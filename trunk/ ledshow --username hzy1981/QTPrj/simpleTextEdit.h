@@ -27,6 +27,9 @@ private:
     //QPushButton *oButton; //´ò¿ª
 
     QLineEdit *lineEdit; //±à¼­¿ò
+
+signals:
+    void edited();
 public:
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
