@@ -81,10 +81,10 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QWidget(parent)
   connect(fontCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
   connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
   connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-  connect(bButton, SIGNAL(clicked(int)),this,SIGNAL(edited()));
-  connect(iButton, SIGNAL(clicked(int)),this,SIGNAL(edited()));
-  connect(uButton, SIGNAL(clicked(int)),this,SIGNAL(edited()));
-  connect(lineEdit, SIGNAL(editingFinished(int)),this,SIGNAL(edited()));
+  connect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
+  connect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
+  connect(uButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
+  connect(lineEdit, SIGNAL(editingFinished()),this,SIGNAL(edited()));
 }
 
 /*
