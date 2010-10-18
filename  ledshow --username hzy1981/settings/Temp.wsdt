@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<Workspace>
+  <ConfigDictionary>
+    
+  <CurrentConfigs><Project>Temp/Debug</Project></CurrentConfigs></ConfigDictionary>
+  <Desktop>
+    <Static>
+      <Workspace>
+        <ColumnWidths>
+          
+          
+          
+          
+        <Column0>245</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+      </Workspace>
+      <Build>
+        <PreferedWindows>
+          
+          
+          
+          
+        <Position>3</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows/></PreferedWindows>
+        
+        
+        
+        
+      <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>915</ColumnWidth1><ColumnWidth2>244</ColumnWidth2><ColumnWidth3>61</ColumnWidth3></Build>
+    <Find-in-Files><ColumnWidth0>440</ColumnWidth0><ColumnWidth1>62</ColumnWidth1><ColumnWidth2>754</ColumnWidth2><PreferedWindows><Position>3</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows><Window><Factory>Build</Factory></Window><Window><Factory>Breakpoints</Factory></Window></Windows></PreferedWindows></Find-in-Files><Breakpoints><PreferedWindows><Position>3</Position><ScreenPosX>0</ScreenPosX><ScreenPosY>0</ScreenPosY><Windows><Window><Factory>Build</Factory></Window><Window><Factory>Find-in-Files</Factory></Window></Windows></PreferedWindows></Breakpoints></Static>
+    <Windows>
+      
+      
+    <Wnd2>
+        <Tabs>
+          <Tab>
+            <Identity>TabID-522-15058</Identity>
+            <TabName>Workspace</TabName>
+            <Factory>Workspace</Factory>
+            <Session>
+              
+            <NodeDict><ExpandedNode>Temp</ExpandedNode></NodeDict></Session>
+          </Tab>
+        </Tabs>
+        
+      <SelectedTab>0</SelectedTab></Wnd2><Wnd3><Tabs><Tab><Identity>TabID-10444-4631</Identity><TabName>Build</TabName><Factory>Build</Factory><Session/></Tab></Tabs><SelectedTab>0</SelectedTab></Wnd3></Windows>
+    <Editor>
+      
+      
+      
+      
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\QTPrj\clockProperty.cpp</Filename><XPos>0</XPos><YPos>19</YPos><SelStart>1131</SelStart><SelEnd>1142</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\pub.c</Filename><XPos>0</XPos><YPos>28</YPos><SelStart>2360</SelStart><SelEnd>2360</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\pub.h</Filename><XPos>0</XPos><YPos>143</YPos><SelStart>4599</SelStart><SelEnd>4599</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\LED_Cfg.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>194</SelStart><SelEnd>209</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Includes.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>230</SelStart><SelEnd>230</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\File_Op.c</Filename><XPos>0</XPos><YPos>6</YPos><SelStart>56</SelStart><SelEnd>56</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\File_Op.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>128</SelStart><SelEnd>128</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>28</SelStart><SelEnd>28</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\com.c</Filename><XPos>0</XPos><YPos>56</YPos><SelStart>1524</SelStart><SelEnd>1524</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\com.h</Filename><XPos>0</XPos><YPos>8</YPos><SelStart>570</SelStart><SelEnd>570</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\STM32.h</Filename><XPos>0</XPos><YPos>25</YPos><SelStart>609</SelStart><SelEnd>609</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\LED_Show.C</Filename><XPos>0</XPos><YPos>1172</YPos><SelStart>32232</SelStart><SelEnd>32232</SelEnd></Tab><ActiveTab>11</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\LED_Show.h</Filename><XPos>0</XPos><YPos>78</YPos><SelStart>2664</SelStart><SelEnd>2668</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\QT_SIM.h</Filename><XPos>0</XPos><YPos>18</YPos><SelStart>556</SelStart><SelEnd>612</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\QT_SIM.c</Filename><XPos>0</XPos><YPos>45</YPos><SelStart>837</SelStart><SelEnd>837</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\LED_Para.h</Filename><XPos>0</XPos><YPos>277</YPos><SelStart>5013</SelStart><SelEnd>5013</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\LED_Para.c</Filename><XPos>0</XPos><YPos>105</YPos><SelStart>2094</SelStart><SelEnd>2107</SelEnd></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\STM32.c</Filename><XPos>0</XPos><YPos>34</YPos><SelStart>681</SelStart><SelEnd>710</SelEnd></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Positions>
+      
+      
+      
+      
+      
+    <Top><Row0><Sizes><Toolbar-00b1a8d0><key>iaridepm.enu1</key></Toolbar-00b1a8d0></Sizes></Row0></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>508</Bottom><Right>319</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>156250</sizeHorzCX><sizeHorzCY>276243</sizeHorzCY><sizeVertCX>250781</sizeVertCX><sizeVertCY>704420</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>171</Bottom><Right>1282</Right><x>-2</x><y>-2</y><xscreen>1284</xscreen><yscreen>173</yscreen><sizeHorzCX>1003125</sizeHorzCX><sizeHorzCY>238950</sizeHorzCY><sizeVertCX>156250</sizeVertCX><sizeVertCY>276243</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+  </Desktop>
+</Workspace>
+
+
