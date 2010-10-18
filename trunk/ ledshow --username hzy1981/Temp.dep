@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project>
+  <fileVersion>2</fileVersion>
+  <fileChecksum>2198630897</fileChecksum>
+  <configuration>
+    <name>Debug</name>
+    <outputs>
+      <file>$PROJ_DIR$\com.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\QT.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\DLib_Defaults.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\STM32.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\Temp.pbd</file>
+      <file>$PROJ_DIR$\Debug\Obj\QT_SIM.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\STM32.o</file>
+      <file>$TOOLKIT_DIR$\inc\ymath.h</file>
+      <file>$TOOLKIT_DIR$\inc\yvals.h</file>
+      <file>$TOOLKIT_DIR$\config\generic.icf</file>
+      <file>$PROJ_DIR$\Debug\Obj\LED_Show.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\File_Op.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\DLib_Product.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\LED_Para.o</file>
+      <file>$TOOLKIT_DIR$\inc\stdio.h</file>
+      <file>$TOOLKIT_DIR$\inc\ycheck.h</file>
+      <file>$TOOLKIT_DIR$\inc\DLib_Config_Normal.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\pub.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\LED_Para.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\ysizet.h</file>
+      <file>$PROJ_DIR$\Debug\Obj\QT_SIM.o</file>
+      <file>$TOOLKIT_DIR$\lib\shs_l.a</file>
+      <file>$PROJ_DIR$\Debug\Obj\File_Op.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\QT.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\LED_Show.pbi</file>
+      <file>$PROJ_DIR$\com.c</file>
+      <file>$PROJ_DIR$\File_Op.cpp</file>
+      <file>$PROJ_DIR$\Debug\Exe\Temp.out</file>
+      <file>$TOOLKIT_DIR$\lib\rt4t_al.a</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\DLib_Product_string.h</file>
+      <file>$TOOLKIT_DIR$\lib\dl4t_tl_in.a</file>
+      <file>$PROJ_DIR$\Debug\Obj\main.o</file>
+      <file>$PROJ_DIR$\Debug\Obj\pub.pbi</file>
+      <file>$PROJ_DIR$\Debug\Obj\com.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\string.h</file>
+      <file>$TOOLKIT_DIR$\inc\math.h</file>
+      <file>$PROJ_DIR$\QT.h</file>
+      <file>$PROJ_DIR$\QT.C</file>
+      <file>$TOOLKIT_DIR$\inc\stdarg.h</file>
+      <file>$TOOLKIT_DIR$\inc\DLib_Threads.h</file>
+      <file>$PROJ_DIR$\LED_Para.cpp</file>
+      <file>$PROJ_DIR$\Debug\Obj\com.o</file>
+      <file>$PROJ_DIR$\STM32.cpp</file>
+      <file>$PROJ_DIR$\com.cpp</file>
+      <file>$PROJ_DIR$\LED_Show.cpp</file>
+      <file>$PROJ_DIR$\LED_Cfg.h</file>
+      <file>$PROJ_DIR$\LED_Para.c</file>
+      <file>$PROJ_DIR$\LED_Para.h</file>
+      <file>$PROJ_DIR$\LED_Show.C</file>
+      <file>$PROJ_DIR$\LED_Show.h</file>
+      <file>$PROJ_DIR$\main.c</file>
+      <file>$PROJ_DIR$\pub.c</file>
+      <file>$PROJ_DIR$\pub.h</file>
+      <file>$TOOLKIT_DIR$\inc\xencoding_limits.h</file>
+      <file>$PROJ_DIR$\File_Op.c</file>
+      <file>$PROJ_DIR$\File_Op.h</file>
+      <file>$PROJ_DIR$\Includes.h</file>
+      <file>$PROJ_DIR$\QT_SIM.c</file>
+      <file>$PROJ_DIR$\QT_SIM.h</file>
+      <file>$PROJ_DIR$\STM32.c</file>
+      <file>$PROJ_DIR$\STM32.h</file>
+      <file>$PROJ_DIR$\ZK.h</file>
+      <file>$PROJ_DIR$\QT_SIM.cpp</file>
+      <file>$PROJ_DIR$\pub.cpp</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\Debug\Obj\Temp.pbd</name>
+      <inputs>
+        <tool>
+          <name>BILINK</name>
+          <file> 11 18 24 5 3 34 29 33</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\com.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 42</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 34</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 57 35 15 8 2 16 12 54 40 19 30 14 39 36 7 46 53 61 59 50 48 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 57 35 15 8 2 12 54 40 19 30 14 39 36 7 46 53 61 59 56 50 48 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 27</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\File_Op.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 22</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 11</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Debug\Exe\Temp.out</name>
+      <inputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 9 22 13 10 20 6 42 32 17 21 28 31</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\QT.C</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 23</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 1</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 57 35 15 8 2 16 12 54 40 19 30 14 39 36 7 46 37 61 53 56 48 50 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\LED_Para.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 13</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 18</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\STM32.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 6</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 3</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\com.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 42</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 34</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\LED_Show.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 10</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 24</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 57 35 15 8 2 16 12 54 40 19 30 14 39 36 7 46 53 61 59 56 50 48 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\LED_Para.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 13</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 18</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 57 35 15 8 2 16 12 54 40 19 30 14 39 36 7 46 53 61 59 50 48 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 57 35 15 8 2 12 54 40 19 30 14 39 36 7 46 53 61 59 56 50 48 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\LED_Show.C</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 10</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 24</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 57 35 15 8 2 16 12 54 40 19 30 14 39 36 7 46 53 61 59 50 48 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 57 35 15 8 2 12 54 40 19 30 14 39 36 7 46 53 61 59 56 50 48 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\main.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 32</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 29</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 57 35 15 8 2 12 54 40 19 30 14 39 36 7 46 53 61 59 56 50 48 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\pub.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 17</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 33</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 57 35 15 8 2 16 12 54 40 19 30 14 39 36 7 46 53 61 59 50 48 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 57 35 15 8 2 12 54 40 19 30 14 39 36 7 46 53 61 59 56 50 48 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\File_Op.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 22</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 11</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 57 35 15 8 2 16 12 54 40 19 30 14 39 36 7 46 53 61 59 50 48 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 57 35 15 8 2 12 54 40 19 30 14 39 36 7 46 53 61 59 56 50 48 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\QT_SIM.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 20</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 5</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 57 35 15 8 2 16 12 54 40 19 30 14 39 36 7 46 53 61 59 50 48 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 57 35 15 8 2 12 54 40 19 30 14 39 36 7 46 53 61 59 56 50 48 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\STM32.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 6</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 3</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 57 35 15 8 2 16 12 54 40 19 30 14 39 36 7 46 53 61 59 50 48 0</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 57 35 15 8 2 12 54 40 19 30 14 39 36 7 46 53 61 59 56 50 48 0</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\QT_SIM.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 20</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 5</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\pub.cpp</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 17</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 33</file>
+        </tool>
+      </outputs>
+    </file>
+  </configuration>
+  <configuration>
+    <name>Release</name>
+    <outputs/>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>ILINK</tool>
+    </forcedrebuild>
+  </configuration>
+</project>
+
+

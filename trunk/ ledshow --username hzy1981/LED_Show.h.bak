@@ -1,0 +1,112 @@
+#ifndef LED_SHOW_H
+#define LED_SHOW_H
+
+#include "QT.h"
+#include "LED_Cfg.h"
+
+#undef EXT
+#ifdef LED_SHOW_C
+#define EXT
+#else
+#define EXT extern
+#endif
+
+#define GET_LINE_Y(X0,Y0,X1,Y1,X) (((Y1)-(Y0))*((X)-(X0))/((X1)-(X0)) + (Y0))
+#define GET_LINE_X(X0,Y0,X1,Y1,Y) (((X1)-(X0))*((Y)-(Y0))/((Y1)-(Y0)) + (X0))
+
+
+//时间
+typedef struct
+{
+  INT8U Head;
+  INT8U Time[5]; //年、月、日、时、分	
+  INT8U Tail;
+}S_Cur_Time;
+
+//三色显示数据
+typedef struct
+{
+  INT8U Head;
+  INT8U Color0[MAX_POINTS/3]; //红色
+  INT8U Color1[MAX_POINTS/3]; //蓝色
+  INT8U Color2[MAX_POINTS/3]; //黄色
+  INT8U Tail;
+}S_Show_3Color_Data;
+
+//双色显示数据
+typedef struct
+{
+  INT8U Head;
+  INT8U Color0[MAX_POINTS/2];
+  INT8U Color1[MAX_POINTS/2];
+  INT8U Tail;
+}S_Show_2Color_Data;
+
+//单色显示数据
+typedef struct
+{
+  INT8U Head;
+  INT8U Color0[MAX_POINTS];
+  INT8U Tail;
+}S_Show_1Color_Data;
+
+
+//点的定义
+typedef struct
+{
+  INT16U X;
+  INT16U Y;
+}S_Point;
+
+typedef union
+{
+  S_Show_1Color_Data One_Color_Data;
+  S_Show_2Color_Data Two_Color_Data;
+  S_Show_3Color_Data Three_Color_Data;
+}S_Show_Data;
+
+//定义分区状态
+typedef struct
+{
+	INT8U Head;
+	
+	INT8U File_No; //当前文件号
+	INT8U File_Offset; //当前文件偏移
+  INT8U Step;        //当前移动的阶梯
+  INT8U Step_Timer;  //已经走过Timer
+	INT16U Stay_Time;   //已经停留的时间
+	
+	INT8U Tail;
+}S_Area_Status;
+
+//定义节目状态
+typedef struct
+{
+	INT8U Time; //已经播放时长
+	
+}S_Program_Status;
+
+EXT S_Show_Data Show_Data;  //显示数据
+EXT S_Show_Data Show_Data_Bak; //显示数据备份
+EXT S_Area_Status Area_Status[MAX_AREA_NUM]; //分区状态信息
+EXT S_Program_Status Program_Status;   //节目状态信息
+
+//获取当前颜色方案
+EXT INT8U Get_Color(); //获取当前的颜色方案
+EXT INT8U Get_Bit(INT8U *p,INT16U X_Size,INT16U X,INT16U Y);
+EXT INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y); //获取某个区域的数据缓冲区起始
+//获取一个区域中的一个点
+EXT INT8U Get_Area_Point_Data(S_Show_Data *pSrc_Buf, INT8U Area_No, INT16U X, INT16U Y); //获取一个区域内一个点的数据
+//设置一个区域中的一个点
+EXT void Set_Area_Point_Data(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, INT8U Data); //设置一个区域的点
+//复制一个矩形数据
+EXT void Copy_Rect_Data(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pSrc_Point, INT16U X_Len, INT16U Y_Len,\
+                        S_Show_Data *pDst_Buf, S_Point *pDst_Point); //复制一个方形区域
+//复制一个三角形数据
+EXT void Copy_Triangle_Data(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pSrc_Point0, S_Point *pSrc_Point1,S_Point *pSrc_Point2,\
+                            S_Show_Data *pDst_Buf, S_Point *pDst_Point0);  //复制一个三角形区域
+//复制一个实心圆
+EXT void Copy_Round(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pCenter0, INT16U Radius, S_Show_Data *pDst_Buf, S_Point *pCenter1);
+//填充一个实心圆
+EXT void Fill_Round(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, INT16U Radius, INT8U Value);
+#endif

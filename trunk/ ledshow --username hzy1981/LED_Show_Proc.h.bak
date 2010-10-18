@@ -1,0 +1,23 @@
+#ifndef LED_SHOW_PROC_H
+#define LED_SHOW_PROC_H
+
+//定义分区状态
+typedef struct
+{
+	INT8U Head;
+	
+	INT8U File_No; //当前文件号
+	INT8U File_Offset; //当前文件偏移
+  INT8U Step; //当前移动的阶
+	
+	INT8U Tail;
+}S_Area_Status;
+
+//定义节目状态
+typedef struct
+{
+	INT8U Time; //已经播放时长
+	INT8U 
+	
+}S_Program_Status;
+#endif
