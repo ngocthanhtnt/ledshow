@@ -46,12 +46,12 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QWidget(parent)
   bButton = new QPushButton(tr("粗体"),this);
   iButton = new QPushButton(tr("斜体"),this);
   uButton = new QPushButton(tr("下划"), this);
-  oButton = new QPushButton(tr("打开"),this);
+  //oButton = new QPushButton(tr("打开"),this);
 
   bButton->setCheckable(true);
   iButton->setCheckable(true);
   uButton->setCheckable(true);
-  oButton->setCheckable(true);
+  //oButton->setCheckable(true);
 
   lineEdit = new QLineEdit(this);
 
@@ -68,7 +68,7 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QWidget(parent)
   hLayout -> addWidget(bButton);
   hLayout -> addWidget(iButton);
   hLayout -> addWidget(uButton);
-  hLayout -> addWidget(oButton);
+  //hLayout -> addWidget(oButton);
   gridLayout->addLayout(hLayout, 1, 0);
 
   hLayout = new QHBoxLayout(this);
@@ -76,6 +76,15 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QWidget(parent)
   gridLayout->addLayout(hLayout, 2, 0);
 
   setLayout(gridLayout);
+
+  //所有的消息统一到一个消息
+  connect(fontCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+  connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+  connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+  connect(bButton, SIGNAL(clicked(int)),this,SIGNAL(edited()));
+  connect(iButton, SIGNAL(clicked(int)),this,SIGNAL(edited()));
+  connect(uButton, SIGNAL(clicked(int)),this,SIGNAL(edited()));
+  connect(lineEdit, SIGNAL(editingFinished(int)),this,SIGNAL(edited()));
 }
 
 /*
@@ -128,12 +137,12 @@ QImage getTextImage(QString str)
     //QString str = lineEdit->text();//edit.document()->toPlainText();//lineEdit->text();//document()->toPlainText ();
     painter.drawText(0,0,width,height,Qt::AlignLeft, text);
     painter.end();
-
+/*
     if(image.save("c:\\a.png")== false)
     {
       qDebug("save image failed");
     }
-
+*/
     settings.endGroup();
     return image;
 
@@ -205,7 +214,14 @@ void CsimpleTextEdit::setSettingsToWidget(QString str)
     lineEdit->setText(settings.value("text").toString());
     settings.endGroup();
 }
+/*
+ bool QObject::connect ( const QObject * sender, const char * signal, const QObject * receiver, const char * method, Qt::ConnectionType type = Qt::AutoConnection )   [static]
 
+void CsimpleTextEdit::edited()
+{
+  qDebug("simpleText edited!");
+}
+*/
 CsimpleTextEdit::~CsimpleTextEdit()
 {
 

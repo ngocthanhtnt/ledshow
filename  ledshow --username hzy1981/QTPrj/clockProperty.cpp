@@ -89,6 +89,8 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(propertyEdited()));
 
     connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(propertyEdited()));
+
+    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(propertyEdited()));
 }
 
 CclockProperty::~CclockProperty()

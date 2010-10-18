@@ -197,8 +197,9 @@ void CprogManage::newProg()
     updateTextHead(0);
     //w->property->stackedWidget->setCurrentIndex(PROG_PROPERTY);
     //w->property->setSettingsToWidget(QString("program") + "/" + QString::number(max), PROG_PROPERTY);
-    w->screenArea->updateShowArea(item);//  progSettingsInit(QStr);
+
     w->property->updateProperty(item);
+    w->screenArea->updateShowArea(item);//  progSettingsInit(QStr);
 }
 
 
@@ -279,10 +280,11 @@ void CprogManage::newArea()
     saveCurItem(item);
     updateTextHead(item->parent());
 
-    w->screenArea->updateShowArea(item);//w->getCurSettingsStr());//显示一个分区,该分区之前处于隐藏状态
+
     //w->property->stackedWidget->setCurrentIndex(AREA_PROPERTY);
     //w->property->setSettingsToWidget(QStr + "/" + QString::number(max), AREA_PROPERTY);
     w->property->updateProperty(item);
+    w->screenArea->updateShowArea(item);//w->getCurSettingsStr());//显示一个分区,该分区之前处于隐藏状态
 }
 
 
@@ -373,7 +375,7 @@ void CprogManage::newFile(int fileType)
     //w->property->stackedWidget->setCurrentIndex(fileType);
     //w->property->setSettingsToWidget(QStr + "/" + QString::number(max), fileType);
     w->property->updateProperty(item);
-
+    w->screenArea->updateShowArea(item);//  progSettingsInit(QStr);
 }
 
 //删除项目
@@ -432,8 +434,8 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
 
     saveCurItem(item);
 
-    w->screenArea->updateShowArea(item);
     w->property->updateProperty(item);
+    w->screenArea->updateShowArea(item);
 }
 
 //progManage中的treeWidget的初始化,根据settings进行初始化
