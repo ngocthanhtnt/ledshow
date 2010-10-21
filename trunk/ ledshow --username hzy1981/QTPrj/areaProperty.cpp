@@ -217,6 +217,12 @@ void CareaProperty::setSettingsToWidget(QString str)
 {
     QStringList keys;
 
+    //设置前端开信号
+    disconnect(xEdit, SIGNAL(editingFinished()), this, SLOT(xEdited()));
+    disconnect(yEdit, SIGNAL(editingFinished()), this, SLOT(yEdited()));
+    disconnect(widthEdit, SIGNAL(editingFinished()), this, SLOT(xLenEdited()));
+    disconnect(heightEdit, SIGNAL(editingFinished()), this, SLOT(yLenEdited()));
+
     settings.beginGroup(str);
     keys = settings.allKeys();
     if(keys.isEmpty() == false)
@@ -230,4 +236,10 @@ void CareaProperty::setSettingsToWidget(QString str)
     }
 
     settings.endGroup();
+
+    //重新连接信号
+    connect(xEdit, SIGNAL(editingFinished()), this, SLOT(xEdited()));
+    connect(yEdit, SIGNAL(editingFinished()), this, SLOT(yEdited()));
+    connect(widthEdit, SIGNAL(editingFinished()), this, SLOT(xLenEdited()));
+    connect(heightEdit, SIGNAL(editingFinished()), this, SLOT(yLenEdited()));
 }

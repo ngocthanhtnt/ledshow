@@ -75,6 +75,7 @@ public:
     void resetProgramPara();
 
     QTreeWidgetItem *treeItem; //对应的treeitem
+    QTreeWidgetItem *fileItem; //对应的文件item
 
     //int getWidth();
     //int getHeight();

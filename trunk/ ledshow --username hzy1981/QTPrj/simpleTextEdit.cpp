@@ -204,9 +204,6 @@ void CsimpleTextEdit::setSettingsToWidget(QString str)
     fontCombo->setCurrentIndex(settings.value("fontIndex").toInt());
     fontSizeCombo->setCurrentIndex(settings.value("fontSizeIndex").toInt());
 
-    //fontCombo->setCurrentText(settings.value("font").toString());
-    //fontSizeCombo->setCurrentText(settings.value("fontSize").toString());
-
     colorCombo->setCurrentIndex(settings.value("color").toInt());
     bButton->setChecked(settings.value("bText").toBool());
     uButton->setChecked(settings.value("uText").toBool());
