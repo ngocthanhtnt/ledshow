@@ -45,6 +45,8 @@ private:
 
     QGroupBox *textGroup;
     CsimpleTextEdit *simpleTextEdit;
+signals:
+    void edited();
 public slots:
     void propertyEdited();
 public:
@@ -57,5 +59,5 @@ public:
 };
 
 void getClockParaFromSettings(QString str, U_File_Para &para);
-void updateClockShowArea(CshowArea *area);
+void updateClockShowArea(CshowArea *area, QTreeWidgetItem *item);
 #endif // CLOCKPROPERTY_H

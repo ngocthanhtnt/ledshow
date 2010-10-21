@@ -123,6 +123,7 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
     }
     else
     {
+        ASSERT_FAILED();
         qDebug("areaSettingsInit Error");
 
         x = 0;//256;
@@ -141,33 +142,20 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
     index = settings.value("index").toInt();
     settings.endGroup();
 
-   // for(i = 0; i < MAX_AREA_NUM; i ++)
+    if(index < MAX_AREA_NUM)
     {
-        //if(pArea[index] -> isVisible() == 0)
-        {
-            pArea[index] -> setVisible(1);
-            pArea[index]->treeItem = item; //背景区域对应该项
-            /*
-            CshowArea *oldArea = w->screenArea->getFocusArea();
-            if(oldArea != pArea[index])
-            {
-               w->screenArea->setFocusArea(pArea[index]); //设置为焦点分区
-               pArea[index]->treeItem = item; //对应的item
+        pArea[index] -> setVisible(1);
+        pArea[index]->treeItem = item; //背景区域对应该项
+        pArea[index]->fileItem = (QTreeWidgetItem *)0; //还没有绑定一个文件
 
-               pArea[index]->raise();
-                if(oldArea != (CshowArea *)0)
-                  oldArea->update();
-            }
-            */
-            w->screenArea->setFocusArea(pArea[index]);
-            pArea[index]->move(x, y);
-            pArea[index]->resize(xLen,yLen);
+        pArea[index]->File_Para.Time_Para.Flag = 0;
 
-            return ;
-            //break;
-        }
+        w->screenArea->setFocusArea(pArea[index]);
+        pArea[index]->move(x, y);
+        pArea[index]->resize(xLen,yLen);
     }
-
+    else
+        ASSERT_FAILED();
     return ;
 }
 
@@ -195,11 +183,13 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     }
 
     area = w->screenArea->pArea[index];
+    area->fileItem = item;
+    //area->treeItem = item->parent(); //父项为分区对应的item
 
     if(type EQ CLOCK_PROPERTY)//表盘显示更新
     {
-        area->treeItem = item;
-        updateClockShowArea(area);
+
+        updateClockShowArea(area, item);
     }
 }
 
@@ -363,7 +353,7 @@ void CscreenArea::updateShowArea(QTreeWidgetItem *item)
         w->screenArea->progSettingsInit(item);//  progSettingsInit(QStr);
     else if(type == AREA_PROPERTY)
     {
-        if(w->screenArea->treeItem != item->parent())
+        if(w->screenArea->treeItem != item->parent()) //与前一个节目是否是同一个节目
         {
             w->screenArea->progSettingsInit(item->parent());
             w->screenArea->areaSettingsInit(item);
@@ -373,7 +363,7 @@ void CscreenArea::updateShowArea(QTreeWidgetItem *item)
     }
     else
     {
-        if(w->screenArea->treeItem != item->parent()->parent())
+        if(w->screenArea->treeItem != item->parent()->parent())//与前一个节目是否是同一个节目
         {
             w->screenArea->progSettingsInit(item->parent()->parent());
             w->screenArea->areaSettingsInit(item->parent());
@@ -505,13 +495,17 @@ void CshowArea::mouseReleaseEvent(QMouseEvent *event)
         width = frameGeometry().width();
         height = frameGeometry().height();
 
-        str = treeItem->data(0, Qt::UserRole).toString();
-        settings.beginGroup(str);
-        settings.setValue("x", x);
-        settings.setValue("y", y);
-        settings.setValue("xLen", width);
-        settings.setValue("yLen", height);
-        settings.endGroup();
+        //记录下当前区域的位置等
+        if(treeItem != (QTreeWidgetItem *)0)
+        {
+            str = treeItem->data(0, Qt::UserRole).toString();
+            settings.beginGroup(str);
+            settings.setValue("x", x);
+            settings.setValue("y", y);
+            settings.setValue("xLen", width);
+            settings.setValue("yLen", height);
+            settings.endGroup();
+        }
     }
     //qDebug("mouseReleaseEvent");
 }

@@ -76,21 +76,23 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     gridLayout -> addWidget(textGroup, 0, 1);
     setLayout(gridLayout);
 
-    connect(pointRadiusEdit, SIGNAL(editingFinished()), this, SLOT(propertyEdited()));
-    connect(point369RadiusEdit, SIGNAL(editingFinished()), this, SLOT(propertyEdited()));
-    connect(hourWidthEdit, SIGNAL(editingFinished()), this, SLOT(propertyEdited()));
-    connect(minWidthEdit, SIGNAL(editingFinished()), this, SLOT(propertyEdited()));
-    connect(secWidthEdit, SIGNAL(editingFinished()), this, SLOT(propertyEdited()));
+    connect(pointRadiusEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
+    connect(point369RadiusEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
+    connect(hourWidthEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
+    connect(minWidthEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
+    connect(secWidthEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
 
-    connect(pointColorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(propertyEdited()));
-    connect(point369ColorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(propertyEdited()));
-    connect(hourColorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(propertyEdited()));
-    connect(minColorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(propertyEdited()));
-    connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(propertyEdited()));
+    connect(pointColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
+    connect(point369ColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
+    connect(hourColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
+    connect(minColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
+    connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
 
-    connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(propertyEdited()));
+    connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
 
-    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(propertyEdited()));
+    connect(simpleTextEdit, SIGNAL(edited()), this, SIGNAL(edited()));
+
+    connect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
 }
 
 CclockProperty::~CclockProperty()
@@ -100,27 +102,40 @@ CclockProperty::~CclockProperty()
 
 void CclockProperty::getSettingsFromWidget(QString str)
 {
+    int type;
+    int tmp;
+
     settings.beginGroup(str);
 
-    settings.setValue("pointRadius", pointRadiusEdit->text().toInt());   //整点半径
-    settings.setValue("point369Radius", point369RadiusEdit->text().toInt()); //369点半径
-    settings.setValue("hourWidth", hourWidthEdit->text().toInt());//时钟宽度
-    settings.setValue("minWidth", minWidthEdit->text().toInt()); //分钟宽度
-    settings.setValue("secWidth", secWidthEdit->text().toInt()); //分钟宽度
+    type = settings.value("type").toInt();
+    if(type == CLOCK_PROPERTY)
+    {
+        tmp = pointRadiusEdit->text().toInt();
+        qDebug("get pointRadius = %d", tmp);
 
-    settings.setValue("pointColor", pointColorCombo->currentIndex()); //整点颜色
-    settings.setValue("point369Color", point369ColorCombo->currentIndex()); //369点颜色
-    settings.setValue("hourColor", hourColorCombo->currentIndex()); //时钟颜色
-    settings.setValue("minColor", minColorCombo->currentIndex()); //分钟颜色
-    settings.setValue("secColor", secColorCombo->currentIndex()); //秒钟颜色
+        settings.setValue("pointRadius", pointRadiusEdit->text().toInt());   //整点半径
+        settings.setValue("point369Radius", point369RadiusEdit->text().toInt()); //369点半径
+        settings.setValue("hourWidth", hourWidthEdit->text().toInt());//时钟宽度
+        settings.setValue("minWidth", minWidthEdit->text().toInt()); //分钟宽度
+        settings.setValue("secWidth", secWidthEdit->text().toInt()); //分钟宽度
+
+        settings.setValue("pointColor", pointColorCombo->currentIndex()); //整点颜色
+        settings.setValue("point369Color", point369ColorCombo->currentIndex()); //369点颜色
+        settings.setValue("hourColor", hourColorCombo->currentIndex()); //时钟颜色
+        settings.setValue("minColor", minColorCombo->currentIndex()); //分钟颜色
+        settings.setValue("secColor", secColorCombo->currentIndex()); //秒钟颜色
+    }
+    else
+        ASSERT_FAILED();
 
     settings.endGroup();
 
-    simpleTextEdit->getSettingsFromWidget(str);
+    if(type == CLOCK_PROPERTY)
+      simpleTextEdit->getSettingsFromWidget(str);
 }
 
 //刷新显示区域
-void updateClockShowArea(CshowArea *area)
+void updateClockShowArea(CshowArea *area, QTreeWidgetItem *item)
 {
     //CshowArea *area;
     QString str;
@@ -128,15 +143,10 @@ void updateClockShowArea(CshowArea *area)
 
     if(area != (CshowArea *)0) //
     {
-        str = area->treeItem->data(0,Qt::UserRole).toString();
-        //qDebug("item str:%s",str);
-        getClockParaFromSettings(str,area->File_Para);
+        str = item->data(0,Qt::UserRole).toString();
 
-        //memset(area->showDataBak.Color_Data, 0, sizeof(area->showDataBak.Color_Data));
+        getClockParaFromSettings(str,area->File_Para);
         area->imageBk = getTextImage(str);
-        //QSize size = getTextShowData(image, &area->showDataBak, 0, 0);
-        //area->File_Para.Clock_Para.Bk_Width = size.width();
-        //area->File_Para.Clock_Para.Bk_Height = size.height();
 
         qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);
         area->update(); //刷新显示
@@ -153,22 +163,29 @@ void updateClockShowArea(CshowArea *area)
 void CclockProperty::propertyEdited()
 {
     CshowArea *area;
+    QTreeWidgetItem *item;
 
     qDebug("propertyEdited");
     area = w->screenArea->getFocusArea(); //当前焦点分区
 
     if(area != (CshowArea *)0) //
     {
-        QString str = area->treeItem->data(0,Qt::UserRole).toString();
-        getSettingsFromWidget(str);
+        //当前选中的item
+        item = area->fileItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
+        if(item != (QTreeWidgetItem *)0)
+        {
+            QString str = item->data(0,Qt::UserRole).toString();
+            getSettingsFromWidget(str);
+            updateClockShowArea(area, item);
+        }
     }
-    updateClockShowArea(area);
 }
 
 //从settings中获取参数
 void getClockParaFromSettings(QString str, U_File_Para &para)
 {
     int tmp;
+   // QString str;
 
     para.Clock_Para.Flag = SHOW_CLOCK;
     settings.beginGroup(str);
@@ -212,7 +229,24 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     para.Clock_Para.Sec_Line_Color = 0;
     SET_BIT(para.Clock_Para.Sec_Line_Color, tmp);
     qDebug("secColor = %d", para.Clock_Para.Sec_Line_Color);
+/*
+    settings.setValue("fontIndex", fontCombo->currentIndex());
+    settings.setValue("fontSizeIndex", fontSizeCombo->currentIndex());
+    settings.setValue("fontName", fontCombo->currentText());
+    settings.setValue("fontSize", fontSizeCombo->currentText().toInt());
 
+    settings.setValue("color", colorCombo->currentIndex());
+    settings.setValue("bText", bButton->isChecked());
+    settings.setValue("uText", uButton->isChecked());
+    settings.setValue("iText", iButton->isChecked());
+    settings.setValue("text", lineEdit->text());
+
+    para.Clock_Para.Bk_Color = settings.value("color").toInt();
+    para.Clock_Para.Bk_Color = settings.value("color").toInt();
+
+    tmp = settings.value("fontSizeIndex").toInt();
+    tmp = settings.value("fontName").toString();
+    */
     settings.endGroup();
 }
 
@@ -237,6 +271,7 @@ void CclockProperty::setSettingsToWidget(QString str)
     QStringList keys;
     QString text;
 
+    disconnect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
     settings.beginGroup(str);
     keys = settings.allKeys();
     if(keys.size() <10)
@@ -269,4 +304,6 @@ void CclockProperty::setSettingsToWidget(QString str)
     settings.endGroup();
 
     simpleTextEdit->setSettingsToWidget(str);
+
+    connect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
 }

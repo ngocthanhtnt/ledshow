@@ -374,6 +374,7 @@ void CprogManage::newFile(int fileType)
     updateTextHead(item->parent());
     //w->property->stackedWidget->setCurrentIndex(fileType);
     //w->property->setSettingsToWidget(QStr + "/" + QString::number(max), fileType);
+
     w->property->updateProperty(item);
     w->screenArea->updateShowArea(item);//  progSettingsInit(QStr);
 }
