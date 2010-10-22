@@ -45,6 +45,26 @@ int checkItemType(QTreeWidgetItem *item)
     return type;
 }
 
+void updateItemSubIndex(QTreeWidgetItem *item)
+{
+    QString QStr;
+    QTreeWidgetItem *parent;
+    int index,parentIndex;
+
+    //parent = item ->parent();
+    //parentIndex = parent->parent()->indexOfChild(parent);
+    index = item->parent()->indexOfChild(item);//在父亲中索引
+    //QStr = QString::number(parentIndex + 1) + QObject::tr("分区");
+    //QStr = QStr + "(" + QString::number(index + 1) + ")";
+    //item->parent()->setText(0,QStr);//setText(QStr);
+
+    QStr = (item->parent()->data(0,Qt::UserRole)).toString();
+    settings.beginGroup(QStr);
+    settings.setValue("subIndex", index + 1);
+    settings.endGroup();
+
+}
+
 /*
 #define HTXT_AREA  0x00 //超文本
 #define PIC_AREA   0x01 //图片
@@ -135,8 +155,8 @@ QString getTypeString(int type)
 //parent!=0表示更新parent的所有子项
 void CprogManage::updateTextHead(QTreeWidgetItem *parent)
 {
-    int count;
-    QString Qstr;
+    int count,type,subIndex,parentIndex;
+    QString Qstr,str;
     QTreeWidgetItem *temp;
 
     if(parent == 0) //顶层项
@@ -144,6 +164,44 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
     else
        count = parent->childCount();
 
+    if(parent != 0)
+    {
+        type = checkItemType(parent);
+        if(type == AREA_PROPERTY || type == PROG_PROPERTY)
+        {
+            str = parent->data(0, Qt::UserRole).toString();
+            settings.beginGroup(str);
+            subIndex = settings.value("subIndex").toInt();
+            settings.endGroup();
+            Qstr = Qstr + "(" + QString::number(subIndex) + ")";
+
+            if(type == AREA_PROPERTY)
+            {
+              parentIndex = parent->parent()->indexOfChild(parent);
+              parent->setText(0, QString::number(parentIndex + 1) + tr("分区") + Qstr); //设置text
+            }
+            else
+            {
+              parentIndex = treeWidget->indexOfTopLevelItem(parent);
+              parent->setText(0, QString::number(parentIndex + 1) + tr("节目") + Qstr); //设置text
+
+            }
+        }
+    }/*
+    else //当前为顶级
+    {
+        settings.beginGroup();
+        subIndex = settings.value("subIndex").toInt();
+        settings.endGroup();
+        Qstr = Qstr + "(" + QString::number(subIndex) + ")";
+
+        int parentIndex = parent->parent()->indexOfChild(parent);
+        if(type == AREA_PROPERTY)
+          parent->setText(0, QString::number(parentIndex + 1) + tr("分区") + Qstr); //设置text
+        else
+          parent->setText(0, QString::number(parentIndex + 1) + tr("节目") + Qstr); //设置text
+
+    }*/
     for(int i=0; i < count; i ++)
     {
         if(parent == (QTreeWidgetItem *)0)
@@ -152,7 +210,16 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
            temp = parent->child(i);
 
         int type = checkItemType(temp); //类型
+
         Qstr = getTypeString(type); //根据类型获得对应的字符串
+        if(type == AREA_PROPERTY || type == PROG_PROPERTY) //分区
+        {
+            str = temp->data(0, Qt::UserRole).toString();
+            settings.beginGroup(str);
+            subIndex = settings.value("subIndex").toInt();
+            settings.endGroup();
+            Qstr = Qstr + "(" + QString::number(subIndex) + ")";
+        }
 
         temp->setText(0, QString::number(i + 1) + Qstr); //设置text
     }
@@ -180,6 +247,7 @@ void CprogManage::newProg()
     qDebug("new prog %d",max);
 
     settings.beginGroup(QString::number(max));
+    settings.setValue("subIndex", 0); //当前子分区
     settings.setValue("name", QString("new prog"));
     settings.setValue("type", PROG_PROPERTY);
     settings.endGroup();
@@ -194,6 +262,8 @@ void CprogManage::newProg()
     treeWidget->addTopLevelItem(item);
     treeWidget->setCurrentItem(item);
     saveCurItem(item); //当前点钟的
+
+    //updateItemSubIndex(item);
     updateTextHead(0);
     //w->property->stackedWidget->setCurrentIndex(PROG_PROPERTY);
     //w->property->setSettingsToWidget(QString("program") + "/" + QString::number(max), PROG_PROPERTY);
@@ -259,6 +329,7 @@ void CprogManage::newArea()
 
     //初始化分区属性
     settings.beginGroup(QString::number(max));
+    settings.setValue("subIndex", 0); //子项索引
     settings.setValue("name", QString("new area"));
     settings.setValue("type", AREA_PROPERTY);
     settings.setValue("index", index);
@@ -278,6 +349,8 @@ void CprogManage::newArea()
     parentItem->addChild(item);
     treeWidget->setCurrentItem(item);
     saveCurItem(item);
+
+    updateItemSubIndex(item);
     updateTextHead(item->parent());
 
 
@@ -371,10 +444,24 @@ void CprogManage::newFile(int fileType)
     parentItem->addChild(item);
     treeWidget->setCurrentItem(item);
     saveCurItem(item);
+
+    updateItemSubIndex(item);
     updateTextHead(item->parent());
     //w->property->stackedWidget->setCurrentIndex(fileType);
     //w->property->setSettingsToWidget(QStr + "/" + QString::number(max), fileType);
 
+
+    /*
+    QStr = (parentItem ->data(0,Qt::UserRole)).toString();
+    settings.beginGroup(QStr);
+    settings.setValue("subIndex", size);
+    settings.endGroup();
+
+    int index = parentItem->parent()->indexOfChild(parentItem);//在父亲中索引
+    QStr = QString::number(index + 1) + QString(tr("分区"));
+    QStr = QStr + "(" + QString::number(size + 1) + ")";
+    parentItem->setText(0,QStr);//setText(QStr);
+*/
     w->property->updateProperty(item);
     w->screenArea->updateShowArea(item);//  progSettingsInit(QStr);
 }
@@ -434,6 +521,16 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     }
 
     saveCurItem(item);
+
+    type = checkItemType(item);
+    if(type != PROG_PROPERTY && type != AREA_PROPERTY) //既不是节目也不是分区
+    {
+        //int index =
+        //QString str = item->parent()->data(0, Qt::UserRole).toString();
+        updateItemSubIndex(item);
+        updateTextHead(item->parent());
+        //updateItemSubIndex(item);
+    }
 
     w->property->updateProperty(item);
     w->screenArea->updateShowArea(item);

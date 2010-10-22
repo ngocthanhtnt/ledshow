@@ -107,8 +107,9 @@ void CscreenArea::progSettingsInit(QTreeWidgetItem *item)
 void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
 {
     QString str;
-    int index;
+    int index, subIndex;
     int x,y,xLen,yLen;
+    QTreeWidgetItem *subItem;
 
     str = item->data(0, Qt::UserRole).toString();
 
@@ -140,6 +141,7 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
     }
 
     index = settings.value("index").toInt();
+    subIndex= settings.value("subIndex").toInt(); //子文件索引
     settings.endGroup();
 
     if(index < MAX_AREA_NUM)
@@ -153,9 +155,19 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
         w->screenArea->setFocusArea(pArea[index]);
         pArea[index]->move(x, y);
         pArea[index]->resize(xLen,yLen);
+
+        //初始化当前子文件
+        if(subIndex >= item->childCount() && subIndex> 0)
+        {
+            subItem = item->child(subIndex - 1);
+            fileSettingsInit(subItem);
+        }
+
     }
     else
         ASSERT_FAILED();
+
+
     return ;
 }
 
@@ -343,11 +355,7 @@ void CscreenArea::updateShowArea(QTreeWidgetItem *item)
     int type, index;
     QString str;
 
-    str = item->data(0, Qt::UserRole).toString();
-
-    settings.beginGroup(str);
-    type = settings.value("type").toInt(); //checkItemType(item);
-    settings.endGroup();
+    type = checkItemType(item);
 
     if(type == PROG_PROPERTY)
         w->screenArea->progSettingsInit(item);//  progSettingsInit(QStr);
@@ -356,7 +364,7 @@ void CscreenArea::updateShowArea(QTreeWidgetItem *item)
         if(w->screenArea->treeItem != item->parent()) //与前一个节目是否是同一个节目
         {
             w->screenArea->progSettingsInit(item->parent());
-            w->screenArea->areaSettingsInit(item);
+            //w->screenArea->areaSettingsInit(item);
         }
         else
           w->screenArea->areaSettingsInit(item);
@@ -366,13 +374,13 @@ void CscreenArea::updateShowArea(QTreeWidgetItem *item)
         if(w->screenArea->treeItem != item->parent()->parent())//与前一个节目是否是同一个节目
         {
             w->screenArea->progSettingsInit(item->parent()->parent());
-            w->screenArea->areaSettingsInit(item->parent());
-            w->screenArea->fileSettingsInit(item);
+            //w->screenArea->areaSettingsInit(item->parent());
+            //w->screenArea->fileSettingsInit(item);
         }
         else
         {
           w->screenArea->areaSettingsInit(item->parent());
-          w->screenArea->fileSettingsInit(item);
+          //w->screenArea->fileSettingsInit(item);
        }
     }
 
