@@ -61,6 +61,6 @@ public:
     CprogManage(QWidget *parent = 0);
     ~CprogManage();
 };
-
+int checkItemType(QTreeWidgetItem *item);
 
 #endif // PROGMANAGE_H
