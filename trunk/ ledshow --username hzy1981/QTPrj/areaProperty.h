@@ -24,7 +24,6 @@ private:
     QGridLayout *grid;
 
 public slots:
-
     void xEdited();
     void yEdited();
     void xLenEdited();

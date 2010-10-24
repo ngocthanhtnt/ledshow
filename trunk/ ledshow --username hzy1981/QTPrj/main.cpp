@@ -30,6 +30,8 @@ int main(int argc, char *argv[])
     w->setGeometry(0, iTitleBarHeight, desktopRect.width(), desktopRect.height() - iTitleBarHeight);  // 设置窗体充满桌面客户区
     w->setFixedSize(desktopRect.width(), desktopRect.height() - iTitleBarHeight);      // 固定窗体大小
 
+    w->progManage->newProg();
+    w->progManage->newArea();
     w->show();
 
     return a.exec();

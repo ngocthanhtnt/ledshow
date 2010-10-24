@@ -1,5 +1,6 @@
 #include "progProperty.h"
 #include <QSettings>
+#include <QDate>
 
 extern QSettings settings;
 //节目属性编辑
@@ -209,6 +210,15 @@ CprogProperty::~CprogProperty()
 void CprogProperty::setSettingsToWidget(QString str)
 {
     QStringList keys;
+    int year,month,day,hour,min;
+    QDate date;
+    QTime time;
+
+    disconnect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(dateTimerCheckProc(int)));
+    disconnect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(weekTimerCheckProc(int)));
+    disconnect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
+    disconnect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
+    disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 
     settings.beginGroup(str);
     keys = settings.allKeys();
@@ -219,8 +229,20 @@ void CprogProperty::setSettingsToWidget(QString str)
 
       //按日期定时
       dateTimerCheck->setChecked(settings.value("dateTimerCheck").toBool());
-      startDateEdit->setDate(QDate::fromString(settings.value("startDate").toString(),"yyyyMd"));
-      endDateEdit->setDate(QDate::fromString(settings.value("endDate").toString(),"yyyyMd"));
+      //startDateEdit->setDate(QDate::fromString(settings.value("startDate").toString(),"yyyyMd"));
+      //endDateEdit->setDate(QDate::fromString(settings.value("endDate").toString(),"yyyyMd"));
+      //开始年月日
+      year = settings.value("startYear").toInt();
+      month = settings.value("startMonth").toInt();
+      day = settings.value("startDay").toInt();
+      date.setDate(year, month, day);
+      startDateEdit->setDate(date);
+      //结束年月日
+      year = settings.value("endYear").toInt();
+      month = settings.value("endMonth").toInt();
+      day = settings.value("endDay").toInt();
+      date.setDate(year, month, day);
+      endDateEdit->setDate(date);
 
       //按星期定时
       weekTimerCheck->setChecked(settings.value("weekTimerCheck").toBool());
@@ -235,22 +257,37 @@ void CprogProperty::setSettingsToWidget(QString str)
 
       //按时间定时
       timeCheck->setChecked(settings.value("timeCheck").toBool());
-      startTimeEdit->setTime(QTime::fromString(settings.value("startTime").toString(),"m.s"));
-      endTimeEdit->setTime(QTime::fromString(settings.value("endTime").toString(),"m.s"));
+      //startTimeEdit->setTime(QTime::fromString(settings.value("startTime").toString(),"m.s"));
+      //endTimeEdit->setTime(QTime::fromString(settings.value("endTime").toString(),"m.s"));
+      hour = settings.value("startHour").toInt();
+      min = settings.value("startMin").toInt();
+      time.setHMS(hour, min, 0, 0);
+      startTimeEdit->setTime(time);
+
+      hour = settings.value("endHour").toInt();
+      min = settings.value("endMin").toInt();
+      time.setHMS(hour, min, 0, 0);
+      endTimeEdit->setTime(time);
 
       //定长播放
       playTimeCheck->setChecked(settings.value("playTimeCheck").toBool());
-      playTimeEdit->setText(settings.value("playTime").toString());
+      playTimeEdit->setText(QString::number(settings.value("playTime").toInt()));
 
       //边框选择
       borderCheck->setChecked(settings.value("borderCheck").toBool());
-      widthEdit->setText(settings.value("width").toString());
-      speedEdit->setText(settings.value("speed").toString());
+      widthEdit->setText(QString::number(settings.value("width").toInt()));
+      speedEdit->setText(QString::number(settings.value("speed").toInt()));
       styleCombo->setCurrentIndex(settings.value("style").toInt());
       colorCombo->setCurrentIndex(settings.value("color").toInt());
     }
 
     settings.endGroup();
+
+    connect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(dateTimerCheckProc(int)));
+    connect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(weekTimerCheckProc(int)));
+    connect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
+    connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
+    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 }
 
 //从Widget获取配置到settings中,str为Settings的group
@@ -267,11 +304,19 @@ void CprogProperty::getSettingsFromWidget(QString str)
     settings.setValue("name",QVariant(nameEdit->text()));
       //按日期定时
     settings.setValue("dateTimerCheck", QVariant((bool)(dateTimerCheck->checkState())));
-    settings.setValue("startDate", QVariant(startDateEdit->date().toString()));
+    //settings.setValue("startDate", QVariant(startDateEdit->date().toString()));
     //endDateEdit->setDate(QDate::fromString(settings.value("endDate").toString(),"yyyyMd"));
-    settings.setValue("endDate", QVariant(endDateEdit->date().toString()));
+    //settings.setValue("endDate", QVariant(endDateEdit->date().toString()));
 
-      //按星期定时
+    settings.setValue("startYear", startDateEdit->date().year());
+    settings.setValue("startMonth", startDateEdit->date().month());
+    settings.setValue("startDay", startDateEdit->date().day());
+
+    settings.setValue("endYear", endDateEdit->date().year());
+    settings.setValue("endMonth", endDateEdit->date().month());
+    settings.setValue("endDay", endDateEdit->date().day());
+
+    //按星期定时
      // weekTimerCheck->setChecked(settings.value("weekTimerCheck").toBool());
     settings.setValue("weekTimerCheck", QVariant(weekTimerCheck->checkState()));
     //weekCheck[0]->setChecked(settings.value("w0").toBool());
@@ -288,21 +333,26 @@ void CprogProperty::getSettingsFromWidget(QString str)
     //timeCheck->setChecked(settings.value("timeCheck").toBool());
     settings.setValue("timeCheck", QVariant(timeCheck->checkState()));
     //startTimeEdit->setTime(QTime::fromString(settings.value("startTime").toString(),"m.s"));
-    settings.setValue("startTime", QVariant(startTimeEdit->time().toString()));
+    //settings.setValue("startTime", QVariant(startTimeEdit->time().toString()));
     //endTimeEdit->setTime(QTime::fromString(settings.value("endTime").toString(),"m.s"));
-    settings.setValue("endTime", QVariant(endTimeEdit->time().toString()));
-      //定长播放
+    //settings.setValue("endTime", QVariant(endTimeEdit->time().toString()));
+    settings.setValue("startHour", startTimeEdit->time().hour());
+    settings.setValue("startMin", startTimeEdit->time().minute());
+    settings.setValue("endHour", endTimeEdit->time().hour());
+    settings.setValue("endMin", endTimeEdit->time().minute());
+
+    //定长播放
       //playTimeCheck->setChecked(settings.value("playTimeCheck").toBool());
     settings.setValue("playTimeCheck", QVariant(playTimeCheck->checkState()));
     //playTimeEdit->setText(settings.value("playTime").toString());
-    settings.setValue("playTime", QVariant(playTimeEdit->text()));
+    settings.setValue("playTime", QVariant(playTimeEdit->text().toInt()));
       //边框选择
       //borderCheck->setChecked(settings.value("boderCheck").toBool());
     settings.setValue("borderCheck", QVariant(borderCheck->checkState()));
     //widthEdit->setText(settings.value("width").toString());
-    settings.setValue("width", QVariant(widthEdit->text()));
+    settings.setValue("width", QVariant(widthEdit->text().toInt()));
     //speedEdit->setText(settings.value("speed").toString());
-    settings.setValue("speed", QVariant(speedEdit->text()));
+    settings.setValue("speed", QVariant(speedEdit->text().toInt()));
     //styleCombo->setCurrentIndex(settings.value("style").toInt());
     settings.setValue("style", QVariant(styleCombo->currentIndex()));
     //colorCombo->setCurrentIndex(settings.value("color").toInt());
@@ -348,7 +398,7 @@ void CprogProperty::weekTimerCheckProc(int state)
     weekCheck[4]->setEnabled(flag);
     weekCheck[5]->setEnabled(flag);
     weekCheck[6]->setEnabled(flag);
-    weekCheck[7]->setEnabled(flag);
+    //weekCheck[7]->setEnabled(flag);
 
 }
 

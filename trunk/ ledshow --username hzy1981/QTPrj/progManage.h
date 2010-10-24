@@ -39,7 +39,7 @@ private:
     void newFile(int fileType); //新文件
     void updateTextHead(QTreeWidgetItem *item); //更新和item同级的所有item的文本头
 
-private slots:
+public slots:
     void newProg(); //新节目
     void newArea(); //新分区
 
