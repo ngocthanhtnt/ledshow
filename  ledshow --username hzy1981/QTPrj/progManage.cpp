@@ -250,11 +250,47 @@ void CprogManage::newProg()
     settings.setValue("subIndex", 0); //当前子分区
     settings.setValue("name", QString("new prog"));
     settings.setValue("type", PROG_PROPERTY);
-    settings.endGroup();
+
+      //按日期定时
+    settings.setValue("dateTimerCheck", 0);
+    settings.setValue("startYear", 2010);
+    settings.setValue("startMonth", 1);
+    settings.setValue("startDay", 1);
+    settings.setValue("endYear", 2010);
+    settings.setValue("endMonth", 1);
+    settings.setValue("endDay", 1);
+
+    //按星期定时
+    settings.setValue("weekTimerCheck", 0);
+    settings.setValue("w0", 0);
+    settings.setValue("w1", 0);
+    settings.setValue("w2", 0);
+    settings.setValue("w3", 0);
+    settings.setValue("w4", 0);
+    settings.setValue("w5", 0);
+    settings.setValue("w6", 0);
+
+    //按时间定时
+    settings.setValue("timeCheck", 0);
+    settings.setValue("startHour", 0);
+    settings.setValue("startMin", 0);
+    settings.setValue("endHour", 0);
+    settings.setValue("endMin", 0);
+
+    //定长播放
+    settings.setValue("playTimeCheck", 0);
+    settings.setValue("playTime", 0);
+
+    //边框选择
+    settings.setValue("borderCheck", 0);
+    settings.setValue("width", 1);
+    settings.setValue("speed", 1);
+    settings.setValue("style", 1);
+    settings.setValue("color", 1);
+
     qDebug("progs size = %d", settings.childGroups().size());
     settings.endGroup();
-
-    //w->setCurSettingsStr(QString("program") + "/" + QString::number(max));
+    settings.endGroup();
 
     QTreeWidgetItem* item = new QTreeWidgetItem(treeWidget);//QStringList(QString::number(size + 1)+tr("节目")));
     item->setData(0, Qt::UserRole, QVariant(QString("program") + "/" + QString::number(max)));
@@ -263,13 +299,10 @@ void CprogManage::newProg()
     treeWidget->setCurrentItem(item);
     saveCurItem(item); //当前点钟的
 
-    //updateItemSubIndex(item);
     updateTextHead(0);
-    //w->property->stackedWidget->setCurrentIndex(PROG_PROPERTY);
-    //w->property->setSettingsToWidget(QString("program") + "/" + QString::number(max), PROG_PROPERTY);
-
     w->property->updateProperty(item);
     w->screenArea->updateShowArea(item);//  progSettingsInit(QStr);
+
 }
 
 
@@ -483,14 +516,19 @@ void CprogManage::deleteItem()
         if(checkItemType(curItem) == AREA_PROPERTY)
         {
             settings.beginGroup(Qvar.toString());
+
             int index = settings.value("index").toInt();
             if(index < MAX_AREA_NUM)
                 w->screenArea->setAreaVisible(index, 0);
+            else
+                ASSERT_FAILED();
+
             settings.endGroup();
         }
 
         QTreeWidgetItem *parent = curItem->parent();
         curItem->parent()->removeChild(curItem);
+        //updateItemSubIndex(cur)
         updateTextHead(parent);
 
     }
@@ -500,7 +538,19 @@ void CprogManage::deleteItem()
         treeWidget->takeTopLevelItem(index);
         updateTextHead(0);
     }
-    settings.remove(Qvar.toString());//删除这个组
+
+    settings.beginGroup(Qvar.toString());
+    settings.remove("");
+    settings.endGroup();
+    //settings.remove(Qvar.toString());//删除这个组
+
+    qDebug("remove : %s", (const char *)(Qvar.toString().toLocal8Bit()));
+    curItem = treeWidget->currentItem(); //当前被选中的项
+    if(curItem == 0)
+        return;
+
+    saveCurItem(0); //删除后当前没有点中项
+    w->progManage->clickItem(curItem, 0);
 }
 
 //点击
@@ -523,7 +573,7 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     saveCurItem(item);
 
     type = checkItemType(item);
-    if(type != PROG_PROPERTY && type != AREA_PROPERTY) //既不是节目也不是分区
+    if(type != PROG_PROPERTY) //&& type != AREA_PROPERTY) //既不是节目也不是分区
     {
         //int index =
         //QString str = item->parent()->data(0, Qt::UserRole).toString();

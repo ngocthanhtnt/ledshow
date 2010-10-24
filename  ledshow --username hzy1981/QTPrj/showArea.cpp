@@ -62,12 +62,16 @@ CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
 //根据settings对某个节目的分区进行初始化
 void CscreenArea::progSettingsInit(QTreeWidgetItem *item)
 {
-    int areaNum = 0;
+    int areaNum = 0,subIndex;
     QStringList areaGroups;
     QString areaStr;
     QString str;
 
     str = item->data(0, Qt::UserRole).toString();
+
+   settings.beginGroup(str);
+   subIndex = settings.value("subIndex").toInt(); //焦点分区
+   settings.endGroup();
 
    settings.beginGroup(str + "/area/");
 
@@ -85,20 +89,29 @@ void CscreenArea::progSettingsInit(QTreeWidgetItem *item)
 
    settings.endGroup();
 
+   if(subIndex > areaNum)
+   {
+       ASSERT_FAILED();
+       subIndex = areaNum;
+   }
+
    for(int i = 0; i < MAX_AREA_NUM; i ++)
    {
        setAreaVisible(i, 0);
    }
 
+   w->screenArea->setFocusArea((CshowArea *)0);
    w->screenArea->treeItem = item; //背景区域对应该项
    for(int i = 0; i < areaNum && i<MAX_AREA_NUM; i ++)
    {
-     //areaStr = str + "/area/" + areaGroups.at(i);
-     //int index = checkEnoughArea();
-     //areaSettingsInit(areaStr, i, item->child(i));
-     areaSettingsInit(item->child(i));
+      if(i != subIndex- 1)
+       areaSettingsInit(item->child(i));
     }
-    w->screenArea->setFocusArea((CshowArea *)0);
+
+   if(areaNum > 0 && subIndex > 0)
+     areaSettingsInit(item->child(subIndex - 1)); //设为焦点分区
+
+
 }
 
 //根据str的设置，初始化一个分区
@@ -157,7 +170,7 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
         pArea[index]->resize(xLen,yLen);
 
         //初始化当前子文件
-        if(subIndex >= item->childCount() && subIndex> 0)
+        if(subIndex <= item->childCount() && subIndex> 0)
         {
             subItem = item->child(subIndex - 1);
             fileSettingsInit(subItem);
@@ -471,7 +484,11 @@ void CshowArea::mousePressEvent(QMouseEvent *event)
 
     event->accept();
     w->screenArea->setFocusArea(this);
-    w->progManage->treeWidget->setCurrentItem(this->treeItem);
+    if(this->treeItem != 0)
+    {
+      w->progManage->treeWidget->setCurrentItem(this->treeItem);
+      w->progManage->clickItem(this->treeItem, 0);
+    }
 /*
     CshowArea *oldArea = w->screenArea->getFocusArea();
     if(oldArea != this)
