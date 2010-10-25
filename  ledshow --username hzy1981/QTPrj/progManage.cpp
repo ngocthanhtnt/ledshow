@@ -101,6 +101,7 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
           this, SLOT(clickItem(QTreeWidgetItem *, int)));
   setWidget(treeWidget);
 
+  settingsInit();
 }
 
 CprogManage::~CprogManage()
@@ -547,7 +548,11 @@ void CprogManage::deleteItem()
     qDebug("remove : %s", (const char *)(Qvar.toString().toLocal8Bit()));
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == 0)
+    {
+        for(int i = 0; i < MAX_AREA_NUM; i ++)
+            w->screenArea->setAreaVisible(i, 0);
         return;
+    }
 
     saveCurItem(0); //删除后当前没有点中项
     w->progManage->clickItem(curItem, 0);
@@ -644,8 +649,28 @@ void CprogManage::settingsInit()
     }
     settings.endGroup();
 
-    treeWidget->setCurrentItem(treeWidget->topLevelItem(0)); //设置第一个item为当前焦点
-    saveCurItem(treeWidget->topLevelItem(0));
+    if(treeWidget->topLevelItemCount()>0)
+    {
+        treeWidget->setCurrentItem(treeWidget->topLevelItem(0)); //设置第一个item为当前焦点
+
+        for(int i = 0; i <treeWidget->topLevelItemCount(); i ++)
+        {
+            QTreeWidgetItem *progItem;
+
+            progItem = treeWidget->topLevelItem(i);
+            updateTextHead(progItem);
+            for(int j = 0; j<progItem->childCount(); j ++)
+            {
+                QTreeWidgetItem *areaItem;
+
+                areaItem =progItem->child(j);
+                updateTextHead(areaItem);
+            }
+        }
+
+        saveCurItem(0);
+        //clickItem(treeWidget->topLevelItem(0), 0);
+   }
 }
 
 //获取当前settings的str
