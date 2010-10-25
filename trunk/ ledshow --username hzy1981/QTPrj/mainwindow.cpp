@@ -1,36 +1,46 @@
 #include "mainwindow.h"
 #include "progProperty.h"
+#include "progManage.h"
+#include <QFileDialog>
+#include <QMessageBox>
 
-QSettings settings("test", "test");
+extern MainWindow *w;
+QSettings settings(INI_FILE,QSettings::IniFormat,0);
 void MainWindow::setupFileActions()
 {
     QToolBar *tb = new QToolBar(this);
     tb->setWindowTitle(tr("File Actions"));
     addToolBar(tb);
 
-    QMenu *menu = new QMenu(tr("新建"), this);
+    QMenu *menu = new QMenu(tr("文件"), this);
     menuBar()->addMenu(menu);
 
     QAction *a;
 
+    a = new QAction(tr("新建"), this);
+    a->setPriority(QAction::LowPriority);
+    a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
+    tb->addAction(a);
+    menu->addAction(a);
+
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
     a = new QAction(tr("打开"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
-    connect(a, SIGNAL(triggered()), this, SLOT(settingsInit()));
+    a->setShortcut(QKeySequence::Open);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
     tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("保存"), this);
-    a->setShortcut(QKeySequence::Open);
-    //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
+    a->setShortcut(QKeySequence::Save);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
     tb->addAction(a);
     menu->addAction(a);
 
     actionSave = a = new QAction(tr("另存为"), this);
     a->setShortcut(QKeySequence::Save);
-    //connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
-    //a->setEnabled(false);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     tb->addAction(a);
     menu->addAction(a);
 
@@ -270,6 +280,95 @@ QString MainWindow::getCurSettingsStr()
     return curSettingsStr;
 }
 
+//文件保存
+void MainWindow::fileSave()
+{
+    QString fileName;
+
+    settings.beginGroup("");
+    fileName = settings.value("cfgFile").toString(); //配置文件名
+    settings.endGroup();
+
+    QFile::copy(INI_FILE, fileName); //保存老的文件
+}
+
+//文件另存为
+void MainWindow::fileSaveAs()
+{
+
+    //QString fileName;
+    QString newFileName;
+
+    newFileName = QFileDialog::getSaveFileName(this, tr("保存配置文件"), ".", tr("配置文件(.ini)"));
+    if(newFileName.length()==0)
+        return;
+
+    if(QFile::copy(INI_FILE, newFileName) == true) //保存老的文件
+    {
+      settings.beginGroup("file");
+      settings.setValue("cfgFile", newFileName); //配置文件名
+      settings.endGroup();
+   }
+
+}
+
+//新建文件
+void MainWindow::fileNew()
+{
+    QString newFileName;
+
+    newFileName = QFileDialog::getSaveFileName(this, tr("新建配置文件"), ".", tr("配置文件(.ini)"));
+    if(newFileName.length()==0)
+        return;
+
+    fileSave(); //保存老文件
+
+    settings.remove("program");//clear(); //清除
+
+    settings.beginGroup("file");
+    settings.setValue("cfgFile", newFileName);
+    settings.endGroup();
+
+    w->progManage->settingsInit();
+    w->progManage->newProg();
+    w->progManage->newArea();
+}
+
+//打开文件
+void MainWindow::fileOpen()
+{
+    QString newFileName;
+    QString oldFileName;
+
+    newFileName = QFileDialog::getOpenFileName(this, tr("打开配置文件"), ".", tr("配置文件(.ini)"));
+    if(newFileName.length()==0)
+    {
+        return;
+    }
+
+    settings.beginGroup("file");
+    oldFileName = settings.value("cfgFile").toString(); //配置文件名
+    settings.endGroup();
+
+    QFile::remove(oldFileName);
+    if(QFile::copy(INI_FILE, oldFileName)==false) //保存老的文件
+    {
+        qDebug("file open copy oldFileName error");
+    }
+
+    QFile::remove(INI_FILE);
+    if(QFile::copy(newFileName, INI_FILE)==false)
+    {
+        qDebug("file open copy INI_FILE error");
+    }
+
+    settings.beginGroup("file");
+    settings.setValue("cfgFile", newFileName);
+    settings.endGroup();
+
+    w->progManage->settingsInit();
+}
+
 void MainWindow::settingsInit()
 {
     QStringList str;
@@ -305,8 +404,8 @@ MainWindow::MainWindow(QWidget *parent)
     setToolButtonStyle(Qt::ToolButtonFollowStyle);
 
     //gridLayout = new QGridLayout(this);
-    progManage = new CprogManage(this);
     property = new Cproperty(this);
+    progManage = new CprogManage(this);
 
     widget = new QWidget(this);
     widget->setAutoFillBackground(true);
@@ -347,6 +446,8 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(widget);
 //screenArea->newShowArea();
     //setLayout(gridLayout);
+
+    //w->progManage->settingsInit();
 
 }
 

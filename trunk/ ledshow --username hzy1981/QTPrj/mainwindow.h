@@ -22,13 +22,17 @@
 #include "property.h"
 #include "timerProperty.h"
 
-
+#define INI_FILE "d:\\temp.ini"
 
 //主窗口
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 private slots:
+    void fileSaveAs();
+    void fileSave();
+    void fileNew();
+    void fileOpen();
     void settingsInit();
 private:
     int color;
@@ -51,12 +55,14 @@ public:
 
     CscreenArea *screenArea; //显示区域
 
+    //QString fileName;
     //QWidget *widget;
 
     //QLabel *Label;
 //protected:
     //void paintEvent(QPaintEvent *);
 public:
+
     void setCurSettingsStr(QString str);  //获取当前的settings的str
     QString getCurSettingsStr();   //设置当前settings的str
 
