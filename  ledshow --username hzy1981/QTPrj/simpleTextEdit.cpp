@@ -12,6 +12,36 @@
 #include "..\led_show.h"
 
 extern QSettings settings;
+
+CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
+{
+    QHBoxLayout *hLayout;
+
+    dateCombo = new QComboBox(this);
+    dateCombo->addItem(tr("2000年12月30日"));
+    dateCombo->addItem(tr("00年12月30日"));
+    dateCombo->addItem(tr("12/30/2000"));
+    dateCombo->addItem(tr("2000/12/30"));
+    dateCombo->addItem(tr("00-12-30"));
+    dateCombo->addItem(tr("00.12.30"));
+    dateCombo->addItem(tr("12月30"));
+    dateCombo->addItem(tr("00.12.30"));
+
+    colorCombo = new CcolorCombo(this);
+    sizeCombo = new CsizeCombo(this);
+
+    hLayout = new QHBoxLayout(this);
+    hLayout->addWidget(dateCombo);
+    hLayout->addWidget(colorCombo);
+    hLayout->addWidget(sizeCombo);
+
+    setLayout(hLayout);
+
+    connect(dateCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+}
+
 //简单文本编辑框
 CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QWidget(parent)
 {
@@ -96,6 +126,7 @@ int pixelsHigh = fm.height();
 //获取文本的像素
 QImage getTextImage(QString str)
 {
+    bool uText, bText, iText;
     QString text;
     QPainter painter;
     //QFontComboBox fontComboBox;
@@ -104,7 +135,9 @@ QImage getTextImage(QString str)
     settings.beginGroup(str);
 
     text = settings.value("text").toString();
-
+    uText = settings.value("uText").toBool();
+    bText = settings.value("bText").toBool();
+    iText = settings.value("iText").toBool();
     QString fontName = settings.value("fontName").toString();
     //fontComboBox.setCurrentIndex(i);
     int fontSize = settings.value("fontSize").toInt();
@@ -115,6 +148,11 @@ QImage getTextImage(QString str)
     QFont font(fontName, fontSize);
 
     font.setStyleStrategy(QFont::NoAntialias);//关闭抗锯齿
+
+    font.setUnderline(uText);
+    font.setBold(bText);
+    font.setItalic(iText);
+
     QFontMetrics fm(font);
     int width = fm.width(text);
     int height = fm.height();

@@ -9,6 +9,15 @@
 #define YEL_INDEX 1
 #define GRE_INDEX 2
 
+class CsizeCombo:public QComboBox
+{
+    Q_OBJECT
+public:
+    CsizeCombo(QWidget *parent = 0);
+    ~CsizeCombo();
+
+};
+
 class CcolorCombo:public QComboBox
 {
     Q_OBJECT

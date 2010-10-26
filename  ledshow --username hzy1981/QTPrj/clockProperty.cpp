@@ -65,7 +65,7 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     editGroup -> setLayout(gridLayout);
 
 
-    textGroup = new QGroupBox(tr("文本编辑"), this);
+    textGroup = new QGroupBox(tr("固定文本"), this);
     simpleTextEdit = new CsimpleTextEdit(textGroup);
     gridLayout = new QGridLayout(this);
     gridLayout ->addWidget(simpleTextEdit, 0, 0);
