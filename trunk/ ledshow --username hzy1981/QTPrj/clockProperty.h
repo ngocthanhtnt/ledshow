@@ -9,6 +9,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QGridLayout>
+#include <QSpinBox>
 #include "simpleTextEdit.h"
 #include "colorCombo.h"
 #include "showArea.h"

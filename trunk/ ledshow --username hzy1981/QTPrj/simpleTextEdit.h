@@ -9,6 +9,23 @@
 #include "colorCombo.h"
 #include "..\Includes.h"
 
+class CdateEdit:public QWidget
+{
+    Q_OBJECT
+private:
+    QComboBox *dateCombo;
+    CcolorCombo *colorCombo;
+    CsizeCombo *sizeCombo;
+
+signals:
+    void edited();
+public:
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CdateEdit(QWidget *parent =0);
+    ~CdateEdit();
+};
+
 class CsimpleTextEdit :public QWidget
 {
     Q_OBJECT
