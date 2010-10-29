@@ -33,6 +33,7 @@ private:
     CtempProperty *tempProperty; //温度
 
 public:
+    Carea *area;
     CareaProperty *areaProperty; //分区属性
     CpicProperty *picProperty;  //图文
 

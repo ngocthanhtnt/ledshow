@@ -13,6 +13,7 @@
 #include <QTextEdit>
 #include <QPushButton>
 #include "simpleTextEdit.h"
+#include "areaProperty.h"
 
 //½ÚÄ¿ÊôÐÔ´°
 class CtempProperty:public QWidget
@@ -31,6 +32,7 @@ private:
 
 
 public:
+    Carea *area;
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CtempProperty(QWidget *parent=0);

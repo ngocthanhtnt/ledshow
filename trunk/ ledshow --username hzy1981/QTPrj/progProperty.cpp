@@ -6,14 +6,29 @@ extern QSettings settings;
 //节目属性编辑
 CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
 {
-    QGridLayout *gridLayout,*timerGroupLayout, *mainLayout;
+    QGridLayout *gridLayout,*timerGroupLayout;
+    QHBoxLayout *hLayout;
+    QVBoxLayout *vLayout;
 
-    nameLabel = new QLabel(tr("名字"), this);
+    hLayout = new QHBoxLayout(this);
+
+    nameGroup = new QGroupBox(tr("节目名称"),this);
+    //nameLabel = new QLabel(tr("名字"), this);
+
     nameEdit = new QLineEdit(this);
+    vLayout = new QVBoxLayout(this);
+    //vLayout->addWidget(nameLabel);
+    vLayout->addWidget(nameEdit);
+    //vLayout->addStretch();
+    nameGroup->setLayout(vLayout);
 
-    mainLayout = new QGridLayout(this); //主布局
-    mainLayout -> addWidget(nameLabel, 0, 0);
-    mainLayout -> addWidget(nameEdit, 0, 1);
+    vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(nameGroup);
+    hLayout->addLayout(vLayout);
+
+    //mainLayout = new QGridLayout(this); //主布局
+    //mainLayout -> addWidget(nameLabel, 0, 0);
+    //mainLayout -> addWidget(nameEdit, 0, 1);
 
     timerGroupLayout = new QGridLayout(this); //定时播放布局
     gridLayout = new QGridLayout(this); //子区域布局
@@ -75,7 +90,12 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     timeGroup -> setLayout(gridLayout);
     timerGroupLayout -> addWidget(timeGroup, 0, 2);
     timerGroup -> setLayout(timerGroupLayout);//addWidget(timerGroupLayout, 1, 0);
-    mainLayout -> addWidget(timerGroup, 1, 0);
+
+    vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(timerGroup);
+    hLayout->addLayout(vLayout);
+
+    //mainLayout -> addWidget(timerGroup, 1, 0);
     //播放长度
     gridLayout = new QGridLayout(this);
     playTimeGroup = new QGroupBox(tr("播放长度"), this);
@@ -86,7 +106,11 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     gridLayout -> addWidget(playTimeEdit, 1, 0);
     gridLayout -> addWidget(playTimeLabel, 1, 1);
     playTimeGroup -> setLayout(gridLayout);
-    mainLayout -> addWidget(playTimeGroup, 1, 1);
+
+    vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(playTimeGroup);
+    hLayout->addLayout(vLayout);
+    //mainLayout -> addWidget(playTimeGroup, 1, 1);
 
 
     //流水边框选择
@@ -115,8 +139,13 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     gridLayout -> addWidget(speedEdit, 4, 1);
     gridLayout -> addWidget(usLabel, 4, 2);
     borderGroup -> setLayout(gridLayout);
-    mainLayout -> addWidget(borderGroup, 1, 2);
+    //mainLayout -> addWidget(borderGroup, 1, 2);
+    vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(borderGroup);
+    hLayout->addLayout(vLayout);
 
+    hLayout->addStretch();
+    setLayout(hLayout);
 
   //-----------------------------------------------------
    styleCombo->addItem(tr("1点顺时钟"));

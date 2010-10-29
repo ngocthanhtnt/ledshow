@@ -18,7 +18,7 @@ class CprogProperty:public QWidget
 {
     Q_OBJECT
 private:
-
+    QGroupBox *nameGroup;
     QGroupBox *timerGroup; //定时播放
 
     //-----------名称-------------

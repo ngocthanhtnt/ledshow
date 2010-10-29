@@ -13,10 +13,188 @@
 
 extern QSettings settings;
 
+/*
+const S_Mode_Func Mode_Func[]=
+{
+  {&Move_Left},
+  {&Move_Right},
+  {&Move_Up},
+  {&Move_Down},
+  {&Move_Left_Cover},
+  {&Move_Right_Cover},
+  {&Move_Up_Cover},
+  {&Move_Down_Cover},
+  {&Move_Left_Up_Cover},
+  {&Move_Right_Up_Cover},
+  {&Move_Left_Down_Cover},
+  {&Move_Right_Down_Cover},
+  {&Move_Left_Right_Open},
+  {&Move_Up_Down_Open},
+  {&Move_Left_Right_Close},
+  {&Move_Up_Down_Close},
+
+};
+*/
+CshowModeCombo::CshowModeCombo(QWidget *parent):QComboBox(parent)
+{
+    addItem(tr("左移"));
+    addItem(tr("右移"));
+    addItem(tr("上移"));
+    addItem(tr("下移"));
+    addItem(tr("左划"));
+    addItem(tr("右划"));
+    addItem(tr("上划"));
+    addItem(tr("下划"));
+    addItem(tr("左上划"));
+    addItem(tr("右上划"));
+    addItem(tr("左下划"));
+    addItem(tr("右下划"));
+    addItem(tr("左右开帘"));
+    addItem(tr("上下开帘"));
+    addItem(tr("左右合帘"));
+    addItem(tr("上下合帘"));
+ }
+
+CshowModeCombo::~CshowModeCombo()
+{
+
+}
+
+CshowSpeedCombo::CshowSpeedCombo(QWidget *parent):QComboBox(parent)
+{
+    addItem(tr("0"));
+    addItem(tr("1"));
+    addItem(tr("2"));
+    addItem(tr("3"));
+    addItem(tr("4"));
+    addItem(tr("5"));
+    addItem(tr("6"));
+    addItem(tr("7"));
+    addItem(tr("8"));
+    addItem(tr("9"));
+ }
+
+CshowSpeedCombo::~CshowSpeedCombo()
+{
+
+}
+
+CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
+{
+    QGridLayout *gridLayout;
+
+    gridLayout = new QGridLayout(this);
+
+    setTitle(tr("显示特效"));
+    showModeLabel = new QLabel(tr("显示模式"), this);
+    speedLabel = new QLabel(tr("运行速度"), this);
+    stayTimeLabel = new QLabel(tr("停留时间"), this);
+
+    showModeCombo = new CshowModeCombo(this);
+    speedCombo = new CshowSpeedCombo(this);
+    stayTimeEdit = new QLineEdit(this);
+    gridLayout -> addWidget(showModeLabel, 0, 0);
+    gridLayout -> addWidget(showModeCombo, 0, 1);
+    gridLayout -> addWidget(speedLabel, 1, 0);
+    gridLayout -> addWidget(speedCombo, 1, 1);
+    gridLayout -> addWidget(stayTimeLabel, 2, 0);
+    gridLayout -> addWidget(stayTimeEdit, 2, 1);
+    setLayout(gridLayout);
+
+}
+
+void CshowModeEdit::getSettingsFromWidget(QString str)
+{
+    settings.beginGroup(str);
+
+    settings.setValue("showMode", showModeCombo->currentIndex());
+    settings.setValue("speed", speedCombo->currentIndex());
+    settings.setValue("stayTime", stayTimeEdit->text().toInt());
+    //settings.setValue("text", edit->getEdit()->toPlainText());
+
+    settings.endGroup();
+
+}
+
+void CshowModeEdit::setSettingsToWidget(QString str)
+{
+    QStringList keys;
+    QString text;
+
+    settings.beginGroup(str);
+    keys = settings.allKeys();
+    if(keys.isEmpty() == true)
+    {
+      //名字
+      settings.setValue("type", PIC_PROPERTY);
+      settings.setValue("showMode", 0);
+      settings.setValue("speed", 1);
+      settings.setValue("stayTime", 5);
+      settings.setValue("text", QString(tr("图文显示")));
+    }
+
+    showModeCombo->setCurrentIndex(settings.value("showMode").toInt());
+    speedCombo->setCurrentIndex(settings.value("speed").toInt());
+    stayTimeEdit->setText(QString::number(settings.value("stayTime").toInt()));
+    /*
+    text = settings.value("text").toString();
+    if(text == "")
+        text == QString(tr("图文显示"));
+    //textEdit->clear();
+    edit->getEdit()->setPlainText(text);*/
+    settings.endGroup();
+}
+
+CshowModeEdit::~CshowModeEdit()
+{
+
+}
+
+
+CsmLineEdit::CsmLineEdit(QWidget *parent):QGroupBox(parent)
+{
+    QHBoxLayout *hLayout;
+
+    //editGroup = new QGroupBox(this);
+    smLineCombo = new QComboBox(this);
+
+    smLineCombo->addItem(tr("单行"));
+    smLineCombo->addItem(tr("多行"));
+
+    hLayout = new QHBoxLayout(this);
+    hLayout->addWidget(smLineCombo);
+
+    setTitle(tr("单/多行"));
+    setLayout(hLayout);
+
+    connect(smLineCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+}
+
+//从Widget上获取设置
+void CsmLineEdit::getSettingsFromWidget(QString str)
+{
+   settings.beginGroup(str);
+   settings.setValue("smLineCombo", smLineCombo->currentIndex());
+   settings.endGroup();
+}
+
+void CsmLineEdit::setSettingsToWidget(QString str)
+{
+    settings.beginGroup(str);
+    smLineCombo->setCurrentIndex(settings.value("smLineCombo").toInt());
+    settings.endGroup();
+}
+
+CsmLineEdit::~CsmLineEdit()
+{
+
+}
+
 CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
 {
     QHBoxLayout *hLayout;
 
+    dateCheck = new QCheckBox(tr("日期"),this);
     dateCombo = new QComboBox(this);
     dateCombo->addItem(tr("2000年12月30日"));
     dateCombo->addItem(tr("00年12月30日"));
@@ -31,33 +209,228 @@ CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
     sizeCombo = new CsizeCombo(this);
 
     hLayout = new QHBoxLayout(this);
+    hLayout->addWidget(dateCheck);
     hLayout->addWidget(dateCombo);
     hLayout->addWidget(colorCombo);
     hLayout->addWidget(sizeCombo);
 
     setLayout(hLayout);
 
+    connect(dateCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
     connect(dateCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
 }
 
+//从Widget上获取设置
+void CdateEdit::getSettingsFromWidget(QString str)
+{
+   settings.beginGroup(str);
+   settings.setValue("dateCheck", dateCheck->isChecked());
+   settings.setValue("date", dateCombo->currentIndex());
+   settings.setValue("color", colorCombo->currentIndex());
+   settings.setValue("size", sizeCombo->currentIndex());
+   settings.endGroup();
+}
+
+void CdateEdit::setSettingsToWidget(QString str)
+{
+    settings.beginGroup(str);
+    dateCheck->setChecked(settings.value("dateCheck").toBool());
+    dateCombo->setCurrentIndex(settings.value("date").toInt());
+    colorCombo->setCurrentIndex(settings.value("color").toInt());
+    sizeCombo->setCurrentIndex(settings.value("size").toInt());
+    settings.endGroup();
+}
+
+CdateEdit::~CdateEdit()
+{
+
+}
+
+CweekEdit::CweekEdit(QWidget *parent):QWidget(parent)
+{
+    QHBoxLayout *hLayout;
+
+    weekCheck = new QCheckBox(tr("星期"),this);
+    weekCombo = new QComboBox(this);
+    weekCombo->addItem(tr("2000年12月30日"));
+    weekCombo->addItem(tr("00年12月30日"));
+    weekCombo->addItem(tr("12/30/2000"));
+    weekCombo->addItem(tr("2000/12/30"));
+    weekCombo->addItem(tr("00-12-30"));
+    weekCombo->addItem(tr("00.12.30"));
+    weekCombo->addItem(tr("12月30"));
+    weekCombo->addItem(tr("00.12.30"));
+
+    colorCombo = new CcolorCombo(this);
+    sizeCombo = new CsizeCombo(this);
+
+    hLayout = new QHBoxLayout(this);
+    hLayout->addWidget(weekCheck);
+    hLayout->addWidget(weekCombo);
+    hLayout->addWidget(colorCombo);
+    hLayout->addWidget(sizeCombo);
+
+    setLayout(hLayout);
+
+    connect(weekCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+    connect(weekCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+}
+
+//从Widget上获取设置
+void CweekEdit::getSettingsFromWidget(QString str)
+{
+   settings.beginGroup(str);
+   settings.setValue("weekCheck", weekCheck->isChecked());
+   settings.setValue("week", weekCombo->currentIndex());
+   settings.setValue("color", colorCombo->currentIndex());
+   settings.setValue("size", sizeCombo->currentIndex());
+   settings.endGroup();
+}
+
+void CweekEdit::setSettingsToWidget(QString str)
+{
+    settings.beginGroup(str);
+    weekCheck->setChecked(settings.value("weekCheck").toBool());
+    weekCombo->setCurrentIndex(settings.value("week").toInt());
+    colorCombo->setCurrentIndex(settings.value("color").toInt());
+    sizeCombo->setCurrentIndex(settings.value("size").toInt());
+    settings.endGroup();
+}
+
+CweekEdit::~CweekEdit()
+{
+
+}
+
+CtimeEdit::CtimeEdit(QWidget *parent):QWidget(parent)
+{
+    QHBoxLayout *hLayout;
+
+    timeCheck = new QCheckBox(tr("时间"),this);
+    timeCombo = new QComboBox(this);
+    timeCombo->addItem(tr("2000年12月30日"));
+    timeCombo->addItem(tr("00年12月30日"));
+    timeCombo->addItem(tr("12/30/2000"));
+    timeCombo->addItem(tr("2000/12/30"));
+    timeCombo->addItem(tr("00-12-30"));
+    timeCombo->addItem(tr("00.12.30"));
+    timeCombo->addItem(tr("12月30"));
+    timeCombo->addItem(tr("00.12.30"));
+
+    colorCombo = new CcolorCombo(this);
+    sizeCombo = new CsizeCombo(this);
+
+    hLayout = new QHBoxLayout(this);
+    hLayout ->addWidget(timeCheck);
+    hLayout->addWidget(timeCombo);
+    hLayout->addWidget(colorCombo);
+    hLayout->addWidget(sizeCombo);
+
+    setLayout(hLayout);
+
+    connect(timeCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+    connect(timeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+}
+
+//从Widget上获取设置
+void CtimeEdit::getSettingsFromWidget(QString str)
+{
+   settings.beginGroup(str);
+   settings.setValue("timeCheck", timeCheck->isChecked());
+   settings.setValue("time", timeCombo->currentIndex());
+   settings.setValue("color", colorCombo->currentIndex());
+   settings.setValue("size", sizeCombo->currentIndex());
+   settings.endGroup();
+}
+
+void CtimeEdit::setSettingsToWidget(QString str)
+{
+    settings.beginGroup(str);
+    timeCheck->setChecked(settings.value("timeCheck").toBool());
+    timeCombo->setCurrentIndex(settings.value("time").toInt());
+    colorCombo->setCurrentIndex(settings.value("color").toInt());
+    sizeCombo->setCurrentIndex(settings.value("size").toInt());
+    settings.endGroup();
+}
+
+CtimeEdit::~CtimeEdit()
+{
+
+}
+
+CdateTimeEdit::CdateTimeEdit(QWidget *parent):QGroupBox(parent)
+{
+    QVBoxLayout *vLayout;
+    QGridLayout *gridLayout;
+
+    vLayout = new QVBoxLayout(this);
+
+    //editGroup = new QGroupBox(tr("时间"),this);
+    dateEdit = new CdateEdit(this);
+    timeEdit = new CtimeEdit(this);
+    weekEdit = new CweekEdit(this);
+
+    vLayout->addWidget(dateEdit);
+    vLayout->addWidget(timeEdit);
+    vLayout->addWidget(weekEdit);
+    //editGroup->setLayout(vLayout);
+
+    //gridLayout = new QGridLayout(this);
+    //gridLayout->addWidget(editGroup, 0, 0);
+    setTitle(tr("时间"));
+    setLayout(vLayout);
+
+    connect(dateEdit, SIGNAL(edited(int)),this,SIGNAL(edited()));
+    connect(timeEdit, SIGNAL(edited(int)),this,SIGNAL(edited()));
+    connect(weekEdit, SIGNAL(edited(int)),this,SIGNAL(edited()));
+}
+
+//从Widget上获取设置
+void CdateTimeEdit::getSettingsFromWidget(QString str)
+{
+    dateEdit->getSettingsFromWidget(str);
+    timeEdit->getSettingsFromWidget(str);
+    weekEdit->getSettingsFromWidget(str);
+}
+
+void CdateTimeEdit::setSettingsToWidget(QString str)
+{
+    dateEdit->setSettingsToWidget(str);
+    timeEdit->setSettingsToWidget(str);
+    weekEdit->setSettingsToWidget(str);
+}
+
+CdateTimeEdit::~CdateTimeEdit()
+{
+
+}
+
 //简单文本编辑框
-CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QWidget(parent)
+CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
 {
     QHBoxLayout *hLayout;
     //QVBoxLayout *vLayout;
-  QGridLayout *gridLayout;
+  QGridLayout *gridLayout, *mainLayout;
   QFontDatabase db;
 
 
   //vLayout = new QVBoxLayout(this);
   gridLayout = new QGridLayout(this);
+  mainLayout = new QGridLayout(this);
+
   fontLabel = new QLabel(tr("字体"), this);
   fontSizeLabel = new QLabel(tr("大小"), this);
   colorLabel = new QLabel(tr("颜色"), this);
 
   fontCombo = new QFontComboBox(this);
+  fontCombo->setFixedWidth(100);
+
   fontSizeCombo = new QComboBox(this);
   //fontSizeCombo->setobjectName("comboSize");
   fontSizeCombo->setEditable(true);
@@ -98,13 +471,21 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QWidget(parent)
   hLayout -> addWidget(bButton);
   hLayout -> addWidget(iButton);
   hLayout -> addWidget(uButton);
+  hLayout->addStretch();
   //hLayout -> addWidget(oButton);
   gridLayout->addLayout(hLayout, 1, 0);
 
+  //lineEdit->setSizePolicy();
   hLayout = new QHBoxLayout(this);
+
   hLayout -> addWidget(lineEdit);
+  hLayout->addStretch();
   gridLayout->addLayout(hLayout, 2, 0);
 
+  //textGroup = new QGroupBox(tr("固定文本"), this);
+  //textGroup -> setLayout(gridLayout);
+  //mainLayout->addWidget(textGroup, 0, 0);
+  setTitle(tr("固定文本"));
   setLayout(gridLayout);
 
   //所有的消息统一到一个消息

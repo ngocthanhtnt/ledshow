@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'clockProperty.h'
 **
-** Created: Tue Oct 26 21:35:37 2010
+** Created: Fri Oct 29 21:29:29 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -17,6 +17,74 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
+static const uint qt_meta_data_CposiEdit[] = {
+
+ // content:
+       5,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       5,   14, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+ // slots: signature, parameters, type, tag, flags
+      11,   10,   10,   10, 0x0a,
+      22,   10,   10,   10, 0x0a,
+      34,   10,   10,   10, 0x0a,
+      43,   10,   10,   10, 0x0a,
+      54,   10,   10,   10, 0x0a,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_CposiEdit[] = {
+    "CposiEdit\0\0leftEdit()\0rightEdit()\0"
+    "upEdit()\0downEdit()\0defEdit()\0"
+};
+
+const QMetaObject CposiEdit::staticMetaObject = {
+    { &QGroupBox::staticMetaObject, qt_meta_stringdata_CposiEdit,
+      qt_meta_data_CposiEdit, 0 }
+};
+
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject &CposiEdit::getStaticMetaObject() { return staticMetaObject; }
+#endif //Q_NO_DATA_RELOCATION
+
+const QMetaObject *CposiEdit::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+}
+
+void *CposiEdit::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_CposiEdit))
+        return static_cast<void*>(const_cast< CposiEdit*>(this));
+    return QGroupBox::qt_metacast(_clname);
+}
+
+int CposiEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QGroupBox::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: leftEdit(); break;
+        case 1: rightEdit(); break;
+        case 2: upEdit(); break;
+        case 3: downEdit(); break;
+        case 4: defEdit(); break;
+        default: ;
+        }
+        _id -= 5;
+    }
+    return _id;
+}
 static const uint qt_meta_data_CclockProperty[] = {
 
  // content:

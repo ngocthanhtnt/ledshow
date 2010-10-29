@@ -8,13 +8,15 @@ CtempProperty::CtempProperty(QWidget *parent):QWidget(parent)
     gridLayout = new QGridLayout(this);
     mainLayout = new QGridLayout(this);
 
+    area = new Carea(this);
     textGroup = new QGroupBox(tr("¹Ì¶¨ÎÄ±¾"), this);
     simpleTextEdit = new CsimpleTextEdit(this);
 
     gridLayout -> addWidget(simpleTextEdit, 0, 0);
     //gridLayout -> addWidget(editButton, 1, 0);
     textGroup -> setLayout(gridLayout);
-    mainLayout->addWidget(textGroup, 0, 0);
+    mainLayout->addWidget(area, 0, 0);
+    mainLayout->addWidget(textGroup, 0, 1);
     setLayout(mainLayout);
 }
 

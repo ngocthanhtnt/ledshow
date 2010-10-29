@@ -12,6 +12,7 @@
 #include <QComboBox>
 #include <QTextEdit>
 #include <QPushButton>
+#include "areaProperty.h"
 
 
 //flash Ù–‘¥∞
@@ -34,6 +35,7 @@ private:
 
 
 public:
+    Carea *area;
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CflashProperty(QWidget *parent=0);
