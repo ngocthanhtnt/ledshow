@@ -486,8 +486,26 @@ void CshowArea::mousePressEvent(QMouseEvent *event)
     w->screenArea->setFocusArea(this);
     if(this->treeItem != 0)
     {
-      w->progManage->treeWidget->setCurrentItem(this->treeItem);
-      w->progManage->clickItem(this->treeItem, 0);
+        if(treeItem == w->progManage->treeWidget->currentItem())
+        {
+          w->progManage->clickItem(treeItem, 0);
+          return;
+        }
+
+        QString str;
+        str = this ->treeItem->data(0, Qt::UserRole).toString();
+
+        settings.beginGroup(str);
+        int subIndex = settings.value("subIndex").toInt();
+        settings.endGroup();
+
+        if(subIndex > 0)
+        {
+            QTreeWidgetItem *item = treeItem->child(subIndex-1);
+            w->progManage->clickItem(item, 0);
+        }
+        else
+            ASSERT_FAILED();
     }
 /*
     CshowArea *oldArea = w->screenArea->getFocusArea();
@@ -732,7 +750,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
 
      }
 
-    w->property->areaProperty->updateRect(rect1);
+    w->property->area->updateRect(rect1);
     //rect1 = geometry();
     //qDebug("setFlag = %d, aft geometry x=%d, y=%d, width=%d, height=%d",setFlag, rect1.x(),rect1.y(),rect1.width(),rect1.height());
 }

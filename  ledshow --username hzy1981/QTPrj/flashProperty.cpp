@@ -1,4 +1,5 @@
 #include "flashProperty.h"
+
 /*
 //flash属性窗
 class CflashProperty:public QWidget
@@ -28,6 +29,9 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
 {
 
     QGridLayout *gridLayout = new QGridLayout(this);
+    QHBoxLayout *hLayout = new QHBoxLayout(this);
+
+    area = new Carea(this);
     groupBox = new QGroupBox(this);
 
    flashSourceLabel = new QLabel(tr("提取源"), this);
@@ -50,6 +54,12 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
    gridLayout->addWidget(speedUnitLabel, 1, 3);
    gridLayout->addWidget(totalFrameNumLabel, 3, 0);
    groupBox->setLayout(gridLayout);
+
+   hLayout->addWidget(area);
+   hLayout->addWidget(groupBox);
+   hLayout->addStretch();
+   setLayout(hLayout);
+
 }
 
 CflashProperty::~CflashProperty()

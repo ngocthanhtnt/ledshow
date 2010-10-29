@@ -10,9 +10,31 @@
 #include <QComboBox>
 #include <QGridLayout>
 #include <QSpinBox>
+#include "areaProperty.h"
 #include "simpleTextEdit.h"
 #include "colorCombo.h"
 #include "showArea.h"
+
+class CposiEdit:public QGroupBox
+{
+  Q_OBJECT
+private:
+    QComboBox *item;
+    QPushButton *left;
+    QPushButton *right;
+    QPushButton *up;
+    QPushButton *down;
+    QPushButton *def;
+public slots:
+    void leftEdit();
+    void rightEdit();
+    void upEdit();
+    void downEdit();
+    void defEdit();
+public:
+    CposiEdit(QWidget *parent);
+    ~CposiEdit();
+};
 
 class CclockProperty:public QWidget
 {
@@ -44,13 +66,19 @@ private:
     CcolorCombo *minColorCombo;
     CcolorCombo *secColorCombo;
 
-    QGroupBox *textGroup;
+    //QGroupBox *textGroup;
     CsimpleTextEdit *simpleTextEdit;
+    CposiEdit *posiEdit;
+
+    QGroupBox *timeGroup;
+    CdateEdit *dateEdit;
+    CweekEdit *weekEdit;
 signals:
     void edited();
 public slots:
     void propertyEdited();
 public:
+    Carea *area;
     void updateShowAreaa(CshowArea *area);
 
     void getSettingsFromWidget(QString str);

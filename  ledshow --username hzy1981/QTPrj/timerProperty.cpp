@@ -8,6 +8,8 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     gridLayout = new QGridLayout(this);
     mainLayout = new QGridLayout(this);
 
+    area = new Carea(this);
+    mainLayout->addWidget(area, 0, 0);
     textGroup = new QGroupBox(tr("固定文本"), this);
     simpleTextEdit = new CsimpleTextEdit(this);
 
@@ -15,7 +17,7 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     //gridLayout -> addWidget(editButton, 1, 0);
     textGroup -> setLayout(gridLayout);
 
-    mainLayout -> addWidget(textGroup, 0, 0);
+    mainLayout -> addWidget(textGroup, 0, 1);
     gridLayout = new QGridLayout(this);
     dstTimeGroup = new QGroupBox(tr("目标时间编辑"), this);
     dstTimeLabel = new QLabel(tr("目标时间"), this);
@@ -36,7 +38,8 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     gridLayout -> addWidget(fontSizeCombo, 1, 3);
     dstTimeGroup -> setLayout(gridLayout);
 
-    mainLayout -> addWidget(dstTimeGroup, 0, 1);
+
+    mainLayout -> addWidget(dstTimeGroup, 0, 2);
     setLayout(mainLayout);
 }
 

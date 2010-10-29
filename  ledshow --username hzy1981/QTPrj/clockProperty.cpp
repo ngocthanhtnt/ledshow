@@ -6,14 +6,83 @@
 
 extern MainWindow *w;
 extern QSettings settings;
+
+CposiEdit::CposiEdit(QWidget *parent):QGroupBox(parent)
+{
+    setTitle(tr("文字位置调整"));
+    QVBoxLayout *vLayout;
+    QHBoxLayout *hLayout;
+
+    //vLayout = new QVBoxLayout(this);
+    hLayout = new QHBoxLayout(this);
+
+    item = new QComboBox(this);
+    item->addItem(tr("固定文本"));
+    item->addItem(tr("日期"));
+    item->addItem(tr("星期"));
+
+    left = new QPushButton(tr("左"));
+    right = new QPushButton(tr("右"));
+    up = new QPushButton(tr("上"));
+    down = new QPushButton(tr("下"));
+    def = new QPushButton(tr("默认"));
+
+    hLayout->addWidget(item);
+    hLayout->addWidget(left);
+    hLayout->addWidget(right);
+    hLayout->addWidget(up);
+    hLayout->addWidget(down);
+    hLayout->addWidget(def);
+
+    setLayout(hLayout);
+}
+
+void CposiEdit::leftEdit()
+{
+
+}
+
+void CposiEdit::rightEdit()
+{
+
+}
+
+void CposiEdit::upEdit()
+{
+
+}
+
+void CposiEdit::downEdit()
+{
+
+}
+
+void CposiEdit::defEdit()
+{
+
+}
+
+CposiEdit::~CposiEdit()
+{
+
+}
+
 //时钟属性编辑
 CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
 {
     QGridLayout *gridLayout;
+    QHBoxLayout *hLayout;
+    QVBoxLayout *vLayout;
 
-    gridLayout = new QGridLayout(this);
 
-    editGroup = new QGroupBox(this);
+    hLayout = new QHBoxLayout(this);
+
+    area = new Carea(this);
+    vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(area);
+    hLayout->addLayout(vLayout);
+
+    editGroup = new QGroupBox(tr("外形"),this);
     pointRadiusLabel = new QLabel(tr("整点半径"), this);
     point369RadiusLabel = new QLabel(tr("369点半径"), this);
     hourWidthLabel = new QLabel(tr("小时宽度"), this);
@@ -26,11 +95,17 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     minColorLabel = new QLabel(tr("分钟颜色"), this);
     secColorLabel = new QLabel(tr("秒钟颜色"), this);
 
+    int width = 30;
     pointRadiusEdit = new QLineEdit(this);
+    pointRadiusEdit->setFixedWidth(width);
     point369RadiusEdit = new QLineEdit(this);
+    point369RadiusEdit->setFixedWidth(width);
     hourWidthEdit = new QLineEdit(this);
+    hourWidthEdit->setFixedWidth(width);
     minWidthEdit= new QLineEdit(this);
+    minWidthEdit->setFixedWidth(width);
     secWidthEdit = new QLineEdit(this);
+    secWidthEdit->setFixedWidth(width);
 
     pointColorCombo = new CcolorCombo(this);
     point369ColorCombo = new CcolorCombo(this);
@@ -38,6 +113,7 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     minColorCombo = new CcolorCombo(this);
     secColorCombo = new CcolorCombo(this);
 
+    gridLayout = new QGridLayout(this);
     gridLayout -> addWidget(pointRadiusLabel, 0, 0);
     gridLayout -> addWidget(pointRadiusEdit, 0, 1);
     gridLayout -> addWidget(pointColorLabel, 0, 2);
@@ -64,17 +140,34 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     gridLayout -> addWidget(secColorCombo, 4, 3);
     editGroup -> setLayout(gridLayout);
 
+    vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(editGroup);
+    hLayout->addLayout(vLayout);
 
-    textGroup = new QGroupBox(tr("固定文本"), this);
-    simpleTextEdit = new CsimpleTextEdit(textGroup);
-    gridLayout = new QGridLayout(this);
-    gridLayout ->addWidget(simpleTextEdit, 0, 0);
-    textGroup ->setLayout(gridLayout);
+    simpleTextEdit = new CsimpleTextEdit(this);
+    vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(simpleTextEdit);
+    hLayout->addLayout(vLayout);
 
-    gridLayout = new QGridLayout(this);
-    gridLayout -> addWidget(editGroup, 0, 0);
-    gridLayout -> addWidget(textGroup, 0, 1);
-    setLayout(gridLayout);
+    timeGroup = new QGroupBox(tr("日期星期"),this);
+    dateEdit = new CdateEdit(this);
+    weekEdit = new CweekEdit(this);
+    vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(dateEdit);
+    vLayout->addWidget(weekEdit);
+    timeGroup->setLayout(vLayout);
+
+    vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(timeGroup);
+    //hLayout->addLayout(vLayout);
+
+    posiEdit = new CposiEdit(this);
+    //vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(posiEdit);
+    hLayout->addLayout(vLayout);
+
+    hLayout ->addStretch();
+    setLayout(hLayout);
 
     connect(pointRadiusEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
     connect(point369RadiusEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));

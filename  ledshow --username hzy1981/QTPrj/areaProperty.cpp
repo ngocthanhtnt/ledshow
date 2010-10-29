@@ -6,7 +6,7 @@ extern MainWindow *w;
 extern QSettings settings;
 //分区属性编辑
 //////////////////////////////
-CareaProperty::CareaProperty(QWidget *parent):QWidget(parent)
+Carea::Carea(QWidget *parent):QGroupBox(parent)
 {
     QHBoxLayout *hBoxLayout;
     QGridLayout *gridLayout;
@@ -20,7 +20,7 @@ CareaProperty::CareaProperty(QWidget *parent):QWidget(parent)
     QValidator *xValidator = new QIntValidator(0,screenWidth,this);
     QValidator *yValidator = new QIntValidator(0,screenHeight,this);
 
-    groupBox = new QGroupBox(tr("分区属性"), this);
+    //groupBox = new QGroupBox(tr("分区属性"), this);
 
     nameLabel = new QLabel(tr("名字"), this);
     xLabel = new QLabel(tr("x起点"), this);
@@ -50,6 +50,8 @@ CareaProperty::CareaProperty(QWidget *parent):QWidget(parent)
     widthEdit->setMaxLength(4);
     heightEdit->setMaxLength(4);
 
+    setTitle(tr("分区属性"));
+    setFixedWidth(150);
     gridLayout = new QGridLayout(this);
 
     gridLayout -> addWidget(nameLabel,0,0);
@@ -57,29 +59,28 @@ CareaProperty::CareaProperty(QWidget *parent):QWidget(parent)
 
     gridLayout -> addWidget(xLabel, 1, 0);
     gridLayout -> addWidget(xEdit, 1, 1);
-    gridLayout -> addWidget(widthLabel, 1, 2);
-    gridLayout -> addWidget(widthEdit, 1, 3);
-
     gridLayout -> addWidget(yLabel, 2, 0);
     gridLayout -> addWidget(yEdit, 2, 1);
-    gridLayout -> addWidget(heightLabel, 2, 2);
-    gridLayout -> addWidget(heightEdit, 2, 3);
+    gridLayout -> addWidget(widthLabel, 3, 0);
+    gridLayout -> addWidget(widthEdit, 3, 1);
+    gridLayout -> addWidget(heightLabel, 4, 0);
+    gridLayout -> addWidget(heightEdit, 4, 1);
     //gridLayout -> setColumnStretch(1, 10);
 
-    groupBox->setLayout(gridLayout);
+    setLayout(gridLayout);
     //resize(200,200);
 
-    hBoxLayout = new QHBoxLayout(this);
-    hBoxLayout->addWidget(groupBox);
+    //hBoxLayout = new QHBoxLayout(this);
+    //hBoxLayout->addWidget(groupBox);
 
-    setLayout(hBoxLayout);
+    //setLayout(hBoxLayout);
 
     setAttribute(Qt::WA_StaticContents);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     //resize(sizeHint().width(),sizeHint().height());
 }
 
-void CareaProperty::updateRect(QRect &rect)
+void Carea::updateRect(QRect &rect)
 {
 
     xEdit->setText(QString::number(rect.x()));
@@ -90,7 +91,7 @@ void CareaProperty::updateRect(QRect &rect)
 
 }
 
-void CareaProperty::xEdited()
+void Carea::xEdited()
 {
     int x,xLen;
     CshowArea *area;
@@ -106,6 +107,9 @@ void CareaProperty::xEdited()
         x = xEdit->text().toInt();
 
     item = w->progManage->treeWidget->currentItem();//setCurrentItem(this->treeItem);
+    if(checkItemType(item) != AREA_PROPERTY)
+        item = item->parent();
+
     str = item->data(0, Qt::UserRole).toString();
 
     settings.beginGroup(str);
@@ -116,7 +120,7 @@ void CareaProperty::xEdited()
     area->move(x, yEdit->text().toInt());
 }
 
-void CareaProperty::yEdited()
+void Carea::yEdited()
 {
     int y,yLen;
     CshowArea *area;
@@ -132,6 +136,9 @@ void CareaProperty::yEdited()
         y = yEdit->text().toInt();
 
     item = w->progManage->treeWidget->currentItem();//setCurrentItem(this->treeItem);
+    if(checkItemType(item) != AREA_PROPERTY)
+        item = item->parent();
+
     str = item->data(0, Qt::UserRole).toString();
 
     settings.beginGroup(str);
@@ -142,7 +149,7 @@ void CareaProperty::yEdited()
     area->move(xEdit->text().toInt(), y);
 }
 
-void CareaProperty::xLenEdited()
+void Carea::xLenEdited()
 {
     int x,width;
     CshowArea *area;
@@ -158,6 +165,9 @@ void CareaProperty::xLenEdited()
         width = widthEdit->text().toInt();
 
     item = w->progManage->treeWidget->currentItem();//setCurrentItem(this->treeItem);
+    if(checkItemType(item) != AREA_PROPERTY)
+        item = item->parent();
+
     str = item->data(0, Qt::UserRole).toString();
 
     settings.beginGroup(str);
@@ -169,7 +179,7 @@ void CareaProperty::xLenEdited()
     area->resize(width, heightEdit->text().toInt());
 }
 
-void CareaProperty::yLenEdited()
+void Carea::yLenEdited()
 {
     int y,height;
     CshowArea *area;
@@ -185,6 +195,9 @@ void CareaProperty::yLenEdited()
         height = heightEdit->text().toInt();
 
     item = w->progManage->treeWidget->currentItem();//setCurrentItem(this->treeItem);
+    if(checkItemType(item) != AREA_PROPERTY)
+        item = item->parent();
+
     str = item->data(0, Qt::UserRole).toString();
 
     settings.beginGroup(str);
@@ -195,13 +208,13 @@ void CareaProperty::yLenEdited()
     area->resize(widthEdit->text().toInt(), height);
 }
 
-CareaProperty::~CareaProperty()
+Carea::~Carea()
 {
 
 
 }
 
-void CareaProperty::getSettingsFromWidget(QString str)
+void Carea::getSettingsFromWidget(QString str)
 {
     return;
     settings.beginGroup(str);
@@ -213,7 +226,7 @@ void CareaProperty::getSettingsFromWidget(QString str)
     settings.endGroup();
 }
 
-void CareaProperty::setSettingsToWidget(QString str)
+void Carea::setSettingsToWidget(QString str)
 {
     QStringList keys;
 
@@ -242,4 +255,21 @@ void CareaProperty::setSettingsToWidget(QString str)
     connect(yEdit, SIGNAL(editingFinished()), this, SLOT(yEdited()));
     connect(widthEdit, SIGNAL(editingFinished()), this, SLOT(xLenEdited()));
     connect(heightEdit, SIGNAL(editingFinished()), this, SLOT(yLenEdited()));
+}
+
+CareaProperty::CareaProperty(QWidget *parent):QWidget(parent)
+{
+    QHBoxLayout *hLayout;
+
+    hLayout = new QHBoxLayout(this);
+    area = new Carea(this);
+    hLayout->addWidget(area);
+    hLayout->addStretch();
+    setLayout(hLayout);
+}
+
+
+CareaProperty::~CareaProperty()
+{
+
 }

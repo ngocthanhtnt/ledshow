@@ -12,21 +12,10 @@
 #include <QComboBox>
 #include <QTextEdit>
 #include <QPushButton>
+#include <simpleTextEdit.h>
+#include "areaProperty.h"
 #include "textedit.h"
 
-class CshowModeCombo:public QComboBox
-{
-public:
-    CshowModeCombo(QWidget *parent = 0);
-    ~CshowModeCombo();
-};
-
-class CshowSpeedCombo:public QComboBox
-{
-public:
-    CshowSpeedCombo(QWidget *parent = 0);
-    ~CshowSpeedCombo();
-};
 
 //节目属性窗
 class CpicProperty:public QWidget
@@ -40,7 +29,7 @@ private:
     QLabel *textLabel;  //文本
     QTextEdit *textEdit; //显示文本
 
-
+/*
     QGroupBox *paraGroup;
     QLabel *showModeLabel; //显示模式
     QLabel *speedLabel; //运行速度
@@ -49,9 +38,11 @@ private:
     CshowModeCombo *showModeCombo;
     CshowSpeedCombo *speedCombo;
     QLineEdit *stayTimeEdit;
-
+*/
+    CshowModeEdit *showModeEdit;
     TextEdit *edit;
 public:
+    Carea *area;
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     QPushButton *editButton; //编辑按钮

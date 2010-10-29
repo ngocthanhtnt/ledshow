@@ -10,7 +10,7 @@
 #include <QRect>
 
 //∑÷«¯ Ù–‘¥∞
-class CareaProperty:public QWidget
+class Carea:public QGroupBox
 {
     Q_OBJECT
 private:
@@ -36,6 +36,16 @@ public:
     void setSettingsToWidget(QString str);
     void getSettingsFromWidget(QString str);
 
+    Carea(QWidget *parent=0);
+    ~Carea();
+};
+
+class CareaProperty:public QWidget
+{
+    Q_OBJECT
+
+public:
+    Carea *area;
     CareaProperty(QWidget *parent=0);
     ~CareaProperty();
 };

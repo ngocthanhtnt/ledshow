@@ -13,7 +13,7 @@
 #include <QTextEdit>
 #include <QPushButton>
 #include "simpleTextEdit.h"
-
+#include "areaProperty.h"
 //节目属性窗
 class CtimeProperty:public QWidget
 {
@@ -25,12 +25,12 @@ private:
     QGroupBox *textGroup;
     QLabel *textLabel;  //文本
     CsimpleTextEdit *simpleTextEdit;
-    //QTextEdit *textEdit; //显示文本
-    //QPushButton *editButton; //编辑按钮
-
+    CsmLineEdit *smLineEdit;
+    CdateTimeEdit *dateTimeEdit;
 
 
 public:
+    Carea *area;
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CtimeProperty(QWidget *parent=0);

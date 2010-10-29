@@ -587,6 +587,7 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
         //updateItemSubIndex(item);
     }
 
+    treeWidget->setCurrentItem(item);//setCurrentItem()
     w->property->updateProperty(item);
     w->screenArea->updateShowArea(item);
 }

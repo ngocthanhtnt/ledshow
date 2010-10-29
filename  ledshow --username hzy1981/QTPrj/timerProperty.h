@@ -13,6 +13,7 @@
 #include <QTextEdit>
 #include <QPushButton>
 #include "simpleTextEdit.h"
+#include "areaProperty.h"
 
 //节目属性窗
 class CtimerProperty:public QWidget
@@ -39,6 +40,7 @@ private:
     QComboBox *fontSizeCombo; //字体大小
 
 public:
+    Carea *area;
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CtimerProperty(QWidget *parent=0);
