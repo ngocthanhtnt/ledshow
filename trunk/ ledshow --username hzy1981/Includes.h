@@ -6,6 +6,7 @@
 #include "QT_SIM.h"
 #include "STM32.h"
 #include "pub.h"
+#include "zk.h"
 #include "File_Op.h"
 #include "LED_Show.h"
 #include "LED_Para.h"
