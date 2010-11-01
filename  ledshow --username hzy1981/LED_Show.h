@@ -24,10 +24,6 @@
 #define SHOW_TEMP  0x05
 
 
-#define FONT_SIZE16 0
-#define FONT_SIZE24 1
-#define FONT_SIZE48 2
-
 #define GET_LINE_Y(X0,Y0,X1,Y1,X) ((X1 != X0)?(((Y1)-(Y0))*((X)-(X0))/((X1)-(X0)) + (Y0)):Y0)
 #define GET_LINE_X(X0,Y0,X1,Y1,Y) ((Y1 != Y0)?(((X1)-(X0))*((Y)-(Y0))/((Y1)-(Y0)) + (X0)):X0)
 
@@ -115,13 +111,7 @@ typedef struct
   
 }S_Program_Status;
 
-//extern char * Get_Program_Data_File_Name(INT8U Prog_No, INT8U Area_No, char File_Name[]);
-typedef struct{
-  INT16U Unicode;
-  INT8U CN16_Dot[32]; //16*16
-  INT8U CN24_Dot[72]; //24*24
-  INT8U CN36_Dot[162]; //36*36
-}CNZK_Info;
+
 
 typedef struct
 {
