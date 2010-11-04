@@ -1,8 +1,28 @@
 #define LED_SHOW_C
 #include "Includes.h"
 
+const char WeekStr[][7][15] =
+{
+{"星期日","星期一","星期二","星期三","星期四","星期五","星期六"},
 
+//const char WeekStr1[][10] =
+{"Sunday","Monday","Tuesday","Wednesday","Thursday","Friday", "Saturday"},
 
+//const char WeekStr2[][6] =
+{ "Sun","Mon","Tues","Wed","Thur","Fri","Sat"},
+
+//const char WeekStr3[][12] =
+{"domenica","lunedi\’","martedi\’","mercoledi\’","giovedi\’","venerdi\’","sabato"},
+
+//const char WeekStr4[][12] =
+{"Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"}, //德文
+
+//const char WeekStr5[][10] =
+{"dimanche","lundi","mardi","mercredi","jeudi", "vendredi","samedi"},//法文
+
+//const char WeekStr6[][12] =
+{"にちようび","げつようび","かようび","すいようび","もくようび","きんようび","どようび"}
+};
 
 //每档速度的延时,单位为毫秒
 const INT16U Step_Delay[]=
@@ -463,6 +483,8 @@ S_Point * Get_X_Mid_Point(S_Point *pPoint0, S_Point *pPoint1, S_Point *pPoint2)
       pMid = pPoint1;
   else
       pMid = pPoint2;
+
+  return pMid;
 }
 
 S_Point * Get_Y_Mid_Point(S_Point *pPoint0, S_Point *pPoint1, S_Point *pPoint2)
@@ -481,6 +503,8 @@ S_Point * Get_Y_Mid_Point(S_Point *pPoint0, S_Point *pPoint1, S_Point *pPoint2)
         pMid = pPoint1;
     else
         pMid = pPoint2;
+
+    return pMid;
 }
 //复制一条线
 //pSrc_Buf,源显示缓冲
@@ -1189,6 +1213,118 @@ void Move_Left_Right_Close(INT8U Area_No)
     Area_Status[Area_No].Step += MOVE_STEP;
   }  
 }
+/*
+    dateCombo->addItem(tr("2000年12月30日"));
+    dateCombo->addItem(tr("00年12月30日"));
+    dateCombo->addItem(tr("12/30/2000"));
+    dateCombo->addItem(tr("2000/12/30"));
+    dateCombo->addItem(tr("00-12-30"));
+    dateCombo->addItem(tr("00.12.30"));
+    dateCombo->addItem(tr("12月30"));
+    dateCombo->addItem(tr("12.30.2000"));
+    dateCombo->addItem(tr("2000-12-30"));
+    dateCombo->addItem(tr("2000"));
+    dateCombo->addItem(tr("12"));
+    dateCombo->addItem(tr("30"));
+ */
+INT8U Get_DateStr_Len(INT8U Font, INT8U Type)
+{
+    INT8U chrNum;
+
+    chrNum = 0;
+    if(Type EQ 0)
+        chrNum = 14;
+    else if(Type EQ 1)
+        chrNum = 12;
+    else if(Type EQ 2)
+        chrNum = 8;
+    else if(Type EQ 3)
+        chrNum = 8;
+    else if(Type EQ 4)
+        chrNum = 8;
+    else if(Type EQ 5)
+        chrNum = 8;
+    else if(Type EQ 6)
+        chrNum = 8;
+    else if(Type EQ 7)
+        chrNum = 10;
+    else if(Type EQ 8)
+        chrNum = 10;
+    else if(Type EQ 9)
+        chrNum = 4;
+    else if(Type EQ 10)
+        chrNum = 2;
+    else if(Type EQ 11)
+        chrNum = 2;
+    else
+        ASSERT_FAILED();
+
+    return chrNum * Get_Font_Width(Font);
+}
+
+INT8U Get_WeekStr_Len(INT8U Font, INT8U Language, INT8U Week)
+{
+  return strlen(WeekStr[Language][Week])*Get_Font_Width(Font);
+}
+
+void Show_Date(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Time *pTime, INT8U Type, INT8U Font, INT8U Color)
+{
+  INT16U y,m,d;
+
+  y = pTime->Time[T_YEAR] + 2000;
+  m = pTime->Time[T_MONTH];
+  d = pTime->Time[T_DATE];
+
+  if(Type EQ 0)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%4d年%2d月%2d日", y, m, d);
+  else if(Type EQ 1)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%2d年%2d月%2d日", y, m, d);
+  else if(Type EQ 2)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%2d/%2d/%2d", m, d, y);
+  else if(Type EQ 3)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%2d/%2d/%2d", y, m, d);
+  else if(Type EQ 4)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%2d-%2d-%2d", y, m, d);
+  else if(Type EQ 5)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%2d.%2d.%2d", y, m, d);
+  else if(Type EQ 6)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%2d月%2d日", m, d);
+  else if(Type EQ 7)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%2d.%2d.%4d", m, d, y);
+  else if(Type EQ 8)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%4d-%2d-%2d", y, m, d);
+  else if(Type EQ 9)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%4d", y);
+  else if(Type EQ 10)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%2d", m);
+  else if(Type EQ 11)
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%2d", d);
+}
+
+//显示星期的字符串
+void Show_Week(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Time *pTime, INT8U Language, INT8U Font, INT8U Color)
+{
+    INT8U Week;
+
+    Week = pTime->Time[T_WEEK];
+    LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%s", WeekStr[Language][Week]);
+    /*
+    if(Language EQ 0)
+      LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%s", WeekStr0[Week]);
+    else if(Language EQ 1)
+      LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%s", WeekStr1[Week]);
+    else if(Language EQ 2)
+      LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%s", WeekStr2[Week]);
+    else if(Language EQ 3)
+      LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%s", WeekStr3[Week]);
+    else if(Language EQ 4)
+      LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%s", WeekStr4[Week]);
+    else if(Language EQ 5)
+      LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%s", WeekStr5[Week]);
+    else if(Language EQ 6)
+      LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%s", WeekStr6[Week]);
+     */
+}
 
 
 
@@ -1260,10 +1396,10 @@ void Update_Clock_Data(INT8U Area_No)
   //Index = Get_Area_Point_Index(Area_No, 0, 0);
   //Bits_Copy(Show_Data_Bak.Color_Data, sizeof(Show_Data_Bak.Color_Data), Index, ;
   //Copy_Buf_2_Area_Rect();
-  Point.X = File_Para[Area_No].Clock_Para.Bk_X;
-  Point.Y = File_Para[Area_No].Clock_Para.Bk_Y;
-  X_Len = File_Para[Area_No].Clock_Para.Bk_Width;
-  Y_Len = File_Para[Area_No].Clock_Para.Bk_Height;
+  Point.X = File_Para[Area_No].Clock_Para.Text_X;
+  Point.Y = File_Para[Area_No].Clock_Para.Text_Y;
+  X_Len = File_Para[Area_No].Clock_Para.Text_Width;
+  Y_Len = File_Para[Area_No].Clock_Para.Text_Height;
   
   Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point, X_Len, Y_Len, &Show_Data, &Point);
 }
@@ -1363,40 +1499,40 @@ INT8S Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
         Len0 =  sizeof(File_Para[Area_No].Clock_Para) - 2;
         mem_cpy(&File_Para[Area_No].Clock_Para.Flag, Pub_Buf, Len0, &File_Para[Area_No].Clock_Para, sizeof(File_Para[Area_No].Clock_Para));
 
-        X = File_Para[Area_No].Clock_Para.Bk_X;
-        Y = File_Para[Area_No].Clock_Para.Bk_Y;
-        X_Len = File_Para[Area_No].Clock_Para.Bk_Width;
-        Y_Len = File_Para[Area_No].Clock_Para.Bk_Height;
+        X = File_Para[Area_No].Clock_Para.Text_X;
+        Y = File_Para[Area_No].Clock_Para.Text_Y;
+        X_Len = File_Para[Area_No].Clock_Para.Text_Width;
+        Y_Len = File_Para[Area_No].Clock_Para.Text_Height;
       }
       else if(Pub_Buf[0] EQ SHOW_TIME)//时间
       {
         Len0 =  sizeof(File_Para[Area_No].Time_Para) - 2;
         mem_cpy(&File_Para[Area_No].Time_Para.Flag, Pub_Buf, Len0, &File_Para[Area_No].Time_Para, sizeof(File_Para[Area_No].Time_Para));
 
-        X = File_Para[Area_No].Clock_Para.Bk_X;
-        Y = File_Para[Area_No].Clock_Para.Bk_Y;
-        X_Len = File_Para[Area_No].Clock_Para.Bk_Width;
-        Y_Len = File_Para[Area_No].Clock_Para.Bk_Height;
+        X = File_Para[Area_No].Clock_Para.Text_X;
+        Y = File_Para[Area_No].Clock_Para.Text_Y;
+        X_Len = File_Para[Area_No].Clock_Para.Text_Width;
+        Y_Len = File_Para[Area_No].Clock_Para.Text_Height;
       }
       else if(Pub_Buf[0] EQ SHOW_TIMER)//定时器
       {
         Len0 =  sizeof(File_Para[Area_No].Timer_Para) - 2;
         mem_cpy(&File_Para[Area_No].Timer_Para.Flag, Pub_Buf, Len0, &File_Para[Area_No].Timer_Para, sizeof(File_Para[Area_No].Timer_Para));
 
-        X = File_Para[Area_No].Clock_Para.Bk_X;
-        Y = File_Para[Area_No].Clock_Para.Bk_Y;
-        X_Len = File_Para[Area_No].Clock_Para.Bk_Width;
-        Y_Len = File_Para[Area_No].Clock_Para.Bk_Height;
+        X = File_Para[Area_No].Clock_Para.Text_X;
+        Y = File_Para[Area_No].Clock_Para.Text_Y;
+        X_Len = File_Para[Area_No].Clock_Para.Text_Width;
+        Y_Len = File_Para[Area_No].Clock_Para.Text_Height;
       }
       else if(Pub_Buf[0] EQ SHOW_TEMP)//温度
       {
         Len0 =  sizeof(File_Para[Area_No].Temp_Para) - 2;
         mem_cpy(&File_Para[Area_No].Temp_Para.Flag, Pub_Buf, Len0, &File_Para[Area_No].Temp_Para, sizeof(File_Para[Area_No].Temp_Para));
 
-        X = File_Para[Area_No].Clock_Para.Bk_X;
-        Y = File_Para[Area_No].Clock_Para.Bk_Y;
-        X_Len = File_Para[Area_No].Clock_Para.Bk_Width;
-        Y_Len = File_Para[Area_No].Clock_Para.Bk_Height;
+        X = File_Para[Area_No].Clock_Para.Text_X;
+        Y = File_Para[Area_No].Clock_Para.Text_Y;
+        X_Len = File_Para[Area_No].Clock_Para.Text_Width;
+        Y_Len = File_Para[Area_No].Clock_Para.Text_Height;
       }
 
       //Bits_Copy(Pub_Buf, sizeof(Pub_Buf), 0, (Len - Len0)* 8, Show_Data.Color_Data + Dst_Index, sizeof(Show_Data.Color_Data), Dst_Index);

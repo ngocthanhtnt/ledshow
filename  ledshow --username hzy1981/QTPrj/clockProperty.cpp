@@ -4,6 +4,8 @@
 #include "colorCombo.h"
 #include <QSettings>
 
+#define POSI_STEP 2
+
 extern MainWindow *w;
 extern QSettings settings;
 
@@ -39,6 +41,27 @@ CposiEdit::CposiEdit(QWidget *parent):QGroupBox(parent)
 
 void CposiEdit::leftEdit()
 {
+    QString str,str1;
+    int index,left;
+
+    index = item->currentIndex();
+    if(index EQ 0) //固定文本左移
+      str = QString("textX");//left = settings.value("textX").toInt();
+    else if(index EQ 1)
+      str = QString("dateX");//left = settings.value("dateX").toInt();
+    else
+      str = QString("weekX");
+      //
+
+    str1 = w->screenArea->getFocusArea()->treeItem->data(0,Qt::UserRole).toString();
+    settings.beginGroup(str1);
+
+    left = settings.value(str).toInt();
+    if(left > 0)
+        left = left - POSI_STEP;
+
+    settings.setValue(str,left);
+    settings.endGroup();
 
 }
 
@@ -184,7 +207,8 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
 
     connect(simpleTextEdit, SIGNAL(edited()), this, SIGNAL(edited()));
-
+    connect(dateEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(weekEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
 }
 
@@ -224,7 +248,11 @@ void CclockProperty::getSettingsFromWidget(QString str)
     settings.endGroup();
 
     if(type == CLOCK_PROPERTY)
+    {
       simpleTextEdit->getSettingsFromWidget(str);
+      dateEdit->getSettingsFromWidget(str);
+      weekEdit->getSettingsFromWidget(str);
+    }
 }
 
 //刷新显示区域
@@ -322,6 +350,47 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     para.Clock_Para.Sec_Line_Color = 0;
     SET_BIT(para.Clock_Para.Sec_Line_Color, tmp);
     qDebug("secColor = %d", para.Clock_Para.Sec_Line_Color);
+
+    settings.beginGroup("dateEdit");
+    tmp = settings.value("dateCheck").toBool();
+    if(tmp EQ 0)
+        para.Clock_Para.Date_Flag = 0;
+    else
+    {
+        tmp = settings.value("date").toInt();
+        para.Clock_Para.Date_Flag = tmp + 1;
+    }
+    settings.endGroup();
+
+    settings.beginGroup("weekEdit");
+    tmp = settings.value("weekCheck").toBool();
+    if(tmp EQ 0)
+        para.Clock_Para.Week_Flag = 0;
+    else
+    {
+        tmp = settings.value("week").toInt();
+        para.Clock_Para.Week_Flag = tmp + 1;
+    }
+    settings.endGroup();
+
+    tmp = settings.value("textX").toInt();
+    para.Clock_Para.Text_X = tmp;
+
+    tmp = settings.value("textY").toInt();
+    para.Clock_Para.Text_Y = tmp;
+
+    tmp = settings.value("dateX").toInt();
+    para.Clock_Para.Date_X = tmp;
+
+    tmp = settings.value("dateY").toInt();
+    para.Clock_Para.Date_Y = tmp;
+
+    tmp = settings.value("weekX").toInt();
+    para.Clock_Para.Week_X = tmp;
+
+    tmp = settings.value("weekY").toInt();
+    para.Clock_Para.Week_Y = tmp;
+
 /*
     settings.setValue("fontIndex", fontCombo->currentIndex());
     settings.setValue("fontSizeIndex", fontSizeCombo->currentIndex());
@@ -334,8 +403,8 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     settings.setValue("iText", iButton->isChecked());
     settings.setValue("text", lineEdit->text());
 
-    para.Clock_Para.Bk_Color = settings.value("color").toInt();
-    para.Clock_Para.Bk_Color = settings.value("color").toInt();
+    para.Clock_Para.Text_Color = settings.value("color").toInt();
+    para.Clock_Para.Text_Color = settings.value("color").toInt();
 
     tmp = settings.value("fontSizeIndex").toInt();
     tmp = settings.value("fontName").toString();
@@ -380,6 +449,13 @@ void CclockProperty::setSettingsToWidget(QString str)
       settings.setValue("hourColor", RED_INDEX); //时钟颜色
       settings.setValue("minColor", RED_INDEX); //分钟颜色
       settings.setValue("secColor", RED_INDEX); //秒钟颜色
+
+      settings.setValue("textX", 50); //固定文本中心在X上的位置
+      settings.setValue("textY", 30); //固定文本中心在Y上的位置
+      settings.setValue("dateX", 50);
+      settings.setValue("dateY", 60);
+      settings.setValue("weekX", 50);
+      settings.setValue("weekY", 70);
     }
 
     pointRadiusEdit->setText(QString::number(settings.value("pointRadius").toInt()));
@@ -397,6 +473,8 @@ void CclockProperty::setSettingsToWidget(QString str)
     settings.endGroup();
 
     simpleTextEdit->setSettingsToWidget(str);
+    dateEdit->setSettingsToWidget(str);
+    weekEdit->setSettingsToWidget(str);
 
     connect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
 }

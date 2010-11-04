@@ -106,12 +106,12 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
 void CshowModeEdit::getSettingsFromWidget(QString str)
 {
     settings.beginGroup(str);
-
-    settings.setValue("showMode", showModeCombo->currentIndex());
+    settings.beginGroup("showMode");
+    settings.setValue("Mode", showModeCombo->currentIndex());
     settings.setValue("speed", speedCombo->currentIndex());
     settings.setValue("stayTime", stayTimeEdit->text().toInt());
     //settings.setValue("text", edit->getEdit()->toPlainText());
-
+    settings.endGroup();
     settings.endGroup();
 
 }
@@ -122,6 +122,7 @@ void CshowModeEdit::setSettingsToWidget(QString str)
     QString text;
 
     settings.beginGroup(str);
+    settings.beginGroup("showMode");
     keys = settings.allKeys();
     if(keys.isEmpty() == true)
     {
@@ -142,6 +143,7 @@ void CshowModeEdit::setSettingsToWidget(QString str)
         text == QString(tr("图文显示"));
     //textEdit->clear();
     edit->getEdit()->setPlainText(text);*/
+    settings.endGroup();
     settings.endGroup();
 }
 
@@ -174,14 +176,18 @@ CsmLineEdit::CsmLineEdit(QWidget *parent):QGroupBox(parent)
 void CsmLineEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
+   settings.beginGroup("smLine");
    settings.setValue("smLineCombo", smLineCombo->currentIndex());
+   settings.endGroup();
    settings.endGroup();
 }
 
 void CsmLineEdit::setSettingsToWidget(QString str)
 {
     settings.beginGroup(str);
+    settings.beginGroup("smLine");
     smLineCombo->setCurrentIndex(settings.value("smLineCombo").toInt());
+    settings.endGroup();
     settings.endGroup();
 }
 
@@ -203,7 +209,11 @@ CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
     dateCombo->addItem(tr("00-12-30"));
     dateCombo->addItem(tr("00.12.30"));
     dateCombo->addItem(tr("12月30"));
-    dateCombo->addItem(tr("00.12.30"));
+    dateCombo->addItem(tr("12.30.2000"));
+    dateCombo->addItem(tr("2000-12-30"));
+    dateCombo->addItem(tr("2000"));
+    dateCombo->addItem(tr("12"));
+    dateCombo->addItem(tr("30"));
 
     colorCombo = new CcolorCombo(this);
     sizeCombo = new CsizeCombo(this);
@@ -226,20 +236,24 @@ CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
 void CdateEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
+   settings.beginGroup("dateEdit");
    settings.setValue("dateCheck", dateCheck->isChecked());
    settings.setValue("date", dateCombo->currentIndex());
    settings.setValue("color", colorCombo->currentIndex());
    settings.setValue("size", sizeCombo->currentIndex());
+   settings.endGroup();
    settings.endGroup();
 }
 
 void CdateEdit::setSettingsToWidget(QString str)
 {
     settings.beginGroup(str);
+    settings.beginGroup("dateEdit");
     dateCheck->setChecked(settings.value("dateCheck").toBool());
     dateCombo->setCurrentIndex(settings.value("date").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
     sizeCombo->setCurrentIndex(settings.value("size").toInt());
+    settings.endGroup();
     settings.endGroup();
 }
 
@@ -254,14 +268,13 @@ CweekEdit::CweekEdit(QWidget *parent):QWidget(parent)
 
     weekCheck = new QCheckBox(tr("星期"),this);
     weekCombo = new QComboBox(this);
-    weekCombo->addItem(tr("2000年12月30日"));
-    weekCombo->addItem(tr("00年12月30日"));
-    weekCombo->addItem(tr("12/30/2000"));
-    weekCombo->addItem(tr("2000/12/30"));
-    weekCombo->addItem(tr("00-12-30"));
-    weekCombo->addItem(tr("00.12.30"));
-    weekCombo->addItem(tr("12月30"));
-    weekCombo->addItem(tr("00.12.30"));
+    weekCombo->addItem(tr("星期一"));
+    weekCombo->addItem(tr("Monday"));
+    weekCombo->addItem(tr("Mon"));
+    weekCombo->addItem(tr("Lunedi"));
+    weekCombo->addItem(tr("Montag"));
+    weekCombo->addItem(tr("Lundi"));
+
 
     colorCombo = new CcolorCombo(this);
     sizeCombo = new CsizeCombo(this);
@@ -284,20 +297,24 @@ CweekEdit::CweekEdit(QWidget *parent):QWidget(parent)
 void CweekEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
+   settings.beginGroup("weekEdit");
    settings.setValue("weekCheck", weekCheck->isChecked());
    settings.setValue("week", weekCombo->currentIndex());
    settings.setValue("color", colorCombo->currentIndex());
    settings.setValue("size", sizeCombo->currentIndex());
+   settings.endGroup();
    settings.endGroup();
 }
 
 void CweekEdit::setSettingsToWidget(QString str)
 {
     settings.beginGroup(str);
+    settings.beginGroup("weekEdit");
     weekCheck->setChecked(settings.value("weekCheck").toBool());
     weekCombo->setCurrentIndex(settings.value("week").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
     sizeCombo->setCurrentIndex(settings.value("size").toInt());
+    settings.endGroup();
     settings.endGroup();
 }
 
@@ -342,20 +359,24 @@ CtimeEdit::CtimeEdit(QWidget *parent):QWidget(parent)
 void CtimeEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
+   settings.beginGroup("timeEdit");
    settings.setValue("timeCheck", timeCheck->isChecked());
    settings.setValue("time", timeCombo->currentIndex());
    settings.setValue("color", colorCombo->currentIndex());
    settings.setValue("size", sizeCombo->currentIndex());
+   settings.endGroup();
    settings.endGroup();
 }
 
 void CtimeEdit::setSettingsToWidget(QString str)
 {
     settings.beginGroup(str);
+    settings.beginGroup("timeEdit");
     timeCheck->setChecked(settings.value("timeCheck").toBool());
     timeCombo->setCurrentIndex(settings.value("time").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
     sizeCombo->setCurrentIndex(settings.value("size").toInt());
+    settings.endGroup();
     settings.endGroup();
 }
 
@@ -514,7 +535,7 @@ QImage getTextImage(QString str)
     //QComboBox fontSizeComboBox;
 
     settings.beginGroup(str);
-
+    settings.beginGroup("simpleTextEdit");
     text = settings.value("text").toString();
     uText = settings.value("uText").toBool();
     bText = settings.value("bText").toBool();
@@ -563,6 +584,7 @@ QImage getTextImage(QString str)
     }
 */
     settings.endGroup();
+    settings.endGroup();
     return image;
 
 }
@@ -604,6 +626,7 @@ QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
 void CsimpleTextEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
+   settings.beginGroup("simpleTextEdit");
    settings.setValue("fontIndex", fontCombo->currentIndex());
    settings.setValue("fontSizeIndex", fontSizeCombo->currentIndex());
    settings.setValue("fontName", fontCombo->currentText());
@@ -615,11 +638,13 @@ void CsimpleTextEdit::getSettingsFromWidget(QString str)
    settings.setValue("iText", iButton->isChecked());
    settings.setValue("text", lineEdit->text());
    settings.endGroup();
+   settings.endGroup();
 }
 
 void CsimpleTextEdit::setSettingsToWidget(QString str)
 {
     settings.beginGroup(str);
+    settings.beginGroup("simpleTextEdit");
     fontCombo->setCurrentIndex(settings.value("fontIndex").toInt());
     fontSizeCombo->setCurrentIndex(settings.value("fontSizeIndex").toInt());
 
@@ -628,6 +653,7 @@ void CsimpleTextEdit::setSettingsToWidget(QString str)
     uButton->setChecked(settings.value("uText").toBool());
     iButton->setChecked(settings.value("iText").toBool());
     lineEdit->setText(settings.value("text").toString());
+    settings.endGroup();
     settings.endGroup();
 }
 /*

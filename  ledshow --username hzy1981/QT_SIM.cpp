@@ -20,7 +20,11 @@ INT8U Get_Cur_Time(INT8U Time[])//S_Time *pTime)
   Time[T_HOUR] = temp.time().hour();
   Time[T_DATE] = temp.date().day();
   Time[T_MONTH] = temp.date().month();
-  Time[T_YEAR] = temp.date().year();
+  if(temp.date().year() >= 2000)
+    Time[T_YEAR] = temp.date().year() - 2000;
+  else
+    Time[T_YEAR] = 0;
+  qDebug("year = %d", Time[T_YEAR]);
   return 1;
 }
 

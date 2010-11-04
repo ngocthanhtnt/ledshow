@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     ../LED_Para.cpp \
     ../File_Op.cpp \
     ../com.cpp \
-    ../STM32.cpp
+    ../STM32.cpp \
+    ../ZK.cpp
 
 HEADERS  += mainwindow.h \
     ../LED_Cfg.h \
@@ -57,7 +58,8 @@ HEADERS  += mainwindow.h \
     ../STM32.h \
     ../com.h \
     ../QT_SIM.h\
-    ../LED_Show.h
+    ../LED_Show.h \
+    ../ZK.h
 
 RESOURCES += \
     textedit.qrc

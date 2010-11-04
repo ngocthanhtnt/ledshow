@@ -3,13 +3,20 @@
 
 #include "led_show.h"
 
-#define FONT16_WIDTH 16
-#define FONT24_WIDTH 24
-#define FONT32_WIDTH 32
+#undef EXT
+#ifdef ZK_C
+#define EXT
+#else
+#define EXT extern
+#endif
 
-#define FONT16 0
-#define FONT24 1
-#define FONT32 2
+#define FONT0_WIDTH 16
+#define FONT1_WIDTH 24
+#define FONT2_WIDTH 32
+
+#define FONT0 0
+#define FONT1 1
+#define FONT2 2
 
 //extern char * Get_Program_Data_File_Name(INT8U Prog_No, INT8U Area_No, char File_Name[]);
 typedef struct{
@@ -19,5 +26,9 @@ typedef struct{
   INT8U CN32_Dot[128]; //32*32
 }CNZK_Info;
 
+EXT INT8U Get_Font_Width(INT8U Font);
+EXT INT8U Get_Font_Height(INT8U Font);
+EXT INT16U Get_String_Width(INT8U Font, char Str[]);
+EXT INT16U Get_String_Height(INT8U Font, char Str[]);
 void LED_Print(INT8U Font, INT8U Color, S_Show_Data *pData,  INT8U Area_No, INT16U X, INT16U Y,const INT8S *format, ...);
 #endif
