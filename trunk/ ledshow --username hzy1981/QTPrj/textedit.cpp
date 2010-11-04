@@ -139,6 +139,7 @@ TextEdit::TextEdit(QWidget *parent)
 
     if (!load(initialFile))
         fileNew();
+
 }
 
 void TextEdit::closeEvent(QCloseEvent *e)
@@ -549,6 +550,9 @@ void TextEdit::textBold()
     QTextCharFormat fmt;
     fmt.setFontWeight(actionTextBold->isChecked() ? QFont::Bold : QFont::Normal);
     mergeFormatOnWordOrSelection(fmt);
+
+    QTextCursor cursor = textEdit->textCursor();
+    cursor.insertTable(10,10);
 }
 
 void TextEdit::textUnderline()

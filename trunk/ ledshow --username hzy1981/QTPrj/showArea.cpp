@@ -834,30 +834,42 @@ void CshowArea::paintEvent(QPaintEvent *)
     Fill_Clock_Line(&showData, 0, &p0, 135, 50, 5, 0x04);
 */
 
-   //if(mousePressed == false || (mousePressed == true && dragFlag != DRAG_MOVE))//鼠标在没有按下的情况下才更新数据
+   if(mousePressed == false || (mousePressed == true && dragFlag != DRAG_MOVE))//鼠标在没有按下的情况下才更新数据
     {
        Clear_Area_Data(&showData, 0);
         if(File_Para.Temp_Para.Flag == SHOW_CLOCK)
         {
             Get_Cur_Time(Cur_Time.Time);
             Show_Clock(&showData, 0, &Cur_Time, &File_Para.Clock_Para);
-            S_Point p0, p1;
+            S_Point p0;
+            S_Point p1;
 
             p0.X = 0;
             p0.Y = 0;
 
 
-            //Copy_Filled_Rect(&showDataBak, 0, &p0, File_Para.Clock_Para.Bk_Width, File_Para.Clock_Para.Bk_Height, &showData, &p1);
+            //Copy_Filled_Rect(&showDataBak, 0, &p0, File_Para.Clock_Para.Text_Width, File_Para.Clock_Para.Text_Height, &showData, &p1);
 
 
             QSize size = imageBk.size();
-            File_Para.Clock_Para.Bk_Width = size.width();
-            File_Para.Clock_Para.Bk_Height = size.height();
-            p1.X = w/2-File_Para.Clock_Para.Bk_Width/2;
-            p1.Y = h*2/5;
+            File_Para.Clock_Para.Text_Width = size.width();
+            File_Para.Clock_Para.Text_Height = size.height();
+
+            int tmp = width() * File_Para.Clock_Para.Text_X / 100 - File_Para.Clock_Para.Text_Width/2;//w/2-File_Para.Clock_Para.Text_Width/2;
+            if(tmp > 0)
+              p1.X = tmp;
+            else
+              p1.X = 0;
+
+            tmp = height() * File_Para.Clock_Para.Text_Y / 100 - File_Para.Clock_Para.Text_Height/2;
+            if(tmp > 0)
+              p1.Y = tmp;
+            else
+              p1.Y = 0;
+
             getTextShowData(imageBk, &showData, p1.X, p1.Y);
-
-
+            Show_Date(&showData, 0, 0, 0, &Cur_Time, 0, FONT0, 0x02);
+            //LED_Print(FONT16, 0x02, &showData, 0, 0, 0, "甲乙丙丁%2d", 0);
         }
 }
 

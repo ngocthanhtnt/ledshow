@@ -181,11 +181,21 @@ typedef struct
   INT8U Sec_Line_Width; //秒钟宽度
   INT8U Sec_Line_Color; //秒钟颜色
   
-  INT8U Bk_Color; //背景颜色
-  INT16U Bk_X; //背景X
-  INT16U Bk_Y; //背景Y
-  INT16U Bk_Width; //背景宽度
-  INT16U Bk_Height; //背景高度
+  INT8U Date_Flag;  //日期标志,0表示不显示日期
+  INT8U Date_Color; //日期颜色
+  INT16U Date_X;
+  INT16U Date_Y;
+
+  INT8U Week_Flag;  //星期标志，0表示不显示星期
+  INT8U Week_Color; //星期颜色
+  INT16U Week_X;
+  INT16U Week_Y;
+
+  INT8U Text_Color; //背景颜色
+  INT16U Text_X; //背景X
+  INT16U Text_Y; //背景Y
+  INT16U Text_Width; //背景宽度
+  INT16U Text_Height; //背景高度
   
   INT8U Tail;
 }S_Clock_Para;
@@ -218,11 +228,11 @@ typedef struct
   
   INT8U Temp; //备用
   
-  INT8U Bk_Color; //背景颜色
-  INT16U Bk_X; //背景X
-  INT16U Bk_Y; //背景Y
-  INT16U Bk_Width; //背景宽度
-  INT16U Bk_Height; //背景高度
+  INT8U Text_Color; //背景颜色
+  INT16U Text_X; //背景X
+  INT16U Text_Y; //背景Y
+  INT16U Text_Width; //背景宽度
+  INT16U Text_Height; //背景高度
   
   INT8U Tail;
 }S_Timer_Para;
@@ -249,11 +259,11 @@ typedef struct
   
   INT8U Temp; //备用
   
-  INT8U Bk_Color; //背景颜色
-  INT16U Bk_X; //背景X
-  INT16U Bk_Y; //背景Y
-  INT16U Bk_Width; //背景宽度
-  INT16U Bk_Height; //背景高度
+  INT8U Text_Color; //背景颜色
+  INT16U Text_X; //背景X
+  INT16U Text_Y; //背景Y
+  INT16U Text_Width; //背景宽度
+  INT16U Text_Height; //背景高度
   
   INT8U Tail;
 }S_Time_Para;
@@ -280,11 +290,11 @@ typedef struct
   
   INT8U Temp; //备用
   
-  INT8U Bk_Color; //背景颜色
-  INT16U Bk_X; //背景X
-  INT16U Bk_Y; //背景Y
-  INT16U Bk_Width; //背景宽度
-  INT16U Bk_Height; //背景高度
+  INT8U Text_Color; //背景颜色
+  INT16U Text_X; //背景X
+  INT16U Text_Y; //背景Y
+  INT16U Text_Width; //背景宽度
+  INT16U Text_Height; //背景高度
   
   INT8U Tail;
 }S_Temp_Para;

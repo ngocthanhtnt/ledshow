@@ -22,6 +22,7 @@ INPUT(
 ./debug\File_Op.o
 ./debug\com.o
 ./debug\STM32.o
+./debug\ZK.o
 ./debug\moc_mainwindow.o
 ./debug\moc_showArea.o
 ./debug\moc_progManage.o
