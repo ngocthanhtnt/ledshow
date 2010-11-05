@@ -237,16 +237,20 @@ void Carea::setSettingsToWidget(QString str)
     disconnect(heightEdit, SIGNAL(editingFinished()), this, SLOT(yLenEdited()));
 
     settings.beginGroup(str);
-    keys = settings.allKeys();
-    if(keys.isEmpty() == false)
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag EQ 0)
     {
-      //Ãû×Ö
-      nameEdit->setText(settings.value("name").toString());
-      xEdit->setText(QString::number(settings.value("x").toInt()));
-      yEdit->setText(QString::number(settings.value("y").toInt()));
-      widthEdit->setText(QString::number(settings.value("xLen").toInt()));
-      heightEdit->setText(QString::number(settings.value("yLen").toInt()));
+
+       settings.setValue("setFlag", 1);
     }
+
+    //Ãû×Ö
+    nameEdit->setText(settings.value("name").toString());
+    xEdit->setText(QString::number(settings.value("x").toInt()));
+    yEdit->setText(QString::number(settings.value("y").toInt()));
+    widthEdit->setText(QString::number(settings.value("xLen").toInt()));
+    heightEdit->setText(QString::number(settings.value("yLen").toInt()));
+
 
     settings.endGroup();
 
