@@ -251,7 +251,7 @@ void CprogManage::newProg()
     settings.setValue("subIndex", 0); //当前子分区
     settings.setValue("name", QString("new prog"));
     settings.setValue("type", PROG_PROPERTY);
-
+    settings.setValue("setFlag", 0); //没有设过参数
       //按日期定时
     settings.setValue("dateTimerCheck", 0);
     settings.setValue("startYear", 2010);
@@ -366,6 +366,7 @@ void CprogManage::newArea()
     settings.setValue("subIndex", 0); //子项索引
     settings.setValue("name", QString("new area"));
     settings.setValue("type", AREA_PROPERTY);
+    settings.setValue("setFlag", 0); //没有设过参数
     settings.setValue("index", index);
     settings.setValue("x", size*(xLen / 20));  //该分区的起点x
     settings.setValue("y", size*(yLen / 20));  //该分区的起点y
@@ -468,6 +469,7 @@ void CprogManage::newFile(int fileType)
     max++;
     settings.beginGroup(QString::number(max));
     settings.setValue("type", fileType);
+    settings.setValue("setFlag", 0); //没有设过参数
     settings.endGroup();
     settings.endGroup();
 

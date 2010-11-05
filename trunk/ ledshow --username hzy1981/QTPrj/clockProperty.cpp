@@ -352,25 +352,30 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     qDebug("secColor = %d", para.Clock_Para.Sec_Line_Color);
 
     settings.beginGroup("dateEdit");
-    tmp = settings.value("dateCheck").toBool();
+    tmp = settings.value("checked").toBool();
     if(tmp EQ 0)
-        para.Clock_Para.Date_Flag = 0;
+        para.Clock_Para.Date_Type = 0;
     else
     {
-        tmp = settings.value("date").toInt();
-        para.Clock_Para.Date_Flag = tmp + 1;
+        tmp = settings.value("type").toInt();
+        para.Clock_Para.Date_Type = tmp + 1;
     }
+
+    tmp = settings.value("size").toInt();
+    para.Clock_Para.Date_Font = tmp;
     settings.endGroup();
 
     settings.beginGroup("weekEdit");
-    tmp = settings.value("weekCheck").toBool();
+    tmp = settings.value("checked").toBool();
     if(tmp EQ 0)
-        para.Clock_Para.Week_Flag = 0;
+        para.Clock_Para.Week_Type = 0;
     else
     {
-        tmp = settings.value("week").toInt();
-        para.Clock_Para.Week_Flag = tmp + 1;
+        tmp = settings.value("type").toInt();
+        para.Clock_Para.Week_Type = tmp + 1;
     }
+    tmp = settings.value("size").toInt();
+    para.Clock_Para.Week_Font = tmp;
     settings.endGroup();
 
     tmp = settings.value("textX").toInt();
@@ -435,8 +440,8 @@ void CclockProperty::setSettingsToWidget(QString str)
 
     disconnect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
     settings.beginGroup(str);
-    keys = settings.allKeys();
-    if(keys.size() <10)
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag EQ 0)
     {
       settings.setValue("pointRadius", 3);   //Õûµã°ë¾¶
       settings.setValue("point369Radius", 3); //369µã°ë¾¶
@@ -456,7 +461,9 @@ void CclockProperty::setSettingsToWidget(QString str)
       settings.setValue("dateY", 60);
       settings.setValue("weekX", 50);
       settings.setValue("weekY", 70);
-    }
+
+      settings.setValue("setFlag", 1);
+   }
 
     pointRadiusEdit->setText(QString::number(settings.value("pointRadius").toInt()));
     point369RadiusEdit->setText(QString::number(settings.value("point369Radius").toInt()));

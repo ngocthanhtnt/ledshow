@@ -82,12 +82,18 @@ void CpicProperty::setSettingsToWidget(QString str)
     //QStringList keys;
     QString text;
 
-    showModeEdit->setSettingsToWidget(str);
     settings.beginGroup(str);
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag EQ 0)
+    {
+
+       settings.setValue("setFlag", 1);
+    }
     text = settings.value("text").toString();
     if(text == "")
         text == QString(tr("Í¼ÎÄÏÔÊ¾"));
     //textEdit->clear();
     edit->getEdit()->setPlainText(text);
     settings.endGroup();
+    showModeEdit->setSettingsToWidget(str);
 }

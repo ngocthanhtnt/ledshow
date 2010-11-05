@@ -1227,7 +1227,7 @@ void Move_Left_Right_Close(INT8U Area_No)
     dateCombo->addItem(tr("12"));
     dateCombo->addItem(tr("30"));
  */
-INT8U Get_DateStr_Len(INT8U Font, INT8U Type)
+INT16U Get_DateStr_Width(INT8U Font, INT8U Type)
 {
     INT8U chrNum;
 
@@ -1262,7 +1262,7 @@ INT8U Get_DateStr_Len(INT8U Font, INT8U Type)
     return chrNum * Get_Font_Width(Font);
 }
 
-INT8U Get_WeekStr_Len(INT8U Font, INT8U Language, INT8U Week)
+INT16U Get_WeekStr_Width(INT8U Font, INT8U Language, INT8U Week)
 {
   return strlen(WeekStr[Language][Week])*Get_Font_Width(Font);
 }

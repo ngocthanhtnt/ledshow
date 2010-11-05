@@ -177,7 +177,7 @@ void CsmLineEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
    settings.beginGroup("smLine");
-   settings.setValue("smLineCombo", smLineCombo->currentIndex());
+   settings.setValue("smLineCheck", smLineCombo->currentIndex());
    settings.endGroup();
    settings.endGroup();
 }
@@ -186,7 +186,13 @@ void CsmLineEdit::setSettingsToWidget(QString str)
 {
     settings.beginGroup(str);
     settings.beginGroup("smLine");
-    smLineCombo->setCurrentIndex(settings.value("smLineCombo").toInt());
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag == 0)
+    {
+       settings.setValue("smLineCheck", 0);
+       settings.setValue("setFlag", 1);
+    }
+    smLineCombo->setCurrentIndex(settings.value("smLineCheck").toInt());
     settings.endGroup();
     settings.endGroup();
 }
@@ -237,8 +243,8 @@ void CdateEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
    settings.beginGroup("dateEdit");
-   settings.setValue("dateCheck", dateCheck->isChecked());
-   settings.setValue("date", dateCombo->currentIndex());
+   settings.setValue("checked", dateCheck->isChecked());
+   settings.setValue("type", dateCombo->currentIndex());
    settings.setValue("color", colorCombo->currentIndex());
    settings.setValue("size", sizeCombo->currentIndex());
    settings.endGroup();
@@ -249,8 +255,17 @@ void CdateEdit::setSettingsToWidget(QString str)
 {
     settings.beginGroup(str);
     settings.beginGroup("dateEdit");
-    dateCheck->setChecked(settings.value("dateCheck").toBool());
-    dateCombo->setCurrentIndex(settings.value("date").toInt());
+    int setFlag = settings.value("setFlag").toBool();
+    {
+       settings.setValue("checked", 0);
+       settings.setValue("type", 0);
+       settings.setValue("color", 0);
+       settings.setValue("size", 0);
+
+       settings.setValue("setFlag", 1);
+    }
+    dateCheck->setChecked(settings.value("checked").toBool());
+    dateCombo->setCurrentIndex(settings.value("type").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
     sizeCombo->setCurrentIndex(settings.value("size").toInt());
     settings.endGroup();
@@ -298,8 +313,8 @@ void CweekEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
    settings.beginGroup("weekEdit");
-   settings.setValue("weekCheck", weekCheck->isChecked());
-   settings.setValue("week", weekCombo->currentIndex());
+   settings.setValue("checked", weekCheck->isChecked());
+   settings.setValue("type", weekCombo->currentIndex());
    settings.setValue("color", colorCombo->currentIndex());
    settings.setValue("size", sizeCombo->currentIndex());
    settings.endGroup();
@@ -310,8 +325,18 @@ void CweekEdit::setSettingsToWidget(QString str)
 {
     settings.beginGroup(str);
     settings.beginGroup("weekEdit");
-    weekCheck->setChecked(settings.value("weekCheck").toBool());
-    weekCombo->setCurrentIndex(settings.value("week").toInt());
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag EQ 0)
+    {
+       settings.setValue("checked", 0);
+       settings.setValue("type", 0);
+       settings.setValue("color", 0);
+       settings.setValue("size", 0);
+
+       settings.setValue("setFlag", 1);
+    }
+    weekCheck->setChecked(settings.value("checked").toBool());
+    weekCombo->setCurrentIndex(settings.value("type").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
     sizeCombo->setCurrentIndex(settings.value("size").toInt());
     settings.endGroup();
@@ -360,8 +385,8 @@ void CtimeEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
    settings.beginGroup("timeEdit");
-   settings.setValue("timeCheck", timeCheck->isChecked());
-   settings.setValue("time", timeCombo->currentIndex());
+   settings.setValue("checked", timeCheck->isChecked());
+   settings.setValue("type", timeCombo->currentIndex());
    settings.setValue("color", colorCombo->currentIndex());
    settings.setValue("size", sizeCombo->currentIndex());
    settings.endGroup();
@@ -372,8 +397,8 @@ void CtimeEdit::setSettingsToWidget(QString str)
 {
     settings.beginGroup(str);
     settings.beginGroup("timeEdit");
-    timeCheck->setChecked(settings.value("timeCheck").toBool());
-    timeCombo->setCurrentIndex(settings.value("time").toInt());
+    timeCheck->setChecked(settings.value("checked").toBool());
+    timeCombo->setCurrentIndex(settings.value("type").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
     sizeCombo->setCurrentIndex(settings.value("size").toInt());
     settings.endGroup();
@@ -645,6 +670,20 @@ void CsimpleTextEdit::setSettingsToWidget(QString str)
 {
     settings.beginGroup(str);
     settings.beginGroup("simpleTextEdit");
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag EQ 0)
+    {
+       settings.setValue("fontIndex", 0);
+       settings.setValue("fontSizeIndex", 0);
+       settings.setValue("color", 0);
+       settings.setValue("bText", 0);
+       settings.setValue("uText", 0);
+       settings.setValue("iText", 0);
+       settings.setValue("text", QString(""));
+
+       settings.setValue("setFlag", 1);
+    }
+
     fontCombo->setCurrentIndex(settings.value("fontIndex").toInt());
     fontSizeCombo->setCurrentIndex(settings.value("fontSizeIndex").toInt());
 

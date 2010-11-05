@@ -850,7 +850,7 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             //Copy_Filled_Rect(&showDataBak, 0, &p0, File_Para.Clock_Para.Text_Width, File_Para.Clock_Para.Text_Height, &showData, &p1);
 
-
+             //----------固定文本---------
             QSize size = imageBk.size();
             File_Para.Clock_Para.Text_Width = size.width();
             File_Para.Clock_Para.Text_Height = size.height();
@@ -868,7 +868,29 @@ void CshowArea::paintEvent(QPaintEvent *)
               p1.Y = 0;
 
             getTextShowData(imageBk, &showData, p1.X, p1.Y);
-            Show_Date(&showData, 0, 0, 0, &Cur_Time, 0, FONT0, 0x02);
+
+            //---------星期---------
+            if(File_Para.Clock_Para.Week_Type > 0)
+            {
+                int weekFont = File_Para.Clock_Para.Week_Font; //字体
+                int weekStrWidth = Get_WeekStr_Width(weekFont, File_Para.Clock_Para.Week_Type - 1, Cur_Time.Time[T_WEEK]);
+                int weekHeight = Get_Font_Height(weekFont);
+                int tmp = width()*File_Para.Clock_Para.Week_X / 100 - weekStrWidth / 2;
+                if(tmp > 0)
+                  p1.X = tmp;
+                else
+                  p1.X = 0;
+
+                tmp = height() * File_Para.Clock_Para.Week_Y / 100 - weekHeight/2;
+                if(tmp > 0)
+                  p1.Y = tmp;
+                else
+                  p1.Y = 0;
+
+                Show_Week(&showData, 0, p1.X, p1.Y, &Cur_Time, File_Para.Clock_Para.Week_Type - 1, FONT0, 0x02);
+             }
+
+            Show_Week(&showData, 0, 0, 0, &Cur_Time, 0, FONT0, 0x02);
             //LED_Print(FONT16, 0x02, &showData, 0, 0, 0, "甲乙丙丁%2d", 0);
         }
 }

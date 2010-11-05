@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'timeProperty.h'
 **
-** Created: Fri Nov 5 00:05:45 2010
+** Created: Fri Nov 5 23:40:37 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
