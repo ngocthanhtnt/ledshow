@@ -81,18 +81,48 @@ CshowSpeedCombo::~CshowSpeedCombo()
 
 CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
 {
-    QGridLayout *gridLayout;
+    //QGridLayout *gridLayout;
+    QHBoxLayout *hLayout;
+    QVBoxLayout *vLayout;
 
-    gridLayout = new QGridLayout(this);
+    //gridLayout = new QGridLayout(this);
+    vLayout=new QVBoxLayout(this);
 
     setTitle(tr("显示特效"));
     showModeLabel = new QLabel(tr("显示模式"), this);
-    speedLabel = new QLabel(tr("运行速度"), this);
-    stayTimeLabel = new QLabel(tr("停留时间"), this);
-
     showModeCombo = new CshowModeCombo(this);
+    hLayout = new QHBoxLayout(this);
+    hLayout->addWidget(showModeLabel);
+    hLayout->addWidget(showModeCombo);
+    hLayout->addStretch();
+    vLayout->addLayout(hLayout);
+
+    speedLabel = new QLabel(tr("运行速度"), this);
     speedCombo = new CshowSpeedCombo(this);
+    hLayout = new QHBoxLayout(this);
+    hLayout->addWidget(speedLabel);
+    hLayout->addWidget(speedCombo);
+    hLayout->addStretch();
+    vLayout->addLayout(hLayout);
+
+    stayTimeLabel = new QLabel(tr("停留时间"), this);
     stayTimeEdit = new QLineEdit(this);
+    stayTimeEdit->setFixedWidth(40);
+    hLayout = new QHBoxLayout(this);
+    hLayout->addWidget(stayTimeLabel);
+    hLayout->addWidget(stayTimeEdit);
+    hLayout->addStretch();
+    vLayout->addLayout(hLayout);
+
+    //vLayout->addStretch();
+    setLayout(vLayout);
+/*
+    int width = 80;
+    showModeCombo->setFixedWidth(width);
+    speedCombo->setFixedWidth(width);
+    stayTimeEdit->setFixedWidth(width);
+*/
+    /*
     gridLayout -> addWidget(showModeLabel, 0, 0);
     gridLayout -> addWidget(showModeCombo, 0, 1);
     gridLayout -> addWidget(speedLabel, 1, 0);
@@ -100,7 +130,7 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     gridLayout -> addWidget(stayTimeLabel, 2, 0);
     gridLayout -> addWidget(stayTimeEdit, 2, 1);
     setLayout(gridLayout);
-
+*/
 }
 
 void CshowModeEdit::getSettingsFromWidget(QString str)
@@ -205,6 +235,7 @@ CsmLineEdit::~CsmLineEdit()
 CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
 {
     QHBoxLayout *hLayout;
+    QLabel *label;
 
     dateCheck = new QCheckBox(tr("日期"),this);
     dateCombo = new QComboBox(this);
@@ -227,8 +258,14 @@ CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
     hLayout = new QHBoxLayout(this);
     hLayout->addWidget(dateCheck);
     hLayout->addWidget(dateCombo);
-    hLayout->addWidget(colorCombo);
+    //label = new QLabel(tr("颜色"), this);
+    //hLayout->addWidget(label);
     hLayout->addWidget(sizeCombo);
+    hLayout->addWidget(colorCombo);
+    hLayout->addStretch();
+    //label = new QLabel(tr("大小"), this);
+    //hLayout->addWidget(label);
+
 
     setLayout(hLayout);
 
@@ -256,6 +293,7 @@ void CdateEdit::setSettingsToWidget(QString str)
     settings.beginGroup(str);
     settings.beginGroup("dateEdit");
     int setFlag = settings.value("setFlag").toBool();
+    if(setFlag EQ 0)
     {
        settings.setValue("checked", 0);
        settings.setValue("type", 0);
@@ -280,6 +318,7 @@ CdateEdit::~CdateEdit()
 CweekEdit::CweekEdit(QWidget *parent):QWidget(parent)
 {
     QHBoxLayout *hLayout;
+    QLabel *label;
 
     weekCheck = new QCheckBox(tr("星期"),this);
     weekCombo = new QComboBox(this);
@@ -297,9 +336,15 @@ CweekEdit::CweekEdit(QWidget *parent):QWidget(parent)
     hLayout = new QHBoxLayout(this);
     hLayout->addWidget(weekCheck);
     hLayout->addWidget(weekCombo);
-    hLayout->addWidget(colorCombo);
+    //label = new QLabel(tr("颜色"), this);
+    //hLayout->addWidget(label);
     hLayout->addWidget(sizeCombo);
+    hLayout->addWidget(colorCombo);
+    //label = new QLabel(tr("大小"), this);
+    //hLayout->addWidget(label);
+    hLayout->addStretch();
 
+    hLayout->addStretch();
     setLayout(hLayout);
 
     connect(weekCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
@@ -351,6 +396,7 @@ CweekEdit::~CweekEdit()
 CtimeEdit::CtimeEdit(QWidget *parent):QWidget(parent)
 {
     QHBoxLayout *hLayout;
+    QLabel *label;
 
     timeCheck = new QCheckBox(tr("时间"),this);
     timeCombo = new QComboBox(this);
@@ -369,8 +415,13 @@ CtimeEdit::CtimeEdit(QWidget *parent):QWidget(parent)
     hLayout = new QHBoxLayout(this);
     hLayout ->addWidget(timeCheck);
     hLayout->addWidget(timeCombo);
-    hLayout->addWidget(colorCombo);
+    //label = new QLabel(tr("颜色"), this);
+    //hLayout->addWidget(label);
     hLayout->addWidget(sizeCombo);
+    hLayout->addWidget(colorCombo);
+    //label = new QLabel(tr("大小"), this);
+    //hLayout->addWidget(label);
+    hLayout->addStretch();
 
     setLayout(hLayout);
 
@@ -471,8 +522,8 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   mainLayout = new QGridLayout(this);
 
   fontLabel = new QLabel(tr("字体"), this);
-  fontSizeLabel = new QLabel(tr("大小"), this);
-  colorLabel = new QLabel(tr("颜色"), this);
+  //fontSizeLabel = new QLabel(tr("大小"), this);
+  //colorLabel = new QLabel(tr("颜色"), this);
 
   fontCombo = new QFontComboBox(this);
   fontCombo->setFixedWidth(100);
@@ -496,21 +547,27 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   iButton = new QPushButton(tr("斜体"),this);
   uButton = new QPushButton(tr("下划"), this);
   //oButton = new QPushButton(tr("打开"),this);
+  int width = 30;
+  bButton->setFixedWidth(width);
+  iButton->setFixedWidth(width);
+  uButton->setFixedWidth(width);
 
   bButton->setCheckable(true);
   iButton->setCheckable(true);
   uButton->setCheckable(true);
   //oButton->setCheckable(true);
 
+  QLabel *textLabel = new QLabel(tr("文字"), this);
   lineEdit = new QLineEdit(this);
 
   hLayout = new QHBoxLayout(this);
   hLayout -> addWidget(fontLabel);
   hLayout -> addWidget(fontCombo);
-  hLayout -> addWidget(fontSizeLabel);
+  //hLayout -> addWidget(fontSizeLabel);
   hLayout -> addWidget(fontSizeCombo);
-  hLayout -> addWidget(colorLabel);
+  //hLayout -> addWidget(colorLabel);
   hLayout -> addWidget(colorCombo);
+  hLayout ->addStretch();
   gridLayout->addLayout(hLayout, 0, 0);
 
   hLayout = new QHBoxLayout(this);
@@ -518,16 +575,23 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   hLayout -> addWidget(iButton);
   hLayout -> addWidget(uButton);
   hLayout->addStretch();
-  //hLayout -> addWidget(oButton);
   gridLayout->addLayout(hLayout, 1, 0);
 
+  hLayout = new QHBoxLayout(this);
+  hLayout -> addWidget(textLabel);
+  hLayout -> addWidget(lineEdit);
+  hLayout->addStretch();
+  //hLayout -> addWidget(oButton);
+  gridLayout->addLayout(hLayout, 2, 0);
+
   //lineEdit->setSizePolicy();
+  /*
   hLayout = new QHBoxLayout(this);
 
   hLayout -> addWidget(lineEdit);
   hLayout->addStretch();
   gridLayout->addLayout(hLayout, 2, 0);
-
+*/
   //textGroup = new QGroupBox(tr("固定文本"), this);
   //textGroup -> setLayout(gridLayout);
   //mainLayout->addWidget(textGroup, 0, 0);

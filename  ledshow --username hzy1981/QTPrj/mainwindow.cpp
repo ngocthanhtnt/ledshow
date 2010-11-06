@@ -353,13 +353,15 @@ void MainWindow::fileOpen()
     QFile::remove(oldFileName);
     if(QFile::copy(INI_FILE, oldFileName)==false) //保存老的文件
     {
-        qDebug("file open copy oldFileName error");
+        ASSERT_FAILED();
+        //qDebug("file open copy oldFileName error");
     }
 
     QFile::remove(INI_FILE);
     if(QFile::copy(newFileName, INI_FILE)==false)
     {
-        qDebug("file open copy INI_FILE error");
+        ASSERT_FAILED();
+        //qDebug("file open copy INI_FILE error");
     }
 
     settings.beginGroup("file");

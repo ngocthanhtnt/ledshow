@@ -9,6 +9,8 @@
 #define YEL_INDEX 1
 #define GRE_INDEX 2
 
+#define COLOR_INDEX_2_COLOR(x) (x+1)
+
 class CsizeCombo:public QComboBox
 {
     Q_OBJECT

@@ -1259,12 +1259,12 @@ INT16U Get_DateStr_Width(INT8U Font, INT8U Type)
     else
         ASSERT_FAILED();
 
-    return chrNum * Get_Font_Width(Font);
+    return chrNum * Get_Font_Width(Font)/2;
 }
 
 INT16U Get_WeekStr_Width(INT8U Font, INT8U Language, INT8U Week)
 {
-  return strlen(WeekStr[Language][Week])*Get_Font_Width(Font);
+  return strlen(WeekStr[Language][Week])*Get_Font_Width(Font)/2;
 }
 
 void Show_Date(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Time *pTime, INT8U Type, INT8U Font, INT8U Color)

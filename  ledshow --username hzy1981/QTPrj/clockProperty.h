@@ -18,20 +18,15 @@
 class CposiEdit:public QGroupBox
 {
   Q_OBJECT
-private:
+public:
     QComboBox *item;
     QPushButton *left;
     QPushButton *right;
     QPushButton *up;
     QPushButton *down;
     QPushButton *def;
-public slots:
-    void leftEdit();
-    void rightEdit();
-    void upEdit();
-    void downEdit();
-    void defEdit();
-public:
+
+
     CposiEdit(QWidget *parent);
     ~CposiEdit();
 };
@@ -73,9 +68,16 @@ private:
     QGroupBox *timeGroup;
     CdateEdit *dateEdit;
     CweekEdit *weekEdit;
+
+    CshowModeEdit *showModeEdit;
 signals:
     void edited();
 public slots:
+    void leftEdit();
+    void rightEdit();
+    void upEdit();
+    void downEdit();
+    void defEdit();
     void propertyEdited();
 public:
     Carea *area;

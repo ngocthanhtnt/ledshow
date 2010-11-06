@@ -236,7 +236,7 @@ void CprogManage::newProg()
     QStringList groups = settings.childGroups(); //所有节目的列表
 
     size = groups.size();
-    qDebug("groups size = %d", size);
+    //qDebug("groups size = %d", size);
     for(i = 0; i < size; i ++)
     {
       tmp = groups.at(i).toInt();
@@ -245,7 +245,7 @@ void CprogManage::newProg()
     }
     max++;
 
-    qDebug("new prog %d",max);
+    //qDebug("new prog %d",max);
 
     settings.beginGroup(QString::number(max));
     settings.setValue("subIndex", 0); //当前子分区
@@ -289,7 +289,7 @@ void CprogManage::newProg()
     settings.setValue("style", 1);
     settings.setValue("color", 1);
 
-    qDebug("progs size = %d", settings.childGroups().size());
+    //qDebug("progs size = %d", settings.childGroups().size());
     settings.endGroup();
     settings.endGroup();
 
@@ -547,7 +547,7 @@ void CprogManage::deleteItem()
     settings.endGroup();
     //settings.remove(Qvar.toString());//删除这个组
 
-    qDebug("remove : %s", (const char *)(Qvar.toString().toLocal8Bit()));
+    //qDebug("remove : %s", (const char *)(Qvar.toString().toLocal8Bit()));
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == 0)
     {
@@ -586,7 +586,11 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
         //QString str = item->parent()->data(0, Qt::UserRole).toString();
         updateItemSubIndex(item);
         updateTextHead(item->parent());
-        //updateItemSubIndex(item);
+        if(type != AREA_PROPERTY)
+        {
+          updateItemSubIndex(item->parent());        //updateItemSubIndex(item);
+          updateTextHead(item->parent()->parent());
+        }
     }
 
     treeWidget->setCurrentItem(item);//setCurrentItem()

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'clockProperty.h'
 **
-** Created: Fri Nov 5 23:40:34 2010
+** Created: Sat Nov 6 22:02:40 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,26 +23,18 @@ static const uint qt_meta_data_CposiEdit[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+       0,    0, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        0,       // signalCount
 
- // slots: signature, parameters, type, tag, flags
-      11,   10,   10,   10, 0x0a,
-      22,   10,   10,   10, 0x0a,
-      34,   10,   10,   10, 0x0a,
-      43,   10,   10,   10, 0x0a,
-      54,   10,   10,   10, 0x0a,
-
        0        // eod
 };
 
 static const char qt_meta_stringdata_CposiEdit[] = {
-    "CposiEdit\0\0leftEdit()\0rightEdit()\0"
-    "upEdit()\0downEdit()\0defEdit()\0"
+    "CposiEdit\0"
 };
 
 const QMetaObject CposiEdit::staticMetaObject = {
@@ -72,17 +64,6 @@ int CposiEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QGroupBox::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
-    if (_c == QMetaObject::InvokeMetaMethod) {
-        switch (_id) {
-        case 0: leftEdit(); break;
-        case 1: rightEdit(); break;
-        case 2: upEdit(); break;
-        case 3: downEdit(); break;
-        case 4: defEdit(); break;
-        default: ;
-        }
-        _id -= 5;
-    }
     return _id;
 }
 static const uint qt_meta_data_CclockProperty[] = {
@@ -91,7 +72,7 @@ static const uint qt_meta_data_CclockProperty[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       2,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -103,12 +84,19 @@ static const uint qt_meta_data_CclockProperty[] = {
 
  // slots: signature, parameters, type, tag, flags
       25,   15,   15,   15, 0x0a,
+      36,   15,   15,   15, 0x0a,
+      48,   15,   15,   15, 0x0a,
+      57,   15,   15,   15, 0x0a,
+      68,   15,   15,   15, 0x0a,
+      78,   15,   15,   15, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_CclockProperty[] = {
-    "CclockProperty\0\0edited()\0propertyEdited()\0"
+    "CclockProperty\0\0edited()\0leftEdit()\0"
+    "rightEdit()\0upEdit()\0downEdit()\0"
+    "defEdit()\0propertyEdited()\0"
 };
 
 const QMetaObject CclockProperty::staticMetaObject = {
@@ -141,10 +129,15 @@ int CclockProperty::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: edited(); break;
-        case 1: propertyEdited(); break;
+        case 1: leftEdit(); break;
+        case 2: rightEdit(); break;
+        case 3: upEdit(); break;
+        case 4: downEdit(); break;
+        case 5: defEdit(); break;
+        case 6: propertyEdited(); break;
         default: ;
         }
-        _id -= 2;
+        _id -= 7;
     }
     return _id;
 }
