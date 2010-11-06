@@ -28,11 +28,18 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
     widthLabel = new QLabel(tr("宽度"), this);
     heightLabel = new QLabel(tr("高度"), this);
 
+    int width = 50;
     nameEdit = new QLineEdit(this);
     xEdit = new QLineEdit(this);
     yEdit = new QLineEdit(this);
     widthEdit = new QLineEdit(this);
     heightEdit = new QLineEdit(this);
+
+    nameEdit->setFixedWidth(width);
+    xEdit->setFixedWidth(width);
+    yEdit->setFixedWidth(width);
+    widthEdit->setFixedWidth(width);
+    heightEdit->setFixedWidth(width);
 
     connect(xEdit, SIGNAL(editingFinished()), this, SLOT(xEdited()));
     connect(yEdit, SIGNAL(editingFinished()), this, SLOT(yEdited()));
@@ -43,15 +50,15 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
     yEdit->setValidator(yValidator);
     widthEdit->setValidator(xValidator);
     heightEdit->setValidator(yValidator);
-
+/*
     nameEdit->setMaxLength(4);
     xEdit->setMaxLength(4);
     yEdit->setMaxLength(4);
     widthEdit->setMaxLength(4);
     heightEdit->setMaxLength(4);
-
+*/
     setTitle(tr("分区属性"));
-    setFixedWidth(150);
+    //setFixedWidth(150);
     gridLayout = new QGridLayout(this);
 
     gridLayout -> addWidget(nameLabel,0,0);

@@ -83,7 +83,8 @@ void CscreenArea::progSettingsInit(QTreeWidgetItem *item)
    }
    else
    {
-       qDebug("progSettingsInit not Prog type");
+       ASSERT_FAILED();
+       //qDebug("progSettingsInit not Prog type");
        areaNum = 0;
    }
 
@@ -887,11 +888,31 @@ void CshowArea::paintEvent(QPaintEvent *)
                 else
                   p1.Y = 0;
 
-                Show_Week(&showData, 0, p1.X, p1.Y, &Cur_Time, File_Para.Clock_Para.Week_Type - 1, FONT0, 0x02);
+                Show_Week(&showData, 0, p1.X, p1.Y, &Cur_Time, File_Para.Clock_Para.Week_Type - 1, FONT0, File_Para.Clock_Para.Week_Color);
              }
 
-            Show_Week(&showData, 0, 0, 0, &Cur_Time, 0, FONT0, 0x02);
-            //LED_Print(FONT16, 0x02, &showData, 0, 0, 0, "甲乙丙丁%2d", 0);
+            //显示日期
+            if(File_Para.Clock_Para.Date_Type > 0)
+            {
+                int dateFont = File_Para.Clock_Para.Date_Font; //字体
+                int dateStrWidth = Get_DateStr_Width(dateFont, File_Para.Clock_Para.Date_Type - 1);
+                int dateHeight = Get_Font_Height(dateFont);
+                int tmp = width()*File_Para.Clock_Para.Date_X / 100 - dateStrWidth / 2;
+                if(tmp > 0)
+                  p1.X = tmp;
+                else
+                  p1.X = 0;
+
+                tmp = height() * File_Para.Clock_Para.Date_Y / 100 - dateHeight/2;
+                if(tmp > 0)
+                  p1.Y = tmp;
+                else
+                  p1.Y = 0;
+
+                Show_Date(&showData, 0, p1.X, p1.Y, &Cur_Time, File_Para.Clock_Para.Date_Type - 1, FONT0, File_Para.Clock_Para.Date_Color);
+             }
+
+            //Show_Date(&showData, 0, 43, 88, &Cur_Time, 0, FONT0, 0x02);
         }
 }
 
@@ -899,10 +920,6 @@ void CshowArea::paintEvent(QPaintEvent *)
     {
         for(i=0; i<w; i++)
         {
-           //if(Get_Bit(color0, w, i, j))
-
-
-
             unsigned char colorData = Get_Area_Point_Data(&showData, 0, i, j);
 
             //if(colorData != 0)

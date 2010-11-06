@@ -1730,6 +1730,7 @@ void vsPrintf(char Buf[], CONST INT8S *format, va_list ap)
 
     va_list ap;
 
+    memset(Print_Buf.Buf, 0, sizeof(Print_Buf.Buf));
     va_start(ap,format);
     vsPrintf((char *)Print_Buf.Buf, format, ap);
     Show_String(Print_Buf.Buf, Font, Color, pData,  Area_No, X, Y);

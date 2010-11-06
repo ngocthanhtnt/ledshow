@@ -4,7 +4,7 @@
 #include "colorCombo.h"
 #include <QSettings>
 
-#define POSI_STEP 2
+#define POSI_STEP 1
 
 extern MainWindow *w;
 extern QSettings settings;
@@ -29,61 +29,23 @@ CposiEdit::CposiEdit(QWidget *parent):QGroupBox(parent)
     down = new QPushButton(tr("下"));
     def = new QPushButton(tr("默认"));
 
+    int width = 30;
+    left->setFixedWidth(width);
+    right->setFixedWidth(width);
+    up->setFixedWidth(width);
+    down->setFixedWidth(width);
+    def->setFixedWidth(width);
+
     hLayout->addWidget(item);
     hLayout->addWidget(left);
     hLayout->addWidget(right);
     hLayout->addWidget(up);
     hLayout->addWidget(down);
     hLayout->addWidget(def);
-
+    hLayout->addStretch();
     setLayout(hLayout);
 }
 
-void CposiEdit::leftEdit()
-{
-    QString str,str1;
-    int index,left;
-
-    index = item->currentIndex();
-    if(index EQ 0) //固定文本左移
-      str = QString("textX");//left = settings.value("textX").toInt();
-    else if(index EQ 1)
-      str = QString("dateX");//left = settings.value("dateX").toInt();
-    else
-      str = QString("weekX");
-      //
-
-    str1 = w->screenArea->getFocusArea()->treeItem->data(0,Qt::UserRole).toString();
-    settings.beginGroup(str1);
-
-    left = settings.value(str).toInt();
-    if(left > 0)
-        left = left - POSI_STEP;
-
-    settings.setValue(str,left);
-    settings.endGroup();
-
-}
-
-void CposiEdit::rightEdit()
-{
-
-}
-
-void CposiEdit::upEdit()
-{
-
-}
-
-void CposiEdit::downEdit()
-{
-
-}
-
-void CposiEdit::defEdit()
-{
-
-}
 
 CposiEdit::~CposiEdit()
 {
@@ -105,20 +67,20 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     vLayout ->addWidget(area);
     hLayout->addLayout(vLayout);
 
-    editGroup = new QGroupBox(tr("外形"),this);
-    pointRadiusLabel = new QLabel(tr("整点半径"), this);
-    point369RadiusLabel = new QLabel(tr("369点半径"), this);
-    hourWidthLabel = new QLabel(tr("小时宽度"), this);
-    minWidthLabel = new QLabel(tr("分钟宽度"), this);
-    secWidthLabel = new QLabel(tr("秒钟宽度"), this);
-
+    editGroup = new QGroupBox(tr("外形属性"),this);
+    pointRadiusLabel = new QLabel(tr("整点"), this);
+    point369RadiusLabel = new QLabel(tr("369点"), this);
+    hourWidthLabel = new QLabel(tr("小时"), this);
+    minWidthLabel = new QLabel(tr("分钟"), this);
+    secWidthLabel = new QLabel(tr("秒钟"), this);
+/*
     pointColorLabel = new QLabel(tr("整点颜色"), this);
     point369ColorLabel = new QLabel(tr("369点颜色"), this);
     hourColorLabel = new QLabel(tr("小时颜色"), this);
     minColorLabel = new QLabel(tr("分钟颜色"), this);
     secColorLabel = new QLabel(tr("秒钟颜色"), this);
-
-    int width = 30;
+*/
+    int width = 20;
     pointRadiusEdit = new QLineEdit(this);
     pointRadiusEdit->setFixedWidth(width);
     point369RadiusEdit = new QLineEdit(this);
@@ -139,28 +101,28 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     gridLayout = new QGridLayout(this);
     gridLayout -> addWidget(pointRadiusLabel, 0, 0);
     gridLayout -> addWidget(pointRadiusEdit, 0, 1);
-    gridLayout -> addWidget(pointColorLabel, 0, 2);
-    gridLayout -> addWidget(pointColorCombo, 0, 3);
+    //gridLayout -> addWidget(pointColorLabel, 0, 2);
+    gridLayout -> addWidget(pointColorCombo, 0, 2);
 
     gridLayout -> addWidget(point369RadiusLabel, 1, 0);
     gridLayout -> addWidget(point369RadiusEdit, 1, 1);
-    gridLayout -> addWidget(point369ColorLabel, 1, 2);
-    gridLayout -> addWidget(point369ColorCombo, 1, 3);
+    //gridLayout -> addWidget(point369ColorLabel, 1, 2);
+    gridLayout -> addWidget(point369ColorCombo, 1, 2);
 
     gridLayout -> addWidget(hourWidthLabel, 2, 0);
     gridLayout -> addWidget(hourWidthEdit, 2, 1);
-    gridLayout -> addWidget(hourColorLabel, 2, 2);
-    gridLayout -> addWidget(hourColorCombo, 2, 3);
+    //gridLayout -> addWidget(hourColorLabel, 2, 2);
+    gridLayout -> addWidget(hourColorCombo, 2, 2);
 
     gridLayout -> addWidget(minWidthLabel, 3, 0);
     gridLayout -> addWidget(minWidthEdit, 3, 1);
-    gridLayout -> addWidget(minColorLabel, 3, 2);
-    gridLayout -> addWidget(minColorCombo, 3, 3);
+    //gridLayout -> addWidget(minColorLabel, 3, 2);
+    gridLayout -> addWidget(minColorCombo, 3, 2);
 
     gridLayout -> addWidget(secWidthLabel, 4, 0);
     gridLayout -> addWidget(secWidthEdit, 4, 1);
-    gridLayout -> addWidget(secColorLabel, 4, 2);
-    gridLayout -> addWidget(secColorCombo, 4, 3);
+    //gridLayout -> addWidget(secColorLabel, 4, 2);
+    gridLayout -> addWidget(secColorCombo, 4, 2);
     editGroup -> setLayout(gridLayout);
 
     vLayout = new QVBoxLayout(this);
@@ -170,23 +132,35 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     simpleTextEdit = new CsimpleTextEdit(this);
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(simpleTextEdit);
+    //vLayout->addStretch();
     hLayout->addLayout(vLayout);
 
+
+
+    //vLayout = new QVBoxLayout(this);
+    //vLayout ->addWidget(timeGroup);
+    //hLayout->addLayout(vLayout);
     timeGroup = new QGroupBox(tr("日期星期"),this);
     dateEdit = new CdateEdit(this);
     weekEdit = new CweekEdit(this);
     vLayout = new QVBoxLayout(this);
     vLayout->addWidget(dateEdit);
     vLayout->addWidget(weekEdit);
+    vLayout->addStretch();
     timeGroup->setLayout(vLayout);
 
+    posiEdit = new CposiEdit(this);
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(timeGroup);
-    //hLayout->addLayout(vLayout);
-
-    posiEdit = new CposiEdit(this);
-    //vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(posiEdit);
+    hLayout->addLayout(vLayout);
+    //vLayout->addStretch();
+
+    showModeEdit = new CshowModeEdit(this);
+
+    vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(showModeEdit);
+    //vLayout->addStretch();
     hLayout->addLayout(vLayout);
 
     hLayout ->addStretch();
@@ -207,9 +181,15 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
 
     connect(simpleTextEdit, SIGNAL(edited()), this, SIGNAL(edited()));
-    connect(dateEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(weekEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(dateEdit, SIGNAL(edited()), this, SIGNAL(edited()));
+    connect(weekEdit, SIGNAL(edited()), this, SIGNAL(edited()));
     connect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
+
+    connect(posiEdit->left, SIGNAL(clicked()), this, SLOT(leftEdit()));
+    connect(posiEdit->right, SIGNAL(clicked()), this, SLOT(rightEdit()));
+    connect(posiEdit->up, SIGNAL(clicked()), this, SLOT(upEdit()));
+    connect(posiEdit->down, SIGNAL(clicked()), this, SLOT(downEdit()));
+    connect(posiEdit->def, SIGNAL(clicked()), this, SLOT(defEdit()));
 }
 
 CclockProperty::~CclockProperty()
@@ -228,7 +208,7 @@ void CclockProperty::getSettingsFromWidget(QString str)
     if(type == CLOCK_PROPERTY)
     {
         tmp = pointRadiusEdit->text().toInt();
-        qDebug("get pointRadius = %d", tmp);
+        //qDebug("get pointRadius = %d", tmp);
 
         settings.setValue("pointRadius", pointRadiusEdit->text().toInt());   //整点半径
         settings.setValue("point369Radius", point369RadiusEdit->text().toInt()); //369点半径
@@ -269,7 +249,7 @@ void updateClockShowArea(CshowArea *area, QTreeWidgetItem *item)
         getClockParaFromSettings(str,area->File_Para);
         area->imageBk = getTextImage(str);
 
-        qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);
+        //qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);
         area->update(); //刷新显示
 
     }
@@ -286,7 +266,7 @@ void CclockProperty::propertyEdited()
     CshowArea *area;
     QTreeWidgetItem *item;
 
-    qDebug("propertyEdited");
+    //qDebug("propertyEdited");
     area = w->screenArea->getFocusArea(); //当前焦点分区
 
     if(area != (CshowArea *)0) //
@@ -329,27 +309,27 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     tmp = settings.value("point369Color").toInt(); //369点颜色
     para.Clock_Para.Hour369_Point_Color = 0;
     SET_BIT(para.Clock_Para.Hour369_Point_Color, tmp);
-    qDebug("point369color = %d", para.Clock_Para.Hour369_Point_Color);
+    //qDebug("point369color = %d", para.Clock_Para.Hour369_Point_Color);
 
     tmp = settings.value("pointColor").toInt(); //整点颜色
     para.Clock_Para.Hour_Point_Color = 0;
     SET_BIT(para.Clock_Para.Hour_Point_Color, tmp);
-    qDebug("pointColor = %d", para.Clock_Para.Hour_Point_Color);
+    //qDebug("pointColor = %d", para.Clock_Para.Hour_Point_Color);
 
     tmp = settings.value("hourColor").toInt(); //小时颜色
     para.Clock_Para.Hour_Line_Color = 0;
     SET_BIT(para.Clock_Para.Hour_Line_Color, tmp);
-    qDebug("hourColor = %d", para.Clock_Para.Hour_Line_Color);
+    //qDebug("hourColor = %d", para.Clock_Para.Hour_Line_Color);
 
     tmp = settings.value("minColor").toInt(); //分钟颜色
     para.Clock_Para.Min_Line_Color = 0;
     SET_BIT(para.Clock_Para.Min_Line_Color, tmp);
-    qDebug("minColor = %d", para.Clock_Para.Min_Line_Color);
+    //qDebug("minColor = %d", para.Clock_Para.Min_Line_Color);
 
     tmp = settings.value("secColor").toInt(); //秒钟颜色
     para.Clock_Para.Sec_Line_Color = 0;
     SET_BIT(para.Clock_Para.Sec_Line_Color, tmp);
-    qDebug("secColor = %d", para.Clock_Para.Sec_Line_Color);
+    //qDebug("secColor = %d", para.Clock_Para.Sec_Line_Color);
 
     settings.beginGroup("dateEdit");
     tmp = settings.value("checked").toBool();
@@ -363,6 +343,9 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
 
     tmp = settings.value("size").toInt();
     para.Clock_Para.Date_Font = tmp;
+    tmp = settings.value("color").toInt();
+    para.Clock_Para.Date_Color = 0;
+    SET_BIT(para.Clock_Para.Date_Color, tmp);
     settings.endGroup();
 
     settings.beginGroup("weekEdit");
@@ -376,6 +359,9 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     }
     tmp = settings.value("size").toInt();
     para.Clock_Para.Week_Font = tmp;
+    tmp = settings.value("color").toInt();
+    para.Clock_Para.Week_Color = 0;
+    SET_BIT(para.Clock_Para.Week_Color, tmp);
     settings.endGroup();
 
     tmp = settings.value("textX").toInt();
@@ -458,9 +444,9 @@ void CclockProperty::setSettingsToWidget(QString str)
       settings.setValue("textX", 50); //固定文本中心在X上的位置
       settings.setValue("textY", 30); //固定文本中心在Y上的位置
       settings.setValue("dateX", 50);
-      settings.setValue("dateY", 60);
+      settings.setValue("dateY", 70);
       settings.setValue("weekX", 50);
-      settings.setValue("weekY", 70);
+      settings.setValue("weekY", 85);
 
       settings.setValue("setFlag", 1);
    }
@@ -484,4 +470,160 @@ void CclockProperty::setSettingsToWidget(QString str)
     weekEdit->setSettingsToWidget(str);
 
     connect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
+}
+
+void CclockProperty::leftEdit()
+{
+    QString str,str1;
+    int index,posi;
+
+    index = posiEdit->item->currentIndex();
+    if(index EQ 0) //固定文本左移
+      str = QString("textX");//left = settings.value("textX").toInt();
+    else if(index EQ 1)
+      str = QString("dateX");//left = settings.value("dateX").toInt();
+    else
+      str = QString("weekX");
+      //
+
+    QTreeWidgetItem *item = w->progManage->treeWidget->currentItem();
+    if(item != (QTreeWidgetItem *)0)
+    {
+        str1 = item->data(0,Qt::UserRole).toString();
+        //qDebug("left : %s", (const char *)str1.toLocal8Bit());
+        settings.beginGroup(str1);
+
+        posi = settings.value(str).toInt();
+        if(posi >= POSI_STEP)
+            posi = posi - POSI_STEP;
+        else
+            posi = 0;
+
+        settings.setValue(str,posi);
+        settings.endGroup();
+
+        propertyEdited();
+   }
+}
+
+void CclockProperty::rightEdit()
+{
+    QString str,str1;
+    int index,posi;
+
+    index = posiEdit->item->currentIndex();
+    if(index EQ 0) //固定文本左移
+      str = QString("textX");//left = settings.value("textX").toInt();
+    else if(index EQ 1)
+      str = QString("dateX");//left = settings.value("dateX").toInt();
+    else
+      str = QString("weekX");
+      //
+
+    QTreeWidgetItem *item = w->progManage->treeWidget->currentItem();
+    if(item != (QTreeWidgetItem *)0)
+    {
+        str1 = item->data(0,Qt::UserRole).toString();
+        //qDebug("left : %s", (const char *)str1.toLocal8Bit());
+        settings.beginGroup(str1);
+
+        posi = settings.value(str).toInt();
+        if(posi  + POSI_STEP <= 100)
+            posi = posi + POSI_STEP;
+        else
+            posi = 100;
+
+        settings.setValue(str,posi);
+        settings.endGroup();
+
+        propertyEdited();
+   }
+}
+
+void CclockProperty::upEdit()
+{
+    QString str,str1;
+    int index,posi;
+
+    index = posiEdit->item->currentIndex();
+    if(index EQ 0) //固定文本左移
+      str = QString("textY");//left = settings.value("textX").toInt();
+    else if(index EQ 1)
+      str = QString("dateY");//left = settings.value("dateX").toInt();
+    else
+      str = QString("weekY");
+      //
+
+    QTreeWidgetItem *item = w->progManage->treeWidget->currentItem();
+    if(item != (QTreeWidgetItem *)0)
+    {
+        str1 = item->data(0,Qt::UserRole).toString();
+        //qDebug("left : %s", (const char *)str1.toLocal8Bit());
+        settings.beginGroup(str1);
+
+        posi = settings.value(str).toInt();
+        if(posi >= POSI_STEP)
+            posi = posi - POSI_STEP;
+        else
+            posi = 0;
+
+        settings.setValue(str,posi);
+        settings.endGroup();
+
+        propertyEdited();
+   }
+}
+
+void CclockProperty::downEdit()
+{
+    QString str,str1;
+    int index,posi;
+
+    index = posiEdit->item->currentIndex();
+    if(index EQ 0) //固定文本左移
+      str = QString("textY");//left = settings.value("textX").toInt();
+    else if(index EQ 1)
+      str = QString("dateY");//left = settings.value("dateX").toInt();
+    else
+      str = QString("weekY");
+      //
+
+    QTreeWidgetItem *item = w->progManage->treeWidget->currentItem();
+    if(item != (QTreeWidgetItem *)0)
+    {
+        str1 = item->data(0,Qt::UserRole).toString();
+        //qDebug("left : %s", (const char *)str1.toLocal8Bit());
+        settings.beginGroup(str1);
+
+        posi = settings.value(str).toInt();
+        if(posi  + POSI_STEP <= 100)
+            posi = posi + POSI_STEP;
+        else
+            posi = 100;
+
+        settings.setValue(str,posi);
+        settings.endGroup();
+
+        propertyEdited();
+   }
+}
+
+void CclockProperty::defEdit()
+{
+    QTreeWidgetItem *item = w->progManage->treeWidget->currentItem();
+    if(item != (QTreeWidgetItem *)0)
+    {
+        QString str = item->data(0,Qt::UserRole).toString();
+        //qDebug("left : %s", (const char *)str1.toLocal8Bit());
+        settings.beginGroup(str);
+        settings.setValue("textX", 50); //固定文本中心在X上的位置
+        settings.setValue("textY", 30); //固定文本中心在Y上的位置
+        settings.setValue("dateX", 50);
+        settings.setValue("dateY", 70);
+        settings.setValue("weekX", 50);
+        settings.setValue("weekY", 85);
+        settings.endGroup();
+
+        propertyEdited();
+    }
 }

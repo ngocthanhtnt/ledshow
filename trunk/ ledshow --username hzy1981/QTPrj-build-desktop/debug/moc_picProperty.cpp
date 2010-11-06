@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'picProperty.h'
 **
-** Created: Fri Nov 5 23:40:27 2010
+** Created: Sat Nov 6 20:39:00 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
