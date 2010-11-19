@@ -838,7 +838,7 @@ void CshowArea::paintEvent(QPaintEvent *)
    if(mousePressed == false || (mousePressed == true && dragFlag != DRAG_MOVE))//鼠标在没有按下的情况下才更新数据
     {
        Clear_Area_Data(&showData, 0);
-        if(File_Para.Temp_Para.Flag == SHOW_CLOCK)
+        if(File_Para.Temp_Para.Flag == SHOW_CLOCK) //显示表盘
         {
             Get_Cur_Time(Cur_Time.Time);
             Show_Clock(&showData, 0, &Cur_Time, &File_Para.Clock_Para);
@@ -914,7 +914,11 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             //Show_Date(&showData, 0, 43, 88, &Cur_Time, 0, FONT0, 0x02);
         }
-}
+        else if(File_Para.Temp_Para.Flag == SHOW_PIC) //显示图文
+        {
+            //getTextShowData(imageBk, &showData, 0, 0);
+        }
+    }
 
     for(j=0; j<h; j++)
     {

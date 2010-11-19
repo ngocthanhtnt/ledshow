@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QComboBox>
+#include <QColor>
 
 #define RED_INDEX 0
 #define YEL_INDEX 1
@@ -24,6 +25,7 @@ class CcolorCombo:public QComboBox
 {
     Q_OBJECT
 public:
+    QColor getColor();
     CcolorCombo(QWidget *parent = 0);
     ~CcolorCombo();
 };

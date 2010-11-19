@@ -615,7 +615,7 @@ int pixelsWide = fm.width("What's the width of this text?");
 int pixelsHigh = fm.height();
  */
 //获取文本的像素
-QImage getTextImage(QString str)
+QImage getLineTextImage(QString str)
 {
     bool uText, bText, iText;
     QString text;

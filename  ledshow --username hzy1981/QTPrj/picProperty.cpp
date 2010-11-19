@@ -5,6 +5,59 @@
 extern MainWindow *w;
 extern QSettings settings;
 
+//获取参数到PicPara中
+void getPicParaFromSettings(QString str, U_File_Para &para)
+{
+   para.Clock_Para.Flag = SHOW_PIC;
+}
+
+//刷新显示区域
+void updatePicShowArea(CshowArea *area, QTreeWidgetItem *item)
+{
+    //CshowArea *area;
+    QString str;
+
+
+    if(area != (CshowArea *)0) //
+    {
+        str = item->data(0,Qt::UserRole).toString();
+
+        getPicParaFromSettings(str,area->File_Para);
+        area->imageBk = getTextEditImage(0, 50, 100, str, 0);
+
+        //qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);
+        area->update(); //刷新显示
+
+    }
+    else
+    {
+        ASSERT_FAILED();
+    }
+
+}
+
+//属性编辑的SLOT
+void CpicProperty::propertyEdited()
+{
+    CshowArea *area;
+    QTreeWidgetItem *item;
+
+    //qDebug("propertyEdited");
+    area = w->screenArea->getFocusArea(); //当前焦点分区
+
+    if(area != (CshowArea *)0) //
+    {
+        //当前选中的item
+        item = area->fileItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
+        if(item != (QTreeWidgetItem *)0)
+        {
+            QString str = item->data(0,Qt::UserRole).toString();
+            getSettingsFromWidget(str);
+            updatePicShowArea(area, item);
+        }
+    }
+}
+
 //图文属性编辑
 CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
 {
@@ -20,7 +73,6 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
     vLayout ->addWidget(area);
     hLayout->addLayout(vLayout);
 
-    //gridLayout = new QGridLayout(this);
     textGroup = new QGroupBox(tr("文本内容"), this);
     editButton = new QPushButton(tr("编辑"), this);
 
@@ -31,35 +83,19 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(textGroup);
     hLayout->addLayout(vLayout);
-/*
-    gridLayout = new QGridLayout(this);
-    paraGroup = new QGroupBox(tr("参数修改"), this);
-    showModeLabel = new QLabel(tr("显示模式"), this);
-    speedLabel = new QLabel(tr("运行速度"), this);
-    stayTimeLabel = new QLabel(tr("停留时间"), this);
 
-    showModeCombo = new CshowModeCombo(this);
-    speedCombo = new CshowSpeedCombo(this);
-    stayTimeEdit = new QLineEdit(this);
-    gridLayout -> addWidget(showModeLabel, 0, 0);
-    gridLayout -> addWidget(showModeCombo, 0, 1);
-    gridLayout -> addWidget(speedLabel, 1, 0);
-    gridLayout -> addWidget(speedCombo, 1, 1);
-    gridLayout -> addWidget(stayTimeLabel, 2, 0);
-    gridLayout -> addWidget(stayTimeEdit, 2, 1);
-    paraGroup -> setLayout(gridLayout);
-*/
     showModeEdit = new CshowModeEdit(this);
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(showModeEdit);
     hLayout->addLayout(vLayout);
-    hLayout->addStretch();
+
+    hLayout->addStretch(10);
     setLayout(hLayout);
 
     edit = new TextEdit(this);
-    //textEdit->show();//clear();
     edit->getEdit()->clear();
     connect(editButton, SIGNAL(clicked()), edit, SLOT(show()));
+    connect(editButton, SIGNAL(clicked()), this, SLOT(propertyEdited()));
 }
 
 CpicProperty::~CpicProperty()
@@ -67,33 +103,18 @@ CpicProperty::~CpicProperty()
 
 }
 
+
+//获取settings到
 void CpicProperty::getSettingsFromWidget(QString str)
 {
     showModeEdit->getSettingsFromWidget(str);
-
-    settings.beginGroup(str);
-    settings.setValue("text", edit->getEdit()->toPlainText());
-    settings.endGroup();
-
+    edit->getSettingsFromWidget(str);
 }
 
 void CpicProperty::setSettingsToWidget(QString str)
 {
-    //QStringList keys;
-    QString text;
-
-    settings.beginGroup(str);
-    int setFlag = settings.value("setFlag").toBool();
-    if(setFlag EQ 0)
-    {
-
-       settings.setValue("setFlag", 1);
-    }
-    text = settings.value("text").toString();
-    if(text == "")
-        text == QString(tr("图文显示"));
-    //textEdit->clear();
-    edit->getEdit()->setPlainText(text);
-    settings.endGroup();
     showModeEdit->setSettingsToWidget(str);
+    edit->setSettingsToWidget(str);
 }
+
+
