@@ -65,12 +65,21 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <QPrintPreviewDialog>
+#include <QPainter>
+#include <QTextEdit>
+#include <QImage>
+#include <QSettings>
+#include <QTextBrowser>
+#include <QAbstractTextDocumentLayout>
+#include <QScrollBar>
 
 #ifdef Q_WS_MAC
 const QString rsrcPath = ":/images/mac";
 #else
 const QString rsrcPath = ":/images/win";
 #endif
+
+extern QSettings settings;
 
 TextEdit::TextEdit(QWidget *parent)
     : QMainWindow(parent)
@@ -79,14 +88,14 @@ TextEdit::TextEdit(QWidget *parent)
     setupFileActions();
     setupEditActions();
     setupTextActions();
-
+/*
     {
         QMenu *helpMenu = new QMenu(tr("Help"), this);
         menuBar()->addMenu(helpMenu);
         helpMenu->addAction(tr("About"), this, SLOT(about()));
         helpMenu->addAction(tr("About &Qt"), qApp, SLOT(aboutQt()));
     }
-
+*/
     textEdit = new QTextEdit(this);
     connect(textEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
             this, SLOT(currentCharFormatChanged(QTextCharFormat)));
@@ -131,7 +140,7 @@ TextEdit::TextEdit(QWidget *parent)
 #ifndef QT_NO_CLIPBOARD
     connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardDataChanged()));
 #endif
-
+/*
     QString initialFile = ":/example.html";
     const QStringList args = QCoreApplication::arguments();
     if (args.count() == 2)
@@ -139,7 +148,10 @@ TextEdit::TextEdit(QWidget *parent)
 
     if (!load(initialFile))
         fileNew();
-
+*/
+    //QColor color = new QColor();
+    palette = new QPalette(QPalette::Base,QColor(Qt::black));
+    textEdit->setPalette(*palette);//->setPalette(palette);
 }
 
 void TextEdit::closeEvent(QCloseEvent *e)
@@ -156,13 +168,13 @@ void TextEdit::setupFileActions()
     tb->setWindowTitle(tr("File Actions"));
     addToolBar(tb);
 
-    QMenu *menu = new QMenu(tr("&File"), this);
+    QMenu *menu = new QMenu(tr("文件"), this);
     menuBar()->addMenu(menu);
 
     QAction *a;
 
     QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
-    a = new QAction( newIcon, tr("&New"), this);
+    a = new QAction( newIcon, tr("新建"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
@@ -170,7 +182,7 @@ void TextEdit::setupFileActions()
     menu->addAction(a);
 
     a = new QAction(QIcon::fromTheme("document-open", QIcon(rsrcPath + "/fileopen.png")),
-                    tr("&Open..."), this);
+                    tr("打开..."), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
     tb->addAction(a);
@@ -179,19 +191,19 @@ void TextEdit::setupFileActions()
     menu->addSeparator();
 
     actionSave = a = new QAction(QIcon::fromTheme("document-save", QIcon(rsrcPath + "/filesave.png")),
-                                 tr("&Save"), this);
+                                 tr("保存"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
     a->setEnabled(false);
     tb->addAction(a);
     menu->addAction(a);
 
-    a = new QAction(tr("Save &As..."), this);
+    a = new QAction(tr("另存为"), this);
     a->setPriority(QAction::LowPriority);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     menu->addAction(a);
     menu->addSeparator();
-
+/*
 #ifndef QT_NO_PRINTER
     a = new QAction(QIcon::fromTheme("document-print", QIcon(rsrcPath + "/fileprint.png")),
                     tr("&Print..."), this);
@@ -216,8 +228,8 @@ void TextEdit::setupFileActions()
 
     menu->addSeparator();
 #endif
-
-    a = new QAction(tr("&Quit"), this);
+*/
+    a = new QAction(tr("退出"), this);
     a->setShortcut(Qt::CTRL + Qt::Key_Q);
     connect(a, SIGNAL(triggered()), this, SLOT(close()));
     menu->addAction(a);
@@ -228,36 +240,36 @@ void TextEdit::setupEditActions()
     QToolBar *tb = new QToolBar(this);
     tb->setWindowTitle(tr("Edit Actions"));
     addToolBar(tb);
-    QMenu *menu = new QMenu(tr("&Edit"), this);
+    QMenu *menu = new QMenu(tr("编辑"), this);
     menuBar()->addMenu(menu);
 
     QAction *a;
     a = actionUndo = new QAction(QIcon::fromTheme("edit-undo", QIcon(rsrcPath + "/editundo.png")),
-                                              tr("&Undo"), this);
+                                              tr("取消"), this);
     a->setShortcut(QKeySequence::Undo);
     tb->addAction(a);
     menu->addAction(a);
     a = actionRedo = new QAction(QIcon::fromTheme("edit-redo", QIcon(rsrcPath + "/editredo.png")),
-                                              tr("&Redo"), this);
+                                              tr("重做"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::Redo);
     tb->addAction(a);
     menu->addAction(a);
     menu->addSeparator();
     a = actionCut = new QAction(QIcon::fromTheme("edit-cut", QIcon(rsrcPath + "/editcut.png")),
-                                             tr("Cu&t"), this);
+                                             tr("剪切"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::Cut);
     tb->addAction(a);
     menu->addAction(a);
     a = actionCopy = new QAction(QIcon::fromTheme("edit-copy", QIcon(rsrcPath + "/editcopy.png")),
-                                 tr("&Copy"), this);
+                                 tr("复制"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::Copy);
     tb->addAction(a);
     menu->addAction(a);
     a = actionPaste = new QAction(QIcon::fromTheme("edit-paste", QIcon(rsrcPath + "/editpaste.png")),
-                                  tr("&Paste"), this);
+                                  tr("粘贴"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::Paste);
     tb->addAction(a);
@@ -273,11 +285,11 @@ void TextEdit::setupTextActions()
     tb->setWindowTitle(tr("Format Actions"));
     addToolBar(tb);
 
-    QMenu *menu = new QMenu(tr("F&ormat"), this);
+    QMenu *menu = new QMenu(tr("格式"), this);
     menuBar()->addMenu(menu);
 
     actionTextBold = new QAction(QIcon::fromTheme("format-text-bold", QIcon(rsrcPath + "/textbold.png")),
-                                 tr("&Bold"), this);
+                                 tr("黑体"), this);
     actionTextBold->setShortcut(Qt::CTRL + Qt::Key_B);
     actionTextBold->setPriority(QAction::LowPriority);
 	QFont bold;
@@ -289,7 +301,7 @@ void TextEdit::setupTextActions()
     actionTextBold->setCheckable(true);
 
     actionTextItalic = new QAction(QIcon::fromTheme("format-text-italic", QIcon(rsrcPath + "/textitalic.png")),
-                                   tr("&Italic"), this);
+                                   tr("斜体"), this);
     actionTextItalic->setPriority(QAction::LowPriority);
     actionTextItalic->setShortcut(Qt::CTRL + Qt::Key_I);
     QFont italic;
@@ -301,7 +313,7 @@ void TextEdit::setupTextActions()
     actionTextItalic->setCheckable(true);
 
     actionTextUnderline = new QAction(QIcon::fromTheme("format-text-underline", QIcon(rsrcPath + "/textunder.png")),
-                                      tr("&Underline"), this);
+                                      tr("下划"), this);
     actionTextUnderline->setShortcut(Qt::CTRL + Qt::Key_U);
     actionTextUnderline->setPriority(QAction::LowPriority);
     QFont underline;
@@ -320,13 +332,13 @@ void TextEdit::setupTextActions()
     // Make sure the alignLeft  is always left of the alignRight
     if (QApplication::isLeftToRight()) {
         actionAlignLeft = new QAction(QIcon::fromTheme("format-justify-left", QIcon(rsrcPath + "/textleft.png")),
-                                      tr("&Left"), grp);
-        actionAlignCenter = new QAction(QIcon::fromTheme("format-justify-center", QIcon(rsrcPath + "/textcenter.png")), tr("C&enter"), grp);
-        actionAlignRight = new QAction(QIcon::fromTheme("format-justify-right", QIcon(rsrcPath + "/textright.png")), tr("&Right"), grp);
+                                      tr("左移"), grp);
+        actionAlignCenter = new QAction(QIcon::fromTheme("format-justify-center", QIcon(rsrcPath + "/textcenter.png")), tr("居中"), grp);
+        actionAlignRight = new QAction(QIcon::fromTheme("format-justify-right", QIcon(rsrcPath + "/textright.png")), tr("右移"), grp);
     } else {
-        actionAlignRight = new QAction(QIcon::fromTheme("format-justify-right", QIcon(rsrcPath + "/textright.png")), tr("&Right"), grp);
-        actionAlignCenter = new QAction(QIcon::fromTheme("format-justify-center", QIcon(rsrcPath + "/textcenter.png")), tr("C&enter"), grp);
-        actionAlignLeft = new QAction(QIcon::fromTheme("format-justify-left", QIcon(rsrcPath + "/textleft.png")), tr("&Left"), grp);
+        actionAlignRight = new QAction(QIcon::fromTheme("format-justify-right", QIcon(rsrcPath + "/textright.png")), tr("右移"), grp);
+        actionAlignCenter = new QAction(QIcon::fromTheme("format-justify-center", QIcon(rsrcPath + "/textcenter.png")), tr("居中"), grp);
+        actionAlignLeft = new QAction(QIcon::fromTheme("format-justify-left", QIcon(rsrcPath + "/textleft.png")), tr("左移"), grp);
     }
     actionAlignJustify = new QAction(QIcon::fromTheme("format-justify-fill", QIcon(rsrcPath + "/textjustify.png")), tr("&Justify"), grp);
 
@@ -350,7 +362,7 @@ void TextEdit::setupTextActions()
 
     QPixmap pix(16, 16);
     pix.fill(Qt::black);
-    actionTextColor = new QAction(pix, tr("&Color..."), this);
+    actionTextColor = new QAction(pix, tr("颜色..."), this);
     connect(actionTextColor, SIGNAL(triggered()), this, SLOT(textColor()));
     tb->addAction(actionTextColor);
     menu->addAction(actionTextColor);
@@ -361,7 +373,7 @@ void TextEdit::setupTextActions()
     tb->setWindowTitle(tr("Format Actions"));
     addToolBarBreak(Qt::TopToolBarArea);
     addToolBar(tb);
-
+/*
     comboStyle = new QComboBox(tb);
     tb->addWidget(comboStyle);
     comboStyle->addItem("Standard");
@@ -375,7 +387,7 @@ void TextEdit::setupTextActions()
     comboStyle->addItem("Ordered List (Roman upper)");
     connect(comboStyle, SIGNAL(activated(int)),
             this, SLOT(textStyle(int)));
-
+*/
     comboFont = new QFontComboBox(tb);
     tb->addWidget(comboFont);
     connect(comboFont, SIGNAL(activated(QString)),
@@ -385,6 +397,10 @@ void TextEdit::setupTextActions()
     comboSize->setObjectName("comboSize");
     tb->addWidget(comboSize);
     comboSize->setEditable(true);
+
+    colorCombo = new CcolorCombo(tb);
+    tb->addWidget(colorCombo);
+    connect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(textColor()));
 
     QFontDatabase db;
     foreach(int size, db.standardSizes())
@@ -649,10 +665,19 @@ void TextEdit::textStyle(int styleIndex)
 }
 
 void TextEdit::textColor()
-{
+{/*
     QColor col = QColorDialog::getColor(textEdit->textColor(), this);
     if (!col.isValid())
         return;
+    QTextCharFormat fmt;
+    fmt.setForeground(col);
+    mergeFormatOnWordOrSelection(fmt);
+    colorChanged(col);
+    */
+    QColor col;
+
+    col = colorCombo->getColor();
+
     QTextCharFormat fmt;
     fmt.setForeground(col);
     mergeFormatOnWordOrSelection(fmt);
@@ -737,4 +762,142 @@ void TextEdit::alignmentChanged(Qt::Alignment a)
 QTextEdit *TextEdit::getEdit()
 {
     return textEdit;
+}
+
+void TextEdit::getSettingsFromWidget(QString str)
+{
+
+    settings.beginGroup(str);
+    settings.beginGroup("textEdit");
+    settings.setValue("text", getEdit()->toHtml());
+    settings.endGroup();
+    settings.endGroup();
+}
+
+void TextEdit::setSettingsToWidget(QString str)
+{
+    //QStringList keys;
+    QString text;
+
+
+    settings.beginGroup(str);
+    settings.beginGroup("textEdit");
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag == 0)
+    {
+
+       settings.setValue("setFlag", 1);
+    }
+    text = settings.value("text").toString();
+    if(text == "")
+        text == QString(tr("图文显示"));
+    //textEdit->clear();
+    getEdit()->setHtml(text);
+    settings.endGroup();
+    settings.endGroup();
+    //showModeEdit->setSettingsToWidget(str);
+}
+/*
+哈哈，QGraphicsTextItem  字间距：void QFont::setLetterSpacing ( SpacingType type, qreal spacing )
+
+行间距，请参考这断代码：
+
+复制代码
+        for (QTextBlock it = doc->begin(); it != doc->end(); it = it.next())
+        {
+            tc.setPosition(it.position(),QTextCursor::MoveAnchor);
+            QTextBlockFormat bfmt = it.blockFormat();
+            bfmt.setBottomMargin(mlinespacing);
+            tc.setBlockFormat(bfmt);
+            this->setTextCursor(tc);
+        }
+
+
+
+
+ */
+
+//获取文本的像素
+//mode 表示单行或多行模式
+// w表示宽度，h表示高度
+//str表示显示文本
+//page表示显示的页号，从0开始
+QImage getTextEditImage(int mode, int w, int h, QString str, int page)
+{
+    QTextEdit edit;
+    //QTextDocument document;
+
+
+    //edit.resize(w,100);
+    settings.beginGroup(str);
+    settings.beginGroup("textEdit");
+    QString str0 = settings.value("text").toString();
+    settings.endGroup();
+    settings.endGroup();
+
+
+    edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
+    edit.setLineWrapColumnOrWidth(100);
+    edit.setHtml(str0);
+    //edit.resize(w,10);
+    qDebug("edit str : %s", (const char *)str0.toLocal8Bit());
+    QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
+    int lines = 0;//  edit.lin;
+    //document.setHtml(str0);
+    //qDebug("edit widht = %d, height = %d, lines = %d",size.width(),size.height(),lines);
+    //qDebug("document widht = %d, height = %d", document.size().width(),edit.size().height());
+    edit.resize(100, size.height());
+    /*
+    QScrollBar *scrollbar = edit.verticalScrollBar();
+    scrollbar->setVisible(false);//resize(0,0);
+
+    scrollbar = edit.horizontalScrollBar();
+    scrollbar->setVisible(false);//resize(0,0);
+    */
+    edit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//setVerticalScrollBarPolicy
+    edit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    QImage image(edit.width(), edit.height(),QImage::Format_RGB32);
+    edit.render(&image);
+    image.save("d:\\text.png");
+
+    int count = edit.document()->blockCount();
+    qDebug("block num = %d",count);
+    QString lineText;
+    for(int i = 0; i < count; i ++)
+    {
+        QTextBlockFormat blockFormat = edit.document()->findBlockByNumber(i).blockFormat();
+        qDebug("line %d str : %s", i,(const char *)lineText.toLocal8Bit());
+    }
+    return image;
+
+    /*
+    QLabel edit;
+    //QTextDocument document;
+
+
+    //edit.resize(w,100);
+    settings.beginGroup(str);
+    settings.beginGroup("textEdit");
+    QString str0 = settings.value("text").toString();
+    settings.endGroup();
+    settings.endGroup();
+
+    edit.setText(str0);
+    edit.
+    //edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
+    //edit.setLineWrapColumnOrWidth(w);
+    //edit.resize(w,10);
+    QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
+
+    //document.setHtml(str0);
+    qDebug("edit widht = %d, height = %d",size.width(),size.height());
+    //qDebug("document widht = %d, height = %d", document.size().width(),edit.size().height());
+    edit.resize(size.width() * 2, size.height()*2);
+    QImage image(edit.width(),edit.height(),QImage::Format_RGB32);
+    edit.render(&image);
+    image.save("d:\\text.png");
+
+    return image;
+    */
 }

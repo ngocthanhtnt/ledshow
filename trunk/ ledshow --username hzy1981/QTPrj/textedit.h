@@ -45,6 +45,8 @@
 #include <QMainWindow>
 #include <QMap>
 #include <QPointer>
+#include <QPalette>
+#include "colorCombo.h"
 
 QT_FORWARD_DECLARE_CLASS(QAction)
 QT_FORWARD_DECLARE_CLASS(QComboBox)
@@ -58,7 +60,10 @@ class TextEdit : public QMainWindow
     Q_OBJECT
 
 public:
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
     TextEdit(QWidget *parent = 0);
+    QPalette *palette;
     QTextEdit *getEdit();
 protected:
     virtual void closeEvent(QCloseEvent *e);
@@ -120,10 +125,12 @@ private:
     QComboBox *comboStyle;
     QFontComboBox *comboFont;
     QComboBox *comboSize;
+    CcolorCombo *colorCombo;
 
     QToolBar *tb;
     QString fileName;
     QTextEdit *textEdit;
 };
 
+QImage getTextEditImage(int mode, int w, int h, QString str, int page);
 #endif

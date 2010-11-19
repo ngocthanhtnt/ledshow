@@ -163,6 +163,6 @@ public:
 
 };
 
-QImage getTextImage(QString str);
+QImage getLineTextImage(QString str);
 QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y);
 #endif // SIMPLETEXTEDIT_H

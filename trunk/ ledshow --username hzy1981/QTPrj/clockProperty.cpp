@@ -163,7 +163,7 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     //vLayout->addStretch();
     hLayout->addLayout(vLayout);
 
-    hLayout ->addStretch();
+    hLayout ->addStretch(10);
     setLayout(hLayout);
 
     connect(pointRadiusEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
@@ -247,7 +247,7 @@ void updateClockShowArea(CshowArea *area, QTreeWidgetItem *item)
         str = item->data(0,Qt::UserRole).toString();
 
         getClockParaFromSettings(str,area->File_Para);
-        area->imageBk = getTextImage(str);
+        area->imageBk = getLineTextImage(str);
 
         //qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);
         area->update(); //Ë¢ÐÂÏÔÊ¾

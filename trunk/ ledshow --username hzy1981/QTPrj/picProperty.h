@@ -41,6 +41,8 @@ private:
 */
     CshowModeEdit *showModeEdit;
     TextEdit *edit;
+public slots:
+    void propertyEdited();
 public:
     Carea *area;
     void getSettingsFromWidget(QString str);
