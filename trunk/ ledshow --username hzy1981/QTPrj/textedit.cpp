@@ -71,7 +71,7 @@
 #include <QSettings>
 #include <QTextBrowser>
 #include <QAbstractTextDocumentLayout>
-#include <QScrollBar>
+#include <QTextDocumentFragment>
 
 #ifdef Q_WS_MAC
 const QString rsrcPath = ":/images/mac";
@@ -817,6 +817,7 @@ void TextEdit::setSettingsToWidget(QString str)
 
  */
 
+
 //获取文本的像素
 //mode 表示单行或多行模式
 // w表示宽度，h表示高度
@@ -837,23 +838,13 @@ QImage getTextEditImage(int mode, int w, int h, QString str, int page)
 
 
     edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
-    edit.setLineWrapColumnOrWidth(100);
+    edit.setLineWrapColumnOrWidth(400);
     edit.setHtml(str0);
-    //edit.resize(w,10);
+
     qDebug("edit str : %s", (const char *)str0.toLocal8Bit());
     QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
-    int lines = 0;//  edit.lin;
-    //document.setHtml(str0);
-    //qDebug("edit widht = %d, height = %d, lines = %d",size.width(),size.height(),lines);
-    //qDebug("document widht = %d, height = %d", document.size().width(),edit.size().height());
-    edit.resize(100, size.height());
-    /*
-    QScrollBar *scrollbar = edit.verticalScrollBar();
-    scrollbar->setVisible(false);//resize(0,0);
+    edit.resize(size.width(), size.height());
 
-    scrollbar = edit.horizontalScrollBar();
-    scrollbar->setVisible(false);//resize(0,0);
-    */
     edit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//setVerticalScrollBarPolicy
     edit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -861,14 +852,40 @@ QImage getTextEditImage(int mode, int w, int h, QString str, int page)
     edit.render(&image);
     image.save("d:\\text.png");
 
+    //-------------------------
+
     int count = edit.document()->blockCount();
     qDebug("block num = %d",count);
-    QString lineText;
+
+    int posi;
+
     for(int i = 0; i < count; i ++)
     {
-        QTextBlockFormat blockFormat = edit.document()->findBlockByNumber(i).blockFormat();
-        qDebug("line %d str : %s", i,(const char *)lineText.toLocal8Bit());
+        QTextCursor cursor = edit.textCursor();
+        posi = edit.document()->findBlockByNumber(i).position();
+        cursor.setPosition(posi,QTextCursor::MoveAnchor);
+        edit.setTextCursor(cursor);
+        cursor.select(QTextCursor::BlockUnderCursor);
+        QString text = cursor.selection().toHtml();
+
+        qDebug("line %d str : %s", i,(const char *)text.toLocal8Bit());
+
+        QTextEdit tempEdit;
+        tempEdit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//setVerticalScrollBarPolicy
+        tempEdit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        tempEdit.setLineWrapMode(QTextEdit::NoWrap);
+        tempEdit.setHtml(text);
+
+        //qDebug("tempEdit %d str : %s", i,(const char *)tempEdit.document()->textWidth());
+
+        QSize size = tempEdit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
+        tempEdit.resize(size.width(), size.height());
+
+        QImage tempImage(tempEdit.width(),tempEdit.height(),QImage::Format_RGB32);
+        tempEdit.render(&tempImage);
+        tempImage.save("d:\\tempImage.png");
     }
+
     return image;
 
     /*
