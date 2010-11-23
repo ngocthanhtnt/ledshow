@@ -44,6 +44,22 @@ public:
     ~CshowModeEdit();
 };
 
+class CsmLineCombo:public QComboBox
+{
+  Q_OBJECT
+//private:
+  //QComboBox *smLineCombo;
+
+signals:
+    void edited();
+public:
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CsmLineCombo(QWidget *parent =0);
+    ~CsmLineCombo();
+
+};
+
 class CsmLineEdit:public QGroupBox
 {
   Q_OBJECT
@@ -51,7 +67,7 @@ private:
   QComboBox *smLineCombo;
 
 signals:
-  void edited();
+    void edited();
 public:
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);

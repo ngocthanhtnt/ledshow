@@ -116,6 +116,7 @@ public:
     //int setOneAreaVisible(QString settingsStr);
     void setAreaVisible(int index, bool flag);
 
+    QString getCurrentStr();
     CshowArea * newShowArea();
     CscreenArea(QWidget *parent = 0);
     ~CscreenArea();

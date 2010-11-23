@@ -72,6 +72,9 @@
 #include <QTextBrowser>
 #include <QAbstractTextDocumentLayout>
 #include <QTextDocumentFragment>
+#include <QRgb>
+#include "showArea.h"
+#include "mainwindow.h"
 
 #ifdef Q_WS_MAC
 const QString rsrcPath = ":/images/mac";
@@ -79,6 +82,7 @@ const QString rsrcPath = ":/images/mac";
 const QString rsrcPath = ":/images/win";
 #endif
 
+extern MainWindow *w;
 extern QSettings settings;
 
 TextEdit::TextEdit(QWidget *parent)
@@ -410,6 +414,12 @@ void TextEdit::setupTextActions()
             this, SLOT(textSize(QString)));
     comboSize->setCurrentIndex(comboSize->findText(QString::number(QApplication::font()
                                                                    .pointSize())));
+
+    smLineCombo = new CsmLineCombo(tb);
+    tb->addWidget(smLineCombo);
+    connect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));//SLOT(textColor()));
+
+    connect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
 }
 
 bool TextEdit::load(const QString &f)
@@ -764,6 +774,28 @@ QTextEdit *TextEdit::getEdit()
     return textEdit;
 }
 
+void TextEdit::showInit()
+{
+    CshowArea *area;
+
+    //qDebug("propertyEdited");
+    area = w->screenArea->getFocusArea(); //当前焦点分区
+    //if(area != (CshowArea *)0)
+    {
+        textEdit->setLineWrapMode(QTextEdit::FixedPixelWidth);
+        textEdit->setLineWrapColumnOrWidth(area->width());
+        show();
+    }
+}
+
+void TextEdit::edit()
+{
+  QString str = w->screenArea->getCurrentStr();//getCurrentStr
+  setSettingsToWidget(str);
+
+  w->screenArea->getFocusArea()->update(); //更新当前显示缓冲
+}
+
 void TextEdit::getSettingsFromWidget(QString str)
 {
 
@@ -772,6 +804,8 @@ void TextEdit::getSettingsFromWidget(QString str)
     settings.setValue("text", getEdit()->toHtml());
     settings.endGroup();
     settings.endGroup();
+
+    smLineCombo->getSettingsFromWidget(str);
 }
 
 void TextEdit::setSettingsToWidget(QString str)
@@ -796,6 +830,8 @@ void TextEdit::setSettingsToWidget(QString str)
     settings.endGroup();
     settings.endGroup();
     //showModeEdit->setSettingsToWidget(str);
+
+    smLineCombo->setSettingsToWidget(str);
 }
 /*
 哈哈，QGraphicsTextItem  字间距：void QFont::setLetterSpacing ( SpacingType type, qreal spacing )
@@ -817,6 +853,46 @@ void TextEdit::setSettingsToWidget(QString str)
 
  */
 
+int getTextImagePageNum(int mode, int w, int h, QString str)
+{
+    QTextEdit edit;
+    //QTextDocument document;
+
+
+    //edit.resize(w,100);
+    settings.beginGroup(str);
+    settings.beginGroup("textEdit");
+    QString str0 = settings.value("text").toString();
+    settings.endGroup();
+    settings.endGroup();
+
+
+    edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
+    edit.setLineWrapColumnOrWidth(w);
+    edit.setHtml(str0);
+
+    qDebug("edit str : %s", (const char *)str0.toLocal8Bit());
+    QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
+
+    if(mode == SLINE_MODE) //单行模式
+    {
+      return edit.document()->lineCount();
+    }
+    else //多行模式
+    {
+        if((edit.height() % h) == 0)
+            return edit.height() / h;
+        else
+            return edit.height() / h + 1;
+      //return (edit.height() - edit.height() % h)/h  + 1;
+    }
+    /*
+    edit.resize(size.width(), size.height());
+
+    edit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//setVerticalScrollBarPolicy
+    edit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    */
+}
 
 //获取文本的像素
 //mode 表示单行或多行模式
@@ -838,12 +914,15 @@ QImage getTextEditImage(int mode, int w, int h, QString str, int page)
 
 
     edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
-    edit.setLineWrapColumnOrWidth(400);
+    edit.setLineWrapColumnOrWidth(w);
     edit.setHtml(str0);
 
     qDebug("edit str : %s", (const char *)str0.toLocal8Bit());
     QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
     edit.resize(size.width(), size.height());
+
+    QPalette *palette = new QPalette(QPalette::Base,QColor(Qt::black));
+    edit.setPalette(*palette);//->setPalette(palette);
 
     edit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//setVerticalScrollBarPolicy
     edit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -852,28 +931,37 @@ QImage getTextEditImage(int mode, int w, int h, QString str, int page)
     edit.render(&image);
     image.save("d:\\text.png");
 
-    //-------------------------
+    QImage reImage(w,h,QImage::Format_RGB32); //
+    reImage.fill(QColor(Qt::black).rgb());
+    QRgb rgb;
 
-    int count = edit.document()->blockCount();
-    qDebug("block num = %d",count);
+    if(mode == MLINE_MODE) //多行模式
+    {
+      int imageHeight = image.height();
+      for(int i = 0; i < w; i ++)
+        for(int j = page*h; j < page*h + h && j < imageHeight; j ++)
+        {
+          rgb = image.pixel(i,j);
+          reImage.setPixel(i, j - page*h, rgb);
 
-    int posi;
-
-    for(int i = 0; i < count; i ++)
+        }
+    }
+    else
     {
         QTextCursor cursor = edit.textCursor();
-        posi = edit.document()->findBlockByNumber(i).position();
-        cursor.setPosition(posi,QTextCursor::MoveAnchor);
+
+        cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, page);
+
         edit.setTextCursor(cursor);
-        cursor.select(QTextCursor::BlockUnderCursor);
+        cursor.select(QTextCursor::LineUnderCursor);
         QString text = cursor.selection().toHtml();
 
-        qDebug("line %d str : %s", i,(const char *)text.toLocal8Bit());
-
         QTextEdit tempEdit;
+
         tempEdit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//setVerticalScrollBarPolicy
         tempEdit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        tempEdit.setLineWrapMode(QTextEdit::NoWrap);
+        tempEdit.setLineWrapMode(QTextEdit::FixedPixelWidth);
+        tempEdit.setLineWrapColumnOrWidth(w);
         tempEdit.setHtml(text);
 
         //qDebug("tempEdit %d str : %s", i,(const char *)tempEdit.document()->textWidth());
@@ -884,9 +972,33 @@ QImage getTextEditImage(int mode, int w, int h, QString str, int page)
         QImage tempImage(tempEdit.width(),tempEdit.height(),QImage::Format_RGB32);
         tempEdit.render(&tempImage);
         tempImage.save("d:\\tempImage.png");
+
+        int height = tempImage.height();
+        if(height > h) //行高度比窗口高度高?
+        {
+            for(int i = 0; i < w; i ++)
+              for(int j = (height - h) / 2; j < (height - h) / 2 + h; j ++)
+              {
+                rgb = tempImage.pixel(i,j);
+                reImage.setPixel(i, j - (height - h) / 2, rgb);
+
+              }
+        }
+        else
+        {
+            for(int i = 0; i < w; i ++)
+              for(int j = 0; j < height; j ++)
+              {
+                rgb = tempImage.pixel(i, j);
+                reImage.setPixel(i, j + (h - height) / 2, rgb);
+
+              }
+
+        }
     }
 
-    return image;
+    reImage.save("d:\\simage.png");
+    return reImage;
 
     /*
     QLabel edit;
