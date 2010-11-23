@@ -183,6 +183,56 @@ CshowModeEdit::~CshowModeEdit()
 }
 
 
+CsmLineCombo::CsmLineCombo(QWidget *parent):QComboBox(parent)
+{
+    QHBoxLayout *hLayout;
+
+    //editGroup = new QGroupBox(this);
+    //smLineCombo = new QComboBox(this);
+
+    addItem(tr("单行字幕"));
+    addItem(tr("多行文本"));
+
+    //hLayout = new QHBoxLayout(this);
+    //hLayout->addWidget(smLineCombo);
+
+    //setTitle(tr("单/多行"));
+    //setLayout(hLayout);
+
+    connect(this, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+}
+
+//从Widget上获取设置
+void CsmLineCombo::getSettingsFromWidget(QString str)
+{
+   settings.beginGroup(str);
+   settings.beginGroup("smLine");
+   settings.setValue("smLineCheck", currentIndex());
+   settings.endGroup();
+   settings.endGroup();
+}
+
+void CsmLineCombo::setSettingsToWidget(QString str)
+{
+    settings.beginGroup(str);
+    settings.beginGroup("smLine");
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag == 0)
+    {
+       settings.setValue("smLineCheck", 0);
+       settings.setValue("setFlag", 1);
+    }
+    setCurrentIndex(settings.value("smLineCheck").toInt());
+    settings.endGroup();
+    settings.endGroup();
+}
+
+CsmLineCombo::~CsmLineCombo()
+{
+
+}
+
+///--------//
 CsmLineEdit::CsmLineEdit(QWidget *parent):QGroupBox(parent)
 {
     QHBoxLayout *hLayout;
@@ -199,7 +249,7 @@ CsmLineEdit::CsmLineEdit(QWidget *parent):QGroupBox(parent)
     setTitle(tr("单/多行"));
     setLayout(hLayout);
 
-    connect(smLineCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(this, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
 }
 
 //从Widget上获取设置
@@ -231,7 +281,7 @@ CsmLineEdit::~CsmLineEdit()
 {
 
 }
-
+///--------//
 CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
 {
     QHBoxLayout *hLayout;

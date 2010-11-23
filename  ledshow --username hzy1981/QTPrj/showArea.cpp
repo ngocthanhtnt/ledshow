@@ -916,10 +916,11 @@ void CshowArea::paintEvent(QPaintEvent *)
         }
         else if(File_Para.Temp_Para.Flag == SHOW_PIC) //ÏÔÊ¾Í¼ÎÄ
         {
-            //getTextShowData(imageBk, &showData, 0, 0);
+            //imageBk = getTextEditImage(MLINE_MODE, width(), height(), w->, 0);
+            getTextShowData(imageBk, &showData, 0, 0);
         }
-    }
 
+     }
     for(j=0; j<h; j++)
     {
         for(i=0; i<w; i++)
@@ -994,6 +995,7 @@ void CshowArea::paintEvent(QPaintEvent *)
         }
     }
 
+
 /*
     else if(Get_Bit(color1, h, i, j))
            {
@@ -1057,6 +1059,19 @@ void CshowArea::resetProgramPara()
     Program_Para.Area[0].X_Len = geometry().width();
     Program_Para.Area[0].Y_Len = geometry().height();
 
+}
+
+QString CscreenArea::getCurrentStr()
+{
+    CshowArea *area = getFocusArea();
+    if(area == (CshowArea *)0)
+        return "";
+
+    QTreeWidgetItem *item = area->fileItem;
+    if(item == (QTreeWidgetItem *)0)
+        return "";
+
+    return item->data(0, Qt::UserRole).toString();
 }
 
 int CshowArea::getColor()

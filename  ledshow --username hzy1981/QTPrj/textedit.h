@@ -47,6 +47,10 @@
 #include <QPointer>
 #include <QPalette>
 #include "colorCombo.h"
+#include "simpleTextEdit.h"
+
+#define SLINE_MODE 0x00
+#define MLINE_MODE 0x01
 
 QT_FORWARD_DECLARE_CLASS(QAction)
 QT_FORWARD_DECLARE_CLASS(QComboBox)
@@ -101,6 +105,8 @@ private slots:
     void about();
     void printPreview(QPrinter *);
 
+    void showInit();
+    void edit();
 private:
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
     void fontChanged(const QFont &f);
@@ -126,11 +132,13 @@ private:
     QFontComboBox *comboFont;
     QComboBox *comboSize;
     CcolorCombo *colorCombo;
+    CsmLineCombo *smLineCombo; //单行字幕或多行文本
 
     QToolBar *tb;
     QString fileName;
     QTextEdit *textEdit;
 };
 
+int getTextImagePageNum(int mode, int w, int h, QString str);
 QImage getTextEditImage(int mode, int w, int h, QString str, int page);
 #endif
