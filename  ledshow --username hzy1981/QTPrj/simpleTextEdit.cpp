@@ -753,8 +753,8 @@ QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
             Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x04);
         else if(rgb == black.rgb())
             Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x00);
-        else
-            ASSERT_FAILED();
+        //else
+            //ASSERT_FAILED();
       }
   size.setWidth(image.width());
   size.setHeight(image.height());

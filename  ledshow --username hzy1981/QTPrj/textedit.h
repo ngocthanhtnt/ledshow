@@ -46,6 +46,8 @@
 #include <QMap>
 #include <QPointer>
 #include <QPalette>
+#include <QSpinBox>
+#include <QDialog>
 #include "colorCombo.h"
 #include "simpleTextEdit.h"
 
@@ -133,6 +135,7 @@ private:
     QComboBox *comboSize;
     CcolorCombo *colorCombo;
     CsmLineCombo *smLineCombo; //单行字幕或多行文本
+    QSpinBox *spinPage;
 
     QToolBar *tb;
     QString fileName;

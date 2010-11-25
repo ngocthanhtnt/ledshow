@@ -217,6 +217,10 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
 
         updateClockShowArea(area, item);
     }
+    else if(type EQ PIC_PROPERTY)
+    {
+        updatePicShowArea(area, item);
+    }
 }
 
 //当前节目、分区、文件发生变化时的处理
@@ -760,6 +764,7 @@ void CshowArea::paintEvent(QPaintEvent *)
 {
     int i,j,w,h;
     int color;
+    QString str;
     //CshowArea *pArea;
     //QPainter painter;
 
@@ -916,7 +921,7 @@ void CshowArea::paintEvent(QPaintEvent *)
         }
         else if(File_Para.Temp_Para.Flag == SHOW_PIC) //显示图文
         {
-            //imageBk = getTextEditImage(MLINE_MODE, width(), height(), w->, 0);
+            imageBk = getTextEditImage(smLineFlag, w,h, picStr, page);
             getTextShowData(imageBk, &showData, 0, 0);
         }
 
