@@ -15,6 +15,7 @@
 #include <simpleTextEdit.h>
 #include "areaProperty.h"
 #include "textedit.h"
+#include <showArea.h>
 
 
 //½ÚÄ¿ÊôÐÔ´°
@@ -51,5 +52,5 @@ public:
     CpicProperty(QWidget *parent=0);
     ~CpicProperty();
 };
-
+void updatePicShowArea(CshowArea *area, QTreeWidgetItem *item);
 #endif // picProperty_H

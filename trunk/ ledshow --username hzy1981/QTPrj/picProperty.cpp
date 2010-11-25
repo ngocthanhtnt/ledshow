@@ -23,7 +23,20 @@ void updatePicShowArea(CshowArea *area, QTreeWidgetItem *item)
         str = item->data(0,Qt::UserRole).toString();
 
         getPicParaFromSettings(str,area->File_Para);
-        area->imageBk = getTextEditImage(MLINE_MODE, area->width(), area->height(), str, 0);
+
+        settings.beginGroup(str);
+        settings.beginGroup("textEdit");
+        area->picStr = settings.value("text").toString();
+        settings.endGroup();
+
+        settings.beginGroup("smLine");
+        area->smLineFlag = settings.value("smLineCheck").toBool();
+        settings.endGroup();
+
+        settings.endGroup();
+
+        area->page = 0;
+        //area->imageBk = getTextEditImage(MLINE_MODE, area->width(), area->height(), str, 0);
 
         //qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);
         area->update(); //Ë¢ÐÂÏÔÊ¾
@@ -93,9 +106,9 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
     setLayout(hLayout);
 
     edit = new TextEdit(this);
-    edit->getEdit()->clear();
+    //edit->getEdit()->clear();
     connect(editButton, SIGNAL(clicked()), edit, SLOT(showInit()));
-    connect(editButton, SIGNAL(clicked()), this, SLOT(propertyEdited()));
+    //connect(editButton, SIGNAL(clicked()), this, SLOT(propertyEdited()));
 }
 
 CpicProperty::~CpicProperty()

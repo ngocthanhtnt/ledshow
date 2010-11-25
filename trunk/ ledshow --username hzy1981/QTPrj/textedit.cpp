@@ -73,6 +73,7 @@
 #include <QAbstractTextDocumentLayout>
 #include <QTextDocumentFragment>
 #include <QRgb>
+#include <QDialog>
 #include "showArea.h"
 #include "mainwindow.h"
 
@@ -153,6 +154,8 @@ TextEdit::TextEdit(QWidget *parent)
     if (!load(initialFile))
         fileNew();
 */
+    //connect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
+    //textEdit->clear();
     //QColor color = new QColor();
     palette = new QPalette(QPalette::Base,QColor(Qt::black));
     textEdit->setPalette(*palette);//->setPalette(palette);
@@ -419,7 +422,10 @@ void TextEdit::setupTextActions()
     tb->addWidget(smLineCombo);
     connect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));//SLOT(textColor()));
 
-    connect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
+    spinPage = new QSpinBox(tb);
+    tb->addWidget(spinPage);
+    spinPage->setValue(0);
+    connect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));//SLOT(textColor()));
 }
 
 bool TextEdit::load(const QString &f)
@@ -780,20 +786,39 @@ void TextEdit::showInit()
 
     //qDebug("propertyEdited");
     area = w->screenArea->getFocusArea(); //当前焦点分区
-    //if(area != (CshowArea *)0)
+    if(area != (CshowArea *)0)
     {
+        connect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
         textEdit->setLineWrapMode(QTextEdit::FixedPixelWidth);
         textEdit->setLineWrapColumnOrWidth(area->width());
+
+        int mode;
+        if(smLineCombo->currentIndex() == 0)
+            mode = SLINE_MODE;
+        else
+            mode = MLINE_MODE;
+
+        int pageNum = getTextImagePageNum(mode,area->width(),area->height(),textEdit->toHtml());
+        spinPage->setMinimum(0);
+        spinPage->setMaximum(pageNum);
+
         show();
     }
 }
 
 void TextEdit::edit()
 {
-  QString str = w->screenArea->getCurrentStr();//getCurrentStr
-  setSettingsToWidget(str);
+    CshowArea *area;
 
-  w->screenArea->getFocusArea()->update(); //更新当前显示缓冲
+  QString str = w->screenArea->getCurrentStr();//getCurrentStr
+  //setSettingsToWidget(str);
+  getSettingsFromWidget(str);
+  area = w->screenArea->getFocusArea();
+  area->smLineFlag = 0;
+  area->picStr = textEdit->toHtml();
+  area->page = spinPage->value(); //页号
+  area->update(); //更新当前显示缓冲
+
 }
 
 void TextEdit::getSettingsFromWidget(QString str)
@@ -803,6 +828,7 @@ void TextEdit::getSettingsFromWidget(QString str)
     settings.beginGroup("textEdit");
     settings.setValue("text", getEdit()->toHtml());
     settings.endGroup();
+    settings.setValue("page", spinPage->value());
     settings.endGroup();
 
     smLineCombo->getSettingsFromWidget(str);
@@ -825,11 +851,20 @@ void TextEdit::setSettingsToWidget(QString str)
     text = settings.value("text").toString();
     if(text == "")
         text == QString(tr("图文显示"));
-    //textEdit->clear();
-    getEdit()->setHtml(text);
+
     settings.endGroup();
+    int page = settings.value("page").toInt();
     settings.endGroup();
-    //showModeEdit->setSettingsToWidget(str);
+
+    //disconnect()
+    disconnect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
+    textEdit->clear();
+    textEdit->setHtml(text);
+    connect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
+
+    disconnect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));
+    spinPage->setValue(page);
+    connect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));
 
     smLineCombo->setSettingsToWidget(str);
 }
@@ -858,20 +893,21 @@ int getTextImagePageNum(int mode, int w, int h, QString str)
     QTextEdit edit;
     //QTextDocument document;
 
-
+/*
     //edit.resize(w,100);
     settings.beginGroup(str);
     settings.beginGroup("textEdit");
-    QString str0 = settings.value("text").toString();
+    QString str = settings.value("text").toString();
     settings.endGroup();
     settings.endGroup();
+*/
 
 
     edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
     edit.setLineWrapColumnOrWidth(w);
-    edit.setHtml(str0);
+    edit.setHtml(str);
 
-    qDebug("edit str : %s", (const char *)str0.toLocal8Bit());
+    qDebug("edit str : %s", (const char *)str.toLocal8Bit());
     QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
 
     if(mode == SLINE_MODE) //单行模式
@@ -904,20 +940,21 @@ QImage getTextEditImage(int mode, int w, int h, QString str, int page)
     QTextEdit edit;
     //QTextDocument document;
 
-
+/*
     //edit.resize(w,100);
     settings.beginGroup(str);
     settings.beginGroup("textEdit");
-    QString str0 = settings.value("text").toString();
+    QString str = settings.value("text").toString();
     settings.endGroup();
     settings.endGroup();
-
+*/
+    //QString str = str;
 
     edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
     edit.setLineWrapColumnOrWidth(w);
-    edit.setHtml(str0);
+    edit.setHtml(str);
 
-    qDebug("edit str : %s", (const char *)str0.toLocal8Bit());
+    qDebug("edit str : %s", (const char *)str.toLocal8Bit());
     QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
     edit.resize(size.width(), size.height());
 
@@ -929,7 +966,7 @@ QImage getTextEditImage(int mode, int w, int h, QString str, int page)
 
     QImage image(edit.width(), edit.height(),QImage::Format_RGB32);
     edit.render(&image);
-    image.save("d:\\text.png");
+    //image.save("d:\\text.png");
 
     QImage reImage(w,h,QImage::Format_RGB32); //
     reImage.fill(QColor(Qt::black).rgb());
@@ -969,9 +1006,13 @@ QImage getTextEditImage(int mode, int w, int h, QString str, int page)
         QSize size = tempEdit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
         tempEdit.resize(size.width(), size.height());
 
+        palette = new QPalette(QPalette::Base,QColor(Qt::black));
+        tempEdit.setPalette(*palette);//->setPalette(palette);
+
         QImage tempImage(tempEdit.width(),tempEdit.height(),QImage::Format_RGB32);
+
         tempEdit.render(&tempImage);
-        tempImage.save("d:\\tempImage.png");
+        //tempImage.save("d:\\tempImage.png");
 
         int height = tempImage.height();
         if(height > h) //行高度比窗口高度高?
@@ -1008,18 +1049,18 @@ QImage getTextEditImage(int mode, int w, int h, QString str, int page)
     //edit.resize(w,100);
     settings.beginGroup(str);
     settings.beginGroup("textEdit");
-    QString str0 = settings.value("text").toString();
+    QString str = settings.value("text").toString();
     settings.endGroup();
     settings.endGroup();
 
-    edit.setText(str0);
+    edit.setText(str);
     edit.
     //edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
     //edit.setLineWrapColumnOrWidth(w);
     //edit.resize(w,10);
     QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
 
-    //document.setHtml(str0);
+    //document.setHtml(str);
     qDebug("edit widht = %d, height = %d",size.width(),size.height());
     //qDebug("document widht = %d, height = %d", document.size().width(),edit.size().height());
     edit.resize(size.width() * 2, size.height()*2);
