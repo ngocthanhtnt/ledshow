@@ -89,6 +89,8 @@ extern QSettings settings;
 TextEdit::TextEdit(QWidget *parent)
     : QMainWindow(parent)
 {
+    //setWindowFlags(windowFlags() | Qt::WType_TopLevel);
+    setWindowModality(Qt::WindowModal);//Qt::WindowModal
     setToolButtonStyle(Qt::ToolButtonFollowStyle);
     setupFileActions();
     setupEditActions();
@@ -424,7 +426,7 @@ void TextEdit::setupTextActions()
 
     spinPage = new QSpinBox(tb);
     tb->addWidget(spinPage);
-    spinPage->setValue(0);
+    spinPage->setValue(1);
     connect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));//SLOT(textColor()));
 }
 
@@ -605,6 +607,7 @@ void TextEdit::textFamily(const QString &f)
 {
     QTextCharFormat fmt;
     fmt.setFontFamily(f);
+    fmt.font().setStyleStrategy(QFont::NoAntialias);//关闭抗锯齿---!
     mergeFormatOnWordOrSelection(fmt);
 }
 
@@ -753,6 +756,11 @@ void TextEdit::fontChanged(const QFont &f)
     actionTextBold->setChecked(f.bold());
     actionTextItalic->setChecked(f.italic());
     actionTextUnderline->setChecked(f.underline());
+/*
+    QFont font = textEdit->currentFont();
+    font.setStyleStrategy(QFont::NoAntialias);//关闭抗锯齿
+    textEdit->setCurrentFont(font);
+*/
 }
 
 void TextEdit::colorChanged(const QColor &c)
@@ -760,6 +768,8 @@ void TextEdit::colorChanged(const QColor &c)
     QPixmap pix(16, 16);
     pix.fill(c);
     actionTextColor->setIcon(pix);
+
+    colorCombo->setColor(c);// setColor(QColor &col)
 }
 
 void TextEdit::alignmentChanged(Qt::Alignment a)
@@ -788,7 +798,7 @@ void TextEdit::showInit()
     area = w->screenArea->getFocusArea(); //当前焦点分区
     if(area != (CshowArea *)0)
     {
-        connect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
+        //connect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
         textEdit->setLineWrapMode(QTextEdit::FixedPixelWidth);
         textEdit->setLineWrapColumnOrWidth(area->width());
 
@@ -800,8 +810,10 @@ void TextEdit::showInit()
 
         int pageNum = getTextImagePageNum(mode,area->width(),area->height(),textEdit->toHtml());
         spinPage->setMinimum(0);
-        spinPage->setMaximum(pageNum);
 
+        spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
+
+        //raise();
         show();
     }
 }
@@ -814,8 +826,16 @@ void TextEdit::edit()
   //setSettingsToWidget(str);
   getSettingsFromWidget(str);
   area = w->screenArea->getFocusArea();
-  area->smLineFlag = 0;
+
+  if(smLineCombo->currentIndex() == 0)
+      area->smLineFlag = SLINE_MODE;//smLineCombo->currentIndex();
+  else
+      area->smLineFlag = MLINE_MODE;
+
   area->picStr = textEdit->toHtml();
+
+  int pageNum = getTextImagePageNum(area->smLineFlag, area->width(),area->height(),area->picStr);
+  spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
   area->page = spinPage->value(); //页号
   area->update(); //更新当前显示缓冲
 
@@ -866,7 +886,9 @@ void TextEdit::setSettingsToWidget(QString str)
     spinPage->setValue(page);
     connect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));
 
+    disconnect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));
     smLineCombo->setSettingsToWidget(str);
+    connect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));
 }
 /*
 哈哈，QGraphicsTextItem  字间距：void QFont::setLetterSpacing ( SpacingType type, qreal spacing )
@@ -912,14 +934,27 @@ int getTextImagePageNum(int mode, int w, int h, QString str)
 
     if(mode == SLINE_MODE) //单行模式
     {
-      return edit.document()->lineCount();
+       int line = 1,posi;
+       QTextCursor cursor = edit.textCursor();
+       while(1)
+       {
+         posi = cursor.position();
+         cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, 1);
+
+         if(posi == cursor.position())
+             break;
+
+         line ++;
+       }
+       //return edit.document()->lineCount();
+      return line;
     }
     else //多行模式
     {
-        if((edit.height() % h) == 0)
-            return edit.height() / h;
+        if((size.height() % h) == 0)
+            return size.height() / h;
         else
-            return edit.height() / h + 1;
+            return size.height() / h + 1;
       //return (edit.height() - edit.height() % h)/h  + 1;
     }
     /*

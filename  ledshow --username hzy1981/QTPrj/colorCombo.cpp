@@ -26,6 +26,16 @@ CcolorCombo::~CcolorCombo()
 
 }
 
+void CcolorCombo::setColor(const QColor &col)
+{
+    if(col == QColor(Qt::red))
+        setCurrentIndex(0);
+    else if(col == QColor(Qt::green))
+        setCurrentIndex(1);
+    else
+        setCurrentIndex(2);
+}
+
 CsizeCombo::CsizeCombo(QWidget *parent):QComboBox(parent)
 {
     addItem(tr("16"));
