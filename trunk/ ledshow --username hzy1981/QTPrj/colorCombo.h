@@ -26,6 +26,7 @@ class CcolorCombo:public QComboBox
     Q_OBJECT
 public:
     QColor getColor();
+    void setColor(const QColor &col);
     CcolorCombo(QWidget *parent = 0);
     ~CcolorCombo();
 };
