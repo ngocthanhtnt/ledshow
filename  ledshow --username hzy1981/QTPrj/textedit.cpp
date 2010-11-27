@@ -114,7 +114,9 @@ TextEdit::TextEdit(QWidget *parent)
     setCurrentFileName(QString());
 
     fontChanged(textEdit->font());
-    colorChanged(textEdit->textColor());
+    textEdit->setTextColor(colorCombo->getColor());
+    colorChanged(colorCombo->getColor());
+
     alignmentChanged(textEdit->alignment());
 
     connect(textEdit->document(), SIGNAL(modificationChanged(bool)),
@@ -368,14 +370,14 @@ void TextEdit::setupTextActions()
     menu->addActions(grp->actions());
 
     menu->addSeparator();
-
+/*
     QPixmap pix(16, 16);
     pix.fill(Qt::black);
     actionTextColor = new QAction(pix, tr("ÑÕÉ«..."), this);
     connect(actionTextColor, SIGNAL(triggered()), this, SLOT(textColor()));
     tb->addAction(actionTextColor);
     menu->addAction(actionTextColor);
-
+*/
 
     tb = new QToolBar(this);
     tb->setAllowedAreas(Qt::TopToolBarArea | Qt::BottomToolBarArea);
@@ -585,8 +587,7 @@ void TextEdit::textBold()
     fmt.setFontWeight(actionTextBold->isChecked() ? QFont::Bold : QFont::Normal);
     mergeFormatOnWordOrSelection(fmt);
 
-    QTextCursor cursor = textEdit->textCursor();
-    cursor.insertTable(10,10);
+    //QTextCursor cursor = textEdit->textCursor();
 }
 
 void TextEdit::textUnderline()
@@ -607,7 +608,6 @@ void TextEdit::textFamily(const QString &f)
 {
     QTextCharFormat fmt;
     fmt.setFontFamily(f);
-    fmt.font().setStyleStrategy(QFont::NoAntialias);//¹Ø±Õ¿¹¾â³Ý---!
     mergeFormatOnWordOrSelection(fmt);
 }
 
@@ -717,8 +717,19 @@ void TextEdit::textAlign(QAction *a)
 
 void TextEdit::currentCharFormatChanged(const QTextCharFormat &format)
 {
-    fontChanged(format.font());
-    colorChanged(format.foreground().color());
+    if(format.foreground().color() != QColor(Qt::red) &&
+       format.foreground().color() != QColor(Qt::green) &&
+       format.foreground().color() != QColor(Qt::yellow))
+    {
+       fontChanged(format.font());
+       textEdit->setTextColor(colorCombo->getColor());
+       colorChanged(colorCombo->getColor());
+   }
+   else
+   {
+     fontChanged(format.font());
+     colorChanged(format.foreground().color());
+   }
 }
 
 void TextEdit::cursorPositionChanged()
@@ -746,6 +757,7 @@ void TextEdit::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
     if (!cursor.hasSelection())
         cursor.select(QTextCursor::WordUnderCursor);
     cursor.mergeCharFormat(format);
+
     textEdit->mergeCurrentCharFormat(format);
 }
 
@@ -756,19 +768,14 @@ void TextEdit::fontChanged(const QFont &f)
     actionTextBold->setChecked(f.bold());
     actionTextItalic->setChecked(f.italic());
     actionTextUnderline->setChecked(f.underline());
-/*
-    QFont font = textEdit->currentFont();
-    font.setStyleStrategy(QFont::NoAntialias);//¹Ø±Õ¿¹¾â³Ý
-    textEdit->setCurrentFont(font);
-*/
 }
 
 void TextEdit::colorChanged(const QColor &c)
-{
+{/*
     QPixmap pix(16, 16);
     pix.fill(c);
     actionTextColor->setIcon(pix);
-
+*/
     colorCombo->setColor(c);//
     //setColor(QColor &col)
 }
