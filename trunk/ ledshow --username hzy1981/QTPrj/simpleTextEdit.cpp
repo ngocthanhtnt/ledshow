@@ -728,16 +728,25 @@ QImage getLineTextImage(QString str)
 
 }
 
+void print_color(QRgb c)
+{
+  qDebug("red = %x", qRed(c));
+  qDebug("green = %x", qGreen(c));
+  qDebug("blue = %x", qBlue(c));
+  qDebug("alpha = %x", qAlpha(c));
+}
+
+#define ANTIALIAS_VALUE 0x01
 //
 QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
 {
   //QImage image;
   QSize size;
-  QColor red(Qt::red);
-  QColor green(Qt::green);
-  QColor yellow(Qt::yellow);
-  QColor black(Qt::black);
-  QRgb rgb;
+  //QColor red(Qt::red);
+  //QColor green(Qt::green);
+  //QColor yellow(Qt::yellow);
+  //QColor black(Qt::black);
+  QRgb rgb,r,g,b,ye;
   int i,j;
 
   //image = getTextImage(str);
@@ -745,16 +754,38 @@ QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
       for(j = 0; j < image.height(); j ++)
       {
         rgb = image.pixel(i,j);
-        if(rgb == red.rgb())
+        r = qRed(rgb);
+        g = qGreen(rgb);
+        b = qBlue(rgb);
+        //ye = QColor(rgb).yellow();
+
+        if(r > ANTIALIAS_VALUE && g == 0 && b == 0)// == red.rgb())
+        {
             Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x01);
-        else if(rgb == green.rgb())
+            //qDebug("red");
+        }
+        else if(g > ANTIALIAS_VALUE && r == 0 && b == 0)// || rgb == 0xFF7F9Db9)
+        {
             Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x02);
-        else if(rgb == yellow.rgb())
+            //qDebug("green");
+        }
+        else if(r > ANTIALIAS_VALUE && g>ANTIALIAS_VALUE && b == 0)
+        {
             Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x04);
-        else if(rgb == black.rgb())
+            //qDebug("yellow");
+        }
+        else //if((r == 0 && g == 0 && b == 0) || rgb == 0xFF7F9DB9)
+        {
             Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x00);
-        //else
+            //qDebug("black");
+        }/*
+        else
+        {
+            print_color(rgb);
+            //qDebug("other", rgb);
             //ASSERT_FAILED();
+        }*/
+
       }
   size.setWidth(image.width());
   size.setHeight(image.height());

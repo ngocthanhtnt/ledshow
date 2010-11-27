@@ -32,8 +32,10 @@ void CcolorCombo::setColor(const QColor &col)
         setCurrentIndex(0);
     else if(col == QColor(Qt::green))
         setCurrentIndex(1);
-    else
+    else if(col == QColor(Qt::yellow))
         setCurrentIndex(2);
+    else
+        setCurrentIndex(0);
 }
 
 CsizeCombo::CsizeCombo(QWidget *parent):QComboBox(parent)
