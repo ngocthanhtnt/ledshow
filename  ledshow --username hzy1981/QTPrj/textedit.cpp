@@ -409,7 +409,7 @@ void TextEdit::setupTextActions()
 
     colorCombo = new CcolorCombo(tb);
     tb->addWidget(colorCombo);
-    connect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(textColor()));
+    connect(colorCombo, SIGNAL(activated(int)), this, SLOT(textColor()));
 
     QFontDatabase db;
     foreach(int size, db.standardSizes())
@@ -769,7 +769,8 @@ void TextEdit::colorChanged(const QColor &c)
     pix.fill(c);
     actionTextColor->setIcon(pix);
 
-    colorCombo->setColor(c);// setColor(QColor &col)
+    colorCombo->setColor(c);//
+    //setColor(QColor &col)
 }
 
 void TextEdit::alignmentChanged(Qt::Alignment a)
