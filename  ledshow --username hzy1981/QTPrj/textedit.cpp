@@ -74,6 +74,7 @@
 #include <QTextDocumentFragment>
 #include <QRgb>
 #include <QDialog>
+#include <QTextLayout>
 #include "showArea.h"
 #include "mainwindow.h"
 
@@ -85,6 +86,10 @@ const QString rsrcPath = ":/images/win";
 
 extern MainWindow *w;
 extern QSettings settings;
+
+
+int linePosi[MAX_LINE_NUM];
+int pagePosi[MAX_LINE_NUM];
 
 TextEdit::TextEdit(QWidget *parent)
     : QMainWindow(parent)
@@ -426,10 +431,24 @@ void TextEdit::setupTextActions()
     tb->addWidget(smLineCombo);
     connect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));//SLOT(textColor()));
 
+    QLabel *pageLabel;
+    pageLabel = new QLabel(tr("分页"),tb);
+    tb->addWidget(pageLabel);
+
     spinPage = new QSpinBox(tb);
     tb->addWidget(spinPage);
     spinPage->setValue(1);
     connect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));//SLOT(textColor()));
+
+    QLabel *distanceLabel;
+    distanceLabel = new QLabel(tr("行距"),tb);
+    tb->addWidget(distanceLabel);
+
+    spinLineDis = new QSpinBox(tb);
+    tb->addWidget(spinLineDis);
+    spinPage->setValue(1);
+    connect(spinLineDis, SIGNAL(valueChanged(int)), this, SLOT(lineDisEdit(int)));//SLOT(textColor()));
+
 }
 
 bool TextEdit::load(const QString &f)
@@ -724,12 +743,35 @@ void TextEdit::currentCharFormatChanged(const QTextCharFormat &format)
        fontChanged(format.font());
        textEdit->setTextColor(colorCombo->getColor());
        colorChanged(colorCombo->getColor());
-   }
+/*
+       QTextCursor tc = textEdit->textCursor();
+       //tc.setPosition(it.position(),QTextCursor::MoveAnchor);
+       QTextBlockFormat bfmt = tc.blockFormat();
+       //bfmt.setBottomMargin(mlinespacing);
+       lineDistanceChanged(bfmt.topMargin());
+  */ }
    else
    {
      fontChanged(format.font());
      colorChanged(format.foreground().color());
-   }
+/*
+     QTextCursor tc = textEdit->textCursor();
+     //tc.setPosition(it.position(),QTextCursor::MoveAnchor);
+     QTextBlockFormat bfmt = tc.blockFormat();
+     //bfmt.setBottomMargin(mlinespacing);
+     lineDistanceChanged(bfmt.topMargin());
+  */ }
+}
+
+void TextEdit::lineDisEdit(int dis)
+{
+    QTextCursor tc = textEdit->textCursor();
+
+    //tc.setPosition(it.position(),QTextCursor::MoveAnchor);
+    QTextBlockFormat bfmt = tc.blockFormat();
+    bfmt.setBottomMargin(dis);
+    tc.setBlockFormat(bfmt);
+    textEdit->setTextCursor(tc);
 }
 
 void TextEdit::cursorPositionChanged()
@@ -780,6 +822,11 @@ void TextEdit::colorChanged(const QColor &c)
     //setColor(QColor &col)
 }
 
+void TextEdit::lineDistanceChanged(const int dis)
+{
+   spinLineDis->setValue(dis);
+}
+
 void TextEdit::alignmentChanged(Qt::Alignment a)
 {
     if (a & Qt::AlignLeft) {
@@ -816,7 +863,7 @@ void TextEdit::showInit()
         else
             mode = MLINE_MODE;
 
-        int pageNum = getTextImagePageNum(mode,area->width(),area->height(),textEdit->toHtml());
+        int pageNum = getTextImagePageNum(mode,area->width(),area->height(),textEdit->toHtml(), linePosi);
         spinPage->setMinimum(0);
 
         spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
@@ -842,7 +889,10 @@ void TextEdit::edit()
 
   area->picStr = textEdit->toHtml();
 
-  int pageNum = getTextImagePageNum(area->smLineFlag, area->width(),area->height(),area->picStr);
+  int lineNum;
+  getTextImage(area->width(), area->picStr, &lineNum, linePosi);
+  int pageNum = getTextPageNum(area->smLineFlag, area->width(), area->height(), lineNum, linePosi, pagePosi);
+  //int pageNum = getTextImagePageNum(area->smLineFlag, area->width(),area->height(),area->picStr, linePosi);
   spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
   area->page = spinPage->value(); //页号
   area->update(); //更新当前显示缓冲
@@ -918,7 +968,9 @@ void TextEdit::setSettingsToWidget(QString str)
 
  */
 
-int getTextImagePageNum(int mode, int w, int h, QString str)
+
+//获取文本行数
+int getTextImageLineNum(int w, QString str)
 {
     QTextEdit edit;
     //QTextDocument document;
@@ -932,6 +984,10 @@ int getTextImagePageNum(int mode, int w, int h, QString str)
     settings.endGroup();
 */
 
+    //edit.document()->frameAt()
+    edit.document()->rootFrame()->frameFormat().setTopMargin(0);
+    edit.document()->rootFrame()->frameFormat().setBottomMargin(0);
+    edit.document()->rootFrame()->frameFormat().setPadding(0);
 
     edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
     edit.setLineWrapColumnOrWidth(w);
@@ -940,7 +996,7 @@ int getTextImagePageNum(int mode, int w, int h, QString str)
     qDebug("edit str : %s", (const char *)str.toLocal8Bit());
     QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
 
-    if(mode == SLINE_MODE) //单行模式
+    //if(mode == SLINE_MODE) //单行模式
     {
        int line = 1,posi;
        QTextCursor cursor = edit.textCursor();
@@ -957,42 +1013,18 @@ int getTextImagePageNum(int mode, int w, int h, QString str)
        //return edit.document()->lineCount();
       return line;
     }
-    else //多行模式
-    {
-        if((size.height() % h) == 0)
-            return size.height() / h;
-        else
-            return size.height() / h + 1;
-      //return (edit.height() - edit.height() % h)/h  + 1;
-    }
-    /*
-    edit.resize(size.width(), size.height());
 
-    edit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//setVerticalScrollBarPolicy
-    edit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    */
 }
 
-//获取文本的像素
-//mode 表示单行或多行模式
-// w表示宽度，h表示高度
-//str表示显示文本
-//page表示显示的页号，从0开始
-QImage getTextEditImage(int mode, int w, int h, QString str, int page)
+//获取文本某行的高度
+QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[])
 {
     QTextEdit edit;
-    //QTextDocument document;
+    QTextLayout *layout;
 
-/*
-    //edit.resize(w,100);
-    settings.beginGroup(str);
-    settings.beginGroup("textEdit");
-    QString str = settings.value("text").toString();
-    settings.endGroup();
-    settings.endGroup();
-*/
-    //QString str = str;
-
+    //edit.document()->rootFrame()->frameFormat().setTopMargin(0);
+    //edit.document()->rootFrame()->frameFormat().setBottomMargin(0);
+    //edit.document()->rootFrame()->frameFormat().setPadding(0);
     edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
     edit.setLineWrapColumnOrWidth(w);
     edit.setHtml(str);
@@ -1009,22 +1041,235 @@ QImage getTextEditImage(int mode, int w, int h, QString str, int page)
 
     QImage image(edit.width(), edit.height(),QImage::Format_RGB32);
     edit.render(&image);
-    //image.save("d:\\text.png");
+   // image.save("d:\\text.png");
+
+    //每个Block
+    qreal blockPosi = 0;
+    int lineNum = 0;
+
+    for(int i = 0; i < edit.document()->blockCount(); i ++)
+    {
+       layout = edit.document()->findBlockByNumber(i).layout();
+       blockPosi = (layout->position().y());
+       for(int j = 0; j < layout->lineCount(); j ++)
+       {
+           //posi = blockPosi + (layout->lineAt(j).position().y());
+           linePosi[lineNum] = blockPosi + (layout->lineAt(j).position().y());
+           lineNum ++;
+       }
+    }
+
+    linePosi[lineNum] = (int)(layout->position().y() + layout->boundingRect().height());
+    *pLineNum = lineNum;
+
+    return image;
+    /*
+    QTextCursor cursor = edit.textCursor();
+
+    cursor.movePosition(QTextCursor::Down, QTextCursor::MoveAnchor, line);
+
+    edit.setTextCursor(cursor);
+    cursor.select(QTextCursor::LineUnderCursor);
+    QString text = cursor.selection().toHtml();
+
+    QTextEdit tempEdit;
+
+    tempEdit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//setVerticalScrollBarPolicy
+    tempEdit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    tempEdit.setLineWrapMode(QTextEdit::FixedPixelWidth);
+    tempEdit.setLineWrapColumnOrWidth(w);
+    tempEdit.setHtml(text);
+
+    //qDebug("tempEdit %d str : %s", i,(const char *)tempEdit.document()->textWidth());
+
+    size = tempEdit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
+    return size.height();
+*/
+}
+
+//获取页数
+//mode表示单行还是多行模式
+//
+int getTextPageNum(int mode ,int w, int h, int lineNum, int linePosi[], int pagePosi[])
+{
+    int height = 0,height1 = 0;
+    int tmp = 0;
+    int pageNum = 0;
+    int startLine = 0;
+
+    if(mode == SLINE_MODE)
+    {
+        for(int i = 0; i < lineNum; i ++)
+            pagePosi[i] = linePosi[i];
+
+        return lineNum;
+    }
+    else
+    {
+        pagePosi[pageNum++] = linePosi[0];
+        startLine = 0;
+        for(int i =0; i < lineNum; i ++)
+        {
+            if(linePosi[i + 1] - linePosi[startLine] > h)
+            {
+              pagePosi[pageNum++] = linePosi[i];
+              startLine = i;
+            }
+        }
+
+        pagePosi[pageNum] = linePosi[lineNum]; // 当前页的结束位置
+
+        return pageNum;
+    }
+}
+
+QImage getTextPageImage(int mode, QImage &image, int w, int h, int page, int pagePosi[])
+{
+    QRgb rgb;
+    int height; //image.height();
+    QImage reImage(w,h,QImage::Format_RGB32); //
+
+    height = pagePosi[page + 1] - pagePosi[page]; //高度
+
+    if(height > h) //行高度比窗口高度高?
+    {
+        for(int i = 0; i < w; i ++)
+          for(int j = pagePosi[page] + (height - h) / 2; j < pagePosi[page] + (height - h) / 2 + h; j ++)
+          {
+            rgb = image.pixel(i,j);
+            reImage.setPixel(i, j - pagePosi[page] - (height - h) / 2, rgb);
+
+          }
+    }
+    else
+    {
+        for(int i = 0; i < w; i ++)
+          for(int j = pagePosi[page]; j < pagePosi[page] + height; j ++)
+          {
+            rgb = image.pixel(i, j);
+            reImage.setPixel(i, j - pagePosi[page] + (h - height) / 2, rgb);
+
+          }
+
+    }
+
+    return reImage;
+}
+
+//--------------------------------------------------------------------------------------------
+//mode模式
+//w宽度
+int getTextImagePageNum(int mode, int w, int h, QString str, int posi[])
+{
+  int height = 0,height1 = 0;
+  int tmp = 0;
+  int pageNum = 0;
+
+  if(mode == SLINE_MODE)
+      return getTextImageLineNum(w, str);
+  else
+  {
+      int lineNum = getTextImageLineNum(w, str);
+
+      for(int i = 0; i < lineNum; i ++)
+      {
+         tmp = 0;//getTextImageLineHeight(w, str, i);
+
+         if(height + tmp> h)
+         {
+             if(pageNum >= MAX_LINE_NUM)
+             {
+                 ASSERT_FAILED();
+                 return 0;
+             }
+
+             posi[pageNum] = height1; // 当前页的结束位置
+             pageNum++;
+
+             height1 += tmp;
+             height = tmp; //下一页的第一个line高度
+         }
+         else
+         {
+           height1 += tmp;
+           height += tmp;
+         }
+      }
+      posi[pageNum] = height1; // 当前页的结束位置
+      pageNum++;
+      return pageNum;
+  }
+}
+
+//获取文本的像素
+//mode 表示单行或多行模式
+// w表示宽度，h表示高度
+//str表示显示文本
+//page表示显示的页号，从0开始
+QImage getTextEditImage(int mode, int w, int h, QString str, int page)
+{
+    QTextEdit edit;
+          int startPosi = 0;
+    int linePosi[MAX_LINE_NUM];
+    //QTextDocument document;
+
+/*
+    //edit.resize(w,100);
+    settings.beginGroup(str);
+    settings.beginGroup("textEdit");
+    QString str = settings.value("text").toString();
+    settings.endGroup();
+    settings.endGroup();
+*/
+    //QString str = str;
+    edit.document()->rootFrame()->frameFormat().setTopMargin(0);
+    edit.document()->rootFrame()->frameFormat().setBottomMargin(0);
+    edit.document()->rootFrame()->frameFormat().setPadding(0);
+    edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
+    edit.setLineWrapColumnOrWidth(w);
+    edit.setHtml(str);
+
+    //qDebug("edit str : %s", (const char *)str.toLocal8Bit());
+    QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
+    edit.resize(size.width(), size.height());
+
+    QPalette *palette = new QPalette(QPalette::Base,QColor(Qt::black));
+    edit.setPalette(*palette);//->setPalette(palette);
+
+    edit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//setVerticalScrollBarPolicy
+    edit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    QImage image(edit.width(), edit.height(),QImage::Format_RGB32);
+    edit.render(&image);
+    image.save("d:\\text.png");
 
     QImage reImage(w,h,QImage::Format_RGB32); //
     reImage.fill(QColor(Qt::black).rgb());
     QRgb rgb;
 
+    //int imageHeight = image.height();
     if(mode == MLINE_MODE) //多行模式
     {
-      int imageHeight = image.height();
-      for(int i = 0; i < w; i ++)
-        for(int j = page*h; j < page*h + h && j < imageHeight; j ++)
-        {
-          rgb = image.pixel(i,j);
-          reImage.setPixel(i, j - page*h, rgb);
+      int pageNum = getTextImagePageNum(MLINE_MODE, w, h, str, linePosi);
 
-        }
+
+      if(page == 0)
+          startPosi = 0;
+      else
+          startPosi = linePosi[page- 1];
+
+      if(pageNum > page)
+      {
+          for(int i = 0; i < w; i ++)
+            for(int j = startPosi; j < linePosi[page] && j < image.height(); j ++)
+            {
+              rgb = image.pixel(i,j);
+              reImage.setPixel(i, j - startPosi, rgb);
+
+            }
+       }
+       else
+           ASSERT_FAILED();
     }
     else
     {
@@ -1038,6 +1283,9 @@ QImage getTextEditImage(int mode, int w, int h, QString str, int page)
 
         QTextEdit tempEdit;
 
+        tempEdit.document()->rootFrame()->frameFormat().setTopMargin(0);
+        tempEdit.document()->rootFrame()->frameFormat().setBottomMargin(0);
+        tempEdit.document()->rootFrame()->frameFormat().setPadding(0);
         tempEdit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);//setVerticalScrollBarPolicy
         tempEdit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         tempEdit.setLineWrapMode(QTextEdit::FixedPixelWidth);
