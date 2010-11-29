@@ -54,6 +54,8 @@
 #define SLINE_MODE 0x00
 #define MLINE_MODE 0x01
 
+#define MAX_LINE_NUM 1000
+
 QT_FORWARD_DECLARE_CLASS(QAction)
 QT_FORWARD_DECLARE_CLASS(QComboBox)
 QT_FORWARD_DECLARE_CLASS(QFontComboBox)
@@ -75,6 +77,8 @@ protected:
     virtual void closeEvent(QCloseEvent *e);
 
 private:
+    //int linePosi[MAX_LINE_NUM];
+
     void setupFileActions();
     void setupEditActions();
     void setupTextActions();
@@ -100,6 +104,7 @@ private slots:
     void textColor();
     void textAlign(QAction *a);
 
+    void lineDisEdit(int dis);
     void currentCharFormatChanged(const QTextCharFormat &format);
     void cursorPositionChanged();
 
@@ -114,7 +119,7 @@ private:
     void fontChanged(const QFont &f);
     void colorChanged(const QColor &c);
     void alignmentChanged(Qt::Alignment a);
-
+    void lineDistanceChanged(const int dis);
     QAction *actionSave,
         *actionTextBold,
         *actionTextUnderline,
@@ -136,12 +141,16 @@ private:
     CcolorCombo *colorCombo;
     CsmLineCombo *smLineCombo; //单行字幕或多行文本
     QSpinBox *spinPage;
+    QSpinBox *spinLineDis; //行距
 
     QToolBar *tb;
     QString fileName;
     QTextEdit *textEdit;
 };
 
-int getTextImagePageNum(int mode, int w, int h, QString str);
-QImage getTextEditImage(int mode, int w, int h, QString str, int page);
+QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[]);
+int getTextPageNum(int mode ,int w, int h, int lineNum, int linePosi[], int pagePosi[]);
+QImage getTextPageImage(int mode, QImage &image, int w, int h, int page, int pagePosi[]);
+
+int getTextImagePageNum(int mode, int w, int h, QString str, int posi[]);
 #endif

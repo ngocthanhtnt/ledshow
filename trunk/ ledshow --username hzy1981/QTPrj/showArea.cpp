@@ -6,6 +6,9 @@
 
 extern MainWindow *w;
 extern QSettings settings;
+
+extern int linePosi[MAX_LINE_NUM];
+extern int pagePosi[MAX_LINE_NUM];
 //背景区域构造函数
 CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
 {
@@ -921,7 +924,14 @@ void CshowArea::paintEvent(QPaintEvent *)
         }
         else if(File_Para.Temp_Para.Flag == SHOW_PIC) //显示图文
         {
-            imageBk = getTextEditImage(smLineFlag, w,h, picStr, page);
+            //imageBk = getTextEditImage(smLineFlag, w,h, picStr, page);
+            int lineNum = 0;
+            int pageNum = 0;
+            QImage image = getTextImage(w, picStr, &lineNum, linePosi);
+            pageNum = getTextPageNum(smLineFlag, w, h, lineNum, linePosi, pagePosi);
+            imageBk = getTextPageImage(smLineFlag, image, w, h, page, pagePosi);
+            //getTextPageNum(area->smLineFlag, area->width(), area->height(), lineNum, linePosi, pagePosi);
+
             getTextShowData(imageBk, &showData, 0, 0);
         }
 
