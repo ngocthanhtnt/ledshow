@@ -863,7 +863,10 @@ void TextEdit::showInit()
         else
             mode = MLINE_MODE;
 
-        int pageNum = getTextImagePageNum(mode,area->width(),area->height(),textEdit->toHtml(), linePosi);
+        int lineNum;
+        getTextImage(area->width(), textEdit->toHtml(), &lineNum, linePosi);
+        int pageNum = getTextPageNum(mode, area->width(), area->height(), lineNum, linePosi, pagePosi);
+        //int pageNum = getTextImagePageNum(mode,area->width(),area->height(),textEdit->toHtml(), linePosi);
         spinPage->setMinimum(0);
 
         spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);

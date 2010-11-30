@@ -14,6 +14,8 @@
 #include <QPushButton>
 #include "simpleTextEdit.h"
 #include "areaProperty.h"
+#include "showArea.h"
+
 //½ÚÄ¿ÊôÐÔ´°
 class CtimeProperty:public QWidget
 {
@@ -27,8 +29,8 @@ private:
     CsimpleTextEdit *simpleTextEdit;
     CsmLineEdit *smLineEdit;
     CdateTimeEdit *dateTimeEdit;
-
-
+public slots:
+    void edited();
 public:
     Carea *area;
     void getSettingsFromWidget(QString str);
@@ -37,4 +39,6 @@ public:
     ~CtimeProperty();
 };
 
+void getTimeParaFromSettings(QString str, U_File_Para &para);
+void updateTimeShowArea(CshowArea *area, QTreeWidgetItem *item);
 #endif // TIMEPROPERTY_H
