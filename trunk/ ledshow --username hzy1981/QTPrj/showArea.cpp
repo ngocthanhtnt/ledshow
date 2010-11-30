@@ -882,7 +882,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             if(File_Para.Clock_Para.Week_Type > 0)
             {
                 int weekFont = File_Para.Clock_Para.Week_Font; //×ÖÌå
-                int weekStrWidth = Get_WeekStr_Width(weekFont, File_Para.Clock_Para.Week_Type - 1, Cur_Time.Time[T_WEEK]);
+                int weekStrWidth = Get_WeekStr_Pix_Width(File_Para.Clock_Para.Week_Type - 1, weekFont, Cur_Time.Time[T_WEEK]);
                 int weekHeight = Get_Font_Height(weekFont);
                 int tmp = width()*File_Para.Clock_Para.Week_X / 100 - weekStrWidth / 2;
                 if(tmp > 0)
@@ -903,7 +903,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             if(File_Para.Clock_Para.Date_Type > 0)
             {
                 int dateFont = File_Para.Clock_Para.Date_Font; //×ÖÌå
-                int dateStrWidth = Get_DateStr_Width(dateFont, File_Para.Clock_Para.Date_Type - 1);
+                int dateStrWidth = Get_DateStr_Pix_Width(File_Para.Clock_Para.Date_Type - 1,dateFont);
                 int dateHeight = Get_Font_Height(dateFont);
                 int tmp = width()*File_Para.Clock_Para.Date_X / 100 - dateStrWidth / 2;
                 if(tmp > 0)

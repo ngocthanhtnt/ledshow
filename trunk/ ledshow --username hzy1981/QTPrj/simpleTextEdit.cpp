@@ -378,7 +378,7 @@ CweekEdit::CweekEdit(QWidget *parent):QWidget(parent)
     weekCombo->addItem(tr("Lunedi"));
     weekCombo->addItem(tr("Montag"));
     weekCombo->addItem(tr("Lundi"));
-
+    weekCombo->addItem(tr("げつうび"));
 
     colorCombo = new CcolorCombo(this);
     sizeCombo = new CsizeCombo(this);
@@ -450,14 +450,17 @@ CtimeEdit::CtimeEdit(QWidget *parent):QWidget(parent)
 
     timeCheck = new QCheckBox(tr("时间"),this);
     timeCombo = new QComboBox(this);
-    timeCombo->addItem(tr("2000年12月30日"));
-    timeCombo->addItem(tr("00年12月30日"));
-    timeCombo->addItem(tr("12/30/2000"));
-    timeCombo->addItem(tr("2000/12/30"));
-    timeCombo->addItem(tr("00-12-30"));
-    timeCombo->addItem(tr("00.12.30"));
-    timeCombo->addItem(tr("12月30"));
-    timeCombo->addItem(tr("00.12.30"));
+    timeCombo->addItem(tr("12时59分59秒"));
+    timeCombo->addItem(tr("12:59:59"));
+    timeCombo->addItem(tr("12时59分"));
+    timeCombo->addItem(tr("12:59"));
+    timeCombo->addItem(tr("12时"));
+    timeCombo->addItem(tr("59分"));
+    timeCombo->addItem(tr("59秒"));
+    timeCombo->addItem(tr("上午 8:59"));
+    timeCombo->addItem(tr("AM 8:59"));
+    timeCombo->addItem(tr("8:59 上午"));
+    timeCombo->addItem(tr("8:59 AM"));
 
     colorCombo = new CcolorCombo(this);
     sizeCombo = new CsizeCombo(this);
