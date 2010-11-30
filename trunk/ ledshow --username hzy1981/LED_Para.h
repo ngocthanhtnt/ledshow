@@ -260,7 +260,13 @@ typedef struct
   INT8U Show_Posi; //显示位置
   
   INT8U Temp; //备用
-  
+
+  INT8U SmLineFlag; //单多行标志
+
+  INT8U DateFlag; //日显示标志
+  INT8U WeekFlag; //星期显示标志
+  INT8U TimeFlag; //时间显示标志
+
   INT8U Text_Color; //背景颜色
   INT16U Text_X; //背景X
   INT16U Text_Y; //背景Y
@@ -297,7 +303,7 @@ typedef struct
   INT16U Text_Y; //背景Y
   INT16U Text_Width; //背景宽度
   INT16U Text_Height; //背景高度
-  
+
   INT8U Tail;
 }S_Temp_Para;
 
