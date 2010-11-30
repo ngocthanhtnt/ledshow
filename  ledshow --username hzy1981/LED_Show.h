@@ -112,6 +112,12 @@ typedef struct
 }S_Program_Status;
 
 
+typedef struct
+{
+  char str[16];
+  INT8U Len;
+
+}S_Format_Str;
 
 typedef struct
 {
@@ -179,8 +185,9 @@ EXT void Move_Left_Right_Open(INT8U Area_No);
 EXT void Move_Up_Down_Open(INT8U Area_No);
 EXT void Move_Left_Right_Close(INT8U Area_No);
 EXT void Move_Up_Down_Close(INT8U Area_No);
-EXT INT16U Get_DateStr_Width(INT8U Font, INT8U Type);
-EXT INT16U Get_WeekStr_Width(INT8U Font, INT8U Language, INT8U Week);
+EXT INT16U Get_DateStr_Pix_Width(INT8U Type, INT8U Font);
+EXT INT16U Get_WeekStr_Pix_Width(INT8U Type, INT8U Font, INT8U Week);
+EXT INT16U Get_TimeStr_Pix_Width(INT8U Type, INT8U Font);
 EXT void Show_Date(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Time *pTime, INT8U Type, INT8U Font, INT8U Color);
 EXT void Show_Week(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Time *pTime, INT8U Language, INT8U Font, INT8U Color);
 EXT INT8S Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No);
