@@ -33,7 +33,15 @@ SOURCES += main.cpp\
     ../File_Op.cpp \
     ../com.cpp \
     ../STM32.cpp \
-    ../ZK.cpp
+    ../ZK.cpp \
+    ../Pic_Show.cpp \
+    ../Clock_Show.cpp \
+    ../Time_Show.cpp \
+    ../Flash_Show.cpp \
+    ../Timer_Show.cpp \
+    ../Lun_Show.cpp \
+    ../Main_Show.cpp \
+    ../Temp_Show.cpp
 
 HEADERS  += mainwindow.h \
     ../LED_Cfg.h \
@@ -59,7 +67,15 @@ HEADERS  += mainwindow.h \
     ../com.h \
     ../QT_SIM.h\
     ../LED_Show.h \
-    ../ZK.h
+    ../ZK.h \
+    ../Flash_Show.h \
+    ../Lun_Show.h \
+    ../Timer_Show.h \
+    ../Time_Show.h \
+    ../Pic_Show.h \
+    ../Clock_Show.h \
+    ../Main_Show.h \
+    ../Temp_Show.h
 
 RESOURCES += \
     textedit.qrc

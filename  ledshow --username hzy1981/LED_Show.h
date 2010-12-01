@@ -1,11 +1,10 @@
 #ifndef LED_SHOW_H
 #define LED_SHOW_H
 
-//extern "c"
-//{
-//#include "LED_Cfg.h"
-#include "pub.h"
+#include "Pub.h"
 #include "LED_Para.h"
+//#include "LED_Show.h"
+
 
 #undef EXT
 #ifdef LED_SHOW_C
@@ -93,14 +92,14 @@ typedef struct
 typedef struct
 {
   INT8U Head;
-  
+
   INT8U File_No; //当前文件号
   INT8U File_Type; //文件类型
   INT8U File_Offset; //当前文件偏移
   INT8U Step;        //当前移动的阶梯
   INT16U Step_Timer;  //已经走过Timer，单位ms
   INT32U Stay_Time;   //已经停留的时间，单位ms
-  
+
   INT8U Tail;
 }S_Area_Status;
 
@@ -108,32 +107,25 @@ typedef struct
 typedef struct
 {
   INT8U Time; //已经播放时长
-  
+
 }S_Program_Status;
 
-
-typedef struct
-{
-  char str[16];
-  INT8U Len;
-
-}S_Format_Str;
-
-typedef struct
-{
-  void (*Func)(INT8U);
-}S_Mode_Func;
+EXT S_Area_Status Area_Status[MAX_AREA_NUM]; //分区状态信息
+EXT S_Program_Status Program_Status;   //节目状态信息
 
 EXT S_Show_Data Show_Data;  //显示数据
 EXT S_Show_Data Show_Data_Bak; //显示数据备份
-EXT S_Area_Status Area_Status[MAX_AREA_NUM]; //分区状态信息
-EXT S_Program_Status Program_Status;   //节目状态信息
+
 
 //获取当前颜色方案
 EXT INT8U Get_Color(); //获取当前的颜色方案
 EXT INT8U Get_Bit(INT8U *p,INT16U X_Size,INT16U X,INT16U Y);
 EXT INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index);
 EXT void Set_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index, INT8U Value);
+EXT INT16U Get_Area_Width(INT8U Area_No);
+EXT INT16U Get_Area_Height(INT8U Area_No);
+EXT INT32U Get_Area_Size(INT8U Area_No);
+EXT INT8U Get_Area_TopLeft(INT8U Area_No, S_Point *pPoint);
 EXT INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y); //获取某个区域的数据缓冲区起始
 //多位的拷贝
 EXT void Bits_Copy(INT8U *pSrc, INT16U Src_Len, INT32U Src_Index, INT32U Bits, INT8U *pDst, INT16U Dst_Len, INT32U Dst_Index);
@@ -169,6 +161,9 @@ EXT void Fill_Clock_Point(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter
 //填充时钟、分钟或秒钟的指针
 EXT void Fill_Clock_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, INT16S Angle, INT16U Len, INT16U Width, INT8U Value);
 
+EXT void Copy_Buf_2_Area_Rect_0(INT8U *pSrc, INT16U Src_Len, INT16U Src_Off, \
+                            S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT16U X_Len, INT16U Y_Len);
+
 EXT void Move_Left(INT8U Area_No);
 EXT void Move_Right(INT8U Area_No);
 EXT void Move_Up(INT8U Area_No);
@@ -185,13 +180,7 @@ EXT void Move_Left_Right_Open(INT8U Area_No);
 EXT void Move_Up_Down_Open(INT8U Area_No);
 EXT void Move_Left_Right_Close(INT8U Area_No);
 EXT void Move_Up_Down_Close(INT8U Area_No);
-EXT INT16U Get_DateStr_Pix_Width(INT8U Type, INT8U Font);
-EXT INT16U Get_WeekStr_Pix_Width(INT8U Type, INT8U Font, INT8U Week);
-EXT INT16U Get_TimeStr_Pix_Width(INT8U Type, INT8U Font);
-EXT void Show_Date(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Time *pTime, INT8U Type, INT8U Font, INT8U Color);
-EXT void Show_Week(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Time *pTime, INT8U Language, INT8U Font, INT8U Color);
-EXT INT8S Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No);
-EXT INT8S Check_Update_Show_Data_Bak();
-EXT void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Para *pClock_Para);
+
+
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
 #endif

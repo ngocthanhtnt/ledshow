@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'progManage.h'
 **
-** Created: Sat Oct 23 20:31:13 2010
+** Created: Wed Nov 24 16:49:30 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
