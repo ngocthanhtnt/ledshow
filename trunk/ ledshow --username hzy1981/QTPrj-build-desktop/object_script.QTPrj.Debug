@@ -23,6 +23,14 @@ INPUT(
 ./debug\com.o
 ./debug\STM32.o
 ./debug\ZK.o
+./debug\Pic_Show.o
+./debug\Clock_Show.o
+./debug\Time_Show.o
+./debug\Flash_Show.o
+./debug\Timer_Show.o
+./debug\Lun_Show.o
+./debug\Main_Show.o
+./debug\Temp_Show.o
 ./debug\moc_mainwindow.o
 ./debug\moc_showArea.o
 ./debug\moc_progManage.o

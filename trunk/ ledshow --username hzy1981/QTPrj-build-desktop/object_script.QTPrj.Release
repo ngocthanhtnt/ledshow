@@ -23,6 +23,14 @@ INPUT(
 ./release\com.o
 ./release\STM32.o
 ./release\ZK.o
+./release\Pic_Show.o
+./release\Clock_Show.o
+./release\Time_Show.o
+./release\Flash_Show.o
+./release\Timer_Show.o
+./release\Lun_Show.o
+./release\Main_Show.o
+./release\Temp_Show.o
 ./release\moc_mainwindow.o
 ./release\moc_showArea.o
 ./release\moc_progManage.o
