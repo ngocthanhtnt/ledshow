@@ -184,14 +184,14 @@ typedef struct
   INT8U Date_Type;  //日期标志,0表示不显示日期
   INT8U Date_Font; //字体
   INT8U Date_Color; //日期颜色
-  INT16U Date_X;
-  INT16U Date_Y;
+  INT16U Date_X; //中心位置在X轴上的比例
+  INT16U Date_Y; //中心位置在Y轴上的比例
 
   INT8U Week_Type;  //星期标志，0表示不显示星期
   INT8U Week_Font;  //字体
   INT8U Week_Color; //星期颜色
-  INT16U Week_X;
-  INT16U Week_Y;
+  INT16U Week_X; //中心位置在X轴上的比例
+  INT16U Week_Y; //中心位置在Y轴上的比例
 
   INT8U Text_Color; //背景颜色
   INT16U Text_X; //背景X
@@ -263,9 +263,23 @@ typedef struct
 
   INT8U SmLineFlag; //单多行标志
 
-  INT8U DateFlag; //日显示标志
-  INT8U WeekFlag; //星期显示标志
-  INT8U TimeFlag; //时间显示标志
+  INT8U Date_Type;  //日期标志,0表示不显示日期
+  INT8U Date_Font; //字体
+  INT8U Date_Color; //日期颜色
+  INT16U Date_X;
+  INT16U Date_Y;
+
+  INT8U Week_Type;  //星期标志，0表示不显示星期
+  INT8U Week_Font;  //字体
+  INT8U Week_Color; //星期颜色
+  INT16U Week_X;
+  INT16U Week_Y;
+
+  INT8U Time_Type;  //星期标志，0表示不显示星期
+  INT8U Time_Font;  //字体
+  INT8U Time_Color; //星期颜色
+  INT16U Time_X;
+  INT16U Time_Y;
 
   INT8U Text_Color; //背景颜色
   INT16U Text_X; //背景X

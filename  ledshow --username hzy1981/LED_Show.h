@@ -22,6 +22,8 @@
 #define SHOW_TIMER 0x04
 #define SHOW_TEMP  0x05
 
+#define SLINE_MODE 0x00
+#define MLINE_MODE 0x01
 
 #define GET_LINE_Y(X0,Y0,X1,Y1,X) ((X1 != X0)?(((Y1)-(Y0))*((X)-(X0))/((X1)-(X0)) + (Y0)):Y0)
 #define GET_LINE_X(X0,Y0,X1,Y1,Y) ((Y1 != Y0)?(((X1)-(X0))*((Y)-(Y0))/((Y1)-(Y0)) + (X0)):X0)

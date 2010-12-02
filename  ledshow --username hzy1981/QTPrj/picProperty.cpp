@@ -22,7 +22,7 @@ void updatePicShowArea(CshowArea *area, QTreeWidgetItem *item)
     {
         str = item->data(0,Qt::UserRole).toString();
 
-        getPicParaFromSettings(str,area->File_Para);
+        getPicParaFromSettings(str,area->filePara);
 
         settings.beginGroup(str);
         settings.beginGroup("textEdit");

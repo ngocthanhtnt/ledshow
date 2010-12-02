@@ -246,10 +246,10 @@ void updateClockShowArea(CshowArea *area, QTreeWidgetItem *item)
     {
         str = item->data(0,Qt::UserRole).toString();
 
-        getClockParaFromSettings(str,area->File_Para);
+        getClockParaFromSettings(str,area->filePara);
         area->imageBk = getLineTextImage(str);
 
-        //qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);
+        //qDebug("file_para flag = %d", area->filePara.Temp_Para.Flag);
         area->update(); //Ë¢ÐÂÏÔÊ¾
 
     }
