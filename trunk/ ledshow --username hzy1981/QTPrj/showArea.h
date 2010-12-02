@@ -73,7 +73,7 @@ public:
     bool smLineFlag; //单多行标志
     int page;  //显示的页号
     //--------------------
-    U_File_Para File_Para; //该分区的显示参数
+    U_File_Para filePara; //该分区的显示参数
     int color;
     bool focusFlag;
     int getColor();

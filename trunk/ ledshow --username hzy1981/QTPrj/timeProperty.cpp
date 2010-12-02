@@ -58,6 +58,10 @@ CtimeProperty::CtimeProperty(QWidget *parent):QWidget(parent)
     //textGroup -> setLayout(gridLayout);
     //mainLayout->addWidget(textGroup, 0, 0);
     setLayout(hLayout);
+
+    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(dateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 }
 
 //属性编辑的SLOT
@@ -93,10 +97,10 @@ void updateTimeShowArea(CshowArea *area, QTreeWidgetItem *item)
     {
         str = item->data(0,Qt::UserRole).toString();
 
-        getTimeParaFromSettings(str,area->File_Para);
+        getTimeParaFromSettings(str,area->filePara);
         area->imageBk = getLineTextImage(str);
 
-        //qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);
+        //qDebug("file_para flag = %d", area->filePara.Temp_Para.Flag);
         area->update(); //刷新显示
 
     }
@@ -111,10 +115,50 @@ void updateTimeShowArea(CshowArea *area, QTreeWidgetItem *item)
 void getTimeParaFromSettings(QString str, U_File_Para &para)
 {
     int tmp;
-   // QString str;
+    bool checked;
+    // QString str;
 
-    para.Clock_Para.Flag = SHOW_TIME;
+    para.Time_Para.Flag = SHOW_TIME;
     settings.beginGroup(str);
+
+    settings.beginGroup("dateEdit");
+    checked = settings.value("checked").toBool();
+    if(checked > 0)
+    {
+        para.Time_Para.Date_Type = settings.value("type").toInt() + 1;
+        para.Time_Para.Date_Color = settings.value("color").toInt();
+        para.Time_Para.Date_Font = settings.value("size").toInt();
+    }
+    else
+        para.Time_Para.Date_Type = 0;
+    settings.endGroup();
+
+    settings.beginGroup("weekEdit");
+    if(checked > 0)
+    {
+        para.Time_Para.Week_Type = settings.value("type").toInt() + 1;
+        para.Time_Para.Week_Color = settings.value("color").toInt();
+        para.Time_Para.Week_Font = settings.value("size").toInt();
+    }
+    else
+        para.Time_Para.Week_Type = 0;
+
+    settings.endGroup();
+
+    settings.beginGroup("timeEdit");
+    if(checked > 0)
+    {
+        para.Time_Para.Time_Type = settings.value("type").toInt() + 1;
+        para.Time_Para.Time_Color = settings.value("color").toInt();
+        para.Time_Para.Time_Font = settings.value("size").toInt();
+    }
+    else
+        para.Time_Para.Time_Type = 0;
+    settings.endGroup();
+
+    settings.beginGroup("smLine");
+    para.Time_Para.SmLineFlag = settings.value("smLineCheck").toBool();
+    settings.endGroup();
 
 
     settings.endGroup();
@@ -129,8 +173,9 @@ CtimeProperty::~CtimeProperty()
 void CtimeProperty::getSettingsFromWidget(QString str)
 {
     settings.beginGroup(str);
-
     int type = settings.value("type").toInt();
+    settings.endGroup();
+
     if(type == TIME_PROPERTY)
     {
         simpleTextEdit->getSettingsFromWidget(str);
@@ -140,14 +185,19 @@ void CtimeProperty::getSettingsFromWidget(QString str)
     else
         ASSERT_FAILED();
 
-    settings.endGroup();
+
 }
 
 void CtimeProperty::setSettingsToWidget(QString str)
 {
-    settings.beginGroup(str);
+    disconnect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(dateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 
+    settings.beginGroup(str);
     int type = settings.value("type").toInt();
+    settings.endGroup();
+
     if(type == TIME_PROPERTY)
     {
         simpleTextEdit->setSettingsToWidget(str);
@@ -157,5 +207,9 @@ void CtimeProperty::setSettingsToWidget(QString str)
     else
         ASSERT_FAILED();
 
-    settings.endGroup();
+
+
+    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(dateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 }

@@ -996,7 +996,7 @@ int getTextImageLineNum(int w, QString str)
     edit.setLineWrapColumnOrWidth(w);
     edit.setHtml(str);
 
-    qDebug("edit str : %s", (const char *)str.toLocal8Bit());
+    //qDebug("edit str : %s", (const char *)str.toLocal8Bit());
     QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
 
     //if(mode == SLINE_MODE) //单行模式
@@ -1032,7 +1032,7 @@ QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[])
     edit.setLineWrapColumnOrWidth(w);
     edit.setHtml(str);
 
-    qDebug("edit str : %s", (const char *)str.toLocal8Bit());
+    //qDebug("edit str : %s", (const char *)str.toLocal8Bit());
     QSize size = edit.document()->documentLayout()->documentSize().toSize(); //->documentLayout()->documentSize().toSize();
     edit.resize(size.width(), size.height());
 

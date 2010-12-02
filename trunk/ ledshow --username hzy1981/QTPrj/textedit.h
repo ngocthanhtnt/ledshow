@@ -51,9 +51,6 @@
 #include "colorCombo.h"
 #include "simpleTextEdit.h"
 
-#define SLINE_MODE 0x00
-#define MLINE_MODE 0x01
-
 #define MAX_LINE_NUM 1000
 
 QT_FORWARD_DECLARE_CLASS(QAction)

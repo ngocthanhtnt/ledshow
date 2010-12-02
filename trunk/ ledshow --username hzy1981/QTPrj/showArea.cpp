@@ -167,7 +167,7 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
         pArea[index]->treeItem = item; //背景区域对应该项
         pArea[index]->fileItem = (QTreeWidgetItem *)0; //还没有绑定一个文件
 
-        pArea[index]->File_Para.Time_Para.Flag = 0;
+        pArea[index]->filePara.Time_Para.Flag = 0;
 
         w->screenArea->setFocusArea(pArea[index]);
         pArea[index]->move(x, y);
@@ -454,7 +454,7 @@ CshowArea::CshowArea(QWidget *parent, int colorFlag):QWidget(parent)
     setMouseTracking(true);
     mousePressed = false;
     focusFlag = false;
-    File_Para.Temp_Para.Flag = SHOW_NULL;
+    filePara.Temp_Para.Flag = SHOW_NULL;
     //setAttribute(Qt::WA_StaticContents);
   //resize(100,100);
   //setText("Test");
@@ -765,9 +765,13 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
 
 void CshowArea::paintEvent(QPaintEvent *)
 {
-    int i,j,w,h;
+    int i,j;
     int color;
     QString str;
+    S_Point P0;
+    INT8U Area_No = 0;
+    INT16U Width,Height;
+    INT16S tmp;
     //CshowArea *pArea;
     //QPainter painter;
 
@@ -776,8 +780,8 @@ void CshowArea::paintEvent(QPaintEvent *)
 
     color =getColor();
 
-    w = width();
-    h = height();
+    Width = width();
+    Height = height();
 
     if(areaType != 0)//0表示是分区
     {
@@ -792,19 +796,19 @@ void CshowArea::paintEvent(QPaintEvent *)
 //测试画线
 /*
     S_Point p0 = {10,0};
-    S_Point p1 = {10,100};
+    S_Point P0 = {10,100};
     S_Point p2 = {20, 10};
 
-    Draw_Line(&showData, 0, &p0, &p1, 0x01);
-    Copy_Line(&showData, 0, &p0, &p1, &showData, &p2);
+    Draw_Line(&showData, 0, &p0, &P0, 0x01);
+    Copy_Line(&showData, 0, &p0, &P0, &showData, &p2);
 */
     //测试画矩形
 /*
     S_Point p0 = {10,10};
-    S_Point p1 = {50,50};
+    S_Point P0 = {50,50};
 
     Fill_Rect(&showData, 0, &p0, 50, 50, 0x02);
-    Copy_Filled_Rect(&showData, 0, &p0, 50, 50, &showData, &p1);
+    Copy_Filled_Rect(&showData, 0, &p0, 50, 50, &showData, &P0);
 */
     //画圆
 /*
@@ -814,133 +818,119 @@ void CshowArea::paintEvent(QPaintEvent *)
     //画三角形
 /*
     S_Point p0 = {0, 0};
-    S_Point p1 = {20,80};
+    S_Point P0 = {20,80};
     S_Point p2 = {100, 20};
     S_Point p3 = {60, 80};
 
-    Fill_Triangle(&showData, 0, &p0, &p1, &p2, 0x03);
-    Copy_Filled_Triangle(&showData, 0, &p0, &p1, &p2, &showData, &p3);
+    Fill_Triangle(&showData, 0, &p0, &P0, &p2, 0x03);
+    Copy_Filled_Triangle(&showData, 0, &p0, &P0, &p2, &showData, &p3);
 */
     //画多边形
 /*
     S_Point p0 = {0, 0};
-    S_Point p1 = {20,20};
+    S_Point P0 = {20,20};
     S_Point p2 = {30, 20};
     S_Point p3 = {40, 10};
     S_Point p4 = {50, 10};
 
-    Fill_Polygon(&showData, 0, &p0,&p1, &p2, &p3, 0x02);//(&showData, 0, &p0, &p1, &p2, 0x03);
-    Copy_Filled_Polygon(&showData, 0, &p0, &p1, &p2, &p3, &showData, &p4);
+    Fill_Polygon(&showData, 0, &p0,&P0, &p2, &p3, 0x02);//(&showData, 0, &p0, &P0, &p2, 0x03);
+    Copy_Filled_Polygon(&showData, 0, &p0, &P0, &p2, &p3, &showData, &p4);
 */
     //画时钟的整点
     /*
     S_Point p0={60, 60};
-    S_Point p1;
+    S_Point P0;
 
-    //Get_Angle_Point(&p0, 45, 30, &p1); //找到圆的中心点
-    //Draw_Line(&showData, 0, &p0, &p1, 0x02);
+    //Get_Angle_Point(&p0, 45, 30, &P0); //找到圆的中心点
+    //Draw_Line(&showData, 0, &p0, &P0, 0x02);
     Fill_Clock_Point(&showData, 0, &p0, 45, 30, 5, 0x01);
     Fill_Clock_Line(&showData, 0, &p0, 135, 50, 5, 0x04);
 */
 
    if(mousePressed == false || (mousePressed == true && dragFlag != DRAG_MOVE))//鼠标在没有按下的情况下才更新数据
     {
-       Clear_Area_Data(&showData, 0);
-        if(File_Para.Temp_Para.Flag == SHOW_CLOCK) //显示表盘
+       Clear_Area_Data(&Show_Data, 0);
+        if(filePara.Temp_Para.Flag == SHOW_CLOCK) //显示表盘
         {
             Get_Cur_Time(Cur_Time.Time);
-            Show_Clock(&showData, 0, &Cur_Time, &File_Para.Clock_Para);
-            S_Point p0;
-            S_Point p1;
 
-            p0.X = 0;
-            p0.Y = 0;
+            //将背景文字放到Show_Data_Bak中
 
-
-            //Copy_Filled_Rect(&showDataBak, 0, &p0, File_Para.Clock_Para.Text_Width, File_Para.Clock_Para.Text_Height, &showData, &p1);
-
-             //----------固定文本---------
             QSize size = imageBk.size();
-            File_Para.Clock_Para.Text_Width = size.width();
-            File_Para.Clock_Para.Text_Height = size.height();
 
-            int tmp = width() * File_Para.Clock_Para.Text_X / 100 - File_Para.Clock_Para.Text_Width/2;//w/2-File_Para.Clock_Para.Text_Width/2;
+            filePara.Clock_Para.Text_Width = size.width();
+            filePara.Clock_Para.Text_Height = size.height();
+
+            mem_cpy((INT8U *)&File_Para[0], &filePara, sizeof(filePara), (INT8U *)&File_Para[0], sizeof(File_Para[0]));
+
+            tmp = (INT16S)(Width * File_Para[Area_No].Clock_Para.Text_X / 100) - (INT16S)File_Para[Area_No].Clock_Para.Text_Width/2;
             if(tmp > 0)
-              p1.X = tmp;
+              P0.X = (INT16U)tmp;
             else
-              p1.X = 0;
+              P0.X = 0;
 
-            tmp = height() * File_Para.Clock_Para.Text_Y / 100 - File_Para.Clock_Para.Text_Height/2;
+            tmp = (INT16S)(Height * File_Para[Area_No].Clock_Para.Text_Y / 100) - (INT16S)(File_Para[Area_No].Clock_Para.Text_Height/2);
             if(tmp > 0)
-              p1.Y = tmp;
+              P0.Y = (INT16U)tmp;
             else
-              p1.Y = 0;
+              P0.Y = 0;
 
-            getTextShowData(imageBk, &showData, p1.X, p1.Y);
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
 
-            //---------星期---------
-            if(File_Para.Clock_Para.Week_Type > 0)
-            {
-                int weekFont = File_Para.Clock_Para.Week_Font; //字体
-                int weekStrWidth = Get_WeekStr_Pix_Width(File_Para.Clock_Para.Week_Type - 1, weekFont, Cur_Time.Time[T_WEEK]);
-                int weekHeight = Get_Font_Height(weekFont);
-                int tmp = width()*File_Para.Clock_Para.Week_X / 100 - weekStrWidth / 2;
-                if(tmp > 0)
-                  p1.X = tmp;
-                else
-                  p1.X = 0;
-
-                tmp = height() * File_Para.Clock_Para.Week_Y / 100 - weekHeight/2;
-                if(tmp > 0)
-                  p1.Y = tmp;
-                else
-                  p1.Y = 0;
-
-                Show_Week(&showData, 0, p1.X, p1.Y, &Cur_Time, File_Para.Clock_Para.Week_Type - 1, FONT0, File_Para.Clock_Para.Week_Color);
-             }
-
-            //显示日期
-            if(File_Para.Clock_Para.Date_Type > 0)
-            {
-                int dateFont = File_Para.Clock_Para.Date_Font; //字体
-                int dateStrWidth = Get_DateStr_Pix_Width(File_Para.Clock_Para.Date_Type - 1,dateFont);
-                int dateHeight = Get_Font_Height(dateFont);
-                int tmp = width()*File_Para.Clock_Para.Date_X / 100 - dateStrWidth / 2;
-                if(tmp > 0)
-                  p1.X = tmp;
-                else
-                  p1.X = 0;
-
-                tmp = height() * File_Para.Clock_Para.Date_Y / 100 - dateHeight/2;
-                if(tmp > 0)
-                  p1.Y = tmp;
-                else
-                  p1.Y = 0;
-
-                Show_Date(&showData, 0, p1.X, p1.Y, &Cur_Time, File_Para.Clock_Para.Date_Type - 1, FONT0, File_Para.Clock_Para.Date_Color);
-             }
-
-            //Show_Date(&showData, 0, 43, 88, &Cur_Time, 0, FONT0, 0x02);
+            Update_Clock_Data(0);
         }
-        else if(File_Para.Temp_Para.Flag == SHOW_PIC) //显示图文
+        else if(filePara.Temp_Para.Flag == SHOW_PIC) //显示图文
         {
             //imageBk = getTextEditImage(smLineFlag, w,h, picStr, page);
             int lineNum = 0;
             int pageNum = 0;
-            QImage image = getTextImage(w, picStr, &lineNum, linePosi);
-            pageNum = getTextPageNum(smLineFlag, w, h, lineNum, linePosi, pagePosi);
-            imageBk = getTextPageImage(smLineFlag, image, w, h, page, pagePosi);
+            QImage image = getTextImage(Width, picStr, &lineNum, linePosi);
+            pageNum = getTextPageNum(smLineFlag, Width, Height, lineNum, linePosi, pagePosi);
+            imageBk = getTextPageImage(smLineFlag, image, Width, Height, page, pagePosi);
             //getTextPageNum(area->smLineFlag, area->width(), area->height(), lineNum, linePosi, pagePosi);
 
-            getTextShowData(imageBk, &showData, 0, 0);
+            getTextShowData(imageBk, &Show_Data, 0, 0);
+        }
+        else if(filePara.Temp_Para.Flag == SHOW_TIME)
+        {
+            Get_Cur_Time(Cur_Time.Time);
+
+            //将背景文字放到Show_Data_Bak中
+
+            QSize size = imageBk.size();
+
+            filePara.Time_Para.Text_Width = size.width();
+            filePara.Time_Para.Text_Height = size.height();
+
+            mem_cpy((INT8U *)&File_Para[0], &filePara, sizeof(filePara), (INT8U *)&File_Para[0], sizeof(File_Para[0]));
+
+            if(File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
+            {
+              P0.X = 0;
+              if(Height > File_Para[Area_No].Time_Para.Text_Height)
+                P0.Y = (Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+              else
+                P0.Y = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+            }
+            else //多行
+            {
+              P0.X = 0;
+              if(Height > File_Para[Area_No].Time_Para.Text_Height)
+                P0.Y = (Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+              else
+                P0.Y = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+
+            }
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            Update_Time_Data(Area_No);
         }
 
      }
-    for(j=0; j<h; j++)
+    for(j=0; j<Height; j++)
     {
-        for(i=0; i<w; i++)
+        for(i=0; i<Width; i++)
         {
-            unsigned char colorData = Get_Area_Point_Data(&showData, 0, i, j);
+            unsigned char colorData = Get_Area_Point_Data(&Show_Data, 0, i, j);
 
             //if(colorData != 0)
               //qDebug("point %d,%d = %d", i, j, colorData);
@@ -997,9 +987,9 @@ void CshowArea::paintEvent(QPaintEvent *)
     else //非0表示是背景
     {
         painter.setPen(QColor(Qt::darkGray));
-        for(i=0; i<w; i++)
+        for(i=0; i<Width; i++)
         {
-            for(j=0; j<h; j++)
+            for(j=0; j<Height; j++)
             {
                //if(Get_Bit(color2, w, i, j))
                {
