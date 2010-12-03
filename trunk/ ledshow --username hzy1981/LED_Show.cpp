@@ -212,7 +212,7 @@ INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y)
   if(X >= Program_Para.Area[Area_No].X_Len ||\
      Y >= Program_Para.Area[Area_No].Y_Len)
   {
-    ASSERT_FAILED();
+    //ASSERT_FAILED();
     return 0;
   }
 

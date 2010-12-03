@@ -205,7 +205,7 @@ void Update_Time_Data(INT8U Area_No)
 
     X = File_Para[Area_No].Time_Para.Text_Width;
     if(X > 0)
-      X = SPACE_WIDTH;//Get_Font_Width(File_Para[Area_No].Time_Para.);
+      X += SPACE_WIDTH;//Get_Font_Width(File_Para[Area_No].Time_Para.);
     else
       X = 0;
 
@@ -221,7 +221,7 @@ void Update_Time_Data(INT8U Area_No)
         Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
                   File_Para[Area_No].Time_Para.Date_Type, File_Para[Area_No].Time_Para.Date_Font, File_Para[Area_No].Time_Para.Date_Color);
 
-        X += SPACE_WIDTH;//Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type);
+        X +=  SPACE_WIDTH + Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type, File_Para[Area_No].Time_Para.Date_Font);
     }
 
     if(File_Para[Area_No].Time_Para.Week_Type > 0)//需要星期?
@@ -232,10 +232,10 @@ void Update_Time_Data(INT8U Area_No)
         else
           P0.Y = 0;
 
-        Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+        Show_Week(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
                   File_Para[Area_No].Time_Para.Week_Type, File_Para[Area_No].Time_Para.Week_Font, File_Para[Area_No].Time_Para.Week_Color);
 
-        X += SPACE_WIDTH;//Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type);
+        X += SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(File_Para[Area_No].Time_Para.Date_Type, File_Para[Area_No].Time_Para.Week_Font);
     }
 
     if(File_Para[Area_No].Time_Para.Time_Type > 0)//需要时间?
@@ -246,10 +246,10 @@ void Update_Time_Data(INT8U Area_No)
         else
           P0.Y = 0;
 
-        Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+        Show_Time(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
                   File_Para[Area_No].Time_Para.Time_Type, File_Para[Area_No].Time_Para.Time_Font, File_Para[Area_No].Time_Para.Time_Color);
 
-        X += SPACE_WIDTH;//Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type);
+        X += SPACE_WIDTH + Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type, File_Para[Area_No].Time_Para.Time_Font);
     }
   }
 }

@@ -126,7 +126,8 @@ void getTimeParaFromSettings(QString str, U_File_Para &para)
     if(checked > 0)
     {
         para.Time_Para.Date_Type = settings.value("type").toInt() + 1;
-        para.Time_Para.Date_Color = settings.value("color").toInt();
+        tmp = settings.value("color").toInt();
+        SET_BIT(para.Time_Para.Date_Color, tmp);
         para.Time_Para.Date_Font = settings.value("size").toInt();
     }
     else
@@ -137,7 +138,8 @@ void getTimeParaFromSettings(QString str, U_File_Para &para)
     if(checked > 0)
     {
         para.Time_Para.Week_Type = settings.value("type").toInt() + 1;
-        para.Time_Para.Week_Color = settings.value("color").toInt();
+        tmp = settings.value("color").toInt();
+        SET_BIT(para.Time_Para.Week_Color, tmp);
         para.Time_Para.Week_Font = settings.value("size").toInt();
     }
     else
@@ -149,7 +151,8 @@ void getTimeParaFromSettings(QString str, U_File_Para &para)
     if(checked > 0)
     {
         para.Time_Para.Time_Type = settings.value("type").toInt() + 1;
-        para.Time_Para.Time_Color = settings.value("color").toInt();
+        tmp = settings.value("color").toInt();
+        SET_BIT(para.Time_Para.Time_Color, tmp);
         para.Time_Para.Time_Font = settings.value("size").toInt();
     }
     else

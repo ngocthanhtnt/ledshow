@@ -686,8 +686,10 @@ QImage getLineTextImage(QString str)
     //fontComboBox.setCurrentIndex(i);
     int fontSize = settings.value("fontSize").toInt();
     //fontSizeComboBox.setCurrentIndex(i);
-
+    int color = settings.value("color").toInt();
     //QFont font(fontComboBox.currentText(), fontSizeComboBox.currentText().toInt());
+    settings.endGroup();
+    settings.endGroup();
 
     QFont font(fontName, fontSize);
 
@@ -706,7 +708,7 @@ QImage getLineTextImage(QString str)
     painter.begin(&image);
     painter.fillRect(0,0,width,height,Qt::black);
 
-    int color = settings.value("color").toInt();
+
     if(color == 0x00)
         painter.setPen(QColor(Qt::red));
     else if(color == 0x01)
@@ -717,16 +719,15 @@ QImage getLineTextImage(QString str)
     painter.setFont(font);
 
     //QString str = lineEdit->text();//edit.document()->toPlainText();//lineEdit->text();//document()->toPlainText ();
-    painter.drawText(0,0,width,height,Qt::AlignLeft, text);
+    painter.drawText(0,0,width,height,Qt::AlignCenter, text);
     painter.end();
-/*
-    if(image.save("c:\\a.png")== false)
+
+    if(image.save("d:\\line.png")== false)
     {
       qDebug("save image failed");
     }
-*/
-    settings.endGroup();
-    settings.endGroup();
+
+
     return image;
 
 }
