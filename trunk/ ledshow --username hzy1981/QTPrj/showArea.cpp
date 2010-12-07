@@ -217,12 +217,15 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
 
     if(type EQ CLOCK_PROPERTY)//表盘显示更新
     {
-
-        updateClockShowArea(area, item);
+        updateClockShowArea(area);
     }
     else if(type EQ PIC_PROPERTY)
     {
-        updatePicShowArea(area, item);
+        updatePicShowArea(area);
+    }
+    else if(type EQ TIME_PROPERTY)
+    {
+        updateTimeShowArea(area);
     }
 }
 
@@ -770,7 +773,7 @@ void CshowArea::paintEvent(QPaintEvent *)
     QString str;
     S_Point P0;
     INT8U Area_No = 0;
-    INT16U Width,Height;
+    INT16U Width,Height,Min_Width, Min_Height;
     INT16S tmp;
     //CshowArea *pArea;
     //QPainter painter;
@@ -849,7 +852,10 @@ void CshowArea::paintEvent(QPaintEvent *)
 
    if(mousePressed == false || (mousePressed == true && dragFlag != DRAG_MOVE))//鼠标在没有按下的情况下才更新数据
     {
-       Clear_Area_Data(&Show_Data, 0);
+        Clear_Area_Data(&Show_Data, 0);
+        Clear_Area_Data(&Show_Data_Bak, 0);
+        //memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
+        //memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
         if(filePara.Temp_Para.Flag == SHOW_CLOCK) //显示表盘
         {
             Get_Cur_Time(Cur_Time.Time);
@@ -904,23 +910,44 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             mem_cpy((INT8U *)&File_Para[0], &filePara, sizeof(filePara), (INT8U *)&File_Para[0], sizeof(File_Para[0]));
 
+            Min_Width = Get_Time_Min_Width(Area_No);
+            Min_Height = Get_Time_Min_Height(Area_No);
+
             if(File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
             {
-              P0.X = 0;
-              if(Height > File_Para[Area_No].Time_Para.Text_Height)
-                P0.Y = (Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+              if(Width > Min_Width)
+              {
+                P0.X = (Width - Min_Width) / 2;
+              }
               else
-                P0.Y = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
-            }
-            else //多行
-            {
-              P0.X = 0;
-              if(Height > File_Para[Area_No].Time_Para.Text_Height)
-                P0.Y = (Height - File_Para[Area_No].Time_Para.Text_Height)/2;
-              else
-                P0.Y = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+              {
+                P0.X = 0;
+              }
 
+              if(Height > File_Para[Area_No].Time_Para.Text_Height)
+                P0.Y = (Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+              else
+                P0.Y = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
             }
+            else
+            {
+                if(Height > Min_Height)
+                {
+                  P0.Y = (Height - Min_Height) / 2;
+                }
+                else
+                {
+                  P0.Y = 0;
+                }
+
+                if(Width > File_Para[Area_No].Time_Para.Text_Width)
+                  P0.X = (Width - File_Para[Area_No].Time_Para.Text_Width)/2;
+                else
+                  P0.X = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+            }
+
+            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Time_Para.Text_Width, File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
+
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
             Update_Time_Data(Area_No);
         }

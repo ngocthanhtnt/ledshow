@@ -52,5 +52,5 @@ public:
     CpicProperty(QWidget *parent=0);
     ~CpicProperty();
 };
-void updatePicShowArea(CshowArea *area, QTreeWidgetItem *item);
+void updatePicShowArea(CshowArea *area);
 #endif // picProperty_H

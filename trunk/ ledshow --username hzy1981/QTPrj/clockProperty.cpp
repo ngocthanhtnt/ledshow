@@ -236,14 +236,15 @@ void CclockProperty::getSettingsFromWidget(QString str)
 }
 
 //Ë¢ÐÂÏÔÊ¾ÇøÓò
-void updateClockShowArea(CshowArea *area, QTreeWidgetItem *item)
+void updateClockShowArea(CshowArea *area)
 {
     //CshowArea *area;
     QString str;
-
+    QTreeWidgetItem *item;
 
     if(area != (CshowArea *)0) //
     {
+        item = area->fileItem;
         str = item->data(0,Qt::UserRole).toString();
 
         getClockParaFromSettings(str,area->filePara);
@@ -277,7 +278,7 @@ void CclockProperty::propertyEdited()
         {
             QString str = item->data(0,Qt::UserRole).toString();
             getSettingsFromWidget(str);
-            updateClockShowArea(area, item);
+            updateClockShowArea(area);
         }
     }
 }

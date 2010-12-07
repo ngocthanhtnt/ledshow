@@ -90,5 +90,5 @@ public:
 };
 
 void getClockParaFromSettings(QString str, U_File_Para &para);
-void updateClockShowArea(CshowArea *area, QTreeWidgetItem *item);
+void updateClockShowArea(CshowArea *area);
 #endif // CLOCKPROPERTY_H

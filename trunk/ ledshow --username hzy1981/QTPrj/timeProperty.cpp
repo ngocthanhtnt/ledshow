@@ -81,20 +81,22 @@ void CtimeProperty::edited()
         {
             QString str = item->data(0,Qt::UserRole).toString();
             getSettingsFromWidget(str);
-            updateTimeShowArea(area, item);
+            updateTimeShowArea(area);
         }
     }
 }
 
 //Ë¢ÐÂÏÔÊ¾ÇøÓò
-void updateTimeShowArea(CshowArea *area, QTreeWidgetItem *item)
+void updateTimeShowArea(CshowArea *area)
 {
     //CshowArea *area;
     QString str;
-
+    QTreeWidgetItem *item;
 
     if(area != (CshowArea *)0) //
     {
+        item = area->fileItem;
+
         str = item->data(0,Qt::UserRole).toString();
 
         getTimeParaFromSettings(str,area->filePara);
@@ -127,6 +129,7 @@ void getTimeParaFromSettings(QString str, U_File_Para &para)
     {
         para.Time_Para.Date_Type = settings.value("type").toInt() + 1;
         tmp = settings.value("color").toInt();
+        para.Time_Para.Date_Color = 0;
         SET_BIT(para.Time_Para.Date_Color, tmp);
         para.Time_Para.Date_Font = settings.value("size").toInt();
     }
@@ -135,10 +138,12 @@ void getTimeParaFromSettings(QString str, U_File_Para &para)
     settings.endGroup();
 
     settings.beginGroup("weekEdit");
+    checked = settings.value("checked").toBool();
     if(checked > 0)
     {
         para.Time_Para.Week_Type = settings.value("type").toInt() + 1;
         tmp = settings.value("color").toInt();
+        para.Time_Para.Week_Color = 0;
         SET_BIT(para.Time_Para.Week_Color, tmp);
         para.Time_Para.Week_Font = settings.value("size").toInt();
     }
@@ -148,10 +153,12 @@ void getTimeParaFromSettings(QString str, U_File_Para &para)
     settings.endGroup();
 
     settings.beginGroup("timeEdit");
+    checked = settings.value("checked").toBool();
     if(checked > 0)
     {
         para.Time_Para.Time_Type = settings.value("type").toInt() + 1;
         tmp = settings.value("color").toInt();
+        para.Time_Para.Time_Color = 0;
         SET_BIT(para.Time_Para.Time_Color, tmp);
         para.Time_Para.Time_Font = settings.value("size").toInt();
     }

@@ -12,14 +12,15 @@ void getPicParaFromSettings(QString str, U_File_Para &para)
 }
 
 //Ë¢ÐÂÏÔÊ¾ÇøÓò
-void updatePicShowArea(CshowArea *area, QTreeWidgetItem *item)
+void updatePicShowArea(CshowArea *area)
 {
     //CshowArea *area;
     QString str;
-
+    QTreeWidgetItem *item;
 
     if(area != (CshowArea *)0) //
     {
+        item = area->fileItem;
         str = item->data(0,Qt::UserRole).toString();
 
         getPicParaFromSettings(str,area->filePara);
@@ -27,6 +28,7 @@ void updatePicShowArea(CshowArea *area, QTreeWidgetItem *item)
         settings.beginGroup(str);
         settings.beginGroup("textEdit");
         area->picStr = settings.value("text").toString();
+        area->page = settings.value("page").toInt();
         settings.endGroup();
 
         settings.beginGroup("smLine");
@@ -35,7 +37,6 @@ void updatePicShowArea(CshowArea *area, QTreeWidgetItem *item)
 
         settings.endGroup();
 
-        area->page = 0;
         //area->imageBk = getTextEditImage(MLINE_MODE, area->width(), area->height(), str, 0);
 
         //qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);
@@ -66,7 +67,7 @@ void CpicProperty::propertyEdited()
         {
             QString str = item->data(0,Qt::UserRole).toString();
             getSettingsFromWidget(str);
-            updatePicShowArea(area, item);
+            updatePicShowArea(area);
         }
     }
 }

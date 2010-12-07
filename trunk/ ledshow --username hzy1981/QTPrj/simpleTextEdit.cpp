@@ -249,7 +249,7 @@ CsmLineEdit::CsmLineEdit(QWidget *parent):QGroupBox(parent)
     setTitle(tr("单/多行"));
     setLayout(hLayout);
 
-    connect(this, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(smLineCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
 }
 
 //从Widget上获取设置
@@ -501,6 +501,17 @@ void CtimeEdit::setSettingsToWidget(QString str)
 {
     settings.beginGroup(str);
     settings.beginGroup("timeEdit");
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag EQ 0)
+    {
+       settings.setValue("checked", 0);
+       settings.setValue("type", 0);
+       settings.setValue("color", 0);
+       settings.setValue("size", 0);
+
+       settings.setValue("setFlag", 1);
+    }
+
     timeCheck->setChecked(settings.value("checked").toBool());
     timeCombo->setCurrentIndex(settings.value("type").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
@@ -523,12 +534,12 @@ CdateTimeEdit::CdateTimeEdit(QWidget *parent):QGroupBox(parent)
 
     //editGroup = new QGroupBox(tr("时间"),this);
     dateEdit = new CdateEdit(this);
-    timeEdit = new CtimeEdit(this);
     weekEdit = new CweekEdit(this);
+    timeEdit = new CtimeEdit(this);
 
     vLayout->addWidget(dateEdit);
-    vLayout->addWidget(timeEdit);
     vLayout->addWidget(weekEdit);
+    vLayout->addWidget(timeEdit);
     //editGroup->setLayout(vLayout);
 
     //gridLayout = new QGridLayout(this);
@@ -536,9 +547,9 @@ CdateTimeEdit::CdateTimeEdit(QWidget *parent):QGroupBox(parent)
     setTitle(tr("时间"));
     setLayout(vLayout);
 
-    connect(dateEdit, SIGNAL(edited(int)),this,SIGNAL(edited()));
-    connect(timeEdit, SIGNAL(edited(int)),this,SIGNAL(edited()));
-    connect(weekEdit, SIGNAL(edited(int)),this,SIGNAL(edited()));
+    connect(dateEdit, SIGNAL(edited()),this,SIGNAL(edited()));
+    connect(timeEdit, SIGNAL(edited()),this,SIGNAL(edited()));
+    connect(weekEdit, SIGNAL(edited()),this,SIGNAL(edited()));
 }
 
 //从Widget上获取设置
