@@ -26,8 +26,7 @@ private:
     QGroupBox *textGroup;
     QLabel *textLabel;  //文本
     CsimpleTextEdit *simpleTextEdit;
-    //QTextEdit *textEdit; //显示文本
-    //QPushButton *editButton; //编辑按钮
+    CsmLineEdit *smLineEdit;
 
     QGroupBox *dstTimeGroup;
     QLabel *dstTimeLabel; //目标时间
@@ -37,7 +36,7 @@ private:
     QDateTimeEdit *dstDateTimeEdit; //目标时间日期
     CcolorCombo *colorCombo;  //颜色
     QComboBox *styleCombo;  //样式
-    QComboBox *fontSizeCombo; //字体大小
+    CsizeCombo *fontSizeCombo; //字体大小
 
 public:
     Carea *area;

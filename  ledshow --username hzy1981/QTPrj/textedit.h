@@ -149,5 +149,5 @@ QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[]);
 int getTextPageNum(int mode ,int w, int h, int lineNum, int linePosi[], int pagePosi[]);
 QImage getTextPageImage(int mode, QImage &image, int w, int h, int page, int pagePosi[]);
 
-int getTextImagePageNum(int mode, int w, int h, QString str, int posi[]);
+//int getTextImagePageNum(int mode, int w, int h, QString str, int posi[]);
 #endif

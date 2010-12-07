@@ -179,31 +179,148 @@ void Show_Week(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Time 
     LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%s", WeekStr[Language][Week]);
 }
 
+//获取时间显示的最小宽度,分区需要有该宽度才能显示完横向上的所有数据
+//Area_No为分区号
+INT16U Get_Time_Min_Width(INT8U Area_No)
+{
+    INT16U Width = 0, Width0 = 0;
+    INT8U i = 0;
+
+    if(File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
+    {
+        if(File_Para[Area_No].Time_Para.Text_Width > 0)
+        {
+            Width = File_Para[Area_No].Time_Para.Text_Width;
+            i ++;
+        }
+
+        if(File_Para[Area_No].Time_Para.Date_Type > 0)
+        {
+            Width += Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font);
+            i++;
+        }
+
+        if(File_Para[Area_No].Time_Para.Week_Type > 0)
+        {
+            Width +=Get_WeekStr_Type_Max_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font);
+            i++;
+        }
+
+        if(File_Para[Area_No].Time_Para.Time_Type > 0)
+        {
+            Width +=Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font);
+            i++;
+        }
+
+        if(i>0)
+            Width += (i- 1)*SPACE_WIDTH;
+    }
+    else
+    {
+
+        Width = File_Para[Area_No].Time_Para.Text_Width;
+
+        if(File_Para[Area_No].Time_Para.Date_Type > 0)
+        {
+            Width0 = Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font);
+            Width = MAX_2(Width, Width0);
+        }
+
+        if(File_Para[Area_No].Time_Para.Week_Type > 0)
+        {
+            Width0 = Get_WeekStr_Type_Max_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font);
+            Width = MAX_2(Width, Width0);
+        }
+
+        if(File_Para[Area_No].Time_Para.Time_Type > 0)
+        {
+            Width0 = Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font);
+            Width = MAX_2(Width, Width0);
+
+        }
+
+    }
+
+    return Width;
+}
+
+//获取时间显示的最小高度,需要该高度才能显示纵向显示完所有的时间数据
+//Area_No为分区号
+INT16U Get_Time_Min_Height(INT8U Area_No)
+{
+    INT16U Height,Height0;
+
+    if(File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
+    {
+        Height = File_Para[Area_No].Time_Para.Text_Height;
+
+        if(File_Para[Area_No].Time_Para.Date_Type > 0)
+        {
+            Height0 = Get_Font_Height(File_Para[Area_No].Time_Para.Date_Font);
+            Height = MAX_2(Height, Height0);
+        }
+
+        if(File_Para[Area_No].Time_Para.Week_Type > 0)
+        {
+            Height0 = Get_Font_Height(File_Para[Area_No].Time_Para.Week_Font);
+            Height = MAX_2(Height, Height0);
+        }
+
+        if(File_Para[Area_No].Time_Para.Time_Type > 0)
+        {
+            Height0 = Get_Font_Height(File_Para[Area_No].Time_Para.Time_Font);
+            Height = MAX_2(Height, Height0);
+        }
+    }
+    else
+    {
+        Height = File_Para[Area_No].Time_Para.Text_Height;
+
+        if(File_Para[Area_No].Time_Para.Date_Type > 0)
+            Height += Get_Font_Height(File_Para[Area_No].Time_Para.Date_Font);
+
+        if(File_Para[Area_No].Time_Para.Week_Type > 0)
+            Height += Get_Font_Height(File_Para[Area_No].Time_Para.Week_Font);
+
+        if(File_Para[Area_No].Time_Para.Time_Type > 0)
+            Height += Get_Font_Height(File_Para[Area_No].Time_Para.Time_Font);
+    }
+
+    return Height;
+}
+
 //更新时间数据
 void Update_Time_Data(INT8U Area_No)
 {
-  INT16U X;
-  INT16U X_Len, Y_Len;
+  INT16U X, Y;
   S_Point P0;
-  INT16S tmp;
   INT16U Width,Height;
-  INT8U Font;
-  INT16U StrWidth, StrHeight;
+  INT16U Min_Width, Min_Height;
 
   Width = Get_Area_Width(Area_No);
   Height = Get_Area_Height(Area_No);
 
-  //Show_Clock(&Show_Data, Area_No, &Cur_Time, &File_Para[Area_No].Clock_Para);
+  Min_Width = Get_Time_Min_Width(Area_No);
+  Min_Height = Get_Time_Min_Height(Area_No);
+
   if(File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
   {
-    P0.X = 0;
+    if(Width > Min_Width)
+    {
+      P0.X = (Width - Min_Width) / 2;
+    }
+    else
+    {
+      P0.X = 0;
+    }
+
     if(Height > File_Para[Area_No].Time_Para.Text_Height)
       P0.Y = (Height - File_Para[Area_No].Time_Para.Text_Height)/2;
     else
       P0.Y = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
     Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Time_Para.Text_Width, File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
 
-    X = File_Para[Area_No].Time_Para.Text_Width;
+    X = P0.X + File_Para[Area_No].Time_Para.Text_Width;
     if(X > 0)
       X += SPACE_WIDTH;//Get_Font_Width(File_Para[Area_No].Time_Para.);
     else
@@ -219,9 +336,9 @@ void Update_Time_Data(INT8U Area_No)
           P0.Y = 0;
 
         Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
-                  File_Para[Area_No].Time_Para.Date_Type, File_Para[Area_No].Time_Para.Date_Font, File_Para[Area_No].Time_Para.Date_Color);
+                  File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font, File_Para[Area_No].Time_Para.Date_Color);
 
-        X +=  SPACE_WIDTH + Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type, File_Para[Area_No].Time_Para.Date_Font);
+        X +=  SPACE_WIDTH + Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font);
     }
 
     if(File_Para[Area_No].Time_Para.Week_Type > 0)//需要星期?
@@ -233,9 +350,9 @@ void Update_Time_Data(INT8U Area_No)
           P0.Y = 0;
 
         Show_Week(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
-                  File_Para[Area_No].Time_Para.Week_Type, File_Para[Area_No].Time_Para.Week_Font, File_Para[Area_No].Time_Para.Week_Color);
+                  File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font, File_Para[Area_No].Time_Para.Week_Color);
 
-        X += SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(File_Para[Area_No].Time_Para.Date_Type, File_Para[Area_No].Time_Para.Week_Font);
+        X += SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font);
     }
 
     if(File_Para[Area_No].Time_Para.Time_Type > 0)//需要时间?
@@ -247,9 +364,70 @@ void Update_Time_Data(INT8U Area_No)
           P0.Y = 0;
 
         Show_Time(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
-                  File_Para[Area_No].Time_Para.Time_Type, File_Para[Area_No].Time_Para.Time_Font, File_Para[Area_No].Time_Para.Time_Color);
+                  File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font, File_Para[Area_No].Time_Para.Time_Color);
 
-        X += SPACE_WIDTH + Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type, File_Para[Area_No].Time_Para.Time_Font);
+        X += SPACE_WIDTH + Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font);
     }
+  }
+  else //多行
+  {
+      if(Height > Min_Height)
+      {
+        P0.Y = (Height - Min_Height) / 2;
+      }
+      else
+      {
+        P0.Y = 0;
+      }
+
+      if(Width > File_Para[Area_No].Time_Para.Text_Width)
+        P0.X = (Width - File_Para[Area_No].Time_Para.Text_Width)/2;
+      else
+        P0.X = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Time_Para.Text_Width, File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
+
+      Y = P0.Y + File_Para[Area_No].Time_Para.Text_Height;
+
+      if(File_Para[Area_No].Time_Para.Date_Type > 0)//需要显示日期?
+      {
+          P0.Y = Y;
+          if(Width > Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font))
+            P0.X = (Width - Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font))/2;
+          else
+            P0.X = 0;
+
+          Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+                    File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font, File_Para[Area_No].Time_Para.Date_Color);
+
+          Y += Get_Font_Height(File_Para[Area_No].Time_Para.Date_Font);//Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font);
+      }
+
+      if(File_Para[Area_No].Time_Para.Week_Type > 0)//需要星期?
+      {
+          P0.Y = Y;
+          if(Width > Get_WeekStr_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font, Cur_Time.Time[T_WEEK]))
+            P0.X = (Width - Get_WeekStr_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font, Cur_Time.Time[T_WEEK]))/2;
+          else
+            P0.X = 0;
+
+          Show_Week(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+                    File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font, File_Para[Area_No].Time_Para.Week_Color);
+
+          Y += Get_Font_Height(File_Para[Area_No].Time_Para.Week_Font);//SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font);
+      }
+
+      if(File_Para[Area_No].Time_Para.Time_Type > 0)//需要时间?
+      {
+          P0.Y = Y;
+          if(Width > Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font))
+            P0.X = (Width - Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font))/2;
+          else
+            P0.X = 0;
+
+          Show_Time(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+                    File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font, File_Para[Area_No].Time_Para.Time_Color);
+
+          //X += SPACE_WIDTH + Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font);
+      }
   }
 }

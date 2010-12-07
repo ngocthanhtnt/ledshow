@@ -1697,7 +1697,7 @@ void vsPrintf(char Buf[], CONST INT8S *format, va_list ap)
 }
 
 //Disp_Flag,1表示反显，0表示正显
-  void Show_String(INT8U Str[], INT8U Font, INT8U Color, S_Show_Data *pData, INT8U Area_No, INT8U X,INT8U Y)
+  void Show_String(INT8U Str[], INT8U Font, INT8U Color, S_Show_Data *pData, INT8U Area_No, INT16U X,INT16U Y)
   {
     INT8U i;
     INT8U FontWidth;

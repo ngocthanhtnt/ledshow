@@ -44,9 +44,9 @@
 #define S_NUM(X) (sizeof(X)/sizeof(X[0]))
 #define EQ  == 
 
-#define SET_BIT(x,y) ((x)|=0x01<<(y))
-#define CLR_BIT(x,y) ((x)&=~(0x01<<(y)))
-#define GET_BIT(x,y) (((x)>>(y))&0x01)
+#define SET_BIT(x,y) ((x)|=(0x01UL<<(y)))
+#define CLR_BIT(x,y) ((x)&=~(0x01UL<<(y)))
+#define GET_BIT(x,y) (((x)>>(y))&0x01UL)
 
 #if TRACE_EN>0
 #define TRACE() Trace(__FILE__,__FUNCTION__,(INT16U)__LINE__)
@@ -101,6 +101,12 @@
 #define SET_VAR_HT(Var) do{_#Var.Head=CHK_BYTE;_#Var.Tail=CHK_BYTE}while(0)
 //检查一个变量的头和尾
 #define CHECK_VAR_HT(Var) ((CHK_BYTE EQ _#Var.Head && CHK_BYTE EQ _#Var.Tail)?1:0) 
+
+#define MAX_2(a,b) ((a)>(b)?(a):(b))
+#define MIN_2(a,b) ((a)>(b)?(b):(a))
+
+#define MAX_3(a,b,c) (MAX_2(a,b) > (c)?MAX_2(a,b):(c))
+#define MIN_3(a,b,c) (MIN_2(a,b) < (c)?MIN_2(a,b):(c))
 
 //次重要全局变量或者静态局部变量，采用如下方式定义
 /*

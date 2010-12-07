@@ -40,5 +40,5 @@ public:
 };
 
 void getTimeParaFromSettings(QString str, U_File_Para &para);
-void updateTimeShowArea(CshowArea *area, QTreeWidgetItem *item);
+void updateTimeShowArea(CshowArea *area);
 #endif // TIMEPROPERTY_H
