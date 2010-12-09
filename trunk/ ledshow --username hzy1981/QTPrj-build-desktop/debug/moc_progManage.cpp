@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'progManage.h'
 **
-** Created: Wed Nov 24 16:49:30 2010
+** Created: Fri Dec 10 01:07:28 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_CprogManage[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      10,   14, // methods
+      11,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -40,7 +40,8 @@ static const uint qt_meta_data_CprogManage[] = {
       74,   12,   12,   12, 0x0a,
       85,   12,   12,   12, 0x0a,
       95,   12,   12,   12, 0x0a,
-     120,  108,   12,   12, 0x0a,
+     104,   12,   12,   12, 0x0a,
+     129,  117,   12,   12, 0x0a,
 
        0        // eod
 };
@@ -48,8 +49,9 @@ static const uint qt_meta_data_CprogManage[] = {
 static const char qt_meta_stringdata_CprogManage[] = {
     "CprogManage\0\0newProg()\0newArea()\0"
     "newPic()\0newFlash()\0newTime()\0newTimer()\0"
-    "newClock()\0newTemp()\0deleteItem()\0"
-    "item,column\0clickItem(QTreeWidgetItem*,int)\0"
+    "newClock()\0newTemp()\0newLun()\0"
+    "deleteItem()\0item,column\0"
+    "clickItem(QTreeWidgetItem*,int)\0"
 };
 
 const QMetaObject CprogManage::staticMetaObject = {
@@ -89,11 +91,12 @@ int CprogManage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 5: newTimer(); break;
         case 6: newClock(); break;
         case 7: newTemp(); break;
-        case 8: deleteItem(); break;
-        case 9: clickItem((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 8: newLun(); break;
+        case 9: deleteItem(); break;
+        case 10: clickItem((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
         default: ;
         }
-        _id -= 10;
+        _id -= 11;
     }
     return _id;
 }

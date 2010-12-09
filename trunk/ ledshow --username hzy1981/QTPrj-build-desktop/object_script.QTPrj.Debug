@@ -48,5 +48,6 @@ INPUT(
 ./debug\moc_timeProperty.o
 ./debug\moc_tempProperty.o
 ./debug\moc_colorCombo.o
+./debug\moc_lunProperty.o
 ./debug\qrc_textedit.o
 );

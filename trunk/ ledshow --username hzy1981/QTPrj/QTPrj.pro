@@ -43,7 +43,7 @@ SOURCES += main.cpp\
     ../Main_Show.cpp \
     ../Temp_Show.cpp \
     lunProperty.cpp \
-    ../nongli.c
+    ../nongli.cpp
 
 HEADERS  += mainwindow.h \
     ../LED_Cfg.h \

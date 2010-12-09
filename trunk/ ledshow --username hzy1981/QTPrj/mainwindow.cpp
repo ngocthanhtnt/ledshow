@@ -131,7 +131,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("日期时间"), this);
+    actionSave = a = new QAction(tr("时间"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTime()));
     tb->addAction(a);
@@ -148,7 +148,6 @@ void MainWindow::setupEditActions()
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTemp()));
     tb->addAction(a);
     menu->addAction(a);
-    menu->addSeparator();
 
     actionSave = a = new QAction(tr("农历"), this);
     a->setShortcut(QKeySequence::Save);

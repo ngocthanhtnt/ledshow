@@ -1,5 +1,6 @@
 #define LUN_SHOW_C
 #include "Includes.h"
+#include "nongli.h"
 
 #define TIANGAN_LEN 8
 #define NONGLI_LEN  10
@@ -129,15 +130,18 @@ INT16U Get_TianganStr_Width(INT8U Font)
   return TIANGAN_LEN*Get_Font_Width(Font)/2;
 }
 
-INT16U Get_NongliStr_Width(INT8U Font, char str)
+INT16U Get_NongliStr_Width(INT8U Font, char str[])
 {
-  return strlen*Get_Font_Width(Font)/2;
+  return strlen(str)*Get_Font_Width(Font)/2;
 }
 
 INT16U Get_JieqiStr_Width(INT8U Font)
 {
   return JIEQI_LEN*Get_Font_Width(Font)/2;
 }
+
+//extern void GetChinaCalendarStr(unsigned int  year,unsigned char month,unsigned char day,char *str);
+
 
 //更新节气数据
 void UpTiangan_Lun_Data(INT8U Area_No)
@@ -147,7 +151,7 @@ void UpTiangan_Lun_Data(INT8U Area_No)
   INT16U Width,Height;
   INT16U Min_Width, Min_Height;
   char Tiangan[20];
-  char Nongli[20]
+  char Nongli[20];
   char Jieqi[10];
 
   memset(Tiangan, 0, sizeof(Tiangan));
@@ -206,7 +210,8 @@ void UpTiangan_Lun_Data(INT8U Area_No)
         //Show_Tiangan(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
                      //File_Para[Area_No].Lun_Para.Tiangan_Font, File_Para[Area_No].Lun_Para.Tiangan_Color);
 
-        LED_Print(File_Para[Area_No].Lun_Para.Tiangan_Font, &Show_Data, Area_No, P0.X, P0.Y,\
+        LED_Print(File_Para[Area_No].Lun_Para.Tiangan_Font, File_Para[Area_No].Lun_Para.Tiangan_Color,\
+                  &Show_Data, Area_No, P0.X, P0.Y,\
                   "%s", Tiangan);
         X +=  SPACE_WIDTH + Get_TianganStr_Width(File_Para[Area_No].Lun_Para.Tiangan_Font);
     }
@@ -221,7 +226,8 @@ void UpTiangan_Lun_Data(INT8U Area_No)
 
         //Show_Nongli(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
                     //File_Para[Area_No].Lun_Para.Nongli_Font, File_Para[Area_No].Lun_Para.Nongli_Color);
-        LED_Print(File_Para[Area_No].Lun_Para.Nongli_Font, &Show_Data, Area_No, P0.X, P0.Y,\
+        LED_Print(File_Para[Area_No].Lun_Para.Nongli_Font, File_Para[Area_No].Lun_Para.Nongli_Color,\
+                  &Show_Data, Area_No, P0.X, P0.Y,\
                   "%s", Nongli);
         //显示农历要预留最大长度
         X += SPACE_WIDTH + NONGLI_LEN * Get_Font_Width(File_Para[Area_No].Lun_Para.Nongli_Font)/2;//Get_NongliStr_Width(File_Para[Area_No].Lun_Para.Nongli_Font, Nongli);
@@ -237,7 +243,8 @@ void UpTiangan_Lun_Data(INT8U Area_No)
 
         //Show_Jieqi(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
                    //File_Para[Area_No].Lun_Para.Jieqi_Font, File_Para[Area_No].Lun_Para.Jieqi_Color);
-        LED_Print(File_Para[Area_No].Lun_Para.Jieqi_Font, &Show_Data, Area_No, P0.X, P0.Y,\
+        LED_Print(File_Para[Area_No].Lun_Para.Jieqi_Font, File_Para[Area_No].Lun_Para.Jieqi_Color,\
+                  &Show_Data, Area_No, P0.X, P0.Y,\
                   "%s", Jieqi);
         X += SPACE_WIDTH + Get_JieqiStr_Width(File_Para[Area_No].Lun_Para.Jieqi_Font);
     }
@@ -271,7 +278,8 @@ void UpTiangan_Lun_Data(INT8U Area_No)
 
           //Show_Tiangan(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
                       //File_Para[Area_No].Lun_Para.Tiangan_Font, File_Para[Area_No].Lun_Para.Tiangan_Color);
-          LED_Print(File_Para[Area_No].Lun_Para.Tiangan_Font, &Show_Data, Area_No, P0.X, P0.Y,\
+          LED_Print(File_Para[Area_No].Lun_Para.Tiangan_Font, File_Para[Area_No].Lun_Para.Tiangan_Color,\
+                    &Show_Data, Area_No, P0.X, P0.Y,\
                     "%s", Tiangan);
           Y += Get_Font_Height(File_Para[Area_No].Lun_Para.Tiangan_Font);//Get_TianganStr_Pix_Width(File_Para[Area_No].Lun_Para.Tiangan_Type - 1, File_Para[Area_No].Lun_Para.Tiangan_Font);
       }
@@ -286,7 +294,8 @@ void UpTiangan_Lun_Data(INT8U Area_No)
 
           //Show_Nongli(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
                       //File_Para[Area_No].Lun_Para.Nongli_Font, File_Para[Area_No].Lun_Para.Nongli_Color);
-          LED_Print(File_Para[Area_No].Lun_Para.Nongli_Font, &Show_Data, Area_No, P0.X, P0.Y,\
+          LED_Print(File_Para[Area_No].Lun_Para.Nongli_Font, File_Para[Area_No].Lun_Para.Nongli_Color,\
+                    &Show_Data, Area_No, P0.X, P0.Y,\
                     "%s", Nongli);
           Y += Get_Font_Height(File_Para[Area_No].Lun_Para.Nongli_Font);//SPACE_WIDTH + Get_NongliStr_Type_Max_Pix_Width(File_Para[Area_No].Lun_Para.Nongli_Type - 1, File_Para[Area_No].Lun_Para.Nongli_Font);
       }
@@ -294,14 +303,15 @@ void UpTiangan_Lun_Data(INT8U Area_No)
       if(File_Para[Area_No].Lun_Para.Jieqi_Type > 0)//需要节气?
       {
           P0.Y = Y;
-          if(Width > Get_JieqiStr_Pix_Width(File_Para[Area_No].Lun_Para.Jieqi_Type - 1, File_Para[Area_No].Lun_Para.Jieqi_Font))
+          if(Width > Get_JieqiStr_Width(File_Para[Area_No].Lun_Para.Jieqi_Font))
             P0.X = (Width - Get_JieqiStr_Width(File_Para[Area_No].Lun_Para.Jieqi_Font))/2;
           else
             P0.X = 0;
 
           //Show_Jieqi(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
                      //File_Para[Area_No].Lun_Para.Jieqi_Font, File_Para[Area_No].Lun_Para.Jieqi_Color);
-          LED_Print(File_Para[Area_No].Lun_Para.Jieqi_Font, &Show_Data, Area_No, P0.X, P0.Y,\
+          LED_Print(File_Para[Area_No].Lun_Para.Jieqi_Font, File_Para[Area_No].Lun_Para.Jieqi_Color,\
+                    &Show_Data, Area_No, P0.X, P0.Y,\
                     "%s", Jieqi);
           //X += SPACE_WIDTH + Get_JieqiStr_Pix_Width(File_Para[Area_No].Lun_Para.Jieqi_Type - 1, File_Para[Area_No].Lun_Para.Jieqi_Font);
       }
