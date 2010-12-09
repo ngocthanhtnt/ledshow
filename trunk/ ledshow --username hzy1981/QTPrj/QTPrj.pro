@@ -41,7 +41,9 @@ SOURCES += main.cpp\
     ../Timer_Show.cpp \
     ../Lun_Show.cpp \
     ../Main_Show.cpp \
-    ../Temp_Show.cpp
+    ../Temp_Show.cpp \
+    lunProperty.cpp \
+    ../nongli.c
 
 HEADERS  += mainwindow.h \
     ../LED_Cfg.h \
@@ -75,7 +77,9 @@ HEADERS  += mainwindow.h \
     ../Pic_Show.h \
     ../Clock_Show.h \
     ../Main_Show.h \
-    ../Temp_Show.h
+    ../Temp_Show.h \
+    lunProperty.h \
+    ../nongli.h
 
 RESOURCES += \
     textedit.qrc

@@ -149,6 +149,33 @@ public:
     ~CdateTimeEdit();
 };
 
+class ClunEdit:public QGroupBox
+{
+  Q_OBJECT
+private:
+
+  QCheckBox *tianganCheck;
+  QCheckBox *nongliCheck;
+  QCheckBox *jieqiCheck;
+
+  CcolorCombo *tianganColor;
+  CcolorCombo *nongliColor;
+  CcolorCombo *jieqiColor;
+
+  CsizeCombo *tianganFont;
+  CsizeCombo *nongliFont;
+  CsizeCombo *jieqiFont;
+
+signals:
+    void edited();
+public:
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    ClunEdit(QWidget *parent =0);
+    ~ClunEdit();
+
+};
+
 class CsimpleTextEdit :public QGroupBox
 {
     Q_OBJECT

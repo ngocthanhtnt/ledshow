@@ -1741,7 +1741,7 @@ void vsPrintf(char Buf[], CONST INT8S *format, va_list ap)
   }
 
   //根据format和ap参数表输出调试信息
-  void LED_Print(INT8U Font, INT8U Color, S_Show_Data *pData, INT8U Area_No, INT16U X, INT16U Y, const INT8S *format,...)
+  INT16U LED_Print(INT8U Font, INT8U Color, S_Show_Data *pData, INT8U Area_No, INT16U X, INT16U Y, const INT8S *format,...)
   {
 
     va_list ap;
@@ -1749,6 +1749,10 @@ void vsPrintf(char Buf[], CONST INT8S *format, va_list ap)
     memset(Print_Buf.Buf, 0, sizeof(Print_Buf.Buf));
     va_start(ap,format);
     vsPrintf((char *)Print_Buf.Buf, format, ap);
-    Show_String(Print_Buf.Buf, Font, Color, pData,  Area_No, X, Y);
+
+    if(pData != (S_Show_Data *)0)
+      Show_String(Print_Buf.Buf, Font, Color, pData,  Area_No, X, Y);
     va_end(ap);
+
+    return strlen((char *)Print_Buf.Buf)*Get_Font_Width(Font)/2;
   }

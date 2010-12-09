@@ -141,6 +141,8 @@ QString getTypeString(int type)
         Qstr = QObject::tr("定时");
     else if(type == TEMP_PROPERTY)
         Qstr = QObject::tr("温度");
+    else if(type == LUN_PROPERTY)
+        Qstr = QObject::tr("农历");
     else
     {
         //ASSERT_FAILED();
@@ -425,6 +427,11 @@ void CprogManage::newTemp() //新温度
 {
   newFile(TEMP_PROPERTY);
 
+}
+
+void CprogManage::newLun() //新农历
+{
+  newFile(LUN_PROPERTY);
 }
 
 //一个新的显示file

@@ -45,11 +45,20 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     styleCombo->addItem(tr("0000天00时00分00秒"));
     styleCombo->addItem(tr("000天00时00分00秒"));
     styleCombo->addItem(tr("00天00时00分00秒"));
+    styleCombo->addItem(tr("0000天00时00分"));
+    styleCombo->addItem(tr("000天00时00分"));
+    styleCombo->addItem(tr("00天00时00分"));
+    styleCombo->addItem(tr("0000天00时"));
+    styleCombo->addItem(tr("000天00时"));
+    styleCombo->addItem(tr("00天00时"));
     styleCombo->addItem(tr("0000天"));
     styleCombo->addItem(tr("000天"));
     styleCombo->addItem(tr("00天"));
     styleCombo->addItem(tr("00时00分00秒"));
+    styleCombo->addItem(tr("00时00分"));
+    styleCombo->addItem(tr("00时"));
     styleCombo->addItem(tr("00分00秒"));
+    styleCombo->addItem(tr("00分"));
     styleCombo->addItem(tr("00秒"));
 
     gridLayout = new QGridLayout(this);
@@ -69,6 +78,119 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
 
     hLayout->addStretch(10);
     setLayout(hLayout);
+
+    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+
+    connect(dstDateTimeEdit, SIGNAL(dateTimeChanged()), this, SLOT(edited()));
+    connect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+}
+
+//属性编辑的SLOT
+void CtimerProperty::edited()
+{
+    CshowArea *area;
+    QTreeWidgetItem *item;
+
+    //qDebug("propertyEdited");
+    area = w->screenArea->getFocusArea(); //当前焦点分区
+
+    if(area != (CshowArea *)0) //
+    {
+        //当前选中的item
+        item = area->fileItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
+        if(item != (QTreeWidgetItem *)0)
+        {
+            QString str = item->data(0,Qt::UserRole).toString();
+            getSettingsFromWidget(str);
+            updateTimerShowArea(area);
+        }
+    }
+}
+
+//刷新显示区域
+void updateTimerShowArea(CshowArea *area)
+{
+    //CshowArea *area;
+    QString str;
+    QTreeWidgetItem *item;
+
+    if(area != (CshowArea *)0) //
+    {
+        item = area->fileItem;
+
+        str = item->data(0,Qt::UserRole).toString();
+
+        getTimerParaFromSettings(str,area->filePara);
+        area->imageBk = getLineTextImage(str);
+
+        //qDebug("file_para flag = %d", area->filePara.Temp_Para.Flag);
+        area->update(); //刷新显示
+
+    }
+    else
+    {
+        ASSERT_FAILED();
+    }
+
+}
+/*
+  INT8U Dst_Year; //目标年
+  INT8U Dst_Month; //目标月
+  INT8U Dst_Date; //目标日
+  INT8U Dst_Hour; //目标时
+  INT8U Dst_Min; //目标分
+  INT8U Dst_Sec; //目标秒
+
+  INT8U Show_Mode;  //显示方式
+  INT8U Show_Color; //显示颜色
+  INT8U Show_Font; //显示字号
+  INT8U Show_Posi; //显示位置
+
+  INT8U Temp; //备用
+
+  INT8U Text_Color; //背景颜色
+  INT16U Text_X; //背景X
+  INT16U Text_Y; //背景Y
+  INT16U Text_Width; //背景宽度
+  INT16U Text_Height; //背景高度
+ */
+//从settings中获取参数
+void getTimerParaFromSettings(QString str, U_File_Para &para)
+{
+    int tmp;
+    bool checked;
+    // QString str;
+
+    para.Timer_Para.Flag = SHOW_TIMER;
+    settings.beginGroup(str);
+
+    if(settings.value("dstYear").toInt() > 2000)
+      para.Timer_Para.Dst_Year = (INT8U)(settings.value("dstYear").toInt() - 2000);
+    else
+      para.Timer_Para.Dst_Year = 0;
+
+    para.Timer_Para.Dst_Month = (INT8U)settings.value("dstMon").toInt();
+    para.Timer_Para.Dst_Date = (INT8U)settings.value("dstDay").toInt();
+    para.Timer_Para.Dst_Hour = (INT8U)settings.value("dstHour").toInt();
+    para.Timer_Para.Dst_Min = (INT8U)settings.value("dstMin").toInt();
+    para.Timer_Para.Dst_Sec = (INT8U)settings.value("dstSec").toInt();
+
+    tmp = (INT8U)settings.value("color").toInt();
+    para.Timer_Para.Timer_Color = 0;
+    SET_BIT(para.Timer_Para.Timer_Color, tmp);
+
+    para.Timer_Para.Timer_Font = (INT8U)settings.value("size").toInt();
+    para.Timer_Para.Timer_Type = (INT8U)settings.value("style").toInt();
+
+    settings.beginGroup("smLine");
+    para.Timer_Para.SmLineFlag = settings.value("smLineCheck").toBool();
+    settings.endGroup();
+
+    settings.endGroup();
 }
 
 CtimerProperty::~CtimerProperty()
@@ -79,19 +201,29 @@ CtimerProperty::~CtimerProperty()
 void CtimerProperty::getSettingsFromWidget(QString str)
 {
   settings.beginGroup(str);
-  settings.setValue("dstYear", dstDateTimeEdit->date().year());
-  settings.setValue("dstMon", dstDateTimeEdit->date().month());
-  settings.setValue("dstDay", dstDateTimeEdit->date().day());
-  settings.setValue("dstHour", dstDateTimeEdit->time().hour());
-  settings.setValue("dstMin", dstDateTimeEdit->time().minute());
-  settings.setValue("dstSec", dstDateTimeEdit->time().second());
+  int type = settings.value("type").toInt();
+  if(type EQ TIMER_PROPERTY)
+  {
+      settings.setValue("dstYear", dstDateTimeEdit->date().year());
+      settings.setValue("dstMon", dstDateTimeEdit->date().month());
+      settings.setValue("dstDay", dstDateTimeEdit->date().day());
+      settings.setValue("dstHour", dstDateTimeEdit->time().hour());
+      settings.setValue("dstMin", dstDateTimeEdit->time().minute());
+      settings.setValue("dstSec", dstDateTimeEdit->time().second());
 
-  settings.setValue("color",   fontSizeCombo->currentIndex());
-  settings.setValue("size", styleCombo->currentIndex());
+      settings.setValue("color",   colorCombo->currentIndex());
+      settings.setValue("style", styleCombo->currentIndex());
+      settings.setValue("size", fontSizeCombo->currentIndex());
+  }
+  else
+      ASSERT_FAILED();
   settings.endGroup();
 
-  simpleTextEdit->getSettingsFromWidget(str);
-  smLineEdit->getSettingsFromWidget(str);
+  if(type EQ TIMER_PROPERTY)
+  {
+      simpleTextEdit->getSettingsFromWidget(str);
+      smLineEdit->getSettingsFromWidget(str);
+  }
 }
 
 void CtimerProperty::setSettingsToWidget(QString str)
@@ -100,22 +232,54 @@ void CtimerProperty::setSettingsToWidget(QString str)
     QDate date;
     QTime time;
 
+    disconnect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+
+    disconnect(dstDateTimeEdit, SIGNAL(dateTimeChanged()), this, SLOT(edited()));
+    disconnect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+
     settings.beginGroup(str);
+    int type = settings.value("type").toInt();
+    if(type EQ TIMER_PROPERTY)
+    {
+        year = settings.value("dstYear").toInt();
+        month = settings.value("dstMon").toInt();
+        day = settings.value("dstDay").toInt();
+        date.setDate(year, month, day);
+        dstDateTimeEdit->setDate(date);
 
-    year = settings.value("dstYear").toInt();
-    month = settings.value("dstMon").toInt();
-    day = settings.value("dstDay").toInt();
-    date.setDate(year, month, day);
-    dstDateTimeEdit->setDate(date);
+        hour = settings.value("dstHour").toInt();
+        min = settings.value("dstMin").toInt();
+        sec = settings.value("dstSec").toInt();
+        time.setHMS(hour, min, sec, 0);
+        dstDateTimeEdit->setTime(time);
 
-    hour = settings.value("dstHour").toInt();
-    min = settings.value("dstMin").toInt();
-    sec = settings.value("dstSec").toInt();
-    time.setHMS(hour, min, sec, 0);
-    dstDateTimeEdit->setTime(time);
-
+        colorCombo->setCurrentIndex(settings.value("color").toInt());
+        styleCombo->setCurrentIndex(settings.value("style").toInt());
+        fontSizeCombo->setCurrentIndex(settings.value("size").toInt());
+    }
+    else
+        ASSERT_FAILED();
     settings.endGroup();
 
-    simpleTextEdit->setSettingsToWidget(str);
-    smLineEdit->setSettingsToWidget(str);
+    if(type EQ TIMER_PROPERTY)
+    {
+        simpleTextEdit->setSettingsToWidget(str);
+        smLineEdit->setSettingsToWidget(str);
+    }
+    else
+        ASSERT_FAILED();
+
+    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+
+    connect(dstDateTimeEdit, SIGNAL(dateTimeChanged()), this, SLOT(edited()));
+    connect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+
 }

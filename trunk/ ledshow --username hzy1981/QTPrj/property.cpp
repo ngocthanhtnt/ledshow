@@ -46,6 +46,8 @@ Cproperty::Cproperty(QWidget *parent):QDockWidget(parent)
     tempProperty = new CtempProperty(stackedWidget);
     stackedWidget->addWidget(tempProperty);
 
+    lunProperty = new ClunProperty(stackedWidget);
+    stackedWidget->addWidget(lunProperty);
     setWidget(stackedWidget);
 
 
@@ -99,6 +101,10 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     {
         //tempProperty->setSettingsToWidget(str);
         area = tempProperty->area;//->setSettingsToWidget(str);
+    }
+    else if(type == LUN_PROPERTY)
+    {
+        area = lunProperty->area;
     }
     else
     {
@@ -171,6 +177,11 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
         tempProperty->setSettingsToWidget(str);
         tempProperty->area->setSettingsToWidget(pstr);
     }
+    else if(type == LUN_PROPERTY)
+    {
+        lunProperty->setSettingsToWidget(str);
+        lunProperty->area->setSettingsToWidget(pstr);
+    }
     else
     {
         ASSERT_FAILED();
@@ -226,6 +237,11 @@ void Cproperty::getSettingsFromWidget(QTreeWidgetItem *item)
     {
         tempProperty->getSettingsFromWidget(str);
         tempProperty->area->getSettingsFromWidget(pstr);
+    }
+    else if(type == LUN_PROPERTY)
+    {
+        lunProperty->getSettingsFromWidget(str);
+        lunProperty->area->getSettingsFromWidget(pstr);
     }
     else
     {

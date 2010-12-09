@@ -30,6 +30,8 @@
 
 #define MAX_FILE_NAME_SIZE 20
 
+#define SPACE_WIDTH 8
+
 typedef struct
 {
     INT8U Head;
@@ -222,11 +224,14 @@ typedef struct
   INT8U Dst_Date; //目标日
   INT8U Dst_Hour; //目标时
   INT8U Dst_Min; //目标分
+  INT8U Dst_Sec; //目标秒
   
-  INT8U Show_Mode;  //显示方式 
-  INT8U Show_Color; //显示颜色
-  INT8U Show_Font; //显示字号
-  INT8U Show_Posi; //显示位置
+  INT8U SmLineFlag; //单多行标志
+
+  INT8U Timer_Type;  //显示方式
+  INT8U Timer_Color; //显示颜色
+  INT8U Timer_Font; //显示字号
+  //INT8U Show_Posi; //显示位置
   
   INT8U Temp; //备用
   
@@ -290,6 +295,57 @@ typedef struct
   INT8U Tail;
 }S_Time_Para;
 
+//农历显示参数
+typedef struct
+{
+  INT8U Head;
+
+  INT8U Flag; //标志
+  INT8U Prog_No; //节目号
+  INT8U Area_No; //分区号
+  INT8U File_No; //文件号
+  INT8U In_Mode; //引入方式
+  INT8U In_Speed; //进入速度
+  INT8U Add_Mode; //追加方式
+  INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
+  INT8U Out_Mode; //引出方式
+
+  INT8U Show_Mode;  //显示方式
+  INT8U Show_Color; //显示颜色
+  INT8U Show_Font; //显示字号
+  INT8U Show_Posi; //显示位置
+
+  INT8U Temp; //备用
+
+  INT8U SmLineFlag; //单多行标志
+
+  INT8U Tiangan_Type;  //天干地支标志,0表示不显示天干
+  INT8U Tiangan_Font; //字体
+  INT8U Tiangan_Color; //天干颜色
+  INT16U Tiangan_X;
+  INT16U Tiangan_Y;
+
+  INT8U Nongli_Type;  //农历标志，0表示不显示农历
+  INT8U Nongli_Font;  //字体
+  INT8U Nongli_Color; //农历颜色
+  INT16U Nongli_X;
+  INT16U Nongli_Y;
+
+  INT8U Jieqi_Type;  //星期标志，0表示不显示星期
+  INT8U Jieqi_Font;  //字体
+  INT8U Jieqi_Color; //星期颜色
+  INT16U Jieqi_X;
+  INT16U Jieqi_Y;
+
+  INT8U Text_Color; //背景颜色
+  INT16U Text_X; //背景X
+  INT16U Text_Y; //背景Y
+  INT16U Text_Width; //背景宽度
+  INT16U Text_Height; //背景高度
+
+  INT8U Tail;
+}S_Lun_Para;
+
 //温度参数
 typedef struct
 {
@@ -328,6 +384,7 @@ typedef union
   S_Clock_Para Clock_Para;
   S_Timer_Para Timer_Para;
   S_Time_Para Time_Para;
+  S_Lun_Para Lun_Para;
   S_Temp_Para Temp_Para;
   
 }U_File_Para;

@@ -13,7 +13,7 @@
 
 typedef struct
 {
-  char str[16];
+  char str[22];
   INT8U Len;
 
 }S_Format_Str;

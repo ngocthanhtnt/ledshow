@@ -25,6 +25,7 @@
 #define TIME_PROPERTY   0x05 //日期时间
 #define TIMER_PROPERTY  0x06 //定时
 #define TEMP_PROPERTY   0x07 //温度
+#define LUN_PROPERTY 0x08    //农历
 
 
 
@@ -49,7 +50,7 @@ public slots:
     void newTimer(); //新计时
     void newClock(); //新表盘
     void newTemp(); //新温度
-
+    void newLun(); //新农历
     void deleteItem();
     void clickItem(QTreeWidgetItem * item, int column);
 public:

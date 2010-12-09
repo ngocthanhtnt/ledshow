@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include "simpleTextEdit.h"
 #include "areaProperty.h"
+#include "showArea.h"
 
 //节目属性窗
 class CtimerProperty:public QWidget
@@ -37,7 +38,8 @@ private:
     CcolorCombo *colorCombo;  //颜色
     QComboBox *styleCombo;  //样式
     CsizeCombo *fontSizeCombo; //字体大小
-
+public slots:
+    void edited();
 public:
     Carea *area;
     void getSettingsFromWidget(QString str);
@@ -46,4 +48,6 @@ public:
     ~CtimerProperty();
 };
 
+void getTimerParaFromSettings(QString str, U_File_Para &para);
+void updateTimerShowArea(CshowArea *area);
 #endif // TIMERPROPERTY_H
