@@ -31,6 +31,8 @@ INPUT(
 ./debug\Lun_Show.o
 ./debug\Main_Show.o
 ./debug\Temp_Show.o
+./debug\lunProperty.o
+./debug\nongli.o
 ./debug\moc_mainwindow.o
 ./debug\moc_showArea.o
 ./debug\moc_progManage.o

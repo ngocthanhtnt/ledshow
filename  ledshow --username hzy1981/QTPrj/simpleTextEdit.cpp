@@ -571,7 +571,56 @@ CdateTimeEdit::~CdateTimeEdit()
 {
 
 }
+//--------------
+ClunEdit::ClunEdit(QWidget *parent):QGroupBox(parent)
+{
+    QGridLayout *gridLayout;
 
+    tianganCheck = new QCheckBox(tr("天干"), this);
+    nongliCheck = new QCheckBox(tr("农历"), this);
+    jieqiCheck = new QCheckBox(tr("节气"), this);
+
+    tianganColor = new CcolorCombo(this);
+    nongliColor = new CcolorCombo(this);
+    jieqiColor = new CcolorCombo(this);
+
+    tianganFont = new CsizeCombo(this);
+    nongliFont = new CsizeCombo(this);
+    jieqiFont = new CsizeCombo(this);
+
+    gridLayout = new QGridLayout(this);
+
+    gridLayout ->addWidget(tianganCheck, 0, 0);
+    gridLayout ->addWidget(nongliCheck, 1, 0);
+    gridLayout ->addWidget(jieqiCheck, 2, 0);
+    gridLayout ->addWidget(tianganColor, 0, 1);
+    gridLayout ->addWidget(nongliColor, 1, 1);
+    gridLayout ->addWidget(jieqiColor, 2, 1);
+    gridLayout ->addWidget(tianganFont, 0, 2);
+    gridLayout ->addWidget(nongliFont, 1, 2);
+    gridLayout ->addWidget(jieqiFont, 2, 2);
+    setLayout(gridLayout);
+    setTitle(tr("显示内容"));
+
+
+}
+
+//从Widget上获取设置
+void ClunEdit::getSettingsFromWidget(QString str)
+{
+
+}
+
+void ClunEdit::setSettingsToWidget(QString str)
+{
+
+}
+
+ClunEdit::~ClunEdit()
+{
+
+}
+//------------------------
 //简单文本编辑框
 CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
 {

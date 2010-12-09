@@ -150,6 +150,13 @@ void MainWindow::setupEditActions()
     menu->addAction(a);
     menu->addSeparator();
 
+    actionSave = a = new QAction(tr("农历"), this);
+    a->setShortcut(QKeySequence::Save);
+    connect(a, SIGNAL(triggered()), progManage, SLOT(newLun()));
+    tb->addAction(a);
+    menu->addAction(a);
+    menu->addSeparator();
+
     actionSave = a = new QAction(tr("删除"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), progManage, SLOT(deleteItem())); //删除节目

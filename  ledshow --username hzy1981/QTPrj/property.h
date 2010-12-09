@@ -10,6 +10,7 @@
 #include "flashProperty.h"
 #include "timeProperty.h"
 #include "tempProperty.h"
+#include "lunProperty.h"
 #include "textedit.h"
 #include <QDockWidget>
 #include <QStackedWidget>
@@ -31,6 +32,7 @@ private:
     CclockProperty *clockProperty; //表盘
     CflashProperty *flashProperty; //flash动画
     CtempProperty *tempProperty; //温度
+    ClunProperty *lunProperty; //农历
 
 public:
     Carea *area;

@@ -31,6 +31,8 @@ INPUT(
 ./release\Lun_Show.o
 ./release\Main_Show.o
 ./release\Temp_Show.o
+./release\lunProperty.o
+./release\nongli.o
 ./release\moc_mainwindow.o
 ./release\moc_showArea.o
 ./release\moc_progManage.o

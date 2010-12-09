@@ -227,6 +227,14 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     {
         updateTimeShowArea(area);
     }
+    else if(type EQ TIMER_PROPERTY)
+    {
+        updateTimerShowArea(area);
+    }
+    else if(type EQ LUN_PROPERTY)
+    {
+        updateLunShowArea(area);
+    }
 }
 
 //当前节目、分区、文件发生变化时的处理
@@ -849,10 +857,10 @@ void CshowArea::paintEvent(QPaintEvent *)
     Fill_Clock_Point(&showData, 0, &p0, 45, 30, 5, 0x01);
     Fill_Clock_Line(&showData, 0, &p0, 135, 50, 5, 0x04);
 */
-
-   if(mousePressed == false || (mousePressed == true && dragFlag != DRAG_MOVE))//鼠标在没有按下的情况下才更新数据
+   Clear_Area_Data(&Show_Data, 0);
+   //if(mousePressed == false || (mousePressed == true && dragFlag != DRAG_MOVE))//鼠标在没有按下的情况下才更新数据
     {
-        Clear_Area_Data(&Show_Data, 0);
+
         Clear_Area_Data(&Show_Data_Bak, 0);
         //memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
         //memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
@@ -951,7 +959,51 @@ void CshowArea::paintEvent(QPaintEvent *)
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
             Update_Time_Data(Area_No);
         }
+        else if(filePara.Temp_Para.Flag == SHOW_TIMER) //计时器
+        {
+            Get_Cur_Time(Cur_Time.Time);
 
+            //将背景文字放到Show_Data_Bak中
+
+            QSize size = imageBk.size();
+
+            filePara.Timer_Para.Text_Width = size.width();
+            filePara.Timer_Para.Text_Height = size.height();
+
+            mem_cpy((INT8U *)&File_Para[0], &filePara, sizeof(filePara), (INT8U *)&File_Para[0], sizeof(File_Para[0]));
+
+            Min_Width = Get_Timer_Min_Width(Area_No);
+            Min_Height = Get_Timer_Min_Height(Area_No);
+
+            if(File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//单行
+            {
+              if(Width > Min_Width)
+                P0.X = (Width - Min_Width) / 2;
+              else
+                P0.X = 0;
+
+              if(Height > File_Para[Area_No].Timer_Para.Text_Height)
+                P0.Y = (Height - File_Para[Area_No].Timer_Para.Text_Height)/2;
+              else
+                P0.Y = 0;//(Height - File_Para[Area_No].Timer_Para.Text_Height)/2;
+            }
+            else
+            {
+                if(Height > Min_Height)
+                  P0.Y = (Height - Min_Height) / 2;
+                else
+                  P0.Y = 0;
+
+                if(Width > File_Para[Area_No].Timer_Para.Text_Width)
+                  P0.X = (Width - File_Para[Area_No].Timer_Para.Text_Width)/2;
+                else
+                  P0.X = 0;//(Height - File_Para[Area_No].Timer_Para.Text_Height)/2;
+            }
+
+            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Timer_Para.Text_Width, File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            Update_Timer_Data(Area_No);
+        }
      }
     for(j=0; j<Height; j++)
     {
