@@ -1148,13 +1148,13 @@ INT16U Get_DateStr_Width(INT8U Font, INT8U Type)
     else
         ASSERT_FAILED();
 
-    return chrNum * Get_Font_Width(Font)/2;
+    return chrNum * Get_Font_Width(Font);
 }
 
 //ÏÔÊ¾ÐÇÆÚ
 INT16U Get_WeekStr_Width(INT8U Font, INT8U Language, INT8U Week)
 {
-  return strlen(WeekStr[Language][Week])*Get_Font_Width(Font)/2;
+  return strlen(WeekStr[Language][Week])*Get_Font_Width(Font);
 }
 */
 

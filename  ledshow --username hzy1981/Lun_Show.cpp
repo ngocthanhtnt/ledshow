@@ -2,9 +2,9 @@
 #include "Includes.h"
 #include "nongli.h"
 
-#define TIANGAN_LEN 8
+#define TIANGAN_LEN 6
 #define NONGLI_LEN  10
-#define JIEQI_LEN   4
+#define JIEQI_LEN   10
 /*
 GetChinaCalendar   (2007,2,8,NLyear);  //NLyear={20,06,12,21}
 GetChinaCalendarStr(2007,2,8,str);     //str   ={"丙戌年腊月廿一"}
@@ -127,24 +127,24 @@ INT16U Get_Lun_Min_Height(INT8U Area_No)
 
 INT16U Get_TianganStr_Width(INT8U Font)
 {
-  return TIANGAN_LEN*Get_Font_Width(Font)/2;
+  return TIANGAN_LEN*Get_Font_Width(Font);
 }
 
 INT16U Get_NongliStr_Width(INT8U Font, char str[])
 {
-  return strlen(str)*Get_Font_Width(Font)/2;
+  return strlen(str)*Get_Font_Width(Font);
 }
 
 INT16U Get_JieqiStr_Width(INT8U Font)
 {
-  return JIEQI_LEN*Get_Font_Width(Font)/2;
+  return JIEQI_LEN*Get_Font_Width(Font);
 }
 
 //extern void GetChinaCalendarStr(unsigned int  year,unsigned char month,unsigned char day,char *str);
 
 
 //更新节气数据
-void UpTiangan_Lun_Data(INT8U Area_No)
+void Update_Lun_Data(INT8U Area_No)
 {
   INT16U X, Y;
   S_Point P0;
@@ -152,7 +152,7 @@ void UpTiangan_Lun_Data(INT8U Area_No)
   INT16U Min_Width, Min_Height;
   char Tiangan[20];
   char Nongli[20];
-  char Jieqi[10];
+  char Jieqi[20];
 
   memset(Tiangan, 0, sizeof(Tiangan));
   memset(Nongli, 0, sizeof(Nongli));
@@ -230,7 +230,7 @@ void UpTiangan_Lun_Data(INT8U Area_No)
                   &Show_Data, Area_No, P0.X, P0.Y,\
                   "%s", Nongli);
         //显示农历要预留最大长度
-        X += SPACE_WIDTH + NONGLI_LEN * Get_Font_Width(File_Para[Area_No].Lun_Para.Nongli_Font)/2;//Get_NongliStr_Width(File_Para[Area_No].Lun_Para.Nongli_Font, Nongli);
+        X += SPACE_WIDTH + NONGLI_LEN * Get_Font_Width(File_Para[Area_No].Lun_Para.Nongli_Font);//Get_NongliStr_Width(File_Para[Area_No].Lun_Para.Nongli_Font, Nongli);
     }
 
     if(File_Para[Area_No].Lun_Para.Jieqi_Type > 0)//需要节气?

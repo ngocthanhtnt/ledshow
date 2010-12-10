@@ -522,6 +522,7 @@ static unsigned char const sky[][3]=  {"甲","乙","丙","丁","戊","己","庚","辛","
 static unsigned char const earth[][3]={"子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥",};
 static unsigned char const monthcode[][3]={"一","二","三","四","五","六","七","八","九","十","冬","腊",};
 static unsigned char const nongliday[][3]={"初","十","廿","三",};
+//static unsigned char const shengxiao[][3]={"鼠","牛","虎","兔","龙","蛇","马","羊","猴",'鸡","狗","猪"};
 static void StrCopy(char *target,unsigned char const *source,unsigned char no)
 {
 	unsigned int i;
@@ -556,7 +557,7 @@ void GetChinaCalendarStr(
 	unsigned char NLyear[4];
 	unsigned char SEyear;
 	
-	StrCopy(&str[0],(unsigned char *)"甲子年正月初一",15);
+        StrCopy(&str[0],(unsigned char *)"甲子年正月初一",15);
 	if(GetChinaCalendar(year,month,day,(unsigned char *)NLyear)==0)	return;
 	GetSkyEarth(NLyear[0]*100+NLyear[1],&SEyear);
 	StrCopy(&str[0],(unsigned char *)  sky[SEyear%10],2);	//  甲

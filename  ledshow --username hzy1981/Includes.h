@@ -17,5 +17,6 @@
 #include "Clock_Show.h"
 #include "Timer_Show.h"
 #include "Temp_Show.h"
+#include "Lun_Show.h"
 #include "Main_Show.h"
 #include "com.h"

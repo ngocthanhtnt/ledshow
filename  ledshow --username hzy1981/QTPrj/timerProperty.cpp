@@ -76,6 +76,11 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     vLayout->addWidget(dstTimeGroup);
     hLayout->addLayout(vLayout);
 
+    showModeEdit = new CshowModeEdit(this);
+    vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(showModeEdit);
+    hLayout->addLayout(vLayout);
+
     hLayout->addStretch(10);
     setLayout(hLayout);
 
@@ -83,7 +88,7 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 
-    connect(dstDateTimeEdit, SIGNAL(dateTimeChanged()), this, SLOT(edited()));
+    connect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
     connect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
@@ -236,7 +241,7 @@ void CtimerProperty::setSettingsToWidget(QString str)
     disconnect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 
-    disconnect(dstDateTimeEdit, SIGNAL(dateTimeChanged()), this, SLOT(edited()));
+    disconnect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
     disconnect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     disconnect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
@@ -277,7 +282,7 @@ void CtimerProperty::setSettingsToWidget(QString str)
     connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 
-    connect(dstDateTimeEdit, SIGNAL(dateTimeChanged()), this, SLOT(edited()));
+    connect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
     connect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));

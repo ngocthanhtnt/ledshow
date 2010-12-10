@@ -29,6 +29,7 @@ private:
     CsimpleTextEdit *simpleTextEdit;
     CsmLineEdit *smLineEdit;
     CdateTimeEdit *dateTimeEdit;
+    CshowModeEdit *showModeEdit;
 public slots:
     void edited();
 public:
