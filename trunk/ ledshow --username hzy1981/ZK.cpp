@@ -1485,15 +1485,15 @@ INT8U Get_Font_Height(INT8U Font)
 {
     if(Font EQ FONT0)
     {
-      return FONT0_WIDTH;
+      return FONT0_WIDTH*2;
     }
     else if(Font EQ FONT1)
     {
-      return FONT1_WIDTH;
+      return FONT1_WIDTH*2;
     }
     else
     {
-      return FONT2_WIDTH;
+      return FONT2_WIDTH*2;
     }
 }
 
@@ -1519,7 +1519,7 @@ void Show_Char(INT16U Unicode, INT8U Font, INT8U Color, S_Show_Data *pData, INT8
   {
     if(CN_ZK[i].Code==Unicode)
     {
-        X_Size = Get_Font_Width(Font);
+        X_Size = Get_Font_Width(Font)*2;
         Y_Size = Get_Font_Height(Font);
 
       Width = X_Size;
@@ -1704,7 +1704,7 @@ void vsPrintf(char Buf[], CONST INT8S *format, va_list ap)
     INT16U Unicode;
     //INT8U X_Bak;
 
-    FontWidth = Get_Font_Width(Font);
+    FontWidth = Get_Font_Width(Font)*2;
 
 
     i=0;
@@ -1754,5 +1754,5 @@ void vsPrintf(char Buf[], CONST INT8S *format, va_list ap)
       Show_String(Print_Buf.Buf, Font, Color, pData,  Area_No, X, Y);
     va_end(ap);
 
-    return strlen((char *)Print_Buf.Buf)*Get_Font_Width(Font)/2;
+    return strlen((char *)Print_Buf.Buf)*Get_Font_Width(Font);
   }

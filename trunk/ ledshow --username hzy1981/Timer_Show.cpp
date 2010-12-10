@@ -165,7 +165,7 @@ INT16U Show_Timer(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Ti
 //定时字符串的像素宽度
 INT16U Get_TimerStr_Pix_Width(INT8U Type, INT8U Font)
 {
-   return TimerStr[Type].Len*Get_Font_Width(Font)/2;
+   return TimerStr[Type].Len*Get_Font_Width(Font);
 }
 
 //显示定时信息的最小宽度

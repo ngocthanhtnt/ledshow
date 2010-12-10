@@ -28,7 +28,7 @@ private:
     QLabel *textLabel;  //文本
     CsimpleTextEdit *simpleTextEdit;
     CsmLineEdit *smLineEdit;
-
+    CshowModeEdit *showModeEdit;
     QGroupBox *dstTimeGroup;
     QLabel *dstTimeLabel; //目标时间
     QLabel *styleLabel; //样式

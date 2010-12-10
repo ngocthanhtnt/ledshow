@@ -1004,6 +1004,60 @@ void CshowArea::paintEvent(QPaintEvent *)
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
             Update_Timer_Data(Area_No);
         }
+        else if(filePara.Temp_Para.Flag == SHOW_LUN) //显示农历
+        {
+            Get_Cur_Time(Cur_Time.Time);
+
+            //将背景文字放到Show_Data_Bak中
+
+            QSize size = imageBk.size();
+
+            filePara.Lun_Para.Text_Width = size.width();
+            filePara.Lun_Para.Text_Height = size.height();
+
+            mem_cpy((INT8U *)&File_Para[0], &filePara, sizeof(filePara), (INT8U *)&File_Para[0], sizeof(File_Para[0]));
+
+            Min_Width = Get_Lun_Min_Width(Area_No); //显示农历的最小宽度
+            Min_Height = Get_Lun_Min_Height(Area_No); //先死农历的最小高度
+
+            if(File_Para[Area_No].Lun_Para.SmLineFlag == SLINE_MODE)//单行
+            {
+              if(Width > Min_Width)
+              {
+                P0.X = (Width - Min_Width) / 2;
+              }
+              else
+              {
+                P0.X = 0;
+              }
+
+              if(Height > File_Para[Area_No].Lun_Para.Text_Height)
+                P0.Y = (Height - File_Para[Area_No].Lun_Para.Text_Height)/2;
+              else
+                P0.Y = 0;//(Height - File_Para[Area_No].Lun_Para.Text_Height)/2;
+            }
+            else
+            {
+                if(Height > Min_Height)
+                {
+                  P0.Y = (Height - Min_Height) / 2;
+                }
+                else
+                {
+                  P0.Y = 0;
+                }
+
+                if(Width > File_Para[Area_No].Lun_Para.Text_Width)
+                  P0.X = (Width - File_Para[Area_No].Lun_Para.Text_Width)/2;
+                else
+                  P0.X = 0;//(Height - File_Para[Area_No].Lun_Para.Text_Height)/2;
+              }
+
+            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Lun_Para.Text_Width, File_Para[Area_No].Lun_Para.Text_Height, &Show_Data, &P0);//&Point);
+
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            Update_Lun_Data(Area_No);
+        }
      }
     for(j=0; j<Height; j++)
     {

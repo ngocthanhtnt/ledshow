@@ -593,27 +593,73 @@ ClunEdit::ClunEdit(QWidget *parent):QGroupBox(parent)
     gridLayout ->addWidget(tianganCheck, 0, 0);
     gridLayout ->addWidget(nongliCheck, 1, 0);
     gridLayout ->addWidget(jieqiCheck, 2, 0);
-    gridLayout ->addWidget(tianganColor, 0, 1);
-    gridLayout ->addWidget(nongliColor, 1, 1);
-    gridLayout ->addWidget(jieqiColor, 2, 1);
-    gridLayout ->addWidget(tianganFont, 0, 2);
-    gridLayout ->addWidget(nongliFont, 1, 2);
-    gridLayout ->addWidget(jieqiFont, 2, 2);
+    gridLayout ->addWidget(tianganFont, 0, 1);
+    gridLayout ->addWidget(nongliFont, 1, 1);
+    gridLayout ->addWidget(jieqiFont, 2, 1);
+    gridLayout ->addWidget(tianganColor, 0, 2);
+    gridLayout ->addWidget(nongliColor, 1, 2);
+    gridLayout ->addWidget(jieqiColor, 2, 2);
+
     setLayout(gridLayout);
     setTitle(tr("显示内容"));
 
+    connect(tianganCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+    connect(nongliCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+    connect(jieqiCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
 
+    connect(tianganColor, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
+    connect(nongliColor, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
+    connect(jieqiColor, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
+
+    connect(tianganFont, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
+    connect(nongliFont, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
+    connect(jieqiFont, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
 }
 
 //从Widget上获取设置
 void ClunEdit::getSettingsFromWidget(QString str)
 {
+    settings.beginGroup(str);
+    settings.beginGroup("lunEdit");
+    settings.setValue("tianganCheck", tianganCheck->isChecked());
+    settings.setValue("tianganSize", tianganFont->currentIndex());
+    settings.setValue("tianganColor", tianganColor->currentIndex());
+    settings.setValue("nongliCheck", nongliCheck->isChecked());
+    settings.setValue("nongliSize", nongliFont->currentIndex());
+    settings.setValue("nongliColor", nongliColor->currentIndex());
+    settings.setValue("jieqiCheck", jieqiCheck->isChecked());
+    settings.setValue("jieqiSize", jieqiFont->currentIndex());
+    settings.setValue("jieqiColor", jieqiColor->currentIndex());
+    settings.endGroup();
+    settings.endGroup();
 
 }
 
 void ClunEdit::setSettingsToWidget(QString str)
 {
+    settings.beginGroup(str);
+    settings.beginGroup("lunEdit");
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag EQ 0)
+    {
+      settings.setValue("tianganCheck", 1);
+      settings.setValue("setFlag", 1);
 
+    }
+
+    tianganCheck->setChecked(settings.value("tianganCheck").toBool());
+    tianganFont->setCurrentIndex(settings.value("tianganSize").toInt());
+    tianganColor->setCurrentIndex(settings.value("tianganColor").toInt());
+
+    nongliCheck->setChecked(settings.value("nongliCheck").toBool());
+    nongliFont->setCurrentIndex(settings.value("nongliSize").toInt());
+    nongliColor->setCurrentIndex(settings.value("nongliColor").toInt());
+
+    jieqiCheck->setChecked(settings.value("jieqiCheck").toBool());
+    jieqiFont->setCurrentIndex(settings.value("jieqiSize").toInt());
+    jieqiColor->setCurrentIndex(settings.value("jieqiColor").toInt());
+    settings.endGroup();
+    settings.endGroup();
 }
 
 ClunEdit::~ClunEdit()

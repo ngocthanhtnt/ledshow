@@ -39,7 +39,12 @@ CtimeProperty::CtimeProperty(QWidget *parent):QWidget(parent)
     dateTimeEdit = new CdateTimeEdit(this);
     vLayout = new QVBoxLayout(this);
     vLayout->addWidget(dateTimeEdit);
+    hLayout->addLayout(vLayout);
     //vLayout->addStretch();
+    showModeEdit = new CshowModeEdit(this);
+    vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(showModeEdit);
+
     hLayout->addLayout(vLayout);
 /*
     vLayout = new QVBoxLayout(this);

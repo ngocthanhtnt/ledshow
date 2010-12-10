@@ -10,9 +10,9 @@
 #define EXT extern
 #endif
 
-#define FONT0_WIDTH 16
-#define FONT1_WIDTH 24
-#define FONT2_WIDTH 32
+#define FONT0_WIDTH 8
+#define FONT1_WIDTH 12
+#define FONT2_WIDTH 16
 
 #define FONT0 0
 #define FONT1 1
