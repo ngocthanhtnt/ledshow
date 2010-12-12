@@ -64,5 +64,7 @@ EXT INT8S File_Write(FILE_T file, INT32U Offset, INT8U Buf[], INT16U Len);
 EXT INT8S File_Close(FILE_T file);
 EXT INT8S File_Delete(char File_Name[]);
 EXT INT8S File_Size(char File_Name[]);
+EXT INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen);
+EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
 #endif
 #endif

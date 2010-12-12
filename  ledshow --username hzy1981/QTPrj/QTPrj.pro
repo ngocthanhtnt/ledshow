@@ -43,7 +43,8 @@ SOURCES += main.cpp\
     ../Main_Show.cpp \
     ../Temp_Show.cpp \
     lunProperty.cpp \
-    ../nongli.cpp
+    ../nongli.cpp \
+    ../Storage.cpp
 
 HEADERS  += mainwindow.h \
     ../LED_Cfg.h \
@@ -79,7 +80,8 @@ HEADERS  += mainwindow.h \
     ../Main_Show.h \
     ../Temp_Show.h \
     lunProperty.h \
-    ../nongli.h
+    ../nongli.h \
+    ../Storage.h
 
 RESOURCES += \
     textedit.qrc

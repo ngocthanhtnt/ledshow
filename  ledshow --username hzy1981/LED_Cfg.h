@@ -1,3 +1,6 @@
+
+#define ROM_CS_BYTES 2
+
 #define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 #define MAX_POINTS (1024*256L) //最大点数
 #define MAX_PROGRAM_NUM 10 //最大节目数

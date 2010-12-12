@@ -238,8 +238,8 @@ void CtimerProperty::setSettingsToWidget(QString str)
     QTime time;
 
     disconnect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    disconnect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    //disconnect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 
     disconnect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
     disconnect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
@@ -279,7 +279,7 @@ void CtimerProperty::setSettingsToWidget(QString str)
         ASSERT_FAILED();
 
     connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    //connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 
     connect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
