@@ -81,6 +81,17 @@ INT8S File_Delete(char File_Name[])
 {
   return 1;
 }
+
+INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen)
+{
+  return 1;
+}
+
+INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen)
+{
+  return 1;
+}
+
 #endif
 
 

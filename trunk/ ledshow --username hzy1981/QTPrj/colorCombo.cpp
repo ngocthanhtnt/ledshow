@@ -2,9 +2,22 @@
 
 CcolorCombo::CcolorCombo(QWidget *parent):QComboBox(parent)
 {
-    addItem(tr("ºìÉ«"));
-    addItem(tr("ÂÌÉ«"));
-    addItem(tr("»ÆÉ«"));
+    QPixmap *pixmap;//(16,16);
+
+    pixmap = new QPixmap(16,16);
+    pixmap->fill(QColor(Qt::red));
+    QIcon redicon(*pixmap);
+    addItem(redicon, tr(""));
+
+    pixmap = new QPixmap(16,16);
+    pixmap->fill(QColor(Qt::green));
+    QIcon greenicon(*pixmap);
+    addItem(greenicon, tr(""));
+
+    pixmap = new QPixmap(16,16);
+    pixmap->fill(QColor(Qt::yellow));
+    QIcon yellowicon(*pixmap);
+    addItem(yellowicon, tr(""));
 }
 
 QColor CcolorCombo::getColor()

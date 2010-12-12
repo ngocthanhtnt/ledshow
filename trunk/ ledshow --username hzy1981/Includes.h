@@ -9,6 +9,7 @@
 #include "nongli.h"
 #include "zk.h"
 #include "File_Op.h"
+#include "Storage.h"
 #include "LED_Para.h"
 #include "LED_Show.h"
 #include "Time_Show.h"

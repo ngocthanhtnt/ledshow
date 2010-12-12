@@ -33,6 +33,7 @@ INPUT(
 ./debug\Temp_Show.o
 ./debug\lunProperty.o
 ./debug\nongli.o
+./debug\Storage.o
 ./debug\moc_mainwindow.o
 ./debug\moc_showArea.o
 ./debug\moc_progManage.o

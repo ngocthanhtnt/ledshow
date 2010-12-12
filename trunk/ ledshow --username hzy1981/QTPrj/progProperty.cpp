@@ -16,6 +16,8 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     //nameLabel = new QLabel(tr("名字"), this);
 
     nameEdit = new QLineEdit(this);
+    nameEdit->setFixedWidth(100);
+
     vLayout = new QVBoxLayout(this);
     //vLayout->addWidget(nameLabel);
     vLayout->addWidget(nameEdit);
@@ -39,10 +41,12 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     dateGroup = new QGroupBox(this);
     dateTimerCheck = new QCheckBox(tr("按日期定时"), this);
     startDateLabel = new QLabel(tr("开始日期"), this);
-    endDateLabel = new QLabel(tr("结束日日期"), this);
+    endDateLabel = new QLabel(tr("结束日期"), this);
     startDateEdit = new QDateEdit(this);
     endDateEdit = new QDateEdit(this);
-    gridLayout -> addWidget(dateTimerCheck, 0, 0);
+    //startDateEdit->resize(startDateEdit->sizeHint());
+
+    gridLayout -> addWidget(dateTimerCheck, 0, 0, 1, 2);
     gridLayout -> addWidget(startDateLabel, 1, 0);
     gridLayout -> addWidget(startDateEdit, 1, 1);
     gridLayout -> addWidget(endDateLabel, 2, 0);
@@ -62,7 +66,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     weekCheck[5] = new QCheckBox(tr("星期六"), this);
     weekCheck[6] = new QCheckBox(tr("星期日"), this);
     //weekCheck[7] = new QCheckBox(tr("全选"), this);
-    gridLayout -> addWidget(weekTimerCheck, 0, 0);
+    gridLayout -> addWidget(weekTimerCheck, 0, 0, 1, 2);
     gridLayout -> addWidget(weekCheck[0], 1, 0);
     gridLayout -> addWidget(weekCheck[1], 1, 1);
     gridLayout -> addWidget(weekCheck[2], 1, 2);
@@ -82,7 +86,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     endTimeLabel = new QLabel(tr("结束时间"), this);
     startTimeEdit = new QTimeEdit(this);
     endTimeEdit = new QTimeEdit(this);
-    gridLayout -> addWidget(timeCheck, 0, 0);
+    gridLayout -> addWidget(timeCheck, 0, 0, 1, 2);
     gridLayout -> addWidget(startTimeLabel, 1, 0);
     gridLayout -> addWidget(startTimeEdit, 1, 1);
     gridLayout -> addWidget(endTimeLabel, 2, 0);
@@ -102,9 +106,18 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     playTimeCheck = new QCheckBox(tr("定长播放"), this);
     playTimeEdit = new QLineEdit(this);
     playTimeLabel = new QLabel(tr("秒"));
-    gridLayout -> addWidget(playTimeCheck, 0, 0);
-    gridLayout -> addWidget(playTimeEdit, 1, 0);
-    gridLayout -> addWidget(playTimeLabel, 1, 1);
+
+    playCountCheck = new QCheckBox(tr("顺次播放"), this);
+    playCountEdit = new QLineEdit(this);
+    playCountLabel = new QLabel(tr("次"));
+
+    gridLayout -> addWidget(playCountCheck, 0, 0, 1, 2);
+    gridLayout -> addWidget(playCountEdit, 1, 0);
+    gridLayout -> addWidget(playCountLabel, 1, 1);
+
+    gridLayout -> addWidget(playTimeCheck, 2, 0, 1, 2);
+    gridLayout -> addWidget(playTimeEdit, 3, 0);
+    gridLayout -> addWidget(playTimeLabel, 3, 1);
     playTimeGroup -> setLayout(gridLayout);
 
     vLayout = new QVBoxLayout(this);
@@ -117,24 +130,26 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     gridLayout = new QGridLayout(this);
     borderGroup = new QGroupBox(tr("流水边框选择"), this);
     borderCheck = new QCheckBox(tr("启用流水边框"), this);
-    widthLabel = new QLabel(tr("宽度"), this);
+    stepLabel = new QLabel(tr("步长"), this);
     pointsLabel = new QLabel(tr("点数"), this);
     styleLabel = new QLabel(tr("样式"), this);
-    colorLabel = new QLabel(tr("颜色"), this);
+    modeLabel = new QLabel(tr("特效"), this);
     speedLabel = new QLabel(tr("速度"), this);
     usLabel = new QLabel(tr("微秒"), this);
-    widthEdit = new QLineEdit(this);
+    stepEdit = new QLineEdit(this);
     speedEdit = new QLineEdit(this);
-    styleCombo = new QComboBox(this);
     colorCombo = new CcolorCombo(this);
-    gridLayout -> addWidget(borderCheck, 0, 0);
-    gridLayout -> addWidget(widthLabel, 1, 0);
-    gridLayout -> addWidget(widthEdit, 1, 1);
+    styleCombo = new QComboBox(this);
+    modeCombo = new QComboBox(this);//CmodeCombo(this);
+    gridLayout -> addWidget(borderCheck, 0, 0, 1, 2);
+    gridLayout -> addWidget(stepLabel, 1, 0);
+    gridLayout -> addWidget(stepEdit, 1, 1);
     gridLayout -> addWidget(pointsLabel, 1, 2);
     gridLayout -> addWidget(styleLabel, 2, 0);
     gridLayout -> addWidget(styleCombo, 2, 1);
-    gridLayout -> addWidget(colorLabel, 3, 0);
-    gridLayout -> addWidget(colorCombo, 3, 1);
+     gridLayout -> addWidget(colorCombo, 2, 2);
+    gridLayout -> addWidget(modeLabel, 3, 0);
+    gridLayout -> addWidget(modeCombo, 3, 1);
     gridLayout -> addWidget(speedLabel, 4, 0);
     gridLayout -> addWidget(speedEdit, 4, 1);
     gridLayout -> addWidget(usLabel, 4, 2);
@@ -144,7 +159,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     vLayout->addWidget(borderGroup);
     hLayout->addLayout(vLayout);
 
-    hLayout->addStretch();
+    hLayout->addStretch(10);
     setLayout(hLayout);
 
   //-----------------------------------------------------
@@ -166,9 +181,16 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    styleCombo->addItem(tr("7点逆时钟"));
    styleCombo->addItem(tr("8点逆时钟"));
 
-   //colorCombo->addItem(tr("红色"));
-   //colorCombo->addItem(tr("绿色"));
-   //colorCombo->addItem(tr("黄色"));
+   modeCombo->addItem(tr("静态"));
+   modeCombo->addItem(tr("闪烁"));
+   modeCombo->addItem(tr("顺时钟移动"));
+   modeCombo->addItem(tr("逆时钟移动"));
+   modeCombo->addItem(tr("顺时钟闪烁移动"));
+   modeCombo->addItem(tr("逆时钟闪烁移动"));
+
+   //modeCombo->addItem(tr("红色"));
+   //modeCombo->addItem(tr("绿色"));
+   //modeCombo->addItem(tr("黄色"));
 
    //按日期定时选择
    dateTimerCheckProc((int)dateTimerCheck->checkState());
@@ -177,7 +199,8 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    //按时间定时选择
    timeCheckProc((int)timeCheck->checkState());
    //定长播放选择
-   playTimeCheckProc((int)timeCheck->checkState());
+   playTimeCheckProc((int)playTimeCheck->checkState());
+   playCountCheckProc((int)playCountCheck->checkState());
    //边框选择
    borderCheckProc((int)borderCheck->checkState());
 
@@ -186,6 +209,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    connect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(weekTimerCheckProc(int)));
    connect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
    connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
+   connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 }
 
@@ -230,10 +254,10 @@ CprogProperty::~CprogProperty()
     QGroupBox *borderGroup; //边框
     QCheckBox *borderCheck;
 
-    QLabel *widthLabel,*styleLabel,*colorLabel,*speedLabel;
+    QLabel *stepLabel,*styleLabel,*modeLabel,*speedLabel;
     QLabel *pointsLabel,*usLabel;
-    QLineEdit *widthEdit, *speedEdit;
-    QComboBox *styleCombo, *colorCombo;
+    QLineEdit *stepEdit, *speedEdit;
+    QComboBox *styleCombo, *modeCombo;
  */
 //从settings设置到widget中
 void CprogProperty::setSettingsToWidget(QString str)
@@ -247,6 +271,7 @@ void CprogProperty::setSettingsToWidget(QString str)
     disconnect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(weekTimerCheckProc(int)));
     disconnect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
     disconnect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
+    disconnect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
     disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 
     settings.beginGroup(str);
@@ -304,13 +329,17 @@ void CprogProperty::setSettingsToWidget(QString str)
     //定长播放
     playTimeCheck->setChecked(settings.value("playTimeCheck").toBool());
     playTimeEdit->setText(QString::number(settings.value("playTime").toInt()));
-
+    playTimeEdit->setFixedWidth(50);
+    playCountCheck->setChecked(settings.value("playCountCheck").toBool());
+    playCountEdit->setText(QString::number(settings.value("playCount").toInt()));
+    playCountEdit->setFixedWidth(50);
     //边框选择
     borderCheck->setChecked(settings.value("borderCheck").toBool());
-    widthEdit->setText(QString::number(settings.value("width").toInt()));
+    stepEdit->setText(QString::number(settings.value("width").toInt()));
     speedEdit->setText(QString::number(settings.value("speed").toInt()));
     styleCombo->setCurrentIndex(settings.value("style").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
+    modeCombo->setCurrentIndex(settings.value("mode").toInt());
 
     settings.endGroup();
 
@@ -318,7 +347,20 @@ void CprogProperty::setSettingsToWidget(QString str)
     connect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(weekTimerCheckProc(int)));
     connect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
     connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
+    connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
     connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+
+    //按日期定时选择
+    dateTimerCheckProc((int)dateTimerCheck->checkState());
+    //按星期定时选择
+    weekTimerCheckProc((int)weekTimerCheck->checkState());
+    //按时间定时选择
+    timeCheckProc((int)timeCheck->checkState());
+    //定长播放选择
+    playTimeCheckProc((int)playTimeCheck->checkState());
+    playCountCheckProc((int)playCountCheck->checkState());
+    //边框选择
+    borderCheckProc((int)borderCheck->checkState());
 }
 
 //从Widget获取配置到settings中,str为Settings的group
@@ -377,17 +419,20 @@ void CprogProperty::getSettingsFromWidget(QString str)
     settings.setValue("playTimeCheck", QVariant(playTimeCheck->checkState()));
     //playTimeEdit->setText(settings.value("playTime").toString());
     settings.setValue("playTime", QVariant(playTimeEdit->text().toInt()));
+    settings.setValue("playCountCheck", QVariant(playCountCheck->checkState()));
+    settings.setValue("playCount", QVariant(playCountEdit->text().toInt()));
       //边框选择
       //borderCheck->setChecked(settings.value("boderCheck").toBool());
     settings.setValue("borderCheck", QVariant(borderCheck->checkState()));
-    //widthEdit->setText(settings.value("width").toString());
-    settings.setValue("width", QVariant(widthEdit->text().toInt()));
+    //stepEdit->setText(settings.value("width").toString());
+    settings.setValue("width", QVariant(stepEdit->text().toInt()));
     //speedEdit->setText(settings.value("speed").toString());
     settings.setValue("speed", QVariant(speedEdit->text().toInt()));
     //styleCombo->setCurrentIndex(settings.value("style").toInt());
     settings.setValue("style", QVariant(styleCombo->currentIndex()));
-    //colorCombo->setCurrentIndex(settings.value("color").toInt());
+    //modeCombo->setCurrentIndex(settings.value("color").toInt());
     settings.setValue("color", QVariant(colorCombo->currentIndex()));
+    settings.setValue("mode", QVariant(modeCombo->currentIndex()));
    }
 
     settings.endGroup();
@@ -449,6 +494,18 @@ void CprogProperty::playTimeCheckProc(int state)
 
     flag = (state==Qt::Unchecked)?false:true;
     playTimeEdit->setEnabled(flag);
+    if(flag == true)
+      playCountCheck->setChecked(false);
+}
+
+void CprogProperty::playCountCheckProc(int state)
+{
+    bool flag;
+
+    flag = (state==Qt::Unchecked)?false:true;
+    playCountEdit->setEnabled(flag);
+    if(flag == true)
+      playTimeCheck->setChecked(false);
 }
 
 void CprogProperty::borderCheckProc(int state)
@@ -457,9 +514,10 @@ void CprogProperty::borderCheckProc(int state)
 
     flag = (state==Qt::Unchecked)?false:true;
 
-    widthEdit->setEnabled(flag);
+    stepEdit->setEnabled(flag);
     speedEdit->setEnabled(flag);
     styleCombo->setEnabled(flag);
+    modeCombo->setEnabled(flag);
     colorCombo->setEnabled(flag);
 }
 

@@ -46,6 +46,10 @@ private:
 
     //------------定长播放----------
     QGroupBox *playTimeGroup; //播放时长
+    QCheckBox *playCountCheck; //顺次播放
+    QLineEdit *playCountEdit; //次数
+    QLabel *playCountLabel;//次数label
+
     QCheckBox *playTimeCheck; //定长播放
     QLineEdit *playTimeEdit; //时长
     QLabel *playTimeLabel;
@@ -54,10 +58,11 @@ private:
     QGroupBox *borderGroup; //边框
     QCheckBox *borderCheck;
 
-    QLabel *widthLabel,*styleLabel,*colorLabel,*speedLabel;
+    QLabel *stepLabel,*styleLabel,*modeLabel,*speedLabel;
     QLabel *pointsLabel,*usLabel;
-    QLineEdit *widthEdit, *speedEdit;
+    QLineEdit *stepEdit, *speedEdit;
     QComboBox *styleCombo;
+    QComboBox *modeCombo;
     CcolorCombo *colorCombo;
 
     //QSrting settingsStr; //当前设置Str
@@ -67,6 +72,7 @@ public slots:
     void weekTimerCheckProc(int state);
     void timeCheckProc(int state);
     void playTimeCheckProc(int state);
+    void playCountCheckProc(int state);
     void borderCheckProc(int state);
 
 public:
