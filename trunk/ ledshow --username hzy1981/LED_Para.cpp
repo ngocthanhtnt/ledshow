@@ -53,7 +53,7 @@ cmd=0x08 节目数
 prog_property00.cfg 文件格式
 
 */
-
+/*
 //获取节目名字
 //获取显示数据文件名
 char * Get_Program_Data_File_Name(INT8U Prog_No, INT8U Area_No, char File_Name[])
@@ -69,11 +69,7 @@ char * Get_Program_Data_File_Name(INT8U Prog_No, INT8U Area_No, char File_Name[]
   File_Name[i++] = '-';
   File_Name[i++] = '0' + Area_No / 10;
   File_Name[i++] = '0' + Area_No % 10;
-/*  
-  File_Name[i++] = '-';
-  File_Name[i++] = '0' + File_No / 10;
-  File_Name[i++] = '0' + File_No % 10;
- */ 
+ 
   File_Name[i] = '\0';
   strcat(File_Name, ".dat");
   
@@ -189,121 +185,86 @@ INT8U Get_Para_Frame_File_Off_Size(INT16U Ctrl_Code, char File_Name[], INT16U *p
   
   return 0;
 }
-
+*/
 //保存参数帧处理
 INT8U Save_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen)
 {
-  FILE_T File;
-  INT16U Ctrl_Code, Off, Len;
-  char File_Name[MAX_FILE_NAME_SIZE];
+  //INT8U Prog_No = Prog_Para.Prog_No;
+  Write_Storage_Data(SDI_SCREEN_PARA , (INT8U *)&Screen_Para + CHK_HEAD_LEN, SCREEN_PARA_LEN);
   
-  Ctrl_Code = Frame[6] + (INT16U)Frame[7] * 256;
+#ifdef SDI_SCREEN_PARA_BK0 
+  Write_Storage_Data(SDI_SCREEN_PARA_BK0, (INT8U *)&Screen_Para + CHK_HEAD_LEN, SCREEN_PARA_LEN);
+#endif
+
+#ifdef SDI_SCREEN_PARA_BK1 
+  Write_Storage_Data(SDI_SCREEN_PARA_BK1, (INT8U *)&Screen_Para + CHK_HEAD_LEN, SCREEN_PARA_LEN);
+#endif  
   
-  if(Get_Para_Frame_File_Off_Size(Ctrl_Code, File_Name, &Off, &Len) > 0) //是否属于参数?
-  {
-    if(Len EQ FrameLen)
-    {
-      File = File_Open(File_Name, FILE_WR);
-      File_Write(File, Off, Frame, Len);
-      return 1;
-    }
-    else
-    {
-      ASSERT_FAILED();
-      
-    }
-  }  
-  return 0;
+  
+#ifdef SDI_SCREEN_PARA_BK2 
+  Write_Storage_Data(SDI_SCREEN_PARA_BK2, (INT8U *)&Screen_Para + CHK_HEAD_LEN, SCREEN_PARA_LEN);
+#endif 
+  
+  return 1;
 }
 
 //保存节目属性帧
 INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 {
-  INT8U Re;
-  FILE_T File;
-  INT16U Ctrl_Code;
   INT8U Prog_No;
-  INT32U Size;
-  char File_Name[MAX_FILE_NAME_SIZE];
+
+  Prog_No = *(Frame + 8); //节目号
+  Write_Storage_Data(SDI_PROG_PARA + Prog_No , (INT8U *)&Prog_Para + CHK_HEAD_LEN, PROG_PARA_LEN);
   
-  Ctrl_Code = Frame[6] + (INT16U)Frame[7] * 256;
+#ifdef SDI_PROG_PARA_BK0 
+  Write_Storage_Data(SDI_PROG_PARA_BK0 + Prog_No, (INT8U *)&Prog_Para + CHK_HEAD_LEN, PROG_PARA_LEN);
+#endif
+
+#ifdef SDI_PROG_PARA_BK1 
+  Write_Storage_Data(SDI_PROG_PARA_BK1 + Prog_No, (INT8U *)&Prog_Para + CHK_HEAD_LEN, PROG_PARA_LEN);
+#endif  
   
-  if(Ctrl_Code EQ C_PROG_PROPERTY) //节目属性
-  {
-    Prog_No = *(Frame + 8); //节目号
-    if(Prog_No >= MAX_PROGRAM_NUM)
-    {
-      ASSERT_FAILED();
-      return 0;
-    }
-    
-    Get_Program_Property_File_Name(Prog_No, File_Name);
-    Re = 1;
-    File = File_Open(File_Name, FILE_WR);
-    if(Re EQ 0)
-      ASSERT_FAILED();
-    
-    Size = File_Size(File_Name);
-    Re &= File_Write(File, Size, Frame, FrameLen);
-    if(Re EQ 0)
-      ASSERT_FAILED();
-    
-    return Re;
-  }
   
-  return 0;
+#ifdef SDI_PROG_PARA_BK2 
+  Write_Storage_Data(SDI_PROG_PARA_BK2 + Prog_No, (INT8U *)&Prog_Para + CHK_HEAD_LEN, PROG_PARA_LEN);
+#endif     
+ 
+  return 1;
 }
 
 //保存节目属性帧
 INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 {
-  FILE_T File;
-  INT8U Re;
-  INT16U Ctrl_Code;
-  INT8U Prog_No, Area_No, File_No;
-  INT32U Size;
-  char File_Name[MAX_FILE_NAME_SIZE];
+    /*
+  INT8U Type,Prog_No,Area_No;
   
-  Ctrl_Code = Frame[6] + (INT16U)Frame[7] * 256;
-  
-  if(Ctrl_Code EQ C_PROG_DATA) //节目属性
-  {
+  //if(Ctrl_Code EQ C_PROG_DATA) //节目属性
+  //{
+    Type = *(Frame + 8);
     Prog_No = *(Frame + 9); //节目号
     Area_No = *(Frame + 10); //分区号
     File_No = *(Frame + 11); //文件号
     
-    if(Prog_No >= MAX_PROGRAM_NUM ||\
+    if(Prog_No >= MAX_PROG_NUM ||\
       Area_No >= MAX_AREA_NUM)
     {
       ASSERT_FAILED();
       return 0;
     }
     
-    Get_Program_Data_File_Name(Prog_No, Area_No, File_Name);
-    Re = 1;
-    File = File_Open(File_Name, FILE_WR);
-    if(Re EQ 0)
-      ASSERT_FAILED();
     
-    Size = File_Size(File);
-    Re &= File_Write(File, Size, Frame, FrameLen);
-    if(Re EQ 0)
-      ASSERT_FAILED();
-    
-    return Re;
-  }
-  
   return 0;
+  */
 }
 
 //删除节目数据
 INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen)
 {
-  INT8U *pData;
+  //INT8U *pData;
   INT16U Ctrl_Code;
   
   Ctrl_Code = Frame[6] + (INT16U)Frame[7] * 256;
-  pData = Frame + 8; //数据域 
+  //pData = Frame + 8; //数据域 
   if(Ctrl_Code EQ C_DEL_PROG) //删除节目---暂定为删除所有节目,后期再修改
   {
     File_Delete("*.pro");  //删除节目数性文件
@@ -320,8 +281,8 @@ INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen)
 //读取节目参数
 //Prog节目号
 //返回值1 表示读取成功。0表示没有这个节目或者读取不成功
-INT8U Read_Program_Para(INT8U Prog_No)
-{
+INT8U Read_Prog_Para(INT8U Prog_No)
+{/*
   char File_Name[MAX_FILE_NAME_SIZE];
   FILE_T File;
   INT16U Ctrl, Len;
@@ -329,7 +290,7 @@ INT8U Read_Program_Para(INT8U Prog_No)
   
   Get_Program_Property_File_Name(Prog_No, File_Name);
   File = File_Open(File_Name, FILE_R);
-  Len = File_Read_One_Frame(File, 0, &Seq, &Ctrl, (INT8U *)&Program_Para, (INT8U *)&Program_Para, sizeof(Program_Para));
+  Len = File_Read_One_Frame(File, 0, &Seq, &Ctrl, (INT8U *)&Prog_Para, (INT8U *)&Prog_Para, sizeof(Prog_Para));
   File_Close(File);
   if(Len > 0)
     return 1;
@@ -337,7 +298,7 @@ INT8U Read_Program_Para(INT8U Prog_No)
   {
     ASSERT_FAILED();
     return 0;
-  }
+  }*/
 }
 
 //定时信息中，星期的第0位表示星期1，第6位表示星期六
@@ -347,35 +308,35 @@ INT8U Check_Program_Time()
   INT8U Temp[20];
   memset(Temp, 0xFF, sizeof(Temp));
   
-  if(Program_Para.Timing[0].Week != 0xFF)  //按星期定时
+  if(Prog_Para.Timing[0].Week != 0xFF)  //按星期定时
   {
-    if(GET_BIT(Program_Para.Timing[0].Week, Cur_Time.Time[T_WEEK]) EQ 0)
+    if(GET_BIT(Prog_Para.Timing[0].Week, Cur_Time.Time[T_WEEK]) EQ 0)
       return 0;
   }      
   
   
   //按日期定时
-  if(memcmp(Program_Para.Timing[0].Start_Date, Temp, 3) != 0 &&\
-    memcmp(Program_Para.Timing[0].End_Date, Temp, 3) != 0)
+  if(memcmp(Prog_Para.Timing[0].Start_Date, Temp, 3) != 0 &&\
+    memcmp(Prog_Para.Timing[0].End_Date, Temp, 3) != 0)
   {
-    if(!(Cur_Time.Time[T_YEAR] >= Program_Para.Timing[0].Start_Date[0] &&\
-      Cur_Time.Time[T_YEAR] <= Program_Para.Timing[0].End_Date[0] &&\
-        Cur_Time.Time[T_MONTH] >= Program_Para.Timing[0].Start_Date[1] &&\
-          Cur_Time.Time[T_MONTH] <= Program_Para.Timing[0].End_Date[1] &&\
-            Cur_Time.Time[T_DATE] >= Program_Para.Timing[0].Start_Date[2] &&\
-              Cur_Time.Time[T_DATE] <= Program_Para.Timing[0].End_Date[2]))
+    if(!(Cur_Time.Time[T_YEAR] >= Prog_Para.Timing[0].Start_Date[0] &&\
+      Cur_Time.Time[T_YEAR] <= Prog_Para.Timing[0].End_Date[0] &&\
+        Cur_Time.Time[T_MONTH] >= Prog_Para.Timing[0].Start_Date[1] &&\
+          Cur_Time.Time[T_MONTH] <= Prog_Para.Timing[0].End_Date[1] &&\
+            Cur_Time.Time[T_DATE] >= Prog_Para.Timing[0].Start_Date[2] &&\
+              Cur_Time.Time[T_DATE] <= Prog_Para.Timing[0].End_Date[2]))
       return 0;
     
   } 
   
   //按时间定时
-  if(memcmp(Program_Para.Timing[0].Start_Time, Temp, 2) != 0 &&\
-    memcmp(Program_Para.Timing[0].End_Time, Temp, 2) != 0)
+  if(memcmp(Prog_Para.Timing[0].Start_Time, Temp, 2) != 0 &&\
+    memcmp(Prog_Para.Timing[0].End_Time, Temp, 2) != 0)
   {
-    if(!(Cur_Time.Time[T_HOUR] >= Program_Para.Timing[0].Start_Time[0] &&\
-      Cur_Time.Time[T_HOUR] <= Program_Para.Timing[0].End_Time[0] &&\
-        Cur_Time.Time[T_MIN] >= Program_Para.Timing[0].Start_Time[1] &&\
-          Cur_Time.Time[T_MIN] <= Program_Para.Timing[0].End_Time[1]))
+    if(!(Cur_Time.Time[T_HOUR] >= Prog_Para.Timing[0].Start_Time[0] &&\
+      Cur_Time.Time[T_HOUR] <= Prog_Para.Timing[0].End_Time[0] &&\
+        Cur_Time.Time[T_MIN] >= Prog_Para.Timing[0].Start_Time[1] &&\
+          Cur_Time.Time[T_MIN] <= Prog_Para.Timing[0].End_Time[1]))
       return 0;
     
   }         
@@ -384,13 +345,13 @@ INT8U Check_Program_Time()
 }
 
 //读取显示参数--调用Read_Prog_Para
-INT8U Update_Program_Para()
+INT8U Update_Prog_Para()
 {
   INT8U i;
   
-  for(i = 0; i < MAX_PROGRAM_NUM; i ++)
+  for(i = 0; i < MAX_PROG_NUM; i ++)
   {
-    if(Read_Program_Para(i)) //读取成功
+    if(Read_Prog_Para(i)) //读取成功
     {
       if(Check_Program_Time())//当前时间是否为节目播放时间?
         return 1;
@@ -402,7 +363,7 @@ INT8U Update_Program_Para()
 }
 
 //检查是否需要更新节目参数
-INT8U Check_Update_Program_Para()
+INT8U Check_Update_Prog_Para()
 {
   static S_Int8U Min_Bak = {CHK_BYTE, 0xFF, CHK_BYTE};
   
@@ -414,7 +375,7 @@ INT8U Check_Update_Program_Para()
  	
   if(Check_Program_Time() EQ 0) //当前时间是否在节目播放时间中?
   {	
-    if(Update_Program_Para())
+    if(Update_Prog_Para())
     {
       Debug_Print("update program para ok!");
       return 1;
@@ -428,7 +389,7 @@ INT8U Check_Update_Program_Para()
 
 //读取参数
 void Read_Para()
-{
+{/*
   FILE_T File;
   INT16U Ctrl_Code;
   char File_Name[20];
@@ -469,5 +430,6 @@ void Read_Para()
   }
   
   //获取节目参数
-  Update_Program_Para();
+  Update_Prog_Para();
+  */
 }

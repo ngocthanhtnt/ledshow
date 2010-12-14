@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'flashProperty.h'
 **
-** Created: Fri Dec 10 01:08:08 2010
+** Created: Wed Dec 15 00:30:17 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,18 +23,21 @@ static const uint qt_meta_data_CflashProperty[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
+       1,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
        0,       // signalCount
 
+ // slots: signature, parameters, type, tag, flags
+      16,   15,   15,   15, 0x0a,
+
        0        // eod
 };
 
 static const char qt_meta_stringdata_CflashProperty[] = {
-    "CflashProperty\0"
+    "CflashProperty\0\0openFlashFile()\0"
 };
 
 const QMetaObject CflashProperty::staticMetaObject = {
@@ -64,6 +67,13 @@ int CflashProperty::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QWidget::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: openFlashFile(); break;
+        default: ;
+        }
+        _id -= 1;
+    }
     return _id;
 }
 QT_END_MOC_NAMESPACE

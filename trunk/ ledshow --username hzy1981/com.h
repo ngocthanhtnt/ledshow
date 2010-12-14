@@ -15,10 +15,10 @@
 #define FRAME_TAIL  0xAA
 
 //控制码定义
-#define C_SCREEN_WH   0x01
-#define C_SCREEN_ADDR 0x02
-#define C_SCREEN_IP   0x03
-#define C_SCREEN_BAUD 0x04
+#define C_SCREEN_WH   0x01 //屏幕宽高
+#define C_SCREEN_ADDR 0x02 //屏幕地址
+#define C_SCREEN_IP   0x03 //IP地址
+#define C_SCREEN_BAUD 0x04 //通信速率
 #define C_SCREEN_OC_TIME 0x05 //定时开关机时间
 #define C_SCREEN_LIGNTNESS 0x06 //亮度
 #define C_SCREEN_TIME 0x07 //时间

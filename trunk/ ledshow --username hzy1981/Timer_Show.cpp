@@ -172,7 +172,7 @@ INT16U Get_TimerStr_Pix_Width(INT8U Type, INT8U Font)
 INT16U Get_Timer_Min_Width(INT8U Area_No)
 {
     INT16U StrWidth;
-    INT8U Font,Type;
+    //INT8U Font,Type;
     StrWidth = Get_TimerStr_Pix_Width(File_Para[Area_No].Timer_Para.Timer_Type, \
                                       File_Para[Area_No].Timer_Para.Timer_Font);
 
@@ -229,7 +229,7 @@ INT16U min, INT16U sec)
 //更新定时器数据
 void Update_Timer_Data(INT8U Area_No)
 {
-    INT16U X, Y;
+    //INT16U X, Y;
     S_Point P0;
     INT16U Width,Height;
     INT16U Min_Width, Min_Height;

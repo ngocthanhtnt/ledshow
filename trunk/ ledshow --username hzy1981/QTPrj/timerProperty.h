@@ -42,6 +42,7 @@ public slots:
     void edited();
 public:
     Carea *area;
+    CnameEdit *nameEdit;
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CtimerProperty(QWidget *parent=0);

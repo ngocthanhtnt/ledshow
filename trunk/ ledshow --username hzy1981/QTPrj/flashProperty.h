@@ -12,6 +12,8 @@
 #include <QComboBox>
 #include <QTextEdit>
 #include <QPushButton>
+#include <QSpinBox>
+#include "showArea.h"
 #include "areaProperty.h"
 
 
@@ -25,21 +27,27 @@ private:
     QLineEdit *flashSourceEdit; //flash源编辑框
     QPushButton *openButton; //打开按钮
 
-    QLabel *frameNumLabel; //帧数标志
-    QLineEdit *frameNumEdit; //帧数编辑
-    QLabel *runSpeedLabel; //运行速度标志
-    QLineEdit *runSpeedEdit; //运行速度编辑
-    QLabel *speedUnitLabel; //速度单位
-
     QLabel *totalFrameNumLabel; //总帧数
+    QLineEdit *totalFrameNumEdit; //总
 
+    QLabel *frameNumLabel; //帧数标志
+    QSpinBox *frameNumEdit; //帧数编辑
 
+    QLabel *runSpeedLabel; //运行速度标志
+    QComboBox *runSpeedCheck; //运行速度编辑
+    QLabel *speedUnitLabel; //速度单位
+public slots:
+    void openFlashFile();
 public:
     Carea *area;
+    CnameEdit *nameEdit;
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CflashProperty(QWidget *parent=0);
     ~CflashProperty();
 };
 
+void getFlashParaFromSettings(QString str, U_File_Para &para);
+void updateFlashShowArea(CshowArea *area);
+QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y);
 #endif // FLASHPROPERTY_H

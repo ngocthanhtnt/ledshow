@@ -58,7 +58,7 @@ void Update_Show_Data()
 {
   INT8U i;
   //static S_Int8U Ms10_Timer
-  for(i = 0; i < Program_Para.Area_Num && i < MAX_AREA_NUM; i ++)
+  for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
     if(File_Para[i].Pic_Para.Flag EQ SHOW_PIC)
       Update_Pic_Data(i);
@@ -89,16 +89,16 @@ INT8S Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 
   Re = AREA_OK;
   //Read_Para();
-  Get_Program_Data_File_Name(Prog_No, Area_No, File_Name); //获取该分区的显示文件
+  //Get_Program_Data_File_Name(Prog_No, Area_No, File_Name); //获取该分区的显示文件
 
   File = File_Open(File_Name, FILE_R); //Read_
 
-  Len = File_Read_One_Frame(File, Area_Status[Area_No].File_Offset, &Seq, &Ctrl_Code, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
+  //Len = File_Read_One_Frame(File, Area_Status[Area_No].File_Offset, &Seq, &Ctrl_Code, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
   if(Len EQ FILE_END) //文件结束--从头开始重新
   {
     Area_Status[Area_No].File_Offset = 0;
     Area_Status[Area_No].File_Type = 0;
-    Len = File_Read_One_Frame(File, Area_Status[Area_No].File_Offset, &Seq, &Ctrl_Code, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
+    //Len = File_Read_One_Frame(File, Area_Status[Area_No].File_Offset, &Seq, &Ctrl_Code, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
   }
 
   if(Seq EQ 0)//---必须是第一帧,先将显示相关参数复制到File_Para结构体中
@@ -119,8 +119,8 @@ INT8S Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
         mem_cpy(&File_Para[Area_No].Pic_Para.Flag, Pub_Buf, Len0, &File_Para[Area_No].Pic_Para, sizeof(File_Para[Area_No].Pic_Para));
         X = 0;
         Y = 0;
-        X_Len = Program_Para.Area[Area_No].X_Len;
-        Y_Len = Program_Para.Area[Area_No].Y_Len;
+        X_Len = Prog_Para.Area[Area_No].X_Len;
+        Y_Len = Prog_Para.Area[Area_No].Y_Len;
       }
       else if(Pub_Buf[0] EQ SHOW_CLOCK)//表盘
       {
@@ -181,7 +181,7 @@ INT8S Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 
     do
     { //继续读下一帧
-      Len = File_Read_One_Frame(File, Area_Status[Area_No].File_Offset, &Seq, &Ctrl_Code, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)); //读取一帧
+      //Len = File_Read_One_Frame(File, Area_Status[Area_No].File_Offset, &Seq, &Ctrl_Code, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)); //读取一帧
 
       if(Len > 0) //正常读出一帧
       {
@@ -226,7 +226,7 @@ INT8S Check_Update_Show_Data_Bak()
   INT32U Area_End_Flag = 0;
   INT8U All_End_Flag = 1; //有一个分区没有结束则将其置0
 
-  for(i = 0; i < Program_Para.Area_Num && i < MAX_AREA_NUM; i ++)
+  for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
     //目前显示的步进已经到100%并且目前停留时间已经达到文件的停留时间，则认为该屏已经显示完毕，切换到下屏
     if(Get_File_Stay_Time(i) < MIN_STAY_TIME)
@@ -235,11 +235,11 @@ INT8S Check_Update_Show_Data_Bak()
     //Step>=100表示整个移动过程完成，Stay_Time>=表示停留时间到，则需更新为下一屏数据
     if(Area_Status[i].Step >= 100 && Area_Status[i].Stay_Time >= Get_File_Stay_Time(i))
     {
-      Re = Update_Show_Data_Bak(Program_Para.Program_No, i);// == FILE_END)
+      Re = Update_Show_Data_Bak(Prog_Para.Prog_No, i);// == FILE_END)
       if(Re EQ AREA_END) //分区完成
       {
         SET_BIT(Area_End_Flag, i); //第i分区节目播放完成
-        if(i + 1 EQ Program_Para.Main_Area_No)
+        if(i + 1 EQ Prog_Para.Main_Area_No)
           return PROG_END;
       }
       else

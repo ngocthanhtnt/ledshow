@@ -32,6 +32,7 @@ private:
 
 
 public:
+    CnameEdit *nameEdit;
     Carea *area;
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);

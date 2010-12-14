@@ -1,6 +1,7 @@
 #include "areaProperty.h"
 #include <QSettings>
 #include "mainwindow.h"
+#include "simpleTextEdit.h"
 
 extern MainWindow *w;
 extern QSettings settings;
@@ -22,20 +23,20 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
 
     //groupBox = new QGroupBox(tr("分区属性"), this);
 
-    nameLabel = new QLabel(tr("名字"), this);
+    //nameLabel = new QLabel(tr("名字"), this);
     xLabel = new QLabel(tr("x起点"), this);
     yLabel = new QLabel(tr("y起点"), this);
     widthLabel = new QLabel(tr("宽度"), this);
     heightLabel = new QLabel(tr("高度"), this);
 
     int width = 50;
-    nameEdit = new QLineEdit(this);
+    //nameEdit = new QLineEdit(this);
     xEdit = new QLineEdit(this);
     yEdit = new QLineEdit(this);
     widthEdit = new QLineEdit(this);
     heightEdit = new QLineEdit(this);
 
-    nameEdit->setFixedWidth(width);
+    //nameEdit->setFixedWidth(width);
     xEdit->setFixedWidth(width);
     yEdit->setFixedWidth(width);
     widthEdit->setFixedWidth(width);
@@ -61,17 +62,17 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
     //setFixedWidth(150);
     gridLayout = new QGridLayout(this);
 
-    gridLayout -> addWidget(nameLabel,0,0);
-    gridLayout -> addWidget(nameEdit,0,1);
+    //gridLayout -> addWidget(nameLabel,0,0);
+    //gridLayout -> addWidget(nameEdit,0,1);
 
-    gridLayout -> addWidget(xLabel, 1, 0);
-    gridLayout -> addWidget(xEdit, 1, 1);
-    gridLayout -> addWidget(yLabel, 2, 0);
-    gridLayout -> addWidget(yEdit, 2, 1);
-    gridLayout -> addWidget(widthLabel, 3, 0);
-    gridLayout -> addWidget(widthEdit, 3, 1);
-    gridLayout -> addWidget(heightLabel, 4, 0);
-    gridLayout -> addWidget(heightEdit, 4, 1);
+    gridLayout -> addWidget(xLabel, 0, 0);
+    gridLayout -> addWidget(xEdit, 0, 1);
+    gridLayout -> addWidget(yLabel, 1, 0);
+    gridLayout -> addWidget(yEdit, 1, 1);
+    gridLayout -> addWidget(widthLabel, 2, 0);
+    gridLayout -> addWidget(widthEdit, 2, 1);
+    gridLayout -> addWidget(heightLabel, 3, 0);
+    gridLayout -> addWidget(heightEdit, 3, 1);
     //gridLayout -> setColumnStretch(1, 10);
 
     setLayout(gridLayout);
@@ -225,7 +226,7 @@ void Carea::getSettingsFromWidget(QString str)
 {
     return;
     settings.beginGroup(str);
-    settings.setValue("name", nameEdit->text().toInt());
+    //settings.setValue("name", nameEdit->text().toInt());
     settings.setValue("x", xEdit->text().toInt());
     settings.setValue("y", yEdit->text().toInt());
     settings.setValue("xLen", widthEdit->text().toInt());
@@ -252,7 +253,7 @@ void Carea::setSettingsToWidget(QString str)
     }
 
     //名字
-    nameEdit->setText(settings.value("name").toString());
+    //nameEdit->setText(settings.value("name").toString());
     xEdit->setText(QString::number(settings.value("x").toInt()));
     yEdit->setText(QString::number(settings.value("y").toInt()));
     widthEdit->setText(QString::number(settings.value("xLen").toInt()));
@@ -269,14 +270,43 @@ void Carea::setSettingsToWidget(QString str)
 }
 
 CareaProperty::CareaProperty(QWidget *parent):QWidget(parent)
-{
+{/*
+   QVBoxLayout *vLayout;
     QHBoxLayout *hLayout;
 
+    vLayout = new QVBoxLayout(this);
     hLayout = new QHBoxLayout(this);
+
+    nameEdit = new CnameEdit(this);
     area = new Carea(this);
-    hLayout->addWidget(area);
-    hLayout->addStretch();
+
+    vLayout->addWidget(nameEdit);
+    vLayout->addWidget(area);
+
+    hLayout->addLayout(vLayout);
+
+    hLayout->addStretch(10);
+    //vLayout->addStretch(10);
+
     setLayout(hLayout);
+*/
+
+    //QGridLayout *gridLayout,*mainLayout;
+    QHBoxLayout *hLayout;
+    QVBoxLayout *vLayout;
+
+hLayout = new QHBoxLayout(this);
+    vLayout = new QVBoxLayout(this);
+
+    nameEdit = new CnameEdit(this);
+    area = new Carea(this);
+    vLayout->addWidget(nameEdit);
+    vLayout->addWidget(area);
+    hLayout->addLayout(vLayout);
+
+    hLayout->addStretch(10);
+    setLayout(hLayout);
+
 }
 
 

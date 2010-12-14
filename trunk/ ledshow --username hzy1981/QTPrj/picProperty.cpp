@@ -83,7 +83,9 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
     hLayout = new QHBoxLayout(this);
 
     area = new Carea(this);
+    nameEdit = new CnameEdit(this);
     vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(nameEdit);
     vLayout ->addWidget(area);
     hLayout->addLayout(vLayout);
 

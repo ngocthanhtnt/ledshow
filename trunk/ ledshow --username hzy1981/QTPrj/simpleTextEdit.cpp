@@ -9,6 +9,7 @@
 #include <QRectF>
 #include <QTextEdit>
 #include <QSettings>
+#include "showArea.h"
 #include "..\led_show.h"
 
 extern QSettings settings;
@@ -666,6 +667,53 @@ ClunEdit::~ClunEdit()
 {
 
 }
+//---------
+CnameEdit::CnameEdit(QWidget *parent):QGroupBox(parent)
+{
+    QHBoxLayout *hLayout;
+
+    hLayout = new QHBoxLayout(this);
+
+    setTitle(tr("名字"));
+    nameEdit = new QLineEdit(this);
+    nameEdit->setFixedWidth(100);
+    hLayout->addWidget(nameEdit);
+    setLayout(hLayout);
+}
+
+//从Widget上获取设置
+void CnameEdit::getSettingsFromWidget(QString str)
+{
+    settings.beginGroup(str);
+    settings.beginGroup("name");
+    settings.setValue("name", nameEdit->text());
+    settings.endGroup();
+    settings.endGroup();
+
+}
+
+void CnameEdit::setSettingsToWidget(QString str)
+{
+    settings.beginGroup(str);
+    settings.beginGroup("name");
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag EQ 0)
+    {
+      settings.setValue("name", QString(""));
+      settings.setValue("setFlag", 1);
+
+    }
+
+    nameEdit->setText(settings.value("name").toString());
+    settings.endGroup();
+    settings.endGroup();
+}
+
+CnameEdit::~CnameEdit()
+{
+
+}
+//----------
 //------------------------
 //简单文本编辑框
 CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
@@ -846,7 +894,7 @@ void print_color(QRgb c)
   qDebug("alpha = %x", qAlpha(c));
 }
 
-#define ANTIALIAS_VALUE 0x01
+
 //
 QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
 {

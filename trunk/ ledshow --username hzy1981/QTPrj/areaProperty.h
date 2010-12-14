@@ -8,6 +8,7 @@
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QRect>
+#include "simpleTextEdit.h"
 
 //∑÷«¯ Ù–‘¥∞
 class Carea:public QGroupBox
@@ -45,6 +46,7 @@ class CareaProperty:public QWidget
     Q_OBJECT
 
 public:
+    CnameEdit *nameEdit;
     Carea *area;
     CareaProperty(QWidget *parent=0);
     ~CareaProperty();
