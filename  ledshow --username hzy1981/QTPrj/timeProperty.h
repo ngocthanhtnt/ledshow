@@ -33,6 +33,7 @@ private:
 public slots:
     void edited();
 public:
+    CnameEdit *nameEdit;
     Carea *area;
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);

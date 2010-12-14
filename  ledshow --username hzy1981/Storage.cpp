@@ -1,9 +1,55 @@
 #define STORAGE_C
 #include "includes.h"
 
+
 const S_Data_Para_Storage_Info Data_Para_Storage[] =
 {
-    0
+  //屏幕参数以及备份
+  {SDI_SCREEN_PARA, SCREEN_PARA_LEN, 1},
+#ifdef SDI_SCREEN_PARA_BK0 
+  {SDI_SCREEN_PARA_BK0, SCREEN_PARA_LEN, 1},
+#endif  
+#ifdef SDI_SCREEN_PARA_BK1
+  {SDI_SCREEN_PARA_BK1, SCREEN_PARA_LEN, 1},
+#endif
+#ifdef SDI_SCREEN_PARA_BK2
+  {SDI_SCREEN_PARA_BK2, SCREEN_PARA_LEN, 1},  
+#endif
+
+  //节目参数及备份
+  {SDI_PROG_PARA, PROG_PARA_LEN, MAX_PROG_NUM},
+#ifdef  SDI_PROG_PARA_BK0
+  {SDI_PROG_PARA_BK0, PROG_PARA_LEN, MAX_PROG_NUM},
+#endif
+#ifdef SDI_PROG_PARA_BK1
+  {SDI_PROG_PARA_BK1, PROG_PARA_LEN, MAX_PROG_NUM},
+#endif  
+
+ //文件参数及备份
+  {SDI_FILE_PARA, FILE_PARA_LEN, MAX_PROG_NUM * MAX_AREA_NUM * MAX_FILE_NUM},
+#ifdef  SDI_FILE_PARA_BK0
+  {SDI_FILE_PARA_BK0,  FILE_PARA_LEN, MAX_PROG_NUM * MAX_AREA_NUM * MAX_FILE_NUM},
+#endif  
+
+ //节目显示数据的存储索引
+  {SDI_PROG_BLOCK_INDEX, BLOCK_INDEX_LEN, MAX_PROG_NUM}, 
+#ifdef SDI_PROG_BLOCK_INDEX_BK0  
+  {SDI_PROG_BLOCK_INDEX_BK0, BLOCK_INDEX_LEN, MAX_PROG_NUM}, 
+#endif  
+#ifdef SDI_PROG_BLOCK_INDEX_BK1  
+  {SDI_PROG_BLOCK_INDEX_BK1, BLOCK_INDEX_LEN, MAX_PROG_NUM}, 
+#endif  
+
+  {SDI_CUR_BLOCK_INDEX, sizeof(S_Cur_Block_Index), 1},
+#ifdef SDI_CUR_BLOCK_INDEX_BK0  
+  {SDI_CUR_BLOCK_INDEX_BK0, sizeof(S_Cur_Block_Index), 1},
+#endif
+#ifdef SDI_CUR_BLOCK_INDEX_BK1
+  {SDI_CUR_BLOCK_INDEX_BK1, sizeof(S_Cur_Block_Index), 1},
+#endif                                   
+                                   
+  //节目显示数据
+  {SDI_SHOW_DATA, sizeof(S_Prog_Show_Data), MAX_BLOCK_NUM}
 };
 
 //从存储器中读取某个重要等级的数据
@@ -15,7 +61,7 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
 //返回1表示成功
 INT8U Read_Data_Width_CS(INT32U Offset, void* pDst, INT16U RD_Len, void* pDst_Start, INT16U DstLen)
 {
-  INT16U i, j;
+  //INT16U i;//, j;
   INT32U Sum;
   INT8U Re;
 
@@ -55,7 +101,7 @@ INT8U Read_Data_Width_CS(INT32U Offset, void* pDst, INT16U RD_Len, void* pDst_St
 //返回WR_IMP_DATA_ERR表示写数据失败
 INT8U Write_Data_With_CS(INT32U Offset, void* pSrc, INT16U SrcLen)
 {
-  INT8U i;
+  //INT8U i;
   INT8U Re;
   INT32U Sum;
 
@@ -76,6 +122,8 @@ INT8U Write_Data_With_CS(INT32U Offset, void* pSrc, INT16U SrcLen)
       ASSERT_FAILED();
       return 0;
     }
+    
+    return 1;
 }
 
 //获取某个存储的数据项的存储偏移，该偏移表示该数据项在同Imp_Flag数据中的存储品偏移
@@ -84,7 +132,7 @@ INT32U Get_Storage_Data_Off(STORA_DI SDI)
 {
   INT16U i; 
   INT32U Offset = 0; 
-  INT8U Re;
+  //INT8U Re;
 
   for(i = 0; i < S_NUM(Data_Para_Storage); i ++)
   {
@@ -137,7 +185,7 @@ INT16U Get_Storage_Data_Len(STORA_DI SDI)
 INT16U Read_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, INT16U Len, void* pDst, void* pDst_Start, INT16U DstLen)
 {
   INT32U Off; 
-  INT8U Imp_Flag, Err; 
+  INT8U Re; 
 
   TRACE();
 
@@ -155,11 +203,11 @@ INT16U Read_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, INT16U Len, void* 
 
   //OS_Mutex_Pend(PUB_RW_ROM_ID); //申请写ROM的信号量ID
   //if(Check_Power_Status() EQ POWER_ON_STATUS)
-  Err = Read_Data_Width_CS(Off, pDst, Len, pDst_Start, DstLen);
+  Re = Read_Data_Width_CS(Off, pDst, Len, pDst_Start, DstLen);
   //else
   //*pErr = PD_Read_Imp_Data(Imp_Flag, Off, pDst, Len, pDst_Start, DstLen); 
   //OS_Mutex_Post(PUB_RW_ROM_ID); //释放写ROM的信号量ID
-  if(1 EQ Err)
+  if(1 EQ Re)
   {
     return Len;
   }
@@ -182,7 +230,7 @@ INT16U Read_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, INT16U Len, void* 
 INT8U Write_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, void* pSrc, INT16U SrcLen)
 {
   INT32U Off; 
-  INT8U Imp_Flag, Re; 
+  INT8U Re; 
 
   TRACE();
 

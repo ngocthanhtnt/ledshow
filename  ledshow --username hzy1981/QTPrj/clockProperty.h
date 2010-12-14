@@ -81,6 +81,7 @@ public slots:
     void propertyEdited();
 public:
     Carea *area;
+    CnameEdit *nameEdit;
     void updateShowAreaa(CshowArea *area);
 
     void getSettingsFromWidget(QString str);

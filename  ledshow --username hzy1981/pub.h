@@ -177,6 +177,7 @@ EXT void Assert(BOOL Conditon,CONST INT8S File[],CONST INT8S Function[],INT16U L
 EXT void Trace_Ctrl(INT32U Flag);
 EXT void Trace_Info_Check(void);
 
+EXT void vPrintf(CONST INT8S *format, va_list ap);
 EXT void Debug_Print(CONST INT8S *format,...);
 EXT void _Debug_Print(CONST INT8S *format,...);
 EXT void mem_cpy(void *pDst, void *pSrc,INT32U SrcLen,void *pDst_Start,INT32U DstLen);

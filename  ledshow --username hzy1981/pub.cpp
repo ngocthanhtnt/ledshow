@@ -39,7 +39,7 @@ CONST INT16U Crc_Table1[256]={
   0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0};
 
 //根据format和ap参数表输出调试信息
-void vsPrintf(CONST INT8S *format, va_list ap)
+void vPrintf(CONST INT8S *format, va_list ap)
 {
   
   static CONST INT8S Chr[]="0123456789ABCDEF";
@@ -193,7 +193,7 @@ void _Debug_Print(CONST INT8S *format, ...)
   va_list ap;
   
   va_start(ap,format);
-  vsPrintf(format,ap);
+  vPrintf(format,ap);
   va_end(ap);
 }
 
@@ -213,7 +213,7 @@ void Debug_Print(CONST INT8S *format, ...)
     return;
   
   va_start(ap,format);
-  vsPrintf(format,ap);
+  vPrintf(format,ap);
   va_end(ap);
 }
 

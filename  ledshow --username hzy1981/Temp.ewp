@@ -1579,6 +1579,12 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\Clock_Show.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Clock_Show.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\com.cpp</name>
   </file>
   <file>
@@ -1589,6 +1595,12 @@
   </file>
   <file>
     <name>$PROJ_DIR$\File_Op.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Flash_Show.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Flash_Show.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\Includes.h</name>
@@ -1609,7 +1621,31 @@
     <name>$PROJ_DIR$\LED_Show.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\main.c</name>
+    <name>$PROJ_DIR$\Lun_Show.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Lun_Show.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\main.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Main_Show.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Main_Show.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\nongli.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\nongli.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Pic_Show.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Pic_Show.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\pub.cpp</name>
@@ -1628,6 +1664,33 @@
   </file>
   <file>
     <name>$PROJ_DIR$\STM32.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Storage.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Storage.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Temp_Show.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Temp_Show.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Time_Show.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Time_Show.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Timer_Show.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Timer_Show.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\ZK.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\ZK.h</name>

@@ -61,9 +61,12 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
 
 
     hLayout = new QHBoxLayout(this);
+    vLayout = new QVBoxLayout(this);
 
     area = new Carea(this);
-    vLayout = new QVBoxLayout(this);
+    nameEdit = new CnameEdit(this);
+
+    vLayout->addWidget(nameEdit);
     vLayout ->addWidget(area);
     hLayout->addLayout(vLayout);
 
@@ -229,6 +232,7 @@ void CclockProperty::getSettingsFromWidget(QString str)
 
     if(type == CLOCK_PROPERTY)
     {
+      nameEdit->getSettingsFromWidget(str);
       simpleTextEdit->getSettingsFromWidget(str);
       dateEdit->getSettingsFromWidget(str);
       weekEdit->getSettingsFromWidget(str);
@@ -466,6 +470,7 @@ void CclockProperty::setSettingsToWidget(QString str)
 
     settings.endGroup();
 
+    nameEdit->setSettingsToWidget(str);
     simpleTextEdit->setSettingsToWidget(str);
     dateEdit->setSettingsToWidget(str);
     weekEdit->setSettingsToWidget(str);

@@ -235,6 +235,10 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     {
         updateLunShowArea(area);
     }
+    else if(type EQ FLASH_PROPERTY)
+    {
+        updateFlashShowArea(area);
+    }
 }
 
 //当前节目、分区、文件发生变化时的处理
@@ -1058,6 +1062,12 @@ void CshowArea::paintEvent(QPaintEvent *)
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
             Update_Lun_Data(Area_No);
         }
+        else if(filePara.Temp_Para.Flag == SHOW_FLASH) //显示动画
+        {
+            P0.X = P0.Y = 0;
+            getFlashShowData(imageBk, &Show_Data, P0.X, P0.Y);
+            //Update_Lun_Data(Area_No);
+        }
      }
     for(j=0; j<Height; j++)
     {
@@ -1191,11 +1201,11 @@ void CshowArea::resetProgramPara()
     Screen_Para.Height = geometry().height();
     Screen_Para.Color = getColor();
 
-    Program_Para.Area_Num = 1;
-    Program_Para.Area[0].X = 0;
-    Program_Para.Area[0].Y = 0;
-    Program_Para.Area[0].X_Len = geometry().width();
-    Program_Para.Area[0].Y_Len = geometry().height();
+    Prog_Para.Area_Num = 1;
+    Prog_Para.Area[0].X = 0;
+    Prog_Para.Area[0].Y = 0;
+    Prog_Para.Area[0].X_Len = geometry().width();
+    Prog_Para.Area[0].Y_Len = geometry().height();
 
 }
 

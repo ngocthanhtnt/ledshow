@@ -17,7 +17,9 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     //mainLayout = new QGridLayout(this);
 
     area = new Carea(this);
+    nameEdit = new CnameEdit(this);
     vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(nameEdit);
     vLayout->addWidget(area);
     hLayout->addLayout(vLayout);
 

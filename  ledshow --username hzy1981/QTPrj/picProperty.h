@@ -46,6 +46,7 @@ public slots:
     void propertyEdited();
 public:
     Carea *area;
+    CnameEdit *nameEdit;
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     QPushButton *editButton; //±à¼­°´Å¥

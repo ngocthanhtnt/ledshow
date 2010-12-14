@@ -3,21 +3,25 @@
 //正反计时编辑
 CtempProperty::CtempProperty(QWidget *parent):QWidget(parent)
 {
-    QGridLayout *gridLayout,*mainLayout;
+    //QGridLayout *gridLayout,*mainLayout;
+    QHBoxLayout *hLayout;
+    QVBoxLayout *vLayout;
 
-    gridLayout = new QGridLayout(this);
-    mainLayout = new QGridLayout(this);
+    hLayout = new QHBoxLayout(this);
+    vLayout = new QVBoxLayout(this);
 
+    nameEdit = new CnameEdit(this);
     area = new Carea(this);
-    textGroup = new QGroupBox(tr("固定文本"), this);
+    vLayout->addWidget(nameEdit);
+    vLayout->addWidget(area);
+    hLayout->addLayout(vLayout);
+    //textGroup = new QGroupBox(tr("固定文本"), this);
     simpleTextEdit = new CsimpleTextEdit(this);
-
-    gridLayout -> addWidget(simpleTextEdit, 0, 0);
-    //gridLayout -> addWidget(editButton, 1, 0);
-    textGroup -> setLayout(gridLayout);
-    mainLayout->addWidget(area, 0, 0);
-    mainLayout->addWidget(textGroup, 0, 1);
-    setLayout(mainLayout);
+    vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(simpleTextEdit);
+    hLayout->addLayout(vLayout);
+    hLayout->addStretch(10);
+    setLayout(hLayout);
 }
 
 CtempProperty::~CtempProperty()

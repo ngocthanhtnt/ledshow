@@ -151,7 +151,7 @@ INT16U Get_Area_Width(INT8U Area_No)
     return 0;
   }
   
-  return Program_Para.Area[Area_No].X_Len;
+  return Prog_Para.Area[Area_No].X_Len;
 }
 
 //获取某个分区的高度
@@ -164,7 +164,7 @@ INT16U Get_Area_Height(INT8U Area_No)
     return 0;
   }
   
-  return Program_Para.Area[Area_No].Y_Len;  
+  return Prog_Para.Area[Area_No].Y_Len;  
 }
 
 //获取一个分区的像素个数,Area_No表示分区号
@@ -176,7 +176,7 @@ INT32U Get_Area_Size(INT8U Area_No)
     return 0;
   }
   
-  return (INT32U)Program_Para.Area[Area_No].X_Len * Program_Para.Area[Area_No].Y_Len;  
+  return (INT32U)Prog_Para.Area[Area_No].X_Len * Prog_Para.Area[Area_No].Y_Len;  
 }
 
 //获取分区的左上点位置
@@ -190,8 +190,8 @@ INT8U Get_Area_TopLeft(INT8U Area_No, S_Point *pPoint)
     return 0;
   }
   
-  pPoint->X = Program_Para.Area[Area_No].X;
-  pPoint->Y = Program_Para.Area[Area_No].Y;
+  pPoint->X = Prog_Para.Area[Area_No].X;
+  pPoint->Y = Prog_Para.Area[Area_No].Y;
   
   return 1;
 }
@@ -209,15 +209,15 @@ INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y)
     return 0;	
   }
   
-  if(X >= Program_Para.Area[Area_No].X_Len ||\
-     Y >= Program_Para.Area[Area_No].Y_Len)
+  if(X >= Prog_Para.Area[Area_No].X_Len ||\
+     Y >= Prog_Para.Area[Area_No].Y_Len)
   {
     //ASSERT_FAILED();
     return 0;
   }
 
-  X += Program_Para.Area[Area_No].X;
-  Y += Program_Para.Area[Area_No].Y;
+  X += Prog_Para.Area[Area_No].X;
+  Y += Prog_Para.Area[Area_No].Y;
  
   if(X >= Screen_Para.Width ||\
      Y >= Screen_Para.Height)
@@ -813,13 +813,13 @@ void Move_Up(INT8U Area_No)//上移动
   
   if(Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
-    Temp.X = 0;//Program_Para.Area[Area_No].X;
-    Temp.Y = 0;//Program_Para.Area[Area_No].Y;
+    Temp.X = 0;//Prog_Para.Area[Area_No].X;
+    Temp.Y = 0;//Prog_Para.Area[Area_No].Y;
     
-    Temp1.X = 0;//Program_Para.Area[Area_No].X;// + Step +
-    Temp1.Y = (100 - Area_Status[Area_No].Step) * Program_Para.Area[Area_No].Y_Len / 100;
+    Temp1.X = 0;//Prog_Para.Area[Area_No].X;// + Step +
+    Temp1.Y = (100 - Area_Status[Area_No].Step) * Prog_Para.Area[Area_No].Y_Len / 100;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Program_Para.Area[Area_No].X_Len, Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 100,\
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100,\
       &Show_Data, &Temp1);
     Area_Status[Area_No].Step += MOVE_STEP;
   } 
@@ -833,13 +833,13 @@ void Move_Down(INT8U Area_No)
   
   if(Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
-    Temp.X = 0;//Program_Para.Area[Area_No].X;// + Step +
-    Temp.Y = (100 - Area_Status[Area_No].Step) * Program_Para.Area[Area_No].Y_Len / 100;
+    Temp.X = 0;//Prog_Para.Area[Area_No].X;// + Step +
+    Temp.Y = (100 - Area_Status[Area_No].Step) * Prog_Para.Area[Area_No].Y_Len / 100;
     
-    Temp1.X = 0;//Program_Para.Area[Area_No].X;
-    Temp1.Y = 0;//Program_Para.Area[Area_No].Y;
+    Temp1.X = 0;//Prog_Para.Area[Area_No].X;
+    Temp1.Y = 0;//Prog_Para.Area[Area_No].Y;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Program_Para.Area[Area_No].X_Len, Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 100,\
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100,\
       &Show_Data, &Temp1);
     Area_Status[Area_No].Step += MOVE_STEP;
   } 
@@ -853,13 +853,13 @@ void Move_Left(INT8U Area_No)
   
   if(Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
-    Temp.X = 0;//Program_Para.Area[Area_No].X;
-    Temp.Y = 0;//Program_Para.Area[Area_No].Y;
+    Temp.X = 0;//Prog_Para.Area[Area_No].X;
+    Temp.Y = 0;//Prog_Para.Area[Area_No].Y;
     
-    Temp1.X = (100 - Area_Status[Area_No].Step) * Program_Para.Area[Area_No].X_Len / 100;// + Step +
+    Temp1.X = (100 - Area_Status[Area_No].Step) * Prog_Para.Area[Area_No].X_Len / 100;// + Step +
     Temp1.Y = 0;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Area_Status[Area_No].Step * Program_Para.Area[Area_No].X_Len / 100,Program_Para.Area[Area_No].Y_Len, \
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / 100,Prog_Para.Area[Area_No].Y_Len, \
       &Show_Data, &Temp1);
     Area_Status[Area_No].Step += MOVE_STEP;
   }   
@@ -873,13 +873,13 @@ void Move_Right(INT8U Area_No)
   
   if(Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
-    Temp.X = (100 - Area_Status[Area_No].Step) * Program_Para.Area[Area_No].Y_Len / 100;// + Step +
+    Temp.X = (100 - Area_Status[Area_No].Step) * Prog_Para.Area[Area_No].Y_Len / 100;// + Step +
     Temp.Y = 0;
     
-    Temp1.X = 0;//Program_Para.Area[Area_No].X;
-    Temp1.Y = 0;//Program_Para.Area[Area_No].Y;
+    Temp1.X = 0;//Prog_Para.Area[Area_No].X;
+    Temp1.Y = 0;//Prog_Para.Area[Area_No].Y;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp,  Area_Status[Area_No].Step * Program_Para.Area[Area_No].X_Len / 100,Program_Para.Area[Area_No].Y_Len,\
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp,  Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / 100,Prog_Para.Area[Area_No].Y_Len,\
       &Show_Data, &Temp1);
     Area_Status[Area_No].Step += MOVE_STEP;
   } 
@@ -892,10 +892,10 @@ void Move_Up_Cover(INT8U Area_No)
   
   if(Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
-    Temp.X = 0;// + (100 - Area_Status[Area_No].Step) * Program_Para.Area[Area_No].Y_Len / 100;
-    Temp.Y = (100 - Area_Status[Area_No].Step) * Program_Para.Area[Area_No].Y_Len / 100;
+    Temp.X = 0;// + (100 - Area_Status[Area_No].Step) * Prog_Para.Area[Area_No].Y_Len / 100;
+    Temp.Y = (100 - Area_Status[Area_No].Step) * Prog_Para.Area[Area_No].Y_Len / 100;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Program_Para.Area[Area_No].X_Len, MOVE_STEP * Program_Para.Area[Area_No].Y_Len / 100,\
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, MOVE_STEP * Prog_Para.Area[Area_No].Y_Len / 100,\
       &Show_Data, &Temp);
     Area_Status[Area_No].Step += MOVE_STEP;
   }  
@@ -909,9 +909,9 @@ void Move_Down_Cover(INT8U Area_No)
   if(Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
     Temp.X = 0;// + Step +
-    Temp.Y = Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 100;
+    Temp.Y = Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Program_Para.Area[Area_No].X_Len, MOVE_STEP * Program_Para.Area[Area_No].Y_Len / 100,\
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, MOVE_STEP * Prog_Para.Area[Area_No].Y_Len / 100,\
       &Show_Data, &Temp);
     Area_Status[Area_No].Step += MOVE_STEP;
   }  
@@ -924,10 +924,10 @@ void Move_Left_Cover(INT8U Area_No)
   
   if(Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
-    Temp.X = (100 - Area_Status[Area_No].Step) * Program_Para.Area[Area_No].X_Len / 100;// + Step +
+    Temp.X = (100 - Area_Status[Area_No].Step) * Prog_Para.Area[Area_No].X_Len / 100;// + Step +
     Temp.Y = 0;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, MOVE_STEP * Program_Para.Area[Area_No].X_Len / 100, Program_Para.Area[Area_No].Y_Len,\
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, MOVE_STEP * Prog_Para.Area[Area_No].X_Len / 100, Prog_Para.Area[Area_No].Y_Len,\
       &Show_Data, &Temp);
     Area_Status[Area_No].Step += MOVE_STEP;
   }  
@@ -941,10 +941,10 @@ void Move_Right_Cover(INT8U Area_No)
   
   if(Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
-    Temp.X = Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 100;// + Step +
+    Temp.X = Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;// + Step +
     Temp.Y = 0;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp,  MOVE_STEP * Program_Para.Area[Area_No].X_Len / 100,Program_Para.Area[Area_No].Y_Len,\
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp,  MOVE_STEP * Prog_Para.Area[Area_No].X_Len / 100,Prog_Para.Area[Area_No].Y_Len,\
       &Show_Data, &Temp1);
     Area_Status[Area_No].Step += MOVE_STEP;
   }  
@@ -957,14 +957,14 @@ void Move_Left_Up_Cover(INT8U Area_No)
   
   if(Area_Status[Area_No].Step < 100)
   {
-    Left.X = (100 - Area_Status[Area_No].Step)*Program_Para.Area[Area_No].X_Len / 100;
-    Left.Y = Program_Para.Area[Area_No].Y_Len;
+    Left.X = (100 - Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].X_Len / 100;
+    Left.Y = Prog_Para.Area[Area_No].Y_Len;
     
-    Up.X = Program_Para.Area[Area_No].X_Len;
-    Up.Y = (100 - Area_Status[Area_No].Step)*Program_Para.Area[Area_No].Y_Len / 100;
+    Up.X = Prog_Para.Area[Area_No].X_Len;
+    Up.Y = (100 - Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].Y_Len / 100;
     
-    Right.X = Program_Para.Area[Area_No].X_Len;
-    Right.Y = Program_Para.Area[Area_No].Y_Len;
+    Right.X = Prog_Para.Area[Area_No].X_Len;
+    Right.Y = Prog_Para.Area[Area_No].Y_Len;
     
     Copy_Filled_Triangle(&Show_Data_Bak, Area_No, &Left, &Up, &Right, &Show_Data, &Left);
     Area_Status[Area_No].Step += MOVE_STEP;
@@ -978,14 +978,14 @@ void Move_Right_Up_Cover(INT8U Area_No)
   
   if(Area_Status[Area_No].Step < 100)
   {
-    Left.X = 0;//Program_Para.Area[Area_No].X;
-    Left.Y = Program_Para.Area[Area_No].Y_Len;
+    Left.X = 0;//Prog_Para.Area[Area_No].X;
+    Left.Y = Prog_Para.Area[Area_No].Y_Len;
     
-    Right.X = Area_Status[Area_No].Step * Program_Para.Area[Area_No].X_Len / 100;
-    Right.Y = Program_Para.Area[Area_No].Y_Len;
+    Right.X = Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / 100;
+    Right.Y = Prog_Para.Area[Area_No].Y_Len;
     
-    Up.X = 0;//Program_Para.Area[Area_No].X;
-    Up.Y = (100 - Area_Status[Area_No].Step)*Program_Para.Area[Area_No].Y_Len / 100;
+    Up.X = 0;//Prog_Para.Area[Area_No].X;
+    Up.Y = (100 - Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].Y_Len / 100;
     
     Copy_Filled_Triangle(&Show_Data_Bak, Area_No, &Left, &Up, &Right, &Show_Data, &Left);
     Area_Status[Area_No].Step += MOVE_STEP;
@@ -1000,13 +1000,13 @@ void Move_Left_Down_Cover(INT8U Area_No)
   
   if(Area_Status[Area_No].Step < 100)
   {
-    Left.X = (100 - Area_Status[Area_No].Step)*Program_Para.Area[Area_No].X_Len / 100; 
+    Left.X = (100 - Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].X_Len / 100; 
     Left.Y = 0;
     
-    Right.X = Program_Para.Area[Area_No].X_Len;
-    Right.Y = Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 100;
+    Right.X = Prog_Para.Area[Area_No].X_Len;
+    Right.Y = Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;
     
-    Up.X = Program_Para.Area[Area_No].X_Len;
+    Up.X = Prog_Para.Area[Area_No].X_Len;
     Up.Y = 0;
     
     Copy_Filled_Triangle(&Show_Data_Bak, Area_No, &Left, &Up, &Right, &Show_Data, &Left);
@@ -1021,13 +1021,13 @@ void Move_Right_Down_Cover(INT8U Area_No)
   
   if(Area_Status[Area_No].Step < 100)
   {
-    Left.X = 0;// + (100 - Area_Status[Area_No].Step)*Program_Para.Area[Area_No].X_Len / 100; 
-    Left.Y = Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 100;
+    Left.X = 0;// + (100 - Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].X_Len / 100; 
+    Left.Y = Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;
     
-    Right.X = Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 100;
-    Right.Y = 0;// + Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 100;
+    Right.X = Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;
+    Right.Y = 0;// + Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;
     
-    Up.X = 0;// + Program_Para.Area[Area_No].X_Len;
+    Up.X = 0;// + Prog_Para.Area[Area_No].X_Len;
     Up.Y = 0;
     
     Copy_Filled_Triangle(&Show_Data_Bak, Area_No, &Left, &Up, &Right, &Show_Data, &Left);
@@ -1043,8 +1043,8 @@ void Move_Up_Down_Open(INT8U Area_No)
   if(Area_Status[Area_No].Step < 100)
   {
     Temp.X = 0;
-    Temp.Y = (100 - Area_Status[Area_No].Step)*Program_Para.Area[Area_No].Y_Len / 200; 
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Program_Para.Area[Area_No].X_Len, Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 100, &Show_Data, &Temp);
+    Temp.Y = (100 - Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].Y_Len / 200; 
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100, &Show_Data, &Temp);
     Area_Status[Area_No].Step += MOVE_STEP;
   }
   
@@ -1058,12 +1058,12 @@ void Move_Up_Down_Close(INT8U Area_No)
   if(Area_Status[Area_No].Step < 100)
   {
     Temp.X = 0;
-    Temp.Y = 0;// + Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 200; 
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Program_Para.Area[Area_No].X_Len, Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 200, &Show_Data, &Temp);
+    Temp.Y = 0;// + Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 200; 
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 200, &Show_Data, &Temp);
     
     Temp.X = 0;
-    Temp.Y = Program_Para.Area[Area_No].Y_Len - Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 200; 
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Program_Para.Area[Area_No].X_Len, Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 200, &Show_Data, &Temp);
+    Temp.Y = Prog_Para.Area[Area_No].Y_Len - Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 200; 
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 200, &Show_Data, &Temp);
     Area_Status[Area_No].Step += MOVE_STEP;
   }  
 }
@@ -1075,9 +1075,9 @@ void Move_Left_Right_Open(INT8U Area_No)
   
   if(Area_Status[Area_No].Step < 100)
   {
-    Temp.X = (100 - Area_Status[Area_No].Step)*Program_Para.Area[Area_No].X_Len / 200;
+    Temp.X = (100 - Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].X_Len / 200;
     Temp.Y = 0; 
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp,  Area_Status[Area_No].Step * Program_Para.Area[Area_No].X_Len / 100, Program_Para.Area[Area_No].Y_Len, &Show_Data, &Temp);
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp,  Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / 100, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp);
     Area_Status[Area_No].Step += MOVE_STEP;
   }
   
@@ -1091,12 +1091,12 @@ void Move_Left_Right_Close(INT8U Area_No)
   if(Area_Status[Area_No].Step < 100)
   {
     Temp.X = 0;
-    Temp.Y = 0;// + Area_Status[Area_No].Step * Program_Para.Area[Area_No].Y_Len / 200; 
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Area_Status[Area_No].Step * Program_Para.Area[Area_No].X_Len / 200, Program_Para.Area[Area_No].Y_Len,  &Show_Data, &Temp);
+    Temp.Y = 0;// + Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 200; 
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / 200, Prog_Para.Area[Area_No].Y_Len,  &Show_Data, &Temp);
     
-    Temp.X = Program_Para.Area[Area_No].X_Len - Area_Status[Area_No].Step * Program_Para.Area[Area_No].X_Len / 200;
+    Temp.X = Prog_Para.Area[Area_No].X_Len - Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / 200;
     Temp.Y = 0; 
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Area_Status[Area_No].Step * Program_Para.Area[Area_No].X_Len / 200, Program_Para.Area[Area_No].Y_Len, &Show_Data, &Temp);
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / 200, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp);
     Area_Status[Area_No].Step += MOVE_STEP;
   }  
 }

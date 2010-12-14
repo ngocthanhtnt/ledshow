@@ -62,7 +62,7 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
 //更新表盘数据
 void Update_Clock_Data(INT8U Area_No)
 {
-  INT16U X_Len, Y_Len;
+  //INT16U X_Len, Y_Len;
   S_Point P0;
   INT16S tmp;
   INT16U Width,Height;

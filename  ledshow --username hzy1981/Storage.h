@@ -9,9 +9,37 @@
 
 #define MEM_WR_NUM 3
 
+#define SDI_SCREEN_PARA     0x000 //屏幕参数
+#define SDI_SCREEN_PARA_BK0 0x001
+#define SDI_SCREEN_PARA_BK1 0x002
+#define SDI_SCREEN_PARA_BK2 0x003
+
+#define SDI_CUR_BLOCK_INDEX     0x0010
+#define SDI_CUR_BLOCK_INDEX_BK0 0x0011
+#define SDI_CUR_BLOCK_INDEX_BK1 0x0012
+
+#define SDI_PROG_PARA       0x100 //编程参数--后续有MAX_PROG_NUM个
+#define SDI_PROG_PARA_BK0   0x200 //备份0
+#define SDI_PROG_PARA_BK1   0x300 //备份1
+
+#define SDI_PROG_BLOCK_INDEX     0x1000
+#define SDI_PROG_BLOCK_INDEX_BK0 0x2000
+#define SDI_PROG_BLOCK_INDEX_BK1 0x3000
+
+#define SDI_FILE_PARA     0x4000 //文件参数
+#define SDI_FILE_PARA_BK0 0x6000 //文件参数备份
+
+#define SDI_SHOW_DATA     0x7000 //显示数据
+
+
+
+
+
+
+
 typedef struct
 {
-    INT8U MemID;
+    //INT8U MemID;
     //INT8U Stora_Property;//存储属性,0表示标识符是自定义的，1表示标识符与协议兼容
     STORA_DI SDI; 
     //参数标识,与DLT645兼容，同时可扩充。

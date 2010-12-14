@@ -33,6 +33,7 @@
 #define BLACK  0x05  //AREA±³¾°
 
 //#define AREA_POINTS 5000
+#define ANTIALIAS_VALUE 0x01
 
 class CshowArea:public QWidget
 {

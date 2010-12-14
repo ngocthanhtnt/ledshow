@@ -176,6 +176,24 @@ public:
 
 };
 
+class CnameEdit:public QGroupBox
+{
+  Q_OBJECT
+private:
+
+  QGroupBox *group;
+  QLineEdit *nameEdit;
+  QLabel *nameLabel;
+signals:
+    void edited();
+public:
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CnameEdit(QWidget *parent =0);
+    ~CnameEdit();
+
+};
+
 class CsimpleTextEdit :public QGroupBox
 {
     Q_OBJECT

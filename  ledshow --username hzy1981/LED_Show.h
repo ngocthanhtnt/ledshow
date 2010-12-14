@@ -22,6 +22,7 @@
 #define SHOW_TIMER 0x04
 #define SHOW_TEMP  0x05
 #define SHOW_LUN   0x06
+#define SHOW_FLASH 0x07
 
 #define SLINE_MODE 0x00
 #define MLINE_MODE 0x01
