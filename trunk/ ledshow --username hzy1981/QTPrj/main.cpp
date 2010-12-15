@@ -4,7 +4,7 @@
 #include <QTextCodec>
 #include "mainwindow.h"
 #include "textedit.h"
-
+/*
 MainWindow *w;
 int main(int argc, char *argv[])
 {
@@ -16,12 +16,6 @@ int main(int argc, char *argv[])
     QFont font(QObject::tr("新宋体"),9,QFont::Normal,FALSE);
     a.setFont(font);
 
-/*
-    QTextCodec::setCodecForTr(QTextCodec::codecForName("gb2312"));
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("gb2312"));
-    QFont font("wenquanyi_120_50"); //使用wenquanyi字体
-    a.setFont(font); //设置字体
-*/
 
     w = new MainWindow;
     QRect desktopRect = QApplication::desktop()->availableGeometry();
@@ -38,10 +32,326 @@ int main(int argc, char *argv[])
 
     return a.exec();
 
+}
+*/
+
+#include "..\Includes.h"
+//#include "Pub.h"
+
+#define TEST_SEM0_ID 0
+#define TEST_SEM1_ID 1
+#define TEST_SEM2_ID 2
+#define TEST_SEM3_ID 3
+#define TEST_SEM4_ID 4
+#define TEST_SEM5_ID 5
+#define TEST_MSG_Q_ID 6
+
+#define MAX_COMMAND_NUM    2
+
+extern INT8U Print(INT8U argc, INT8S *argv[])
+{
+  INT8U i;
+
+  for(i = 0; i < argc; i ++)
+  {
+    printf("arg %d:%s",i, argv[i]);
+  }
+
+  return 1;
+}
+
+extern CONST S_OS_Shell_Cmd OS_Shell_Cmd[MAX_COMMAND_NUM] =
+{
+  {/*.pName = */"Printxx", /*.pCmdFunc = */0},
+  {/*.pName = */"Print", /*.pCmdFunc = */&Print}
+
+};
+
+INT8S Cmd_Buf[20] = {"Print aa bb cc\r"};
+
+OS_INT8U Test_Buf[10];
+
 /*
-    TextEdit mw;
-    mw.resize( 700, 800 );
-    mw.show();
-    return a.exec();
-    */
+#define MSG_MAX_LEN 20
+#define MSG_MEM_SIZE (MSG_MAX_LEN+MSG_RESERVE_SIZE)
+
+typedef struct
+{
+  OS_INT32U Head;
+  OS_INT8U Buf[5][MSG_MEM_SIZE];
+  OS_INT32U Tail;
+}S_Msg_Buf;
+
+S_Msg_Buf _Msg_Buf;
+
+S_Msg_Q_Info Msg_Q={CHK_BYTE,OS_MSG_Q,0xFFFF,{0},0,5,MSG_MEM_SIZE,_Msg_Buf.Buf,{0},CHK_BYTE};
+*/
+
+DECLARE_MSG_Q(Test11,3+7,5+5,0xFF);
+/*
+#define Msg_Num 10
+#define Msg_Len 12
+#define Rcv_Flag 0xFF
+typedef struct{\
+             OS_INT32U Head;\
+             OS_INT8U Buf[Msg_Num][Msg_Len+MSG_RESERVE_SIZE];\
+             OS_INT32U Tail;\
+             }S_XXQ_Info_NameXX_Buf;\
+S_XXQ_Info_NameXX_Buf XXQ_Info_NameXX_Buf={.Head=CHK_BYTE,\
+  .Tail=CHK_BYTE;\
+              };\
+S_Msg_Q_Info Q_Info_Name={\
+              .Head=CHK_BYTE,\
+              .Msg_Flag=OS_MSG_Q;\
+              .Msg_Rcv_Flag=Rcv_Flag;\
+              .Msg_Max_Num=Msg_Num;\
+              .Msg_Mem_Size=Msg_Len+MSG_RESERVE_SIZE;\
+              .Msg=XXQ_Info_NameXX_Buf.Buf;\
+              .Tail=CHK_BYTE;};
+*/
+
+//Tick钩子函数，注意：该函数中不能调用操作系统提供的调用
+void OS_Tick_Hook(void)
+{
+ OS_Mem_Use_Time_Stat(OS_MS_PER_TICK);
+
+}
+
+
+
+
+//打印复位前的任务堆栈使用情况,在所有任务都已经创建好后才能调用该函数
+//打印所有任务堆栈信息
+void Print_Task_Stk_Left()
+{
+  OS_INT8U i,Task_Num;
+
+  Task_Num=OS_Get_Cur_Task_Num();
+  for(i=0;i<Task_Num;i++)
+    OS_Debug_Print("Task %d Stack Left:%d\r\n",i,OS_Get_Task_Stk_Left(i));
+}
+
+#define EXT_NULL
+DECLARE_HT_VAR(EXT_NULL,INT8U,a);
+void Task1()
+{
+  OS_INT16U Value;
+  OS_INT8U *p;
+  OS_INT16U Len;
+  OS_INT8U Temp[15];
+  OS_INT16U TimeOut;
+  S_Int8U Test;
+  void *p1,*p2,*p3;
+  DECLARE_HT_BUF_TYPE(INT8U,100,S_Pub_Buf);
+  S_Pub_Buf _Pub_Buf;
+  OS_Mem_Init();
+  _a.Var=10;
+
+  //TimeOut = 100;
+  //OS_Wait_Ms(0,TimeOut);
+  //OS_Core_Wait(0);
+  OS_TimeDly_Ms(500);
+
+  OS_Msg_Q_Send(TEST_MSG_Q_ID,(void *)"Msg_Q 0,test",13,10);
+  OS_Msg_Q_Send(TEST_MSG_Q_ID,(void *)"Msg_Q 1,test",11,10);
+  OS_Msg_Q_Send(TEST_MSG_Q_ID,(void *)"Msg_Q 2,test",11,10);
+  OS_Msg_Q_Send(TEST_MSG_Q_ID,(void *)"Msg_Q 3,test",11,10);
+  OS_Msg_Q_Send(TEST_MSG_Q_ID,(void *)"Msg_Q 4,test",11,10);
+
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+  /*
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+
+  //OS_Sem_Post(TEST_SEM3_ID);
+  OS_Sem_Pend(TEST_SEM3_ID);
+  OS_Sem_Pend(TEST_SEM3_ID);
+  OS_Sem_Pend(TEST_SEM3_ID);
+  OS_Sem_Post(TEST_SEM3_ID);
+  OS_Sem_Post(TEST_SEM3_ID);
+  OS_Sem_Post(TEST_SEM3_ID);
+
+  OS_Msg_Rcv_Start(TEST_SEM4_ID,&Value,&p,0);
+   */
+  p1=OS_malloc(100);
+  //memset(p1,0xff,105);
+  OS_TimeDly_Ms(2000);
+  //OS_free(p1);
+  p2=OS_malloc(100);
+  //p2=OS_malloc(100);
+  //OS_TimeDly_Ms(200);
+  OS_Check();
+  OS_Info_Print();
+  //OS_free(p2);
+  //p3=OS_malloc(100);
+  //OS_free(p3);
+
+  Test.Var=0x88;
+  OS_SET_STRUCT_HT(_Pub_Buf);
+
+  OS_Task_Suspend(0);
+  while(1)
+  {
+    //OS_Msg_Send(TEST_SEM4_ID,1,Test_Buf,0x06,0);
+    OS_Mutex_Pend(TEST_SEM0_ID);
+    OS_TimeDly_Ms(100);
+    OS_Mutex_Pend(TEST_SEM1_ID);
+    SET_VAR(Test_Buf[6],0xab,Test_Buf,sizeof(Test_Buf));
+    OS_TimeDly_Ms(50);
+    OS_Debug_Print("\r\nTask1 Run\r\n");
+    OS_Debug_Print("Task 1 StkLeft:%5d\r\n",OS_Get_Task_Stk_Left(OS_Get_Cur_Task_ID()));
+    OS_Mutex_Post(TEST_SEM1_ID);
+    OS_Mutex_Post(TEST_SEM0_ID);
+
+  }
+}
+
+void Task2()
+{
+  OS_INT16U Len;
+  OS_INT8U Val;
+  OS_INT8U *p;
+  OS_INT8U Temp[20];
+
+
+  while(1)
+  {
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+
+  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
+  memcpy(Temp,p,Len);
+  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
+
+    OS_Mutex_Pend(TEST_SEM1_ID);
+    OS_TimeDly_Ms(100);
+    OS_Mutex_Pend(TEST_SEM2_ID);
+    OS_Debug_Print("\r\nTask2 Run\r\n");
+    OS_Debug_Print("Task 2 StkLeft:%5d\r\n",OS_Get_Task_Stk_Left(OS_Get_Cur_Task_ID()));
+    OS_Mutex_Post(TEST_SEM2_ID);
+    OS_Mutex_Post(TEST_SEM1_ID);
+    OS_TimeDly_Ms(100);//让出cpu
+    //Test_Buf[0]=100;
+    //OS_Debug_Print("\r\nTask2 set Test_Buf[0] EQ 100\r\n");
+
+  }
+}
+
+void Task3()
+{
+  OS_INT8U Val;
+  OS_INT8U *p;
+  while(1)
+  {
+    //OS_Msg_Rcv_Start(TEST_SEM4_ID,&Val,&p,0);
+    //OS_TimeDly_Ms(500);
+    //OS_Msg_Rcv_End(TEST_SEM4_ID);
+
+    OS_Mutex_Pend(TEST_SEM2_ID);
+    OS_TimeDly_Ms(100);
+    OS_Mutex_Pend(TEST_SEM0_ID);
+    OS_Debug_Print("\r\nTask3 Run\r\n");
+    OS_Debug_Print("Task 3 StkLeft:%5d\r\n",OS_Get_Task_Stk_Left(OS_Get_Cur_Task_ID()));
+    Print_Task_Stk_Left();
+    OS_Mutex_Post(TEST_SEM0_ID);
+    OS_Mutex_Post(TEST_SEM2_ID);
+    OS_TimeDly_Ms(200);//让出cpu
+    Test_Buf[0]=0;
+    OS_Debug_Print("\r\nTask3 set Test_Buf[0]=0\r\n");
+    OS_TimeDly_Ms(200);//让出cpu
+    Test_Buf[0]=100;
+    OS_Debug_Print("\r\nTask3 set Test_Buf[0]=100\r\n");
+
+  }
+}
+
+#define TASK_STK_SIZE 300
+
+NO_INIT OS_STK TASK_STK[3][TASK_STK_SIZE];
+
+typedef struct
+{
+  INT8U a;
+  INT8U b;
+
+  INT8U CS[4];
+
+}S_Test;
+
+S_Test PStruct_test;
+void main()
+{
+  OS_TRACE();
+  OS_Shell_Init(1);
+  OS_Debug_Print("Sys Starttia");
+  //OS_SET_PSTRUCT_SUM(PStruct_test,&PStruct_test,sizeof(PStruct_test));
+  OS_TRACE();
+  OS_TRACE_CTRL(0);//关闭断言，防止冲掉记录的掉电前的调用轨迹
+  OS_Init();//操作系统初始化
+  //OS_Mutex_Clr();//清信号量
+
+  while(1)
+  {
+    OS_Cmd_Analys(OS_Shell_Cmd, 2, Cmd_Buf, 20);
+  }
+
+
+  OS_TRACE();
+  OS_Mutex_Init(TEST_SEM0_ID,1);
+  OS_Mutex_Init(TEST_SEM1_ID,1);
+  OS_Mutex_Init(TEST_SEM2_ID,1);
+  OS_Sem_Init(TEST_SEM3_ID,3);
+  OS_Msg_Init(TEST_SEM4_ID);
+  OS_Msg_Q_Init(TEST_MSG_Q_ID,&Test11);
+  OS_TRACE();
+  OS_ASSERT_FAILED();
+  //Print_Task_Stk_Left();//创建任务前可以打印各任务复位前的
+  //创建任务
+  OS_Create_Task(&Task1,&TASK_STK[0][TASK_STK_SIZE-1],sizeof(TASK_STK[0]),(OS_INT8U *)"Task1");
+  OS_Create_Task(&Task2,&TASK_STK[1][TASK_STK_SIZE-1],sizeof(TASK_STK[1]),(OS_INT8U *)"Task2");
+  OS_Create_Task(&Task3,&TASK_STK[2][TASK_STK_SIZE-1],sizeof(TASK_STK[2]),(OS_INT8U *)"Task3");
+
+  OS_TRACE_CTRL(0xFF);//打开前8个任务的断言
+  OS_ASSERT_FAILED();//打印复位前的流程
+  OS_TRACE_CTRL(0x01);//只开第0号任务的断言
+  OS_Debug_Print("\r\n%s","----------uOS Start!----------");
+
+
+  OS_Start();
 }
