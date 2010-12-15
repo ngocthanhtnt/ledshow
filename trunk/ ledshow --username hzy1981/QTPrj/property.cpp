@@ -146,7 +146,10 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
     if(type == PROG_PROPERTY)
         progProperty->setSettingsToWidget(str);//stackedWidget->setCurrentIndex();
     else if(type == AREA_PROPERTY)
+    {
+        areaProperty->setSettingsToWidget(str);
         areaProperty->area->setSettingsToWidget(str);
+    }
     else if(type == PIC_PROPERTY)
     {
         picProperty->setSettingsToWidget(str);

@@ -192,6 +192,8 @@ void CflashProperty::getSettingsFromWidget(QString str)
   settings.setValue("fileName", flashSourceEdit->text());
   settings.setValue("speed", runSpeedCheck->currentIndex());
   settings.endGroup();
+
+  nameEdit->getSettingsFromWidget(str);
 }
 
 void CflashProperty::setSettingsToWidget(QString str)
@@ -206,6 +208,8 @@ void CflashProperty::setSettingsToWidget(QString str)
         QMovie *movie = new QMovie(flashSourceEdit->text());
         totalFrameNumEdit->setText(QString::number(movie->frameCount()));
     }
+
+    nameEdit->setSettingsToWidget(str);
 }
 
 QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)

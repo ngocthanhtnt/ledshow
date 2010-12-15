@@ -195,6 +195,7 @@ void CtimeProperty::getSettingsFromWidget(QString str)
 
     if(type == TIME_PROPERTY)
     {
+        nameEdit->getSettingsFromWidget(str);
         simpleTextEdit->getSettingsFromWidget(str);
         smLineEdit->getSettingsFromWidget(str);
         dateTimeEdit->getSettingsFromWidget(str);
@@ -217,6 +218,7 @@ void CtimeProperty::setSettingsToWidget(QString str)
 
     if(type == TIME_PROPERTY)
     {
+        nameEdit->setSettingsToWidget(str);
         simpleTextEdit->setSettingsToWidget(str);
         smLineEdit->setSettingsToWidget(str);
         dateTimeEdit->setSettingsToWidget(str);

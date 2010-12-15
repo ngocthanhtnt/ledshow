@@ -232,6 +232,7 @@ void Carea::getSettingsFromWidget(QString str)
     settings.setValue("xLen", widthEdit->text().toInt());
     settings.setValue("yLen", heightEdit->text().toInt());
     settings.endGroup();
+
 }
 
 void Carea::setSettingsToWidget(QString str)
@@ -295,7 +296,7 @@ CareaProperty::CareaProperty(QWidget *parent):QWidget(parent)
     QHBoxLayout *hLayout;
     QVBoxLayout *vLayout;
 
-hLayout = new QHBoxLayout(this);
+    hLayout = new QHBoxLayout(this);
     vLayout = new QVBoxLayout(this);
 
     nameEdit = new CnameEdit(this);
@@ -307,8 +308,39 @@ hLayout = new QHBoxLayout(this);
     hLayout->addStretch(10);
     setLayout(hLayout);
 
+    connect(nameEdit, SIGNAL(edited()), this, SLOT(edited()));
 }
 
+void CareaProperty::edited()
+{
+    CshowArea *area;
+    QTreeWidgetItem *item;
+
+    //qDebug("propertyEdited");
+    area = w->screenArea->getFocusArea(); //当前焦点分区
+
+    if(area != (CshowArea *)0) //
+    {
+        //当前选中的item
+        item = area->treeItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
+        if(item != (QTreeWidgetItem *)0)
+        {
+            QString str = item->data(0,Qt::UserRole).toString();
+            getSettingsFromWidget(str);
+            //updateClockShowArea(area);
+        }
+    }
+}
+
+void CareaProperty::getSettingsFromWidget(QString str)
+{
+   nameEdit->getSettingsFromWidget(str);
+}
+
+void CareaProperty::setSettingsToWidget(QString str)
+{
+   nameEdit->setSettingsToWidget(str);
+}
 
 CareaProperty::~CareaProperty()
 {
