@@ -168,7 +168,7 @@ INT16U Get_Storage_Data_Len(STORA_DI SDI)
       return Data_Para_Storage[i].Len;
     }
   }
-  _Debug_Print("Get_Storage_Data_Len Err, SDI = 0x%lx",SDI);
+  Debug_Print("Get_Storage_Data_Len Err, SDI = 0x%lx",SDI);
   ASSERT_FAILED(); 
   return 0;
 }
@@ -189,7 +189,7 @@ INT16U Read_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, INT16U Len, void* 
 
   TRACE();
 
-  _Debug_Print("Read Storage Data:0x%lx, Off = %d, Len = %d", SDI, Offset, Len); 
+  Debug_Print("Read Storage Data:0x%lx, Off = %d, Len = %d", SDI, Offset, Len);
 
   Off = Get_Storage_Data_Off(SDI); //获取数据偏移
   if(NULL_4BYTES EQ Off)//ASSERT(NULL_4BYTES != Off))
@@ -234,7 +234,7 @@ INT8U Write_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, void* pSrc, INT16U
 
   TRACE();
 
-  _Debug_Print("Write Storage Data:0x%lx, Off = %d, Len = %d", SDI, Offset, SrcLen); 
+  Debug_Print("Write Storage Data:0x%lx, Off = %d, Len = %d", SDI, Offset, SrcLen);
 
   //Imp_Flag = Get_Storage_Data_ImpFlag(SDI); //获取该数据的重要标志
 

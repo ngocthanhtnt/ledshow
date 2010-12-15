@@ -20,14 +20,14 @@
 #define T_SEC   5
 #define T_WEEK  6
 
-#define FAC_PARA_FILE  0 //工厂参数文件
-#define USR_PARA_FILE  1 //用户参数文件
-#define PROG_PARA_FILE 2 //节目擦数文件
-#define PROG_DATA_FILE 3 //节目数据文件
-
-#define FILE_R 0//文件读
-#define FILE_W 1//文件写
-#define FILE_WR 2//文件读和写
+#define SHOW_NULL  0x00
+#define SHOW_PIC   0x01 //图文--表格和图片也是这个
+#define SHOW_CLOCK 0x02 //表盘
+#define SHOW_TIME  0x03 //时间
+#define SHOW_TIMER 0x04 //计时
+#define SHOW_TEMP  0x05 //温度
+#define SHOW_LUN   0x06 //农历
+#define SHOW_FLASH 0x07 //动画
 
 #define MAX_FILE_NAME_SIZE 20
 
@@ -452,8 +452,7 @@ EXT S_Cur_Block_Index Cur_Block_Index;
 
 EXT S_Time Cur_Time; //当前时间 
 EXT void Read_Screen_Para();
-EXT char * Get_Program_Data_File_Name(INT8U Prog_No, INT8U Area_No, char File_Name[]);
-EXT INT32S File_Read_One_Frame(FILE_T File, INT32U Offset, INT8U *pSeq, INT16U *pCtrl, INT8U *pDst, INT8U *pDst_Start, INT16U DstLen);
+EXT INT8U Get_Show_Para_Len(INT8U Type);
 EXT INT8U Save_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen);
 EXT INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);

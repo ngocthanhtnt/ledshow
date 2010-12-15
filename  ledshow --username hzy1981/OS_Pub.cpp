@@ -1,10 +1,10 @@
-#define PUB_C
-#include "Includes.h"
+#define OS_PUB_C
+#include "OS_Includes.h"
 
-CONST INT16U Crc_Table0[16]={0x0000,0x1021,0x2042,0x3063,0x4084,0x50a5,0x60c6,0x70e7,
+CONST OS_INT16U Crc_Table0[16]={0x0000,0x1021,0x2042,0x3063,0x4084,0x50a5,0x60c6,0x70e7,
                                 0x8108,0x9129,0xa14a,0xb16b,0xc18c,0xd1ad,0xe1ce,0xf1ef};
 
-CONST INT16U Crc_Table1[256]={ 
+CONST OS_INT16U Crc_Table1[256]={ 
   0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
   0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
   0x1231, 0x0210, 0x3273, 0x2252, 0x52B5, 0x4294, 0x72F7, 0x62D6,
@@ -39,36 +39,36 @@ CONST INT16U Crc_Table1[256]={
   0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0};
 
 //根据format和ap参数表输出调试信息
-void vsPrintf(CONST INT8S *format, va_list ap)
+void OS_vsPrintf(CONST OS_INT8S *format, va_list ap)
 {
   
-  static CONST INT8S Chr[]="0123456789ABCDEF";
+  static CONST OS_INT8S Chr[]="0123456789ABCDEF";
 
-  static CONST INT32U Oct[12]=
+  static CONST OS_INT32U Oct[12]=
   {
     01,010,0100,01000,010000,0100000,01000000,010000000,
     0100000000,01000000000,010000000000,010000000000,
   }; //八进制
-  static CONST INT32U Dec[11]=
+  static CONST OS_INT32U Dec[11]=
   {
     1,10,100,1000,10000,100000,1000000,
     10000000,100000000,1000000000,1000000000,
   }; //十进制
-  static CONST INT32U Hex[8]=
+  static CONST OS_INT32U Hex[8]=
   {
     0x1,0x10,0x100,0x1000,0x10000,
     0x100000,0x1000000,0x10000000,
   }; //十六进制
   
-  INT8U LintFlag;
-  INT32U CONST *p;
-  INT8S *pSrc;
+  OS_INT8U LintFlag;
+  OS_INT32U CONST *p;
+  OS_INT8S *pSrc;
   
   unsigned long int uParaValue;//无符号数
   long int sParaValue;//有符号数
   
-  INT8U c;
-  INT8U i,Width,Len;
+  OS_INT8U c;
+  OS_INT8U i,Width,Len;
  
   for(;;)    //遍历整个参数表
   {
@@ -76,7 +76,7 @@ void vsPrintf(CONST INT8S *format, va_list ap)
     {
       if(!c)
         return;
-      Put_Char(c);
+      OS_Put_Char(c);
     }
 
     c=*format++;
@@ -85,12 +85,12 @@ void vsPrintf(CONST INT8S *format, va_list ap)
     {
       case 'c':
         c = va_arg(ap, int);
-        Put_Char(c);
+        OS_Put_Char(c);
         break;
       case 's':
-        pSrc= va_arg(ap,INT8S *);
+        pSrc= va_arg(ap,OS_INT8S *);
         while((c = *pSrc++)!=0)
-          Put_Char(c);
+          OS_Put_Char(c);
         break;
       default:
         break;
@@ -143,7 +143,7 @@ void vsPrintf(CONST INT8S *format, va_list ap)
       
       if(sParaValue<0)
       {
-        Put_Char('-');
+        OS_Put_Char('-');
         sParaValue=0-sParaValue;
       }
       uParaValue=(unsigned long int)sParaValue;//赋值到uParaValue,统一计算
@@ -153,7 +153,7 @@ void vsPrintf(CONST INT8S *format, va_list ap)
       if(LintFlag)//长整型
         uParaValue=va_arg(ap,unsigned long int);
       else
-        uParaValue=va_arg(ap,INT16U);  
+        uParaValue=va_arg(ap,OS_INT16U);  
     }
     
     //计算数据本身的长度
@@ -170,7 +170,7 @@ void vsPrintf(CONST INT8S *format, va_list ap)
     i=0;//表示是否已经找到了一个非0位
     for(;Width!=0;Width--)
     {
-      c=(INT8U)(uParaValue/(*(p+Width-1)));
+      c=(OS_INT8U)(uParaValue/(*(p+Width-1)));
       uParaValue=uParaValue%(*(p+Width-1));
       //前面的0全部打成空格
 
@@ -181,77 +181,74 @@ void vsPrintf(CONST INT8S *format, va_list ap)
         i=1;//表示已经有一个非0位了
         c=Chr[c];
       }
-      Put_Char(c);
+      OS_Put_Char(c);
     }
   }
 }
 
 //调试信息输出函数
 //注意目前只支持%c,%s,%d,%u,%o,%x。暂不支持浮点数
-void _Debug_Print(CONST INT8S *format, ...)
+void _OS_Debug_Print(CONST OS_INT8S *format, ...)
 {
   va_list ap;
   
   va_start(ap,format);
-  vsPrintf(format,ap);
+  OS_vsPrintf(format,ap);
   va_end(ap);
 }
 
-INT8U Debug_Print_En(void)
-{
-    return 1;
-}
-
+extern OS_INT8U OS_Debug_Print_En(void);
 //调试信息输出函数
 //注意目前只支持%c,%s,%d,%u,%o,%x。暂不支持浮点数
-//该函数在只有在Debug_Print_En()返回>0时才输出
-void Debug_Print(CONST INT8S *format, ...)
+//该函数在只有在OS_Debug_Print_En()返回>0时才输出
+void OS_Debug_Print(CONST OS_INT8S *format, ...)
 {
   va_list ap;
   
-  if(Debug_Print_En() EQ 0)
+  if(OS_Debug_Print_En() EQ 0)
     return;
   
   va_start(ap,format);
-  vsPrintf(format,ap);
+  OS_vsPrintf(format,ap);
   va_end(ap);
 }
 
-#if TRACE_HOOK_EN>0
-extern void Trace_Hook(void);
-void _Trace_Hook(void)
+#if OS_TRACE_HOOK_EN>0
+extern void OS_Trace_Hook(void);
+void _OS_Trace_Hook(void)
 {
-  INT8U Temp;
+  OS_INT8U Temp;
   
   Temp=Trace_Info.On_Off_Flag;
-  Trace_Ctrl(0);//关闭所有任务的Trace功能，使Trace_Hook函数不会产生重入
-  Trace_Hook();
-  Trace_Ctrl(Temp);
+  OS_Trace_Ctrl(0);//关闭所有任务的Trace功能，使OS_Trace_Hook函数不会产生重入
+  OS_Trace_Hook();
+  OS_Trace_Ctrl(Temp);
 }
 #endif
 
-//轨迹跟踪函数，入口参数File必须已经经过处理，保留最后TRACE_BUF_LEN个字符
-void Trace0(CONST INT8S File[],CONST INT8S Function[],INT16U Line)
+//轨迹跟踪函数，入口参数File必须已经经过处理，保留最后OS_TRACE_BUF_LEN个字符
+void OS_Trace0(CONST OS_INT8S File[],CONST OS_INT8S Function[],OS_INT16U Line)
 { 
   //记录下当此调用的函数
   //该次调用和上次调用的行号不相等,或者两次调用的函数名字不一样,或者不是在同一个任务中,认为是两次不同的调用
   if(Trace_Info.Line[Trace_Info.Index]!=Line ||\
-     strcmp(Trace_Info.File[Trace_Info.Index],File)!=0)
+     strcmp(Trace_Info.File[Trace_Info.Index],File)!=0 ||\
+     Trace_Info.Task_ID[Trace_Info.Index]!=Task_Info.Cur_Task_ID)
   {
     Trace_Info.Index++;
-    if(Trace_Info.Index>=TRACE_NUM)
+    if(Trace_Info.Index>=OS_TRACE_NUM)
       Trace_Info.Index=0;
     
     //记录当前任务号,与行号
-    Trace_Info.Task_ID[Trace_Info.Index]=0;//Task_Info.Cur_Task_ID;//保存任务ID
+    Trace_Info.Task_ID[Trace_Info.Index]=Task_Info.Cur_Task_ID;//保存任务ID
     //记录文件名
-    memcpy(Trace_Info.File[Trace_Info.Index],File,TRACE_BUF_LEN-1);//记录下该次调用的函数名字
+    memcpy(Trace_Info.File[Trace_Info.Index],File,OS_TRACE_BUF_LEN-1);//记录下该次调用的函数名字
     //最后一个字符填0
-    Trace_Info.File[Trace_Info.Index][TRACE_BUF_LEN-1]='\0';
+    Trace_Info.File[Trace_Info.Index][OS_TRACE_BUF_LEN-1]='\0';
     //记录函数名
-    memcpy(Trace_Info.Func,Function,TRACE_BUF_LEN-1);//记录下该次调用的函数名字
+    memcpy(Trace_Info.Func,Function,OS_TRACE_BUF_LEN-1);//记录下该次调用的函数名字
     //最后一个字符填0
-    Trace_Info.Func[TRACE_BUF_LEN-1]='\0';  
+    Trace_Info.Func[OS_TRACE_BUF_LEN-1]='\0';  
     
     Trace_Info.Line[Trace_Info.Index]=Line;//保存行号
     Trace_Info.Counts[Trace_Info.Index]=1;//调用次数
@@ -259,44 +256,44 @@ void Trace0(CONST INT8S File[],CONST INT8S Function[],INT16U Line)
   }
   else
   {
-    if(Trace_Info.Index>=TRACE_NUM)
+    if(Trace_Info.Index>=OS_TRACE_NUM)
       Trace_Info.Index=0;    
     Trace_Info.Counts[Trace_Info.Index]++;//认为在反复调用同一个函数，增加调用次数的记录
   } 
 }
 
 //操作系统的轨迹跟踪函数，File表示文件名，Line表示行号
-void Trace(CONST INT8S File[],CONST INT8S Function[],INT16U Line)
+void OS_Trace(CONST OS_INT8S File[],CONST OS_INT8S Function[],OS_INT16U Line)
 {
-  INT16U Len;
-  INT8S *pFile;
+  OS_INT16U Len;
+  OS_INT8S *pFile;
 
   //轨迹功能关闭情况下记录调用流程
-#if TRACE_CTRL_EN>0
-  if(GET_BIT(Trace_Info.On_Off_Flag,0) EQ 0)
+#if OS_TRACE_CTRL_EN>0
+  if(GET_BIT(Trace_Info.On_Off_Flag,Task_Info.Cur_Task_ID) EQ 0)
     return;   
 #endif
 
-  //Flag=1表示已经在Trace流程中了，防止重复进入
+  //Flag=1表示已经在OS_Trace流程中了，防止重复进入
   if(Trace_Info.Entry_Flag EQ 1)
   {
-    Debug_Print("\r\nOS:Trace Reentry!");
+    OS_Debug_Print("\r\nOS:Trace Reentry!");
     return;    
   }
   
   Trace_Info.Entry_Flag=1;//表示已经进入，以下部分不可重入 
   
-  Len=strlen((INT8S *)File)+1;
+  Len=strlen((OS_INT8S *)File)+1;
   
-  if(Len>TRACE_BUF_LEN)
-    pFile=(INT8S *)File+Len-TRACE_BUF_LEN;//取文件名的起始位置
+  if(Len>OS_TRACE_BUF_LEN)
+    pFile=(OS_INT8S *)File+Len-OS_TRACE_BUF_LEN;//取文件名的起始位置
   else
-    pFile=(INT8S *)File;
+    pFile=(OS_INT8S *)File;
   
-  Trace0(pFile,Function,Line);
+  OS_Trace0(pFile,Function,Line);
   
-#if TRACE_HOOK_EN>0  
-  _Trace_Hook();//调用钩子函数
+#if OS_TRACE_HOOK_EN>0  
+  _OS_Trace_Hook();//调用钩子函数
 #endif
 
   //Entry_Flag=0表示退出Trace流程
@@ -304,40 +301,40 @@ void Trace(CONST INT8S File[],CONST INT8S Function[],INT16U Line)
 }
 
 //轨迹记录打开关闭的控制功能
-void Trace_Ctrl(INT32U Flag)
+void OS_Trace_Ctrl(OS_INT32U Flag)
 {
   Trace_Info.On_Off_Flag=Flag;//打开或者关闭断言，每位对应一个任务
 }
 
 //检查Trace_Info信息是否有溢出等
-void Trace_Info_Check(void)
+void OS_Trace_Info_Check(void)
 {
-  if(CHECK_STRUCT_HT(Trace_Info) EQ 0)
+  if(OS_CHECK_STRUCT_HT(Trace_Info) EQ 0)
   {
-    ASSERT_FAILED();
-    Debug_Print("\r\nOS:Trace_Info HT error");
+    OS_ASSERT_FAILED();
+    OS_Debug_Print("\r\nOS:Trace_Info HT error");
   }
 }
 
 //打印函数调用轨迹
-void Print_Trace_Info(void)
+void OS_Print_Trace_Info(void)
 {
-  INT8U i, Index;
+  OS_INT8U i, Index;
   //打印前几次调用的函数
-  if(Trace_Info.Index>=TRACE_NUM)
+  if(Trace_Info.Index>=OS_TRACE_NUM)
   {
-    Debug_Print("\r\nOS:Trace Index error %d",Trace_Info.Index);
+    OS_Debug_Print("\r\nOS:Trace Index error %d",Trace_Info.Index);
     Trace_Info.Index=0;
   }
 
-  Debug_Print("\r\nOS:Trace_Info:");
+  OS_Debug_Print("\r\nOS:Trace_Info:");
   
   Index=Trace_Info.Index; //最近一次调用信息索引   
-  for(i=0;i<TRACE_NUM;i++)//打印出前TRACE_NUM次调用的函数
+  for(i=0;i<OS_TRACE_NUM;i++)//打印出前OS_TRACE_NUM次调用的函数
   {
-    Trace_Info.File[Index][TRACE_BUF_LEN-1]=0;
+    Trace_Info.File[Index][OS_TRACE_BUF_LEN-1]=0;
     
-    Debug_Print("\r\n  Call:Task:%u,File:%s,Func:%s,Line:%u,Counts:%u",\
+    OS_Debug_Print("\r\n  Call:Task:%u,File:%s,Func:%s,Line:%u,Counts:%u",\
       Trace_Info.Task_ID[Index],\
       Trace_Info.File[Index],\
       Trace_Info.Func,\
@@ -345,49 +342,49 @@ void Print_Trace_Info(void)
       Trace_Info.Counts[Index]);
     //前一次调用信息
     if(Index EQ 0)
-      Index=TRACE_NUM-1;
+      Index=OS_TRACE_NUM-1;
     else
       Index--;
   }  
 }
 
-#if ASSERT_HOOK_EN>0
-extern void Assert_Hook(CONST INT8S File[],CONST INT8S Function[],INT16U Line);
+#if OS_ASSERT_HOOK_EN>0
+extern void OS_Assert_Hook(CONST OS_INT8S File[],CONST OS_INT8S Function[],OS_INT16U Line);
 #endif
 
 //断言失败时，输出信息
 //File断言所在的文件
 //Function断言所在的函数
 //Line断言所在的行号
-void Assert_Failed(CONST INT8S File[],CONST INT8S Function[],INT16U Line)
+void OS_Assert_Failed(CONST OS_INT8S File[],CONST OS_INT8S Function[],OS_INT16U Line)
 {
-  INT16U Len;
-  INT8S *pFile;
+  OS_INT16U Len;
+  OS_INT8S *pFile;
   
-  Len=strlen((INT8S *)File)+1;
+  Len=strlen((OS_INT8S *)File)+1;
     
-  if(Len>TRACE_BUF_LEN)
-    pFile=(INT8S *)File+Len-TRACE_BUF_LEN;//取文件名的起始位置
+  if(Len>OS_TRACE_BUF_LEN)
+    pFile=(OS_INT8S *)File+Len-OS_TRACE_BUF_LEN;//取文件名的起始位置
   else
-    pFile=(INT8S *)File;
- /* 
+    pFile=(OS_INT8S *)File;
+  
   //打印任务名字或者ID
-#if TASK_NAME_EN>0    
-  Debug_Print("\r\nASSERT Task Name:%s",Tcb[Task_Info.Cur_Task_ID].Name);
+#if OS_TASK_NAME_EN>0    
+  OS_Debug_Print("\r\nASSERT Task Name:%s",Tcb[Task_Info.Cur_Task_ID].Name);
 #else
-  Debug_Print("\r\nASSERT Task ID:%u",Task_Info.Cur_Task_ID);
+  OS_Debug_Print("\r\nASSERT Task ID:%u",Task_Info.Cur_Task_ID);
 #endif
-*/
+
   //打印出错文件
-  Debug_Print("\r\n  Err File:%s,Function:%s,Line:%u",pFile,Function,Line); 
+  OS_Debug_Print("\r\n  Err File:%s,Function:%s,Line:%u",pFile,Function,Line); 
   
   //打印函数调用轨迹
-#if TRACE_EN>0  
-  Print_Trace_Info();
+#if OS_TRACE_EN>0  
+  OS_Print_Trace_Info();
 #endif
   
-#if ASSERT_HOOK_EN>0
-  Assert_Hook(pFile,Function,Line);
+#if OS_ASSERT_HOOK_EN>0
+  OS_Assert_Hook(pFile,Function,Line);
 #endif  
 
 }
@@ -399,11 +396,11 @@ void Assert_Failed(CONST INT8S File[],CONST INT8S Function[],INT16U Line)
 //Line断言所在的行号
 //返回：条件成立为1，不成立为0
 //注意：该函数内部不能调用操作系统的调用，不能有延时函数等
-void Assert(BOOL Condition,CONST INT8S File[],CONST INT8S Function[],INT16U Line)
+void OS_Assert(OS_BOOL Condition,CONST OS_INT8S File[],CONST OS_INT8S Function[],OS_INT16U Line)
 {
   if(Condition EQ 0)
   {
-    Assert_Failed(File,Function,Line);
+    OS_Assert_Failed(File,Function,Line);
   }
 }
 
@@ -412,12 +409,12 @@ void Assert(BOOL Condition,CONST INT8S File[],CONST INT8S Function[],INT16U Line
 //pSrc表示源缓冲区
 //SrcLen表示拷贝长度
 //pDst_Start和DstLen一起限制pDst和SrcLen的范围
-//必须满足ASSERT(A_WARNING,(INT8U *)pDst>=(INT8U *)pDst_Start && (INT8U *)pDst+SrcLen<=(INT8U *)pDst_Start+DstLen);
-void mem_cpy(void *pDst,void *pSrc,INT32U SrcLen,void *pDst_Start,INT32U DstLen)
+//必须满足ASSERT(A_WARNING,(OS_INT8U *)pDst>=(OS_INT8U *)pDst_Start && (OS_INT8U *)pDst+SrcLen<=(OS_INT8U *)pDst_Start+DstLen);
+void OS_memcpy(void *pDst,void *pSrc,OS_INT32U SrcLen,void *pDst_Start,OS_INT32U DstLen)
 {
-  if(!((INT8U *)pDst>=(INT8U *)pDst_Start && (INT8U *)pDst+SrcLen<=(INT8U *)pDst_Start+DstLen))//pDst必须满足的条件
+  if(!((OS_INT8U *)pDst>=(OS_INT8U *)pDst_Start && (OS_INT8U *)pDst+SrcLen<=(OS_INT8U *)pDst_Start+DstLen))//pDst必须满足的条件
   {
-    ASSERT_FAILED();
+    OS_ASSERT_FAILED();
     return;
   }
   memcpy(pDst,pSrc,SrcLen);
@@ -428,12 +425,12 @@ void mem_cpy(void *pDst,void *pSrc,INT32U SrcLen,void *pDst_Start,INT32U DstLen)
 //Value表示需要设置的值
 //SetLen表示置数长度
 //pDst_Start和DstLen一起限制pDst和SetLen的范围
-//必须满足ASSERT(A_WARNING,(INT8U *)pDst>=(INT8U *)pDst_Start && (INT8U *)pDst+SetLen<=(INT8U *)pDst_Start+DstLen);
-void mem_set(void *pDst, INT8U Value,INT32U SetLen,void *pDst_Start,INT32U DstLen)
+//必须满足ASSERT(A_WARNING,(OS_INT8U *)pDst>=(OS_INT8U *)pDst_Start && (OS_INT8U *)pDst+SetLen<=(OS_INT8U *)pDst_Start+DstLen);
+void OS_memset(void *pDst, OS_INT8U Value,OS_INT32U SetLen,void *pDst_Start,OS_INT32U DstLen)
 {
-  if(!((INT8U *)pDst>=(INT8U *)pDst_Start && (INT8U *)pDst+SetLen<=(INT8U *)pDst_Start+DstLen))//pDst必须满足的条件
+  if(!((OS_INT8U *)pDst>=(OS_INT8U *)pDst_Start && (OS_INT8U *)pDst+SetLen<=(OS_INT8U *)pDst_Start+DstLen))//pDst必须满足的条件
   {
-    ASSERT_FAILED();
+    OS_ASSERT_FAILED();
     return;
   }
   memset(pDst,Value,SetLen);
@@ -441,18 +438,18 @@ void mem_set(void *pDst, INT8U Value,INT32U SetLen,void *pDst_Start,INT32U DstLe
 
 
 //CRC校验算法0，用于空间比较小的情况,但速度要求不高的情况
-INT16U Crc16_0(INT8U *pSrc, INT16U Len) 
+OS_INT16U OS_Crc16_0(OS_INT8U *pSrc, OS_INT16U Len) 
 {
-  INT16U Crc=0;
-  INT8U Temp;
+  OS_INT16U Crc=0;
+  OS_INT8U Temp;
 
   while(Len--!=0)
   {
-    Temp=(INT8U)(Crc>>12); 
+    Temp=(OS_INT8U)(Crc>>12); 
     Crc<<=4; 
     Crc^=Crc_Table0[Temp^(*pSrc/16)]; 
                               
-    Temp=(INT8U)(Crc>>12); 
+    Temp=(OS_INT8U)(Crc>>12); 
     Crc<<=4; 
     Crc^=Crc_Table0[Temp^(*pSrc&0x0F)]; 
     pSrc++;
@@ -461,10 +458,10 @@ INT16U Crc16_0(INT8U *pSrc, INT16U Len)
 }
 
 //CRC校验算法1，用于空间比较大的情况,但速度要求较高的情况
-INT16U Crc16_1(INT8U *pSrc, INT16U Len)
+OS_INT16U OS_Crc16_1(OS_INT8U *pSrc, OS_INT16U Len)
 {
-  INT16U Crc=0;
-  INT16U Temp;
+  OS_INT16U Crc=0;
+  OS_INT16U Temp;
   
   while(Len--!=0)
   {
@@ -481,24 +478,24 @@ INT16U Crc16_1(INT8U *pSrc, INT16U Len)
 //pCS表示校验和的起始地址
 //CS_Bytes表示校验和长度
 //注意：这个函数要和Set_Sum成对使用，因为内部不是计算简单的校验和
-INT8U Check_Sum(void *pSrc,INT16U SrcLen,void *pCS,INT8U CS_Bytes)
+OS_INT8U OS_Check_Sum(void *pSrc,OS_INT16U SrcLen,void *pCS,OS_INT8U CS_Bytes)
 {
-  INT32U Sum=0;
+  OS_INT32U Sum=0;
   
   if(!(CS_Bytes EQ 1 || CS_Bytes EQ 2 || CS_Bytes EQ 4))//字节数必须是1或2或4
   {
-    ASSERT_FAILED();
+    OS_ASSERT_FAILED();
     return 0;
   }
   
-#if CS_TYPE EQ CS_CRC16_0
-  Sum=(INT32U)Crc16_0((INT8U *)pSrc,SrcLen);
-#elif CS_TYPE EQ CS_CRC16_1
-  Sum=(INT32U)Crc16_1((INT8U *)pSrc,SrcLen);
+#if OS_CS_TYPE EQ CS_CRC16_0
+  Sum=(OS_INT32U)OS_Crc16_0((OS_INT8U *)pSrc,SrcLen);
+#elif OS_CS_TYPE EQ CS_CRC16_1
+  Sum=(OS_INT32U)OS_Crc16_1((OS_INT8U *)pSrc,SrcLen);
 #else
   while(SrcLen--!=0)
   {
-    Sum+=*((INT8U *)pSrc+SrcLen);
+    Sum+=*((OS_INT8U *)pSrc+SrcLen);
   }
 #endif
 
@@ -516,37 +513,37 @@ INT8U Check_Sum(void *pSrc,INT16U SrcLen,void *pCS,INT8U CS_Bytes)
 //CS_Bytes表示校验和长度
 //pDst_Start对pDst范围的限定
 //DstLen对pDst范围的限定,
-//需要满足ASSERT(A_WARNING,(INT8U *)pDst>=(INT8U *)pDst_Start && (INT8U *)pDst+CS_Bytes<=(INT8U *)pDst_Start+DstLen);
+//需要满足ASSERT(A_WARNING,(OS_INT8U *)pDst>=(OS_INT8U *)pDst_Start && (OS_INT8U *)pDst+CS_Bytes<=(OS_INT8U *)pDst_Start+DstLen);
 //这个函数要和Check_Sum成对使用，因为生成的校验不是简单的校验和，而是进行了简单的变换
-void Set_Sum(void *pSrc,INT16U SrcLen,void *pDst,INT8U CS_Bytes,void *pDst_Start,INT16U DstLen)
+void OS_Set_Sum(void *pSrc,OS_INT16U SrcLen,void *pDst,OS_INT8U CS_Bytes,void *pDst_Start,OS_INT16U DstLen)
 {
-  INT32U Sum=0;
+  OS_INT32U Sum=0;
   
   if(!(CS_Bytes EQ 1 || CS_Bytes EQ 2 || CS_Bytes EQ 4))
   {
-    ASSERT_FAILED();
+    OS_ASSERT_FAILED();
     return;
   }
   
-  if(!((INT8U *)pDst>=(INT8U *)pDst_Start && (INT8U *)pDst+CS_Bytes<=(INT8U *)pDst_Start+DstLen))
+  if(!((OS_INT8U *)pDst>=(OS_INT8U *)pDst_Start && (OS_INT8U *)pDst+CS_Bytes<=(OS_INT8U *)pDst_Start+DstLen))
   {
-    ASSERT_FAILED();
+    OS_ASSERT_FAILED();
     return;
   }
 
-#if CS_TYPE EQ CS_CRC16_0
-  Sum=(INT32U)Crc16_0((INT8U *)pSrc,SrcLen);
-#elif CS_TYPE EQ CS_CRC16_1
-  Sum=(INT32U)Crc16_1((INT8U *)pSrc,SrcLen);
+#if OS_CS_TYPE EQ CS_CRC16_0
+  Sum=(OS_INT32U)OS_Crc16_0((OS_INT8U *)pSrc,SrcLen);
+#elif OS_CS_TYPE EQ CS_CRC16_1
+  Sum=(OS_INT32U)OS_Crc16_1((OS_INT8U *)pSrc,SrcLen);
 #else
   while(SrcLen--!=0)
   {
-    Sum+=*((INT8U *)pSrc+SrcLen);
+    Sum+=*((OS_INT8U *)pSrc+SrcLen);
   }
 #endif 
   
   Sum=Sum^CHK_CS_BYTES;//进行简单变换,某些位取反,防止数据全为0的情况下校验和也为0  
-  mem_cpy(pDst,&Sum,CS_Bytes,pDst_Start,DstLen);
+  OS_memcpy(pDst,&Sum,CS_Bytes,pDst_Start,DstLen);
 }
 
 //检查某个结构体的校验和是否正确,该结构体的定义必须满足如下方式
@@ -554,25 +551,25 @@ void Set_Sum(void *pSrc,INT16U SrcLen,void *pDst,INT8U CS_Bytes,void *pDst_Start
 //typedef struct{
 //     ...
 //     ...
-//     INT8U CS[CS_BYTES];//最后一个域必须是校验和，且长度为CS_BYTES
+//     OS_INT8U CS[OS_CS_BYTES];//最后一个域必须是校验和，且长度为OS_CS_BYTES
 //    }sturct_name;
 //
 //pSrc为结构体变量的起始指针
 //SrcLen为结构体变量长度
 //CS为结构体变量的校验和,注意该变量必须为结构体中的一个域
 //注意：这个函数要和Set_STRUCT_Sum成对使用，因为校验计算算法一致
-INT8U Check_STRUCT_Sum(void *pSrc,INT16U SrcLen,INT8U *pCS,INT8U CS_Bytes)
+OS_INT8U OS_Check_STRUCT_Sum(void *pSrc,OS_INT16U SrcLen,OS_INT8U *pCS,OS_INT8U CS_Bytes)
 {
-  INT16U Len;
+  OS_INT16U Len;
   
-  if(!(pCS>(INT8U *)pSrc && pCS+CS_Bytes<=(INT8U *)pSrc+SrcLen))//判断CS的位置是否合法
+  if(!(pCS>(OS_INT8U *)pSrc && pCS+CS_Bytes<=(OS_INT8U *)pSrc+SrcLen))//判断CS的位置是否合法
   {
-    ASSERT_FAILED();
+    OS_ASSERT_FAILED();
     return 0;
   }
   
-  Len=(INT16U)((INT8U *)pCS-(INT8U *)pSrc);//计算需要计算校验和的数据长度
-  return Check_Sum(pSrc,Len,pCS,CS_Bytes);
+  Len=(OS_INT16U)((OS_INT8U *)pCS-(OS_INT8U *)pSrc);//计算需要计算校验和的数据长度
+  return OS_Check_Sum(pSrc,Len,pCS,CS_Bytes);
 }
 
 //设置结构体变量的校验和,该结构体的定义必须满足如下方式
@@ -580,37 +577,72 @@ INT8U Check_STRUCT_Sum(void *pSrc,INT16U SrcLen,INT8U *pCS,INT8U CS_Bytes)
 //typedef struct{
 //     ...
 //     ...
-//     INT8U CS[CS_BYTES];//最后一个域必须是校验和，且长度为CS_BYTES
+//     OS_INT8U CS[OS_CS_BYTES];//最后一个域必须是校验和，且长度为OS_CS_BYTES
 //    }sturct_name;
 //
 //pSrc为结构体变量的起始指针
 //SrcLen为结构体变量长度
 //CS为结构体变量的校验和,注意该变量必须为结构体中的一个域
 //注意：这个函数要和Check_STRUCT_Sum成对使用，因为校验计算算法一致
-void Set_STRUCT_Sum(void *pSrc,INT16U SrcLen,INT8U *pCS,INT8U CS_Bytes)
+void OS_Set_STRUCT_Sum(void *pSrc,OS_INT16U SrcLen,OS_INT8U *pCS,OS_INT8U CS_Bytes)
 {
-  INT16U Len;
+  OS_INT16U Len;
 
-  if(!(pCS>(INT8U *)pSrc && pCS+CS_Bytes<=(INT8U *)pSrc+SrcLen))//判断CS的位置是否合法
+  if(!(pCS>(OS_INT8U *)pSrc && pCS+CS_Bytes<=(OS_INT8U *)pSrc+SrcLen))//判断CS的位置是否合法
   {
-    ASSERT_FAILED();
+    OS_ASSERT_FAILED();
     return;    
   }
   
-  Len=(INT16U)((INT8U *)pCS-(INT8U *)pSrc);//计算需要计算校验和的数据长度
-  Set_Sum(pSrc,Len,pCS,CS_Bytes,pSrc,SrcLen);
+  Len=(OS_INT16U)((OS_INT8U *)pCS-(OS_INT8U *)pSrc);//计算需要计算校验和的数据长度
+  OS_Set_Sum(pSrc,Len,pCS,CS_Bytes,pSrc,SrcLen);
 }
 
-INT16U Sum_2Bytes(INT8U Src[], INT16U SrcLen)
+
+//检查操作系统的运行状态
+//该调用应该放在主任务中定期调用
+void OS_Check(void)
 {
-  INT16U CS = 0;
-  INT16U i;
-
-  for(i = 0; i < SrcLen; i ++)
-  {
-    CS += Src[i]; 
-  }
-  return CS;
+  OS_Task_Info_Check();//任务运行状态检查
+  
+#if OS_MEM_EN>0
+  OS_Mem_Check(); //动态内存分配检查
+#endif
+  
+#if (OS_MUTEX_EN>0) || (OS_SEM_EN>0) || (OS_MSG_EN>0) || (OS_MSG_Q_EN>0)  
+  OS_Event_Check(); //信号量等事件检查
+#endif  
+  
+#if OS_TRACE_EN>0
+  OS_Trace_Info_Check();//检查函数轨迹的内存信息
+#endif  
 }
 
-#undef PUB_C
+//打印操作系统运行状态
+//该调用应该放在主任务中定期调用
+void OS_Info_Print(void)
+{
+  OS_Task_Info_Print();
+  
+#if OS_MUTEX_EN>0
+  OS_Mutex_Info_Print();
+#endif
+
+#if OS_SEM_EN>0
+  OS_Sem_Info_Print();
+#endif
+  
+#if OS_MSG_EN>0
+  OS_Msg_Info_Print();
+#endif
+  
+#if OS_MSG_Q_EN>0
+  OS_Msg_Q_Info_Print();
+#endif
+  
+#if OS_MEM_EN>0
+  OS_Mem_Info_Print(); 
+#endif  
+}
+
+#undef OS_PUB_C

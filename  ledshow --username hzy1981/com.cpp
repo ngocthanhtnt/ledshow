@@ -29,7 +29,6 @@ const INT16U Frame_Data_Size[]=
 
 //
 
-
 INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len)
 {
   INT16U Len;

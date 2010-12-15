@@ -44,7 +44,19 @@ SOURCES += main.cpp\
     ../Temp_Show.cpp \
     lunProperty.cpp \
     ../nongli.cpp \
-    ../Storage.cpp
+    ../Storage.cpp \
+     ../OS_Time.cpp \
+    ../OS_Shell.cpp \
+    ../OS_Sem.cpp \
+    ../OS_Pub.cpp \
+    ../OS_Port.cpp \
+    ../OS_Mutex.cpp \
+    ../OS_Msg_Q.cpp \
+    ../OS_Msg.cpp \
+    ../OS_Mem.cpp \
+    ../OS_Ext.cpp \
+    ../OS_Event.cpp \
+    ../OS_Core.cpp
 
 HEADERS  += mainwindow.h \
     ../LED_Cfg.h \
@@ -81,7 +93,21 @@ HEADERS  += mainwindow.h \
     ../Temp_Show.h \
     lunProperty.h \
     ../nongli.h \
-    ../Storage.h
+    ../Storage.h \
+    ../OS_Shell.h \
+    ../OS_Sem.h \
+    ../OS_Pub.h \
+    ../OS_Port.h \
+    ../OS_Mutex.h \
+    ../OS_Msg_Q.h \
+    ../OS_Msg.h \
+    ../OS_Mem.h \
+    ../OS_Includes.h \
+    ../OS_Ext.h \
+    ../OS_Event.h \
+    ../OS_Core.h \
+    ../OS_Cfg.h \
+    ../OS_Time.h
 
 RESOURCES += \
     textedit.qrc
