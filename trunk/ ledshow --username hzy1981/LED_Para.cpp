@@ -186,6 +186,29 @@ INT8U Get_Para_Frame_File_Off_Size(INT16U Ctrl_Code, char File_Name[], INT16U *p
   return 0;
 }
 */
+
+INT8U Get_Show_Para_Len(INT8U Type)
+{
+  if(Type EQ SHOW_PIC)
+    return sizeof(S_Pic_Para) - CHK_BYTE_LEN;
+  else if(Type EQ SHOW_CLOCK)
+    return sizeof(S_Clock_Para) - CHK_BYTE_LEN;
+  else if(Type EQ SHOW_TIME)
+    return sizeof(S_Time_Para) - CHK_BYTE_LEN;
+  else if(Type EQ SHOW_TIMER)
+    return sizeof(S_Timer_Para) - CHK_BYTE_LEN;
+  else if(Type EQ SHOW_TEMP)
+    return sizeof(S_Temp_Para) - CHK_BYTE_LEN;
+  else if(Type EQ SHOW_LUN)
+    return sizeof(S_Lun_Para) - CHK_BYTE_LEN;
+  else
+  {
+    ASSERT_FAILED();
+    return 0;
+  }
+  
+}
+
 //保存参数帧处理
 INT8U Save_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen)
 {
@@ -232,47 +255,39 @@ INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   return 1;
 }
 
-//保存节目属性帧
+//保存节目数据帧
 INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 {
-    /*
-  INT8U Type,Prog_No,Area_No;
+  INT8U Type,Prog_No,Area_No,File_No;
+  INT16U Para_Len;
+//if(Ctrl_Code EQ C_PROG_DATA) //节目属性
+//{
+  Type = *(Frame + 8);
+  Prog_No = *(Frame + 9); //节目号
+  Area_No = *(Frame + 10); //分区号
+  File_No = *(Frame + 11); //文件号
   
-  //if(Ctrl_Code EQ C_PROG_DATA) //节目属性
-  //{
-    Type = *(Frame + 8);
-    Prog_No = *(Frame + 9); //节目号
-    Area_No = *(Frame + 10); //分区号
-    File_No = *(Frame + 11); //文件号
+  if(Prog_No >= MAX_PROG_NUM ||\
+    Area_No >= MAX_AREA_NUM)
+  {
+    ASSERT_FAILED();
+    return 0;
+  }
     
-    if(Prog_No >= MAX_PROG_NUM ||\
-      Area_No >= MAX_AREA_NUM)
-    {
-      ASSERT_FAILED();
-      return 0;
-    }
+  Para_Len = Get_Show_Para_Len(Type);
+  {
+    
+  }
     
     
   return 0;
-  */
+
 }
 
 //删除节目数据
 INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen)
 {
-  //INT8U *pData;
-  INT16U Ctrl_Code;
-  
-  Ctrl_Code = Frame[6] + (INT16U)Frame[7] * 256;
-  //pData = Frame + 8; //数据域 
-  if(Ctrl_Code EQ C_DEL_PROG) //删除节目---暂定为删除所有节目,后期再修改
-  {
-    File_Delete("*.pro");  //删除节目数性文件
-    File_Delete("*.dat"); //删除节目数据文件
-    return 1;
-  }
-  
-  return 0;
+
 }
 
 

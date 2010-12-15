@@ -3,6 +3,7 @@
 #include "stdarg.h"
 #include "math.h"
 #include "LED_Cfg.h"
+#include "OS_Includes.h"
 #include "QT_SIM.h"
 #include "STM32.h"
 #include "pub.h"

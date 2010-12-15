@@ -15,14 +15,7 @@
 
 #define PI 3.1415926
 
-#define SHOW_NULL  0x00
-#define SHOW_PIC   0x01
-#define SHOW_CLOCK 0x02
-#define SHOW_TIME  0x03
-#define SHOW_TIMER 0x04
-#define SHOW_TEMP  0x05
-#define SHOW_LUN   0x06
-#define SHOW_FLASH 0x07
+
 
 #define SLINE_MODE 0x00
 #define MLINE_MODE 0x01

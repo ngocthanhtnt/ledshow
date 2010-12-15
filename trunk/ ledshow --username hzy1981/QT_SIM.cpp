@@ -3,6 +3,11 @@
 
 #if QT_EN > 0
 #include <QDateTime>
+void OS_Put_Char(char Chr)
+{
+  qDebug("%c", Chr);
+}
+
 void Put_Char(char c)
 {
   c =c;

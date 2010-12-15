@@ -1,4 +1,5 @@
 
+#define CS_BYTES 1
 #define ROM_CS_BYTES 2
 
 #define QT_EN 1 //สนำรQTทยีๆ
