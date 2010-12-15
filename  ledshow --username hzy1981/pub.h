@@ -31,6 +31,12 @@
 #define MAX_3(a,b,c) (MAX_2(a,b) > (c)?MAX_2(a,b):(c))
 #define MIN_3(a,b,c) (MIN_2(a,b) < (c)?MIN_2(a,b):(c))
 
+//定义设置某个变量的宏方法
+#define SET_VAR(X,Y,X_Addr,X_Len) do{if(((INT8U *)&(X))>=(INT8U *)(X_Addr) && ((INT8U *)&(X))<(INT8U *)(X_Addr)+(X_Len))\
+                                                                                   X=Y;\
+                                                                                 else\
+                                                                                   ASSERT_FAILED();\
+                                                                                }while(0)
 
 typedef struct
 {

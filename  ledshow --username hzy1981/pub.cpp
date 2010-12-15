@@ -1,9 +1,14 @@
 #define PUB_C
 #include "Includes.h"
 
-OS_INT8U OS_Debug_Print_En(void)
+//此函数内切不可有引起输出的函数！
+INT8U OS_Debug_Print_En(void)
 {
-  return 1;
+  if(OS_Check_Bg_Status() EQ 1 &&
+     OS_Check_Bg_Print_En() EQ 0)
+    return 0;
+  else
+    return 1;
 }
 
 void OS_Trace_Hook(void)
