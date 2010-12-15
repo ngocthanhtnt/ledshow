@@ -679,6 +679,8 @@ CnameEdit::CnameEdit(QWidget *parent):QGroupBox(parent)
     nameEdit->setFixedWidth(100);
     hLayout->addWidget(nameEdit);
     setLayout(hLayout);
+
+    connect(nameEdit, SIGNAL(editingFinished()),this,SIGNAL(edited()));
 }
 
 //从Widget上获取设置

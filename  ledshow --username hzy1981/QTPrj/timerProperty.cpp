@@ -228,6 +228,7 @@ void CtimerProperty::getSettingsFromWidget(QString str)
 
   if(type EQ TIMER_PROPERTY)
   {
+      nameEdit->getSettingsFromWidget(str);
       simpleTextEdit->getSettingsFromWidget(str);
       smLineEdit->getSettingsFromWidget(str);
   }
@@ -274,6 +275,7 @@ void CtimerProperty::setSettingsToWidget(QString str)
 
     if(type EQ TIMER_PROPERTY)
     {
+        nameEdit->setSettingsToWidget(str);
         simpleTextEdit->setSettingsToWidget(str);
         smLineEdit->setSettingsToWidget(str);
     }

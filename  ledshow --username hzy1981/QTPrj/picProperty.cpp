@@ -123,12 +123,14 @@ CpicProperty::~CpicProperty()
 //»ñÈ¡settingsµ½
 void CpicProperty::getSettingsFromWidget(QString str)
 {
+    nameEdit->getSettingsFromWidget(str);
     showModeEdit->getSettingsFromWidget(str);
     edit->getSettingsFromWidget(str);
 }
 
 void CpicProperty::setSettingsToWidget(QString str)
 {
+    nameEdit->setSettingsToWidget(str);
     showModeEdit->setSettingsToWidget(str);
     edit->setSettingsToWidget(str);
 }

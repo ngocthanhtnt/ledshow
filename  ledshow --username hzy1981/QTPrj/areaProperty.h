@@ -44,8 +44,11 @@ public:
 class CareaProperty:public QWidget
 {
     Q_OBJECT
-
+public slots:
+    void edited();
 public:
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
     CnameEdit *nameEdit;
     Carea *area;
     CareaProperty(QWidget *parent=0);
