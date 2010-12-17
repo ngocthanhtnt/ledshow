@@ -1663,7 +1663,7 @@ void vsPrintf(char Buf[], CONST INT8S *format, va_list ap)
       if(LintFlag)//长整型
         uParaValue=va_arg(ap,unsigned long int);
       else
-        uParaValue=va_arg(ap,INT16U);
+        uParaValue=va_arg(ap,int);
     }
 
     //计算数据本身的长度

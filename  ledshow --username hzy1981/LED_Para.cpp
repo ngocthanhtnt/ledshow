@@ -255,28 +255,248 @@ INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   return 1;
 }
 
-//保存节目数据帧
-INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
+//获取节目prog_no分区Area_No的第File_No个文件的参数的存储索引
+STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No)
 {
-  INT8U Type,Prog_No,Area_No,File_No;
-  INT16U Para_Len;
-//if(Ctrl_Code EQ C_PROG_DATA) //节目属性
-//{
-  Type = *(Frame + 8);
-  Prog_No = *(Frame + 9); //节目号
-  Area_No = *(Frame + 10); //分区号
-  File_No = *(Frame + 11); //文件号
-  
-  if(Prog_No >= MAX_PROG_NUM ||\
-    Area_No >= MAX_AREA_NUM)
+  if(Prog_No >= MAX_PROG_NUM || Area_No >= MAX_AREA_NUM || File_No >= MAX_FILE_NUM)
   {
     ASSERT_FAILED();
     return 0;
   }
+  
+  return SDI_FILE_PARA + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No; 
     
-  Para_Len = Get_Show_Para_Len(Type);
+}
+
+//节目数据块的索引
+INT8U Read_Prog_Block_Index(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen)
+{
+  INT16U Len;
+  
+  Len = Read_Storage_Data(SDI_PROG_BLOCK_INDEX + Prog_No,  pDst, pDst_Start, DstLen);
+#ifdef SDI_PROG_BLOCK_INDEX_BK0
+  if(Len EQ 0)
+    Len = Read_Storage_Data(SDI_PROG_BLOCK_INDEX_BK0 + Prog_No,  pDst, pDst_Start, DstLen);
+#endif     
+  
+#ifdef SDI_PROG_BLOCK_INDEX_BK1
+  if(Len EQ 0)
+    Len = Read_Storage_Data(SDI_PROG_BLOCK_INDEX_BK1 + Prog_No,  pDst, pDst_Start, DstLen);
+#endif 
+  
+  return 0;
+  
+}
+
+
+INT8U Write_Prog_Block_Index(INT8U Prog_No, void *pSrc, INT16U SrcLen)
+{
+  INT8U Re = 1;
+  
+  Re &= Write_Storage_Data(SDI_PROG_BLOCK_INDEX + Prog_No, pSrc, SrcLen);
+  
+#ifdef SDI_PROG_BLOCK_INDEX_BK0
+  Re &= Write_Storage_Data(SDI_PROG_BLOCK_INDEX_BK0 + Prog_No, pSrc, SrcLen);
+#endif
+
+#ifdef SDI_PROG_BLOCK_INDEX_BK1
+  Re &= Write_Storage_Data(SDI_PROG_BLOCK_INDEX_BK1 + Prog_No, pSrc, SrcLen);
+#endif
+  
+  return Re;
+  
+}
+
+//读取文件参数
+INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen)
+{
+  STORA_DI SDI;
+  INT16U Len;
+  
+  SDI = SDI_FILE_PARA + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
+  Len = Read_Storage_Data(SDI, pDst, pDst_Start, DstLen); 
+  
+#ifdef SDI_FILE_PARA_BK0
+  if(Len EQ 0)
   {
+    SDI = SDI_FILE_PARA_BK0 + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
+    Len = Read_Storage_Data(SDI, pDst, pDst_Start, DstLen); 
+  }
+#endif
+  
+#ifdef SDI_FILE_PARA_BK1
+  if(Len EQ 0)
+  {
+    SDI = SDI_FILE_PARA_BK1 + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
+    Len = Read_Storage_Data(SDI, pDst, pDst_Start, DstLen); 
+  }
+#endif 
+  
+  return Len;
+
+}
+
+//写文件参数
+INT8U Write_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pSrc, INT16U SrcLen)
+{
+  STORA_DI SDI;
+  INT8U Re = 1;
+  
+  SDI = SDI_FILE_PARA + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
+  Re &=  Write_Storage_Data(SDI, pSrc, FILE_PARA_LEN); 
+  
+#ifdef SDI_FILE_PARA_BK0
+  SDI = SDI_FILE_PARA_BK0 + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
+  Re &=  Write_Storage_Data(SDI, pSrc, FILE_PARA_LEN);   
+#endif
+  
+#ifdef SDI_FILE_PARA_BK1
+  SDI = SDI_FILE_PARA_BK1 + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
+  Re &=  Write_Storage_Data(SDI, pSrc, FILE_PARA_LEN);   
+#endif 
+  
+  return Re;
+}
+
+//读取当前显示数据存储索引
+INT16U Read_Cur_Block_Index(void *pDst, void *pDst_Start, INT16U DstLen)
+{
+  STORA_DI SDI;
+  INT16U Len;
+  
+  Len = Read_Storage_Data(SDI_CUR_BLOCK_INDEX, pDst, pDst_Start, DstLen); 
+  
+#ifdef SDI_CUR_BLOCK_INDEX_BK0
+  if(Len EQ 0)
+    Len = Read_Storage_Data(SDI_CUR_BLOCK_INDEX_BK0, pDst, pDst_Start, DstLen); 
+#endif
+  
+#ifdef SDI_CUR_BLOCK_INDEX_BK1
+  if(Len EQ 0)
+     Len = Read_Storage_Data(SDI_CUR_BLOCK_INDEX_BK1, pDst, pDst_Start, DstLen); 
+#endif 
+  
+  return Len;
+
+}
+//写当前显示数据存储索引
+INT8U Write_Cur_Block_Index(void *pSrc, INT16U SrcLen)
+{
+  //STORA_DI SDI;
+  INT8U Re = 1;
+  
+  //SDI = SDI_FILE_PARA + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
+  Re &=  Write_Storage_Data(SDI_CUR_BLOCK_INDEX, pSrc, sizeof(S_Cur_Block_Index)); 
+  
+#ifdef SDI_CUR_BLOCK_INDEX_BK0
+  //SDI = SDI_FILE_PARA_BK0 + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
+  Re &=  Write_Storage_Data(SDI_CUR_BLOCK_INDEX, pSrc, sizeof(S_Cur_Block_Index));   
+#endif
+  
+#ifdef SDI_CUR_BLOCK_INDEX_BK1
+  //SDI = SDI_FILE_PARA_BK1 + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
+  Re &=  Write_Storage_Data(SDI_CUR_BLOCK_INDEX, pSrc, sizeof(S_Cur_Block_Index));   
+#endif 
+  
+  return Re;
+}
+
+/*
+typedef struct
+{
+  INT8U Prog_No;  //节目号
+  INT8U Area_No:4; //分区号
+  INT8U File_No:4; //文件号
+  INT16U Len;     //帧长度
+  INT8U Buf[ONE_BLOCK_SIZE];
+  
+}S_Prog_Show_Data;
+*/
+//保存节目数据帧
+INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
+{
+  static S_File_Para_Info File_Para_Info;
+  INT8U Prog_No, Area_No, File_No, Type;
+  INT16U Para_Len,Len;
+  INT8U Seq,Seq0;
+  STORA_DI SDI;
+  S_Prog_Show_Data *pShow_Data;
+
+  memcpy(&Len, &Frame[FLEN], sizeof(Len)); //帧长
+  //计算数据域长度
+  if(Len > F_NDATA_LEN)
+    Len = Len - F_NDATA_LEN;
+  else
+  {
+    ASSERT_FAILED();
+    return 0;
+  }
+  
+  Seq0 = Frame[FSEQ0];
+  if(Seq0 EQ 0) //参数帧--多帧中的第一帧
+  {
+      Type = Frame[FDATA];//*(Frame + 8); //哪类数据?
+      Prog_No = Frame[FDATA + 1];//*(Frame + 9); //节目号
+      Area_No = Frame[FDATA + 2];//*(Frame + 10); //分区号
+      File_No = Frame[FDATA + 3];//*(Frame + 11); //文件号
+      //File_Para_Info.Seq0 = Seq0;
+
+      Para_Len = Get_Show_Para_Len(File_Para_Info.Type); //参数长度
+      if(Para_Len EQ Len)// 参数长度
+      {     
+        Re =  Write_File_Para(SDI, &Frame[FDATA], FILE_PARA_LEN);//写入文件参数
+        if(Re > 0)
+        {
+          File_Para_Info.Type = Type;
+          File_Para_Info.Prog_No = Prog_No;
+          File_Para_Info.Area_No = Area_No;
+          File_Para_Info.File_No = File_No;
+          //File_Para_Info.Block_Index = 
+          File_Para_Info.Seq0 = Seq0;
+          
+          //读出这个节目的存储索引
+          Read_Prog_Block_Index(Prog_No, Prog_Block_Index.Block_Index, &Prog_Block_Index, sizeof(Prog_Block_Index));
+          //Read_Storage_Data(Prog_Block_Index
+        }
+        
+        return Re;
+      }
+      else
+      {
+        
+        ASSERT_FAILED();
+        return 0;
+      }
+  }
+  else if(Seq0 EQ File_Para_Info.Seq0 + 1) //下一帧
+  {
+    if(Seq0 EQ 1) //第一条数据帧
+      Prog_Block_Index.Block_Index[File_Para_Info.Area_No][File_Para_Info.File_No] = Cur_Block_Index.Index;
     
+    memset(Pub_Buf, 0, sizeof(Pub_Buf));
+    
+    Pub_Buf[0] = File_Para_Info.Prog_No;
+    Pub_Buf[1] = (File_Para_Info.Area_No <<4) + File_Para_Info.File_No;
+    Pub_Buf[2] = File_Para_Info.Type;   
+    Pub_Buf[3] = Seq0 - 1;
+    Pub_Buf[4] = Len % 256;
+    Pub_Buf[5] = Len / 256;
+    Pub_Buf[6] = 0; //下一帧的存储索引
+    Pub_Buf[7] = 0;
+    mem_cpy(Pub_Buf + 8, &Frame[FDATA], Len, Pub_Buf, sizeof(Pub_Buf));
+    
+    //当前分块数据
+    Write_Storage_Data(SDI_SHOW_DATA + Cur_Block_Index.Index, Pub_Buf, BLOCK_DATA_LEN);
+    
+    Cur_Block_Index.Index ++;
+    SET_STRUCT_SUM(Cur_Block_Index);
+
+    //保存当前索引
+    Prog_Block_Index.Block_Index[File_Para_Info.Area_No][File_Para_Info.File_No + 1] = Cur_Block_Index.Index;
+    //Write_Storage_Data(SDI_PROG_BLOCK_INDEX + File_Para_Info.Prog_No, Prog_Block_Index.Block_Index, BLOCK_INDEX_LEN);
+    Write_Prog_Block_Index(File_Para_Info.Prog_No, Prog_Block_Index.Block_Inde, sizeof(Prog_Block_Index.Block_Inde));
+    
+    return 1;
   }
     
     
@@ -284,6 +504,11 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 
 }
 
+//读取节目的显示数据
+INT16U Read_Prog_Show_Data()
+{
+  
+}
 //删除节目数据
 INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen)
 {

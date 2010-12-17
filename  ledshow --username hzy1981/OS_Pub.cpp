@@ -38,6 +38,7 @@ CONST OS_INT16U Crc_Table1[256]={
   0xEF1F, 0xFF3E, 0xCF5D, 0xDF7C, 0xAF9B, 0xBFBA, 0x8FD9, 0x9FF8,
   0x6E17, 0x7E36, 0x4E55, 0x5E74, 0x2E93, 0x3EB2, 0x0ED1, 0x1EF0};
 
+#if QT_EN == 0
 //根据format和ap参数表输出调试信息
 void OS_vsPrintf(CONST OS_INT8S *format, va_list ap)
 {
@@ -212,6 +213,7 @@ void OS_Debug_Print(CONST OS_INT8S *format, ...)
   OS_vsPrintf(format,ap);
   va_end(ap);
 }
+#endif
 
 #if OS_TRACE_HOOK_EN>0
 extern void OS_Trace_Hook(void);

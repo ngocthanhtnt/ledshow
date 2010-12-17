@@ -34,13 +34,13 @@ INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len)
   INT16U Len;
   INT16U Sum;
   
-  if(!(Frame[0] EQ FRAME_HEAD0 && Frame[1] EQ FRAME_HEAD1)) //头正确
+  if(Frame[0] != FRAME_HEAD) //头正确
   {
     ASSERT_FAILED();
     return 0;
   }
   
-  Len = Frame[2] + (INT16U)Frame[3] * 256; //帧长
+  Len = Frame[1] + (INT16U)Frame[2] * 256; //帧长
 
   if(Len!= Frame_Len || Frame[Len - 1] != FRAME_TAIL) //尾正确
   {

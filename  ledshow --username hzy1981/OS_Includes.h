@@ -1,6 +1,10 @@
 #include "stdarg.h"
 #include "stdio.h"
 #include "string.h"
+#include "LED_Cfg.h"
+#if QT_EN > 0
+#include <QDebug>
+#endif
 #include "OS_Cfg.h"
 #include "OS_Port.h"
 #include "OS_Pub.h"
