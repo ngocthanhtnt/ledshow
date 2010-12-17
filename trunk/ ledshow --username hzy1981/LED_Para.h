@@ -412,19 +412,20 @@ typedef struct
 }S_Prog_Block_Index;
 
 //文件中某个参数的偏移
+/*
 typedef struct
 {
   INT8U Ctrl_Code;
   INT16U Len;
 }S_File_Para_Info;
-
+*/
 typedef struct
 {
   INT8U Prog_No;  //节目号
   INT8U Area_No:4; //分区号
   INT8U File_No:4; //文件号
-  INT8U Screen_No; //屏号
-  INT8U Block_No; //块号
+  //INT8U Screen_No; //屏号
+  //INT8U Block_No; //块号
   INT16U Len;     //帧长度
   INT8U Buf[ONE_BLOCK_SIZE];
   
@@ -433,15 +434,37 @@ typedef struct
 typedef struct
 {
   INT8U Head;
-  INT16U Cur_Index;
+  INT16U Index;
   INT8U CS[CS_BYTES];
   INT8U Tail;
 }S_Cur_Block_Index;
+
+typedef struct
+{
+    INT8U Head;
+    INT8U Buf[ONE_BLOCK_SIZE];
+    INT16U Index;
+    INT8U Tail;
+}S_Rcv_Show_Data;
+
+typedef struct
+{
+  INT8U Head;
+  INT8U Type;
+  INT8U Prog_No;
+  INT8U Area_No;
+  INT8U File_No;
+  
+  INT8U Seq0;
+  INT8U Flag;
+  INT8U Tail;
+}S_File_Para_Info;
 
 #define SCREEN_PARA_LEN (sizeof(S_Screen_Para) -CHK_BYTE_LEN)
 #define PROG_PARA_LEN   (sizeof(S_Prog_Para)-CHK_BYTE_LEN)
 #define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN)
 #define BLOCK_INDEX_LEN (sizeof(S_Prog_Block_Index) - CHK_BYTE_LEN)
+#define BLOCK_DATA_LEN 300
 
 EXT S_Screen_Para Screen_Para; //显示屏相关参数
 EXT U_File_Para File_Para[MAX_AREA_NUM]; //当前节目的每个分区的文件参数，更换文件时刷新之
@@ -449,10 +472,12 @@ EXT S_Prog_Para Prog_Para;  //当前节目属性[MAX_PROGRAM_NUM]; //节目个数
 EXT S_Prog_Block_Index Prog_Block_Index; //当前节目的存储参数
 EXT S_Cur_Block_Index Cur_Block_Index;
 //EXT S_Clock_Para Clock_Para;
+EXT S_Rcv_Show_Data Rcv_Show_Data;
 
 EXT S_Time Cur_Time; //当前时间 
 EXT void Read_Screen_Para();
 EXT INT8U Get_Show_Para_Len(INT8U Type);
+EXT STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No);
 EXT INT8U Save_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen);
 EXT INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);

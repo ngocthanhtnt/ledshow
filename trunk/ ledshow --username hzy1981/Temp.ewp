@@ -1621,6 +1621,9 @@
     <name>$PROJ_DIR$\LED_Show.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\LED_Show_Proc.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\Lun_Show.cpp</name>
   </file>
   <file>
@@ -1640,6 +1643,87 @@
   </file>
   <file>
     <name>$PROJ_DIR$\nongli.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Cfg.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Core.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Core.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Event.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Event.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Ext.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Ext.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Includes.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Mem.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Mem.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Msg.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Msg.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Msg_Q.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Msg_Q.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Mutex.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Mutex.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Port.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Port.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Port_a.asm</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Pub.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Pub.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Sem.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Sem.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Shell.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Shell.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Time.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\OS_Time.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\Pic_Show.cpp</name>

@@ -4,7 +4,7 @@
 #include <QTextCodec>
 #include "mainwindow.h"
 #include "textedit.h"
-/*
+
 MainWindow *w;
 int main(int argc, char *argv[])
 {
@@ -33,8 +33,9 @@ int main(int argc, char *argv[])
     return a.exec();
 
 }
-*/
 
+
+#if 0
 #include "..\Includes.h"
 //#include "Pub.h"
 
@@ -128,180 +129,40 @@ void Print_Task_Stk_Left()
 
   Task_Num=OS_Get_Cur_Task_Num();
   for(i=0;i<Task_Num;i++)
-    OS_Debug_Print("Task %d Stack Left:%d\r\n",i,OS_Get_Task_Stk_Left(i));
+    Debug_Print("Task %d Stack Left:%d\r\n",i,OS_Get_Task_Stk_Left(i));
 }
 
 #define EXT_NULL
 DECLARE_HT_VAR(EXT_NULL,INT8U,a);
 void Task1()
 {
-  OS_INT16U Value;
-  OS_INT8U *p;
-  OS_INT16U Len;
-  OS_INT8U Temp[15];
-  OS_INT16U TimeOut;
-  S_Int8U Test;
-  void *p1,*p2,*p3;
-  DECLARE_HT_BUF_TYPE(INT8U,100,S_Pub_Buf);
-  S_Pub_Buf _Pub_Buf;
-  OS_Mem_Init();
-  _a.Var=10;
 
-  //TimeOut = 100;
-  //OS_Wait_Ms(0,TimeOut);
-  //OS_Core_Wait(0);
-  OS_TimeDly_Ms(500);
-
-  OS_Msg_Q_Send(TEST_MSG_Q_ID,(void *)"Msg_Q 0,test",13,10);
-  OS_Msg_Q_Send(TEST_MSG_Q_ID,(void *)"Msg_Q 1,test",11,10);
-  OS_Msg_Q_Send(TEST_MSG_Q_ID,(void *)"Msg_Q 2,test",11,10);
-  OS_Msg_Q_Send(TEST_MSG_Q_ID,(void *)"Msg_Q 3,test",11,10);
-  OS_Msg_Q_Send(TEST_MSG_Q_ID,(void *)"Msg_Q 4,test",11,10);
-
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-  /*
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-
-  //OS_Sem_Post(TEST_SEM3_ID);
-  OS_Sem_Pend(TEST_SEM3_ID);
-  OS_Sem_Pend(TEST_SEM3_ID);
-  OS_Sem_Pend(TEST_SEM3_ID);
-  OS_Sem_Post(TEST_SEM3_ID);
-  OS_Sem_Post(TEST_SEM3_ID);
-  OS_Sem_Post(TEST_SEM3_ID);
-
-  OS_Msg_Rcv_Start(TEST_SEM4_ID,&Value,&p,0);
-   */
-  p1=OS_malloc(100);
-  //memset(p1,0xff,105);
-  OS_TimeDly_Ms(2000);
-  //OS_free(p1);
-  p2=OS_malloc(100);
-  //p2=OS_malloc(100);
-  //OS_TimeDly_Ms(200);
-  OS_Check();
-  OS_Info_Print();
-  //OS_free(p2);
-  //p3=OS_malloc(100);
-  //OS_free(p3);
-
-  Test.Var=0x88;
-  OS_SET_STRUCT_HT(_Pub_Buf);
-
-  OS_Task_Suspend(0);
-  while(1)
-  {
-    //OS_Msg_Send(TEST_SEM4_ID,1,Test_Buf,0x06,0);
-    OS_Mutex_Pend(TEST_SEM0_ID);
-    OS_TimeDly_Ms(100);
-    OS_Mutex_Pend(TEST_SEM1_ID);
-    SET_VAR(Test_Buf[6],0xab,Test_Buf,sizeof(Test_Buf));
-    OS_TimeDly_Ms(50);
-    OS_Debug_Print("\r\nTask1 Run\r\n");
-    OS_Debug_Print("Task 1 StkLeft:%5d\r\n",OS_Get_Task_Stk_Left(OS_Get_Cur_Task_ID()));
-    OS_Mutex_Post(TEST_SEM1_ID);
-    OS_Mutex_Post(TEST_SEM0_ID);
-
-  }
+    while(1)
+    {
+      OS_TimeDly_Ms(100);
+      Debug_Print("tas1 run");
+    }
 }
 
 void Task2()
 {
-  OS_INT16U Len;
-  OS_INT8U Val;
-  OS_INT8U *p;
-  OS_INT8U Temp[20];
-
-
-  while(1)
-  {
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-
-  Len=OS_Msg_Q_Rcv_Start(TEST_MSG_Q_ID,&p,0);
-  memcpy(Temp,p,Len);
-  OS_Msg_Q_Rcv_End(TEST_MSG_Q_ID);
-
-    OS_Mutex_Pend(TEST_SEM1_ID);
-    OS_TimeDly_Ms(100);
-    OS_Mutex_Pend(TEST_SEM2_ID);
-    OS_Debug_Print("\r\nTask2 Run\r\n");
-    OS_Debug_Print("Task 2 StkLeft:%5d\r\n",OS_Get_Task_Stk_Left(OS_Get_Cur_Task_ID()));
-    OS_Mutex_Post(TEST_SEM2_ID);
-    OS_Mutex_Post(TEST_SEM1_ID);
-    OS_TimeDly_Ms(100);//让出cpu
-    //Test_Buf[0]=100;
-    //OS_Debug_Print("\r\nTask2 set Test_Buf[0] EQ 100\r\n");
-
-  }
+    while(1)
+    {
+      OS_TimeDly_Ms(200);
+      Debug_Print("tas2 run");
+    }
 }
 
 void Task3()
 {
-  OS_INT8U Val;
-  OS_INT8U *p;
-  while(1)
-  {
-    //OS_Msg_Rcv_Start(TEST_SEM4_ID,&Val,&p,0);
-    //OS_TimeDly_Ms(500);
-    //OS_Msg_Rcv_End(TEST_SEM4_ID);
-
-    OS_Mutex_Pend(TEST_SEM2_ID);
-    OS_TimeDly_Ms(100);
-    OS_Mutex_Pend(TEST_SEM0_ID);
-    OS_Debug_Print("\r\nTask3 Run\r\n");
-    OS_Debug_Print("Task 3 StkLeft:%5d\r\n",OS_Get_Task_Stk_Left(OS_Get_Cur_Task_ID()));
-    Print_Task_Stk_Left();
-    OS_Mutex_Post(TEST_SEM0_ID);
-    OS_Mutex_Post(TEST_SEM2_ID);
-    OS_TimeDly_Ms(200);//让出cpu
-    Test_Buf[0]=0;
-    OS_Debug_Print("\r\nTask3 set Test_Buf[0]=0\r\n");
-    OS_TimeDly_Ms(200);//让出cpu
-    Test_Buf[0]=100;
-    OS_Debug_Print("\r\nTask3 set Test_Buf[0]=100\r\n");
-
-  }
+    while(1)
+    {
+      OS_TimeDly_Ms(300);
+      Debug_Print("tas3 run");
+    }
 }
 
-#define TASK_STK_SIZE 300
+#define TASK_STK_SIZE 100000
 
 NO_INIT OS_STK TASK_STK[3][TASK_STK_SIZE];
 
@@ -315,22 +176,28 @@ typedef struct
 }S_Test;
 
 S_Test PStruct_test;
-void main()
+
+MainWindow *w;
+int main(int argc, char *argv[])
 {
+    QApplication a(argc, argv);
+
+    w = new MainWindow;
+
   OS_TRACE();
   OS_Shell_Init(1);
-  OS_Debug_Print("Sys Starttia");
+  Debug_Print("Sys Starttia");
   //OS_SET_PSTRUCT_SUM(PStruct_test,&PStruct_test,sizeof(PStruct_test));
   OS_TRACE();
   OS_TRACE_CTRL(0);//关闭断言，防止冲掉记录的掉电前的调用轨迹
   OS_Init();//操作系统初始化
   //OS_Mutex_Clr();//清信号量
-
+/*
   while(1)
   {
     OS_Cmd_Analys(OS_Shell_Cmd, 2, Cmd_Buf, 20);
   }
-
+*/
 
   OS_TRACE();
   OS_Mutex_Init(TEST_SEM0_ID,1);
@@ -350,8 +217,10 @@ void main()
   OS_TRACE_CTRL(0xFF);//打开前8个任务的断言
   OS_ASSERT_FAILED();//打印复位前的流程
   OS_TRACE_CTRL(0x01);//只开第0号任务的断言
-  OS_Debug_Print("\r\n%s","----------uOS Start!----------");
+  Debug_Print("\r\n%s","----------uOS Start!----------");
 
 
   OS_Start();
+  return a.exec();
 }
+#endif

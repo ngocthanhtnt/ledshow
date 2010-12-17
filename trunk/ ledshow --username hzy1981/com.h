@@ -10,8 +10,8 @@
 #define EXT extern
 #endif
 
-#define FRAME_HEAD0 0x5A
-#define FRAME_HEAD1 0xA5
+#define FRAME_HEAD 0x5A
+//#define FRAME_HEAD1 0xA5
 #define FRAME_TAIL  0xAA
 
 //控制码定义
@@ -27,6 +27,15 @@
 #define C_PROG_DATA  0x0A //显示数据
 #define C_SCREEN_INFO 0x0B //屏幕信息
 #define C_UPDATE      0x0C //固件升级
+
+#define FLEN   0x01
+#define FADDR  0x03
+#define FSEQ   0x05
+#define FSEQ0  0x06
+#define FCTRL  0x07
+#define FDATA  0x09
+
+#define F_NDATA_LEN 12 
 
 EXT INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len);
 EXT INT8U Para_Frame_Proc(INT16U Ctrl_Code, INT8U Data[], INT16U Len);

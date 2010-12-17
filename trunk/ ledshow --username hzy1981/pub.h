@@ -18,10 +18,15 @@
 
 #define mem_cpy OS_memcpy
 #define mem_set OS_memset
-#define Debug_Print OS_Debug_Print
 #define TRACE() //OS_Trace
 #define Check_Sum OS_Check_Sum
 #define Set_Sum OS_Set_Sum
+
+#if QT_EN == 0
+#define Debug_Print OS_Debug_Print
+#else
+#define Debug_Print qDebug
+#endif
 
 #define S_NUM(X) (sizeof(X)/sizeof(X[0]))
 

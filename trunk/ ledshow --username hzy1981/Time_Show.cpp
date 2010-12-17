@@ -113,7 +113,7 @@ INT16U Get_TimeStr_Pix_Width(INT8U Type, INT8U Font)
 //获取某个语言的星期字符串的最大像素宽度
 INT16U Get_WeekStr_Type_Max_Pix_Width(INT8U Type, INT8U Font)
 {
-    int max = 0;
+    INT16U max = 0;
 
     for(int i=0; i < 7; i ++)
     {
