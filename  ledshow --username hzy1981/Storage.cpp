@@ -49,7 +49,7 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
 #endif                                   
                                    
   //节目显示数据
-  {SDI_SHOW_DATA, BLOCK_DATA_LEN, MAX_BLOCK_NUM}
+  {SDI_SHOW_DATA, BLOCK_DATA_LEN + 8, MAX_BLOCK_NUM}
 };
 
 //从存储器中读取某个重要等级的数据

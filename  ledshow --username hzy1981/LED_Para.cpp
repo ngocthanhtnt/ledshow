@@ -1,6 +1,6 @@
 #define LED_PARA_C
 #include "Includes.h"
-
+/*
 //用户参数文件大小配置
 const S_File_Para_Info Usr_Para_File_Info[] =
 {
@@ -20,6 +20,7 @@ const S_File_Para_Info Fac_Para_File_Info[] =
   {C_SCREEN_WH, 5 + 11},//0x02
   
 };
+*/
 /*
 文件布局：
 fac_para.cfg //工厂参数--出厂前设置
@@ -379,6 +380,92 @@ INT16U Read_Cur_Block_Index(void *pDst, void *pDst_Start, INT16U DstLen)
   return Len;
 
 }
+
+INT8U Check_Prog_Show_Data(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pData)
+{
+  S_File_Para_Info *p = (S_File_Para_Info *)pData;
+
+  if(p->Prog_No EQ Prog_Para.Prog_No &&\
+     p->Area_No EQ Area_No &&\
+     p->File_No EQ File_No)
+    return 1;
+  else
+    return 0;
+  
+}
+
+INT16U Copy_Show_Pic_Data(INT8U Area_No, void *pSrc, INT16U Off, INT16U SrcLen, S_Show_Data *pDst)
+{
+  INT16U Width,Height;
+  INT32U X,Y;
+  INT32U i,Len;
+  INT8U Re;
+  //INT16U Index;
+
+  
+  Width = Get_Area_Width(Area_No);
+  Height = Get_Area_Height(Area_No);
+  
+  Len = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1)); //每屏显示的数据长度
+
+  Off = Off % Len; //Off在一屏显示数据中的偏移 
+
+  for(i = 0; i <SrcLen*8 && i<Len*8; i ++)
+  {
+    Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, i);
+    X = (Off*8 + i) % Width;
+    Y = (Off*8 + i) / Width;
+    if(X < Width && Y < Height) //X0,Y0必须在X_Len和Y_Len的范围内
+      Set_Area_Point_Data(pDst, Area_No, X, Y, Re);
+    else
+      break;
+  }
+  
+  return i/8;
+}
+
+//读取当前节目的分区Area_No的第File_No文件的第SIndex屏的显示数据
+INT16U Read_Prog_Show_Data(INT8U Area_No, INT8U File_No, INT16U SIndex, S_Show_Data *pShow_Data)
+{
+  INT16U Width,Height;
+  INT32U Len,Len0,Offset;
+  INT16U Index;
+
+  Width = Get_Area_Width(Area_No);
+  Height = Get_Area_Height(Area_No);
+  
+  Len = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));//每屏的字节数
+  //SLen = Len;
+  Len = Len * SIndex; //在整个显示数据中的起始位置
+
+  Index = Len / BLOCK_SHOW_DATA_LEN;//块偏移
+  Index += Prog_Status.Block_Index.Index[Area_No][File_No]; //起始块号
+    
+  Offset = Len % BLOCK_SHOW_DATA_LEN; //在该块中的索引
+
+  Len0 = 0;
+  while(Len0 < Len)
+  {
+    if(Read_Storage_Data(SDI_SHOW_DATA + Index, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)) EQ 0)
+      break;
+    
+    if(Check_Prog_Show_Data(Prog_Para.Prog_No, Area_No, File_No, Pub_Buf) EQ 0)
+      break;
+       
+    //复制数据
+    //Len0 = 0;
+    mem_cpy(Pub_Buf, Pub_Buf + BLOCK_HEAD_DATA_LEN + Offset, BLOCK_DATA_LEN - (BLOCK_HEAD_DATA_LEN + Offset), Pub_Buf, sizeof(Pub_Buf));   
+    //将读到的数据复制到显示备份区
+    
+    Len0 += Copy_Show_Pic_Data(Area_No, Pub_Buf, Len0, BLOCK_DATA_LEN - (BLOCK_HEAD_DATA_LEN + Offset), pShow_Data);
+    Index++;
+    Offset = 0;
+  }
+  
+  return Len0;
+  
+}
+
 //写当前显示数据存储索引
 INT8U Write_Cur_Block_Index(void *pSrc, INT16U SrcLen)
 {
@@ -418,7 +505,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   static S_File_Para_Info File_Para_Info;
   INT8U Prog_No, Area_No, File_No, Type;
   INT16U Para_Len,Len;
-  INT8U Seq,Seq0;
+  INT8U Seq,Seq0,Re;
   STORA_DI SDI;
   S_Prog_Show_Data *pShow_Data;
 
@@ -444,7 +531,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
       Para_Len = Get_Show_Para_Len(File_Para_Info.Type); //参数长度
       if(Para_Len EQ Len)// 参数长度
       {     
-        Re =  Write_File_Para(SDI, &Frame[FDATA], FILE_PARA_LEN);//写入文件参数
+        Re =  Write_File_Para(Prog_No, Area_No, File_No, &Frame[FDATA], FILE_PARA_LEN);//写入文件参数
         if(Re > 0)
         {
           File_Para_Info.Type = Type;
@@ -455,7 +542,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
           File_Para_Info.Seq0 = Seq0;
           
           //读出这个节目的存储索引
-          Read_Prog_Block_Index(Prog_No, Prog_Block_Index.Block_Index, &Prog_Block_Index, sizeof(Prog_Block_Index));
+          Read_Prog_Block_Index(Prog_No, Prog_Status.Block_Index.Index, &Prog_Status.Block_Index, sizeof(Prog_Status.Block_Index));
           //Read_Storage_Data(Prog_Block_Index
         }
         
@@ -471,7 +558,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   else if(Seq0 EQ File_Para_Info.Seq0 + 1) //下一帧
   {
     if(Seq0 EQ 1) //第一条数据帧
-      Prog_Block_Index.Block_Index[File_Para_Info.Area_No][File_Para_Info.File_No] = Cur_Block_Index.Index;
+      Prog_Status.Block_Index.Index[File_Para_Info.Area_No][File_Para_Info.File_No] = Cur_Block_Index.Index;
     
     memset(Pub_Buf, 0, sizeof(Pub_Buf));
     
@@ -481,20 +568,22 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
     Pub_Buf[3] = Seq0 - 1;
     Pub_Buf[4] = Len % 256;
     Pub_Buf[5] = Len / 256;
-    Pub_Buf[6] = 0; //下一帧的存储索引
+    Pub_Buf[6] = 0; //下一帧的存储索引--备用 
     Pub_Buf[7] = 0;
     mem_cpy(Pub_Buf + 8, &Frame[FDATA], Len, Pub_Buf, sizeof(Pub_Buf));
     
     //当前分块数据
     Write_Storage_Data(SDI_SHOW_DATA + Cur_Block_Index.Index, Pub_Buf, BLOCK_DATA_LEN);
     
-    Cur_Block_Index.Index ++;
-    SET_STRUCT_SUM(Cur_Block_Index);
-
     //保存当前索引
-    Prog_Block_Index.Block_Index[File_Para_Info.Area_No][File_Para_Info.File_No + 1] = Cur_Block_Index.Index;
-    //Write_Storage_Data(SDI_PROG_BLOCK_INDEX + File_Para_Info.Prog_No, Prog_Block_Index.Block_Index, BLOCK_INDEX_LEN);
-    Write_Prog_Block_Index(File_Para_Info.Prog_No, Prog_Block_Index.Block_Inde, sizeof(Prog_Block_Index.Block_Inde));
+    Cur_Block_Index.Index ++;
+    SET_SUM(Cur_Block_Index);
+    Write_Cur_Block_Index(&Cur_Block_Index, sizeof(Cur_Block_Index));
+    
+    //写当前节目的索引
+    Prog_Status.Block_Index.Index[File_Para_Info.Area_No][File_Para_Info.File_No + 1] = Cur_Block_Index.Index;
+    SET_SUM(Prog_Status.Block_Index);
+    Write_Prog_Block_Index(File_Para_Info.Prog_No, Prog_Status.Block_Index.Index, sizeof(Prog_Status.Block_Index.Index));
     
     return 1;
   }
@@ -504,11 +593,6 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 
 }
 
-//读取节目的显示数据
-INT16U Read_Prog_Show_Data()
-{
-  
-}
 //删除节目数据
 INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen)
 {

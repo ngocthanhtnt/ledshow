@@ -32,8 +32,10 @@ CtimeProperty::CtimeProperty(QWidget *parent):QWidget(parent)
     hLayout->addLayout(vLayout);
 
     //textGroup = new QGroupBox(tr("¹Ì¶¨ÎÄ±¾"), this);
+    timeDiffEdit = new CtimeDiffEdit(this);
     simpleTextEdit = new CsimpleTextEdit(this);
     vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(timeDiffEdit);
     vLayout->addWidget(simpleTextEdit);
     //vLayout->addStretch();
     hLayout->addLayout(vLayout);
@@ -66,6 +68,7 @@ CtimeProperty::CtimeProperty(QWidget *parent):QWidget(parent)
     //mainLayout->addWidget(textGroup, 0, 0);
     setLayout(hLayout);
 
+    connect(timeDiffEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(dateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
@@ -196,6 +199,7 @@ void CtimeProperty::getSettingsFromWidget(QString str)
     if(type == TIME_PROPERTY)
     {
         nameEdit->getSettingsFromWidget(str);
+        timeDiffEdit->getSettingsFromWidget(str);
         simpleTextEdit->getSettingsFromWidget(str);
         smLineEdit->getSettingsFromWidget(str);
         dateTimeEdit->getSettingsFromWidget(str);
@@ -208,6 +212,7 @@ void CtimeProperty::getSettingsFromWidget(QString str)
 
 void CtimeProperty::setSettingsToWidget(QString str)
 {
+    disconnect(timeDiffEdit, SIGNAL(edited()), this, SLOT(edited()));
     disconnect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
     disconnect(dateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
     disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
@@ -219,6 +224,7 @@ void CtimeProperty::setSettingsToWidget(QString str)
     if(type == TIME_PROPERTY)
     {
         nameEdit->setSettingsToWidget(str);
+        timeDiffEdit->setSettingsToWidget(str);
         simpleTextEdit->setSettingsToWidget(str);
         smLineEdit->setSettingsToWidget(str);
         dateTimeEdit->setSettingsToWidget(str);
@@ -228,6 +234,7 @@ void CtimeProperty::setSettingsToWidget(QString str)
 
 
 
+    connect(timeDiffEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(dateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));

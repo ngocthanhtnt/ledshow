@@ -186,29 +186,29 @@ INT16U Get_Time_Min_Width(INT8U Area_No)
     INT16U Width = 0, Width0 = 0;
     INT8U i = 0;
 
-    if(File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
+    if(Prog_Status.File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
     {
-        if(File_Para[Area_No].Time_Para.Text_Width > 0)
+        if(Prog_Status.File_Para[Area_No].Time_Para.Text_Width > 0)
         {
-            Width = File_Para[Area_No].Time_Para.Text_Width;
+            Width = Prog_Status.File_Para[Area_No].Time_Para.Text_Width;
             i ++;
         }
 
-        if(File_Para[Area_No].Time_Para.Date_Type > 0)
+        if(Prog_Status.File_Para[Area_No].Time_Para.Date_Type > 0)
         {
-            Width += Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font);
+            Width += Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
             i++;
         }
 
-        if(File_Para[Area_No].Time_Para.Week_Type > 0)
+        if(Prog_Status.File_Para[Area_No].Time_Para.Week_Type > 0)
         {
-            Width +=Get_WeekStr_Type_Max_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font);
+            Width +=Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
             i++;
         }
 
-        if(File_Para[Area_No].Time_Para.Time_Type > 0)
+        if(Prog_Status.File_Para[Area_No].Time_Para.Time_Type > 0)
         {
-            Width +=Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font);
+            Width +=Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
             i++;
         }
 
@@ -218,23 +218,23 @@ INT16U Get_Time_Min_Width(INT8U Area_No)
     else
     {
 
-        Width = File_Para[Area_No].Time_Para.Text_Width;
+        Width = Prog_Status.File_Para[Area_No].Time_Para.Text_Width;
 
-        if(File_Para[Area_No].Time_Para.Date_Type > 0)
+        if(Prog_Status.File_Para[Area_No].Time_Para.Date_Type > 0)
         {
-            Width0 = Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font);
+            Width0 = Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
             Width = MAX_2(Width, Width0);
         }
 
-        if(File_Para[Area_No].Time_Para.Week_Type > 0)
+        if(Prog_Status.File_Para[Area_No].Time_Para.Week_Type > 0)
         {
-            Width0 = Get_WeekStr_Type_Max_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font);
+            Width0 = Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
             Width = MAX_2(Width, Width0);
         }
 
-        if(File_Para[Area_No].Time_Para.Time_Type > 0)
+        if(Prog_Status.File_Para[Area_No].Time_Para.Time_Type > 0)
         {
-            Width0 = Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font);
+            Width0 = Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
             Width = MAX_2(Width, Width0);
 
         }
@@ -250,40 +250,40 @@ INT16U Get_Time_Min_Height(INT8U Area_No)
 {
     INT16U Height,Height0;
 
-    if(File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
+    if(Prog_Status.File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
     {
-        Height = File_Para[Area_No].Time_Para.Text_Height;
+        Height = Prog_Status.File_Para[Area_No].Time_Para.Text_Height;
 
-        if(File_Para[Area_No].Time_Para.Date_Type > 0)
+        if(Prog_Status.File_Para[Area_No].Time_Para.Date_Type > 0)
         {
-            Height0 = Get_Font_Height(File_Para[Area_No].Time_Para.Date_Font);
+            Height0 = Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
             Height = MAX_2(Height, Height0);
         }
 
-        if(File_Para[Area_No].Time_Para.Week_Type > 0)
+        if(Prog_Status.File_Para[Area_No].Time_Para.Week_Type > 0)
         {
-            Height0 = Get_Font_Height(File_Para[Area_No].Time_Para.Week_Font);
+            Height0 = Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
             Height = MAX_2(Height, Height0);
         }
 
-        if(File_Para[Area_No].Time_Para.Time_Type > 0)
+        if(Prog_Status.File_Para[Area_No].Time_Para.Time_Type > 0)
         {
-            Height0 = Get_Font_Height(File_Para[Area_No].Time_Para.Time_Font);
+            Height0 = Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
             Height = MAX_2(Height, Height0);
         }
     }
     else
     {
-        Height = File_Para[Area_No].Time_Para.Text_Height;
+        Height = Prog_Status.File_Para[Area_No].Time_Para.Text_Height;
 
-        if(File_Para[Area_No].Time_Para.Date_Type > 0)
-            Height += Get_Font_Height(File_Para[Area_No].Time_Para.Date_Font);
+        if(Prog_Status.File_Para[Area_No].Time_Para.Date_Type > 0)
+            Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
 
-        if(File_Para[Area_No].Time_Para.Week_Type > 0)
-            Height += Get_Font_Height(File_Para[Area_No].Time_Para.Week_Font);
+        if(Prog_Status.File_Para[Area_No].Time_Para.Week_Type > 0)
+            Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
 
-        if(File_Para[Area_No].Time_Para.Time_Type > 0)
-            Height += Get_Font_Height(File_Para[Area_No].Time_Para.Time_Font);
+        if(Prog_Status.File_Para[Area_No].Time_Para.Time_Type > 0)
+            Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
     }
 
     return Height;
@@ -303,7 +303,7 @@ void Update_Time_Data(INT8U Area_No)
   Min_Width = Get_Time_Min_Width(Area_No);
   Min_Height = Get_Time_Min_Height(Area_No);
 
-  if(File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
+  if(Prog_Status.File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
   {
     if(Width > Min_Width)
     {
@@ -314,59 +314,59 @@ void Update_Time_Data(INT8U Area_No)
       P0.X = 0;
     }
 
-    if(Height > File_Para[Area_No].Time_Para.Text_Height)
-      P0.Y = (Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+    if(Height > Prog_Status.File_Para[Area_No].Time_Para.Text_Height)
+      P0.Y = (Height - Prog_Status.File_Para[Area_No].Time_Para.Text_Height)/2;
     else
-      P0.Y = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Time_Para.Text_Width, File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
+      P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Time_Para.Text_Height)/2;
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Time_Para.Text_Width, Prog_Status.File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
 
-    X = P0.X + File_Para[Area_No].Time_Para.Text_Width;
+    X = P0.X + Prog_Status.File_Para[Area_No].Time_Para.Text_Width;
     if(X > 0)
-      X += SPACE_WIDTH;//Get_Font_Width(File_Para[Area_No].Time_Para.);
+      X += SPACE_WIDTH;//Get_Font_Width(Prog_Status.File_Para[Area_No].Time_Para.);
     else
       X = 0;
 
 
-    if(File_Para[Area_No].Time_Para.Date_Type > 0)//需要显示日期?
+    if(Prog_Status.File_Para[Area_No].Time_Para.Date_Type > 0)//需要显示日期?
     {
         P0.X = X;
-        if(Height > Get_Font_Height(File_Para[Area_No].Time_Para.Date_Font))
-          P0.Y = (Height - Get_Font_Height(File_Para[Area_No].Time_Para.Date_Font))/2;
+        if(Height > Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Date_Font))
+          P0.Y = (Height - Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Date_Font))/2;
         else
           P0.Y = 0;
 
         Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
-                  File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font, File_Para[Area_No].Time_Para.Date_Color);
+                  Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font, Prog_Status.File_Para[Area_No].Time_Para.Date_Color);
 
-        X +=  SPACE_WIDTH + Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font);
+        X +=  SPACE_WIDTH + Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
     }
 
-    if(File_Para[Area_No].Time_Para.Week_Type > 0)//需要星期?
+    if(Prog_Status.File_Para[Area_No].Time_Para.Week_Type > 0)//需要星期?
     {
         P0.X = X;
-        if(Height > Get_Font_Height(File_Para[Area_No].Time_Para.Week_Font))
-          P0.Y = (Height - Get_Font_Height(File_Para[Area_No].Time_Para.Week_Font))/2;
+        if(Height > Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font))
+          P0.Y = (Height - Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font))/2;
         else
           P0.Y = 0;
 
         Show_Week(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
-                  File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font, File_Para[Area_No].Time_Para.Week_Color);
+                  Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font, Prog_Status.File_Para[Area_No].Time_Para.Week_Color);
 
-        X += SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font);
+        X += SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
     }
 
-    if(File_Para[Area_No].Time_Para.Time_Type > 0)//需要时间?
+    if(Prog_Status.File_Para[Area_No].Time_Para.Time_Type > 0)//需要时间?
     {
         P0.X = X;
-        if(Height > Get_Font_Height(File_Para[Area_No].Time_Para.Time_Font))
-          P0.Y = (Height - Get_Font_Height(File_Para[Area_No].Time_Para.Time_Font))/2;
+        if(Height > Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Time_Font))
+          P0.Y = (Height - Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Time_Font))/2;
         else
           P0.Y = 0;
 
         Show_Time(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
-                  File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font, File_Para[Area_No].Time_Para.Time_Color);
+                  Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font, Prog_Status.File_Para[Area_No].Time_Para.Time_Color);
 
-        X += SPACE_WIDTH + Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font);
+        X += SPACE_WIDTH + Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
     }
   }
   else //多行
@@ -380,54 +380,54 @@ void Update_Time_Data(INT8U Area_No)
         P0.Y = 0;
       }
 
-      if(Width > File_Para[Area_No].Time_Para.Text_Width)
-        P0.X = (Width - File_Para[Area_No].Time_Para.Text_Width)/2;
+      if(Width > Prog_Status.File_Para[Area_No].Time_Para.Text_Width)
+        P0.X = (Width - Prog_Status.File_Para[Area_No].Time_Para.Text_Width)/2;
       else
-        P0.X = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
-      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Time_Para.Text_Width, File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
+        P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Time_Para.Text_Height)/2;
+      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Time_Para.Text_Width, Prog_Status.File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
 
-      Y = P0.Y + File_Para[Area_No].Time_Para.Text_Height;
+      Y = P0.Y + Prog_Status.File_Para[Area_No].Time_Para.Text_Height;
 
-      if(File_Para[Area_No].Time_Para.Date_Type > 0)//需要显示日期?
+      if(Prog_Status.File_Para[Area_No].Time_Para.Date_Type > 0)//需要显示日期?
       {
           P0.Y = Y;
-          if(Width > Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font))
-            P0.X = (Width - Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font))/2;
+          if(Width > Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font))
+            P0.X = (Width - Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font))/2;
           else
             P0.X = 0;
 
           Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
-                    File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font, File_Para[Area_No].Time_Para.Date_Color);
+                    Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font, Prog_Status.File_Para[Area_No].Time_Para.Date_Color);
 
-          Y += Get_Font_Height(File_Para[Area_No].Time_Para.Date_Font);//Get_DateStr_Pix_Width(File_Para[Area_No].Time_Para.Date_Type - 1, File_Para[Area_No].Time_Para.Date_Font);
+          Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Date_Font);//Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
       }
 
-      if(File_Para[Area_No].Time_Para.Week_Type > 0)//需要星期?
+      if(Prog_Status.File_Para[Area_No].Time_Para.Week_Type > 0)//需要星期?
       {
           P0.Y = Y;
-          if(Width > Get_WeekStr_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font, Cur_Time.Time[T_WEEK]))
-            P0.X = (Width - Get_WeekStr_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font, Cur_Time.Time[T_WEEK]))/2;
+          if(Width > Get_WeekStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font, Cur_Time.Time[T_WEEK]))
+            P0.X = (Width - Get_WeekStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font, Cur_Time.Time[T_WEEK]))/2;
           else
             P0.X = 0;
 
           Show_Week(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
-                    File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font, File_Para[Area_No].Time_Para.Week_Color);
+                    Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font, Prog_Status.File_Para[Area_No].Time_Para.Week_Color);
 
-          Y += Get_Font_Height(File_Para[Area_No].Time_Para.Week_Font);//SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(File_Para[Area_No].Time_Para.Week_Type - 1, File_Para[Area_No].Time_Para.Week_Font);
+          Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font);//SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
       }
 
-      if(File_Para[Area_No].Time_Para.Time_Type > 0)//需要时间?
+      if(Prog_Status.File_Para[Area_No].Time_Para.Time_Type > 0)//需要时间?
       {
           P0.Y = Y;
-          if(Width > Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font))
-            P0.X = (Width - Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font))/2;
+          if(Width > Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font))
+            P0.X = (Width - Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font))/2;
           else
             P0.X = 0;
 
           Show_Time(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
-                    File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font, File_Para[Area_No].Time_Para.Time_Color);
+                    Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font, Prog_Status.File_Para[Area_No].Time_Para.Time_Color);
 
-          //X += SPACE_WIDTH + Get_TimeStr_Pix_Width(File_Para[Area_No].Time_Para.Time_Type - 1, File_Para[Area_No].Time_Para.Time_Font);
+          //X += SPACE_WIDTH + Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
       }
   }
 }

@@ -61,7 +61,7 @@ private:
     CcolorCombo *minColorCombo;
     CcolorCombo *secColorCombo;
 
-    //QGroupBox *textGroup;
+    CtimeDiffEdit *timeDiffEdit;
     CsimpleTextEdit *simpleTextEdit;
     CposiEdit *posiEdit;
 

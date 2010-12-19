@@ -456,7 +456,7 @@
         </option>
         <option>
           <name>AOutputFile</name>
-          <state></state>
+          <state>$FILE_BNAME$.o</state>
         </option>
         <option>
           <name>AMultibyteSupport</name>
@@ -1619,9 +1619,6 @@
   </file>
   <file>
     <name>$PROJ_DIR$\LED_Show.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\LED_Show_Proc.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\Lun_Show.cpp</name>
