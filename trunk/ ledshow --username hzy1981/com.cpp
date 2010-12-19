@@ -82,7 +82,7 @@ INT8U Para_Frame_Proc(INT16U Ctrl, INT8U Data[], INT16U Len)
   else if(Ctrl EQ C_SCREEN_OC_TIME && Len >= Frame_Data_Size[Ctrl]) 	
     mem_cpy((INT8U *)&Screen_Para.Open_Close_Time, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //定时开关机时间
   else if(Ctrl EQ C_SCREEN_LIGNTNESS && Len >= Frame_Data_Size[Ctrl])
-    mem_cpy((INT8U *)&Screen_Para.Lightness, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //定时开关机时间
+    mem_cpy((INT8U *)&Screen_Para.Lightness, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //亮度参数
   else if(Ctrl EQ C_SCREEN_TIME && Len >= Frame_Data_Size[Ctrl])
     ;//mem_cpy((INT8U *)&Screen_Para.Open_Close_Time, Frame, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //定时开关机时间
   else

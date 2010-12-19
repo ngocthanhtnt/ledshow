@@ -27,18 +27,18 @@ void Update_Pic_Data(INT8U Area_No)
 {
   INT8U In_Mode;
   //还在移动状态
-  if(Area_Status[Area_No].Step < 100)
+  if(Prog_Status.Area_Status[Area_No].Step < 100)
   {
-    if(Area_Status[Area_No].Step_Timer < Get_Area_Step_Delay(Area_No))
-      Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
+    if(Prog_Status.Area_Status[Area_No].Step_Timer < Get_Area_Step_Delay(Area_No))
+      Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
     else
     {
-      In_Mode = File_Para[Area_No].Pic_Para.In_Mode;
+      In_Mode = Prog_Status.File_Para[Area_No].Pic_Para.In_Mode;
       (*(Mode_Func[In_Mode].Func))(Area_No);//执行移动操作
     }
   }
-  else if(Area_Status[Area_No].Stay_Time <= Get_File_Stay_Time(Area_No)) //停留时间未到
+  else if(Prog_Status.Area_Status[Area_No].Stay_Time <= Get_File_Stay_Time(Area_No)) //停留时间未到
   {
-    Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
+    Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
   }
 }

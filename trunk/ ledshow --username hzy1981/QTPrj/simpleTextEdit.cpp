@@ -526,6 +526,82 @@ CtimeEdit::~CtimeEdit()
 
 }
 
+//-----------
+CtimeDiffEdit::CtimeDiffEdit(QWidget *parent):QGroupBox(parent)
+{
+  QHBoxLayout *hLayout;
+  QLabel *label;
+
+  hLayout =new QHBoxLayout(this);
+  label = new QLabel(tr("时差"), this);
+  hLayout->addWidget(label);
+
+  diffCheck = new QComboBox(this);
+  diffCheck->addItem(tr("+"));
+  diffCheck->addItem(tr("-"));
+  hLayout->addWidget(diffCheck);
+
+  label = new QLabel(tr("小时"), this);
+  hLayout->addWidget(label);
+  hourEdit = new QSpinBox(this);
+  hourEdit->setMinimum(0);
+  hourEdit->setMaximum(23);
+  hLayout->addWidget(hourEdit);
+
+  label = new QLabel(tr("分钟"), this);
+  hLayout->addWidget(label);
+  minEdit = new QSpinBox(this);
+  minEdit->setMinimum(0);
+  minEdit->setMaximum(59);
+  hLayout->addWidget(minEdit);
+
+  setLayout(hLayout);
+  setTitle(tr("时差调整"));
+
+  connect(diffCheck, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+  connect(hourEdit, SIGNAL(valueChanged(int)),this,SIGNAL(edited()));
+  connect(minEdit, SIGNAL(valueChanged(int)),this,SIGNAL(edited()));
+
+}
+
+//从Widget上获取设置
+void CtimeDiffEdit::getSettingsFromWidget(QString str)
+{
+   settings.beginGroup(str);
+   settings.beginGroup("timeDiff");
+   settings.setValue("diffCheck", diffCheck->currentIndex());
+   settings.setValue("hour", hourEdit->value());
+   settings.setValue("min", minEdit->value());
+   settings.endGroup();
+   settings.endGroup();
+}
+
+void CtimeDiffEdit::setSettingsToWidget(QString str)
+{
+    settings.beginGroup(str);
+    settings.beginGroup("timeDiff");
+    int setFlag = settings.value("setFlag").toBool();
+    if(setFlag EQ 0)
+    {
+        settings.setValue("diffCheck", 0);
+        settings.setValue("hour", 0);
+        settings.setValue("min", 0);
+
+       settings.setValue("setFlag", 1);
+    }
+
+    diffCheck->setCurrentIndex(settings.value("diffCheck").toInt());
+    hourEdit->setValue(settings.value("hour").toInt());
+    minEdit->setValue(settings.value("min").toInt());
+    settings.endGroup();
+    settings.endGroup();
+}
+
+CtimeDiffEdit::~CtimeDiffEdit()
+{
+
+}
+//----------------
 CdateTimeEdit::CdateTimeEdit(QWidget *parent):QGroupBox(parent)
 {
     QVBoxLayout *vLayout;

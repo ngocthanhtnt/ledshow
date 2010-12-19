@@ -600,9 +600,10 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
         }
     }
 
-    treeWidget->setCurrentItem(item);//setCurrentItem()
+    //treeWidget->setCurrentItem(item);//setCurrentItem()
     w->property->updateProperty(item);
     w->screenArea->updateShowArea(item);
+    treeWidget->setCurrentItem(item);//setCurrentItem()---这句话要放到最后！否则前面的两个函数触发槽，槽函数还是引用之前的curitem
 }
 
 //progManage中的treeWidget的初始化,根据settings进行初始化

@@ -43,6 +43,9 @@
                                                                                    ASSERT_FAILED();\
                                                                                 }while(0)
 
+#define SET_SUM OS_SET_STRUCT_SUM
+#define CHK_SUM OS_CHECK_STRUCT_SUM
+
 typedef struct
 {
   INT8U Head;

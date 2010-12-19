@@ -8,6 +8,7 @@
 #include <QFontComboBox>
 #include <QCheckBox>
 #include <QGroupBox>
+#include <QSpinBox>
 #include "colorCombo.h"
 #include "progManage.h"
 #include "..\Includes.h"
@@ -129,6 +130,23 @@ public:
     void setSettingsToWidget(QString str);
     CtimeEdit(QWidget *parent =0);
     ~CtimeEdit();
+};
+
+class CtimeDiffEdit:public QGroupBox
+{
+    Q_OBJECT
+private:
+    QComboBox *diffCheck;
+    QSpinBox *hourEdit;
+    QSpinBox *minEdit;
+
+signals:
+    void edited();
+public:
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CtimeDiffEdit(QWidget *parent =0);
+    ~CtimeDiffEdit();
 };
 
 class CdateTimeEdit:public QGroupBox

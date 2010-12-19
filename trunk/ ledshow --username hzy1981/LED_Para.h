@@ -117,8 +117,10 @@ typedef struct
   //INT16U Program_Stay_Sec; //停留秒数
   S_Program_Timing Timing[3]; //节目定时设置
   INT8U Area_Num; //分区数
-  S_Area Area[MAX_AREA_NUM]; //区域定义
   INT8U Main_Area_No; //主分区号
+  INT8U Area_File_Num[MAX_AREA_NUM]; //每分区文件数
+  S_Area Area[MAX_AREA_NUM]; //区域定义
+  
   INT8U CS[CS_BYTES];
   
   INT8U Tail;
@@ -156,7 +158,7 @@ typedef struct
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
   INT8U Color; //颜色
-  
+  INT16U SNum; //分屏个数
   INT8U CS[CS_BYTES];
   INT8U Tail;
 }S_Pic_Para;
@@ -405,7 +407,7 @@ typedef union
 typedef struct
 {
   INT8U Head;
-  STORA_DI Block_Index[MAX_AREA_NUM][MAX_FILE_NUM+1]; //后一个文件的起始就是前一个文件的结束,[MAX_FILE_NUM + 1]表示最后一个文件的结束位置
+  STORA_DI Index[MAX_AREA_NUM][MAX_FILE_NUM+1]; //后一个文件的起始就是前一个文件的结束,[MAX_FILE_NUM + 1]表示最后一个文件的结束位置
   //INT16U Block_End;
   INT8U CS[CS_BYTES];
   INT8U Tail;
@@ -449,15 +451,16 @@ typedef struct
 
 typedef struct
 {
-  INT8U Head;
-  INT8U Type;
   INT8U Prog_No;
-  INT8U Area_No;
-  INT8U File_No;
+  INT8U File_No:4;  
+  INT8U Area_No:4;
+  INT8U Type;
   
   INT8U Seq0;
-  INT8U Flag;
-  INT8U Tail;
+   
+  INT16U Len;
+  INT16U Bak;
+  
 }S_File_Para_Info;
 
 #define SCREEN_PARA_LEN (sizeof(S_Screen_Para) -CHK_BYTE_LEN)
@@ -465,11 +468,13 @@ typedef struct
 #define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN)
 #define BLOCK_INDEX_LEN (sizeof(S_Prog_Block_Index) - CHK_BYTE_LEN)
 #define BLOCK_DATA_LEN 300
+#define BLOCK_HEAD_DATA_LEN 8
+#define BLOCK_SHOW_DATA_LEN (BLOCK_DATA_LEN -BLOCK_HEAD_DATA_LEN)
 
 EXT S_Screen_Para Screen_Para; //显示屏相关参数
-EXT U_File_Para File_Para[MAX_AREA_NUM]; //当前节目的每个分区的文件参数，更换文件时刷新之
+
 EXT S_Prog_Para Prog_Para;  //当前节目属性[MAX_PROGRAM_NUM]; //节目个数
-EXT S_Prog_Block_Index Prog_Block_Index; //当前节目的存储参数
+//EXT S_Prog_Block_Index Prog_Block_Index; //当前节目的存储参数
 EXT S_Cur_Block_Index Cur_Block_Index;
 //EXT S_Clock_Para Clock_Para;
 EXT S_Rcv_Show_Data Rcv_Show_Data;
@@ -481,6 +486,7 @@ EXT STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No)
 EXT INT8U Save_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen);
 EXT INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
+EXT INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen);
 EXT INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen);
 EXT INT8U Check_Update_Prog_Para();
 EXT void Read_Para();

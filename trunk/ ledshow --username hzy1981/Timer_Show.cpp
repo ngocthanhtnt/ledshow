@@ -173,18 +173,18 @@ INT16U Get_Timer_Min_Width(INT8U Area_No)
 {
     INT16U StrWidth;
     //INT8U Font,Type;
-    StrWidth = Get_TimerStr_Pix_Width(File_Para[Area_No].Timer_Para.Timer_Type, \
-                                      File_Para[Area_No].Timer_Para.Timer_Font);
+    StrWidth = Get_TimerStr_Pix_Width(Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, \
+                                      Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font);
 
 
-   if(File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//单行
+   if(Prog_Status.File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//单行
    {
-      return File_Para[Area_No].Timer_Para.Text_Width + SPACE_WIDTH + StrWidth;
+      return Prog_Status.File_Para[Area_No].Timer_Para.Text_Width + SPACE_WIDTH + StrWidth;
    }
    else
    {
-      if(File_Para[Area_No].Timer_Para.Text_Width > StrWidth)
-          return File_Para[Area_No].Timer_Para.Text_Width;
+      if(Prog_Status.File_Para[Area_No].Timer_Para.Text_Width > StrWidth)
+          return Prog_Status.File_Para[Area_No].Timer_Para.Text_Width;
       else
           return StrWidth;
    }
@@ -195,18 +195,18 @@ INT16U Get_Timer_Min_Height(INT8U Area_No)
 {
     INT16U StrHeight;
 
-    StrHeight = Get_Font_Height(File_Para[Area_No].Timer_Para.Timer_Font);
+    StrHeight = Get_Font_Height(Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font);
 
-    if(File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//单行
+    if(Prog_Status.File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//单行
     {
-        if(File_Para[Area_No].Timer_Para.Text_Height > StrHeight)
-            return File_Para[Area_No].Timer_Para.Text_Height;
+        if(Prog_Status.File_Para[Area_No].Timer_Para.Text_Height > StrHeight)
+            return Prog_Status.File_Para[Area_No].Timer_Para.Text_Height;
         else
             return StrHeight;
     }
     else
     {
-        return File_Para[Area_No].Timer_Para.Text_Height + StrHeight;
+        return Prog_Status.File_Para[Area_No].Timer_Para.Text_Height + StrHeight;
     }
 }
 
@@ -241,38 +241,38 @@ void Update_Timer_Data(INT8U Area_No)
     Min_Width = Get_Timer_Min_Width(Area_No);
     Min_Height = Get_Timer_Min_Height(Area_No);
 
-    Dst_Time.Time[T_YEAR] = File_Para[Area_No].Timer_Para.Dst_Year;
-    Dst_Time.Time[T_MONTH] = File_Para[Area_No].Timer_Para.Dst_Month;
-    Dst_Time.Time[T_DATE] = File_Para[Area_No].Timer_Para.Dst_Date;
-    Dst_Time.Time[T_HOUR] = File_Para[Area_No].Timer_Para.Dst_Hour;
-    Dst_Time.Time[T_MIN] = File_Para[Area_No].Timer_Para.Dst_Min;
-    Dst_Time.Time[T_SEC] = File_Para[Area_No].Timer_Para.Dst_Sec;
+    Dst_Time.Time[T_YEAR] = Prog_Status.File_Para[Area_No].Timer_Para.Dst_Year;
+    Dst_Time.Time[T_MONTH] = Prog_Status.File_Para[Area_No].Timer_Para.Dst_Month;
+    Dst_Time.Time[T_DATE] = Prog_Status.File_Para[Area_No].Timer_Para.Dst_Date;
+    Dst_Time.Time[T_HOUR] = Prog_Status.File_Para[Area_No].Timer_Para.Dst_Hour;
+    Dst_Time.Time[T_MIN] = Prog_Status.File_Para[Area_No].Timer_Para.Dst_Min;
+    Dst_Time.Time[T_SEC] = Prog_Status.File_Para[Area_No].Timer_Para.Dst_Sec;
 
-    if(File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//单行
+    if(Prog_Status.File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//单行
     {
       if(Width > Min_Width)
         P0.X = (Width - Min_Width) / 2;
       else
         P0.X = 0;
 
-      if(Height > File_Para[Area_No].Timer_Para.Text_Height)
-        P0.Y = (Height - File_Para[Area_No].Timer_Para.Text_Height)/2;
+      if(Height > Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)
+        P0.Y = (Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
       else
-        P0.Y = 0;//(Height - File_Para[Area_No].Timer_Para.Text_Height)/2;
-      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Timer_Para.Text_Width, File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
+        P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
+      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Timer_Para.Text_Width, Prog_Status.File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
 
 
-      P0.X = P0.X + File_Para[Area_No].Timer_Para.Text_Width;
+      P0.X = P0.X + Prog_Status.File_Para[Area_No].Timer_Para.Text_Width;
       if(P0.X > 0)
-        P0.X += SPACE_WIDTH;//Get_Font_Width(File_Para[Area_No].Timer_Para.);
+        P0.X += SPACE_WIDTH;//Get_Font_Width(Prog_Status.File_Para[Area_No].Timer_Para.);
 
-      if(Height > Get_Font_Height(File_Para[Area_No].Timer_Para.Timer_Font))
-        P0.Y = (Height - Get_Font_Height(File_Para[Area_No].Timer_Para.Timer_Font))/2;
+      if(Height > Get_Font_Height(Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font))
+        P0.Y = (Height - Get_Font_Height(Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font))/2;
       else
         P0.Y = 0;
 
       Show_Timer(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, &Dst_Time, \
-                 File_Para[Area_No].Timer_Para.Timer_Type, File_Para[Area_No].Timer_Para.Timer_Font,File_Para[Area_No].Timer_Para.Timer_Color);
+                 Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font,Prog_Status.File_Para[Area_No].Timer_Para.Timer_Color);
   }
   else
   {
@@ -281,20 +281,20 @@ void Update_Timer_Data(INT8U Area_No)
       else
         P0.Y = 0;
 
-      if(Width > File_Para[Area_No].Timer_Para.Text_Width)
-        P0.X = (Width - File_Para[Area_No].Timer_Para.Text_Width)/2;
+      if(Width > Prog_Status.File_Para[Area_No].Timer_Para.Text_Width)
+        P0.X = (Width - Prog_Status.File_Para[Area_No].Timer_Para.Text_Width)/2;
       else
-        P0.X = 0;//(Height - File_Para[Area_No].Timer_Para.Text_Height)/2;
-      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Timer_Para.Text_Width, File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
+        P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
+      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Timer_Para.Text_Width, Prog_Status.File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
 
-      P0.Y = P0.Y + File_Para[Area_No].Timer_Para.Text_Height;
-      if(Width > Get_TimerStr_Pix_Width(File_Para[Area_No].Timer_Para.Timer_Type, File_Para[Area_No].Timer_Para.Timer_Font))
-        P0.X = (Width - Get_TimerStr_Pix_Width(File_Para[Area_No].Timer_Para.Timer_Type, File_Para[Area_No].Timer_Para.Timer_Font))/2;
+      P0.Y = P0.Y + Prog_Status.File_Para[Area_No].Timer_Para.Text_Height;
+      if(Width > Get_TimerStr_Pix_Width(Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font))
+        P0.X = (Width - Get_TimerStr_Pix_Width(Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font))/2;
       else
         P0.X = 0;
 
       Show_Timer(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, &Dst_Time, \
-                 File_Para[Area_No].Timer_Para.Timer_Type, File_Para[Area_No].Timer_Para.Timer_Font,File_Para[Area_No].Timer_Para.Timer_Color);
+                 Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font,Prog_Status.File_Para[Area_No].Timer_Para.Timer_Color);
 
   }
 }

@@ -90,9 +90,9 @@ typedef struct
 {
   INT8U Head;
 
-  INT8U File_No; //当前文件号
-  INT8U File_Type; //文件类型
-  INT8U File_Offset; //当前文件偏移
+  INT16U SNum;      //当前已经读到第几屏数据了?
+  
+  INT8U File_No;    //当前文件号
   INT8U Step;        //当前移动的阶梯
   INT16U Step_Timer;  //已经走过Timer，单位ms
   INT32U Stay_Time;   //已经停留的时间，单位ms
@@ -103,12 +103,18 @@ typedef struct
 //定义节目状态
 typedef struct
 {
+  INT8U Head;
   INT8U Time; //已经播放时长
 
-}S_Program_Status;
+  U_File_Para File_Para[MAX_AREA_NUM]; //每个分区的当前文件参数
+  S_Area_Status Area_Status[MAX_AREA_NUM]; //每个分区的状态 
+  S_Prog_Block_Index Block_Index; //当前节目的索引
 
-EXT S_Area_Status Area_Status[MAX_AREA_NUM]; //分区状态信息
-EXT S_Program_Status Program_Status;   //节目状态信息
+  INT8U Tail;
+}S_Prog_Status;
+
+//EXT S_Area_Status Area_Status[MAX_AREA_NUM]; //分区状态信息
+EXT S_Prog_Status Prog_Status;   //节目状态信息
 
 EXT S_Show_Data Show_Data;  //显示数据
 EXT S_Show_Data Show_Data_Bak; //显示数据备份

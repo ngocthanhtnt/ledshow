@@ -132,8 +132,10 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     vLayout ->addWidget(editGroup);
     hLayout->addLayout(vLayout);
 
+    timeDiffEdit = new CtimeDiffEdit(this);
     simpleTextEdit = new CsimpleTextEdit(this);
     vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(timeDiffEdit);
     vLayout ->addWidget(simpleTextEdit);
     //vLayout->addStretch();
     hLayout->addLayout(vLayout);
@@ -183,6 +185,7 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
 
     connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
 
+    connect(timeDiffEdit, SIGNAL(edited()), this, SIGNAL(edited()));
     connect(simpleTextEdit, SIGNAL(edited()), this, SIGNAL(edited()));
     connect(dateEdit, SIGNAL(edited()), this, SIGNAL(edited()));
     connect(weekEdit, SIGNAL(edited()), this, SIGNAL(edited()));
@@ -233,6 +236,7 @@ void CclockProperty::getSettingsFromWidget(QString str)
     if(type == CLOCK_PROPERTY)
     {
       nameEdit->getSettingsFromWidget(str);
+      timeDiffEdit->getSettingsFromWidget(str);
       simpleTextEdit->getSettingsFromWidget(str);
       dateEdit->getSettingsFromWidget(str);
       weekEdit->getSettingsFromWidget(str);
@@ -471,6 +475,7 @@ void CclockProperty::setSettingsToWidget(QString str)
     settings.endGroup();
 
     nameEdit->setSettingsToWidget(str);
+    timeDiffEdit->setSettingsToWidget(str);
     simpleTextEdit->setSettingsToWidget(str);
     dateEdit->setSettingsToWidget(str);
     weekEdit->setSettingsToWidget(str);

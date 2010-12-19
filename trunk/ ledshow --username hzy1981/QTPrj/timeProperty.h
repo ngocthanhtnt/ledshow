@@ -26,6 +26,7 @@ private:
 
     QGroupBox *textGroup;
     QLabel *textLabel;  //нд╠╬
+    CtimeDiffEdit *timeDiffEdit;
     CsimpleTextEdit *simpleTextEdit;
     CsmLineEdit *smLineEdit;
     CdateTimeEdit *dateTimeEdit;

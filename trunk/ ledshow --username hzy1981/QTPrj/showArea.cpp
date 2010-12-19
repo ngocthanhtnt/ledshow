@@ -157,6 +157,7 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
         //return;
     }
 
+    qDebug("x=%d,y=%d,xLen=%d,yLen=%d",x,y,xLen,yLen);
     index = settings.value("index").toInt();
     subIndex= settings.value("subIndex").toInt(); //子文件索引
     settings.endGroup();
@@ -470,6 +471,9 @@ CshowArea::CshowArea(QWidget *parent, int colorFlag):QWidget(parent)
     mousePressed = false;
     focusFlag = false;
     filePara.Temp_Para.Flag = SHOW_NULL;
+
+    fileItem = (QTreeWidgetItem *)0;
+    treeItem = (QTreeWidgetItem *)0;
     //setAttribute(Qt::WA_StaticContents);
   //resize(100,100);
   //setText("Test");
@@ -506,7 +510,7 @@ void CshowArea::mousePressEvent(QMouseEvent *event)
     oldSize = size();
 
     event->accept();
-    w->screenArea->setFocusArea(this);
+    //w->screenArea->setFocusArea(this);
     if(this->treeItem != 0)
     {
         if(treeItem == w->progManage->treeWidget->currentItem())
@@ -514,21 +518,23 @@ void CshowArea::mousePressEvent(QMouseEvent *event)
           w->progManage->clickItem(treeItem, 0);
           return;
         }
-
+/*
         QString str;
         str = this ->treeItem->data(0, Qt::UserRole).toString();
 
         settings.beginGroup(str);
         int subIndex = settings.value("subIndex").toInt();
         settings.endGroup();
+*/
+        QTreeWidgetItem *item = this->fileItem;
 
-        if(subIndex > 0)
+        if(item != (QTreeWidgetItem *)0)
         {
-            QTreeWidgetItem *item = treeItem->child(subIndex-1);
+            //QTreeWidgetItem *item = treeItem->child(subIndex-1);
             w->progManage->clickItem(item, 0);
         }
-        else
-            ASSERT_FAILED();
+        //else
+            //ASSERT_FAILED();
     }
 /*
     CshowArea *oldArea = w->screenArea->getFocusArea();
@@ -584,6 +590,10 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
 
     int x0,y0;
     int x1,y1;
+
+
+    if(areaType EQ 0)
+        return;
 
     x0 = event->x();
     y0 = event->y();
@@ -879,15 +889,15 @@ void CshowArea::paintEvent(QPaintEvent *)
             filePara.Clock_Para.Text_Width = size.width();
             filePara.Clock_Para.Text_Height = size.height();
 
-            mem_cpy((INT8U *)&File_Para[0], &filePara, sizeof(filePara), (INT8U *)&File_Para[0], sizeof(File_Para[0]));
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 
-            tmp = (INT16S)(Width * File_Para[Area_No].Clock_Para.Text_X / 100) - (INT16S)File_Para[Area_No].Clock_Para.Text_Width/2;
+            tmp = (INT16S)(Width * Prog_Status.File_Para[Area_No].Clock_Para.Text_X / 100) - (INT16S)Prog_Status.File_Para[Area_No].Clock_Para.Text_Width/2;
             if(tmp > 0)
               P0.X = (INT16U)tmp;
             else
               P0.X = 0;
 
-            tmp = (INT16S)(Height * File_Para[Area_No].Clock_Para.Text_Y / 100) - (INT16S)(File_Para[Area_No].Clock_Para.Text_Height/2);
+            tmp = (INT16S)(Height * Prog_Status.File_Para[Area_No].Clock_Para.Text_Y / 100) - (INT16S)(Prog_Status.File_Para[Area_No].Clock_Para.Text_Height/2);
             if(tmp > 0)
               P0.Y = (INT16U)tmp;
             else
@@ -920,12 +930,12 @@ void CshowArea::paintEvent(QPaintEvent *)
             filePara.Time_Para.Text_Width = size.width();
             filePara.Time_Para.Text_Height = size.height();
 
-            mem_cpy((INT8U *)&File_Para[0], &filePara, sizeof(filePara), (INT8U *)&File_Para[0], sizeof(File_Para[0]));
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 
             Min_Width = Get_Time_Min_Width(Area_No);
             Min_Height = Get_Time_Min_Height(Area_No);
 
-            if(File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
+            if(Prog_Status.File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
             {
               if(Width > Min_Width)
               {
@@ -936,10 +946,10 @@ void CshowArea::paintEvent(QPaintEvent *)
                 P0.X = 0;
               }
 
-              if(Height > File_Para[Area_No].Time_Para.Text_Height)
-                P0.Y = (Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+              if(Height > Prog_Status.File_Para[Area_No].Time_Para.Text_Height)
+                P0.Y = (Height - Prog_Status.File_Para[Area_No].Time_Para.Text_Height)/2;
               else
-                P0.Y = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+                P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Time_Para.Text_Height)/2;
             }
             else
             {
@@ -952,13 +962,13 @@ void CshowArea::paintEvent(QPaintEvent *)
                   P0.Y = 0;
                 }
 
-                if(Width > File_Para[Area_No].Time_Para.Text_Width)
-                  P0.X = (Width - File_Para[Area_No].Time_Para.Text_Width)/2;
+                if(Width > Prog_Status.File_Para[Area_No].Time_Para.Text_Width)
+                  P0.X = (Width - Prog_Status.File_Para[Area_No].Time_Para.Text_Width)/2;
                 else
-                  P0.X = 0;//(Height - File_Para[Area_No].Time_Para.Text_Height)/2;
+                  P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Time_Para.Text_Height)/2;
             }
 
-            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Time_Para.Text_Width, File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
+            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Time_Para.Text_Width, Prog_Status.File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
             Update_Time_Data(Area_No);
@@ -974,22 +984,22 @@ void CshowArea::paintEvent(QPaintEvent *)
             filePara.Timer_Para.Text_Width = size.width();
             filePara.Timer_Para.Text_Height = size.height();
 
-            mem_cpy((INT8U *)&File_Para[0], &filePara, sizeof(filePara), (INT8U *)&File_Para[0], sizeof(File_Para[0]));
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 
             Min_Width = Get_Timer_Min_Width(Area_No);
             Min_Height = Get_Timer_Min_Height(Area_No);
 
-            if(File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//单行
+            if(Prog_Status.File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//单行
             {
               if(Width > Min_Width)
                 P0.X = (Width - Min_Width) / 2;
               else
                 P0.X = 0;
 
-              if(Height > File_Para[Area_No].Timer_Para.Text_Height)
-                P0.Y = (Height - File_Para[Area_No].Timer_Para.Text_Height)/2;
+              if(Height > Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)
+                P0.Y = (Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
               else
-                P0.Y = 0;//(Height - File_Para[Area_No].Timer_Para.Text_Height)/2;
+                P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
             }
             else
             {
@@ -998,13 +1008,13 @@ void CshowArea::paintEvent(QPaintEvent *)
                 else
                   P0.Y = 0;
 
-                if(Width > File_Para[Area_No].Timer_Para.Text_Width)
-                  P0.X = (Width - File_Para[Area_No].Timer_Para.Text_Width)/2;
+                if(Width > Prog_Status.File_Para[Area_No].Timer_Para.Text_Width)
+                  P0.X = (Width - Prog_Status.File_Para[Area_No].Timer_Para.Text_Width)/2;
                 else
-                  P0.X = 0;//(Height - File_Para[Area_No].Timer_Para.Text_Height)/2;
+                  P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
             }
 
-            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Timer_Para.Text_Width, File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
+            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Timer_Para.Text_Width, Prog_Status.File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
             Update_Timer_Data(Area_No);
         }
@@ -1019,12 +1029,12 @@ void CshowArea::paintEvent(QPaintEvent *)
             filePara.Lun_Para.Text_Width = size.width();
             filePara.Lun_Para.Text_Height = size.height();
 
-            mem_cpy((INT8U *)&File_Para[0], &filePara, sizeof(filePara), (INT8U *)&File_Para[0], sizeof(File_Para[0]));
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 
             Min_Width = Get_Lun_Min_Width(Area_No); //显示农历的最小宽度
             Min_Height = Get_Lun_Min_Height(Area_No); //先死农历的最小高度
 
-            if(File_Para[Area_No].Lun_Para.SmLineFlag == SLINE_MODE)//单行
+            if(Prog_Status.File_Para[Area_No].Lun_Para.SmLineFlag == SLINE_MODE)//单行
             {
               if(Width > Min_Width)
               {
@@ -1035,10 +1045,10 @@ void CshowArea::paintEvent(QPaintEvent *)
                 P0.X = 0;
               }
 
-              if(Height > File_Para[Area_No].Lun_Para.Text_Height)
-                P0.Y = (Height - File_Para[Area_No].Lun_Para.Text_Height)/2;
+              if(Height > Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)
+                P0.Y = (Height - Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)/2;
               else
-                P0.Y = 0;//(Height - File_Para[Area_No].Lun_Para.Text_Height)/2;
+                P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)/2;
             }
             else
             {
@@ -1051,13 +1061,13 @@ void CshowArea::paintEvent(QPaintEvent *)
                   P0.Y = 0;
                 }
 
-                if(Width > File_Para[Area_No].Lun_Para.Text_Width)
-                  P0.X = (Width - File_Para[Area_No].Lun_Para.Text_Width)/2;
+                if(Width > Prog_Status.File_Para[Area_No].Lun_Para.Text_Width)
+                  P0.X = (Width - Prog_Status.File_Para[Area_No].Lun_Para.Text_Width)/2;
                 else
-                  P0.X = 0;//(Height - File_Para[Area_No].Lun_Para.Text_Height)/2;
+                  P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)/2;
               }
 
-            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, File_Para[Area_No].Lun_Para.Text_Width, File_Para[Area_No].Lun_Para.Text_Height, &Show_Data, &P0);//&Point);
+            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Lun_Para.Text_Width, Prog_Status.File_Para[Area_No].Lun_Para.Text_Height, &Show_Data, &P0);//&Point);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
             Update_Lun_Data(Area_No);
