@@ -81,7 +81,7 @@ typedef struct
   S_Show_3Color_Data Three_Color_Data;
   */
   INT8U Head;
-  INT8U Color_Data[3*MAX_POINTS/8];
+  INT8U Color_Data[3*MAX_POINTS/8];//---连续的3个字节表示八个点3个颜色!!
   INT8U Tail;
 }S_Show_Data;
 
@@ -100,12 +100,23 @@ typedef struct
   INT8U Tail;
 }S_Area_Status;
 
+typedef struct
+{
+  INT8U Head;
+  INT8U Step;   //步长
+  INT32U Timer; //已经走过的Timer
+  INT8U Tail;  
+}S_Border_Status;
+
+
+
 //定义节目状态
 typedef struct
 {
   INT8U Head;
   INT8U Time; //已经播放时长
 
+  S_Border_Status Border_Status;
   U_File_Para File_Para[MAX_AREA_NUM]; //每个分区的当前文件参数
   S_Area_Status Area_Status[MAX_AREA_NUM]; //每个分区的状态 
   S_Prog_Block_Index Block_Index; //当前节目的索引
