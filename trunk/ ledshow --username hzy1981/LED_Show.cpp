@@ -202,8 +202,8 @@ INT8U Get_Area_TopLeft(INT8U Area_No, S_Point *pPoint)
 INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y)
 {
   INT32U Index;
-  
-  if(Area_No > MAX_AREA_NUM)
+ /* 
+  if(Area_No < MAX_AREA_NUM)
   {
     ASSERT_FAILED();
     return 0;	
@@ -228,6 +228,47 @@ INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y)
 
   Index = (((Y>>3) * Screen_Para.Width) + X)*8 + (Y & 0x07);
   return Index;
+  */
+  
+  if(Area_No < MAX_AREA_NUM)
+  {
+    if(X >= Prog_Para.Area[Area_No].X_Len ||\
+       Y >= Prog_Para.Area[Area_No].Y_Len)
+    {
+      //ASSERT_FAILED();
+      return 0;
+    }
+  
+    X += Prog_Para.Area[Area_No].X;
+    Y += Prog_Para.Area[Area_No].Y;
+   
+    if(X >= Screen_Para.Width ||\
+       Y >= Screen_Para.Height)
+    {
+      ASSERT_FAILED();
+      return 0;
+    }
+  
+    Index = (((Y>>3) * Screen_Para.Width) + X)*8 + (Y & 0x07);
+    return Index; 
+  }
+  else if(Area_No EQ MAX_AREA_NUM) //表示整屏数据
+  {
+    if(X >= Screen_Para.Width ||\
+       Y >= Screen_Para.Height)
+    {
+      ASSERT_FAILED();
+      return 0;
+    }
+  
+    Index = (((Y>>3) * Screen_Para.Width) + X)*8 + (Y & 0x07);
+    return Index;  
+  }
+  else
+  {
+    ASSERT_FAILED();
+    return 0;
+  }
 }
 
 //位拷贝

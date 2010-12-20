@@ -75,6 +75,7 @@ void Update_Show_Data()
     else if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_LUN)
       Update_Lun_Data(i);
   }
+  Update_Border_Data(); //更新边框数据
 }
 
 //读取一屏显示数据

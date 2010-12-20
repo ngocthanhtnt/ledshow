@@ -29,12 +29,14 @@
 #define SHOW_LUN   0x06 //农历
 #define SHOW_FLASH 0x07 //动画
 
-#define MAX_FILE_NAME_SIZE 20
+//#define MAX_FILE_NAME_SIZE 20
 
 #define SPACE_WIDTH 8
 
 #define CHK_BYTE_LEN 3 //结构体中用于校验的字节数--一般是Head、Tail和CS
 #define CHK_HEAD_LEN 1 //结构体中用于校验的头字节数--一般是Head
+
+#define MAX_BORDER_POINTS 50
 
 typedef struct
 {
@@ -120,6 +122,12 @@ typedef struct
   INT8U Main_Area_No; //主分区号
   INT8U Area_File_Num[MAX_AREA_NUM]; //每分区文件数
   S_Area Area[MAX_AREA_NUM]; //区域定义
+  
+  INT8U Border_Speed; //边框运行速度
+  INT8U Border_Width;   //边框宽度
+  INT8U Border_Height;  //边框高度
+  INT8U Temp;   //备用
+  INT8U Border_Data[3*MAX_BORDER_POINTS/8]; //边框数据
   
   INT8U CS[CS_BYTES];
   

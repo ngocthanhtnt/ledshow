@@ -1579,6 +1579,12 @@
     </settings>
   </configuration>
   <file>
+    <name>$PROJ_DIR$\Border_Show.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Border_Show.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\Clock_Show.cpp</name>
   </file>
   <file>
