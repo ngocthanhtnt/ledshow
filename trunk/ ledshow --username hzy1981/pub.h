@@ -16,6 +16,8 @@
 #define EXT
 #endif
 
+#define PUB_BUF_MUTEX_ID 0x00 //信号量ID，用于Pub_Buf使用的互斥
+
 #define mem_cpy OS_memcpy
 #define mem_set OS_memset
 #define TRACE() //OS_Trace
@@ -52,6 +54,7 @@ typedef struct
   INT8U Buf[500];
   INT8U Tail;
 }S_Pub_Buf;
+
 
 //EXT NO_INIT S_Trace_Info Trace_Info;
 #ifdef PUB_C

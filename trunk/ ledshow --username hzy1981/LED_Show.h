@@ -130,11 +130,13 @@ EXT S_Prog_Status Prog_Status;   //节目状态信息
 EXT S_Show_Data Show_Data;  //显示数据
 EXT S_Show_Data Show_Data_Bak; //显示数据备份
 
+//#define Pub_Buf Show_Data.Color_Data
 
 //获取当前颜色方案
 EXT INT8U Get_Color(); //获取当前的颜色方案
 EXT INT8U Get_Bit(INT8U *p,INT16U X_Size,INT16U X,INT16U Y);
 EXT INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index);
+EXT INT8U Get_Rect_Buf_Bit(INT8U Buf[], INT16U Buf_Size, INT16U Width, INT16U X, INT16U Y);
 EXT void Set_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index, INT8U Value);
 EXT INT16U Get_Area_Width(INT8U Area_No);
 EXT INT16U Get_Area_Height(INT8U Area_No);

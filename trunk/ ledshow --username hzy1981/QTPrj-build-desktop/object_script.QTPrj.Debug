@@ -46,6 +46,7 @@ INPUT(
 ./debug\OS_Ext.o
 ./debug\OS_Event.o
 ./debug\OS_Core.o
+./debug\Border_Show.o
 ./debug\moc_mainwindow.o
 ./debug\moc_showArea.o
 ./debug\moc_progManage.o

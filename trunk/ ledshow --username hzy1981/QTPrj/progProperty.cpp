@@ -1,8 +1,70 @@
 #include "progProperty.h"
+#include "..\Includes.h"
 #include <QSettings>
 #include <QDate>
 
 extern QSettings settings;
+
+//定义边框数据
+const S_Border_Data Border_Data[] =
+{
+    /*--  每五个点一个单元  --*/
+    /*--  宽度x高度=40x8  --*/
+    {40,1,{0x00,0x00,0x00,0x00,0x00,0x01,0x01,0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x01,
+    0x01,0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x01,0x01,0x01,0x01,0x01,0x00,0x00,
+    0x00,0x00,0x00,0x01,0x01,0x01,0x01,0x01}},
+    /*--  每10个点一个单元  --*/
+    /*--  宽度x高度=40x8  --*/
+    {40,1,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x01,0x01,0x01,0x01,0x01,
+    0x01,0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x01,
+    0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01}},
+
+    /*--    --*/
+    /*--  宽度x高度=40x8  --*/
+    {40,2,{0x00,0x00,0x00,0x00,0x00,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x00,
+    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x03,0x03,0x03,0x03,0x03,0x03,0x03,
+    0x03,0x03,0x03,0x00,0x00,0x00,0x00,0x00}},
+
+    /*--  调入了一幅图像：这是您新建的图像  --*/
+    /*--  宽度x高度=40x8  --*/
+    {40,2,{0x01,0x01,0x01,0x01,0x01,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x01,
+    0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x03,0x03,0x03,0x03,0x03,0x03,0x03,
+    0x03,0x03,0x03,0x01,0x01,0x01,0x01,0x01}},
+
+    /*--  调入了一幅图像：这是您新建的图像  --*/
+    /*--  宽度x高度=40x8  --*/
+    {40,2,{0x02,0x02,0x02,0x02,0x02,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x02,
+    0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x03,0x03,0x03,0x03,0x03,0x03,0x03,
+    0x03,0x03,0x03,0x02,0x02,0x02,0x02,0x02}}
+
+
+};
+
+QImage getBorderImage(int index, QColor color)
+{
+
+   int i,j;
+
+   if(index >= sizeof(Border_Data)/sizeof(Border_Data[0]))
+   {
+       ASSERT_FAILED();
+       return QImage(0,0);
+   }
+
+   QImage border(Border_Data[index].Width, Border_Data[index].Height, QImage::Format_RGB32);
+   border.fill(Qt::black);
+   for(i = 0; i < border.width(); i ++)
+       for(j = 0; j <border.height(); j++)
+       {
+         if(Get_Rect_Buf_Bit((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data), Border_Data[index].Width, i, j) > 0)
+             border.setPixel(i, j, color.rgb());
+   }
+
+   border = border.scaled(border.width()*4, border.height()*10);
+   border.save("d:\\border.png");
+   return border;
+}
+
 //节目属性编辑
 CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
 {
@@ -136,14 +198,14 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     modeLabel = new QLabel(tr("特效"), this);
     speedLabel = new QLabel(tr("速度"), this);
     usLabel = new QLabel(tr("微秒"), this);
-    stepEdit = new QLineEdit(this);
-    speedEdit = new QLineEdit(this);
+    stepCombo = new QComboBox(this);//new QLineEdit(this); //步长
+    speedCombo = new QComboBox(this);
     colorCombo = new CcolorCombo(this);
     styleCombo = new QComboBox(this);
     modeCombo = new QComboBox(this);//CmodeCombo(this);
     gridLayout -> addWidget(borderCheck, 0, 0, 1, 2);
     gridLayout -> addWidget(stepLabel, 1, 0);
-    gridLayout -> addWidget(stepEdit, 1, 1);
+    gridLayout -> addWidget(stepCombo, 1, 1);
     gridLayout -> addWidget(pointsLabel, 1, 2);
     gridLayout -> addWidget(styleLabel, 2, 0);
     gridLayout -> addWidget(styleCombo, 2, 1);
@@ -151,7 +213,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     gridLayout -> addWidget(modeLabel, 3, 0);
     gridLayout -> addWidget(modeCombo, 3, 1);
     gridLayout -> addWidget(speedLabel, 4, 0);
-    gridLayout -> addWidget(speedEdit, 4, 1);
+    gridLayout -> addWidget(speedCombo, 4, 1);
     gridLayout -> addWidget(usLabel, 4, 2);
     borderGroup -> setLayout(gridLayout);
     //mainLayout -> addWidget(borderGroup, 1, 2);
@@ -163,6 +225,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     setLayout(hLayout);
 
   //-----------------------------------------------------
+  /*
    styleCombo->addItem(tr("1点顺时钟"));
    styleCombo->addItem(tr("2点顺时钟"));
    styleCombo->addItem(tr("3点顺时钟"));
@@ -180,7 +243,17 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    styleCombo->addItem(tr("6点逆时钟"));
    styleCombo->addItem(tr("7点逆时钟"));
    styleCombo->addItem(tr("8点逆时钟"));
+  */
 
+   QPixmap borderPixmap;
+   QImage borderImage;
+   for(int i = 0; i < S_NUM(Border_Data); i ++)
+    {
+       borderImage = getBorderImage(i, QColor(Qt::red));
+       borderPixmap.convertFromImage(borderImage);
+       styleCombo->addItem(QIcon(borderPixmap),tr("sss"), 0);
+
+   }
    modeCombo->addItem(tr("静态"));
    modeCombo->addItem(tr("闪烁"));
    modeCombo->addItem(tr("顺时钟移动"));
@@ -203,6 +276,26 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    playCountCheckProc((int)playCountCheck->checkState());
    //边框选择
    borderCheckProc((int)borderCheck->checkState());
+
+   stepCombo->addItem(tr("1"));
+   stepCombo->addItem(tr("2"));
+   stepCombo->addItem(tr("3"));
+   stepCombo->addItem(tr("4"));
+   stepCombo->addItem(tr("5"));
+   stepCombo->addItem(tr("6"));
+   stepCombo->addItem(tr("7"));
+   stepCombo->addItem(tr("8"));
+
+   speedCombo->addItem(tr("1最快"));
+   speedCombo->addItem(tr("2"));
+   speedCombo->addItem(tr("3"));
+   speedCombo->addItem(tr("4"));
+   speedCombo->addItem(tr("5"));
+   speedCombo->addItem(tr("6"));
+   speedCombo->addItem(tr("7"));
+   speedCombo->addItem(tr("8"));
+   speedCombo->addItem(tr("9"));
+   speedCombo->addItem(tr("10最慢"));
 
    //connect(weekCheck[7], SIGNAL(stateChanged(int)),this,SLOT(allWeekDayCheckProc(int)));
    connect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(dateTimerCheckProc(int)));
@@ -256,7 +349,7 @@ CprogProperty::~CprogProperty()
 
     QLabel *stepLabel,*styleLabel,*modeLabel,*speedLabel;
     QLabel *pointsLabel,*usLabel;
-    QLineEdit *stepEdit, *speedEdit;
+    QLineEdit *stepCombo, *speedCombo;
     QComboBox *styleCombo, *modeCombo;
  */
 //从settings设置到widget中
@@ -335,8 +428,14 @@ void CprogProperty::setSettingsToWidget(QString str)
     playCountEdit->setFixedWidth(50);
     //边框选择
     borderCheck->setChecked(settings.value("borderCheck").toBool());
-    stepEdit->setText(QString::number(settings.value("width").toInt()));
-    speedEdit->setText(QString::number(settings.value("speed").toInt()));
+    //stepCombo->setText(QString::number(settings.value("width").toInt()));
+    stepCombo->setCurrentIndex(settings.value("step").toInt());
+
+    //stepCombo->addItem(tr("2"));
+
+    speedCombo->setCurrentIndex(settings.value("speed").toInt());
+
+
     styleCombo->setCurrentIndex(settings.value("style").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
     modeCombo->setCurrentIndex(settings.value("mode").toInt());
@@ -424,10 +523,10 @@ void CprogProperty::getSettingsFromWidget(QString str)
       //边框选择
       //borderCheck->setChecked(settings.value("boderCheck").toBool());
     settings.setValue("borderCheck", QVariant(borderCheck->checkState()));
-    //stepEdit->setText(settings.value("width").toString());
-    settings.setValue("width", QVariant(stepEdit->text().toInt()));
-    //speedEdit->setText(settings.value("speed").toString());
-    settings.setValue("speed", QVariant(speedEdit->text().toInt()));
+    //stepCombo->setText(settings.value("width").toString());
+    settings.setValue("step", QVariant(stepCombo->currentIndex()));
+    //speedCombo->setText(settings.value("speed").toString());
+    settings.setValue("speed", QVariant(speedCombo->currentIndex()));
     //styleCombo->setCurrentIndex(settings.value("style").toInt());
     settings.setValue("style", QVariant(styleCombo->currentIndex()));
     //modeCombo->setCurrentIndex(settings.value("color").toInt());
@@ -514,8 +613,8 @@ void CprogProperty::borderCheckProc(int state)
 
     flag = (state==Qt::Unchecked)?false:true;
 
-    stepEdit->setEnabled(flag);
-    speedEdit->setEnabled(flag);
+    stepCombo->setEnabled(flag);
+    speedCombo->setEnabled(flag);
     styleCombo->setEnabled(flag);
     modeCombo->setEnabled(flag);
     colorCombo->setEnabled(flag);

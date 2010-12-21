@@ -46,6 +46,7 @@ INPUT(
 ./release\OS_Ext.o
 ./release\OS_Event.o
 ./release\OS_Core.o
+./release\Border_Show.o
 ./release\moc_mainwindow.o
 ./release\moc_showArea.o
 ./release\moc_progManage.o

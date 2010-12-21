@@ -36,11 +36,9 @@
 #define CHK_BYTE_LEN 3 //结构体中用于校验的字节数--一般是Head、Tail和CS
 #define CHK_HEAD_LEN 1 //结构体中用于校验的头字节数--一般是Head
 
-#define MAX_BORDER_POINTS 50
-
 typedef struct
 {
-    INT8U Head;
+  INT8U Head;
   INT8U Time[7];
   //INT8U CS[CS_BYTES];
   INT8U Tail;
@@ -103,7 +101,7 @@ typedef struct
   S_Open_Close_Time Open_Close_Time; //开关机时间
   S_Lightness Lightness; //强度
 
-  INT8U Program_Num; //节目数
+  INT8U Prog_Num; //节目数
   INT8U CS[CS_BYTES];
 
   INT8U Tail;
@@ -124,6 +122,7 @@ typedef struct
   S_Area Area[MAX_AREA_NUM]; //区域定义
   
   INT8U Border_Speed; //边框运行速度
+  INT8U Border_Mode;  //边框模式
   INT8U Border_Width;   //边框宽度
   INT8U Border_Height;  //边框高度
   INT8U Temp;   //备用
@@ -488,6 +487,8 @@ EXT S_Cur_Block_Index Cur_Block_Index;
 EXT S_Rcv_Show_Data Rcv_Show_Data;
 
 EXT S_Time Cur_Time; //当前时间 
+
+EXT INT8U Get_Screen_Color_Num();
 EXT void Read_Screen_Para();
 EXT INT8U Get_Show_Para_Len(INT8U Type);
 EXT STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No);

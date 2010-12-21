@@ -144,14 +144,14 @@ void OS_Task_Info_Check(void)
     if(OS_CHECK_STRUCT_HT(Tcb[i]) EQ 0)
     {
       OS_ASSERT_FAILED();
-      OS_Debug_Print("\r\nOS:Task %d env head or tail check error");
+      OS_Debug_Print("\r\nOS:Task %d env head or tail check error",i);
     }
     
 #if OS_CS_EN>0 
     if(OS_CHECK_STRUCT_SUM(Tcb[i]) EQ 0)
     {
       OS_ASSERT_FAILED();
-      OS_Debug_Print("\r\nOS:Task %d env CS check error");
+      OS_Debug_Print("\r\nOS:Task %d env CS check error",i);
     }
 #endif
   }
