@@ -145,26 +145,30 @@ void Copy_Area_Rect_2_Buf(INT8U *pDst, INT16U Dst_Size, S_Show_Data *pSrc, INT8U
 //Area_No分区号
 INT16U Get_Area_Width(INT8U Area_No)
 {
-  if(Area_No >= MAX_AREA_NUM)
+  if(Area_No < MAX_AREA_NUM)
+    return Prog_Para.Area[Area_No].X_Len;
+  else if(Area_No EQ MAX_AREA_NUM)
+    return Screen_Para.Width;
+  else
   {
     ASSERT_FAILED();
-    return 0;
-  }
-  
-  return Prog_Para.Area[Area_No].X_Len;
+    return 0; 
+  } 
 }
 
 //获取某个分区的高度
 //Area_No分区号
 INT16U Get_Area_Height(INT8U Area_No)
 {
-  if(Area_No >= MAX_AREA_NUM)
+  if(Area_No < MAX_AREA_NUM)
+    return Prog_Para.Area[Area_No].Y_Len;
+  else if(Area_No EQ MAX_AREA_NUM)
+    return Screen_Para.Height;
+  else
   {
     ASSERT_FAILED();
-    return 0;
-  }
-  
-  return Prog_Para.Area[Area_No].Y_Len;  
+    return 0; 
+  }  
 }
 
 //获取一个分区的像素个数,Area_No表示分区号

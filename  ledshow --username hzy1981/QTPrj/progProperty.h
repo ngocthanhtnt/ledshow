@@ -12,7 +12,7 @@
 #include <QComboBox>
 #include "colorCombo.h"
 
-
+#define MAX_BORDER_TYPE 10
 //节目属性窗
 class CprogProperty:public QWidget
 {
@@ -60,10 +60,12 @@ private:
 
     QLabel *stepLabel,*styleLabel,*modeLabel,*speedLabel;
     QLabel *pointsLabel,*usLabel;
-    QLineEdit *stepEdit, *speedEdit;
+    QComboBox *stepCombo, *speedCombo;
     QComboBox *styleCombo;
     QComboBox *modeCombo;
     CcolorCombo *colorCombo;
+
+    QPixmap borderPixmap[MAX_BORDER_TYPE];
 
     //QSrting settingsStr; //当前设置Str
 public slots:
@@ -84,4 +86,12 @@ public:
     ~CprogProperty();
 };
 
+typedef struct
+{
+  int Width;
+  int Height;
+
+  char Data[300];
+
+}S_Border_Data;
 #endif // PROGPROPERTY_H

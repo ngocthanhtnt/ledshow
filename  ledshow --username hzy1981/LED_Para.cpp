@@ -1,193 +1,13 @@
 #define LED_PARA_C
 #include "Includes.h"
-/*
-//用户参数文件大小配置
-const S_File_Para_Info Usr_Para_File_Info[] =
+
+//返回屏幕支持的颜色数
+INT8U Get_Screen_Color_Num()
 {
-  //{C_SCREEN_WH, 0}  0x01
-  {C_SCREEN_ADDR, 1 + 11},//0x02
-  {C_SCREEN_IP,   4 + 11}, //0x03
-  {C_SCREEN_BAUD, 1 + 11}, //0x04
-  {C_SCREEN_OC_TIME, 16 + 11},//0x05 //定时开关机时间
-  {C_SCREEN_LIGNTNESS, 8 + 11},//0x06 //亮度
-  //{C_SCREEN_TIME, 0x07}, //时间
-  
-};
-
-//工厂参数文件大小配置
-const S_File_Para_Info Fac_Para_File_Info[] =
-{
-  {C_SCREEN_WH, 5 + 11},//0x02
-  
-};
-*/
-/*
-文件布局：
-fac_para.cfg //工厂参数--出厂前设置
-屏幕大小
-user_para.cfg //用户参数--用户可自己设置
-地址
-IP地址
-波特率
-开关机时间
-亮度
-节目数
-
-prog_property00.cfg //节目0属性
-...
-prog_propertyAA.cfg //节目N数性
-
-show-00-00-00.dat //文件名意义: show-节目号-分区号-文件号
-......
-show-AA-BB-CC.dat    
-
-fac_para文件格式:
-cmd=01 屏长度与颜色帧
-
-use_para.cfg 文件格式
-cmd=0x02 屏地址，可读可写
-cmd=0x03 屏IP参数，可读可写
-cmd=0x04 通信速率，可读可写
-cmd=0x05 定时开关机，可读可写
-cmd=0x07 亮度设置，可读可写
-cmd=0x08 节目数
-prog_property00.cfg 文件格式
-
-*/
-/*
-//获取节目名字
-//获取显示数据文件名
-char * Get_Program_Data_File_Name(INT8U Prog_No, INT8U Area_No, char File_Name[])
-{
-  INT8U i;
-  
-  strcpy(File_Name, "show-");
-  i = 5;
-  
-  File_Name[i++] = '0' + Prog_No / 10;
-  File_Name[i++] = '0' + Prog_No % 10;
-  
-  File_Name[i++] = '-';
-  File_Name[i++] = '0' + Area_No / 10;
-  File_Name[i++] = '0' + Area_No % 10;
- 
-  File_Name[i] = '\0';
-  strcat(File_Name, ".dat");
-  
-  return File_Name;
+  return Screen_Para.Color + 1;
 }
 
-//获取节目数性文件名
-char * Get_Program_Property_File_Name(INT8U Prog_No, char File_Name[])
-{
-  INT8U i;
-  
-  strcpy(File_Name, "program_property-");
-  i = 17;
-  
-  File_Name[i++] = '0' + Prog_No / 10;
-  File_Name[i++] = '0' + Prog_No % 10;
-  File_Name[i] = '\0';
-  strcat(File_Name, ".pro");
-  
-  return File_Name;
-}
-
-//获取工厂参数文件名
-char * Get_Fac_Para_File_Name(char File_Name[])
-{
-  strcpy(File_Name, "fac_para.cfg");  
-  return File_Name;
-}
-
-//获取用户参数文件名
-char * Get_Usr_Para_File_Name(char File_Name[])
-{
-  strcpy(File_Name, "usr_para.cfg");
-  return File_Name;
-}
-
-
-
-//从文件中读取一帧
-//Offset 偏移
-//pDst 目标缓冲区
-//返回-1读取出错,无法读到，0表示文件已至结尾，>0读出的帧长
-INT32S File_Read_One_Frame(FILE_T File, INT32U Offset, INT8U *pSeq, INT16U *pCtrl, INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
-{
-  INT8S Re;
-  //INT8U Temp[10];
-  INT16U Len;
-  
-  //读取Offset偏移处的一帧
-  Re = File_Read(File, Offset, 4, pDst, pDst_Start, DstLen); //sizeof(Temp), Temp, Temp, sizeof(Temp));
-  if(Re <= 0)
-    return Re;
-  
-  //帧头是否正确
-  if(!(pDst[0] EQ FRAME_HEAD0 && pDst[1] EQ FRAME_HEAD1))
-  {
-    ASSERT_FAILED();
-    return FILE_FRAME_ERR;
-  }
-  
-  Len = pDst[2] + (INT16U)pDst[3] * 256; //帧长
-  Re = File_Read(File, Offset + 4, Len - 4, pDst + 4, pDst_Start, DstLen);
-  if(Re <= 0)
-    return Re;
-  
-  if(Check_Frame_Format(pDst, Len) EQ 0)//帧格式是否正确
-  {
-    ASSERT_FAILED();
-    return FILE_FRAME_ERR;
-  }
-  else
-    return Len;
-}
-
-
-
-//获取某一参数帧在参数文件中的存储位置和偏移以及存储在哪个文件中
-INT8U Get_Para_Frame_File_Off_Size(INT16U Ctrl_Code, char File_Name[], INT16U *pOffset, INT16U *pLen)
-{
-  INT8U i;
-  INT16U Off = 0;//Len = 0;
-  
-  if(Ctrl_Code EQ C_SCREEN_WH) //屏幕宽高
-  {
-    for(i = 0; i < S_NUM(Fac_Para_File_Info); i ++)
-    {
-      if(Ctrl_Code EQ Fac_Para_File_Info[i].Ctrl_Code)
-      {
-        *pOffset = Off;
-        *pLen = Fac_Para_File_Info[i].Len;
-        Get_Fac_Para_File_Name(File_Name);
-        return 1;
-      }
-      else
-        Off += Fac_Para_File_Info[i].Len;
-    }
-  }
-  else //其他参数都存储在用户参数文件
-  {
-    for(i = 0; i < S_NUM(Usr_Para_File_Info); i ++)
-    {
-      if(Ctrl_Code EQ Usr_Para_File_Info[i].Ctrl_Code)
-      {
-        *pOffset = Off;
-        *pLen = Usr_Para_File_Info[i].Len;
-        Get_Usr_Para_File_Name(File_Name);
-        return 1;
-      }
-      else
-        Off += Usr_Para_File_Info[i].Len;
-    }    
-  }
-  
-  return 0;
-}
-*/
-
+//获取不同显示参数的长度
 INT8U Get_Show_Para_Len(INT8U Type)
 {
   if(Type EQ SHOW_PIC)
@@ -362,7 +182,7 @@ INT8U Write_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pSrc, I
 //读取当前显示数据存储索引
 INT16U Read_Cur_Block_Index(void *pDst, void *pDst_Start, INT16U DstLen)
 {
-  STORA_DI SDI;
+  //STORA_DI SDI;
   INT16U Len;
   
   Len = Read_Storage_Data(SDI_CUR_BLOCK_INDEX, pDst, pDst_Start, DstLen); 
@@ -381,6 +201,11 @@ INT16U Read_Cur_Block_Index(void *pDst, void *pDst_Start, INT16U DstLen)
 
 }
 
+//检查读出的数据是否是某节目某分区的某文件的数据
+//Prog_No节目号
+//Area_No分区号
+//File_No文件号
+//pData读出的数据
 INT8U Check_Prog_Show_Data(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pData)
 {
   S_File_Para_Info *p = (S_File_Para_Info *)pData;
@@ -394,27 +219,45 @@ INT8U Check_Prog_Show_Data(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pD
   
 }
 
-INT16U Copy_Show_Pic_Data(INT8U Area_No, void *pSrc, INT16U Off, INT16U SrcLen, S_Show_Data *pDst)
+//复制图文数据,从读取到的缓冲区复制到Show_Data中
+//pSrc表示从存储器中读出的显示数据
+//Off表示pSrc起始的数据在一屏显示数据中的偏移
+//SrcLen表示pSrc起始的数据长度
+//pDst表示目标显示缓冲区
+//Area_No表示图文数据所在分区号
+//X、Y表示目标图形显示的坐标
+//Width,Height复制的图形的宽度和高度
+INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
+                     S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT16U Width, INT16U Height)
 {
-  INT16U Width,Height;
-  INT32U X,Y;
+  //INT16U Width,Height;
+  //INT32U X,Y;
   INT32U i,Len;
   INT8U Re;
-  //INT16U Index;
+  INT8U Screen_Color_Num;
 
   
-  Width = Get_Area_Width(Area_No);
-  Height = Get_Area_Height(Area_No);
-  
+  Screen_Color_Num = Get_Screen_Color_Num();
   Len = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1)); //每屏显示的数据长度
-
+  Len = Len * Screen_Color_Num; //屏幕支持的颜色数
+  
   Off = Off % Len; //Off在一屏显示数据中的偏移 
 
-  for(i = 0; i <SrcLen*8 && i<Len*8; i ++)
+  for(i = 0; i <SrcLen*8/Screen_Color_Num && i<Len*8/Screen_Color_Num; i ++)
   {
-    Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, i);
+    if(Screen_Color_Num EQ 1)  //单色屏
+      Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, i);
+    else if(Screen_Color_Num EQ 2) //双色屏
+      Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, ((i>>3)<<4) + (i & 0x07)) +\
+        (Get_Buf_Bit((INT8U *)pSrc, SrcLen, ((i>>3)<<4) + 8 + (i & 0x07))<<1);
+    else if(Screen_Color_Num EQ 3) //三色屏
+      Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + (i & 0x07)) +\
+        (Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + 8 + (i & 0x07))<<1)+
+        (Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + 16 + (i & 0x07))<<2);
+  
     X = (Off*8 + i) % Width;
     Y = (Off*8 + i) / Width;
+    
     if(X < Width && Y < Height) //X0,Y0必须在X_Len和Y_Len的范围内
       Set_Area_Point_Data(pDst, Area_No, X, Y, Re);
     else
@@ -425,26 +268,103 @@ INT16U Copy_Show_Pic_Data(INT8U Area_No, void *pSrc, INT16U Off, INT16U SrcLen, 
 }
 
 //读取当前节目的分区Area_No的第File_No文件的第SIndex屏的显示数据
-INT16U Read_Prog_Show_Data(INT8U Area_No, INT8U File_No, INT16U SIndex, S_Show_Data *pShow_Data)
+INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
+                      S_Show_Data *pShow_Data, INT16U X, INT16U Y)
 {
   INT16U Width,Height;
-  INT32U Len,Len0,Offset;
+  INT32U Len,DstLen, Offset;
   INT16U Index;
-
-  Width = Get_Area_Width(Area_No);
-  Height = Get_Area_Height(Area_No);
-  
-  Len = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));//每屏的字节数
-  //SLen = Len;
-  Len = Len * SIndex; //在整个显示数据中的起始位置
-
-  Index = Len / BLOCK_SHOW_DATA_LEN;//块偏移
-  Index += Prog_Status.Block_Index.Index[Area_No][File_No]; //起始块号
     
-  Offset = Len % BLOCK_SHOW_DATA_LEN; //在该块中的索引
+  if(Flag EQ SHOW_PIC) //图文
+  {
+    Width = Get_Area_Width(Area_No);
+    Height = Get_Area_Height(Area_No);
+   
+    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
+    
+    Index = (DstLen * SIndex) / BLOCK_SHOW_DATA_LEN;//块偏移
+    Index += Prog_Status.Block_Index.Index[Area_No][File_No]; //起始块号
+      
+    Offset = (DstLen * SIndex) % BLOCK_SHOW_DATA_LEN; //在该块中的索引   
+    X = 0;
+    Y = 0;
+  }
+  else if(Flag EQ SHOW_CLOCK) //表盘
+  {
+    Width = Prog_Status.File_Para[Area_No].Clock_Para.Text_Width;
+    Height = Prog_Status.File_Para[Area_No].Clock_Para.Text_Height;
+    
+    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
 
-  Len0 = 0;
-  while(Len0 < Len)
+    Index = Prog_Status.Block_Index.Index[Area_No][File_No];
+    Offset = 0;
+    X = Prog_Status.File_Para[Area_No].Clock_Para.Text_X;
+    Y = Prog_Status.File_Para[Area_No].Clock_Para.Text_Y;    
+  }
+  else if(Flag EQ SHOW_TIMER) //计时
+  {
+    Width = Prog_Status.File_Para[Area_No].Timer_Para.Text_Width;
+    Height = Prog_Status.File_Para[Area_No].Timer_Para.Text_Height;
+    
+    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
+
+    Index = Prog_Status.Block_Index.Index[Area_No][File_No];
+    Offset = 0;
+    X = Prog_Status.File_Para[Area_No].Timer_Para.Text_X;
+    Y = Prog_Status.File_Para[Area_No].Timer_Para.Text_Y;     
+  }
+  else if(Flag EQ SHOW_TIME) //日期时间
+  {
+    Width = Prog_Status.File_Para[Area_No].Time_Para.Text_Width;
+    Height = Prog_Status.File_Para[Area_No].Time_Para.Text_Height;
+    
+    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
+
+    Index = Prog_Status.Block_Index.Index[Area_No][File_No];
+    Offset = 0;
+    X = Prog_Status.File_Para[Area_No].Time_Para.Text_X;
+    Y = Prog_Status.File_Para[Area_No].Time_Para.Text_Y;     
+  }
+  else if(Flag EQ SHOW_LUN) //农历
+  {
+    Width = Prog_Status.File_Para[Area_No].Lun_Para.Text_Width;
+    Height = Prog_Status.File_Para[Area_No].Lun_Para.Text_Height;
+    
+    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
+
+    Index = Prog_Status.Block_Index.Index[Area_No][File_No];
+    Offset = 0;
+    X = Prog_Status.File_Para[Area_No].Lun_Para.Text_X;
+    Y = Prog_Status.File_Para[Area_No].Lun_Para.Text_Y;    
+  }
+  else if(Flag EQ SHOW_TEMP) //温度
+  {
+    Width = Prog_Status.File_Para[Area_No].Temp_Para.Text_Width;
+    Height = Prog_Status.File_Para[Area_No].Temp_Para.Text_Height;
+    
+    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
+
+    Index = Prog_Status.Block_Index.Index[Area_No][File_No];
+    Offset = 0;
+    X = Prog_Status.File_Para[Area_No].Temp_Para.Text_X;
+    Y = Prog_Status.File_Para[Area_No].Temp_Para.Text_Y;    
+  }
+  else
+  {
+    ASSERT_FAILED();
+    return;
+  }
+  
+  OS_Mutex_Pend(PUB_BUF_MUTEX_ID);
+  
+  Len = 0;
+  while(Len < DstLen)
   {
     if(Read_Storage_Data(SDI_SHOW_DATA + Index, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)) EQ 0)
       break;
@@ -457,12 +377,31 @@ INT16U Read_Prog_Show_Data(INT8U Area_No, INT8U File_No, INT16U SIndex, S_Show_D
     mem_cpy(Pub_Buf, Pub_Buf + BLOCK_HEAD_DATA_LEN + Offset, BLOCK_DATA_LEN - (BLOCK_HEAD_DATA_LEN + Offset), Pub_Buf, sizeof(Pub_Buf));   
     //将读到的数据复制到显示备份区
     
-    Len0 += Copy_Show_Pic_Data(Area_No, Pub_Buf, Len0, BLOCK_DATA_LEN - (BLOCK_HEAD_DATA_LEN + Offset), pShow_Data);
+    Len += Copy_Show_Data(Pub_Buf, Len, BLOCK_DATA_LEN - (BLOCK_HEAD_DATA_LEN + Offset), \
+                           pShow_Data, Area_No, X, Y, Width, Height);
     Index++;
     Offset = 0;
   }
   
-  return Len0;
+  OS_Mutex_Post(PUB_BUF_MUTEX_ID);
+  return Len;
+  
+}
+
+//删除某个节目的所有显示数据
+void Clr_Prog_Show_Data(INT8U Prog_No)
+{
+  
+  
+}
+
+//清除所有的显示数据
+void Clr_All_Show_Data()
+{
+  INT8U i;
+
+  for(i = 0; i < Screen_Para.Prog_Num; i ++)
+    Clr_Prog_Show_Data(i);
   
 }
 
@@ -500,7 +439,7 @@ typedef struct
 }S_Prog_Show_Data;
 */
 //保存节目数据帧
-INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
+INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 {
   static S_File_Para_Info File_Para_Info;
   INT8U Prog_No, Area_No, File_No, Type;
@@ -596,7 +535,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 //删除节目数据
 INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen)
 {
-
+  return 1;
 }
 
 
@@ -605,24 +544,23 @@ INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen)
 //读取节目参数
 //Prog节目号
 //返回值1 表示读取成功。0表示没有这个节目或者读取不成功
-INT8U Read_Prog_Para(INT8U Prog_No)
-{/*
-  char File_Name[MAX_FILE_NAME_SIZE];
-  FILE_T File;
-  INT16U Ctrl, Len;
-  INT8U Seq;
+INT16U Read_Prog_Para(INT8U Prog_No)
+{
+  INT16U Len;
   
-  Get_Program_Property_File_Name(Prog_No, File_Name);
-  File = File_Open(File_Name, FILE_R);
-  Len = File_Read_One_Frame(File, 0, &Seq, &Ctrl, (INT8U *)&Prog_Para, (INT8U *)&Prog_Para, sizeof(Prog_Para));
-  File_Close(File);
-  if(Len > 0)
-    return 1;
-  else
-  {
-    ASSERT_FAILED();
-    return 0;
-  }*/
+  Len = Read_Storage_Data(SDI_PROG_PARA + Prog_No, &Prog_Para.Prog_No, &Prog_Para, sizeof(Prog_Para));
+
+#ifdef SDI_PROG_PARA_BK0
+  if(Len EQ 0)
+    Len = Read_Storage_Data(SDI_PROG_PARA_BK0 + Prog_No, &Prog_Para.Prog_No, &Prog_Para, sizeof(Prog_Para));
+#endif
+
+#ifdef SDI_PROG_PARA_BK1
+  if(Len EQ 0)
+    Len = Read_Storage_Data(SDI_PROG_PARA_BK1 + Prog_No, &Prog_Para.Prog_No, &Prog_Para, sizeof(Prog_Para));
+#endif 
+  
+  return Len;
 }
 
 //定时信息中，星期的第0位表示星期1，第6位表示星期六

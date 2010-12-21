@@ -1,8 +1,9 @@
 
 #define CS_BYTES 1
 #define ROM_CS_BYTES 2
+#define MAX_BORDER_POINTS 50
 
-#define QT_EN 1 //使用QT仿真
+#define QT_EN 0 //使用QT仿真
 
 #if QT_EN == 0 //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 1

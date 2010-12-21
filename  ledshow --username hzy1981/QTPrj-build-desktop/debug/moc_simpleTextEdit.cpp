@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'simpleTextEdit.h'
 **
-** Created: Sun Dec 19 21:16:37 2010
+** Created: Tue Dec 21 12:51:13 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
