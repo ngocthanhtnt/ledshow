@@ -2,7 +2,7 @@
 #include "Includes.h"
 
 
-
+/*
 //获取得颜色
 INT8U Get_Color()
 {
@@ -13,7 +13,7 @@ INT8U Get_Color()
     return Screen_Para.Color;
   } 
 }  
-
+*/
 //获取缓冲区中第Index位的值
 INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index)
 {
@@ -322,6 +322,26 @@ void Copy_Bits_2_Area(INT8U *pSrc, INT16U Src_Len, INT16U Width, INT32U Bits, \
 }
 */
 
+INT8U Get_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT16U Width, INT16U X, INT16U Y)
+{
+  INT32U Index;
+
+  Index = (((Y>>3) * Width) + X)*8 + (Y & 0x07);
+  
+  if(Color EQ 0)  //单色屏
+    return Get_Buf_Bit(Buf, Buf_Len,Index);
+  else if(Color EQ 1) //双色屏
+    return Get_Buf_Bit(Buf, Buf_Len, ((Index>>3)<<4) + (Index & 0x07)) +\
+      (Get_Buf_Bit(Buf, Buf_Len, ((Index>>3)<<4) + 8 + (Index & 0x07))<<1);
+  else if(Color EQ 2) //三色屏
+    return Get_Buf_Bit(Buf, Buf_Len, (Index>>3)*24 + (Index & 0x07)) +\
+      (Get_Buf_Bit(Buf, Buf_Len, (Index>>3)*24 + 8 + (Index & 0x07))<<1)+
+      (Get_Buf_Bit(Buf, Buf_Len, (Index>>3)*24 + 16 + (Index & 0x07))<<2);
+  else
+    return 0;  
+  
+}
+
 //当前节目的某点数据,第0位到第2位分别为三种颜色
 //pSrc_Buf，显示数据buf
 //Area_No，分区号
@@ -332,12 +352,12 @@ INT8U Get_Area_Point_Data(S_Show_Data *pSrc_Buf, INT8U Area_No, INT16U X, INT16U
 
   Index = Get_Area_Point_Index(Area_No, X, Y);
   
-  if(Screen_Para.Color EQ 0)  //单色屏
+  if(Screen_Para.Color < 3 || Screen_Para.Color EQ 4)  //0,1,2,4单色屏
     return Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data),Index);
-  else if(Screen_Para.Color EQ 1) //双色屏
+  else if(Screen_Para.Color EQ 3 || Screen_Para.Color EQ 5 || Screen_Para.Color EQ 6) //双色屏
     return Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), ((Index>>3)<<4) + (Index & 0x07)) +\
       (Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), ((Index>>3)<<4) + 8 + (Index & 0x07))<<1);
-  else if(Screen_Para.Color EQ 2) //三色屏
+  else if(Screen_Para.Color EQ 7) //三色屏
     return Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), (Index>>3)*24 + (Index & 0x07)) +\
       (Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), (Index>>3)*24 + 8 + (Index & 0x07))<<1)+
       (Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), (Index>>3)*24 + 16 + (Index & 0x07))<<2);
@@ -351,12 +371,12 @@ INT8U Get_Area_Offset_Len(S_Show_Data *pBuf, INT8U Area_No, INT8U **pOff, INT16U
   
   Index = Get_Area_Point_Index(Area_No, X, Y);
  
-  if(Screen_Para.Color EQ 0)  //单色屏
+  if(Screen_Para.Color < 3 || Screen_Para.Color EQ 4)  //单色屏
     return Get_Buf_Bit(pSrc_Buf->One_Color_Data.Color0, sizeof(pSrc_Buf->One_Color_Data.Color0),Index);
-  else if(Screen_Para.Color EQ 1) //双色屏
+  else if(Screen_Para.Color EQ 3 || Screen_Para.Color EQ 5 || Screen_Para.Color EQ 6) //双色屏
     return Get_Buf_Bit(pSrc_Buf->Two_Color_Data.Color0, sizeof(pSrc_Buf->Two_Color_Data.Color0), Index) +\
       (Get_Buf_Bit(pSrc_Buf->Two_Color_Data.Color1, sizeof(pSrc_Buf->Two_Color_Data.Color1), Index) << 1);
-  else if(Screen_Para.Color EQ 2) //三色屏
+  else if(Screen_Para.Color EQ 7) //三色屏
     return Get_Buf_Bit(pSrc_Buf->Three_Color_Data.Color0, sizeof(pSrc_Buf->Two_Color_Data.Color0), Index) + \
       (Get_Buf_Bit(pSrc_Buf->Three_Color_Data.Color1, sizeof(pSrc_Buf->Three_Color_Data.Color1), Index) << 1) +\
         (Get_Buf_Bit(pSrc_Buf->Three_Color_Data.Color2, sizeof(pSrc_Buf->Three_Color_Data.Color2), Index) << 2);
@@ -365,6 +385,29 @@ INT8U Get_Area_Offset_Len(S_Show_Data *pBuf, INT8U Area_No, INT8U **pOff, INT16U
   
 }
 */
+
+void Set_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT8U Width, INT16U X, INT16U Y, INT8U Value)
+{
+  INT32U Index;
+  
+  Index = (((Y>>3) * Width) + X)*8 + (Y & 0x07);
+  
+  if(Color EQ 0)  //单色屏
+    Set_Buf_Bit(Buf, Buf_Len,Index, (Value & 0x01));
+  else if(Color EQ 1) //双色屏
+  {
+    Set_Buf_Bit(Buf, Buf_Len, ((Index>>3)<<4) + (Index & 0x07), (Value & 0x01));
+    Set_Buf_Bit(Buf, Buf_Len, ((Index>>3)<<4) + 8+ (Index & 0x07), (Value & 0x02)>>1);
+  }
+  else if(Color EQ 2) //三色屏
+  {
+    Set_Buf_Bit(Buf, Buf_Len, (Index>>3)*24 + (Index & 0x07), (Value & 0x01));
+    Set_Buf_Bit(Buf, Buf_Len, (Index>>3)*24 + 8 + (Index & 0x07), (Value & 0x02)>>1);
+    Set_Buf_Bit(Buf, Buf_Len, (Index>>3)*24 + 16 + (Index & 0x07), (Value & 0x04)>>2);
+  }  
+}
+
+
 //设置某节目区域中某点的数据,第0-2位分别表示三种颜色
 //pDst_Buf，设置该显示缓冲中的点
 //Area_No表示分区号
@@ -376,14 +419,14 @@ void Set_Area_Point_Data(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U 
   
   Index = Get_Area_Point_Index(Area_No, X, Y);
   
-  if(Screen_Para.Color EQ 0)  //单色屏
+  if(Screen_Para.Color < 3 || Screen_Para.Color EQ 4)  //0,1,2,4单色屏
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data),Index, (Value & 0x01));
-  else if(Screen_Para.Color EQ 1) //双色屏
+  else if(Screen_Para.Color EQ 3 || Screen_Para.Color EQ 5 || Screen_Para.Color EQ 6) //双色屏
   {
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data), ((Index>>3)<<4) + (Index & 0x07), (Value & 0x01));
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data), ((Index>>3)<<4) + 8+ (Index & 0x07), (Value & 0x02)>>1);
   }
-  else if(Screen_Para.Color EQ 2) //三色屏
+  else if(Screen_Para.Color EQ 7) //三色屏
   {
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data), (Index>>3)*24 + (Index & 0x07), (Value & 0x01));
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data), (Index>>3)*24 + 8 + (Index & 0x07), (Value & 0x02)>>1);

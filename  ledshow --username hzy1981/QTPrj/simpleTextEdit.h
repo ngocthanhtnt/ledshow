@@ -136,7 +136,7 @@ class CtimeDiffEdit:public QGroupBox
 {
     Q_OBJECT
 private:
-    QComboBox *diffCheck;
+    QComboBox *diffFlag;
     QSpinBox *hourEdit;
     QSpinBox *minEdit;
 

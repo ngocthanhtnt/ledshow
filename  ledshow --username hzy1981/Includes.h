@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "stdarg.h"
 #include "math.h"
+#include "time.h"
 #include "LED_Cfg.h"
 #include "OS_Includes.h"
 #include "QT_SIM.h"

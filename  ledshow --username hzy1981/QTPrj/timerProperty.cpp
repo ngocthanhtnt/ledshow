@@ -197,6 +197,12 @@ void getTimerParaFromSettings(QString str, U_File_Para &para)
     para.Timer_Para.SmLineFlag = settings.value("smLineCheck").toBool();
     settings.endGroup();
 
+    settings.beginGroup("timeDiff");
+    para.Clock_Para.Diff_Flag = settings.value("diffFlag").toInt();
+    para.Clock_Para.Hour_Diff = settings.value("hour").toInt();
+    para.Clock_Para.Min_Diff = settings.value("min").toInt();
+    settings.endGroup();
+
     settings.endGroup();
 }
 

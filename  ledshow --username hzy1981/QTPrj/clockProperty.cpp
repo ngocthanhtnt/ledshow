@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+ #include "mainwindow.h"
 #include "showArea.h"
 #include "clockProperty.h"
 #include "colorCombo.h"
@@ -409,6 +409,12 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     tmp = settings.value("fontSizeIndex").toInt();
     tmp = settings.value("fontName").toString();
     */
+    //settings.beginGroup(str);
+    settings.beginGroup("timeDiff");
+    para.Clock_Para.Diff_Flag = settings.value("diffFlag").toInt();
+    para.Clock_Para.Hour_Diff = settings.value("hour").toInt();
+    para.Clock_Para.Min_Diff = settings.value("min").toInt();
+    settings.endGroup();
     settings.endGroup();
 }
 

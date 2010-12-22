@@ -57,22 +57,81 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
    Fill_Clock_Line(pDst_Buf, Area_No, &Point, 90 - 360 * pTime->Time[T_SEC] / 60, Radius * 12 / 10,\
                    pClock_Para->Sec_Line_Width, pClock_Para->Sec_Line_Color);
 }
+/*
+struct tm {
+    int tm_sec;        seconds after the minute (from 0)
+    int tm_min;        minutes after the hour (from 0)
+    int tm_hour;       hour of the day (from 0)
+    int tm_mday;       day of the month (from 1)
+    int tm_mon;        month of the year (from 0)
+    int tm_year;       years since 1900 (from 0)
+    int tm_wday;       days since Sunday (from 0)
+    int tm_yday;       day of the year (from 0)
+    int tm_isdst;      Daylight Saving Time flag
+    };
+*/
 
+//S_Time类型转到tm类型
+void S_Time_2_tm(S_Time *pTime, struct tm *ptm)
+{
+  ptm -> tm_sec = pTime->Time[T_SEC];
+  ptm -> tm_min = pTime->Time[T_MIN];
+  ptm -> tm_hour = pTime->Time[T_HOUR];
+  ptm -> tm_mday = pTime->Time[T_DATE];
+  ptm -> tm_mon = pTime->Time[T_MONTH] - 1;
+  ptm -> tm_year = (int)pTime->Time[T_YEAR] + 2000 - 1900; 
+  ptm -> tm_isdst = 0;
+}
+
+//tm类型转到S_Time类型
+void tm_2_S_Time(struct tm *ptm, S_Time *pTime)
+{
+  pTime->Time[T_SEC] = (INT8U)(ptm -> tm_sec);
+  pTime->Time[T_MIN] = (INT8U)(ptm -> tm_min);
+  pTime->Time[T_HOUR] = (INT8U)(ptm -> tm_hour);
+  pTime->Time[T_DATE] = (INT8U)(ptm -> tm_mday);
+  pTime->Time[T_MONTH] = (INT8U)(ptm -> tm_mon + 1);
+  pTime->Time[T_YEAR] = (INT8U)(ptm -> tm_year + 1900 - 2000); 
+}
 
 //更新表盘数据
 void Update_Clock_Data(INT8U Area_No)
 {
-  //INT16U X_Len, Y_Len;
   S_Point P0;
   INT16S tmp;
   INT16U Width,Height;
   INT8U Font;
   INT16U StrWidth, StrHeight;
-
+  time_t CurSec;
+  S_Time sTime;
+  struct tm tTime, *ptm;
+  
   Width = Get_Area_Width(Area_No);
   Height = Get_Area_Height(Area_No);
 
-  Show_Clock(&Show_Data, Area_No, &Cur_Time, &Prog_Status.File_Para[Area_No].Clock_Para);
+  //是否需要调整时差
+  if(Prog_Status.File_Para[Area_No].Clock_Para.Hour_Diff != 0 ||\
+     Prog_Status.File_Para[Area_No].Clock_Para.Min_Diff != 0)
+  {
+    S_Time_2_tm(&Cur_Time, &tTime);
+    CurSec = mktime(&tTime);
+    
+    if(Prog_Status.File_Para[Area_No].Clock_Para.Diff_Flag EQ 0) //增加
+      CurSec += Prog_Status.File_Para[Area_No].Clock_Para.Hour_Diff*3600 +\
+                Prog_Status.File_Para[Area_No].Clock_Para.Min_Diff*60;
+    else
+      CurSec -= Prog_Status.File_Para[Area_No].Clock_Para.Hour_Diff*3600 +\
+                Prog_Status.File_Para[Area_No].Clock_Para.Min_Diff*60;
+    
+    ptm = localtime(&CurSec);
+    tm_2_S_Time(ptm, &sTime); 
+  }
+  else
+  {
+    mem_cpy(&sTime, &Cur_Time, sizeof(Cur_Time), &sTime, sizeof(sTime)); 
+  }
+  
+  Show_Clock(&Show_Data, Area_No, &sTime, &Prog_Status.File_Para[Area_No].Clock_Para);
 
   //----------固定文本---------
   tmp = (INT16S)(Width * Prog_Status.File_Para[Area_No].Clock_Para.Text_X / 100) - (INT16S)Prog_Status.File_Para[Area_No].Clock_Para.Text_Width/2;

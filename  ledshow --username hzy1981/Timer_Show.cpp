@@ -45,13 +45,13 @@ const S_Format_Str TimerStr[]=
 INT16U Show_Timer(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Time *pCurTime, S_Time *pDstTime, INT8U Type, INT8U Font, INT8U Color)
 {
     INT16U d,h,m,s,Len = 0;
-    INT32U CurSec, DstSec, DiffSec;
-
-    CurSec = mktime(pCurTime->Time[T_YEAR] + 2000, pCurTime->Time[T_MONTH], pCurTime->Time[T_DATE],\
-                    pCurTime->Time[T_HOUR], pCurTime->Time[T_MIN], pCurTime->Time[T_SEC]);
-
-    DstSec = mktime(pDstTime->Time[T_YEAR] + 2000, pDstTime->Time[T_MONTH], pDstTime->Time[T_DATE],\
-                    pCurTime->Time[T_HOUR], pDstTime->Time[T_MIN], pDstTime->Time[T_SEC]);
+    time_t CurSec, DstSec, DiffSec;
+    struct tm tTime;
+    
+    S_Time_2_tm(pCurTime, &tTime);
+    CurSec = mktime(&tTime);
+    S_Time_2_tm(pDstTime, &tTime);
+    DstSec = mktime(&tTime);
 
     if(CurSec > DstSec)
         DiffSec = CurSec - DstSec;
@@ -208,22 +208,6 @@ INT16U Get_Timer_Min_Height(INT8U Area_No)
     {
         return Prog_Status.File_Para[Area_No].Timer_Para.Text_Height + StrHeight;
     }
-}
-
-INT32U mktime(INT16U year, INT16U mon, \
-INT16U day, INT16U hour, \
-INT16U min, INT16U sec)
-{
-  //INT16U mon = mon0, year = year0;
-
-  /* 1..12 -> 11,12,1..10 */
-  if(0 >= (int) (mon -= 2))
-  {
-    mon += 12;    /* Puts Feb last since it has leap day */
-    year -= 1;
-  }
-
-  return ((((INT32U) (year / 4 - year / 100 + year / 400 + 367 * mon / 12 + day) + year * 365 - 719499) * 24 + hour /* now have hours */) * 60 + min /* now have minutes */) * 60 + sec; /* finally seconds */
 }
 
 //更新定时器数据

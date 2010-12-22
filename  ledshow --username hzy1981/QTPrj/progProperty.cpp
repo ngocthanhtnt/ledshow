@@ -2,7 +2,10 @@
 #include "..\Includes.h"
 #include <QSettings>
 #include <QDate>
+#include "mainwindow.h"
 
+
+extern MainWindow *w;
 extern QSettings settings;
 
 //定义边框数据
@@ -60,8 +63,8 @@ QImage getBorderImage(int index, QColor color)
              border.setPixel(i, j, color.rgb());
    }
 
-   border = border.scaled(border.width()*4, border.height()*10);
-   border.save("d:\\border.png");
+   //border = border.scaled(border.width(), border.height());
+   //border.save("d:\\border.png");
    return border;
 }
 
@@ -245,15 +248,20 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    styleCombo->addItem(tr("8点逆时钟"));
   */
 
-   QPixmap borderPixmap;
-   QImage borderImage;
+
+   styleCombo->setIconSize(QSize(40,8));
+
    for(int i = 0; i < S_NUM(Border_Data); i ++)
     {
+       QPixmap borderPixmap;
+       QImage borderImage;
        borderImage = getBorderImage(i, QColor(Qt::red));
+       borderImage = borderImage.scaled(borderImage.width()*10, borderImage.height()*20);
        borderPixmap.convertFromImage(borderImage);
-       styleCombo->addItem(QIcon(borderPixmap),tr("sss"), 0);
+       styleCombo->addItem(QIcon(borderPixmap), QString("%1").arg(Border_Data[i].Height));
 
    }
+
    modeCombo->addItem(tr("静态"));
    modeCombo->addItem(tr("闪烁"));
    modeCombo->addItem(tr("顺时钟移动"));
@@ -620,4 +628,76 @@ void CprogProperty::borderCheckProc(int state)
     colorCombo->setEnabled(flag);
 }
 
+/*
+typedef struct
+{
+  INT8U Head;
+  INT8U Prog_No; //节目号
+  //INT8U Program_Cycles; //循环次数
+  //INT16U Program_Stay_Sec; //停留秒数
+  S_Program_Timing Timing[3]; //节目定时设置
+  INT8U Area_Num; //分区数
+  INT8U Main_Area_No; //主分区号
+  INT8U Area_File_Num[MAX_AREA_NUM]; //每分区文件数
+  S_Area Area[MAX_AREA_NUM]; //区域定义
 
+  INT8U Border_Speed; //边框运行速度
+  INT8U Border_Mode;  //边框模式
+  INT8U Border_Width;   //边框宽度
+  INT8U Border_Height;  //边框高度
+  INT8U Temp;   //备用
+  INT8U Border_Data[3*MAX_BORDER_POINTS/8]; //边框数据
+
+  INT8U CS[CS_BYTES];
+
+  INT8U Tail;
+}S_Prog_Para;
+ */
+void getProgParaFromSettings(QString str, S_Prog_Para &para)
+{
+  int index;
+  INT8U color;
+  INT8U Re;
+
+  color = Screen_Para.Color;//w->screenArea->screenPara.Color;
+
+  settings.beginGroup(str);
+  index = settings.value("style").toInt();
+  para.Border_Width = Border_Data[index].Width;
+  para.Border_Height = Border_Data[index].Height;
+
+  for(int i = 0; i < para.Border_Width; i ++)
+      for(int j = 0; j < para.Border_Height; j++)
+      {
+     //Re = Get_Buf_Point_Data((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data), color, Border_Data[index].Width, i, j);
+      Re = Get_Rect_Buf_Bit((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data),\
+                       para.Border_Width, i, j);
+      Set_Buf_Point_Data((INT8U *)para.Border_Data, sizeof(para.Border_Data), color, para.Border_Width, i, j, Re);
+   }
+/*
+  for(int i = 0; i < para.Border_Width; i ++)
+      for(int j = 0; j < para.Border_Height; j ++)
+  {
+    Get_Rect_Buf_Bit(Border_Data[index].Data, sizeof(Border_Data[index].Data),\
+                     para.Border_Width, i, j);
+
+    int Index = (((Y>>3) * para.Border_Width) + X)*8 + (Y & 0x07);
+
+    if(Screen_Para.Color EQ 0)  //单色屏
+      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data),Index, (Value & 0x01));
+    else if(Screen_Para.Color EQ 1) //双色屏
+    {
+      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), ((Index>>3)<<4) + (Index & 0x07), (Value & 0x01));
+      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), ((Index>>3)<<4) + 8+ (Index & 0x07), (Value & 0x02)>>1);
+    }
+    else if(Screen_Para.Color EQ 2) //三色屏
+    {
+      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), (Index>>3)*24 + (Index & 0x07), (Value & 0x01));
+      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), (Index>>3)*24 + 8 + (Index & 0x07), (Value & 0x02)>>1);
+      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), (Index>>3)*24 + 16 + (Index & 0x07), (Value & 0x04)>>2);
+    }
+  }
+*/
+  //memcpy(para.Border_Data, Border_Data[index].Data, sizeof(Border_Data[index].Data));
+  settings.endGroup();
+}

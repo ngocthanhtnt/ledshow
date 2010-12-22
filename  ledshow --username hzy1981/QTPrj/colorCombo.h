@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QComboBox>
 #include <QColor>
+#include "..\Includes.h"
 
 #define RED_INDEX 0
 #define YEL_INDEX 1
@@ -31,4 +32,5 @@ public:
     ~CcolorCombo();
 };
 
+QColor getQColor(INT8U colorData);
 #endif // COLORCOMBO_H

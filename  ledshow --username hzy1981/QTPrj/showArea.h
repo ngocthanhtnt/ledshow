@@ -74,6 +74,10 @@ public:
     bool smLineFlag; //单多行标志
     int page;  //显示的页号
     //--------------------
+    S_Screen_Para screenPara; //屏幕参数
+    S_Prog_Para progPara; //节目参数
+
+    //-----------------------
     U_File_Para filePara; //该分区的显示参数
     int color;
     bool focusFlag;

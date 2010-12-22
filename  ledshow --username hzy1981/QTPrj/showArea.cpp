@@ -1087,6 +1087,9 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             //if(colorData != 0)
               //qDebug("point %d,%d = %d", i, j, colorData);
+           painter.setPen(getQColor(colorData));
+           painter.drawPoint(i,j);
+           /*
            if(colorData & 0x01)
            {
                painter.setPen(QColor(Qt::red));
@@ -1108,6 +1111,7 @@ void CshowArea::paintEvent(QPaintEvent *)
                painter.setPen(QColor(Qt::black));
                painter.drawPoint(i,j);
            }
+           */
        }
     }
 /*
@@ -1209,7 +1213,7 @@ void CshowArea::resetProgramPara()
 {
     Screen_Para.Width = geometry().width();
     Screen_Para.Height = geometry().height();
-    Screen_Para.Color = getColor();
+    //Screen_Para.Color = 0x07;//getColor();
 
     Prog_Para.Area_Num = 1;
     Prog_Para.Area[0].X = 0;

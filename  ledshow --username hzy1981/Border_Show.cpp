@@ -1,23 +1,12 @@
 #define BORDER_SHOW_C
 #include "Includes.h"
+
 //获取边框数据
 //X\Y表示在边框数据块内的索引
-
 INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y) //获取一个区域内一个点的数据
 {
-  INT32U Index;
-
-  Index = (((Y>>3) * Prog_Para.Border_Width) + X)*8 + (Y & 0x07);//Get_Area_Point_Index(Area_No, X, Y);
-  
-  if(Screen_Para.Color EQ 0)  //单色屏
-    return Get_Buf_Bit(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data),Index);
-  else if(Screen_Para.Color EQ 1) //双色屏
-    return Get_Buf_Bit(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data), ((Index>>3)<<4) + (Index & 0x07)) +\
-      (Get_Buf_Bit(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data), ((Index>>3)<<4) + 8 + (Index & 0x07))<<1);
-  else if(Screen_Para.Color EQ 2) //三色屏
-    return Get_Buf_Bit(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data), (Index>>3)*24 + (Index & 0x07)) +\
-      (Get_Buf_Bit(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data), (Index>>3)*24 + 8 + (Index & 0x07))<<1)+
-      (Get_Buf_Bit(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data), (Index>>3)*24 + 16 + (Index & 0x07))<<2);
+  if(Area_No EQ MAX_AREA_NUM)
+    return Get_Buf_Point_Data(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data), Screen_Para.Color, Prog_Para.Border_Width, X, Y);   
   else
     return 0;
 }

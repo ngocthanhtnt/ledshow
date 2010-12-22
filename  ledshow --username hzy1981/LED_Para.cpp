@@ -4,7 +4,14 @@
 //返回屏幕支持的颜色数
 INT8U Get_Screen_Color_Num()
 {
-  return Screen_Para.Color + 1;
+  if(Screen_Para.Color < 3 || Screen_Para.Color EQ 4)
+      return 1;
+  else if(Screen_Para.Color EQ 3 || Screen_Para.Color EQ 5 || Screen_Para.Color EQ 6)
+      return 2;
+  else if(Screen_Para.Color EQ 7)
+      return 3;
+  else
+      return 0;
 }
 
 //获取不同显示参数的长度
@@ -358,7 +365,7 @@ INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
   else
   {
     ASSERT_FAILED();
-    return;
+    return 0;
   }
   
   OS_Mutex_Pend(PUB_BUF_MUTEX_ID);
