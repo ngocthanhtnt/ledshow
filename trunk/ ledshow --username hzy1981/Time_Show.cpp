@@ -296,13 +296,38 @@ void Update_Time_Data(INT8U Area_No)
   S_Point P0;
   INT16U Width,Height;
   INT16U Min_Width, Min_Height;
-
+  time_t CurSec;
+  S_Time sTime;
+  struct tm tTime, *ptm;
+  
   Width = Get_Area_Width(Area_No);
   Height = Get_Area_Height(Area_No);
 
   Min_Width = Get_Time_Min_Width(Area_No);
   Min_Height = Get_Time_Min_Height(Area_No);
 
+  //是否需要调整时差
+  if(Prog_Status.File_Para[Area_No].Time_Para.Hour_Diff != 0 ||\
+     Prog_Status.File_Para[Area_No].Time_Para.Min_Diff != 0)
+  {
+    S_Time_2_tm(&Cur_Time, &tTime);
+    CurSec = mktime(&tTime);
+    
+    if(Prog_Status.File_Para[Area_No].Time_Para.Diff_Flag EQ 0)
+      CurSec += Prog_Status.File_Para[Area_No].Time_Para.Hour_Diff*3600 +\
+                Prog_Status.File_Para[Area_No].Time_Para.Min_Diff*60;
+    else
+      CurSec -= Prog_Status.File_Para[Area_No].Time_Para.Hour_Diff*3600 +\
+                Prog_Status.File_Para[Area_No].Time_Para.Min_Diff*60;
+    
+    ptm = localtime(&CurSec);
+    tm_2_S_Time(ptm, &sTime); 
+  }
+  else
+  {
+    mem_cpy(&sTime, &Cur_Time, sizeof(Cur_Time), &sTime, sizeof(sTime));
+  }
+  
   if(Prog_Status.File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
   {
     if(Width > Min_Width)
@@ -335,7 +360,7 @@ void Update_Time_Data(INT8U Area_No)
         else
           P0.Y = 0;
 
-        Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+        Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &sTime, \
                   Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font, Prog_Status.File_Para[Area_No].Time_Para.Date_Color);
 
         X +=  SPACE_WIDTH + Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
@@ -349,7 +374,7 @@ void Update_Time_Data(INT8U Area_No)
         else
           P0.Y = 0;
 
-        Show_Week(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+        Show_Week(&Show_Data, Area_No, P0.X, P0.Y, &sTime, \
                   Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font, Prog_Status.File_Para[Area_No].Time_Para.Week_Color);
 
         X += SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
@@ -363,7 +388,7 @@ void Update_Time_Data(INT8U Area_No)
         else
           P0.Y = 0;
 
-        Show_Time(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+        Show_Time(&Show_Data, Area_No, P0.X, P0.Y, &sTime, \
                   Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font, Prog_Status.File_Para[Area_No].Time_Para.Time_Color);
 
         X += SPACE_WIDTH + Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
@@ -396,7 +421,7 @@ void Update_Time_Data(INT8U Area_No)
           else
             P0.X = 0;
 
-          Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+          Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &sTime, \
                     Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font, Prog_Status.File_Para[Area_No].Time_Para.Date_Color);
 
           Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Date_Font);//Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
@@ -410,7 +435,7 @@ void Update_Time_Data(INT8U Area_No)
           else
             P0.X = 0;
 
-          Show_Week(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+          Show_Week(&Show_Data, Area_No, P0.X, P0.Y, &sTime, \
                     Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font, Prog_Status.File_Para[Area_No].Time_Para.Week_Color);
 
           Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font);//SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
@@ -424,7 +449,7 @@ void Update_Time_Data(INT8U Area_No)
           else
             P0.X = 0;
 
-          Show_Time(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+          Show_Time(&Show_Data, Area_No, P0.X, P0.Y, &sTime, \
                     Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font, Prog_Status.File_Para[Area_No].Time_Para.Time_Color);
 
           //X += SPACE_WIDTH + Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);

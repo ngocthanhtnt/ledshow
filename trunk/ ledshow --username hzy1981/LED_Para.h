@@ -12,7 +12,7 @@
 #endif
 
 //时间索引
-#define T_YEAR  0
+#define T_YEAR  0 //--除了日和年其他都从0开始计起。日从1计起，年从1900年计起
 #define T_MONTH 1
 #define T_DATE  2
 #define T_HOUR  3
@@ -184,6 +184,11 @@ typedef struct
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
+ 
+  INT8U Diff_Flag;  //时差标志,0加，1减  
+  INT8U Hour_Diff;  //时差小时
+  INT8U Min_Diff;   //时差分钟
+  //INT8U Sec_Diff;   //时差秒钟
   
   INT8U Hour_Point_Radius; //整点半径
   INT8U Hour_Point_Color; ///整点颜色
@@ -278,6 +283,11 @@ typedef struct
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
 
+  INT8U Diff_Flag;  //时差标志,0加，1减
+  INT8U Hour_Diff;  //时差小时
+  INT8U Min_Diff;   //时差分钟
+  //INT8U Sec_Diff;   //时差秒钟
+  
   INT8U Show_Mode;  //显示方式 
   INT8U Show_Color; //显示颜色
   INT8U Show_Font; //显示字号
@@ -494,7 +504,7 @@ EXT INT8U Get_Show_Para_Len(INT8U Type);
 EXT STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No);
 EXT INT8U Save_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen);
 EXT INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen);
-EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
+EXT INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen);
 EXT INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen);
 EXT INT8U Check_Update_Prog_Para();

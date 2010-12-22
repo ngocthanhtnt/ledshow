@@ -536,10 +536,10 @@ CtimeDiffEdit::CtimeDiffEdit(QWidget *parent):QGroupBox(parent)
   label = new QLabel(tr("时差"), this);
   hLayout->addWidget(label);
 
-  diffCheck = new QComboBox(this);
-  diffCheck->addItem(tr("+"));
-  diffCheck->addItem(tr("-"));
-  hLayout->addWidget(diffCheck);
+  diffFlag = new QComboBox(this);
+  diffFlag->addItem(tr("+"));
+  diffFlag->addItem(tr("-"));
+  hLayout->addWidget(diffFlag);
 
   label = new QLabel(tr("小时"), this);
   hLayout->addWidget(label);
@@ -558,7 +558,7 @@ CtimeDiffEdit::CtimeDiffEdit(QWidget *parent):QGroupBox(parent)
   setLayout(hLayout);
   setTitle(tr("时差调整"));
 
-  connect(diffCheck, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+  connect(diffFlag, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
   connect(hourEdit, SIGNAL(valueChanged(int)),this,SIGNAL(edited()));
   connect(minEdit, SIGNAL(valueChanged(int)),this,SIGNAL(edited()));
 
@@ -569,7 +569,7 @@ void CtimeDiffEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
    settings.beginGroup("timeDiff");
-   settings.setValue("diffCheck", diffCheck->currentIndex());
+   settings.setValue("diffFlag", diffFlag->currentIndex());
    settings.setValue("hour", hourEdit->value());
    settings.setValue("min", minEdit->value());
    settings.endGroup();
@@ -583,14 +583,14 @@ void CtimeDiffEdit::setSettingsToWidget(QString str)
     int setFlag = settings.value("setFlag").toBool();
     if(setFlag EQ 0)
     {
-        settings.setValue("diffCheck", 0);
+        settings.setValue("diffFlag", 0);
         settings.setValue("hour", 0);
         settings.setValue("min", 0);
 
        settings.setValue("setFlag", 1);
     }
 
-    diffCheck->setCurrentIndex(settings.value("diffCheck").toInt());
+    diffFlag->setCurrentIndex(settings.value("diffFlag").toInt());
     hourEdit->setValue(settings.value("hour").toInt());
     minEdit->setValue(settings.value("min").toInt());
     settings.endGroup();
@@ -971,8 +971,50 @@ void print_color(QRgb c)
   qDebug("blue = %x", qBlue(c));
   qDebug("alpha = %x", qAlpha(c));
 }
+/*
+//image转化为buf形显示数据
+QSize imageToShowData(QImage image, char buf[], INT16U width, INT16U x, INT16U y)
+{
+    QSize size;
+    QRgb rgb,r,g,b,ye;
+    int i,j;
 
+    for(i = 0; i < image.width(); i ++)
+        for(j = 0; j < image.height(); j ++)
+        {
+          rgb = image.pixel(i,j);
+          r = qRed(rgb);
+          g = qGreen(rgb);
+          b = qBlue(rgb);
 
+          if(r > ANTIALIAS_VALUE && g == 0 && b == 0)// == red.rgb())
+          {
+              Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x01);
+              //qDebug("red");
+          }
+          else if(g > ANTIALIAS_VALUE && r == 0 && b == 0)// || rgb == 0xFF7F9Db9)
+          {
+              Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x02);
+              //qDebug("green");
+          }
+          else if(r > ANTIALIAS_VALUE && g>ANTIALIAS_VALUE && b == 0)
+          {
+              Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x04);
+              //qDebug("yellow");
+          }
+          else //if((r == 0 && g == 0 && b == 0) || rgb == 0xFF7F9DB9)
+          {
+              Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x00);
+              //qDebug("black");
+          }
+
+        }
+    size.setWidth(image.width());
+    size.setHeight(image.height());
+    return size;
+
+}
+*/
 //
 QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
 {

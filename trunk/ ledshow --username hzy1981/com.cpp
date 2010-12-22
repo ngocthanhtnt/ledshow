@@ -118,7 +118,7 @@ void Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen)
   }
   else if(Ctrl_Code EQ C_PROG_DATA) //显示数据 
   {
-    Re &= Save_Prog_Data_Frame_Proc(Frame, FrameLen); //保存节目显示数据
+    Re &= Save_Show_Data_Frame_Proc(Frame, FrameLen); //保存节目显示数据
   }
   else if(Ctrl_Code EQ C_SCREEN_TIME) //设置时间
   {

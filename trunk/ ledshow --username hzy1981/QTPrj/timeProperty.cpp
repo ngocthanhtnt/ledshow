@@ -180,6 +180,11 @@ void getTimeParaFromSettings(QString str, U_File_Para &para)
     para.Time_Para.SmLineFlag = settings.value("smLineCheck").toBool();
     settings.endGroup();
 
+    settings.beginGroup("timeDiff");
+    para.Time_Para.Diff_Flag = settings.value("diffFlag").toInt();
+    para.Time_Para.Hour_Diff = settings.value("hour").toInt();
+    para.Time_Para.Min_Diff = settings.value("min").toInt();
+    settings.endGroup();
 
     settings.endGroup();
 }

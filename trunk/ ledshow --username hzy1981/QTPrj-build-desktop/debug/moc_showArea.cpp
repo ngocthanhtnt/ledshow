@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'showArea.h'
 **
-** Created: Tue Dec 21 12:50:36 2010
+** Created: Wed Dec 22 20:56:33 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
