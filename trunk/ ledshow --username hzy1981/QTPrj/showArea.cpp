@@ -106,6 +106,9 @@ void CscreenArea::progSettingsInit(QTreeWidgetItem *item)
 
    w->screenArea->setFocusArea((CshowArea *)0);
    w->screenArea->treeItem = item; //背景区域对应该项
+
+   updateProgShowArea(w->screenArea);
+
    for(int i = 0; i < areaNum && i<MAX_AREA_NUM; i ++)
    {
       if(i != subIndex- 1)
@@ -394,8 +397,9 @@ void CscreenArea::updateShowArea(QTreeWidgetItem *item)
 
     type = checkItemType(item);
 
-    if(type == PROG_PROPERTY)
-        w->screenArea->progSettingsInit(item);//  progSettingsInit(QStr);
+    if(type == PROG_PROPERTY) {
+        w->screenArea->progSettingsInit(item);
+    }//  progSettingsInit(QStr);
     else if(type == AREA_PROPERTY)
     {
         if(w->screenArea->treeItem != item->parent()) //与前一个节目是否是同一个节目
@@ -792,6 +796,7 @@ void CshowArea::paintEvent(QPaintEvent *)
 {
     int i,j;
     int color;
+    unsigned char colorData;
     QString str;
     S_Point P0;
     INT8U Area_No = 0;
@@ -912,6 +917,9 @@ void CshowArea::paintEvent(QPaintEvent *)
             //imageBk = getTextEditImage(smLineFlag, w,h, picStr, page);
             int lineNum = 0;
             int pageNum = 0;
+
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
             QImage image = getTextImage(Width, picStr, &lineNum, linePosi);
             pageNum = getTextPageNum(smLineFlag, Width, Height, lineNum, linePosi, pagePosi);
             imageBk = getTextPageImage(smLineFlag, image, Width, Height, page, pagePosi);
@@ -1079,11 +1087,12 @@ void CshowArea::paintEvent(QPaintEvent *)
             //Update_Lun_Data(Area_No);
         }
      }
+
     for(j=0; j<Height; j++)
     {
         for(i=0; i<Width; i++)
         {
-            unsigned char colorData = Get_Area_Point_Data(&Show_Data, 0, i, j);
+           colorData = Get_Area_Point_Data(&Show_Data, 0, i, j);
 
             //if(colorData != 0)
               //qDebug("point %d,%d = %d", i, j, colorData);
@@ -1143,54 +1152,45 @@ void CshowArea::paintEvent(QPaintEvent *)
 }
     else //非0表示是背景
     {
-        painter.setPen(QColor(Qt::darkGray));
+
+        Clear_Area_Data(&Show_Data, 0);
+        memcpy(&Prog_Para, &progPara, sizeof(progPara));
+        //if(areaType EQ 0) //当前背景
+        {
+           Draw_Border(&Show_Data, MAX_AREA_NUM, Prog_Para.Border_Data, \
+                       Prog_Para.Border_Width, Prog_Para.Border_Height, 0);
+        }
+
+        //unsigned char colorData;
         for(i=0; i<Width; i++)
         {
             for(j=0; j<Height; j++)
             {
-               //if(Get_Bit(color2, w, i, j))
-               {
-                 //painter.setPen(QColor(Qt::red));
-                 painter.drawPoint(i,j);
-               }
+                colorData = Get_Area_Point_Data(&Show_Data, MAX_AREA_NUM, i, j);
+
+                if(colorData > 0)
+                {
+                    painter.setPen(getQColor(colorData));
+                    painter.drawPoint(i,j);
+                }
+                else
+                {
+                    painter.setPen(QColor(Qt::darkGray));
+                    painter.drawPoint(i,j);
+                }
+              }
            }
         }
-    }
 
 
-/*
-    else if(Get_Bit(color1, h, i, j))
-           {
-             painter.setPen(QColor(Qt::green));
-             painter.drawPoint(i,j);
-           }
-           else if(Get_Bit(color2, h, i, j))
-           {
-             painter.setPen(QColor(Qt::yellow));
-             painter.drawPoint(i,j);
-           }
-           else
-           {
-               if(areaType == 0)
-               {
-                   painter.setPen(QColor(Qt::darkGray));
-                   painter.drawPoint(i,j);
-               }
-               else if(areaType > 0)
-               {
-                   painter.setPen(QColor(Qt::black));
-                   painter.drawPoint(i,j);
-               }
-           }
-        }
-    }
-*/
+
     //lpArea = w->screenArea->getFocusArea();//((CscreenArea *)parentWidget)->getFocusArea(); //w->screenArea->getFocusArea();
     if(focusFlag == true) //当前分区是焦点
     {
       painter.setPen(QColor(Qt::yellow));
       painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
     }
+
 
     //painter.setPen(QColor(Qt::yellow));
     //painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);

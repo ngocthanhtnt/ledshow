@@ -97,6 +97,8 @@ INT8S Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
                    &Prog_Status.File_Para[Area_No], sizeof(U_File_Para)); 
     if(Re EQ 0)
       return 0;
+    
+    //Read_Show_Data()
   }
   
   return 1;

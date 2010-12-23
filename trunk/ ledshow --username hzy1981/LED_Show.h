@@ -73,18 +73,6 @@ typedef struct
   INT16U Y;
 }S_Point;
 
-typedef struct
-{/*
-  S_Pub_Buf Pub_Buf;  //公共buf
-  S_Show_1Color_Data One_Color_Data;
-  S_Show_2Color_Data Two_Color_Data;
-  S_Show_3Color_Data Three_Color_Data;
-  */
-  INT8U Head;
-  INT8U Color_Data[3*MAX_POINTS/8];//---连续的3个字节表示八个点3个颜色!!
-  INT8U Tail;
-}S_Show_Data;
-
 //定义分区状态
 typedef struct
 {
@@ -116,7 +104,7 @@ typedef struct
   INT8U Head;
   
   INT8U Time; //已经播放时长
-  INT8U Lightness; //当前亮度
+  //INT8U Lightness; //当前亮度
   
   S_Border_Status Border_Status;
   U_File_Para File_Para[MAX_AREA_NUM]; //每个分区的当前文件参数
