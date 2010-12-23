@@ -312,6 +312,11 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
    connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+
+   //-----------------
+   connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+   connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+   connect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
 }
 
 
@@ -374,6 +379,10 @@ void CprogProperty::setSettingsToWidget(QString str)
     disconnect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
     disconnect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
     disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+
+    disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
 
     settings.beginGroup(str);
     int setFlag = settings.value("setFlag").toBool();
@@ -456,6 +465,10 @@ void CprogProperty::setSettingsToWidget(QString str)
     connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
     connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
     connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+
+    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
 
     //按日期定时选择
     dateTimerCheckProc((int)dateTimerCheck->checkState());
@@ -627,7 +640,53 @@ void CprogProperty::borderCheckProc(int state)
     modeCombo->setEnabled(flag);
     colorCombo->setEnabled(flag);
 }
+//属性编辑的SLOT
+void CprogProperty::edited()
+{
+    CshowArea *area;
+    QTreeWidgetItem *item;
 
+    //qDebug("propertyEdited");
+    area = w->screenArea; //当前焦点分区
+
+    if(area != (CshowArea *)0) //
+    {
+        //当前选中的item
+        item = area->treeItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
+        if(item != (QTreeWidgetItem *)0)
+        {
+            QString str = item->data(0,Qt::UserRole).toString();
+            getSettingsFromWidget(str);
+            updateProgShowArea(area);
+        }
+    }
+}
+
+//刷新显示区域
+void updateProgShowArea(CshowArea *area)
+{
+    //CshowArea *area;
+    QString str;
+    QTreeWidgetItem *item;
+
+    if(area != (CshowArea *)0) //
+    {
+        item = area->treeItem;
+        str = item->data(0,Qt::UserRole).toString();
+
+        getProgParaFromSettings(str,area->progPara);
+        //area->imageBk = getLineTextImage(str);
+
+        //qDebug("file_para flag = %d", area->filePara.Temp_Para.Flag);
+        area->update(); //刷新显示
+
+    }
+    else
+    {
+        ASSERT_FAILED();
+    }
+
+}
 /*
 typedef struct
 {

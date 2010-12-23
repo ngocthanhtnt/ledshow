@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'clockProperty.h'
 **
-** Created: Thu Dec 23 00:04:39 2010
+** Created: Thu Dec 23 19:45:11 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!

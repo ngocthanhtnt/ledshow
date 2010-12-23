@@ -10,4 +10,6 @@
 
 #define MAX_LIGHTNESS_LEVEL 0x09
 
+EXT void Lightness_Proc();
+EXT void Open_Close_Proc();
 #endif

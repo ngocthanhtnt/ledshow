@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'progProperty.h'
 **
-** Created: Thu Dec 23 00:04:17 2010
+** Created: Thu Dec 23 22:04:15 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_CprogProperty[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+       8,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -38,6 +38,7 @@ static const uint qt_meta_data_CprogProperty[] = {
      113,   15,   14,   14, 0x0a,
      136,   15,   14,   14, 0x0a,
      160,   15,   14,   14, 0x0a,
+     181,   14,   14,   14, 0x0a,
 
        0        // eod
 };
@@ -47,6 +48,7 @@ static const char qt_meta_stringdata_CprogProperty[] = {
     "dateTimerCheckProc(int)\0weekTimerCheckProc(int)\0"
     "timeCheckProc(int)\0playTimeCheckProc(int)\0"
     "playCountCheckProc(int)\0borderCheckProc(int)\0"
+    "edited()\0"
 };
 
 const QMetaObject CprogProperty::staticMetaObject = {
@@ -85,9 +87,10 @@ int CprogProperty::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 4: playTimeCheckProc((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 5: playCountCheckProc((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 6: borderCheckProc((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 7: edited(); break;
         default: ;
         }
-        _id -= 7;
+        _id -= 8;
     }
     return _id;
 }

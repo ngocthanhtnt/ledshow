@@ -2,6 +2,7 @@
 #define LED_PARA_H
 
 #include "Storage.h"
+#include "LED_Show.h"
 //extern "c"
 //{
 #undef EXT
@@ -480,6 +481,18 @@ typedef struct
   
 }S_File_Para_Info;
 
+typedef struct
+{/*
+  S_Pub_Buf Pub_Buf;  //公共buf
+  S_Show_1Color_Data One_Color_Data;
+  S_Show_2Color_Data Two_Color_Data;
+  S_Show_3Color_Data Three_Color_Data;
+  */
+  INT8U Head;
+  INT8U Color_Data[3*MAX_POINTS/8];//---连续的3个字节表示八个点3个颜色!!
+  INT8U Tail;
+}S_Show_Data;
+
 #define SCREEN_PARA_LEN (sizeof(S_Screen_Para) -CHK_BYTE_LEN)
 #define PROG_PARA_LEN   (sizeof(S_Prog_Para)-CHK_BYTE_LEN)
 #define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN)
@@ -508,6 +521,7 @@ EXT INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen);
 EXT INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen);
 EXT INT8U Check_Update_Prog_Para();
-EXT void Read_Para();
+EXT INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
+                      S_Show_Data *pShow_Data, INT16U X, INT16U Y);
 //}
 #endif // LED_PARA_H

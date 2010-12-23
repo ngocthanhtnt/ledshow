@@ -11,6 +11,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include "colorCombo.h"
+#include "showArea.h"
 
 #define MAX_BORDER_TYPE 10
 //½ÚÄ¿ÊôÐÔ´°
@@ -76,7 +77,7 @@ public slots:
     void playTimeCheckProc(int state);
     void playCountCheckProc(int state);
     void borderCheckProc(int state);
-
+    void edited();
 public:
 
     void setSettingsToWidget(QString str);
@@ -94,4 +95,7 @@ typedef struct
   char Data[300];
 
 }S_Border_Data;
+
+void getProgParaFromSettings(QString str, S_Prog_Para &para);
+void updateProgShowArea(CshowArea *area);
 #endif // PROGPROPERTY_H

@@ -62,12 +62,14 @@ INT8U Get_Open_Close_Status(S_Time *pTime)
   return 1;
 }
 
+//亮度控制
 void Lightness_Proc()
 {
   Screen_Status.Lightness = Get_Cur_Time_Lightness(&Cur_Time);  
   
 }
 
+//开关机控制
 void Open_Close_Proc()
 {
   Screen_Status.Open_Flag = Get_Open_Close_Status(&Cur_Time);
