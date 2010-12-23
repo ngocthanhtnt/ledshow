@@ -663,6 +663,8 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
 
   settings.beginGroup(str);
   index = settings.value("style").toInt();
+  color = settings.value("color").toInt();
+
   para.Border_Width = Border_Data[index].Width;
   para.Border_Height = Border_Data[index].Height;
 
@@ -672,7 +674,8 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
      //Re = Get_Buf_Point_Data((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data), color, Border_Data[index].Width, i, j);
       Re = Get_Rect_Buf_Bit((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data),\
                        para.Border_Width, i, j);
-      Set_Buf_Point_Data((INT8U *)para.Border_Data, sizeof(para.Border_Data), color, para.Border_Width, i, j, Re);
+      Re = (Re << color);
+      Set_Buf_Point_Data((INT8U *)para.Border_Data, sizeof(para.Border_Data), Screen_Para.Color, para.Border_Width, i, j, Re);
    }
 /*
   for(int i = 0; i < para.Border_Width; i ++)

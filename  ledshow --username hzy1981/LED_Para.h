@@ -47,7 +47,7 @@ typedef struct
 typedef struct
 {
   //INT8U Head;
-
+  INT8U Flag;
   INT8U Value; //亮度值
   INT8U Start_Hour; //起始小时
 
@@ -58,7 +58,7 @@ typedef struct
 typedef struct
 {
   //INT8U Head;
-
+  INT8U Flag;
   INT8U Open_Hour;
   INT8U Open_Min;
   INT8U Close_Hour;
@@ -98,8 +98,8 @@ typedef struct
   INT32U IP; //IP地址
   INT8U Baud;  //波特率
 
-  S_Open_Close_Time Open_Close_Time; //开关机时间
-  S_Lightness Lightness; //强度
+  S_Open_Close_Time Open_Close_Time[MAX_OPEN_CLOSE_TIME]; //开关机时间
+  S_Lightness Lightness[MAX_LIGHTNESS_TIME]; //强度
 
   INT8U Prog_Num; //节目数
   INT8U CS[CS_BYTES];
