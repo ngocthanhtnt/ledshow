@@ -392,14 +392,14 @@ void Set_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT8U Width, I
   
   Index = (((Y>>3) * Width) + X)*8 + (Y & 0x07);
   
-  if(Color EQ 0)  //单色屏
+  if(Color < 3 || Color EQ 4)  //单色屏
     Set_Buf_Bit(Buf, Buf_Len,Index, (Value & 0x01));
-  else if(Color EQ 1) //双色屏
+  else if(Color EQ 3 || Color EQ 5 || Color EQ 6) //双色屏
   {
     Set_Buf_Bit(Buf, Buf_Len, ((Index>>3)<<4) + (Index & 0x07), (Value & 0x01));
     Set_Buf_Bit(Buf, Buf_Len, ((Index>>3)<<4) + 8+ (Index & 0x07), (Value & 0x02)>>1);
   }
-  else if(Color EQ 2) //三色屏
+  else if(Color EQ 7) //三色屏
   {
     Set_Buf_Bit(Buf, Buf_Len, (Index>>3)*24 + (Index & 0x07), (Value & 0x01));
     Set_Buf_Bit(Buf, Buf_Len, (Index>>3)*24 + 8 + (Index & 0x07), (Value & 0x02)>>1);

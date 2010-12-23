@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     //--------------
-    Screen_Para.Color = 0x05;
+    Screen_Para.Color = 0x07;
     //-------------
     //设置为支持中文---重要
 

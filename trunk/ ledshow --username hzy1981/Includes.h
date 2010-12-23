@@ -14,6 +14,7 @@
 #include "Storage.h"
 #include "LED_Para.h"
 #include "LED_Show.h"
+#include "Screen_Status.h"
 #include "Time_Show.h"
 #include "Pic_Show.h"
 #include "Flash_Show.h"

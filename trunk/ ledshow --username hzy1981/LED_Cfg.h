@@ -3,7 +3,7 @@
 #define ROM_CS_BYTES 2
 #define MAX_BORDER_POINTS 50
 
-#define QT_EN 1 //使用QT仿真
+#define QT_EN 0 //使用QT仿真
 
 #if QT_EN == 0 //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 1
@@ -20,6 +20,7 @@
 #define MAX_BLOCK_NUM  200 //显示数据块的大小
 #define ONE_BLOCK_SIZE 250 //一个显示数据块的大小
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
+#define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
 
 
@@ -40,6 +41,6 @@
 #define MAX_BLOCK_NUM  200
 #define ONE_BLOCK_SIZE 250
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
-
+#define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
 #endif
