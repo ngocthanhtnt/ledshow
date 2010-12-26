@@ -23,7 +23,7 @@
 #define GET_LINE_Y(X0,Y0,X1,Y1,X) ((X1 != X0)?(((Y1)-(Y0))*((X)-(X0))/((X1)-(X0)) + (Y0)):Y0)
 #define GET_LINE_X(X0,Y0,X1,Y1,Y) ((Y1 != Y0)?(((X1)-(X0))*((Y)-(Y0))/((Y1)-(Y0)) + (X0)):X0)
 
-#define AREA_ERR -1//更新显示文件出错
+#define AREA_ERR 2 //更新显示文件出错
 #define AREA_END 0 //该分区结束
 #define AREA_OK  1 //更新成功
 
@@ -84,7 +84,8 @@ typedef struct
   INT8U Step;        //当前移动的阶梯
   INT16U Step_Timer;  //已经走过Timer，单位ms
   INT32U Stay_Time;   //已经停留的时间，单位ms
-
+  INT8U Counts;
+  
   INT8U Tail;
 }S_Area_Status;
 
@@ -103,8 +104,11 @@ typedef struct
 {
   INT8U Head;
   
-  INT8U Time; //已经播放时长
-  //INT8U Lightness; //当前亮度
+  INT8U Prog_No; //当前节目号
+  INT32U Time; //已经播放时长
+  INT16U Counts; //已经播放次数
+
+  INT8U Play_Flag; //是否播放标志
   
   S_Border_Status Border_Status;
   U_File_Para File_Para[MAX_AREA_NUM]; //每个分区的当前文件参数

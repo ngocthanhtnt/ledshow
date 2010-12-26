@@ -671,11 +671,12 @@ void updateProgShowArea(CshowArea *area)
 
     if(area != (CshowArea *)0) //
     {
-        item = area->treeItem;
-        str = item->data(0,Qt::UserRole).toString();
+        //item = area->treeItem;
+        str = area->treeItem->data(0,Qt::UserRole).toString();
 
         getProgParaFromSettings(str,area->progPara);
         //area->imageBk = getLineTextImage(str);
+        area->updateFlag = true;
 
         //qDebug("file_para flag = %d", area->filePara.Temp_Para.Flag);
         area->update(); //À¢–¬œ‘ æ
@@ -726,6 +727,8 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
 
   para.Border_Width = Border_Data[index].Width;
   para.Border_Height = Border_Data[index].Height;
+
+  memset(para.Border_Data, 0, sizeof(para.Border_Data));
 
   for(int i = 0; i < para.Border_Width; i ++)
       for(int j = 0; j < para.Border_Height; j++)

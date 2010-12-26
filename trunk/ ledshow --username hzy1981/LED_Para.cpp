@@ -97,7 +97,7 @@ STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No)
 }
 
 //节目数据块的索引
-INT8U Read_Prog_Block_Index(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen)
+INT16U _Read_Prog_Block_Index(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen)
 {
   INT16U Len;
   
@@ -112,10 +112,27 @@ INT8U Read_Prog_Block_Index(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U 
     Len = Read_Storage_Data(SDI_PROG_BLOCK_INDEX_BK1 + Prog_No,  pDst, pDst_Start, DstLen);
 #endif 
   
-  return 0;
+  return Len;
   
 }
 
+//读取节目的存储索引
+
+//Prog_No表示节目号
+INT16U Read_Prog_Block_Index(INT8U Prog_No)
+{
+  INT16U Len;
+  
+  Len = _Read_Prog_Block_Index(Prog_No, Prog_Status.Block_Index.Index, &Prog_Status.Block_Index, sizeof(Prog_Status.Block_Index));
+  
+  if(Len > 0)
+  {
+    SET_HT(Prog_Status.Block_Index);
+    SET_SUM(Prog_Status.Block_Index);
+  }
+  
+  return Len;
+}
 
 INT8U Write_Prog_Block_Index(INT8U Prog_No, void *pSrc, INT16U SrcLen)
 {
@@ -276,9 +293,9 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
 
 //读取当前节目的分区Area_No的第File_No文件的第SIndex屏的显示数据
 INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
-                      S_Show_Data *pShow_Data, INT16U X, INT16U Y)
+                      S_Show_Data *pShow_Data)
 {
-  INT16U Width,Height;
+  INT16U Width,Height,X,Y;
   INT32U Len,DstLen, Offset;
   INT16U Index;
     
@@ -488,8 +505,7 @@ INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
           File_Para_Info.Seq0 = Seq0;
           
           //读出这个节目的存储索引
-          Read_Prog_Block_Index(Prog_No, Prog_Status.Block_Index.Index, &Prog_Status.Block_Index, sizeof(Prog_Status.Block_Index));
-          //Read_Storage_Data(Prog_Block_Index
+          Read_Prog_Block_Index(Prog_No);
         }
         
         return Re;

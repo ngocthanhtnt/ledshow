@@ -37,6 +37,7 @@ void updatePicShowArea(CshowArea *area)
 
         settings.endGroup();
 
+        area->updateFlag = true;
         //area->imageBk = getTextEditImage(MLINE_MODE, area->width(), area->height(), str, 0);
 
         //qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);

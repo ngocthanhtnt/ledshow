@@ -14,8 +14,8 @@ EXT INT8U Get_Area_Step_Delay(INT8U Area_No);
 EXT INT32U Get_File_Stay_Time(INT8U Area_No);
 EXT void Set_File_Stay_Time(INT8U Area_No, INT16U ms);
 EXT void Update_Show_Data();
-EXT INT8S Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No);
-EXT INT8S Check_Update_Show_Data_Bak();
+EXT INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No);
+EXT INT8U Check_Update_Show_Data_Bak();
 EXT void Show_Timer_Proc();
 EXT void Show_Main_Proc();
 #endif

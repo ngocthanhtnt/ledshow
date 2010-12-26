@@ -34,7 +34,7 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
      {
        Re = Get_Border_Point_Data(Area_No, (i + Prog_Para.Border_Width *Step / 100) % Prog_Para.Border_Width, j);  
        Set_Area_Point_Data(pDst, Area_No, i, j, Re); //ÉÏ±ß¿ò
-       Set_Area_Point_Data(pDst, Area_No, Area_Width - i, Area_Height - j, Re); //ÏÂ±ß¿ò
+       Set_Area_Point_Data(pDst, Area_No, Area_Width-1 - i, Area_Height-1 - j, Re); //ÏÂ±ß¿ò
      }
   
    //×óÓÒ±ß¿ò
@@ -43,7 +43,7 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
      {
        Re = Get_Border_Point_Data(Area_No, (i + Prog_Para.Border_Width *Step / 100) % Prog_Para.Border_Width, j);  
        Set_Area_Point_Data(pDst, Area_No, j, i, Re); //×ó±ß¿ò
-       Set_Area_Point_Data(pDst, Area_No, Area_Width -j, Area_Height-j, Re); //ÓÒ±ß¿ò
+       Set_Area_Point_Data(pDst, Area_No, Area_Width-1 -j, Area_Height-1-i, Re); //ÓÒ±ß¿ò
      }   
 }
 

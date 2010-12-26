@@ -65,6 +65,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
 public:
+    bool updateFlag;
     S_Show_Data showData;
     //S_Show_Data showDataBak;
     QImage imageBk;

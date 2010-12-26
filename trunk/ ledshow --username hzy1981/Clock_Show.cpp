@@ -191,19 +191,8 @@ void Update_Clock_Data(INT8U Area_No)
 
       Show_Date(&Show_Data, 0, P0.X, P0.Y, &Cur_Time, Prog_Status.File_Para[Area_No].Clock_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Clock_Para.Week_Font, Prog_Status.File_Para[Area_No].Clock_Para.Date_Color);
    }
-/*
-  //-------------------
-  Show_Clock(&Show_Data, Area_No, &Cur_Time, &Prog_Status.File_Para[Area_No].Clock_Para);
-  //Index = Get_Area_Point_Index(Area_No, 0, 0);
-  //Bits_Copy(Show_Data_Bak.Color_Data, sizeof(Show_Data_Bak.Color_Data), Index, ;
-  //Copy_Buf_2_Area_Rect();
-  Point.X = Prog_Status.File_Para[Area_No].Clock_Para.Text_X;
-  Point.Y = Prog_Status.File_Para[Area_No].Clock_Para.Text_Y;
-  X_Len = Prog_Status.File_Para[Area_No].Clock_Para.Text_Width;
-  Y_Len = Prog_Status.File_Para[Area_No].Clock_Para.Text_Height;
-
-  Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point, X_Len, Y_Len, &Show_Data, &Point);
-*/
+  
+   Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
 }
 
 

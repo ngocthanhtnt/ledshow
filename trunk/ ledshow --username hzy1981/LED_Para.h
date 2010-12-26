@@ -37,6 +37,10 @@
 #define CHK_BYTE_LEN 3 //结构体中用于校验的字节数--一般是Head、Tail和CS
 #define CHK_HEAD_LEN 1 //结构体中用于校验的头字节数--一般是Head
 
+#define PROG_NULL_MODE 0x00
+#define PROG_COUNTS_MODE 0x01
+#define PROG_TIME_MODE  0x02
+
 typedef struct
 {
   INT8U Head;
@@ -70,9 +74,11 @@ typedef struct
 
 typedef struct
 {
-  INT8U Week; //星期
+  INT8U Week; //星期--全0表示都播放，第0位表示星期日，1-6表示星期1-星期6
+  
   INT8U Start_Date[3]; //起始年月日
   INT8U End_Date[3];	//结束年月日  
+  
   INT8U Start_Time[2]; //起始时分
   INT8U End_Time[2];	//结束时分
 }S_Program_Timing;
@@ -114,8 +120,11 @@ typedef struct
 {
   INT8U Head;
   INT8U Prog_No; //节目号
-  //INT8U Program_Cycles; //循环次数
-  //INT16U Program_Stay_Sec; //停留秒数
+  
+  INT8U Mode; //播放方式，0表示循环播放，1表示定长播放
+  INT16U Counts; //循环次数
+  INT32U Time; //停留秒数
+  
   S_Program_Timing Timing[3]; //节目定时设置
   INT8U Area_Num; //分区数
   INT8U Main_Area_No; //主分区号
@@ -127,7 +136,7 @@ typedef struct
   INT8U Border_Width;   //边框宽度
   INT8U Border_Height;  //边框高度
   INT8U Temp;   //备用
-  INT8U Border_Data[3*MAX_BORDER_POINTS/8]; //边框数据
+  INT8U Border_Data[3*MAX_BORDER_POINTS]; //边框数据
   
   INT8U CS[CS_BYTES];
   
@@ -519,9 +528,11 @@ EXT INT8U Save_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen);
 EXT INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen);
-EXT INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen);
+
 EXT INT8U Check_Update_Prog_Para();
+EXT INT16U Read_Prog_Para(INT8U Prog_No);
+EXT INT16U Read_Prog_Block_Index(INT8U Prog_No);
 EXT INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
-                      S_Show_Data *pShow_Data, INT16U X, INT16U Y);
+                      S_Show_Data *pShow_Data);
 //}
 #endif // LED_PARA_H

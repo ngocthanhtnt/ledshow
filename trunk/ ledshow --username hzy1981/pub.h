@@ -47,6 +47,8 @@
 
 #define SET_SUM OS_SET_STRUCT_SUM
 #define CHK_SUM OS_CHECK_STRUCT_SUM
+#define SET_HT(V) do{V.Head = CHK_BYTE; V.Tail = CHK_BYTE;}while(0)
+#define CHK_HT(V) ((V.Head == CHK_BYTE && V.Tail == CHK_BYTE)?1:0)
 
 typedef struct
 {
