@@ -316,4 +316,7 @@ void Update_Lun_Data(INT8U Area_No)
           //X += SPACE_WIDTH + Get_JieqiStr_Pix_Width(Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Type - 1, Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Font);
       }
   }
+  
+
+  Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
 }

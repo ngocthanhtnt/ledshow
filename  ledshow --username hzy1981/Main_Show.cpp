@@ -81,206 +81,118 @@ void Update_Show_Data()
 //读取一屏显示数据
 //prog节目号
 //area分区号
-INT8S Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
+INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 {
-  INT8U Re;
+  INT16U Len,SNum;
   
-  if(Prog_Status.Area_Status[Area_No].SNum EQ 0) //第一屏显示
+  if(Prog_Status.Area_Status[Area_No].SNum EQ 0) //第一屏显示--表示更新到一个新的文件了，必须重读文件参数
   {
     //先将文件参数读出
     Prog_Status.Area_Status[Area_No].File_No ++;
-    if(Prog_Status.Area_Status[Area_No].File_No >= Prog_Para.Area_File_Num[Area_No])
+   
+    //文件号
+    if(Prog_Status.Area_Status[Area_No].File_No >= Prog_Para.Area_File_Num[Area_No]) //所有文件全部都播放了一遍
+    {
       Prog_Status.Area_Status[Area_No].File_No = 0;
+      Prog_Status.Area_Status[Area_No].Counts++; //所有文件都播放了一次，则将播放次数+1
+    }
     
-    Re = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
+    Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
                    &Prog_Status.File_Para[Area_No].Pic_Para.Flag, \
                    &Prog_Status.File_Para[Area_No], sizeof(U_File_Para)); 
-    if(Re EQ 0)
-      return 0;
-    
-    //Read_Show_Data()
-  }
-  
-  return 1;
-
-  /*
-  INT8S Re;
-  INT8U Seq;
-  char File_Name[MAX_FILE_NAME_SIZE];
-  FILE_T File;
-  INT16U Ctrl_Code;
-  INT32S Len, Len0;
-  INT32U Dst_Index, Size;
-  INT16U X,Y,X_Len,Y_Len;
-
-  Re = AREA_OK;
-  //Read_Para();
-  //Get_Program_Data_File_Name(Prog_No, Area_No, File_Name); //获取该分区的显示文件
-
-  File = File_Open(File_Name, FILE_R); //Read_
-
-  //Len = File_Read_One_Frame(File, Prog_Status.Area_Status[Area_No].File_Offset, &Seq, &Ctrl_Code, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
-  if(Len EQ FILE_END) //文件结束--从头开始重新
-  {
-    Prog_Status.Area_Status[Area_No].File_Offset = 0;
-    Prog_Status.Area_Status[Area_No].File_Type = 0;
-    //Len = File_Read_One_Frame(File, Prog_Status.Area_Status[Area_No].File_Offset, &Seq, &Ctrl_Code, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
-  }
-
-  if(Seq EQ 0)//---必须是第一帧,先将显示相关参数复制到File_Para结构体中
-  {
-    Prog_Status.Area_Status[Area_No].File_Offset += Len;
-
-    if(Len > (sizeof(S_Pic_Para) - 2)) //第一帧
+    if(Len EQ 0)
     {
-      Len0 = 0;
-
-      Dst_Index = Get_Area_Point_Index(Area_No, 0, 0);
-      Size = 0;
-      Prog_Status.Area_Status[Area_No].File_Type = Pub_Buf[0];
-
-      if(Pub_Buf[0] EQ SHOW_PIC) //图文
-      {
-        Len0 =  sizeof(Prog_Status.File_Para[Area_No].Pic_Para) - 2;
-        mem_cpy(&Prog_Status.File_Para[Area_No].Pic_Para.Flag, Pub_Buf, Len0, &Prog_Status.File_Para[Area_No].Pic_Para, sizeof(Prog_Status.File_Para[Area_No].Pic_Para));
-        X = 0;
-        Y = 0;
-        X_Len = Prog_Para.Area[Area_No].X_Len;
-        Y_Len = Prog_Para.Area[Area_No].Y_Len;
-      }
-      else if(Pub_Buf[0] EQ SHOW_CLOCK)//表盘
-      {
-        Len0 =  sizeof(Prog_Status.File_Para[Area_No].Clock_Para) - 2;
-        mem_cpy(&Prog_Status.File_Para[Area_No].Clock_Para.Flag, Pub_Buf, Len0, &Prog_Status.File_Para[Area_No].Clock_Para, sizeof(Prog_Status.File_Para[Area_No].Clock_Para));
-
-        X = Prog_Status.File_Para[Area_No].Clock_Para.Text_X;
-        Y = Prog_Status.File_Para[Area_No].Clock_Para.Text_Y;
-        X_Len = Prog_Status.File_Para[Area_No].Clock_Para.Text_Width;
-        Y_Len = Prog_Status.File_Para[Area_No].Clock_Para.Text_Height;
-      }
-      else if(Pub_Buf[0] EQ SHOW_TIME)//时间
-      {
-        Len0 =  sizeof(Prog_Status.File_Para[Area_No].Time_Para) - 2;
-        mem_cpy(&Prog_Status.File_Para[Area_No].Time_Para.Flag, Pub_Buf, Len0, &Prog_Status.File_Para[Area_No].Time_Para, sizeof(Prog_Status.File_Para[Area_No].Time_Para));
-
-        X = Prog_Status.File_Para[Area_No].Clock_Para.Text_X;
-        Y = Prog_Status.File_Para[Area_No].Clock_Para.Text_Y;
-        X_Len = Prog_Status.File_Para[Area_No].Clock_Para.Text_Width;
-        Y_Len = Prog_Status.File_Para[Area_No].Clock_Para.Text_Height;
-      }
-      else if(Pub_Buf[0] EQ SHOW_TIMER)//定时器
-      {
-        Len0 =  sizeof(Prog_Status.File_Para[Area_No].Timer_Para) - 2;
-        mem_cpy(&Prog_Status.File_Para[Area_No].Timer_Para.Flag, Pub_Buf, Len0, &Prog_Status.File_Para[Area_No].Timer_Para, sizeof(Prog_Status.File_Para[Area_No].Timer_Para));
-
-        X = Prog_Status.File_Para[Area_No].Clock_Para.Text_X;
-        Y = Prog_Status.File_Para[Area_No].Clock_Para.Text_Y;
-        X_Len = Prog_Status.File_Para[Area_No].Clock_Para.Text_Width;
-        Y_Len = Prog_Status.File_Para[Area_No].Clock_Para.Text_Height;
-      }
-      else if(Pub_Buf[0] EQ SHOW_TEMP)//温度
-      {
-        Len0 =  sizeof(Prog_Status.File_Para[Area_No].Temp_Para) - 2;
-        mem_cpy(&Prog_Status.File_Para[Area_No].Temp_Para.Flag, Pub_Buf, Len0, &Prog_Status.File_Para[Area_No].Temp_Para, sizeof(Prog_Status.File_Para[Area_No].Temp_Para));
-
-        X = Prog_Status.File_Para[Area_No].Clock_Para.Text_X;
-        Y = Prog_Status.File_Para[Area_No].Clock_Para.Text_Y;
-        X_Len = Prog_Status.File_Para[Area_No].Clock_Para.Text_Width;
-        Y_Len = Prog_Status.File_Para[Area_No].Clock_Para.Text_Height;
-      }
-
-      //Bits_Copy(Pub_Buf, sizeof(Pub_Buf), 0, (Len - Len0)* 8, Show_Data.Color_Data + Dst_Index, sizeof(Show_Data.Color_Data), Dst_Index);
-      Copy_Buf_2_Area_Rect_0(Pub_Buf, Len - Len0, 0, &Show_Data_Bak, Area_No, X, Y, X_Len, Y_Len);
-      Dst_Index += (Len - Len0)*8;
-      Size += (Len - Len0);
+      ASSERT_FAILED();
+      return AREA_END;
     }
   }
-  else
-  {
+
+  Len = Read_Show_Data(Area_No, \
+                 Prog_Status.Area_Status[Area_No].File_No, \
+                 Prog_Status.File_Para[Area_No].Pic_Para.Flag,\
+                 Prog_Status.Area_Status[Area_No].SNum,\
+                 &Show_Data_Bak);
+
+  if(Len EQ 0)
     ASSERT_FAILED();
-    return 0;
-  }
+  
+  Prog_Status.Area_Status[Area_No].SNum ++; //显示屏数增加
+  
+  //SNum表示当前文件总的屏幕数，只有图文的屏幕数会大于1！！
+  if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_PIC)
+    SNum = Prog_Status.File_Para[Area_No].Pic_Para.SNum;
+  else
+    SNum = 1;
+  
+  if(Prog_Status.Area_Status[Area_No].SNum >= SNum)
+    Prog_Status.Area_Status[Area_No].SNum = 0;
 
-  if((Ctrl_Code & 0x10) == 0x10) //有后续帧
-  {
-    STOP_SHOW_TIMER_INT; //关闭显示中断
-
-    do
-    { //继续读下一帧
-      //Len = File_Read_One_Frame(File, Prog_Status.Area_Status[Area_No].File_Offset, &Seq, &Ctrl_Code, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)); //读取一帧
-
-      if(Len > 0) //正常读出一帧
-      {
-        if((Size + Len) * 8 > Get_Area_Size(Area_No)) //超过了分区的范围！
-        {
-          ASSERT_FAILED();
-          break;
-        }
-
-        //位复制
-        Copy_Buf_2_Area_Rect_0(Pub_Buf, Len - Len0, Size, &Show_Data_Bak, Area_No, X, Y, X_Len, Y_Len);
-        //Bits_Copy(Pub_Buf, sizeof(Pub_Buf), 0, Len * 8, Show_Data.Color_Data + Dst_Index, sizeof(Show_Data.Color_Data), Dst_Index);
-        Dst_Index += Len*8;
-        Size += Len;
-        //修改读文件偏移
-        Prog_Status.Area_Status[Area_No].File_Offset += Len;
-
-        if((Ctrl_Code & 0x10) != 0x10) //没有后续帧则退出
-          break;
-      }
-      else //读不出一条完整的帧数据了，认为该分区所有数据结束了
-      {
-        Prog_Status.Area_Status[Area_No].File_Offset = 0;
-        Re = AREA_END;
-        break;
-      }
-    }while(1); //是同一屏数据,有后续帧表示---一个完整的屏数据用一帧传输，数据太大则拆帧
-
-    START_SHOW_TIMER_INT; //打开显示中断
-  }
-
-  //File_Close(File); //关闭
-
-  return 1;
-  */
+    
+  return AREA_OK;
 }
 
 
 //检测更新显示备份区数据
-INT8S Check_Update_Show_Data_Bak()
+INT8U Check_Update_Show_Data_Bak()
 {
-  INT8U i, Re;
-  INT32U Area_End_Flag = 0;
-  INT8U All_End_Flag = 1; //有一个分区没有结束则将其置0
-
+  INT8U i;
+  INT32U Stay_Time;
+  
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
+    Stay_Time = Get_File_Stay_Time(i);
     //目前显示的步进已经到100%并且目前停留时间已经达到文件的停留时间，则认为该屏已经显示完毕，切换到下屏
-    if(Get_File_Stay_Time(i) < MIN_STAY_TIME)
+    if(Stay_Time < MIN_STAY_TIME)
       Set_File_Stay_Time(i, MIN_STAY_TIME);
 
     //Step>=100表示整个移动过程完成，Stay_Time>=表示停留时间到，则需更新为下一屏数据
-    if(Prog_Status.Area_Status[i].Step >= 100 && Prog_Status.Area_Status[i].Stay_Time >= Get_File_Stay_Time(i))
+    if(Prog_Status.Area_Status[i].Step >= 100 &&\
+       Prog_Status.Area_Status[i].Stay_Time >= Stay_Time)
     {
-      Re = Update_Show_Data_Bak(Prog_Para.Prog_No, i);// == FILE_END)
-      if(Re EQ AREA_END) //分区完成
-      {
-        SET_BIT(Area_End_Flag, i); //第i分区节目播放完成
-        if(i + 1 EQ Prog_Para.Main_Area_No)
-          return PROG_END;
-      }
-      else
-        All_End_Flag = 0; //有一个分区没有结束则清楚该标志
+      Update_Show_Data_Bak(Prog_Para.Prog_No, i);// == FILE_END)
+
     }
   }
-
-  if(All_End_Flag EQ 1) //所有分区都结束了
-    return PROG_END;
-  else
-    return PROG_OK;
+  return 1;
 }
 
+void Clr_Prog_Status()
+{
+  memset(&Prog_Status, 0, sizeof(Prog_Status));
+  SET_HT(Prog_Status);
+  
+}
 
+INT8U Check_Prog_End()
+{
+  //次数模式
+  if(Prog_Para.Mode EQ PROG_COUNTS_MODE)
+  {
+    if(Prog_Status.Counts >= Prog_Para.Counts)
+      return 0;
+    else
+      return 1;
+  }
+  else if(Prog_Para.Mode EQ PROG_TIME_MODE)
+  {
+    if(Prog_Status.Time >= Prog_Para.Time)
+      return 0;
+    else
+      return 1;    
+  }
+  else
+  {
+    if(Prog_Status.Counts >= 1)
+      return 0;
+    else
+      return 1;   
+  } 
+}
+
+INT8U Check_Prog_Play_Time()
+{
+  
+}
 
 //每隔MOVE_STEP_TIMER ms 调用该函数，实现移动效果
 void Show_Timer_Proc()
@@ -290,15 +202,81 @@ void Show_Timer_Proc()
 }
 
 
+void Check_Update_Program_Para()
+{
+  INT8U Re;
+  INT8U i,Count = 0;
+  INT16U Len, Min_Counts = 0xFFFF;
+  static S_Int8U Sec = {CHK_BYTE, 0xFF, CHK_BYTE};
+  static S_Int8U Min = {CHK_BYTE, 0xFF, CHK_BYTE};
+  
+  if(Sec.Var EQ Cur_Time.Time[T_SEC])
+    return;
+  
+  Sec.Var = Cur_Time.Time[T_SEC];
+  
+  Re = CHK_HT(Prog_Status);
+  if(Re EQ 0)
+    ASSERT_FAILED();
+  
+  if(Prog_Status.Play_Flag EQ 0) //第一次播放该节目，则读取节目参数
+  {
+    while(1) //寻找下一个可播放的节目
+    {
+      Prog_Status.Prog_No ++;
+      Count ++;
+      
+      if(Prog_Status.Prog_No >= Screen_Para.Prog_Num || Prog_Status.Prog_No >= MAX_PROG_NUM)
+        Prog_Status.Prog_No = 0;
+  
+      Len = Read_Prog_Para(Prog_Status.Prog_No); //重新更新节目参数
+      if(Len > 0 && Check_Prog_Play_Time() > 0)
+      {
+        //读取该节目的存储索引
+        Clr_Prog_Status(); //清除节目状态
+        Read_Prog_Block_Index(Prog_Status.Prog_No);//重新读取节目的存储索引
+        break;
+      }
+      
+      //最多查询次数不超过Screen_Para.Prog_Num和MAX_PROG_NUM次
+      if(Count > Screen_Para.Prog_Num || Count > MAX_PROG_NUM)
+        break;
+    } 
+  }
+  
+  Prog_Status.Play_Flag = 1; //进入节目播放状态
+  
+  if(Min.Var != Cur_Time.Time[T_MIN]) //每分钟+1，当前节目的播放时间
+  {
+    Min.Var = Cur_Time.Time[T_MIN];
+    Prog_Status.Time ++;
+  }
+ 
+  
+  //最小播放次数是节目的播放次数---次数也可采用主分区的播放次数
+  for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
+  {
+    if(Prog_Status.Area_Status[i].Counts < Min_Counts)
+      Min_Counts = Prog_Status.Area_Status[i].Counts;
+  }
+  
+  Prog_Status.Counts = Min_Counts; //在所有分区内的最小播放次数就是节目的总播放次数
+  
+  
+  if(Check_Prog_End() > 0)//>0表示节目结束
+  {
+    Prog_Status.Time = 0;
+    Prog_Status.Counts = 0;
+    Prog_Status.Play_Flag = 0; //--当前节目播放完毕
+  }
+}
 
 
 //显示相关处理
 void Show_Main_Proc()
 {
-  //Check_Update_Program_Para(); //检查是否需要更新节目
+  Check_Update_Program_Para(); //检查是否需要更新节目
   Check_Update_Show_Data_Bak(); //检查是否需要更新显示备份区数据
-  //Check_Update_Show_Data(); //检查是否更新显示区数据
-
 }
 
 

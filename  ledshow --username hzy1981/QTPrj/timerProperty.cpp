@@ -133,7 +133,7 @@ void updateTimerShowArea(CshowArea *area)
 
         getTimerParaFromSettings(str,area->filePara);
         area->imageBk = getLineTextImage(str);
-
+        area->updateFlag = true;
         //qDebug("file_para flag = %d", area->filePara.Temp_Para.Flag);
         area->update(); //Ë¢ÐÂÏÔÊ¾
 

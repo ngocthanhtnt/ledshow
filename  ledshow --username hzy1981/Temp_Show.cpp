@@ -7,5 +7,5 @@
 void Update_Temp_Data(INT8U Area_No)
 {
 
-
+  Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
 }

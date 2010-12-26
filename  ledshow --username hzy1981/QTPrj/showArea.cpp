@@ -603,6 +603,8 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
     y0 = event->y();
     x1 = width();
     y1 = height();
+
+    updateFlag = true;
 /*
     qDebug("gloabal pos x = %d, y = %d, frame toleft x= %d, y = %d",
            event->globalPos().x(),event->globalPos().y(),
@@ -788,6 +790,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
      }
 
     w->property->area->updateRect(rect1);
+
     //rect1 = geometry();
     //qDebug("setFlag = %d, aft geometry x=%d, y=%d, width=%d, height=%d",setFlag, rect1.x(),rect1.y(),rect1.width(),rect1.height());
 }
@@ -876,11 +879,13 @@ void CshowArea::paintEvent(QPaintEvent *)
     Fill_Clock_Point(&showData, 0, &p0, 45, 30, 5, 0x01);
     Fill_Clock_Line(&showData, 0, &p0, 135, 50, 5, 0x04);
 */
-   Clear_Area_Data(&Show_Data, 0);
-   //if(mousePressed == false || (mousePressed == true && dragFlag != DRAG_MOVE))//鼠标在没有按下的情况下才更新数据
-    {
 
-        Clear_Area_Data(&Show_Data_Bak, 0);
+
+   if(updateFlag == true)//鼠标在没有按下的情况下才更新数据
+    {
+       updateFlag = 0;
+       Clear_Area_Data(&Show_Data, 0);
+       Clear_Area_Data(&Show_Data_Bak, 0);
         //memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
         //memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
         if(filePara.Temp_Para.Flag == SHOW_CLOCK) //显示表盘
@@ -1083,17 +1088,20 @@ void CshowArea::paintEvent(QPaintEvent *)
         else if(filePara.Temp_Para.Flag == SHOW_FLASH) //显示动画
         {
             P0.X = P0.Y = 0;
-            getFlashShowData(imageBk, &Show_Data, P0.X, P0.Y);
+            QImage image = imageBk.scaled(size());
+            getFlashShowData(image, &Show_Data, P0.X, P0.Y);
             //Update_Lun_Data(Area_No);
         }
-     }
+
+        memcpy(showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
+    }
 
     for(j=0; j<Height; j++)
     {
         for(i=0; i<Width; i++)
         {
-           colorData = Get_Area_Point_Data(&Show_Data, 0, i, j);
-
+           //colorData = Get_Area_Point_Data(&Show_Data, 0, i, j);
+           colorData = Get_Area_Point_Data(&showData, 0, i, j);
             //if(colorData != 0)
               //qDebug("point %d,%d = %d", i, j, colorData);
            painter.setPen(getQColor(colorData));
@@ -1122,6 +1130,17 @@ void CshowArea::paintEvent(QPaintEvent *)
            }
            */
        }
+
+        if(focusFlag == true) //当前分区是焦点
+        {
+          painter.setPen(QColor(Qt::yellow));
+          painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
+        }
+        else
+        {
+            painter.setPen(QColor(Qt::darkGray));
+            painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
+        }
     }
 /*
     painter.setPen(QColor(Qt::green));
@@ -1151,22 +1170,26 @@ void CshowArea::paintEvent(QPaintEvent *)
     }*/
 }
     else //非0表示是背景
-    {
+    {      
+        if(updateFlag == true)//鼠标在没有按下的情况下才更新数据
+         {
+            Clear_Area_Data(&Show_Data, 0);
+            updateFlag = 0;
+            memcpy(&Prog_Para, &progPara, sizeof(progPara));
 
-        Clear_Area_Data(&Show_Data, 0);
-        memcpy(&Prog_Para, &progPara, sizeof(progPara));
-        //if(areaType EQ 0) //当前背景
-        {
            Draw_Border(&Show_Data, MAX_AREA_NUM, Prog_Para.Border_Data, \
                        Prog_Para.Border_Width, Prog_Para.Border_Height, 0);
-        }
+
+            memcpy(showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
+         }
 
         //unsigned char colorData;
         for(i=0; i<Width; i++)
         {
             for(j=0; j<Height; j++)
             {
-                colorData = Get_Area_Point_Data(&Show_Data, MAX_AREA_NUM, i, j);
+                //colorData = Get_Area_Point_Data(&Show_Data, MAX_AREA_NUM, i, j);
+                colorData = Get_Area_Point_Data(&showData, MAX_AREA_NUM, i, j);
 
                 if(colorData > 0)
                 {
@@ -1175,7 +1198,7 @@ void CshowArea::paintEvent(QPaintEvent *)
                 }
                 else
                 {
-                    painter.setPen(QColor(Qt::darkGray));
+                    painter.setPen(QColor(Qt::black));
                     painter.drawPoint(i,j);
                 }
               }
@@ -1185,11 +1208,7 @@ void CshowArea::paintEvent(QPaintEvent *)
 
 
     //lpArea = w->screenArea->getFocusArea();//((CscreenArea *)parentWidget)->getFocusArea(); //w->screenArea->getFocusArea();
-    if(focusFlag == true) //当前分区是焦点
-    {
-      painter.setPen(QColor(Qt::yellow));
-      painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
-    }
+
 
 
     //painter.setPen(QColor(Qt::yellow));

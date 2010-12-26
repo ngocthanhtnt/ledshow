@@ -898,6 +898,7 @@ void TextEdit::edit()
   //int pageNum = getTextImagePageNum(area->smLineFlag, area->width(),area->height(),area->picStr, linePosi);
   spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
   area->page = spinPage->value(); //页号
+  area->updateFlag = true;
   area->update(); //更新当前显示缓冲
 
 }

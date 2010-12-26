@@ -281,4 +281,6 @@ void Update_Timer_Data(INT8U Area_No)
                  Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font,Prog_Status.File_Para[Area_No].Timer_Para.Timer_Color);
 
   }
+  
+  Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
 }
