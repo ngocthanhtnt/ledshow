@@ -2,6 +2,8 @@
 #include "Includes.h"
 #include "nongli.h"
 
+#if LUN_SHOW_EN
+
 #define TIANGAN_LEN 6
 #define NONGLI_LEN  10
 #define JIEQI_LEN   10
@@ -336,3 +338,4 @@ void Update_Lun_Data(INT8U Area_No)
 
   Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
 }
+#endif

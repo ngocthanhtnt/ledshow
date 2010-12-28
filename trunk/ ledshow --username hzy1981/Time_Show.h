@@ -3,6 +3,8 @@
 
 #include "Includes.h"
 
+#if TIME_SHOW_EN
+
 #undef EXT
 #ifdef TIME_SHOW_C
 #define EXT
@@ -11,12 +13,6 @@
 #endif
 
 
-typedef struct
-{
-  char str[22];
-  INT8U Len;
-
-}S_Format_Str;
 
 EXT INT16U Get_DateStr_Pix_Width(INT8U Type, INT8U Font);
 EXT INT16U Get_WeekStr_Pix_Width(INT8U Type, INT8U Font, INT8U Week);
@@ -29,3 +25,5 @@ EXT INT16U Get_Time_Min_Height(INT8U Area_No);
 EXT void Update_Time_Data(INT8U Area_No);
 
 #endif
+#endif
+

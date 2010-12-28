@@ -1,6 +1,8 @@
 #define TIMER_SHOW_C
 #include "Includes.h"
 
+#if TIMER_SHOW_EN
+
 #define DAY_SEC (1440*60)
 #define HOUR_SEC 3600
 #define MIN_SEC 60
@@ -292,3 +294,4 @@ void Update_Timer_Data(INT8U Area_No)
   
   Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
 }
+#endif

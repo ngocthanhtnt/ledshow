@@ -1,6 +1,7 @@
 #define BORDER_SHOW_C
 #include "Includes.h"
 
+#if BORDER_SHOW_EN > 0
 //获取边框数据
 //X\Y表示在边框数据块内的索引
 INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y) //获取一个区域内一个点的数据
@@ -169,5 +170,5 @@ void Update_Border_Data(INT8U Area_No)
   else
     Flag.Var = 1;
 }
-
+#endif
 #undef BORDER_SHOW_C

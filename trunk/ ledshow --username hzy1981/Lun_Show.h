@@ -3,6 +3,8 @@
 
 #include "Includes.h"
 
+#if LUN_SHOW_EN
+
 #undef EXT
 #ifdef LUN_SHOW_C
 #define EXT
@@ -17,3 +19,5 @@ EXT INT16U Get_NongliStr_Width(INT8U Font, char str[]);
 EXT INT16U Get_JieqiStr_Width(INT8U Font);
 EXT void Update_Lun_Data(INT8U Area_No);
 #endif
+#endif
+

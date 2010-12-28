@@ -57,7 +57,21 @@ typedef struct
   INT8U Tail;
 }S_Pub_Buf;
 
+typedef struct
+{
+  INT8U Head;
+  INT8U Time[7];
+  //INT8U CS[CS_BYTES];
+  INT8U Tail;
+}S_Time;
 
+
+typedef struct
+{
+  char str[22];
+  INT8U Len;
+
+}S_Format_Str;
 //EXT NO_INIT S_Trace_Info Trace_Info;
 #ifdef PUB_C
 EXT S_Pub_Buf _Pub_Buf = {CHK_BYTE,{0}, CHK_BYTE};
@@ -71,7 +85,8 @@ EXT S_Pub_Buf _Pub_Buf;
 EXT INT16U Sum_2Bytes(INT8U Src[], INT16U SrcLen);
 EXT void Check(void);
 EXT void Info_Print(void);
+EXT void S_Time_2_tm(S_Time *pTime, struct tm *ptm);
+EXT void tm_2_S_Time(struct tm *ptm, S_Time *pTime);
 //外部完成调试信息输出函数
 extern void Put_Char(INT8S Chr);
-//}
 #endif

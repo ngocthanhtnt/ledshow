@@ -3,6 +3,8 @@
 
 #include "Includes.h"
 
+#if PIC_SHOW_EN
+
 #undef EXT
 #ifdef PIC_SHOW_C
 #define EXT
@@ -17,3 +19,5 @@ typedef struct
 
 EXT void Update_Pic_Data(INT8U Area_No);
 #endif
+#endif
+

@@ -610,7 +610,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
     y1 = this->height();
 
     rect2 = parentWidget()->geometry();
-    updateFlag = true;
+
 /*
     qDebug("gloabal pos x = %d, y = %d, frame toleft x= %d, y = %d",
            event->globalPos().x(),event->globalPos().y(),
@@ -664,7 +664,6 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         else
         {
 
-            updateFlag = false;
             //if(mousePressed == true)
             {
                 dragFlag = DRAG_MOVE;
@@ -699,6 +698,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
                 posi.setY(rect2.height() - this->height());
 
             move(posi);
+
         }
 
     }
@@ -711,6 +711,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         else
             width = oldSize.width() + event->globalPos().x() - dragPosition.x();
 
+        updateFlag = true;
         resize(width, oldSize.height());
     }
     else if(dragFlag == DRAG_RD)//右下拉伸
@@ -725,6 +726,8 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
             height = rect2.height() - frameGeometry().topLeft().y();// oldSize.height();//resize(rect2.width() - frameGeometry().topLeft().x(), oldSize.height());
         else
             height = oldSize.height() + event->globalPos().y() - dragPosition.y();
+
+        updateFlag = true;
         resize(width,height);
     }
     else if(dragFlag == DRAG_RU) //右上
@@ -746,6 +749,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         else
             width = oldSize.width() + event->globalPos().x() - dragPosition.x();
 
+        updateFlag = true;
         move(framePosition.x(),y);
         resize(width, height);
     }
@@ -757,6 +761,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         else
           height = rect2.height() - framePosition.y();
 
+        updateFlag = true;
         resize(oldSize.width(), height);
     }
     else if(dragFlag == DRAG_U) //垂直向上拉伸
@@ -772,6 +777,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
            height = oldSize.height() - event->globalPos().y() + dragPosition.y();
         }
 
+        updateFlag = true;
         move(framePosition.x(),y);
         resize(oldSize.width(), height);
     }
@@ -787,6 +793,8 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
            x = framePosition.x() + event->globalPos().x() - dragPosition.x();
            width = oldSize.width() - event->globalPos().x() + dragPosition.x();
         }
+
+        updateFlag = true;
         move(x,framePosition.y());
         resize(width, oldSize.height());
     }
@@ -808,6 +816,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         else
           height = rect2.height() - framePosition.y();
 
+        updateFlag = true;
         move(x, framePosition.y());
         resize(width,height);
     }
@@ -836,6 +845,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
            height = oldSize.height() - event->globalPos().y() + dragPosition.y();
         }
 
+        updateFlag = true;
         move(x,y);
         resize(width,height);
     }
