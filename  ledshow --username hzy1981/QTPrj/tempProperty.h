@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include "simpleTextEdit.h"
 #include "areaProperty.h"
+#include "showArea.h"
 
 class Ctemp:public QGroupBox
 {
@@ -63,4 +64,5 @@ public:
     ~CtempProperty();
 };
 
+void updateTempShowArea(CshowArea *area);
 #endif // TEMPPROPERTY_H

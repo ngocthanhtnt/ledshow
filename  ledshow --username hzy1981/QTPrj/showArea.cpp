@@ -243,6 +243,10 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     {
         updateFlashShowArea(area);
     }
+    else if(type EQ TEMP_PROPERTY)
+    {
+        updateTempShowArea(area);
+    }
 }
 
 //当前节目、分区、文件发生变化时的处理
@@ -589,9 +593,9 @@ void CshowArea::mouseReleaseEvent(QMouseEvent *event)
 void CshowArea::mouseMoveEvent(QMouseEvent *event)
 {
     QPoint point = pos();
-    //int diff;
+    int width,height;
     QRect rect, rect1,rect2;
-
+    int x,y;
     int x0,y0;
     int x1,y1;
 
@@ -601,9 +605,11 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
 
     x0 = event->x();
     y0 = event->y();
-    x1 = width();
-    y1 = height();
 
+    x1 = this->width();
+    y1 = this->height();
+
+    rect2 = parentWidget()->geometry();
     updateFlag = true;
 /*
     qDebug("gloabal pos x = %d, y = %d, frame toleft x= %d, y = %d",
@@ -658,6 +664,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         else
         {
 
+            updateFlag = false;
             //if(mousePressed == true)
             {
                 dragFlag = DRAG_MOVE;
@@ -679,61 +686,163 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
     {
         if(event->buttons() & Qt::LeftButton)
         {
-            move(framePosition + event->globalPos() - dragPosition);
+            QPoint posi;
+            posi = framePosition + event->globalPos() - dragPosition;
+            //move(framePosition + event->globalPos() - dragPosition);
+            if(posi.x() < 0)
+                posi.setX(0);
+            if(posi.y() < 0)
+                posi.setY(0);
+            if(posi.x() + this->width() > rect2.width())
+               posi.setX(rect2.width() - this->width());
+            if(posi.y() + this->height() > rect2.height())
+                posi.setY(rect2.height() - this->height());
+
+            move(posi);
         }
 
     }
     else if(dragFlag == DRAG_R) //右
     {
        //resize(event->x() + 4, height());
-        resize(oldSize.width() + event->globalPos().x() - dragPosition.x(), oldSize.height());
+        //使其不越右边界
+        if(frameGeometry().topLeft().x() + oldSize.width() + event->globalPos().x() - dragPosition.x() > rect2.width())
+            width = rect2.width() - frameGeometry().topLeft().x();// oldSize.height();//resize(rect2.width() - frameGeometry().topLeft().x(), oldSize.height());
+        else
+            width = oldSize.width() + event->globalPos().x() - dragPosition.x();
+
+        resize(width, oldSize.height());
     }
     else if(dragFlag == DRAG_RD)//右下拉伸
     {
-        //resize(event->x() + 4, event -> y() + 4);
-        resize(oldSize.width() + event->globalPos().x() - dragPosition.x(),\
-               oldSize.height() + event->globalPos().y() - dragPosition.y());
+
+        if(frameGeometry().topLeft().x() + oldSize.width() + event->globalPos().x() - dragPosition.x() > rect2.width())
+            width = rect2.width() - frameGeometry().topLeft().x(); //oldSize.height();//resize(rect2.width() - frameGeometry().topLeft().x(), oldSize.height());
+        else
+            width = oldSize.width() + event->globalPos().x() - dragPosition.x();
+
+        if(frameGeometry().topLeft().y() + oldSize.height() + event->globalPos().y() - dragPosition.y() > rect2.height())
+            height = rect2.height() - frameGeometry().topLeft().y();// oldSize.height();//resize(rect2.width() - frameGeometry().topLeft().x(), oldSize.height());
+        else
+            height = oldSize.height() + event->globalPos().y() - dragPosition.y();
+        resize(width,height);
     }
     else if(dragFlag == DRAG_RU) //右上
     {
-        move(framePosition.x(),framePosition.y() + event->globalPos().y() - dragPosition.y());
-        resize(oldSize.width() + event->globalPos().x() - dragPosition.x(),\
-               oldSize.height() - event->globalPos().y() + dragPosition.y());
+        if(framePosition.y() + event->globalPos().y() - dragPosition.y() < 0)
+        {
+           y = 0;
+           height = framePosition.y() + oldSize.height();
+        }
+        else
+        {
+           y = framePosition.y() + event->globalPos().y() - dragPosition.y();
+           height = oldSize.height() - event->globalPos().y() + dragPosition.y();
+        }
+        //move(framePosition.x(),y);//framePosition.y() + event->globalPos().y() - dragPosition.y());
+
+        if(frameGeometry().topLeft().x() + oldSize.width() + event->globalPos().x() - dragPosition.x() > rect2.width())
+            width = rect2.width() - frameGeometry().topLeft().x(); //oldSize.height();//resize(rect2.width() - frameGeometry().topLeft().x(), oldSize.height());
+        else
+            width = oldSize.width() + event->globalPos().x() - dragPosition.x();
+
+        move(framePosition.x(),y);
+        resize(width, height);
     }
-    else if(dragFlag == DRAG_D) //垂直拉伸
+    else if(dragFlag == DRAG_D) //垂直向下拉伸
     {
         //resize(width(), event ->y() + 4);
-        resize(oldSize.width(), oldSize.height() + event->globalPos().y() - dragPosition.y());
+        if(framePosition.y() + oldSize.height() + event->globalPos().y() - dragPosition.y() < rect2.height())
+          height = oldSize.height() + event->globalPos().y() - dragPosition.y();
+        else
+          height = rect2.height() - framePosition.y();
+
+        resize(oldSize.width(), height);
     }
-    else if(dragFlag == DRAG_U) //垂直拉伸
+    else if(dragFlag == DRAG_U) //垂直向上拉伸
     {
-        move(framePosition.x(),framePosition.y() + event->globalPos().y() - dragPosition.y());
-        resize(oldSize.width(), oldSize.height() - event->globalPos().y() + dragPosition.y());
+        if(framePosition.y() + event->globalPos().y() - dragPosition.y() < 0)
+        {
+           y = 0;
+           height = framePosition.y() + oldSize.height();
+        }
+        else
+        {
+           y = framePosition.y() + event->globalPos().y() - dragPosition.y();
+           height = oldSize.height() - event->globalPos().y() + dragPosition.y();
+        }
+
+        move(framePosition.x(),y);
+        resize(oldSize.width(), height);
     }
     else if(dragFlag == DRAG_L) //左
     {
-        move(framePosition.x()  + event->globalPos().x() - dragPosition.x(),framePosition.y());
-        resize(oldSize.width() - event->globalPos().x() + dragPosition.x(), oldSize.height());
+        if(framePosition.x() + event->globalPos().x() - dragPosition.x() < 0)
+        {
+           x = 0;
+           width = framePosition.x() + oldSize.width();
+        }
+        else
+        {
+           x = framePosition.x() + event->globalPos().x() - dragPosition.x();
+           width = oldSize.width() - event->globalPos().x() + dragPosition.x();
+        }
+        move(x,framePosition.y());
+        resize(width, oldSize.height());
     }
     else if(dragFlag == DRAG_LD)//左下拉伸
     {
-        move(framePosition.x()  + event->globalPos().x() - dragPosition.x(),\
-             framePosition.y());
-        resize(oldSize.width() - event->globalPos().x() + dragPosition.x(),\
-               oldSize.height() + event->globalPos().y() - dragPosition.y());
+        if(framePosition.x() + event->globalPos().x() - dragPosition.x() < 0)
+        {
+           x = 0;
+           width = framePosition.x() + oldSize.width();
+        }
+        else
+        {
+           x = framePosition.x() + event->globalPos().x() - dragPosition.x();
+           width = oldSize.width() - event->globalPos().x() + dragPosition.x();
+        }
+
+        if(framePosition.y() + oldSize.height() + event->globalPos().y() - dragPosition.y() < rect2.height())
+          height = oldSize.height() + event->globalPos().y() - dragPosition.y();
+        else
+          height = rect2.height() - framePosition.y();
+
+        move(x, framePosition.y());
+        resize(width,height);
     }
     else if(dragFlag == DRAG_LU) //左上
     {
-        move(framePosition.x()  + event->globalPos().x() - dragPosition.x(),\
-             framePosition.y()  + event->globalPos().y() - dragPosition.y());
 
-        resize(oldSize.width() - event->globalPos().x() + dragPosition.x(),\
-               oldSize.height() - event->globalPos().y() + dragPosition.y());
+        if(framePosition.x() + event->globalPos().x() - dragPosition.x() < 0)
+        {
+           x = 0;
+           width = framePosition.x() + oldSize.width();
+        }
+        else
+        {
+           x = framePosition.x() + event->globalPos().x() - dragPosition.x();
+           width = oldSize.width() - event->globalPos().x() + dragPosition.x();
+        }
+
+        if(framePosition.y() + event->globalPos().y() - dragPosition.y() < 0)
+        {
+           y = 0;
+           height = framePosition.y() + oldSize.height();
+        }
+        else
+        {
+           y = framePosition.y() + event->globalPos().y() - dragPosition.y();
+           height = oldSize.height() - event->globalPos().y() + dragPosition.y();
+        }
+
+        move(x,y);
+        resize(width,height);
     }
     event->accept();
 
     rect1 = geometry();
-    rect2 = parentWidget()->geometry();
+/*
 
     //qDebug("bef geometry x=%d, y=%d, width=%d, height=%d",rect1.x(),rect1.y(),rect1.width(),rect1.height());
 
@@ -757,9 +866,9 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
     }
     if(rect1.x() + rect1.width()>= rect2.width())
     {
-        rect1.setX(rect2.width()-rect1.width());
+        //rect1.setX(rect2.width()-rect1.width());
         //rect1.setY(rect.y());
-        rect1.setWidth(rect.width());
+        rect1.setWidth(rect.width()- (rect1.x() + rect1.width()- rect2.width()));
         rect1.setHeight(rect.height());
 
         setFlag = 1;
@@ -788,7 +897,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
          setGeometry(rect1);
 
      }
-
+*/
     w->property->area->updateRect(rect1);
 
     //rect1 = geometry();
