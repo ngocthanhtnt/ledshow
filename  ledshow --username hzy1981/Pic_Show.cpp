@@ -1,6 +1,7 @@
 #define PIC_SHOW_C
 #include "Includes.h"
 
+#if PIC_SHOW_EN
 //数据移入方式
 const S_Mode_Func Mode_Func[]=
 {
@@ -46,3 +47,5 @@ void Update_Pic_Data(INT8U Area_No)
     Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
   }
 }
+#endif
+

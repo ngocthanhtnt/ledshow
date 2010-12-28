@@ -298,9 +298,11 @@ INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
   INT16U Width,Height,X,Y;
   INT32U Len,DstLen, Offset;
   INT16U Index;
-    
+   
+#if PIC_SHOW_EN 
   if(Flag EQ SHOW_PIC) //图文
   {
+     
     Width = Get_Area_Width(Area_No);
     Height = Get_Area_Height(Area_No);
    
@@ -312,8 +314,10 @@ INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
       
     Offset = (DstLen * SIndex) % BLOCK_SHOW_DATA_LEN; //在该块中的索引   
     X = 0;
-    Y = 0;
-  }
+    Y = 0;   
+  }  
+#endif
+#if CLOCK_SHOW_EN  
   else if(Flag EQ SHOW_CLOCK) //表盘
   {
     Width = Prog_Status.File_Para[Area_No].Clock_Para.Text_Width;
@@ -327,6 +331,8 @@ INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     X = Prog_Status.File_Para[Area_No].Clock_Para.Text_X;
     Y = Prog_Status.File_Para[Area_No].Clock_Para.Text_Y;    
   }
+#endif
+#if TIMER_SHOW_EN  
   else if(Flag EQ SHOW_TIMER) //计时
   {
     Width = Prog_Status.File_Para[Area_No].Timer_Para.Text_Width;
@@ -340,6 +346,8 @@ INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     X = Prog_Status.File_Para[Area_No].Timer_Para.Text_X;
     Y = Prog_Status.File_Para[Area_No].Timer_Para.Text_Y;     
   }
+#endif
+#if TIME_SHOW_EN  
   else if(Flag EQ SHOW_TIME) //日期时间
   {
     Width = Prog_Status.File_Para[Area_No].Time_Para.Text_Width;
@@ -353,6 +361,8 @@ INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     X = Prog_Status.File_Para[Area_No].Time_Para.Text_X;
     Y = Prog_Status.File_Para[Area_No].Time_Para.Text_Y;     
   }
+#endif
+#if LUN_SHOW_EN  
   else if(Flag EQ SHOW_LUN) //农历
   {
     Width = Prog_Status.File_Para[Area_No].Lun_Para.Text_Width;
@@ -366,6 +376,8 @@ INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     X = Prog_Status.File_Para[Area_No].Lun_Para.Text_X;
     Y = Prog_Status.File_Para[Area_No].Lun_Para.Text_Y;    
   }
+#endif
+#if TEMP_SHOW_EN  
   else if(Flag EQ SHOW_TEMP) //温度
   {
     Width = Prog_Status.File_Para[Area_No].Temp_Para.Text_Width;
@@ -379,6 +391,7 @@ INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     X = Prog_Status.File_Para[Area_No].Temp_Para.Text_X;
     Y = Prog_Status.File_Para[Area_No].Temp_Para.Text_Y;    
   }
+#endif  
   else
   {
     ASSERT_FAILED();

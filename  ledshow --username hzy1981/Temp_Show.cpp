@@ -1,6 +1,7 @@
 #define TEMP_SHOW_C
 #include "Includes.h"
 
+#if TEMP_SHOW_EN
 //#define TEMP_STR_MAX_WIDTH 250
 
 //温度>=0是使用以下格式字符串
@@ -132,3 +133,4 @@ void Update_Temp_Data(INT8U Area_No)
       
     Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
 }
+#endif

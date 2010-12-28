@@ -62,20 +62,34 @@ void Update_Show_Data()
 
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
+#if PIC_SHOW_EN    
     if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_PIC)
       Update_Pic_Data(i);
+#endif   
+#if CLOCK_SHOW_EN
     else if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_CLOCK)
       Update_Clock_Data(i);
+#endif
+#if TIMER_SHOW_EN
     else if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_TIMER)
       Update_Timer_Data(i);
+#endif
+#if TIME_SHOW_EN
     else if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_TIME)
       Update_Time_Data(i);
+#endif
+#if TEMP_SHOW_EN
     else if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_TEMP)
       Update_Temp_Data(i);
+#endif
+#if LUN_SHOW_EN
     else if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_LUN)
       Update_Lun_Data(i);
+#endif  
   }
+#if BORDER_SHOW_EN
   Update_Border_Data(MAX_AREA_NUM); //更新边框数据
+#endif  
 }
 
 //读取一屏显示数据

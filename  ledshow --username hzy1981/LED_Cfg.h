@@ -3,7 +3,7 @@
 #define ROM_CS_BYTES 2
 #define MAX_BORDER_POINTS (40*8)
 
-#define QT_EN 1 //使用QT仿真
+#define QT_EN 0 //使用QT仿真
 
 #if QT_EN == 0 //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 1
@@ -22,7 +22,13 @@
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
 #define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
-
+#define BORDER_SHOW_EN 1 //边框显示使能
+#define CLOCK_SHOW_EN  1 //时钟显示使能
+#define PIC_SHOW_EN    1 //图文显示使能
+#define LUN_SHOW_EN    1 //农历显示使能
+#define TEMP_SHOW_EN   1 //温度显示使能
+#define TIME_SHOW_EN   1 //时间显示使能
+#define TIMER_SHOW_EN  1 //定时显示使能 
 
 #else
 #define ASSERT_EN 1
@@ -43,4 +49,11 @@
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
 #define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
+#define BORDER_SHOW_EN 1 //边框显示使能
+#define CLOCK_SHOW_EN  1 //时钟显示使能
+#define PIC_SHOW_EN    1 //图文显示使能
+#define LUN_SHOW_EN    1 //农历显示使能
+#define TEMP_SHOW_EN   1 //温度显示使能
+#define TIME_SHOW_EN   1 //时间显示使能
+#define TIMER_SHOW_EN  1 //定时显示使能 
 #endif

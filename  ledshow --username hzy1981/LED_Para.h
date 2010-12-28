@@ -43,14 +43,6 @@
 
 typedef struct
 {
-  INT8U Head;
-  INT8U Time[7];
-  //INT8U CS[CS_BYTES];
-  INT8U Tail;
-}S_Time;
-
-typedef struct
-{
   //INT8U Head;
   INT8U Flag;
   INT8U Value; //亮度值
@@ -136,8 +128,9 @@ typedef struct
   INT8U Border_Width;   //边框宽度
   INT8U Border_Height;  //边框高度
   INT8U Temp;   //备用
+//#if BORDER_SHOW_EN > 0  
   INT8U Border_Data[3*MAX_BORDER_POINTS/8]; //边框数据
-  
+//#endif  
   INT8U CS[CS_BYTES];
   
   INT8U Tail;
@@ -431,13 +424,24 @@ typedef struct
 //所有参数的联合
 typedef union
 {
+#if PIC_SHOW_EN  
   S_Pic_Para Pic_Para;
+#endif
+#if CLOCK_SHOW_EN  
   S_Clock_Para Clock_Para;
+#endif
+#if TIMER_SHOW_EN  
   S_Timer_Para Timer_Para;
+#endif
+#if TIME_SHOW_EN  
   S_Time_Para Time_Para;
+#endif
+#if LUN_SHOW_EN  
   S_Lun_Para Lun_Para;
+#endif
+#if TEMP_SHOW_EN  
   S_Temp_Para Temp_Para;
-  
+#endif  
 }U_File_Para;
 
 typedef struct

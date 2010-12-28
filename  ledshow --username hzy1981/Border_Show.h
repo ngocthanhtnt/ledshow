@@ -1,6 +1,8 @@
 #ifndef BORDER_SHOW_H
 #define BORDER_SHOW_H
 
+#if BORDER_SHOW_EN > 0
+
 #undef EXT
 #ifdef BORDER_SHOW_C
 #define EXT
@@ -20,3 +22,4 @@ EXT void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width
 EXT void Update_Border_Data(INT8U Area_No);
 #endif
 
+#endif
