@@ -4,6 +4,8 @@
 #include <QPainter>
 #include <QTreeWidgetItem>
 
+#define MIN_AREA 10
+
 extern MainWindow *w;
 extern QSettings settings;
 
@@ -177,6 +179,8 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
         pArea[index]->move(x, y);
         pArea[index]->resize(xLen,yLen);
 
+        memset(pArea[index]->showData.Color_Data, 0, sizeof(pArea[index]->showData.Color_Data));
+        //Clear_Area_Data(&(pArea[index]->showData), 0);
         //初始化当前子文件
         if(subIndex <= item->childCount() && subIndex> 0)
         {
@@ -520,12 +524,12 @@ void CshowArea::mousePressEvent(QMouseEvent *event)
     event->accept();
     //w->screenArea->setFocusArea(this);
     if(this->treeItem != 0)
-    {
+    {/*
         if(treeItem == w->progManage->treeWidget->currentItem())
         {
           w->progManage->clickItem(treeItem, 0);
           return;
-        }
+        }*/
 /*
         QString str;
         str = this ->treeItem->data(0, Qt::UserRole).toString();
@@ -534,12 +538,16 @@ void CshowArea::mousePressEvent(QMouseEvent *event)
         int subIndex = settings.value("subIndex").toInt();
         settings.endGroup();
 */
-        QTreeWidgetItem *item = this->fileItem;
-
-        if(item != (QTreeWidgetItem *)0)
+        QTreeWidgetItem *fileItem = this->fileItem;
+        //QTreeWidgetItem *treeItem = this->treeItem;
+        if(fileItem != (QTreeWidgetItem *)0)
         {
             //QTreeWidgetItem *item = treeItem->child(subIndex-1);
-            w->progManage->clickItem(item, 0);
+            w->progManage->clickItem(fileItem, 0);
+        }
+        else //if(treeItem != (QTreeWidgetItem *)0)
+        {
+            w->progManage->clickItem(treeItem, 0);
         }
         //else
             //ASSERT_FAILED();
@@ -712,6 +720,8 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
             width = oldSize.width() + event->globalPos().x() - dragPosition.x();
 
         updateFlag = true;
+        if(width < MIN_AREA)
+            width = MIN_AREA;
         resize(width, oldSize.height());
     }
     else if(dragFlag == DRAG_RD)//右下拉伸
@@ -727,6 +737,12 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         else
             height = oldSize.height() + event->globalPos().y() - dragPosition.y();
 
+        if(width < MIN_AREA)
+            width = MIN_AREA;
+
+        if(height < MIN_AREA)
+            height = MIN_AREA;
+
         updateFlag = true;
         resize(width,height);
     }
@@ -736,6 +752,11 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         {
            y = 0;
            height = framePosition.y() + oldSize.height();
+        }
+        else if(event->globalPos().y() - dragPosition.y() > oldSize.height() - MIN_AREA)
+        {
+           y = framePosition.y() +oldSize.height() - MIN_AREA;
+           height = MIN_AREA;
         }
         else
         {
@@ -750,6 +771,13 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
             width = oldSize.width() + event->globalPos().x() - dragPosition.x();
 
         updateFlag = true;
+
+        if(width < MIN_AREA)
+            width = MIN_AREA;
+
+        if(height < MIN_AREA)
+            height = MIN_AREA;
+
         move(framePosition.x(),y);
         resize(width, height);
     }
@@ -762,6 +790,8 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
           height = rect2.height() - framePosition.y();
 
         updateFlag = true;
+        if(height < MIN_AREA)
+            height = MIN_AREA;
         resize(oldSize.width(), height);
     }
     else if(dragFlag == DRAG_U) //垂直向上拉伸
@@ -778,6 +808,8 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         }
 
         updateFlag = true;
+        if(height < MIN_AREA)
+            height = MIN_AREA;
         move(framePosition.x(),y);
         resize(oldSize.width(), height);
     }
@@ -788,6 +820,11 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
            x = 0;
            width = framePosition.x() + oldSize.width();
         }
+        else if(event->globalPos().x() - dragPosition.x() > oldSize.width() - MIN_AREA)
+        {
+           x = framePosition.x() + oldSize.width()-MIN_AREA;
+           width = MIN_AREA;
+        }
         else
         {
            x = framePosition.x() + event->globalPos().x() - dragPosition.x();
@@ -795,6 +832,9 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         }
 
         updateFlag = true;
+        //if(width < MIN_AREA)
+            //width = MIN_AREA;
+
         move(x,framePosition.y());
         resize(width, oldSize.height());
     }
@@ -804,6 +844,11 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         {
            x = 0;
            width = framePosition.x() + oldSize.width();
+        }
+        else if(event->globalPos().x() - dragPosition.x() > oldSize.width() - MIN_AREA)
+        {
+           x = framePosition.x() + oldSize.width()-MIN_AREA;
+           width = MIN_AREA;
         }
         else
         {
@@ -817,6 +862,11 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
           height = rect2.height() - framePosition.y();
 
         updateFlag = true;
+        if(width < MIN_AREA)
+            width = MIN_AREA;
+
+        if(height < MIN_AREA)
+            height = MIN_AREA;
         move(x, framePosition.y());
         resize(width,height);
     }
@@ -827,6 +877,11 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         {
            x = 0;
            width = framePosition.x() + oldSize.width();
+        }
+        else if(event->globalPos().x() - dragPosition.x() > oldSize.width() - MIN_AREA)
+        {
+           x = framePosition.x() + oldSize.width()-MIN_AREA;
+           width = MIN_AREA;
         }
         else
         {
@@ -839,6 +894,11 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
            y = 0;
            height = framePosition.y() + oldSize.height();
         }
+        else if(event->globalPos().y() - dragPosition.y() > oldSize.height() - MIN_AREA)
+        {
+           y = framePosition.y() +oldSize.height() - MIN_AREA;
+           height = MIN_AREA;
+        }
         else
         {
            y = framePosition.y() + event->globalPos().y() - dragPosition.y();
@@ -846,69 +906,21 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         }
 
         updateFlag = true;
+        if(width < MIN_AREA)
+            width = MIN_AREA;
+
+        if(height < MIN_AREA)
+            height = MIN_AREA;
         move(x,y);
         resize(width,height);
     }
     event->accept();
 
     rect1 = geometry();
-/*
 
-    //qDebug("bef geometry x=%d, y=%d, width=%d, height=%d",rect1.x(),rect1.y(),rect1.width(),rect1.height());
-
-    int setFlag = 0;
-    rect = rect1;
-    if(rect1.x() < 0)
-    {
-        rect1.setX(0);
-        rect1.setY(rect.y());
-        rect1.setWidth(rect.width());
-        rect1.setHeight(rect.height());
-        setFlag = 1;
+    if(w->property->area != (Carea *)0) {
+        w->property->area->updateRect(rect1);
     }
-    if(rect1.y() < 0)
-    {
-        //rect1.setX(rect.x());
-        rect1.setY(0);
-        rect1.setWidth(rect.width());
-        rect1.setHeight(rect.height());
-        setFlag = 1;
-    }
-    if(rect1.x() + rect1.width()>= rect2.width())
-    {
-        //rect1.setX(rect2.width()-rect1.width());
-        //rect1.setY(rect.y());
-        rect1.setWidth(rect.width()- (rect1.x() + rect1.width()- rect2.width()));
-        rect1.setHeight(rect.height());
-
-        setFlag = 1;
-    }
-    if(rect1.y() + rect1.height()>= rect2.height())
-    {
-        //rect1.setX(rect.x());
-        rect1.setY(rect2.height()-rect1.height());
-        rect1.setWidth(rect.width());
-        rect1.setHeight(rect.height());
-        setFlag = 1;
-    }
-    if(rect1.width()<10)
-    {
-        rect1.setWidth(10);
-        setFlag = 1;
-    }
-    if(rect1.height()<10)
-    {
-        rect1.setHeight(10);
-        setFlag = 1;
-    }
-
-    if(setFlag == 1)
-    {
-         setGeometry(rect1);
-
-     }
-*/
-    w->property->area->updateRect(rect1);
 
     //rect1 = geometry();
     //qDebug("setFlag = %d, aft geometry x=%d, y=%d, width=%d, height=%d",setFlag, rect1.x(),rect1.y(),rect1.width(),rect1.height());

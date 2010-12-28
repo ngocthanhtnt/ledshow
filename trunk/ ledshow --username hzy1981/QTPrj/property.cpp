@@ -69,7 +69,10 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     stackedWidget->setCurrentIndex(type);
 
     if(type == PROG_PROPERTY)
-        ASSERT_FAILED();//progProperty->setSettingsToWidget(str);//stackedWidget->setCurrentIndex();
+    {
+       area = (Carea *)0;
+       ASSERT_FAILED();//progProperty->setSettingsToWidget(str);//stackedWidget->setCurrentIndex();
+    }
     else if(type == AREA_PROPERTY)
         area = areaProperty->area;//->setSettingsToWidget(str);
     else if(type == PIC_PROPERTY)
@@ -108,6 +111,7 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     }
     else
     {
+        area = (Carea *)0;
         ASSERT_FAILED();
     }
 
