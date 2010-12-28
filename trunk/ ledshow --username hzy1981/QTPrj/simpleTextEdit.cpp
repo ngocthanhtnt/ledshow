@@ -236,21 +236,33 @@ CsmLineCombo::~CsmLineCombo()
 ///--------//
 CsmLineEdit::CsmLineEdit(QWidget *parent):QGroupBox(parent)
 {
-    QHBoxLayout *hLayout;
+    //QHBoxLayout *hLayout;
+    QGridLayout *gridLayout;
+    QVBoxLayout *vLayout;
+    QLabel *label;
 
     //editGroup = new QGroupBox(this);
     smLineCombo = new QComboBox(this);
 
     smLineCombo->addItem(tr("单行"));
     smLineCombo->addItem(tr("多行"));
+    label = new QLabel(tr("行间距"),this);
+    lineSpaceEdit = new QSpinBox(this);
 
-    hLayout = new QHBoxLayout(this);
-    hLayout->addWidget(smLineCombo);
+    lineSpaceEdit->setMinimum(0);
+    lineSpaceEdit->setMaximum(255);
+
+    gridLayout = new QGridLayout(this);
+    gridLayout->addWidget(smLineCombo,0,0,1,2);
+    gridLayout->addWidget(label, 1, 0);
+    gridLayout->addWidget(lineSpaceEdit, 1,1);
 
     setTitle(tr("单/多行"));
-    setLayout(hLayout);
+    setLayout(gridLayout);
 
     connect(smLineCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(lineSpaceEdit, SIGNAL(valueChanged(int)),this,SIGNAL(edited()));
+    connect(smLineCombo, SIGNAL(currentIndexChanged(int)),this,SLOT(smLineChanged(int)));
 }
 
 //从Widget上获取设置
@@ -259,6 +271,7 @@ void CsmLineEdit::getSettingsFromWidget(QString str)
    settings.beginGroup(str);
    settings.beginGroup("smLine");
    settings.setValue("smLineCheck", smLineCombo->currentIndex());
+   settings.setValue("lineSpace", lineSpaceEdit->value());
    settings.endGroup();
    settings.endGroup();
 }
@@ -271,11 +284,22 @@ void CsmLineEdit::setSettingsToWidget(QString str)
     if(setFlag == 0)
     {
        settings.setValue("smLineCheck", 0);
+       settings.setValue("lineSpace", 0);
        settings.setValue("setFlag", 1);
     }
     smLineCombo->setCurrentIndex(settings.value("smLineCheck").toInt());
+    lineSpaceEdit->setValue(settings.value("lineSpace").toInt());
+    smLineChanged(smLineCombo->currentIndex());
     settings.endGroup();
     settings.endGroup();
+}
+
+void CsmLineEdit::smLineChanged(int index)
+{
+  if(index == 0)
+      lineSpaceEdit->setEnabled(false);
+  else
+      lineSpaceEdit->setEnabled(true);
 }
 
 CsmLineEdit::~CsmLineEdit()

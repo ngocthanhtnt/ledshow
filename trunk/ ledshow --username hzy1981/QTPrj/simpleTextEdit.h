@@ -66,9 +66,11 @@ class CsmLineEdit:public QGroupBox
   Q_OBJECT
 private:
   QComboBox *smLineCombo;
-
+  QSpinBox *lineSpaceEdit;
 signals:
     void edited();
+public slots:
+    void smLineChanged(int index);
 public:
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);

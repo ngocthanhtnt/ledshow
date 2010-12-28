@@ -3,6 +3,11 @@
 
 #if QT_EN == 0
 
+void OS_Put_Char(char Chr)
+{
+  //qDebug("%c", Chr);
+}
+
 void Put_Char(char c)
 {
   
@@ -76,4 +81,8 @@ INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen)
   return 1;
 }
 
+INT16S Get_Cur_Temp()
+{
+  return -215; 
+}
 #endif

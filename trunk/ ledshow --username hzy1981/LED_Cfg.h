@@ -1,7 +1,7 @@
 
 #define CS_BYTES 1
 #define ROM_CS_BYTES 2
-#define MAX_BORDER_POINTS 50
+#define MAX_BORDER_POINTS (40*8)
 
 #define QT_EN 1 //使用QT仿真
 
@@ -13,10 +13,10 @@
 #define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 
 //----根据不同的屏幕和硬件配置下列项目
-#define MAX_POINTS (1024*256L) //最大点数
+#define MAX_POINTS (1024*42L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
 #define MAX_PROG_NUM 10 //最大节目数
-#define MAX_AREA_NUM 10 //每个节目下最大分区数
-#define MAX_FILE_NUM 10 //每个分区下最大文件数
+#define MAX_AREA_NUM 8 //每个节目下最大分区数
+#define MAX_FILE_NUM 8 //每个分区下最大文件数
 #define MAX_BLOCK_NUM  200 //显示数据块的大小
 #define ONE_BLOCK_SIZE 250 //一个显示数据块的大小
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
@@ -34,10 +34,10 @@
 
 
 //----根据不同的屏幕和硬件配置下列项目
-#define MAX_POINTS (1024*256L) //最大点数
+#define MAX_POINTS (1024*256L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
 #define MAX_PROG_NUM 10 //最大节目数
-#define MAX_AREA_NUM 10 //每个节目下最大分区数
-#define MAX_FILE_NUM 10 //每个分区下最大文件数
+#define MAX_AREA_NUM 8 //每个节目下最大分区数
+#define MAX_FILE_NUM 8 //每个分区下最大文件数
 #define MAX_BLOCK_NUM  200
 #define ONE_BLOCK_SIZE 250
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段

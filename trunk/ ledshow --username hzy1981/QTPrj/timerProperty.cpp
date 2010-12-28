@@ -195,6 +195,7 @@ void getTimerParaFromSettings(QString str, U_File_Para &para)
 
     settings.beginGroup("smLine");
     para.Timer_Para.SmLineFlag = settings.value("smLineCheck").toBool();
+    para.Timer_Para.LineSpace = (INT8U)settings.value("lineSpace").toInt();
     settings.endGroup();
 
 

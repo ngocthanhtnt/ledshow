@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'simpleTextEdit.h'
 **
-** Created: Sun Dec 26 23:11:12 2010
+** Created: Mon Dec 27 21:18:48 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -137,7 +137,7 @@ static const uint qt_meta_data_CsmLineEdit[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       1,   14, // methods
+       2,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -147,11 +147,15 @@ static const uint qt_meta_data_CsmLineEdit[] = {
  // signals: signature, parameters, type, tag, flags
       13,   12,   12,   12, 0x05,
 
+ // slots: signature, parameters, type, tag, flags
+      28,   22,   12,   12, 0x0a,
+
        0        // eod
 };
 
 static const char qt_meta_stringdata_CsmLineEdit[] = {
-    "CsmLineEdit\0\0edited()\0"
+    "CsmLineEdit\0\0edited()\0index\0"
+    "smLineChanged(int)\0"
 };
 
 const QMetaObject CsmLineEdit::staticMetaObject = {
@@ -184,9 +188,10 @@ int CsmLineEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: edited(); break;
+        case 1: smLineChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
-        _id -= 1;
+        _id -= 2;
     }
     return _id;
 }

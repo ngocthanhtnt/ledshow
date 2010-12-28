@@ -39,6 +39,7 @@ INT8U Time[5]; //年、月、日、时、分
 INT8U Tail;
 }S_Time;
 */
+/*
 //三色显示数据
 typedef struct
 {
@@ -65,7 +66,7 @@ typedef struct
   INT8U Color0[MAX_POINTS];
   INT8U Tail;
 }S_Show_1Color_Data;
-
+*/
 //点的定义
 typedef struct
 {

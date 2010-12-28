@@ -178,6 +178,7 @@ void getTimeParaFromSettings(QString str, U_File_Para &para)
 
     settings.beginGroup("smLine");
     para.Time_Para.SmLineFlag = settings.value("smLineCheck").toBool();
+    para.Time_Para.LineSpace = (INT8U)settings.value("lineSpace").toInt();
     settings.endGroup();
 
     settings.beginGroup("timeDiff");

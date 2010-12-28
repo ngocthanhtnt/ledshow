@@ -277,13 +277,25 @@ INT16U Get_Time_Min_Height(INT8U Area_No)
         Height = Prog_Status.File_Para[Area_No].Time_Para.Text_Height;
 
         if(Prog_Status.File_Para[Area_No].Time_Para.Date_Type > 0)
+        {
+            if(Height > 0)
+              Height += Prog_Status.File_Para[Area_No].Time_Para.LineSpace;
             Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
-
+        }
+        
         if(Prog_Status.File_Para[Area_No].Time_Para.Week_Type > 0)
-            Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
-
+        {
+           if(Height > 0)
+             Height += Prog_Status.File_Para[Area_No].Time_Para.LineSpace;
+           Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
+        }
         if(Prog_Status.File_Para[Area_No].Time_Para.Time_Type > 0)
-            Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
+        {
+           if(Height > 0)
+             Height += Prog_Status.File_Para[Area_No].Time_Para.LineSpace; 
+           Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
+   
+        }
     }
 
     return Height;
@@ -412,6 +424,9 @@ void Update_Time_Data(INT8U Area_No)
       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Time_Para.Text_Width, Prog_Status.File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
 
       Y = P0.Y + Prog_Status.File_Para[Area_No].Time_Para.Text_Height;
+      
+      if(Prog_Status.File_Para[Area_No].Time_Para.Text_Height > 0)
+        Y += Prog_Status.File_Para[Area_No].Time_Para.LineSpace;
 
       if(Prog_Status.File_Para[Area_No].Time_Para.Date_Type > 0)//需要显示日期?
       {
@@ -425,6 +440,7 @@ void Update_Time_Data(INT8U Area_No)
                     Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font, Prog_Status.File_Para[Area_No].Time_Para.Date_Color);
 
           Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Date_Font);//Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
+          Y += Prog_Status.File_Para[Area_No].Time_Para.LineSpace;
       }
 
       if(Prog_Status.File_Para[Area_No].Time_Para.Week_Type > 0)//需要星期?
@@ -439,6 +455,7 @@ void Update_Time_Data(INT8U Area_No)
                     Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font, Prog_Status.File_Para[Area_No].Time_Para.Week_Color);
 
           Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font);//SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
+          Y += Prog_Status.File_Para[Area_No].Time_Para.LineSpace;
       }
 
       if(Prog_Status.File_Para[Area_No].Time_Para.Time_Type > 0)//需要时间?
