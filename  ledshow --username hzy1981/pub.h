@@ -53,7 +53,7 @@
 typedef struct
 {
   INT8U Head;
-  INT8U Buf[500];
+  INT8U Buf[400];
   INT8U Tail;
 }S_Pub_Buf;
 

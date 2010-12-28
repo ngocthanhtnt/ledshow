@@ -136,7 +136,7 @@ typedef struct
   INT8U Border_Width;   //边框宽度
   INT8U Border_Height;  //边框高度
   INT8U Temp;   //备用
-  INT8U Border_Data[3*MAX_BORDER_POINTS]; //边框数据
+  INT8U Border_Data[3*MAX_BORDER_POINTS/8]; //边框数据
   
   INT8U CS[CS_BYTES];
   
@@ -260,6 +260,7 @@ typedef struct
   INT8U Dst_Sec; //目标秒
   
   INT8U SmLineFlag; //单多行标志
+  INT8U LineSpace;  //行间距，在多行显示时用--备用
 
   INT8U Timer_Type;  //显示方式
   INT8U Timer_Color; //显示颜色
@@ -306,7 +307,8 @@ typedef struct
   INT8U Temp; //备用
 
   INT8U SmLineFlag; //单多行标志
-
+  INT8U LineSpace;  //行间距，在多行显示时用--备用
+  
   INT8U Date_Type;  //日期标志,0表示不显示日期
   INT8U Date_Font; //字体
   INT8U Date_Color; //日期颜色
@@ -358,7 +360,8 @@ typedef struct
   INT8U Temp; //备用
 
   INT8U SmLineFlag; //单多行标志
-
+  INT8U LineSpace;  //行间距，在多行显示时用--备用
+  
   INT8U Tiangan_Type;  //天干地支标志,0表示不显示天干
   INT8U Tiangan_Font; //字体
   INT8U Tiangan_Color; //天干颜色
@@ -408,6 +411,12 @@ typedef struct
   INT8U Show_Posi; //显示位置
   
   INT8U Temp; //备用
+
+  INT8U Temp_Type;  //温度显示方式
+  INT8U Temp_Font;  //温度字体
+  INT8U Temp_Color; //温度颜色
+  INT16U Temp_X;    
+  INT16U Temp_Y;
   
   INT8U Text_Color; //背景颜色
   INT16U Text_X; //背景X
@@ -467,7 +476,7 @@ typedef struct
   INT8U CS[CS_BYTES];
   INT8U Tail;
 }S_Cur_Block_Index;
-
+/*
 typedef struct
 {
     INT8U Head;
@@ -475,7 +484,7 @@ typedef struct
     INT16U Index;
     INT8U Tail;
 }S_Rcv_Show_Data;
-
+*/
 typedef struct
 {
   INT8U Prog_No;
@@ -516,7 +525,7 @@ EXT S_Prog_Para Prog_Para;  //当前节目属性[MAX_PROGRAM_NUM]; //节目个数
 //EXT S_Prog_Block_Index Prog_Block_Index; //当前节目的存储参数
 EXT S_Cur_Block_Index Cur_Block_Index;
 //EXT S_Clock_Para Clock_Para;
-EXT S_Rcv_Show_Data Rcv_Show_Data;
+//EXT S_Rcv_Show_Data Rcv_Show_Data;
 
 EXT S_Time Cur_Time; //当前时间 
 

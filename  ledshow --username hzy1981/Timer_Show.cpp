@@ -194,6 +194,7 @@ INT16U Get_Timer_Min_Width(INT8U Area_No)
 INT16U Get_Timer_Min_Height(INT8U Area_No)
 {
     INT16U StrHeight;
+    INT16U Height;
 
     StrHeight = Get_Font_Height(Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font);
 
@@ -206,7 +207,10 @@ INT16U Get_Timer_Min_Height(INT8U Area_No)
     }
     else
     {
-        return Prog_Status.File_Para[Area_No].Timer_Para.Text_Height + StrHeight;
+        Height = Prog_Status.File_Para[Area_No].Timer_Para.Text_Height + StrHeight;
+        if(Prog_Status.File_Para[Area_No].Timer_Para.Text_Height > 0)
+          Height += Prog_Status.File_Para[Area_No].Timer_Para.LineSpace;
+        return Height;
     }
 }
 
@@ -272,6 +276,10 @@ void Update_Timer_Data(INT8U Area_No)
       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Timer_Para.Text_Width, Prog_Status.File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
 
       P0.Y = P0.Y + Prog_Status.File_Para[Area_No].Timer_Para.Text_Height;
+      
+      if(Prog_Status.File_Para[Area_No].Timer_Para.Text_Height > 0)
+        P0.Y += Prog_Status.File_Para[Area_No].Timer_Para.LineSpace;
+      
       if(Width > Get_TimerStr_Pix_Width(Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font))
         P0.X = (Width - Get_TimerStr_Pix_Width(Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font))/2;
       else

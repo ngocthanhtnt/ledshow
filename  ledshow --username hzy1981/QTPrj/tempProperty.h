@@ -15,17 +15,40 @@
 #include "simpleTextEdit.h"
 #include "areaProperty.h"
 
-//节目属性窗
-class CtempProperty:public QWidget
+class Ctemp:public QGroupBox
 {
     Q_OBJECT
 private:
 
+  QComboBox *tempCombo;
+  CcolorCombo *colorCombo;
+  CsizeCombo *sizeCombo;
+
+signals:
+    void edited();
+
+public:
+
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    Ctemp(QWidget *parent=0);
+    ~Ctemp();
+};
+
+//节目属性窗
+class CtempProperty:public QWidget
+{
+    Q_OBJECT
+public slots:
+    void edited();
+private:
+
     QGroupBox *tempPropertyGroup; //属性
 
-    QGroupBox *textGroup;
+
     QLabel *textLabel;  //文本
     CsimpleTextEdit *simpleTextEdit;
+    Ctemp *tempStyle;
     //QTextEdit *textEdit; //显示文本
     //QPushButton *editButton; //编辑按钮
 

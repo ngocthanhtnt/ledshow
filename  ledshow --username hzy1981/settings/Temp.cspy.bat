@@ -22,7 +22,7 @@
 @REM but they are listed at the end of this file for reference.
 
 
-"C:\Program Files\IAR Systems\Embedded Workbench 5.4\common\bin\cspybat" "C:\Program Files\IAR Systems\Embedded Workbench 5.4\arm\bin\armproc.dll" "C:\Program Files\IAR Systems\Embedded Workbench 5.4\arm\bin\armsim2.dll"  %1 --plugin "C:\Program Files\IAR Systems\Embedded Workbench 5.4\arm\bin\<libsupport_plugin>" --backend -B "--endian=little" "--cpu=ARM7TDMI" "--fpu=None" "--semihosting" "-d" "sim" 
+"C:\Program Files\IAR Systems\Embedded Workbench 5.4\common\bin\cspybat" "C:\Program Files\IAR Systems\Embedded Workbench 5.4\arm\bin\armproc.dll" "C:\Program Files\IAR Systems\Embedded Workbench 5.4\arm\bin\armsim2.dll"  %1 --plugin "C:\Program Files\IAR Systems\Embedded Workbench 5.4\arm\bin\<libsupport_plugin>" --backend -B "--endian=little" "--cpu=Cortex-M3" "--fpu=None" "--semihosting" "-d" "sim" 
 
 
 @REM Loaded plugins:

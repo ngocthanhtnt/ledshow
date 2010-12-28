@@ -1092,7 +1092,35 @@ void CshowArea::paintEvent(QPaintEvent *)
             getFlashShowData(image, &Show_Data, P0.X, P0.Y);
             //Update_Lun_Data(Area_No);
         }
+        else if(filePara.Temp_Para.Flag == SHOW_TEMP) //ÏÔÊ¾Å©Àú
+        {
+            QSize size = imageBk.size();
 
+            filePara.Temp_Para.Text_Width = size.width();
+            filePara.Temp_Para.Text_Height = size.height();
+
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+            Width = Get_Area_Width(Area_No);
+            Height = Get_Area_Height(Area_No);
+
+            Min_Width = Get_Temp_Min_Width(Area_No);
+            //Min_Height = Get_Temp_Min_Height(Area_No);
+
+            if(Width > Min_Width)
+              P0.X = (Width - Min_Width) / 2;
+            else
+              P0.X = 0;
+
+            if(Height > Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)
+              P0.Y = (Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
+            else
+              P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
+            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Temp_Para.Text_Width, Prog_Status.File_Para[Area_No].Temp_Para.Text_Height, &Show_Data, &P0);//&Point);
+
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            Update_Temp_Data(Area_No);
+        }
         memcpy(showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
     }
 

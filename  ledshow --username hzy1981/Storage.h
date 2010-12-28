@@ -1,7 +1,7 @@
 #ifndef STORAGE_H
 #define STORAGE_H
 
-#define STORA_DI INT32U
+#define STORA_DI INT16U
 
 #define NULL_1BYTE  0xFF
 #define NULL_2BYTES 0xFFFF

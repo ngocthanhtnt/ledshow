@@ -113,13 +113,25 @@ INT16U Get_Lun_Min_Height(INT8U Area_No)
         Height = Prog_Status.File_Para[Area_No].Lun_Para.Text_Height;
 
         if(Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Type > 0)
-            Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Font);
-
+        {
+          if(Height > 0)
+            Height += Prog_Status.File_Para[Area_No].Lun_Para.LineSpace;       
+          Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Font);
+        }
+        
         if(Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Type > 0)
-            Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Font);
-
+        {
+          if(Height > 0)
+            Height += Prog_Status.File_Para[Area_No].Lun_Para.LineSpace;          
+          Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Font);
+        }
+        
         if(Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Type > 0)
-            Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Font);
+        {
+          if(Height > 0)
+            Height += Prog_Status.File_Para[Area_No].Lun_Para.LineSpace;          
+          Height += Get_Font_Height(Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Font); 
+        }
     }
 
     return Height;
@@ -267,6 +279,8 @@ void Update_Lun_Data(INT8U Area_No)
       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Lun_Para.Text_Width, Prog_Status.File_Para[Area_No].Lun_Para.Text_Height, &Show_Data, &P0);//&Point);
 
       Y = P0.Y + Prog_Status.File_Para[Area_No].Lun_Para.Text_Height;
+      if(Prog_Status.File_Para[Area_No].Lun_Para.Text_Height > 0)
+        Y += Prog_Status.File_Para[Area_No].Lun_Para.LineSpace;
 
       if(Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Type > 0)//需要显示天干?
       {
@@ -282,6 +296,7 @@ void Update_Lun_Data(INT8U Area_No)
                     &Show_Data, Area_No, P0.X, P0.Y,\
                     "%s", Tiangan);
           Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Font);//Get_TianganStr_Pix_Width(Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Type - 1, Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Font);
+          Y += Prog_Status.File_Para[Area_No].Lun_Para.LineSpace;
       }
 
       if(Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Type > 0)//需要农历?
@@ -298,6 +313,7 @@ void Update_Lun_Data(INT8U Area_No)
                     &Show_Data, Area_No, P0.X, P0.Y,\
                     "%s", Nongli);
           Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Font);//SPACE_WIDTH + Get_NongliStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Type - 1, Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Font);
+          Y += Prog_Status.File_Para[Area_No].Lun_Para.LineSpace;
       }
 
       if(Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Type > 0)//需要节气?
