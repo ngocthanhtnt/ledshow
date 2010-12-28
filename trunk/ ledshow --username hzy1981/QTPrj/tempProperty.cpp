@@ -124,13 +124,15 @@ void getTempParaFromSettings(QString str, U_File_Para &para)
 
     para.Temp_Para.Flag = SHOW_TEMP;
     settings.beginGroup(str);
+    settings.beginGroup("tempStyle");
 
+    para.Temp_Para.Temp_Type = settings.value("tempCombo").toInt();
     tmp = settings.value("color").toInt();
     para.Temp_Para.Temp_Color = 0;
     SET_BIT(para.Temp_Para.Temp_Color, tmp);
     para.Temp_Para.Temp_Font = settings.value("size").toInt();
 
-
+    settings.endGroup();
     settings.endGroup();
 }
 //Ë¢ÐÂÏÔÊ¾ÇøÓò

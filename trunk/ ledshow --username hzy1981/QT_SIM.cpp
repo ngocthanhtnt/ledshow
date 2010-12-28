@@ -99,7 +99,7 @@ INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen)
 
 INT16S Get_Cur_Temp()
 {
-  return -215; 
+  return 215;
 }
 #endif
 
