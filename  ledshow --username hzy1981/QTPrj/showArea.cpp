@@ -202,13 +202,16 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     CshowArea *area;
 
     //当前文件类型
+    /*
     QString str = item->data(0, Qt::UserRole).toString();
     settings.beginGroup(str);
     int type = settings.value("type").toInt();
     settings.endGroup();
+    */
+    int type = checkItemType(item);
 
     //索引在父路径中
-    str = item->parent()->data(0, Qt::UserRole).toString();
+    QString str = item->parent()->data(0, Qt::UserRole).toString();
     settings.beginGroup(str);
     int index = settings.value("index").toInt();
     settings.endGroup();
@@ -227,7 +230,7 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     {
         updateClockShowArea(area);
     }
-    else if(type EQ PIC_PROPERTY)
+    else if(type EQ PIC_MTEXT_PROPERTY)
     {
         updatePicShowArea(area);
     }
@@ -243,7 +246,7 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     {
         updateLunShowArea(area);
     }
-    else if(type EQ FLASH_PROPERTY)
+    else if(type EQ PIC_FLASH_PROPERTY)
     {
         updateFlashShowArea(area);
     }
@@ -524,12 +527,12 @@ void CshowArea::mousePressEvent(QMouseEvent *event)
     event->accept();
     //w->screenArea->setFocusArea(this);
     if(this->treeItem != 0)
-    {/*
+    {
         if(treeItem == w->progManage->treeWidget->currentItem())
         {
-          w->progManage->clickItem(treeItem, 0);
+          //w->progManage->clickItem(treeItem, 0);
           return;
-        }*/
+        }
 /*
         QString str;
         str = this ->treeItem->data(0, Qt::UserRole).toString();

@@ -183,8 +183,9 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     connect(minColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
     connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
 
-    connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
+    //connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
 
+    //connect(nameEdit, SIGNAL(edited()), this, SIGNAL(edited()));
     connect(timeDiffEdit, SIGNAL(edited()), this, SIGNAL(edited()));
     connect(simpleTextEdit, SIGNAL(edited()), this, SIGNAL(edited()));
     connect(dateEdit, SIGNAL(edited()), this, SIGNAL(edited()));
@@ -287,6 +288,7 @@ void CclockProperty::propertyEdited()
             QString str = item->data(0,Qt::UserRole).toString();
             getSettingsFromWidget(str);
             updateClockShowArea(area);
+
         }
     }
 }

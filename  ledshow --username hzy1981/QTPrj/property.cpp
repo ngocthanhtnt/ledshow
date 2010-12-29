@@ -53,6 +53,32 @@ Cproperty::Cproperty(QWidget *parent):QDockWidget(parent)
 
 }
 
+INT8U getStackedWidgetIndex(INT8U type)
+{
+    if(type < 10)
+        return type;
+    else if(type EQ PIC_MTEXT_PROPERTY ||\
+            type EQ PIC_STEXT_PROPERTY)
+        return 0x02;
+    else if(type EQ PIC_FLASH_PROPERTY)
+        return 0x03;
+    else
+    {
+        ASSERT_FAILED();
+        return 0;
+    }
+    /*
+#define PROG_PROPERTY 0x00
+#define AREA_PROPERTY 0x01
+#define PIC_PROPERTY    0x02 //图片
+#define CLOCK_PROPERTY  0x04 //表盘
+#define TIME_PROPERTY   0x05 //日期时间
+#define TIMER_PROPERTY  0x06 //定时
+#define TEMP_PROPERTY   0x07 //温度
+#define LUN_PROPERTY 0x08    //农历
+     */
+}
+
 //根据item更新当前property的显示
 void Cproperty::updateProperty(QTreeWidgetItem *item)
 {
@@ -60,13 +86,16 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     int type;
 
     setSettingsToWidget(item);
-
+/*
     str = item->data(0, Qt::UserRole).toString();
 
     settings.beginGroup(str);
     type = settings.value("type").toInt();
     settings.endGroup();
-    stackedWidget->setCurrentIndex(type);
+*/
+    type = checkItemType(item);
+    int index = getStackedWidgetIndex(type);
+    stackedWidget->setCurrentIndex(index);
 
     if(type == PROG_PROPERTY)
     {
@@ -75,12 +104,12 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     }
     else if(type == AREA_PROPERTY)
         area = areaProperty->area;//->setSettingsToWidget(str);
-    else if(type == PIC_PROPERTY)
+    else if(type == PIC_MTEXT_PROPERTY)
     {
         //picProperty->setSettingsToWidget(str);
         area = picProperty->area;//->setSettingsToWidget(str);
     }
-    else if(type == FLASH_PROPERTY)
+    else if(type == PIC_FLASH_PROPERTY)
     {
         //flashProperty->setSettingsToWidget(str);
         area = flashProperty->area;//->setSettingsToWidget(str);
@@ -142,10 +171,12 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
     str = item->data(0, Qt::UserRole).toString();
     if(item->parent()!= 0)
       pstr = item->parent()->data(0, Qt::UserRole).toString();
-
+/*
     settings.beginGroup(str);
     type = settings.value("type").toInt();
     settings.endGroup();
+*/
+    type = checkItemType(item);
 
     if(type == PROG_PROPERTY)
         progProperty->setSettingsToWidget(str);//stackedWidget->setCurrentIndex();
@@ -154,12 +185,12 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
         areaProperty->setSettingsToWidget(str);
         areaProperty->area->setSettingsToWidget(str);
     }
-    else if(type == PIC_PROPERTY)
+    else if(type == PIC_MTEXT_PROPERTY)
     {
         picProperty->setSettingsToWidget(str);
         picProperty->area->setSettingsToWidget(pstr);
     }
-    else if(type == FLASH_PROPERTY)
+    else if(type == PIC_FLASH_PROPERTY)
     {
         flashProperty->setSettingsToWidget(str);
         flashProperty->area->setSettingsToWidget(pstr);
@@ -206,10 +237,12 @@ void Cproperty::getSettingsFromWidget(QTreeWidgetItem *item)
     str = item->data(0, Qt::UserRole).toString();
     if(item->parent()!= 0)
       pstr = item->parent()->data(0, Qt::UserRole).toString();
-
+/*
     settings.beginGroup(str);
     type = settings.value("type").toInt();
     settings.endGroup();
+*/
+    type = checkItemType(item);
 
     if(type == PROG_PROPERTY)
         progProperty->getSettingsFromWidget(str);//stackedWidget->setCurrentIndex();
@@ -218,12 +251,12 @@ void Cproperty::getSettingsFromWidget(QTreeWidgetItem *item)
         areaProperty->getSettingsFromWidget(str);
         areaProperty->area->getSettingsFromWidget(str);
     }
-    else if(type == PIC_PROPERTY)
+    else if(type == PIC_MTEXT_PROPERTY)
     {
         picProperty->getSettingsFromWidget(str);
         picProperty->area->getSettingsFromWidget(pstr);
     }
-    else if(type == FLASH_PROPERTY)
+    else if(type == PIC_FLASH_PROPERTY)
     {
         flashProperty->getSettingsFromWidget(str);
         flashProperty->area->getSettingsFromWidget(pstr);

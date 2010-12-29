@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     //--------------
-    Screen_Para.Color = 0x07;
+    Screen_Para.Color = 0x06;
     memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
     memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
     //-------------

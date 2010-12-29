@@ -31,6 +31,6 @@ public:
     CcolorCombo(QWidget *parent = 0);
     ~CcolorCombo();
 };
-
+INT8U getColorData(const QColor &col);
 QColor getQColor(INT8U colorData);
 #endif // COLORCOMBO_H

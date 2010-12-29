@@ -308,7 +308,7 @@ CareaProperty::CareaProperty(QWidget *parent):QWidget(parent)
     hLayout->addStretch(10);
     setLayout(hLayout);
 
-    connect(nameEdit, SIGNAL(edited()), this, SLOT(edited()));
+    //connect(nameEdit, SIGNAL(edited()), this, SLOT(edited()));
 }
 
 void CareaProperty::edited()

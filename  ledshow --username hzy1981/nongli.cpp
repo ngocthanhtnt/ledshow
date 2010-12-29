@@ -1,4 +1,6 @@
 
+#include "nongli.h"
+#if LUN_SHOW_EN
 /****************************************Copyright (c)**************************************************
 **                              四川唐门高新技术开发有限公司
 **                                     研    发    部
@@ -762,7 +764,7 @@ unsigned char GetJieQiStr(
 	} 
 	else                                            //如果今天日期大于本月的节气日期
 	{
-		StrCopy(&str[2],(unsigned char *)JieQiStr[JQ+1],4);
+                StrCopy(&str[2],(unsigned char *)JieQiStr[(JQ+1)%24],4);
 		if(day < 15)
 		{
 			GetJieQi(year,month,15,&JQdate);
@@ -784,3 +786,4 @@ unsigned char GetJieQiStr(
         str[7]=day%10+'0';
 	return 1;
 }
+#endif

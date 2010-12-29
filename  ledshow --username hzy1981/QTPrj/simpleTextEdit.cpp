@@ -11,9 +11,10 @@
 #include <QSettings>
 #include "showArea.h"
 #include "..\led_show.h"
+#include "mainwindow.h"
 
+extern MainWindow *w;
 extern QSettings settings;
-
 /*
 const S_Mode_Func Mode_Func[]=
 {
@@ -154,11 +155,11 @@ void CshowModeEdit::setSettingsToWidget(QString str)
 
     settings.beginGroup(str);
     settings.beginGroup("showMode");
-    keys = settings.allKeys();
-    if(keys.isEmpty() == true)
+    int setFlag = settings.value("setFlag").toInt();
+    if(setFlag == 0)
     {
       //名字
-      settings.setValue("type", PIC_PROPERTY);
+      settings.setValue("setFlag", 1);
       settings.setValue("showMode", 0);
       settings.setValue("speed", 1);
       settings.setValue("stayTime", 5);
@@ -777,25 +778,51 @@ CnameEdit::CnameEdit(QWidget *parent):QGroupBox(parent)
     setTitle(tr("名字"));
     nameEdit = new QLineEdit(this);
     nameEdit->setFixedWidth(100);
+    nameEdit->setMaxLength(16);
     hLayout->addWidget(nameEdit);
     setLayout(hLayout);
 
-    connect(nameEdit, SIGNAL(editingFinished()),this,SIGNAL(edited()));
+    connect(nameEdit, SIGNAL(editingFinished()),this,SLOT(edited()));
+}
+
+void CnameEdit::edited()
+{
+    CshowArea *area;
+    QTreeWidgetItem *item;
+
+    area = w->screenArea->getFocusArea(); //当前焦点分区
+
+    //if(area != (CshowArea *)0) //
+    {
+        //当前选中的item
+        item = w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
+        if(item != (QTreeWidgetItem *)0)
+        {
+            QString str = item->data(0,Qt::UserRole).toString();
+            getSettingsFromWidget(str);
+            w->progManage->updateTextHead(item->parent());
+         }
+    }
 }
 
 //从Widget上获取设置
 void CnameEdit::getSettingsFromWidget(QString str)
 {
+
+
     settings.beginGroup(str);
     settings.beginGroup("name");
     settings.setValue("name", nameEdit->text());
     settings.endGroup();
     settings.endGroup();
 
+
 }
 
 void CnameEdit::setSettingsToWidget(QString str)
 {
+    disconnect(nameEdit, SIGNAL(editingFinished()),this,SLOT(edited()));
+
     settings.beginGroup(str);
     settings.beginGroup("name");
     int setFlag = settings.value("setFlag").toBool();
@@ -809,7 +836,10 @@ void CnameEdit::setSettingsToWidget(QString str)
     nameEdit->setText(settings.value("name").toString());
     settings.endGroup();
     settings.endGroup();
+
+    connect(nameEdit, SIGNAL(editingFinished()),this,SLOT(edited()));
 }
+
 
 CnameEdit::~CnameEdit()
 {
@@ -1050,6 +1080,7 @@ QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
   //QColor black(Qt::black);
   QRgb rgb,r,g,b,ye;
   int i,j;
+  INT8U colorData;
 
   //image = getTextImage(str);
   for(i = 0; i < image.width(); i ++)
@@ -1063,22 +1094,26 @@ QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
 
         if(r > ANTIALIAS_VALUE && g == 0 && b == 0)// == red.rgb())
         {
-            Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x01);
+            colorData = getColorData(QColor(Qt::red));
+            Set_Area_Point_Data(pDst, 0, x + i, y + j, colorData);
             //qDebug("red");
         }
         else if(g > ANTIALIAS_VALUE && r == 0 && b == 0)// || rgb == 0xFF7F9Db9)
         {
-            Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x02);
+            colorData = getColorData(QColor(Qt::green));
+            Set_Area_Point_Data(pDst, 0, x + i, y + j, colorData);
             //qDebug("green");
         }
         else if(r > ANTIALIAS_VALUE && g>ANTIALIAS_VALUE && b == 0)
         {
-            Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x04);
+            colorData = getColorData(QColor(Qt::yellow));
+            Set_Area_Point_Data(pDst, 0, x + i, y + j, colorData);
             //qDebug("yellow");
         }
         else //if((r == 0 && g == 0 && b == 0) || rgb == 0xFF7F9DB9)
         {
-            Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x00);
+            //colorData = getColorData(QColor(Qt::red));
+            Set_Area_Point_Data(pDst, 0, x + i, y + j, 0);
             //qDebug("black");
         }/*
         else
