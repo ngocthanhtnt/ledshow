@@ -106,6 +106,7 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
    hLayout->addStretch(10);
    setLayout(hLayout);
 
+   //connect(nameEdit, SIGNAL(edited()), this, SIGNAL(edited()));
    connect(openButton, SIGNAL(clicked()), this, SLOT(openFlashFile()));
 }
 

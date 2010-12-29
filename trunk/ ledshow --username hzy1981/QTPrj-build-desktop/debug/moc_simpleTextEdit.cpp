@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'simpleTextEdit.h'
 **
-** Created: Tue Dec 28 20:32:08 2010
+** Created: Wed Dec 29 23:24:11 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -602,10 +602,10 @@ static const uint qt_meta_data_CnameEdit[] = {
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       1,       // signalCount
+       0,       // signalCount
 
- // signals: signature, parameters, type, tag, flags
-      11,   10,   10,   10, 0x05,
+ // slots: signature, parameters, type, tag, flags
+      11,   10,   10,   10, 0x0a,
 
        0        // eod
 };
@@ -649,12 +649,6 @@ int CnameEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         _id -= 1;
     }
     return _id;
-}
-
-// SIGNAL 0
-void CnameEdit::edited()
-{
-    QMetaObject::activate(this, &staticMetaObject, 0, 0);
 }
 static const uint qt_meta_data_CsimpleTextEdit[] = {
 

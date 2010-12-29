@@ -77,20 +77,22 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
 
     hLayout = new QHBoxLayout(this);
 
-    nameGroup = new QGroupBox(tr("节目名称"),this);
+    //nameGroup = new QGroupBox(tr("节目名称"),this);
     //nameLabel = new QLabel(tr("名字"), this);
 
-    nameEdit = new QLineEdit(this);
-    nameEdit->setFixedWidth(100);
+    //nameEdit = new QLineEdit(this);
+    //nameEdit->setFixedWidth(100);
+    nameEdit = new CnameEdit(this);
 
     vLayout = new QVBoxLayout(this);
     //vLayout->addWidget(nameLabel);
     vLayout->addWidget(nameEdit);
+    vLayout->addStretch(10);
     //vLayout->addStretch();
-    nameGroup->setLayout(vLayout);
+    //nameGroup->setLayout(vLayout);
 
-    vLayout = new QVBoxLayout(this);
-    vLayout->addWidget(nameGroup);
+    //vLayout = new QVBoxLayout(this);
+    //vLayout->addWidget(nameGroup);
     hLayout->addLayout(vLayout);
 
     //mainLayout = new QGridLayout(this); //主布局
@@ -392,7 +394,7 @@ void CprogProperty::setSettingsToWidget(QString str)
     }
 
     //名字
-    nameEdit->setText(settings.value("name").toString());
+    //nameEdit->setText(settings.value("name").toString());
 
     //按日期定时
     dateTimerCheck->setChecked(settings.value("dateTimerCheck").toBool());
@@ -481,6 +483,8 @@ void CprogProperty::setSettingsToWidget(QString str)
     playCountCheckProc((int)playCountCheck->checkState());
     //边框选择
     borderCheckProc((int)borderCheck->checkState());
+
+    nameEdit->setSettingsToWidget(str);
 }
 
 //从Widget获取配置到settings中,str为Settings的group
@@ -494,7 +498,7 @@ void CprogProperty::getSettingsFromWidget(QString str)
     {
       //名字
       //nameEdit->setText(settings.value("name").toString());
-    settings.setValue("name",QVariant(nameEdit->text()));
+    //settings.setValue("name",QVariant(nameEdit->text()));
       //按日期定时
     settings.setValue("dateTimerCheck", QVariant((bool)(dateTimerCheck->checkState())));
     //settings.setValue("startDate", QVariant(startDateEdit->date().toString()));
@@ -556,6 +560,8 @@ void CprogProperty::getSettingsFromWidget(QString str)
    }
 
     settings.endGroup();
+
+    nameEdit->getSettingsFromWidget(str);
 
 }
 

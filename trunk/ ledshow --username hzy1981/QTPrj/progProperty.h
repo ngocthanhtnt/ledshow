@@ -12,6 +12,7 @@
 #include <QComboBox>
 #include "colorCombo.h"
 #include "showArea.h"
+#include "simpleTextEdit.h"
 
 #define MAX_BORDER_TYPE 10
 //节目属性窗
@@ -23,9 +24,9 @@ private:
     QGroupBox *timerGroup; //定时播放
 
     //-----------名称-------------
-    QLabel *nameLabel;  //名字
-    QLineEdit *nameEdit; //名字输入框
-
+    //QLabel *nameLabel;  //名字
+    //QLineEdit *nameEdit; //名字输入框
+    CnameEdit *nameEdit;
     //--------  按日期定时---------
     QGroupBox *dateGroup;
     QCheckBox *dateTimerCheck; //按日期定时

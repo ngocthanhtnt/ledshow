@@ -204,7 +204,7 @@ private:
   QGroupBox *group;
   QLineEdit *nameEdit;
   QLabel *nameLabel;
-signals:
+public slots:
     void edited();
 public:
     void getSettingsFromWidget(QString str);

@@ -796,8 +796,12 @@ void TextEdit::about()
 void TextEdit::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 {
     QTextCursor cursor = textEdit->textCursor();
+    /*
     if (!cursor.hasSelection())
+    {
         cursor.select(QTextCursor::WordUnderCursor);
+    }
+    */
     cursor.mergeCharFormat(format);
 
     textEdit->mergeCurrentCharFormat(format);
@@ -1037,14 +1041,16 @@ QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[])
        blockPosi = (layout->position().y());
        for(int j = 0; j < layout->lineCount(); j ++)
        {
-           linePosi[lineNum++] = blockPosi + (layout->lineAt(j).position().y());
+           linePosi[lineNum++] = blockPosi + (layout->lineAt(j).position().y()) + 1;
+           //linePosi[lineNum]+=20; //--!!!此处如果不+1可能导致图像上行的数据进入本行，本行的最后一行数据进入下行
        }
     }
 
     linePosi[lineNum] = (int)(layout->position().y() + layout->boundingRect().height());
+    linePosi[lineNum]+=1;//--!!!此处如果不+1可能导致图像上行的数据进入本行，本行的最后一行数据进入下行
     *pLineNum = lineNum;
 
-    image.save("d:\\Image.png");
+    //image.save("d:\\Image.png");
     return image;
 }
 
@@ -1126,7 +1132,7 @@ QImage getTextPageImage(int mode, QImage &image, int w, int h, int page, int pag
 
     }
 
-    reImage.save("d:\\reImage.png");
+    //reImage.save("d:\\reImage.png");
     return reImage;
 }
 /*

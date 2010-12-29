@@ -23,12 +23,12 @@
 #define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
 #define BORDER_SHOW_EN 1 //边框显示使能
-#define CLOCK_SHOW_EN  1 //时钟显示使能
+#define CLOCK_SHOW_EN  0 //表盘显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
-#define LUN_SHOW_EN    1 //农历显示使能
-#define TEMP_SHOW_EN   1 //温度显示使能
+#define LUN_SHOW_EN    0 //农历显示使能
+#define TEMP_SHOW_EN   0 //温度显示使能
 #define TIME_SHOW_EN   1 //时间显示使能
-#define TIMER_SHOW_EN  1 //定时显示使能 
+#define TIMER_SHOW_EN  0 //定时显示使能 
 
 #else
 #define ASSERT_EN 1
@@ -50,7 +50,7 @@
 #define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
 #define BORDER_SHOW_EN 1 //边框显示使能
-#define CLOCK_SHOW_EN  1 //时钟显示使能
+#define CLOCK_SHOW_EN  1 //表盘显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
 #define LUN_SHOW_EN    1 //农历显示使能
 #define TEMP_SHOW_EN   1 //温度显示使能

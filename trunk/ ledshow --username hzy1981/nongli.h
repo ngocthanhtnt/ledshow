@@ -1,3 +1,5 @@
+#include "LED_Cfg.h"
+#if LUN_SHOW_EN
 /****************************************Copyright (c)**************************************************
 **                              四川唐门高新技术开发有限公司
 **                                     研    发    部
@@ -171,3 +173,4 @@ extern unsigned char GetJieQiStr(
 			unsigned char month,
 			unsigned char day,
 			         char *str);
+#endif

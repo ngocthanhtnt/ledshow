@@ -20,14 +20,16 @@
 #define PROG_PROPERTY 0x00
 #define AREA_PROPERTY 0x01
 #define PIC_PROPERTY    0x02 //图片
-#define FLASH_PROPERTY  0x03 //动画
 #define CLOCK_PROPERTY  0x04 //表盘
 #define TIME_PROPERTY   0x05 //日期时间
 #define TIMER_PROPERTY  0x06 //定时
 #define TEMP_PROPERTY   0x07 //温度
 #define LUN_PROPERTY 0x08    //农历
 
-
+#define PIC_TABLE_PROPERTY  0x20
+#define PIC_FLASH_PROPERTY  0x21 //动画
+#define PIC_MTEXT_PROPERTY  0x22
+#define PIC_STEXT_PROPERTY  0x23
 
 //节目管理窗
 class CprogManage:public QDockWidget
@@ -37,8 +39,7 @@ private:
     //QString settingsStr;
     QTreeWidgetItem *curItem;
     //QTreeWidget *treeWidget;
-    void newFile(int fileType); //新文件
-    void updateTextHead(QTreeWidgetItem *item); //更新和item同级的所有item的文本头
+    void newFile(int fileType, int subType); //新文件
 
 public slots:
     void newProg(); //新节目
@@ -54,6 +55,7 @@ public slots:
     void deleteItem();
     void clickItem(QTreeWidgetItem * item, int column);
 public:
+    void updateTextHead(QTreeWidgetItem *item); //更新和item同级的所有item的文本头
     QTreeWidgetItem *getCurItem();
     void saveCurItem(QTreeWidgetItem *item);
 

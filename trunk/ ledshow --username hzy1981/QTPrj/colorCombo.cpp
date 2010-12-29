@@ -30,6 +30,38 @@ CcolorCombo::CcolorCombo(QWidget *parent):QComboBox(parent)
     }
 }
 
+INT8U getColorData(const QColor &col)
+{
+    INT8U data = 0;
+    INT8U index = 0;
+
+    if(col == QColor(Qt::red))
+    {
+        index = 0;
+       if(GET_BIT(Screen_Para.Color, 0) != 0)
+         ASSERT_FAILED();
+    }
+    else if(col == QColor(Qt::green))
+    {
+        if(GET_BIT(Screen_Para.Color, 0))
+          index ++ ;
+        if(GET_BIT(Screen_Para.Color, 1) == 0)
+          ASSERT_FAILED();
+    }
+    else if(col == QColor(Qt::yellow))
+    {
+        if(GET_BIT(Screen_Para.Color, 0))
+            index ++ ;
+        if(GET_BIT(Screen_Para.Color, 1))
+            index ++;
+        if(GET_BIT(Screen_Para.Color, 2) == 0)
+            ASSERT_FAILED();
+    }
+
+    //return index;
+    return (0x01 <<index);
+}
+
 QColor getQColor(INT8U colorData)
 {
     QColor col;
@@ -76,33 +108,40 @@ QColor getQColor(INT8U colorData)
 
 QColor CcolorCombo::getColor()
 {
+    int index;
+    INT8U colorData = 0;
+
+    index = currentIndex();
+    colorData = (0x01 <<index);
+    return getQColor(colorData);
+    /*
     QColor col;
 
     if(currentIndex() == 0)
     {
-      if(GET_BIT(Screen_Para.Color, 0x01) > 0)// || Screen_Para.Color EQ 0 || Screen_Para.Color > 7)
+      if(GET_BIT(Screen_Para.Color, 0x00) > 0)// || Screen_Para.Color EQ 0 || Screen_Para.Color > 7)
         col = QColor(Qt::red);
+      else if(GET_BIT(Screen_Para.Color, 0x01) > 0)
+        col = QColor(Qt::green);
       else if(GET_BIT(Screen_Para.Color, 0x02) > 0)
-        col = QColor(Qt::blue);
-      else if(GET_BIT(Screen_Para.Color, 0x03) > 0)
         col = QColor(Qt::yellow);
       else
         col = QColor(Qt::red);
     }
-     else if(currentIndex() == 1)
+    else if(currentIndex() == 1)
     {
-     if(GET_BIT(Screen_Para.Color, 0x02) > 0)
-       col = QColor(Qt::blue);
-     else if(GET_BIT(Screen_Para.Color, 0x03) > 0)
-       col = QColor(Qt::yellow);
-     else
-       col = QColor(Qt::blue);
-
+        if(GET_BIT(Screen_Para.Color, 0x00) > 0)
+          col = QColor(Qt::green);
+        else if(GET_BIT(Screen_Para.Color, 0x03) > 0)
+          col = QColor(Qt::yellow);
+        else
+          col = QColor(Qt::green);
     }
     else
         col = QColor(Qt::yellow);
 
     return col;
+    */
 }
 
 CcolorCombo::~CcolorCombo()
@@ -112,14 +151,34 @@ CcolorCombo::~CcolorCombo()
 
 void CcolorCombo::setColor(const QColor &col)
 {
+    INT8U data = 0;
+    INT8U index = 0;
+
     if(col == QColor(Qt::red))
-        setCurrentIndex(0);
+    {
+        index = 0;
+       if(GET_BIT(Screen_Para.Color, 0) != 0)
+         ASSERT_FAILED();
+    }
     else if(col == QColor(Qt::green))
-        setCurrentIndex(1);
+    {
+        if(GET_BIT(Screen_Para.Color, 0))
+          index ++ ;
+        if(GET_BIT(Screen_Para.Color, 1) == 0)
+          ASSERT_FAILED();
+    }
     else if(col == QColor(Qt::yellow))
-        setCurrentIndex(2);
-    else
-        setCurrentIndex(0);
+    {
+        if(GET_BIT(Screen_Para.Color, 0))
+            index ++ ;
+        if(GET_BIT(Screen_Para.Color, 1))
+            index ++;
+        if(GET_BIT(Screen_Para.Color, 2) == 0)
+            ASSERT_FAILED();
+    }
+
+    //return index;
+    setCurrentIndex(index);
 }
 
 CsizeCombo::CsizeCombo(QWidget *parent):QComboBox(parent)

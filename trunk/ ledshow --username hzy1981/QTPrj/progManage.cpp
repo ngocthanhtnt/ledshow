@@ -33,6 +33,7 @@ int checkItemType(QTreeWidgetItem *item)
         */
     settings.beginGroup(QStr);
     int type = settings.value("type").toInt();
+    int subType = settings.value("subType").toInt();
     settings.endGroup();
 /*
     if(type == PROG_PROPERTY)
@@ -42,7 +43,10 @@ int checkItemType(QTreeWidgetItem *item)
     else
         return FILE_TYPE;
         */
-    return type;
+    if(subType > 0)
+     return subType;
+    else
+     return type;
 }
 
 void updateItemSubIndex(QTreeWidgetItem *item)
@@ -129,9 +133,9 @@ QString getTypeString(int type)
         Qstr = QObject::tr("节目");
     else if(type == AREA_PROPERTY)
         Qstr = QObject::tr("分区");
-    else if(type == PIC_PROPERTY)
+    else if(type == PIC_MTEXT_PROPERTY)
         Qstr = QObject::tr("图文");
-    else if(type == FLASH_PROPERTY)
+    else if(type == PIC_FLASH_PROPERTY)
         Qstr = QObject::tr("动画");
     else if(type == CLOCK_PROPERTY)
         Qstr = QObject::tr("表盘");
@@ -161,9 +165,11 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
     int count,type,subIndex,parentIndex;
     QString Qstr,str;
     QTreeWidgetItem *temp;
+    QString name;
 
-    if(parent == 0) //顶层项
-       count = treeWidget->topLevelItemCount();
+    if(parent == 0) { //顶层项
+        count = treeWidget->topLevelItemCount();
+    }
     else
        count = parent->childCount();
 
@@ -175,36 +181,30 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
             str = parent->data(0, Qt::UserRole).toString();
             settings.beginGroup(str);
             subIndex = settings.value("subIndex").toInt();
+
+            settings.beginGroup("name");
+            name = settings.value("name").toString();
+            if(!name.isEmpty())
+              name = QString("-") + name;
+            settings.endGroup();
+
             settings.endGroup();
             Qstr = Qstr + "(" + QString::number(subIndex) + ")";
 
             if(type == AREA_PROPERTY)
             {
               parentIndex = parent->parent()->indexOfChild(parent);
-              parent->setText(0, QString::number(parentIndex + 1) + tr("分区") + Qstr); //设置text
+              parent->setText(0, QString::number(parentIndex + 1) + tr("分区") + Qstr + name); //设置text
             }
             else
             {
               parentIndex = treeWidget->indexOfTopLevelItem(parent);
-              parent->setText(0, QString::number(parentIndex + 1) + tr("节目") + Qstr); //设置text
+              parent->setText(0, QString::number(parentIndex + 1) + tr("节目") + Qstr + name); //设置text
 
             }
         }
-    }/*
-    else //当前为顶级
-    {
-        settings.beginGroup();
-        subIndex = settings.value("subIndex").toInt();
-        settings.endGroup();
-        Qstr = Qstr + "(" + QString::number(subIndex) + ")";
+    }
 
-        int parentIndex = parent->parent()->indexOfChild(parent);
-        if(type == AREA_PROPERTY)
-          parent->setText(0, QString::number(parentIndex + 1) + tr("分区") + Qstr); //设置text
-        else
-          parent->setText(0, QString::number(parentIndex + 1) + tr("节目") + Qstr); //设置text
-
-    }*/
     for(int i=0; i < count; i ++)
     {
         if(parent == (QTreeWidgetItem *)0)
@@ -214,17 +214,42 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
 
         int type = checkItemType(temp); //类型
 
+        //QString QStr = temp ->data(0,Qt::UserRole).toString();
+
+
         Qstr = getTypeString(type); //根据类型获得对应的字符串
+
+        str = temp->data(0, Qt::UserRole).toString();
+        settings.beginGroup(str);
+        subIndex = settings.value("subIndex").toInt();
+
+        settings.beginGroup("name");
+        name = settings.value("name").toString();
+        if(!name.isEmpty())
+          name = QString("-") + name;
+        settings.endGroup();
+        settings.endGroup();
+
         if(type == AREA_PROPERTY || type == PROG_PROPERTY) //分区
         {
-            str = temp->data(0, Qt::UserRole).toString();
-            settings.beginGroup(str);
-            subIndex = settings.value("subIndex").toInt();
-            settings.endGroup();
             Qstr = Qstr + "(" + QString::number(subIndex) + ")";
         }
+        /*
+        else
+        {
+            //-------------
+            str = temp->data(0, Qt::UserRole).toString();
+            settings.beginGroup(str);
 
-        temp->setText(0, QString::number(i + 1) + Qstr); //设置text
+            settings.beginGroup("name");
+            name = settings.value("name").toString();
+            settings.endGroup();
+
+            settings.endGroup();
+        }
+        */
+        //---------------
+        temp->setText(0, QString::number(i + 1) + Qstr + name); //设置text
     }
 }
 
@@ -253,6 +278,7 @@ void CprogManage::newProg()
     settings.setValue("subIndex", 0); //当前子分区
     settings.setValue("name", QString("new prog"));
     settings.setValue("type", PROG_PROPERTY);
+    settings.setValue("subType", 0);
     settings.setValue("setFlag", 0); //没有设过参数
       //按日期定时
     settings.setValue("dateTimerCheck", 0);
@@ -368,6 +394,7 @@ void CprogManage::newArea()
     settings.setValue("subIndex", 0); //子项索引
     settings.setValue("name", QString("new area"));
     settings.setValue("type", AREA_PROPERTY);
+    settings.setValue("subType", AREA_PROPERTY);
     settings.setValue("setFlag", 0); //没有设过参数
     settings.setValue("index", index);
     settings.setValue("x", size*(xLen / 20));  //该分区的起点x
@@ -400,42 +427,42 @@ void CprogManage::newArea()
 
 void CprogManage::newPic() //新图文
 {
-  newFile(PIC_PROPERTY);
+  newFile(PIC_PROPERTY,PIC_MTEXT_PROPERTY);
 }
 
 void CprogManage::newFlash() //新动画
 {
-  newFile(FLASH_PROPERTY);
+  newFile(PIC_PROPERTY,PIC_FLASH_PROPERTY);
 }
 
 void CprogManage::newTime() //新日期
 {
-  newFile(TIME_PROPERTY);
+  newFile(TIME_PROPERTY,0);
 }
 
 void CprogManage::newTimer() //新计时
 {
-  newFile(TIMER_PROPERTY);
+  newFile(TIMER_PROPERTY,0);
 }
 
 void CprogManage::newClock() //新表盘
 {
-  newFile(CLOCK_PROPERTY);
+  newFile(CLOCK_PROPERTY,0);
 }
 
 void CprogManage::newTemp() //新温度
 {
-  newFile(TEMP_PROPERTY);
+  newFile(TEMP_PROPERTY,0);
 
 }
 
 void CprogManage::newLun() //新农历
 {
-  newFile(LUN_PROPERTY);
+  newFile(LUN_PROPERTY,0);
 }
 
 //一个新的显示file
-void CprogManage::newFile(int fileType)
+void CprogManage::newFile(int fileType, int subType)
 {
     QTreeWidgetItem *curItem;
     QTreeWidgetItem *parentItem;
@@ -476,6 +503,7 @@ void CprogManage::newFile(int fileType)
     max++;
     settings.beginGroup(QString::number(max));
     settings.setValue("type", fileType);
+    settings.setValue("subType", subType);
     settings.setValue("setFlag", 0); //没有设过参数
     settings.endGroup();
     settings.endGroup();
@@ -485,11 +513,12 @@ void CprogManage::newFile(int fileType)
     QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(max)));
     item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
     parentItem->addChild(item);
+    updateItemSubIndex(item);
+    updateTextHead(item->parent());
     treeWidget->setCurrentItem(item);
     saveCurItem(item);
 
-    updateItemSubIndex(item);
-    updateTextHead(item->parent());
+
     //w->property->stackedWidget->setCurrentIndex(fileType);
     //w->property->setSettingsToWidget(QStr + "/" + QString::number(max), fileType);
 
