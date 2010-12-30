@@ -181,7 +181,7 @@ INT16U Get_Timer_Min_Width(INT8U Area_No)
 
    if(Prog_Status.File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//µ¥ÐÐ
    {
-      return Prog_Status.File_Para[Area_No].Timer_Para.Text_Width + SPACE_WIDTH + StrWidth;
+      return Prog_Status.File_Para[Area_No].Timer_Para.Text_Width + Prog_Status.File_Para[Area_No].Timer_Para.LineSpace + StrWidth;
    }
    else
    {
@@ -253,8 +253,8 @@ void Update_Timer_Data(INT8U Area_No)
 
 
       P0.X = P0.X + Prog_Status.File_Para[Area_No].Timer_Para.Text_Width;
-      if(P0.X > 0)
-        P0.X += SPACE_WIDTH;//Get_Font_Width(Prog_Status.File_Para[Area_No].Timer_Para.);
+      if(Prog_Status.File_Para[Area_No].Timer_Para.Text_Width > 0)
+        P0.X += Prog_Status.File_Para[Area_No].Timer_Para.LineSpace;//Get_Font_Width(Prog_Status.File_Para[Area_No].Timer_Para.);
 
       if(Height > Get_Font_Height(Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font))
         P0.Y = (Height - Get_Font_Height(Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font))/2;

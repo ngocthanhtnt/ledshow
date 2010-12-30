@@ -263,7 +263,7 @@ CsmLineEdit::CsmLineEdit(QWidget *parent):QGroupBox(parent)
 
     connect(smLineCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(lineSpaceEdit, SIGNAL(valueChanged(int)),this,SIGNAL(edited()));
-    connect(smLineCombo, SIGNAL(currentIndexChanged(int)),this,SLOT(smLineChanged(int)));
+    //connect(smLineCombo, SIGNAL(currentIndexChanged(int)),this,SLOT(smLineChanged(int)));
 }
 
 //从Widget上获取设置
@@ -290,7 +290,7 @@ void CsmLineEdit::setSettingsToWidget(QString str)
     }
     smLineCombo->setCurrentIndex(settings.value("smLineCheck").toInt());
     lineSpaceEdit->setValue(settings.value("lineSpace").toInt());
-    smLineChanged(smLineCombo->currentIndex());
+    //smLineChanged(smLineCombo->currentIndex());
     settings.endGroup();
     settings.endGroup();
 }
@@ -994,14 +994,16 @@ QImage getLineTextImage(QString str)
     painter.begin(&image);
     painter.fillRect(0,0,width,height,Qt::black);
 
-
+/*
     if(color == 0x00)
         painter.setPen(QColor(Qt::red));
     else if(color == 0x01)
         painter.setPen(QColor(Qt::green));
     else
         painter.setPen(QColor(Qt::yellow));
+*/
 
+    painter.setPen(getQColor((0x01 <<color)));
     painter.setFont(font);
 
     //QString str = lineEdit->text();//edit.document()->toPlainText();//lineEdit->text();//document()->toPlainText ();

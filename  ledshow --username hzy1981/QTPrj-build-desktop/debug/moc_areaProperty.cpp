@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'areaProperty.h'
 **
-** Created: Wed Dec 29 23:23:51 2010
+** Created: Thu Dec 30 22:23:18 2010
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!

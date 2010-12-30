@@ -87,6 +87,7 @@ const QString rsrcPath = ":/images/win";
 extern MainWindow *w;
 extern QSettings settings;
 
+#define LINE_POSI_ADJ 3
 
 int linePosi[MAX_LINE_NUM];
 int pagePosi[MAX_LINE_NUM];
@@ -1041,13 +1042,13 @@ QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[])
        blockPosi = (layout->position().y());
        for(int j = 0; j < layout->lineCount(); j ++)
        {
-           linePosi[lineNum++] = blockPosi + (layout->lineAt(j).position().y()) + 1;
+           linePosi[lineNum++] = blockPosi + (layout->lineAt(j).position().y()) + LINE_POSI_ADJ;
            //linePosi[lineNum]+=20; //--!!!此处如果不+1可能导致图像上行的数据进入本行，本行的最后一行数据进入下行
        }
     }
 
     linePosi[lineNum] = (int)(layout->position().y() + layout->boundingRect().height());
-    linePosi[lineNum]+=1;//--!!!此处如果不+1可能导致图像上行的数据进入本行，本行的最后一行数据进入下行
+    linePosi[lineNum]+=LINE_POSI_ADJ;//--!!!此处如果不+1可能导致图像上行的数据进入本行，本行的最后一行数据进入下行
     *pLineNum = lineNum;
 
     //image.save("d:\\Image.png");
