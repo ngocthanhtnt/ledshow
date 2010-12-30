@@ -1,4 +1,5 @@
 #define ZK_C
+
 #include "includes.h"
 
 typedef struct
@@ -15,7 +16,7 @@ S_Print_Buf Print_Buf;
 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWZYZ./-
 甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥
 立春雨水惊蛰分清明谷夏小大满芒种至暑秋处白露寒霜降冬雪
-初廿卅鼠牛虎兔龙蛇马羊猴鸡狗猪
+腊初廿卅鼠牛虎兔龙蛇马羊猴鸡狗猪
 年月日时分秒距
 一二三四五六七八九十星期天:にちようびげつよかよすいよもくよきんよどよ温度湿℃
 
@@ -935,7 +936,13 @@ const CNZK_Info CN_ZK[]=
     {0}
     },
 
-
+    {'腊',
+    // 宋体12;  此字体下对应的点阵为：宽x高=16x16
+     {0x00,0xFE,0x12,0x12,0xFE,0x00,0x44,0x44,0x7F,0x44,0x44,0x7F,0x44,0x44,0x44,0x00,
+      0xC0,0x3F,0x41,0x81,0x7F,0x00,0x00,0xFF,0x49,0x49,0x49,0x49,0xFF,0x00,0x00,0x00},
+    {0},
+    {0}
+    },
     
     {'初',
     //-- 宋体12;  此字体下对应的点阵为：宽x高=16x16

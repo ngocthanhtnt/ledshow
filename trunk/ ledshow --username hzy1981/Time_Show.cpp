@@ -213,7 +213,7 @@ INT16U Get_Time_Min_Width(INT8U Area_No)
         }
 
         if(i>0)
-            Width += (i- 1)*SPACE_WIDTH;
+            Width += (i- 1)*Prog_Status.File_Para[Area_No].Time_Para.LineSpace;
     }
     else
     {
@@ -358,10 +358,10 @@ void Update_Time_Data(INT8U Area_No)
     Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Time_Para.Text_Width, Prog_Status.File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
 
     X = P0.X + Prog_Status.File_Para[Area_No].Time_Para.Text_Width;
-    if(X > 0)
-      X += SPACE_WIDTH;//Get_Font_Width(Prog_Status.File_Para[Area_No].Time_Para.);
+    if(X > P0.X)
+      X += Prog_Status.File_Para[Area_No].Time_Para.LineSpace;//Get_Font_Width(Prog_Status.File_Para[Area_No].Time_Para.);
     else
-      X = 0;
+      X = P0.X;
 
 
     if(Prog_Status.File_Para[Area_No].Time_Para.Date_Type > 0)//需要显示日期?
@@ -375,7 +375,7 @@ void Update_Time_Data(INT8U Area_No)
         Show_Date(&Show_Data, Area_No, P0.X, P0.Y, &sTime, \
                   Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font, Prog_Status.File_Para[Area_No].Time_Para.Date_Color);
 
-        X +=  SPACE_WIDTH + Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
+        X +=  Prog_Status.File_Para[Area_No].Time_Para.LineSpace + Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
     }
 
     if(Prog_Status.File_Para[Area_No].Time_Para.Week_Type > 0)//需要星期?
@@ -389,7 +389,7 @@ void Update_Time_Data(INT8U Area_No)
         Show_Week(&Show_Data, Area_No, P0.X, P0.Y, &sTime, \
                   Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font, Prog_Status.File_Para[Area_No].Time_Para.Week_Color);
 
-        X += SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
+        X += Prog_Status.File_Para[Area_No].Time_Para.LineSpace + Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
     }
 
     if(Prog_Status.File_Para[Area_No].Time_Para.Time_Type > 0)//需要时间?
@@ -403,7 +403,7 @@ void Update_Time_Data(INT8U Area_No)
         Show_Time(&Show_Data, Area_No, P0.X, P0.Y, &sTime, \
                   Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font, Prog_Status.File_Para[Area_No].Time_Para.Time_Color);
 
-        X += SPACE_WIDTH + Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
+        X += Prog_Status.File_Para[Area_No].Time_Para.LineSpace + Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
     }
   }
   else //多行
@@ -454,7 +454,7 @@ void Update_Time_Data(INT8U Area_No)
           Show_Week(&Show_Data, Area_No, P0.X, P0.Y, &sTime, \
                     Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font, Prog_Status.File_Para[Area_No].Time_Para.Week_Color);
 
-          Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font);//SPACE_WIDTH + Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
+          Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font);//Prog_Status.File_Para[Area_No].Time_Para.LineSpace + Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
           Y += Prog_Status.File_Para[Area_No].Time_Para.LineSpace;
       }
 
@@ -469,7 +469,7 @@ void Update_Time_Data(INT8U Area_No)
           Show_Time(&Show_Data, Area_No, P0.X, P0.Y, &sTime, \
                     Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font, Prog_Status.File_Para[Area_No].Time_Para.Time_Color);
 
-          //X += SPACE_WIDTH + Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
+          //X += Prog_Status.File_Para[Area_No].Time_Para.LineSpace + Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
       }
   }
   
