@@ -92,7 +92,7 @@ void Show_Temp(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, INT16S 
 }
 
 //更新温度数据
-void Update_Temp_Data(INT8U Area_No)
+void Update_Temp_Data_Bak(INT8U Area_No)
 {
     S_Point P0;
     INT16U Width,Height;
@@ -109,13 +109,13 @@ void Update_Temp_Data(INT8U Area_No)
       P0.X = (Width - Min_Width) / 2;
     else
       P0.X = 0;
-
+/*
     if(Height > Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)
       P0.Y = (Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
     else
       P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
     Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Temp_Para.Text_Width, Prog_Status.File_Para[Area_No].Temp_Para.Text_Height, &Show_Data, &P0);//&Point);
-
+*/
 
     P0.X = P0.X + Prog_Status.File_Para[Area_No].Temp_Para.Text_Width;
     if(P0.X > 0)
@@ -127,7 +127,7 @@ void Update_Temp_Data(INT8U Area_No)
       P0.Y = 0;
 
     Temp = Get_Cur_Temp(); //--获取当前温度
-    Show_Temp(&Show_Data, Area_No, P0.X, P0.Y, Temp, \
+    Show_Temp(&Show_Data_Bak, Area_No, P0.X, P0.Y, Temp, \
                Prog_Status.File_Para[Area_No].Temp_Para.Temp_Type, Prog_Status.File_Para[Area_No].Temp_Para.Temp_Font,Prog_Status.File_Para[Area_No].Temp_Para.Temp_Color);
 
       

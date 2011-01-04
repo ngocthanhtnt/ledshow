@@ -4,13 +4,31 @@
 #include <QPainter>
 #include <QTreeWidgetItem>
 
-#define MIN_AREA 10
+
 
 extern MainWindow *w;
 extern QSettings settings;
 
 extern int linePosi[MAX_LINE_NUM];
 extern int pagePosi[MAX_LINE_NUM];
+
+S_Screen_Para Screen_Para_Bak;
+S_Prog_Para Prog_Para_Bak;
+
+//
+void saveScreenProgPara()
+{
+  memcpy(&Screen_Para_Bak, &Screen_Para, sizeof(Screen_Para));
+  memcpy(&Prog_Para_Bak, &Prog_Para, sizeof(Prog_Para));
+}
+
+void restoreScreenProgPara()
+{
+  memcpy(&Screen_Para, &Screen_Para_Bak, sizeof(Screen_Para_Bak));
+  memcpy(&Prog_Para, &Prog_Para_Bak, sizeof(Prog_Para_Bak));
+}
+
+
 //背景区域构造函数
 CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
 {
@@ -23,7 +41,7 @@ CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
      pArea[i]->setVisible(0);
      //areaUsed[i] = 0;
     }
-
+/*
     settings.beginGroup("screen");
     str = settings.allKeys();
     if(str.isEmpty() == false)
@@ -57,10 +75,14 @@ CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
         settings.setValue("yLen", yLen);
         settings.setValue("color", 0x07);
     }
+*/
+    xLen = Screen_Para.Width;
+    yLen = Screen_Para.Height;
+    color = Screen_Para.Color;
 
     resize(xLen, yLen);
 
-    settings.endGroup();
+    //settings.endGroup();
     setAreaType(0);
 }
 
@@ -452,9 +474,12 @@ CshowArea::CshowArea(QWidget *parent, int colorFlag):QWidget(parent)
     else if(i == YELLOW)
         memset(color2, 0xFF, sizeof(color0));
 */
+    /*
     settings.beginGroup("screen");
     color = settings.value("color").toInt();
     settings.endGroup();
+    */
+    color = Screen_Para.Color;
 
     if(color > 0x02)
         color = 0x00;
@@ -586,6 +611,7 @@ void CshowArea::mouseReleaseEvent(QMouseEvent *event)
         width = frameGeometry().width();
         height = frameGeometry().height();
 
+        //qDebug("release x=%d,y=%d,width=%d,height=%d",x,y,width,height);
         //记录下当前区域的位置等
         if(treeItem != (QTreeWidgetItem *)0)
         {
@@ -613,6 +639,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
 
     if(areaType EQ 0)
         return;
+
 
     x0 = event->x();
     y0 = event->y();
@@ -689,6 +716,8 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
 
     if(mousePressed == false)
         return;
+
+    //qDebug("enter!!!");
 
     rect = geometry();
 
@@ -832,14 +861,19 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         {
            x = framePosition.x() + event->globalPos().x() - dragPosition.x();
            width = oldSize.width() - event->globalPos().x() + dragPosition.x();
-        }
+       }
 
         updateFlag = true;
         //if(width < MIN_AREA)
             //width = MIN_AREA;
 
+        //setGeometry(x,framePosition.y(),width,oldSize.height());
         move(x,framePosition.y());
         resize(width, oldSize.height());
+
+        //qDebug("old x = %d, width = %d, new x = %d, width = %d",\
+              // framePosition.x(), oldSize.width(), x, width);
+
     }
     else if(dragFlag == DRAG_LD)//左下拉伸
     {
@@ -920,7 +954,10 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
     event->accept();
 
     rect1 = geometry();
+    //qDebug("get x = %d, width = %d",\
+           //rect1.x(), rect1.width());
 
+    //更新当前显示的property的分区大小数据
     if(w->property->area != (Carea *)0) {
         w->property->area->updateRect(rect1);
     }
@@ -942,6 +979,7 @@ void CshowArea::paintEvent(QPaintEvent *)
     //CshowArea *pArea;
     //QPainter painter;
 
+    saveScreenProgPara();
     resetProgramPara();
     painter.begin(this);
 
@@ -1025,7 +1063,7 @@ void CshowArea::paintEvent(QPaintEvent *)
         if(filePara.Temp_Para.Flag == SHOW_CLOCK) //显示表盘
         {
             Get_Cur_Time(Cur_Time.Time);
-
+            //Cur_Time.Time[T_SEC] = 0x00;
             //将背景文字放到Show_Data_Bak中
 
             QSize size = imageBk.size();
@@ -1048,8 +1086,8 @@ void CshowArea::paintEvent(QPaintEvent *)
               P0.Y = 0;
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
-
-            Update_Clock_Data(0);
+            Update_Clock_Data_Bak(0);
+            memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_PIC) //显示图文
         {
@@ -1115,10 +1153,11 @@ void CshowArea::paintEvent(QPaintEvent *)
                   P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Time_Para.Text_Height)/2;
             }
 
-            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Time_Para.Text_Width, Prog_Status.File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
+            //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Time_Para.Text_Width, Prog_Status.File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
-            Update_Time_Data(Area_No);
+            Update_Time_Data_Bak(Area_No);
+            memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_TIMER) //计时器
         {
@@ -1161,9 +1200,10 @@ void CshowArea::paintEvent(QPaintEvent *)
                   P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
             }
 
-            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Timer_Para.Text_Width, Prog_Status.File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
+            //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Timer_Para.Text_Width, Prog_Status.File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
-            Update_Timer_Data(Area_No);
+            Update_Timer_Data_Bak(Area_No);
+            memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_LUN) //显示农历
         {
@@ -1214,10 +1254,11 @@ void CshowArea::paintEvent(QPaintEvent *)
                   P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)/2;
               }
 
-            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Lun_Para.Text_Width, Prog_Status.File_Para[Area_No].Lun_Para.Text_Height, &Show_Data, &P0);//&Point);
+            //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Lun_Para.Text_Width, Prog_Status.File_Para[Area_No].Lun_Para.Text_Height, &Show_Data, &P0);//&Point);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
-            Update_Lun_Data(Area_No);
+            Update_Lun_Data_Bak(Area_No);
+            memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_FLASH) //显示动画
         {
@@ -1226,7 +1267,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             getFlashShowData(image, &Show_Data, P0.X, P0.Y);
             //Update_Lun_Data(Area_No);
         }
-        else if(filePara.Temp_Para.Flag == SHOW_TEMP) //显示农历
+        else if(filePara.Temp_Para.Flag == SHOW_TEMP) //显示温度
         {
             QSize size = imageBk.size();
 
@@ -1250,10 +1291,11 @@ void CshowArea::paintEvent(QPaintEvent *)
               P0.Y = (Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
             else
               P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
-            Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Temp_Para.Text_Width, Prog_Status.File_Para[Area_No].Temp_Para.Text_Height, &Show_Data, &P0);//&Point);
+            //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Temp_Para.Text_Width, Prog_Status.File_Para[Area_No].Temp_Para.Text_Height, &Show_Data, &P0);//&Point);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
-            Update_Temp_Data(Area_No);
+            Update_Temp_Data_Bak(Area_No);
+            memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         memcpy(showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
     }
@@ -1376,6 +1418,7 @@ void CshowArea::paintEvent(QPaintEvent *)
     //painter.setPen(QColor(Qt::yellow));
     //painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
     painter.end();
+    restoreScreenProgPara();
 }
 
 void CshowArea::draw_point(int x,int y, int value)

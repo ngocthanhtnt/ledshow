@@ -107,6 +107,9 @@ void Update_Border_Data(INT8U Area_No)
   INT32U Step_Time = 0; //步进时间
   INT8U Border_Width,Border_Height;
   
+  if(Prog_Para.Border_Check EQ 0)
+      return;
+
   Prog_Status.Border_Status.Timer += MOVE_STEP_TIMER;
   
   Border_Width = Get_Area_Border_Width(Area_No);

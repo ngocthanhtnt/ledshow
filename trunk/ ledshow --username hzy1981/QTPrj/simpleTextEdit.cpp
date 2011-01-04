@@ -821,7 +821,7 @@ void CnameEdit::getSettingsFromWidget(QString str)
 
 void CnameEdit::setSettingsToWidget(QString str)
 {
-    disconnect(nameEdit, SIGNAL(editingFinished()),this,SLOT(edited()));
+    disconnect(nameEdit, SIGNAL(textEdited(const QString &)),this,SLOT(edited()));
 
     settings.beginGroup(str);
     settings.beginGroup("name");
@@ -837,7 +837,7 @@ void CnameEdit::setSettingsToWidget(QString str)
     settings.endGroup();
     settings.endGroup();
 
-    connect(nameEdit, SIGNAL(editingFinished()),this,SLOT(edited()));
+    connect(nameEdit, SIGNAL(textEdited(const QString &)),this,SLOT(edited()));
 }
 
 
@@ -885,6 +885,8 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   bButton = new QPushButton(tr("粗体"),this);
   iButton = new QPushButton(tr("斜体"),this);
   uButton = new QPushButton(tr("下划"), this);
+  editCheck = new QCheckBox(tr("固定文本"), this);
+
   //oButton = new QPushButton(tr("打开"),this);
   int width = 30;
   bButton->setFixedWidth(width);
@@ -913,6 +915,7 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   hLayout -> addWidget(bButton);
   hLayout -> addWidget(iButton);
   hLayout -> addWidget(uButton);
+  hLayout -> addWidget(editCheck);
   hLayout->addStretch();
   gridLayout->addLayout(hLayout, 1, 0);
 
@@ -944,7 +947,8 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   connect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
   connect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
   connect(uButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
-  connect(lineEdit, SIGNAL(editingFinished()),this,SIGNAL(edited()));
+  connect(editCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+  connect(lineEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
 }
 
 /*
@@ -957,6 +961,7 @@ int pixelsHigh = fm.height();
 QImage getLineTextImage(QString str)
 {
     bool uText, bText, iText;
+    bool editCheck;
     QString text;
     QPainter painter;
     //QFontComboBox fontComboBox;
@@ -968,6 +973,14 @@ QImage getLineTextImage(QString str)
     uText = settings.value("uText").toBool();
     bText = settings.value("bText").toBool();
     iText = settings.value("iText").toBool();
+    editCheck = settings.value("editCheck").toBool();
+    if(editCheck == false)
+    {
+        settings.endGroup();
+        settings.endGroup();
+        return QImage(0,0, QImage::Format_RGB32);
+    }
+
     QString fontName = settings.value("fontName").toString();
     //fontComboBox.setCurrentIndex(i);
     int fontSize = settings.value("fontSize").toInt();
@@ -1009,12 +1022,12 @@ QImage getLineTextImage(QString str)
     //QString str = lineEdit->text();//edit.document()->toPlainText();//lineEdit->text();//document()->toPlainText ();
     painter.drawText(0,0,width,height,Qt::AlignCenter, text);
     painter.end();
-
+/*
     if(image.save("d:\\line.png")== false)
     {
       qDebug("save image failed");
     }
-
+*/
 
     return image;
 
@@ -1145,6 +1158,7 @@ void CsimpleTextEdit::getSettingsFromWidget(QString str)
    settings.setValue("bText", bButton->isChecked());
    settings.setValue("uText", uButton->isChecked());
    settings.setValue("iText", iButton->isChecked());
+   settings.setValue("editCheck", editCheck->isChecked());//->checkState());
    settings.setValue("text", lineEdit->text());
    settings.endGroup();
    settings.endGroup();
@@ -1152,6 +1166,15 @@ void CsimpleTextEdit::getSettingsFromWidget(QString str)
 
 void CsimpleTextEdit::setSettingsToWidget(QString str)
 {
+    disconnect(fontCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    disconnect(fontSizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    disconnect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    disconnect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
+    disconnect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
+    disconnect(uButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
+    disconnect(editCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+    disconnect(lineEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+
     settings.beginGroup(str);
     settings.beginGroup("simpleTextEdit");
     int setFlag = settings.value("setFlag").toBool();
@@ -1163,6 +1186,7 @@ void CsimpleTextEdit::setSettingsToWidget(QString str)
        settings.setValue("bText", 0);
        settings.setValue("uText", 0);
        settings.setValue("iText", 0);
+       settings.setValue("editCheck", 0);
        settings.setValue("text", QString(""));
 
        settings.setValue("setFlag", 1);
@@ -1175,9 +1199,20 @@ void CsimpleTextEdit::setSettingsToWidget(QString str)
     bButton->setChecked(settings.value("bText").toBool());
     uButton->setChecked(settings.value("uText").toBool());
     iButton->setChecked(settings.value("iText").toBool());
+    editCheck->setChecked(settings.value("editCheck").toBool());
     lineEdit->setText(settings.value("text").toString());
     settings.endGroup();
     settings.endGroup();
+
+    connect(fontCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
+    connect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
+    connect(uButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
+    connect(editCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+    connect(lineEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+
 }
 /*
  bool QObject::connect ( const QObject * sender, const char * signal, const QObject * receiver, const char * method, Qt::ConnectionType type = Qt::AutoConnection )   [static]

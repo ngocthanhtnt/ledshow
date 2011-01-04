@@ -123,6 +123,7 @@ typedef struct
   INT8U Area_File_Num[MAX_AREA_NUM]; //每分区文件数
   S_Area Area[MAX_AREA_NUM]; //区域定义
   
+  INT8U Border_Check; //是否显示边框
   INT8U Border_Speed; //边框运行速度
   INT8U Border_Mode;  //边框模式
   INT8U Border_Width;   //边框宽度
@@ -504,6 +505,15 @@ typedef struct
 }S_File_Para_Info;
 
 typedef struct
+{
+    INT8U Prog_Num; //最大节目数
+    INT8U Area_Num; //最大分区数
+    INT8U File_Num; //最大文件数
+    INT8U ROM_Size; //存储空间大小
+    INT16U File_Type; //支持的节目类型
+}S_Card_Para;
+
+typedef struct
 {/*
   S_Pub_Buf Pub_Buf;  //公共buf
   S_Show_1Color_Data One_Color_Data;
@@ -524,7 +534,7 @@ typedef struct
 #define BLOCK_SHOW_DATA_LEN (BLOCK_DATA_LEN -BLOCK_HEAD_DATA_LEN)
 
 EXT S_Screen_Para Screen_Para; //显示屏相关参数
-
+EXT S_Card_Para Card_Para;   //板卡支持的参数
 EXT S_Prog_Para Prog_Para;  //当前节目属性[MAX_PROGRAM_NUM]; //节目个数
 //EXT S_Prog_Block_Index Prog_Block_Index; //当前节目的存储参数
 EXT S_Cur_Block_Index Cur_Block_Index;

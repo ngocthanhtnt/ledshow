@@ -453,10 +453,19 @@ S_Point * Get_Left_Point(S_Point *pPoint0, S_Point *pPoint1)
   {
     return pPoint0;
   }
-  else
+  else if(pPoint0->X > pPoint1->X)
   {
     return pPoint1;
   }  
+  else
+  {
+    if(pPoint0->Y < pPoint1->Y)
+        return pPoint0;
+    else if(pPoint0 ->Y > pPoint1->Y)
+        return pPoint1;
+    else
+        return pPoint0;
+  }
 }
 
 //获取两个点之中的右边一个点，X座标较大的一个
@@ -466,11 +475,19 @@ S_Point * Get_Right_Point(S_Point *pPoint0, S_Point *pPoint1)
   {
     return pPoint0;
   }
-  else
+  else if(pPoint0->X < pPoint1->X)
   {
     return pPoint1;
-  }  
-}
+  }
+  else
+  {
+    if(pPoint0->Y > pPoint1->Y)
+        return pPoint0;
+    else if(pPoint0 ->Y < pPoint1->Y)
+        return pPoint1;
+    else
+        return pPoint0;
+  }}
 
 S_Point * Get_Up_Point(S_Point *pPoint0, S_Point *pPoint1)
 {
@@ -478,9 +495,18 @@ S_Point * Get_Up_Point(S_Point *pPoint0, S_Point *pPoint1)
   {
     return pPoint0;
   }
-  else
+  else if(pPoint0->Y > pPoint1->Y)
   {
     return pPoint1;
+  }
+  else
+  {
+      if(pPoint0->X < pPoint1->X)
+          return pPoint0;
+      else if(pPoint0->X > pPoint1->X)
+          return pPoint1;
+      else
+          return pPoint0;
   }
 }
 
@@ -491,9 +517,18 @@ S_Point * Get_Down_Point(S_Point *pPoint0, S_Point *pPoint1)
   {
     return pPoint0;
   }
-  else
+  else if(pPoint0->Y < pPoint1->Y)
   {
     return pPoint1;
+  }
+  else
+  {
+      if(pPoint0->X > pPoint1->X)
+          return pPoint0;
+      else if(pPoint0->X < pPoint1->X)
+          return pPoint1;
+      else
+          return pPoint0;
   }
 }
 
@@ -589,21 +624,36 @@ void Draw_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
 {
   S_Point *p0, *p1;
   INT32S i,j;
+  INT16U Y,k;
   
   p0 = Get_Left_Point(pPoint0, pPoint1);
   p1 = Get_Right_Point(pPoint0, pPoint1);
   
-  if(p0 != p1)
+  Y = p0->Y;
+  if(p0->X != p1->X)
   {
       for(i = p0 -> X; i <= p1->X ; i ++)
       {
         j = GET_LINE_Y((INT32S)p0->X,(INT32S)p0->Y, (INT32S)p1->X, (INT32S)p1->Y, i);//(INT32S)pLeft->Y + (INT32S)(i - pLeft ->X)((INT32S)(pRgiht->Y) - (INT32S)(pLeft->Y))/(pRight -> X - pLeft->X) ;
 
+//--------------
+        if((INT16U)j > Y + 1)
+        {
+          for(k = Y + 1; k < j; k ++)
+              Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)k, Value);
+        }
+        else if(Y > (INT16U)j + 1)
+        {
+            for(k = (INT16U)j + 1; k < Y; k ++)
+                Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)k, Value);
+        }
+//----------------
         if(j < 0)
           ASSERT_FAILED();
 
         Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)j, Value);
-      }
+        Y = j;
+     }
   }
   else
   {
@@ -686,8 +736,9 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
   S_Point *pLeft;  //最左边的点
   S_Point *pRight; //最右边的点
   S_Point *pMid;  //中间的点
-  S_Point Temp0, Temp1;
-  
+  S_Point Temp0, Temp1,Temp0_Bk,Temp1_Bk;
+
+
   pLeft = Get_Left_Point(pPoint0, pPoint1);
   pLeft = Get_Left_Point(pLeft, pPoint2);
 
@@ -701,7 +752,12 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
   //Draw_Line(pDst_Buf, Area_No, pPoint2, pPoint0, Value);
 
   Temp0.X = pLeft -> X;  //中间的X
-  
+  Temp0_Bk.X = pLeft->X;
+  Temp0_Bk.Y = pLeft->Y;
+
+  Temp1_Bk.X = pLeft->X;
+  Temp1_Bk.Y = pLeft->Y;
+
   do
   {
     Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
@@ -711,6 +767,14 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
     else
       Temp1.Y = GET_LINE_Y((INT32S)pRight ->X, (INT32S)pRight->Y, (INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)Temp1.X);
     Draw_Line(pDst_Buf, Area_No, &Temp0, &Temp1, Value);
+    Draw_Line(pDst_Buf, Area_No, &Temp0, &Temp0_Bk, Value);
+    Draw_Line(pDst_Buf, Area_No, &Temp1, &Temp1_Bk, Value);
+
+    Temp0_Bk.X = Temp0.X;
+    Temp0_Bk.Y = Temp0.Y;
+
+    Temp1_Bk.X = Temp1.X;
+    Temp1_Bk.Y = Temp1.Y;
     Temp0.X ++;
   }while(Temp0.X <= pRight -> X);
 }
@@ -829,8 +893,8 @@ void Copy_Filled_Round(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pCenter0, 
 //
 void Get_Angle_Point(S_Point *pPoint0, INT16S Angle, INT16U Len, S_Point *pPoint1)
 {
-  pPoint1 -> X = (INT16U)((INT16S)pPoint0->X + (INT16S)Len * cos(2*PI*Angle/360));
-  pPoint1 -> Y = (INT16U)((INT16S)pPoint0->Y - (INT16S)Len * sin(2*PI*Angle/360));
+  pPoint1 -> X = (INT16U)((INT16S)pPoint0->X + (INT16S)Len * cos(2*PI*Angle/360) + 0.5);
+  pPoint1 -> Y = (INT16U)((INT16S)pPoint0->Y - (INT16S)Len * sin(2*PI*Angle/360) + 0.5);
 }
 
 //pDst_Buf,显示目标缓冲区

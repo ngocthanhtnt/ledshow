@@ -57,3 +57,12 @@
 #define TIME_SHOW_EN   1 //时间显示使能
 #define TIMER_SHOW_EN  1 //定时显示使能 
 #endif
+
+//节目特征字
+#define FILE_EN_WORD ((BORDER_SHOW_EN<<0x00) |\
+                       (PIC_SHOW_EN << 0x01) |\
+                       (CLOCK_SHOW_EN<<0x02) |\
+                       (TIME_SHOW_EN << 0x03) |\
+                       (TIMER_SHOW_EN << 0x04) |\
+                       (LUN_SHOW_EN << 0x05) |\
+                       (TEMP_SHOW_EN << 0x06))

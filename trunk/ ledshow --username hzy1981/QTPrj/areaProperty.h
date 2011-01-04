@@ -20,8 +20,8 @@ private:
     QLabel *xLabel,*yLabel;
     QLabel *widthLabel, *heightLabel;
     QLineEdit *nameEdit;
-    QLineEdit *xEdit,*yEdit;
-    QLineEdit *widthEdit,*heightEdit;
+    QSpinBox *xEdit,*yEdit;
+    QSpinBox *widthEdit,*heightEdit;
     QGridLayout *grid;
 
 public slots:

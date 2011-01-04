@@ -100,6 +100,7 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
   setAllowedAreas(Qt::LeftDockWidgetArea);
   treeWidget = new QTreeWidget(this);
   treeWidget->setHeaderHidden(true);//header()->setVisible(false);
+  //treeWidget->grabKeyboard();
 
   QObject::connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),\
           this, SLOT(clickItem(QTreeWidgetItem *, int)));
@@ -263,6 +264,11 @@ void CprogManage::newProg()
     QStringList groups = settings.childGroups(); //所有节目的列表
 
     size = groups.size();
+    if(size >= Card_Para.Prog_Num)
+    {
+        settings.endGroup();
+        return;
+    }
     //qDebug("groups size = %d", size);
     for(i = 0; i < size; i ++)
     {
@@ -349,11 +355,14 @@ void CprogManage::newArea()
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == (QTreeWidgetItem *)0)
         return;
-
+/*
     settings.beginGroup("screen");
     int xLen = settings.value("xLen").toInt();
     int yLen = settings.value("yLen").toInt();
     settings.endGroup();
+*/
+    int xLen = Screen_Para.Width;
+    int yLen = Screen_Para.Height;
 
     type = checkItemType(curItem); //该项目是哪种?
 
@@ -374,6 +383,12 @@ void CprogManage::newArea()
     QStringList groups = settings.childGroups(); //area列表
 
     size = groups.size();
+    if(size >= Card_Para.Area_Num)
+    {
+        settings.endGroup();
+        return;
+    }
+
     for(i = 0; i < size; i ++)
     {
       tmp = groups.at(i).toInt();
@@ -494,6 +509,12 @@ void CprogManage::newFile(int fileType, int subType)
     QStringList groups = settings.childGroups(); //area列表
 
     size = groups.size();
+    if(size >= Card_Para.File_Num)
+    {
+        settings.endGroup();
+        return;
+    }
+
     for(i = 0; i < size; i ++)
     {
       tmp = groups.at(i).toInt();

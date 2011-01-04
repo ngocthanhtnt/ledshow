@@ -72,7 +72,7 @@ struct tm {
 */
 
 //更新表盘数据
-void Update_Clock_Data(INT8U Area_No)
+void Update_Clock_Data_Bak(INT8U Area_No)
 {
   S_Point P0;
   INT16S tmp;
@@ -108,8 +108,8 @@ void Update_Clock_Data(INT8U Area_No)
     mem_cpy(&sTime, &Cur_Time, sizeof(Cur_Time), &sTime, sizeof(sTime)); 
   }
   
-  Show_Clock(&Show_Data, Area_No, &sTime, &Prog_Status.File_Para[Area_No].Clock_Para);
-
+  Show_Clock(&Show_Data_Bak, Area_No, &sTime, &Prog_Status.File_Para[Area_No].Clock_Para);
+/*
   //----------固定文本---------
   tmp = (INT16S)(Width * Prog_Status.File_Para[Area_No].Clock_Para.Text_X / 100) - (INT16S)Prog_Status.File_Para[Area_No].Clock_Para.Text_Width/2;
   if(tmp > 0)
@@ -124,7 +124,7 @@ void Update_Clock_Data(INT8U Area_No)
     P0.Y = 0;
 
   Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Clock_Para.Text_Width, Prog_Status.File_Para[Area_No].Clock_Para.Text_Height, &Show_Data, &P0);//&Point);
-
+*/
   //---------星期---------
   if(Prog_Status.File_Para[Area_No].Clock_Para.Week_Type > 0)
   {
@@ -144,7 +144,7 @@ void Update_Clock_Data(INT8U Area_No)
       else
         P0.Y = 0;
 
-      Show_Week(&Show_Data, 0, P0.X, P0.Y, &Cur_Time, Prog_Status.File_Para[Area_No].Clock_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Clock_Para.Week_Font, Prog_Status.File_Para[Area_No].Clock_Para.Week_Color);
+      Show_Week(&Show_Data_Bak, 0, P0.X, P0.Y, &Cur_Time, Prog_Status.File_Para[Area_No].Clock_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Clock_Para.Week_Font, Prog_Status.File_Para[Area_No].Clock_Para.Week_Color);
    }
 
   //显示日期
@@ -166,7 +166,7 @@ void Update_Clock_Data(INT8U Area_No)
       else
         P0.Y = 0;
 
-      Show_Date(&Show_Data, 0, P0.X, P0.Y, &Cur_Time, Prog_Status.File_Para[Area_No].Clock_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Clock_Para.Week_Font, Prog_Status.File_Para[Area_No].Clock_Para.Date_Color);
+      Show_Date(&Show_Data_Bak, 0, P0.X, P0.Y, &Cur_Time, Prog_Status.File_Para[Area_No].Clock_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Clock_Para.Week_Font, Prog_Status.File_Para[Area_No].Clock_Para.Date_Color);
    }
   
    Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
