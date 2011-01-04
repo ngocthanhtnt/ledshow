@@ -722,7 +722,7 @@ typedef struct
 void getProgParaFromSettings(QString str, S_Prog_Para &para)
 {
   int index;
-  INT8U color;
+  INT8U color,check;
   INT8U Re;
 
   color = Screen_Para.Color;//w->screenArea->screenPara.Color;
@@ -730,12 +730,16 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
   settings.beginGroup(str);
   index = settings.value("style").toInt();
   color = settings.value("color").toInt();
+  check = settings.value("borderCheck").toBool();
 
+  para.Border_Check = check;
   para.Border_Width = Border_Data[index].Width;
   para.Border_Height = Border_Data[index].Height;
 
   memset(para.Border_Data, 0, sizeof(para.Border_Data));
 
+  if(check > 0)
+  {
   for(int i = 0; i < para.Border_Width; i ++)
       for(int j = 0; j < para.Border_Height; j++)
       {
@@ -770,5 +774,6 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
   }
 */
   //memcpy(para.Border_Data, Border_Data[index].Data, sizeof(Border_Data[index].Data));
+  }
   settings.endGroup();
 }

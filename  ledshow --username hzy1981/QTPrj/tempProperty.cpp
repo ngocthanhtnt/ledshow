@@ -134,6 +134,7 @@ void getTempParaFromSettings(QString str, U_File_Para &para)
 
     settings.endGroup();
     settings.endGroup();
+
 }
 //Ë¢ÐÂÏÔÊ¾ÇøÓò
 void updateTempShowArea(CshowArea *area)
@@ -190,10 +191,13 @@ void CtempProperty::getSettingsFromWidget(QString str)
 {
   simpleTextEdit->getSettingsFromWidget(str);
   tempStyle->getSettingsFromWidget(str);
+  nameEdit->getSettingsFromWidget(str);
+
 }
 
 void CtempProperty::setSettingsToWidget(QString str)
 {
     simpleTextEdit->setSettingsToWidget(str);
     tempStyle->setSettingsToWidget(str);
+    nameEdit->setSettingsToWidget(str);
 }

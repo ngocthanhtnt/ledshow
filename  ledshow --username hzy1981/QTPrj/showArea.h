@@ -35,6 +35,8 @@
 //#define AREA_POINTS 5000
 #define ANTIALIAS_VALUE 0x50
 
+#define MIN_AREA 10
+
 class CshowArea:public QWidget
 {
     Q_OBJECT
@@ -133,4 +135,6 @@ public:
     ~CscreenArea();
 
 };
+
+
 #endif // MAINWINDOW_H

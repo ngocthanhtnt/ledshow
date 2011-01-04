@@ -13,13 +13,16 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
     QGridLayout *gridLayout;
     int screenWidth, screenHeight;
 
+    screenWidth = Screen_Para.Width;
+    screenHeight = Screen_Para.Height;
+    /*
     settings.beginGroup("screen");
     screenWidth = settings.value("xLen").toInt();//w->screenArea->width();
     screenHeight = settings.value("yLen").toInt();//w->screenArea->height();
     settings.endGroup();
-
-    QValidator *xValidator = new QIntValidator(0,screenWidth,this);
-    QValidator *yValidator = new QIntValidator(0,screenHeight,this);
+*/
+    //QValidator *xValidator = new QIntValidator(0,screenWidth,this);
+    //QValidator *yValidator = new QIntValidator(0,screenHeight,this);
 
     //groupBox = new QGroupBox(tr("分区属性"), this);
 
@@ -31,10 +34,10 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
 
     int width = 50;
     //nameEdit = new QLineEdit(this);
-    xEdit = new QLineEdit(this);
-    yEdit = new QLineEdit(this);
-    widthEdit = new QLineEdit(this);
-    heightEdit = new QLineEdit(this);
+    xEdit = new QSpinBox(this);
+    yEdit = new QSpinBox(this);
+    widthEdit = new QSpinBox(this);
+    heightEdit = new QSpinBox(this);
 
     //nameEdit->setFixedWidth(width);
     xEdit->setFixedWidth(width);
@@ -42,15 +45,25 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
     widthEdit->setFixedWidth(width);
     heightEdit->setFixedWidth(width);
 
-    connect(xEdit, SIGNAL(editingFinished()), this, SLOT(xEdited()));
-    connect(yEdit, SIGNAL(editingFinished()), this, SLOT(yEdited()));
-    connect(widthEdit, SIGNAL(editingFinished()), this, SLOT(xLenEdited()));
-    connect(heightEdit, SIGNAL(editingFinished()), this, SLOT(yLenEdited()));
+    xEdit->setMinimum(0);
+    yEdit->setMinimum(0);
+    widthEdit->setMinimum(MIN_AREA);
+    heightEdit->setMinimum(MIN_AREA);
 
-    xEdit->setValidator(xValidator);
-    yEdit->setValidator(yValidator);
-    widthEdit->setValidator(xValidator);
-    heightEdit->setValidator(yValidator);
+    xEdit->setMaximum(screenWidth);
+    yEdit->setMaximum(screenHeight);
+    widthEdit->setMaximum(screenWidth);
+    heightEdit->setMaximum(screenHeight);
+
+    connect(xEdit, SIGNAL(valueChanged(int)), this, SLOT(xEdited()));
+    connect(yEdit, SIGNAL(valueChanged(int)), this, SLOT(yEdited()));
+    connect(widthEdit, SIGNAL(valueChanged(int)), this, SLOT(xLenEdited()));
+    connect(heightEdit, SIGNAL(valueChanged(int)), this, SLOT(yLenEdited()));
+
+    //xEdit->setValidator(xValidator);
+    //yEdit->setValidator(yValidator);
+    //widthEdit->setValidator(xValidator);
+    //heightEdit->setValidator(yValidator);
 /*
     nameEdit->setMaxLength(4);
     xEdit->setMaxLength(4);
@@ -90,11 +103,20 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
 
 void Carea::updateRect(QRect &rect)
 {
+    disconnect(xEdit, SIGNAL(valueChanged(int)), this, SLOT(xEdited()));
+    disconnect(yEdit, SIGNAL(valueChanged(int)), this, SLOT(yEdited()));
+    disconnect(widthEdit, SIGNAL(valueChanged(int)), this, SLOT(xLenEdited()));
+    disconnect(heightEdit, SIGNAL(valueChanged(int)), this, SLOT(yLenEdited()));
 
-    xEdit->setText(QString::number(rect.x()));
-    yEdit->setText(QString::number(rect.y()));
-    widthEdit->setText(QString::number(rect.width()));
-    heightEdit->setText(QString::number(rect.height()));
+    xEdit->setValue((rect.x()));
+    yEdit->setValue((rect.y()));
+    widthEdit->setValue((rect.width()));
+    heightEdit->setValue((rect.height()));
+
+    connect(xEdit, SIGNAL(valueChanged(int)), this, SLOT(xEdited()));
+    connect(yEdit, SIGNAL(valueChanged(int)), this, SLOT(yEdited()));
+    connect(widthEdit, SIGNAL(valueChanged(int)), this, SLOT(xLenEdited()));
+    connect(heightEdit, SIGNAL(valueChanged(int)), this, SLOT(yLenEdited()));
 
 
 }
@@ -106,13 +128,13 @@ void Carea::xEdited()
     QTreeWidgetItem *item;
     QString str;
 
-    if(xEdit->text().toInt() + widthEdit->text().toInt() > w->screenArea->width())
+    if(xEdit->value() + widthEdit->value() > w->screenArea->width())
     {
-        x = w->screenArea->width() - widthEdit->text().toInt();
-        xEdit->setText(QString::number(x));
+        x = w->screenArea->width() - widthEdit->value();
+        xEdit->setValue((x));
     }
     else
-        x = xEdit->text().toInt();
+        x = xEdit->value();
 
     item = w->progManage->treeWidget->currentItem();//setCurrentItem(this->treeItem);
     if(checkItemType(item) != AREA_PROPERTY)
@@ -125,7 +147,7 @@ void Carea::xEdited()
     settings.endGroup();
 
     area = w->screenArea->getFocusArea(); //当前点中的分区
-    area->move(x, yEdit->text().toInt());
+    area->move(x, yEdit->value());
 }
 
 void Carea::yEdited()
@@ -135,13 +157,13 @@ void Carea::yEdited()
     QTreeWidgetItem *item;
     QString str;
 
-    if(yEdit->text().toInt() + heightEdit->text().toInt() > w->screenArea->height())
+    if(yEdit->value() + heightEdit->value() > w->screenArea->height())
     {
-        y = w->screenArea->height() - heightEdit->text().toInt();
-        yEdit->setText(QString::number(y));
+        y = w->screenArea->height() - heightEdit->value();
+        yEdit->setValue((y));
     }
     else
-        y = yEdit->text().toInt();
+        y = yEdit->value();
 
     item = w->progManage->treeWidget->currentItem();//setCurrentItem(this->treeItem);
     if(checkItemType(item) != AREA_PROPERTY)
@@ -154,7 +176,7 @@ void Carea::yEdited()
     settings.endGroup();
 
     area = w->screenArea->getFocusArea(); //当前点中的分区
-    area->move(xEdit->text().toInt(), y);
+    area->move(xEdit->value(), y);
 }
 
 void Carea::xLenEdited()
@@ -164,13 +186,13 @@ void Carea::xLenEdited()
     QTreeWidgetItem *item;
     QString str;
 
-    if(xEdit->text().toInt() + widthEdit->text().toInt() > w->screenArea->width())
+    if(xEdit->value() + widthEdit->value() > w->screenArea->width())
     {
-        width = w->screenArea->width() - xEdit->text().toInt();
-        widthEdit->setText(QString::number(width));
+        width = w->screenArea->width() - xEdit->value();
+        widthEdit->setValue((width));
     }
     else
-        width = widthEdit->text().toInt();
+        width = widthEdit->value();
 
     item = w->progManage->treeWidget->currentItem();//setCurrentItem(this->treeItem);
     if(checkItemType(item) != AREA_PROPERTY)
@@ -183,8 +205,9 @@ void Carea::xLenEdited()
     settings.endGroup();
 
     area = w->screenArea->getFocusArea(); //当前点中的分区
-    //area->move(xEdit, yEdit->text().toInt());
-    area->resize(width, heightEdit->text().toInt());
+    //area->move(xEdit, yEdit->value());
+    area->updateFlag = 1;
+    area->resize(width, heightEdit->value());
 }
 
 void Carea::yLenEdited()
@@ -194,13 +217,13 @@ void Carea::yLenEdited()
     QTreeWidgetItem *item;
     QString str;
 
-    if(yEdit->text().toInt() + heightEdit->text().toInt() > w->screenArea->height())
+    if(yEdit->value() + heightEdit->value() > w->screenArea->height())
     {
-        height = w->screenArea->height() - yEdit->text().toInt();
-        heightEdit->setText(QString::number(height));
+        height = w->screenArea->height() - yEdit->value();
+        heightEdit->setValue((height));
     }
     else
-        height = heightEdit->text().toInt();
+        height = heightEdit->value();
 
     item = w->progManage->treeWidget->currentItem();//setCurrentItem(this->treeItem);
     if(checkItemType(item) != AREA_PROPERTY)
@@ -213,7 +236,8 @@ void Carea::yLenEdited()
     settings.endGroup();
 
     area = w->screenArea->getFocusArea(); //当前点中的分区
-    area->resize(widthEdit->text().toInt(), height);
+    area->updateFlag = 1;
+    area->resize(widthEdit->value(), height);
 }
 
 Carea::~Carea()
@@ -226,11 +250,11 @@ void Carea::getSettingsFromWidget(QString str)
 {
     return;
     settings.beginGroup(str);
-    //settings.setValue("name", nameEdit->text().toInt());
-    settings.setValue("x", xEdit->text().toInt());
-    settings.setValue("y", yEdit->text().toInt());
-    settings.setValue("xLen", widthEdit->text().toInt());
-    settings.setValue("yLen", heightEdit->text().toInt());
+    //settings.setValue("name", nameEdit->value());
+    settings.setValue("x", xEdit->value());
+    settings.setValue("y", yEdit->value());
+    settings.setValue("xLen", widthEdit->value());
+    settings.setValue("yLen", heightEdit->value());
     settings.endGroup();
 
 }
@@ -240,10 +264,10 @@ void Carea::setSettingsToWidget(QString str)
     QStringList keys;
 
     //设置前端开信号
-    disconnect(xEdit, SIGNAL(editingFinished()), this, SLOT(xEdited()));
-    disconnect(yEdit, SIGNAL(editingFinished()), this, SLOT(yEdited()));
-    disconnect(widthEdit, SIGNAL(editingFinished()), this, SLOT(xLenEdited()));
-    disconnect(heightEdit, SIGNAL(editingFinished()), this, SLOT(yLenEdited()));
+    disconnect(xEdit, SIGNAL(valueChanged(int)), this, SLOT(xEdited()));
+    disconnect(yEdit, SIGNAL(valueChanged(int)), this, SLOT(yEdited()));
+    disconnect(widthEdit, SIGNAL(valueChanged(int)), this, SLOT(xLenEdited()));
+    disconnect(heightEdit, SIGNAL(valueChanged(int)), this, SLOT(yLenEdited()));
 
     settings.beginGroup(str);
     int setFlag = settings.value("setFlag").toBool();
@@ -255,19 +279,19 @@ void Carea::setSettingsToWidget(QString str)
 
     //名字
     //nameEdit->setText(settings.value("name").toString());
-    xEdit->setText(QString::number(settings.value("x").toInt()));
-    yEdit->setText(QString::number(settings.value("y").toInt()));
-    widthEdit->setText(QString::number(settings.value("xLen").toInt()));
-    heightEdit->setText(QString::number(settings.value("yLen").toInt()));
+    xEdit->setValue((settings.value("x").toInt()));
+    yEdit->setValue((settings.value("y").toInt()));
+    widthEdit->setValue((settings.value("xLen").toInt()));
+    heightEdit->setValue((settings.value("yLen").toInt()));
 
 
     settings.endGroup();
 
     //重新连接信号
-    connect(xEdit, SIGNAL(editingFinished()), this, SLOT(xEdited()));
-    connect(yEdit, SIGNAL(editingFinished()), this, SLOT(yEdited()));
-    connect(widthEdit, SIGNAL(editingFinished()), this, SLOT(xLenEdited()));
-    connect(heightEdit, SIGNAL(editingFinished()), this, SLOT(yLenEdited()));
+    connect(xEdit, SIGNAL(valueChanged(int)), this, SLOT(xEdited()));
+    connect(yEdit, SIGNAL(valueChanged(int)), this, SLOT(yEdited()));
+    connect(widthEdit, SIGNAL(valueChanged(int)), this, SLOT(xLenEdited()));
+    connect(heightEdit, SIGNAL(valueChanged(int)), this, SLOT(yLenEdited()));
 }
 
 CareaProperty::CareaProperty(QWidget *parent):QWidget(parent)

@@ -217,7 +217,7 @@ INT16U Get_Timer_Min_Height(INT8U Area_No)
 }
 
 //更新定时器数据
-void Update_Timer_Data(INT8U Area_No)
+void Update_Timer_Data_Bak(INT8U Area_No)
 {
     //INT16U X, Y;
     S_Point P0;
@@ -244,13 +244,13 @@ void Update_Timer_Data(INT8U Area_No)
         P0.X = (Width - Min_Width) / 2;
       else
         P0.X = 0;
-
+/*
       if(Height > Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)
         P0.Y = (Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
       else
         P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Timer_Para.Text_Width, Prog_Status.File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
-
+*/
 
       P0.X = P0.X + Prog_Status.File_Para[Area_No].Timer_Para.Text_Width;
       if(Prog_Status.File_Para[Area_No].Timer_Para.Text_Width > 0)
@@ -261,7 +261,7 @@ void Update_Timer_Data(INT8U Area_No)
       else
         P0.Y = 0;
 
-      Show_Timer(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, &Dst_Time, \
+      Show_Timer(&Show_Data_Bak, Area_No, P0.X, P0.Y, &Cur_Time, &Dst_Time, \
                  Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font,Prog_Status.File_Para[Area_No].Timer_Para.Timer_Color);
   }
   else
@@ -270,13 +270,13 @@ void Update_Timer_Data(INT8U Area_No)
         P0.Y = (Height - Min_Height) / 2;
       else
         P0.Y = 0;
-
+/*
       if(Width > Prog_Status.File_Para[Area_No].Timer_Para.Text_Width)
         P0.X = (Width - Prog_Status.File_Para[Area_No].Timer_Para.Text_Width)/2;
       else
         P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Timer_Para.Text_Width, Prog_Status.File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
-
+*/
       P0.Y = P0.Y + Prog_Status.File_Para[Area_No].Timer_Para.Text_Height;
       
       if(Prog_Status.File_Para[Area_No].Timer_Para.Text_Height > 0)
@@ -287,7 +287,7 @@ void Update_Timer_Data(INT8U Area_No)
       else
         P0.X = 0;
 
-      Show_Timer(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, &Dst_Time, \
+      Show_Timer(&Show_Data_Bak, Area_No, P0.X, P0.Y, &Cur_Time, &Dst_Time, \
                  Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font,Prog_Status.File_Para[Area_No].Timer_Para.Timer_Color);
 
   }

@@ -230,6 +230,7 @@ private:
     QPushButton *bButton; //加黑
     QPushButton *iButton; //斜体
     QPushButton *uButton; //划线
+    QCheckBox *editCheck;
     //QPushButton *oButton; //打开
 
     QLineEdit *lineEdit; //编辑框

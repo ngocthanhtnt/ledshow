@@ -378,7 +378,7 @@ void MainWindow::fileOpen()
 }
 
 void MainWindow::settingsInit()
-{
+{/*
     QStringList str;
 
     settings.beginGroup("screen");
@@ -396,6 +396,7 @@ void MainWindow::settingsInit()
     settings.endGroup();
     //color =
    //progManage->settingsInit();
+*/
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

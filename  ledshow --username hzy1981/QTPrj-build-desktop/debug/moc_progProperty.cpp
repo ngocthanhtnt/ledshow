@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'progProperty.h'
 **
-** Created: Thu Dec 30 22:23:26 2010
+** Created: Mon Jan 3 23:14:37 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
