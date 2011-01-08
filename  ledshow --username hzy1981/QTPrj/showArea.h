@@ -136,5 +136,12 @@ public:
 
 };
 
+INT8U Get_Border_Show_En();
+INT8U Get_Clock_Show_En();
+INT8U Get_Pic_Show_En();
+INT8U Get_Lun_Show_En();
+INT8U Get_Temp_Show_En();
+INT8U Get_Time_Show_En();
+INT8U Get_Timer_Show_En();
 
 #endif // MAINWINDOW_H
