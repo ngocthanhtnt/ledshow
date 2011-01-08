@@ -506,11 +506,12 @@ typedef struct
 
 typedef struct
 {
+    INT32U Max_Points; //最大支持
     INT8U Prog_Num; //最大节目数
     INT8U Area_Num; //最大分区数
     INT8U File_Num; //最大文件数
     INT8U ROM_Size; //存储空间大小
-    INT16U File_Type; //支持的节目类型
+    INT16U File_En_Word; //支持的节目类型
 }S_Card_Para;
 
 typedef struct

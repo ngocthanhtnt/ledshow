@@ -6,6 +6,17 @@
 #include "textedit.h"
 
 MainWindow *w;
+/*
+#define BORDER_SHOW_EN 1 //边框显示使能
+#define CLOCK_SHOW_EN  0 //表盘显示使能
+#define PIC_SHOW_EN    1 //图文显示使能
+#define LUN_SHOW_EN    0 //农历显示使能
+#define TEMP_SHOW_EN   0 //温度显示使能
+#define TIME_SHOW_EN   1 //时间显示使能
+#define TIMER_SHOW_EN  0 //定时显示使能
+ */
+
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -15,9 +26,11 @@ int main(int argc, char *argv[])
     Screen_Para.Height = 256;
     Screen_Para.Color = 0x07;
 
+    Card_Para.Max_Points = MAX_POINTS;
     Card_Para.Prog_Num = 8;
     Card_Para.Area_Num = 8;
     Card_Para.File_Num = 8;
+    Card_Para.File_En_Word = 0xFF;
 
     memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
     memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));

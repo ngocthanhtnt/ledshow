@@ -3,6 +3,15 @@
 #define ROM_CS_BYTES 2
 #define MAX_BORDER_POINTS (40*8)
 
+//节目特征字
+#define BORDER_SHOW_BIT 0x00
+#define PIC_SHOW_BIT    0x01
+#define CLOCK_SHOW_BIT  0x02
+#define TIME_SHOW_BIT   0x03
+#define TIMER_SHOW_BIT  0x04
+#define LUN_SHOW_BIT    0x05
+#define TEMP_SHOW_BIT   0x06
+
 #define QT_EN 1 //使用QT仿真
 
 #if QT_EN == 0 //没有使能QT仿真 ---STM32的环境下
@@ -29,6 +38,15 @@
 #define TEMP_SHOW_EN   0 //温度显示使能
 #define TIME_SHOW_EN   1 //时间显示使能
 #define TIMER_SHOW_EN  0 //定时显示使能 
+
+//节目特征字
+#define FILE_EN_WORD ((BORDER_SHOW_EN<<BORDER_SHOW_EN) |\
+                       (PIC_SHOW_EN << PIC_SHOW_EN) |\
+                       (CLOCK_SHOW_EN<<CLOCK_SHOW_EN) |\
+                       (TIME_SHOW_EN << TIME_SHOW_EN) |\
+                       (TIMER_SHOW_EN << TIMER_SHOW_EN) |\
+                       (LUN_SHOW_EN << LUN_SHOW_EN) |\
+                       (TEMP_SHOW_EN << TEMP_SHOW_EN))
 
 #else
 #define ASSERT_EN 1
@@ -58,11 +76,3 @@
 #define TIMER_SHOW_EN  1 //定时显示使能 
 #endif
 
-//节目特征字
-#define FILE_EN_WORD ((BORDER_SHOW_EN<<0x00) |\
-                       (PIC_SHOW_EN << 0x01) |\
-                       (CLOCK_SHOW_EN<<0x02) |\
-                       (TIME_SHOW_EN << 0x03) |\
-                       (TIMER_SHOW_EN << 0x04) |\
-                       (LUN_SHOW_EN << 0x05) |\
-                       (TEMP_SHOW_EN << 0x06))

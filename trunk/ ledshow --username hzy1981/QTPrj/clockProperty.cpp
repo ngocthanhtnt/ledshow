@@ -83,16 +83,16 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     minColorLabel = new QLabel(tr("分钟颜色"), this);
     secColorLabel = new QLabel(tr("秒钟颜色"), this);
 */
-    int width = 20;
-    pointRadiusEdit = new QLineEdit(this);
+    int width = 40;
+    pointRadiusEdit = new QSpinBox(this);
     pointRadiusEdit->setFixedWidth(width);
-    point369RadiusEdit = new QLineEdit(this);
+    point369RadiusEdit = new QSpinBox(this);
     point369RadiusEdit->setFixedWidth(width);
-    hourWidthEdit = new QLineEdit(this);
+    hourWidthEdit = new QSpinBox(this);
     hourWidthEdit->setFixedWidth(width);
-    minWidthEdit= new QLineEdit(this);
+    minWidthEdit= new QSpinBox(this);
     minWidthEdit->setFixedWidth(width);
-    secWidthEdit = new QLineEdit(this);
+    secWidthEdit = new QSpinBox(this);
     secWidthEdit->setFixedWidth(width);
 
     pointColorCombo = new CcolorCombo(this);
@@ -171,11 +171,11 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     hLayout ->addStretch(10);
     setLayout(hLayout);
 
-    connect(pointRadiusEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
-    connect(point369RadiusEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
-    connect(hourWidthEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
-    connect(minWidthEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
-    connect(secWidthEdit, SIGNAL(editingFinished()), this, SIGNAL(edited()));
+    connect(pointRadiusEdit, SIGNAL(valueChanged(int)), this, SIGNAL(edited()));
+    connect(point369RadiusEdit, SIGNAL(valueChanged(int)), this, SIGNAL(edited()));
+    connect(hourWidthEdit, SIGNAL(valueChanged(int)), this, SIGNAL(edited()));
+    connect(minWidthEdit, SIGNAL(valueChanged(int)), this, SIGNAL(edited()));
+    connect(secWidthEdit, SIGNAL(valueChanged(int)), this, SIGNAL(edited()));
 
     connect(pointColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
     connect(point369ColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
@@ -214,14 +214,14 @@ void CclockProperty::getSettingsFromWidget(QString str)
     type = settings.value("type").toInt();
     if(type == CLOCK_PROPERTY)
     {
-        tmp = pointRadiusEdit->text().toInt();
+        tmp = pointRadiusEdit->value();
         //qDebug("get pointRadius = %d", tmp);
 
-        settings.setValue("pointRadius", pointRadiusEdit->text().toInt());   //整点半径
-        settings.setValue("point369Radius", point369RadiusEdit->text().toInt()); //369点半径
-        settings.setValue("hourWidth", hourWidthEdit->text().toInt());//时钟宽度
-        settings.setValue("minWidth", minWidthEdit->text().toInt()); //分钟宽度
-        settings.setValue("secWidth", secWidthEdit->text().toInt()); //分钟宽度
+        settings.setValue("pointRadius", pointRadiusEdit->value());   //整点半径
+        settings.setValue("point369Radius", point369RadiusEdit->value()); //369点半径
+        settings.setValue("hourWidth", hourWidthEdit->value());//时钟宽度
+        settings.setValue("minWidth", minWidthEdit->value()); //分钟宽度
+        settings.setValue("secWidth", secWidthEdit->value()); //分钟宽度
 
         settings.setValue("pointColor", pointColorCombo->currentIndex()); //整点颜色
         settings.setValue("point369Color", point369ColorCombo->currentIndex()); //369点颜色
@@ -397,7 +397,7 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     settings.setValue("fontIndex", fontCombo->currentIndex());
     settings.setValue("fontSizeIndex", fontSizeCombo->currentIndex());
     settings.setValue("fontName", fontCombo->currentText());
-    settings.setValue("fontSize", fontSizeCombo->currentText().toInt());
+    settings.setValue("fontSize", fontSizeCombo->currentvalue());
 
     settings.setValue("color", colorCombo->currentIndex());
     settings.setValue("bText", bButton->isChecked());
@@ -468,11 +468,11 @@ void CclockProperty::setSettingsToWidget(QString str)
       settings.setValue("setFlag", 1);
    }
 
-    pointRadiusEdit->setText(QString::number(settings.value("pointRadius").toInt()));
-    point369RadiusEdit->setText(QString::number(settings.value("point369Radius").toInt()));
-    hourWidthEdit->setText(QString::number(settings.value("hourWidth").toInt()));
-    minWidthEdit->setText(QString::number(settings.value("minWidth").toInt()));
-    secWidthEdit->setText(QString::number(settings.value("secWidth").toInt()));
+    pointRadiusEdit->setValue((settings.value("pointRadius").toInt()));
+    point369RadiusEdit->setValue((settings.value("point369Radius").toInt()));
+    hourWidthEdit->setValue((settings.value("hourWidth").toInt()));
+    minWidthEdit->setValue((settings.value("minWidth").toInt()));
+    secWidthEdit->setValue((settings.value("secWidth").toInt()));
 
     pointColorCombo->setCurrentIndex(settings.value("pointColor").toInt());
     point369ColorCombo->setCurrentIndex(settings.value("point369Color").toInt());

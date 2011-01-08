@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
+
 extern MainWindow *w;
 QSettings settings(INI_FILE,QSettings::IniFormat,0);
 void MainWindow::setupFileActions()
@@ -115,42 +116,49 @@ void MainWindow::setupEditActions()
 
     actionSave = a = new QAction(tr("图文"), this);
     a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newPic())); //新建节目
     tb->addAction(a);
     menu->addAction(a);
 
     actionSave = a = new QAction(tr("动画"), this);
     a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newFlash()));
     tb->addAction(a);
     menu->addAction(a);
 
     actionSave = a = new QAction(tr("表盘"), this);
     a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Clock_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newClock()));
     tb->addAction(a);
     menu->addAction(a);
 
     actionSave = a = new QAction(tr("时间"), this);
     a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Time_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTime()));
     tb->addAction(a);
     menu->addAction(a);
 
     actionSave = a = new QAction(tr("计时"), this);
     a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Timer_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTimer()));
     tb->addAction(a);
     menu->addAction(a);
 
     actionSave = a = new QAction(tr("温度"), this);
     a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Temp_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTemp()));
     tb->addAction(a);
     menu->addAction(a);
 
     actionSave = a = new QAction(tr("农历"), this);
     a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Lun_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newLun()));
     tb->addAction(a);
     menu->addAction(a);

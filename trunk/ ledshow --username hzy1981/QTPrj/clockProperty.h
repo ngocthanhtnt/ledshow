@@ -49,11 +49,11 @@ private:
     QLabel *minColorLabel; //分钟颜色
     QLabel *secColorLabel; //秒钟颜色
 
-    QLineEdit *pointRadiusEdit; //整点半径
-    QLineEdit *point369RadiusEdit; //
-    QLineEdit *hourWidthEdit;
-    QLineEdit *minWidthEdit;
-    QLineEdit *secWidthEdit;
+    QSpinBox *pointRadiusEdit; //整点半径
+    QSpinBox *point369RadiusEdit; //
+    QSpinBox *hourWidthEdit;
+    QSpinBox *minWidthEdit;
+    QSpinBox *secWidthEdit;
 
     CcolorCombo *pointColorCombo;
     CcolorCombo *point369ColorCombo;
