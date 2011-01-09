@@ -3,6 +3,7 @@
 
 #include <QtGui/QMainWindow>
 #include "areaProperty.h"
+#include "screenProperty.h"
 #include "progProperty.h"
 #include "timerProperty.h"
 #include "picProperty.h"
@@ -24,7 +25,7 @@ class Cproperty :public QDockWidget
     Q_OBJECT
 private:
 
-
+    CscreenProperty *screenProperty; //屏幕属性
     CprogProperty *progProperty; //节目属性
     CtimeProperty *timeProperty; //日期时间
     CtimerProperty *timerProperty; //定时器

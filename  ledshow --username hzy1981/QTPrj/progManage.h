@@ -17,19 +17,20 @@
 #define AREA_STR "area"
 #define FILE_STR "file"
 
-#define PROG_PROPERTY 0x00
-#define AREA_PROPERTY 0x01
-#define PIC_PROPERTY    0x02 //图片
-#define CLOCK_PROPERTY  0x04 //表盘
-#define TIME_PROPERTY   0x05 //日期时间
-#define TIMER_PROPERTY  0x06 //定时
-#define TEMP_PROPERTY   0x07 //温度
-#define LUN_PROPERTY 0x08    //农历
+#define SCREEN_PROPERTY 0x00
+#define PROG_PROPERTY   0x01
+#define AREA_PROPERTY   0x02
+#define PIC_PROPERTY    0x03 //图片
+#define CLOCK_PROPERTY  0x05 //表盘
+#define TIME_PROPERTY   0x06 //日期时间
+#define TIMER_PROPERTY  0x07 //定时
+#define TEMP_PROPERTY   0x08 //温度
+#define LUN_PROPERTY    0x09    //农历
 
-#define PIC_TABLE_PROPERTY  0x20
-#define PIC_FLASH_PROPERTY  0x21 //动画
-#define PIC_MTEXT_PROPERTY  0x22
-#define PIC_STEXT_PROPERTY  0x23
+#define PIC_TABLE_PROPERTY  0x30
+#define PIC_FLASH_PROPERTY  0x31 //动画
+#define PIC_MTEXT_PROPERTY  0x32
+#define PIC_STEXT_PROPERTY  0x33
 
 //节目管理窗
 class CprogManage:public QDockWidget
