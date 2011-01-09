@@ -147,7 +147,7 @@ INT32U Get_Storage_Data_Off(STORA_DI SDI)
     }
   }
 
-  Debug_Print("Get_Storage_Data_Off Error, Data 0x%lx Not Found\r\n", SDI); 
+  Debug_Print("Get_Storage_Data_Off Error, Data 0x%x Not Found\r\n", SDI);
   return NULL_4BYTES;
 }
 
@@ -168,7 +168,7 @@ INT16U Get_Storage_Data_Len(STORA_DI SDI)
       return Data_Para_Storage[i].Len;
     }
   }
-  Debug_Print("Get_Storage_Data_Len Err, SDI = 0x%lx",SDI);
+  Debug_Print("Get_Storage_Data_Len Err, SDI = 0x%x",SDI);
   ASSERT_FAILED(); 
   return 0;
 }
@@ -189,7 +189,7 @@ INT16U Read_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, INT16U Len, void* 
 
   TRACE();
 
-  Debug_Print("Read Storage Data:0x%lx, Off = %d, Len = %d", SDI, Offset, Len);
+  Debug_Print("Read Storage Data:0x%x, Off = %d, Len = %d", SDI, Offset, Len);
 
   Off = Get_Storage_Data_Off(SDI); //获取数据偏移
   if(NULL_4BYTES EQ Off)//ASSERT(NULL_4BYTES != Off))
@@ -234,7 +234,7 @@ INT8U Write_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, void* pSrc, INT16U
 
   TRACE();
 
-  Debug_Print("Write Storage Data:0x%lx, Off = %d, Len = %d", SDI, Offset, SrcLen);
+  Debug_Print("Write Storage Data:0x%x, Off = %d, Len = %d", SDI, Offset, SrcLen);
 
   //Imp_Flag = Get_Storage_Data_ImpFlag(SDI); //获取该数据的重要标志
 
@@ -284,7 +284,7 @@ INT16U Read_Storage_Data(STORA_DI SDI, void* pDst, void* pDst_Start, INT16U DstL
   //Clear_Ext_Dog();     //清CPU外部看门狗
 
   //Cur_Task_ID = Get_Cur_Task_ID(); 
-  //Debug_Print("Read Storage Data:0x%lx", DI, Tcb[Cur_Task_ID].Name); 
+  //Debug_Print("Read Storage Data:0x%x", DI, Tcb[Cur_Task_ID].Name);
   Len = Get_Storage_Data_Len(SDI); 
   if(Len > 0)
   {
@@ -333,13 +333,13 @@ INT8U Write_Storage_Data(STORA_DI SDI, void* pSrc, INT16U SrcLen)
   TRACE();
 
   //Cur_Task_ID = Get_Cur_Task_ID(); 
-  //Debug_Print("Write Storage Data:0x%lx", DI, Tcb[Cur_Task_ID].Name); 
+  //Debug_Print("Write Storage Data:0x%x", DI, Tcb[Cur_Task_ID].Name);
   //获取并比较数据长度
   Len = Get_Storage_Data_Len(SDI); 
   if(Len != SrcLen)//ASSERT(Len EQ SrcLen))
   {
     ASSERT_FAILED();
-    Debug_Print("WR_Len Err, SDI = 0x%lx Len = %d, SrcLen = %d", SDI, Len, SrcLen);
+    Debug_Print("WR_Len Err, SDI = 0x%x Len = %d, SrcLen = %d", SDI, Len, SrcLen);
     return 0;
   } 
 

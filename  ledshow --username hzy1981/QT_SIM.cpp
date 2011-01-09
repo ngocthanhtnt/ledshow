@@ -3,6 +3,8 @@
 
 #if QT_EN > 0
 #include <QDateTime>
+#include <QFile>
+
 void OS_Put_Char(char Chr)
 {
   qDebug("%c", Chr);
@@ -86,14 +88,43 @@ INT8S File_Delete(char File_Name[])
 {
   return 1;
 }
+/*
+#include <stdio.h>
+
+void printError(const char* msg)
+{
+    QFile file;
+    file.open(stderr, QIODevice::WriteOnly);
+    file.write(msg, qstrlen(msg));        // write to stderr
+    file.close();
+}
+*/
+void Mem_Init()
+{
+
+}
 
 INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen)
 {
-  return 1;
+    QFile file("d:\\phy.dat");
+    file.open(QIODevice::ReadWrite);
+    file.seek(Offset);
+    //file.write(msg, qstrlen(msg));        // write to stderr
+    file.read((char *)pDst, RD_Len);
+    file.close();
+
+  return RD_Len;
 }
 
 INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen)
 {
+    QFile file("d:\\phy.dat");
+    file.open(QIODevice::WriteOnly);
+    file.seek(Offset);
+    //file.write(msg, qstrlen(msg));        // write to stderr
+    file.write((char *)pSrc, SrcLen);
+    file.close();
+
   return 1;
 }
 
