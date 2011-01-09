@@ -105,9 +105,9 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
   len += F_NDATA_LEN; //数据域 + 非数据域 = 整个帧长
   memcpy(pDst + FLEN, &len, 2);
 
-  INT16U sum = Sum_2Bytes(pDst, len - 3); //后3个字节是校验和和帧尾
-  memcpy(pDst + FLEN + len, &sum, 2);
-  pDst[FTAIL] = FRAME_TAIL;
+  INT16U sum = Sum_2Bytes((INT8U *)pDst, len - 3); //后3个字节是校验和和帧尾
+  memcpy((char *)pDst + FLEN, (char *)&sum, 2);
+  pDst[len - 1] = FRAME_TAIL;
 
   return len;
 }
