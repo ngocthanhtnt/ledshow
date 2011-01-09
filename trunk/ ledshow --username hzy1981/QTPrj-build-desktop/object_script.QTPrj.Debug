@@ -48,6 +48,7 @@ INPUT(
 ./debug\OS_Core.o
 ./debug\Border_Show.o
 ./debug\screenProperty.o
+./debug\makeProto.o
 ./debug\moc_mainwindow.o
 ./debug\moc_showArea.o
 ./debug\moc_progManage.o

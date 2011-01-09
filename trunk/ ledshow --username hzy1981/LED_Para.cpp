@@ -504,7 +504,7 @@ INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
       File_No = Frame[FDATA + 3];//*(Frame + 11); //文件号
       //File_Para_Info.Seq0 = Seq0;
 
-      Para_Len = Get_Show_Para_Len(File_Para_Info.Type); //参数长度
+      Para_Len = Get_Show_Para_Len(Type); //参数长度
       if(Para_Len EQ Len)// 参数长度
       {     
         Re =  Write_File_Para(Prog_No, Area_No, File_No, &Frame[FDATA], FILE_PARA_LEN);//写入文件参数

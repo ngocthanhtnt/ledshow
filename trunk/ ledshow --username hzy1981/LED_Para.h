@@ -93,7 +93,7 @@ typedef struct
   INT16U Height; //高度
   INT8U Color; //颜色 0单色，1双色，2三色，3-255级灰度
   
-  INT8U Addr; //地址
+  INT16U Addr; //地址
   INT32U IP; //IP地址
   INT8U Baud;  //波特率
 

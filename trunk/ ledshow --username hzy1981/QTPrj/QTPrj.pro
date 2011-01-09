@@ -58,7 +58,8 @@ SOURCES += main.cpp\
     ../OS_Event.cpp \
     ../OS_Core.cpp \
     ../Border_Show.cpp \
-    screenProperty.cpp
+    screenProperty.cpp \
+    makeProto.cpp
 
 HEADERS  += mainwindow.h \
     ../LED_Cfg.h \
@@ -111,7 +112,8 @@ HEADERS  += mainwindow.h \
     ../OS_Cfg.h \
     ../OS_Time.h \
     ../Border_Show.h \
-    screenProperty.h
+    screenProperty.h \
+    makeProto.h
 
 RESOURCES += \
     textedit.qrc

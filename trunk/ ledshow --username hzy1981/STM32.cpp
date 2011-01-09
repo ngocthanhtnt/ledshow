@@ -71,6 +71,11 @@ INT8S File_Size(char File_Name[])
 
 }
 
+void Mem_Init()
+{
+
+}
+
 INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen)
 {
   return 1;
