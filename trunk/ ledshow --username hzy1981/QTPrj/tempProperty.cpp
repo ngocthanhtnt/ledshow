@@ -41,7 +41,7 @@ Ctemp::Ctemp(QWidget *parent):QGroupBox(parent)
 
     connect(tempCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited));
+    connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
 }
 
 void Ctemp::getSettingsFromWidget(QString str)

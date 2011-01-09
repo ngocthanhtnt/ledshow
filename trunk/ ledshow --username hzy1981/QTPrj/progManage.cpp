@@ -130,7 +130,9 @@ QString getTypeString(int type)
 {
     QString Qstr;
 
-    if(type == PROG_PROPERTY)
+    if(type == SCREEN_PROPERTY)
+        Qstr = QObject::tr("屏幕");
+    else if(type == PROG_PROPERTY)
         Qstr = QObject::tr("节目");
     else if(type == AREA_PROPERTY)
         Qstr = QObject::tr("分区");
@@ -177,7 +179,7 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
     if(parent != 0)
     {
         type = checkItemType(parent);
-        if(type == AREA_PROPERTY || type == PROG_PROPERTY)
+        if(type == SCREEN_PROPERTY || type == AREA_PROPERTY || type == PROG_PROPERTY)
         {
             str = parent->data(0, Qt::UserRole).toString();
             settings.beginGroup(str);
@@ -190,16 +192,21 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
             settings.endGroup();
 
             settings.endGroup();
-            Qstr = Qstr + "(" + QString::number(subIndex) + ")";
+            Qstr = "(" + QString::number(subIndex) + ")";
 
-            if(type == AREA_PROPERTY)
+            if(type == SCREEN_PROPERTY)//---不会进入此判断
+            {
+                parentIndex = treeWidget->indexOfTopLevelItem(parent);//parent->parent()->indexOfChild(parent);
+                parent->setText(0, QString::number(parentIndex + 1) + tr("屏幕") + Qstr + name); //设置text
+            }
+            else if(type == AREA_PROPERTY)
             {
               parentIndex = parent->parent()->indexOfChild(parent);
               parent->setText(0, QString::number(parentIndex + 1) + tr("分区") + Qstr + name); //设置text
             }
             else
             {
-              parentIndex = treeWidget->indexOfTopLevelItem(parent);
+              parentIndex = parent->parent()->indexOfChild(parent);
               parent->setText(0, QString::number(parentIndex + 1) + tr("节目") + Qstr + name); //设置text
 
             }
@@ -257,10 +264,38 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
 // program/01
 void CprogManage::newProg()
 {
-    int i,size;
+    int i,size,type;
     int max = 0,tmp;
+    QTreeWidgetItem *parentItem,*curItem;
 
-    settings.beginGroup("program"); //设置settings到program下面
+    curItem = treeWidget->currentItem(); //当前被选中的项
+    if(curItem == (QTreeWidgetItem *)0)
+        return;
+
+    type = checkItemType(curItem); //该项目是哪种?
+
+    //找到该分区对应的节目的treeWidgetItem
+    if(type == SCREEN_PROPERTY)
+        parentItem = curItem;
+    else if(type == PROG_PROPERTY)
+        parentItem = curItem->parent();
+    else if(type == AREA_PROPERTY)
+        parentItem = curItem->parent()->parent();
+    else
+    {
+      parentItem = (curItem ->parent())->parent()->parent();
+    }
+
+    if(parentItem EQ (QTreeWidgetItem *)0)
+    {
+        ASSERT_FAILED();
+        return;
+    }
+
+    QString QStr = (parentItem ->data(0,Qt::UserRole)).toString();
+    QStr = QStr + "/program";
+
+    settings.beginGroup(QStr); //设置settings到program下面
     QStringList groups = settings.childGroups(); //所有节目的列表
 
     size = groups.size();
@@ -327,17 +362,21 @@ void CprogManage::newProg()
     settings.endGroup();
     settings.endGroup();
 
-    QTreeWidgetItem* item = new QTreeWidgetItem(treeWidget);//QStringList(QString::number(size + 1)+tr("节目")));
-    item->setData(0, Qt::UserRole, QVariant(QString("program") + "/" + QString::number(max)));
+    QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(size + 1)+tr("节目")));
+    item->setData(0, Qt::UserRole, QStr + "/" + QString::number(max));
 
-    treeWidget->addTopLevelItem(item);
-    treeWidget->setCurrentItem(item);
-    saveCurItem(item); //当前点钟的
+    parentItem->addChild(item);
 
-    updateTextHead(0);
+    //treeWidget->addTopLevelItem(item);
+    //treeWidget->setCurrentItem(item);
+    //saveCurItem(item); //当前点钟的
+
+    w->progManage->clickItem(item, 0);
+/*
+    updateTextHead(parentItem);
     w->property->updateProperty(item);
     w->screenArea->updateShowArea(item);//  progSettingsInit(QStr);
-
+*/
 }
 
 
@@ -365,6 +404,8 @@ void CprogManage::newArea()
     int yLen = Screen_Para.Height;
 
     type = checkItemType(curItem); //该项目是哪种?
+    if(type == SCREEN_PROPERTY)
+        return;
 
     //找到该分区对应的节目的treeWidgetItem
     if(type == PROG_PROPERTY)
@@ -426,6 +467,7 @@ void CprogManage::newArea()
 
 
     parentItem->addChild(item);
+    /*
     treeWidget->setCurrentItem(item);
     saveCurItem(item);
 
@@ -437,6 +479,9 @@ void CprogManage::newArea()
     //w->property->setSettingsToWidget(QStr + "/" + QString::number(max), AREA_PROPERTY);
     w->property->updateProperty(item);
     w->screenArea->updateShowArea(item);//w->getCurSettingsStr());//显示一个分区,该分区之前处于隐藏状态
+    */
+
+    w->progManage->clickItem(item, 0);
 }
 
 
@@ -491,7 +536,7 @@ void CprogManage::newFile(int fileType, int subType)
 
     type = checkItemType(curItem); //该项目是哪种?
 
-    if(type == PROG_PROPERTY)
+    if(type == PROG_PROPERTY || type == SCREEN_PROPERTY)
     {
         return;
     }
@@ -534,6 +579,9 @@ void CprogManage::newFile(int fileType, int subType)
     QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(max)));
     item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
     parentItem->addChild(item);
+
+    w->progManage->clickItem(item, 0);
+    /*
     updateItemSubIndex(item);
     updateTextHead(item->parent());
     treeWidget->setCurrentItem(item);
@@ -544,38 +592,35 @@ void CprogManage::newFile(int fileType, int subType)
     //w->property->setSettingsToWidget(QStr + "/" + QString::number(max), fileType);
 
 
-    /*
-    QStr = (parentItem ->data(0,Qt::UserRole)).toString();
-    settings.beginGroup(QStr);
-    settings.setValue("subIndex", size);
-    settings.endGroup();
-
-    int index = parentItem->parent()->indexOfChild(parentItem);//在父亲中索引
-    QStr = QString::number(index + 1) + QString(tr("分区"));
-    QStr = QStr + "(" + QString::number(size + 1) + ")";
-    parentItem->setText(0,QStr);//setText(QStr);
-*/
     w->property->updateProperty(item);
     w->screenArea->updateShowArea(item);//  progSettingsInit(QStr);
+    */
 }
 
 //删除项目
 void CprogManage::deleteItem()
 {
     QTreeWidgetItem *curItem;
-    QVariant Qvar;
+    int type;
+    QTreeWidgetItem *parent;
+    QString str;
     int index;
 
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == 0)
         return;
 
-    Qvar = curItem->data(0, Qt::UserRole);
-    if(checkItemType(curItem) != PROG_PROPERTY)
+    str = curItem->data(0, Qt::UserRole).toString();
+    type = checkItemType(curItem);
+
+    if(type EQ SCREEN_PROPERTY)//---是屏幕的不能删除
+        return;
+
+    if(type != PROG_PROPERTY) //分区和文件类型
     {
-        if(checkItemType(curItem) == AREA_PROPERTY)
+        if(type == AREA_PROPERTY)
         {
-            settings.beginGroup(Qvar.toString());
+            settings.beginGroup(str);
 
             int index = settings.value("index").toInt();
             if(index < MAX_AREA_NUM)
@@ -586,24 +631,40 @@ void CprogManage::deleteItem()
             settings.endGroup();
         }
 
-        QTreeWidgetItem *parent = curItem->parent();
+        parent = curItem->parent();
         curItem->parent()->removeChild(curItem);
-        //updateItemSubIndex(cur)
-        updateTextHead(parent);
+        //updateItemSubIndex(curItem);
+        //updateTextHead(parent);
 
     }
     else
-    {
+    {/*
         index = treeWidget->indexOfTopLevelItem(curItem);
         treeWidget->takeTopLevelItem(index);
         updateTextHead(0);
+        */
+        parent = curItem->parent();
+        curItem->parent()->removeChild(curItem);
+        //updateItemSubIndex(curItem);
+        //updateTextHead(parent);
+        for(int i = 0; i < MAX_AREA_NUM; i ++)
+            w->screenArea->setAreaVisible(i, 0);
     }
 
-    settings.beginGroup(Qvar.toString());
+    settings.beginGroup(str);
+    //qDebug("remove str:%s",(const char *)str.toLocal8Bit());
     settings.remove("");
     settings.endGroup();
-    //settings.remove(Qvar.toString());//删除这个组
 
+    //settings.remove(str);//删除这个组
+
+    if(parent->childCount() == 0)//子项都删除则将父项的子索引清0
+    {
+        str = parent->data(0, Qt::UserRole).toString();//.toString();
+        settings.beginGroup(str);
+        settings.setValue("subIndex", 0);
+        settings.endGroup();
+    }
     //qDebug("remove : %s", (const char *)(Qvar.toString().toLocal8Bit()));
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == 0)
@@ -614,7 +675,11 @@ void CprogManage::deleteItem()
     }
 
     saveCurItem(0); //删除后当前没有点中项
+
+    //updateItemSubIndex(curItem);
+    //updateTextHead(curItem->parent());
     w->progManage->clickItem(curItem, 0);
+
 }
 
 //点击
@@ -637,17 +702,29 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     saveCurItem(item);
 
     type = checkItemType(item);
-    if(type != PROG_PROPERTY) //&& type != AREA_PROPERTY) //既不是节目也不是分区
+    if(type != SCREEN_PROPERTY)//PROG_PROPERTY) //&& type != AREA_PROPERTY) //既不是节目也不是分区
     {
         //int index =
         //QString str = item->parent()->data(0, Qt::UserRole).toString();
         updateItemSubIndex(item);
         updateTextHead(item->parent());
-        if(type != AREA_PROPERTY)
+
+        if(type != PROG_PROPERTY) //分区或者文件类型则更新父目录
         {
-          updateItemSubIndex(item->parent());        //updateItemSubIndex(item);
-          updateTextHead(item->parent()->parent());
+            updateItemSubIndex(item->parent());        //updateItemSubIndex(item);
+            updateTextHead(item->parent()->parent());
         }
+
+        if(type!= PROG_PROPERTY && type!= AREA_PROPERTY) //节目文件
+        {
+          updateItemSubIndex(item->parent()->parent());        //updateItemSubIndex(item);
+          updateTextHead(item->parent()->parent()->parent());
+        }
+    }
+    else
+    {
+        //updateItemSubIndex(item);
+        updateTextHead(item);
     }
 
     //treeWidget->setCurrentItem(item);//setCurrentItem()
@@ -655,7 +732,7 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     w->screenArea->updateShowArea(item);
     treeWidget->setCurrentItem(item);//setCurrentItem()---这句话要放到最后！否则前面的两个函数触发槽，槽函数还是引用之前的curitem
 }
-
+/*
 //progManage中的treeWidget的初始化,根据settings进行初始化
 void CprogManage::settingsInit()
 {
@@ -730,6 +807,125 @@ void CprogManage::settingsInit()
 
                 areaItem =progItem->child(j);
                 updateTextHead(areaItem);
+            }
+        }
+
+        saveCurItem(0);
+        //clickItem(treeWidget->topLevelItem(0), 0);
+   }
+}
+*/
+
+//progManage中的treeWidget的初始化,根据settings进行初始化
+void CprogManage::settingsInit()
+{
+    int screenSize, progSize, fileSize;
+    QStringList screenGroups, progGroups, areaGroups, fileGroups;
+
+    treeWidget->clear();
+    settings.clear();
+    settings.beginGroup("screen");
+
+    settings.beginGroup("1");
+    settings.setValue("name", "screen1");
+    settings.setValue("type",SCREEN_PROPERTY);
+    settings.endGroup();
+
+    settings.beginGroup("2");
+    settings.setValue("name", "screen2");
+    settings.setValue("type",SCREEN_PROPERTY);
+    settings.endGroup();
+
+    screenGroups = settings.childGroups(); //屏幕列表
+    screenSize = screenGroups.size();
+
+    //对每一个显示屏进行初始化
+    for(int m = 0; m < screenSize; m ++)
+    {
+        QTreeWidgetItem *screenItem = new QTreeWidgetItem(treeWidget);
+        treeWidget->addTopLevelItem(screenItem);
+        QString screenStr = "screen/" + screenGroups.at(m);
+        screenItem->setData(0, Qt::UserRole, screenStr);
+        screenItem->setText(0, QString::number(m + 1) + tr("显示屏"));
+
+
+        settings.beginGroup(screenGroups.at(m) + "/program");
+        progGroups = settings.childGroups(); //节目列表
+        progSize = progGroups.size(); //节目个数
+
+        for(int i = 0; i < progSize; i ++)
+        {
+            QTreeWidgetItem *progItem = new QTreeWidgetItem(treeWidget);
+            QString progStr = screenStr + "/program/" + progGroups.at(i);
+            progItem->setData(0, Qt::UserRole, progStr);
+            progItem->setText(0, QString::number(i + 1) + tr("节目"));
+            //treeWidget->addTopLevelItem(progItem);
+            screenItem->addChild(progItem);
+
+            settings.beginGroup(progGroups.at(i) + "/area");
+            areaGroups = settings.childGroups(); //列表
+            //areaSize = areaGroups.size();
+            //qDebug("set %d prog %s, area size = %d", i, progGroups.at(i), areaSize);
+
+            for(int j = 0; j < areaGroups.size(); j ++)
+            {
+                QTreeWidgetItem *areaItem = new QTreeWidgetItem(progItem);
+                QString areaStr = progStr + "/area/" + areaGroups.at(j);
+                areaItem->setData(0, Qt::UserRole, areaStr);
+                areaItem->setText(0, QString::number(j + 1) + tr("分区"));
+                progItem->addChild(areaItem);
+
+                settings.beginGroup(areaGroups.at(j) + "/file");
+                fileGroups = settings.childGroups(); //列表
+                fileSize = fileGroups.size();
+                //qDebug("set %d area %s, file size = %d", j, areaGroups.at(i), fileSize);
+
+                for(int k = 0; k < fileSize; k ++)
+                {
+                    QTreeWidgetItem *fileItem = new QTreeWidgetItem(areaItem);
+                    QString fileStr = areaStr + "/file/" + fileGroups.at(k);
+                    fileItem->setData(0, Qt::UserRole, fileStr);
+
+                    settings.beginGroup(fileGroups.at(k));
+                    int type = settings.value("type").toInt();
+                    QString name = getTypeString(type);
+                    fileItem->setText(0, QString::number(k + 1) + name);
+                    areaItem->addChild(fileItem);
+
+                    settings.endGroup();
+                    //qDebug("set %d file %s", k, fileGroups.at(i));
+                }
+                settings.endGroup();
+             }
+            settings.endGroup();
+        }
+        settings.endGroup();
+    }
+    settings.endGroup();
+
+    if(treeWidget->topLevelItemCount()>0)
+    {
+        treeWidget->setCurrentItem(treeWidget->topLevelItem(0)); //设置第一个item为当前焦点
+
+        for(int i = 0; i <treeWidget->topLevelItemCount(); i ++)
+        {
+            QTreeWidgetItem *screenItem;
+            screenItem = treeWidget->topLevelItem(i);
+            updateTextHead(screenItem);
+
+            for(int k = 0; k<screenItem->childCount(); k ++)
+            {
+                QTreeWidgetItem *progItem;
+
+                progItem = screenItem->child(k);
+                updateTextHead(progItem);
+                for(int j = 0; j<progItem->childCount(); j ++)
+                {
+                    QTreeWidgetItem *areaItem;
+
+                    areaItem =progItem->child(j);
+                    updateTextHead(areaItem);
+                }
             }
         }
 

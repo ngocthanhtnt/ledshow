@@ -87,7 +87,7 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     setLayout(hLayout);
 
     connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    //connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 
     connect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));

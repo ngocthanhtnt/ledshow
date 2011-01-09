@@ -346,7 +346,7 @@ void CareaProperty::edited()
     if(area != (CshowArea *)0) //
     {
         //当前选中的item
-        item = area->treeItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
+        item = area->areaItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
         if(item != (QTreeWidgetItem *)0)
         {
             QString str = item->data(0,Qt::UserRole).toString();

@@ -157,7 +157,7 @@ void CcolorCombo::setColor(const QColor &col)
     if(col == QColor(Qt::red))
     {
         index = 0;
-       if(GET_BIT(Screen_Para.Color, 0) != 0)
+       if(GET_BIT(Screen_Para.Color, 0) == 0)
          ASSERT_FAILED();
     }
     else if(col == QColor(Qt::green))

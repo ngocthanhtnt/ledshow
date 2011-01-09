@@ -47,6 +47,7 @@ INPUT(
 ./release\OS_Event.o
 ./release\OS_Core.o
 ./release\Border_Show.o
+./release\screenProperty.o
 ./release\moc_mainwindow.o
 ./release\moc_showArea.o
 ./release\moc_progManage.o
@@ -63,5 +64,6 @@ INPUT(
 ./release\moc_tempProperty.o
 ./release\moc_colorCombo.o
 ./release\moc_lunProperty.o
+./release\moc_screenProperty.o
 ./release\qrc_textedit.o
 );

@@ -658,7 +658,7 @@ void CprogProperty::edited()
     if(area != (CshowArea *)0) //
     {
         //当前选中的item
-        item = area->treeItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
+        item = area->progItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
         if(item != (QTreeWidgetItem *)0)
         {
             QString str = item->data(0,Qt::UserRole).toString();
@@ -678,7 +678,7 @@ void updateProgShowArea(CshowArea *area)
     if(area != (CshowArea *)0) //
     {
         //item = area->treeItem;
-        str = area->treeItem->data(0,Qt::UserRole).toString();
+        str = area->progItem->data(0,Qt::UserRole).toString();
 
         getProgParaFromSettings(str,area->progPara);
         //area->imageBk = getLineTextImage(str);

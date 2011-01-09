@@ -87,7 +87,9 @@ public:
     int getColor();
     void resetProgramPara();
 
-    QTreeWidgetItem *treeItem; //对应的treeitem
+    QTreeWidgetItem *screenItem;
+    QTreeWidgetItem *progItem;
+    QTreeWidgetItem *areaItem; //对应的treeitem
     QTreeWidgetItem *fileItem; //对应的文件item
 
     //int getWidth();
@@ -116,6 +118,7 @@ public:
     int areaUsed[MAX_AREA_NUM];
 
     void updateShowArea(QTreeWidgetItem *item);
+    void screenSettingsInit(QTreeWidgetItem *item);
     void areaSettingsInit(QTreeWidgetItem *item);
     void progSettingsInit(QTreeWidgetItem *item);
     void fileSettingsInit(QTreeWidgetItem *item);

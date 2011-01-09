@@ -5,14 +5,20 @@
 
 extern QSettings settings;
 /*
-#define PROG_PROPERTY 0x00
-#define AREA_PROPERTY 0x01
-#define PIC_PROPERTY    0x02 //图片
-#define FLASH_PROPERTY  0x03 //动画
-#define CLOCK_PROPERTY  0x04 //表盘
-#define TIME_PROPERTY   0x05 //日期时间
-#define TIMER_PROPERTY  0x06 //定时
-#define TEMP_PROPERTY   0x07 //温度
+#define SCREEN_PROPERTY 0x00
+#define PROG_PROPERTY 0x01
+#define AREA_PROPERTY 0x02
+#define PIC_PROPERTY    0x03 //图片
+#define CLOCK_PROPERTY  0x05 //表盘
+#define TIME_PROPERTY   0x06 //日期时间
+#define TIMER_PROPERTY  0x07 //定时
+#define TEMP_PROPERTY   0x08 //温度
+#define LUN_PROPERTY 0x09    //农历
+
+#define PIC_TABLE_PROPERTY  0x30
+#define PIC_FLASH_PROPERTY  0x31 //动画
+#define PIC_MTEXT_PROPERTY  0x32
+#define PIC_STEXT_PROPERTY  0x33
  */
 //属性编辑框
 Cproperty::Cproperty(QWidget *parent):QDockWidget(parent)
@@ -22,30 +28,43 @@ Cproperty::Cproperty(QWidget *parent):QDockWidget(parent)
     stackedWidget = new QStackedWidget(this);
     setAllowedAreas(Qt::BottomDockWidgetArea);
 
+    //0
+    screenProperty = new CscreenProperty(stackedWidget);
+    stackedWidget->addWidget(screenProperty);
+
+    //1
     progProperty = new CprogProperty(stackedWidget);
     stackedWidget->addWidget(progProperty);
 
+    //2
     areaProperty = new CareaProperty(stackedWidget);
     stackedWidget -> addWidget(areaProperty);
 
+    //3
     picProperty = new CpicProperty(stackedWidget);
     stackedWidget->addWidget(picProperty);
 
+    //4
     flashProperty = new CflashProperty(stackedWidget);
     stackedWidget->addWidget(flashProperty);
 
+    //5
     clockProperty = new CclockProperty(stackedWidget);
     stackedWidget->addWidget(clockProperty);
 
+    //6
     timeProperty = new CtimeProperty(stackedWidget);
     stackedWidget->addWidget(timeProperty);
 
+    //7
     timerProperty = new CtimerProperty(stackedWidget);
     stackedWidget->addWidget(timerProperty);
 
+    //8
     tempProperty = new CtempProperty(stackedWidget);
     stackedWidget->addWidget(tempProperty);
 
+    //9
     lunProperty = new ClunProperty(stackedWidget);
     stackedWidget->addWidget(lunProperty);
     setWidget(stackedWidget);
@@ -59,9 +78,9 @@ INT8U getStackedWidgetIndex(INT8U type)
         return type;
     else if(type EQ PIC_MTEXT_PROPERTY ||\
             type EQ PIC_STEXT_PROPERTY)
-        return 0x02;
-    else if(type EQ PIC_FLASH_PROPERTY)
         return 0x03;
+    else if(type EQ PIC_FLASH_PROPERTY)
+        return 0x04;
     else
     {
         ASSERT_FAILED();
@@ -97,10 +116,15 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     int index = getStackedWidgetIndex(type);
     stackedWidget->setCurrentIndex(index);
 
-    if(type == PROG_PROPERTY)
+    if(type  == SCREEN_PROPERTY)
+    {
+        area= (Carea *)0;
+        //ASSERT_FAILED();
+    }
+    else if(type == PROG_PROPERTY)
     {
        area = (Carea *)0;
-       ASSERT_FAILED();//progProperty->setSettingsToWidget(str);//stackedWidget->setCurrentIndex();
+       //ASSERT_FAILED();//progProperty->setSettingsToWidget(str);//stackedWidget->setCurrentIndex();
     }
     else if(type == AREA_PROPERTY)
         area = areaProperty->area;//->setSettingsToWidget(str);
@@ -178,7 +202,11 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
 */
     type = checkItemType(item);
 
-    if(type == PROG_PROPERTY)
+    if(type == SCREEN_PROPERTY)
+    {
+        ; //屏幕
+    }
+    else if(type == PROG_PROPERTY)
         progProperty->setSettingsToWidget(str);//stackedWidget->setCurrentIndex();
     else if(type == AREA_PROPERTY)
     {
@@ -244,7 +272,11 @@ void Cproperty::getSettingsFromWidget(QTreeWidgetItem *item)
 */
     type = checkItemType(item);
 
-    if(type == PROG_PROPERTY)
+    if(type == SCREEN_PROPERTY)
+    {
+        ;//屏幕
+    }
+    else if(type == PROG_PROPERTY)
         progProperty->getSettingsFromWidget(str);//stackedWidget->setCurrentIndex();
     else if(type == AREA_PROPERTY)
     {
