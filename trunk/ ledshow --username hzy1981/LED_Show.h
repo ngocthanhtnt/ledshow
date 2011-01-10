@@ -87,6 +87,7 @@ typedef struct
   INT32U Stay_Time;   //已经停留的时间，单位ms
   INT8U Counts;
   
+  INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态
   INT8U Tail;
 }S_Area_Status;
 
@@ -116,6 +117,7 @@ typedef struct
   S_Area_Status Area_Status[MAX_AREA_NUM]; //每个分区的状态 
   S_Prog_Block_Index Block_Index; //当前节目的索引
 
+  INT8U CS[CS_BYTES];
   INT8U Tail;
 }S_Prog_Status;
 
@@ -124,6 +126,7 @@ typedef struct
   INT8U Head;
   INT8U Lightness;
   INT8U Open_Flag;
+  INT8U CS[CS_BYTES];
   INT8U Tail;  
 }S_Screen_Status;
 

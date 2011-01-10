@@ -76,3 +76,21 @@ void Open_Close_Proc()
   
 }
 
+//获取屏幕亮度
+INT8U Get_Screen_Lightness()
+{
+  return Screen_Status.Lightness;
+}
+
+//获取屏幕开机状态
+INT8U Get_Screen_Open_Status()
+{
+  return Screen_Status.Open_Flag;
+}
+
+
+void Screen_Proc()
+{
+  Lightness_Proc();
+  Open_Close_Proc();
+}

@@ -1,8 +1,8 @@
 #ifndef OS_CFG_H
 #define OS_CFG_H
 
-#define OS_TASK_NUM       3 //最大任务个数,最大不能超过32
-#define OS_EVENT_NUM      10 //最大事件个数
+#define OS_TASK_NUM       1 //最大任务个数,最大不能超过32
+#define OS_EVENT_NUM      5 //最大事件个数
 //注意：本系统最多支持32个任务和16个事件,如果需要支持更多个数，需要修改OS_Core.h文件中的Tcb和OS_Event中的变量
 
 #define OS_TICK_ISR_EN    0 //0表示使用OS_Check_Tick()查询定时器的方式产生时基，1表示使用中断OS_Tick_ISR产生时基
@@ -22,34 +22,34 @@
 
 #define OS_STK_GROWTH     1 //设置堆栈增长方向，1表示由高地址向低地址递减，0相反
 
-#define OS_TRACE_EN       1
+#define OS_TRACE_EN       0
 #define OS_TRACE_CTRL_EN  0 //定义断言的开关功能，1表示允许开关。0表示不允许开关，一直打开
                               //如果需要获取异常复位前的调用流程信息，需要在复位后马上关闭断言。然后在初始化
                               //调试串口后马上调用OS_ASSERT_FAILED()输出
-#define OS_TRACE_NUM       10 //函数轨迹跟踪的个数
-#define OS_TRACE_BUF_LEN   20 //每个断言记录内容长度
+#define OS_TRACE_NUM       1 //函数轨迹跟踪的个数
+#define OS_TRACE_BUF_LEN   10 //每个断言记录内容长度
 #define OS_TRACE_HOOK_EN    1 //轨迹函数内是否允许钩子函数，1表示允许
 
 #define OS_ASSERT_EN      1 //1表示断言功能开启，0表示关闭
-#define OS_ASSERT_HOOK_EN 1 //1表示断言钩子使能，0表示禁止
+#define OS_ASSERT_HOOK_EN 0 //1表示断言钩子使能，0表示禁止
 
 #define OS_MUTEX_EN      1  //使用互斥信号量
-#define OS_MUTEX_LOCK_CHK_EN      1 //1表示支持事件锁死检查，0表示不支持,只有互斥型信号量才有此功能
-#define OS_MUTEX_WAIT_WARN_TIME   1 //申请信号量超时时间，超过该时间仍然申请不到，则进行锁死检查,单位为s
+#define OS_MUTEX_LOCK_CHK_EN      0 //1表示支持事件锁死检查，0表示不支持,只有互斥型信号量才有此功能
+#define OS_MUTEX_WAIT_WARN_TIME   0 //申请信号量超时时间，超过该时间仍然申请不到，则进行锁死检查,单位为s
 
-#define OS_MSG_EN        1  //使用消息
+#define OS_MSG_EN        0  //使用消息
 #define OS_MSG_WAIT_WARN_TIME 1 //消息等待超时报警时间，单位为s
 
-#define OS_MSG_Q_EN      1 //使用消息队列
+#define OS_MSG_Q_EN      0 //使用消息队列
 #define OS_MSG_Q_WAIT_WARN_TIME 1//消息队列等待超时报警时间，单位为s
 
-#define OS_SEM_EN        1  //使用普通信号量
+#define OS_SEM_EN        0  //使用普通信号量
 #define OS_SEM_WAIT_WARN_TIME 1 //信号量等待超时报警时间，单位s
 
-#define OS_MEM_EN        1  //使用动态内存管理
+#define OS_MEM_EN        0  //使用动态内存管理
 #define OS_MEM_WAIT_WARN_TIME 1 //申请到的内存块的最长使用时间单位为s
 
-#define OS_SHELL_EN      1  //使用Shell
+#define OS_SHELL_EN      0  //使用Shell
 
 #if OS_MEM_EN>0 //定义动态内存的每个Block的大小
 
