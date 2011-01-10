@@ -823,9 +823,9 @@ void CprogManage::settingsInit()
     QStringList screenGroups, progGroups, areaGroups, fileGroups;
 
     treeWidget->clear();
-    settings.clear();
+    //settings.clear();
     settings.beginGroup("screen");
-
+/*
     settings.beginGroup("1");
     settings.setValue("name", "screen1");
     settings.setValue("type",SCREEN_PROPERTY);
@@ -835,7 +835,7 @@ void CprogManage::settingsInit()
     settings.setValue("name", "screen2");
     settings.setValue("type",SCREEN_PROPERTY);
     settings.endGroup();
-
+*/
     screenGroups = settings.childGroups(); //屏幕列表
     screenSize = screenGroups.size();
 
@@ -855,7 +855,7 @@ void CprogManage::settingsInit()
 
         for(int i = 0; i < progSize; i ++)
         {
-            QTreeWidgetItem *progItem = new QTreeWidgetItem(treeWidget);
+            QTreeWidgetItem *progItem = new QTreeWidgetItem(screenItem);
             QString progStr = screenStr + "/program/" + progGroups.at(i);
             progItem->setData(0, Qt::UserRole, progStr);
             progItem->setText(0, QString::number(i + 1) + tr("节目"));

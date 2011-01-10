@@ -87,7 +87,7 @@ typedef struct
   INT32U Stay_Time;   //已经停留的时间，单位ms
   INT8U Counts;
   
-  INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态
+  INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态--主要用于与中断显示同步
   INT8U Tail;
 }S_Area_Status;
 
@@ -110,7 +110,7 @@ typedef struct
   INT32U Time; //已经播放时长
   INT16U Counts; //已经播放次数
 
-  INT8U Play_Flag; //是否播放标志
+  INT8U Play_Flag; //是否播放标志--主要用于与中断显示同步
   
   S_Border_Status Border_Status;
   U_File_Para File_Para[MAX_AREA_NUM]; //每个分区的当前文件参数
