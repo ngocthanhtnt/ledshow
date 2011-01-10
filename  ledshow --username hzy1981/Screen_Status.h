@@ -12,4 +12,7 @@
 
 EXT void Lightness_Proc();
 EXT void Open_Close_Proc();
+EXT INT8U Get_Screen_Lightness();
+EXT INT8U Get_Screen_Open_Status();
+EXT void Screen_Proc();
 #endif

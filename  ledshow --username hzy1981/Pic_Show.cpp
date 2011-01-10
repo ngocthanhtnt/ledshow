@@ -27,6 +27,13 @@ const S_Mode_Func Mode_Func[]=
 void Update_Pic_Data(INT8U Area_No)
 {
   INT8U In_Mode;
+  INT32U Stay_Time;
+  
+  if(Prog_Status.Play_Flag EQ 0 ||\
+     Prog_Status.Area_Status[Area_No].Play_Flag EQ 0) //该节目或该分区还没有进入播放状态?
+    return;
+  
+  Stay_Time = Get_File_Stay_Time(Area_No);
   //还在移动状态
   if(Prog_Status.Area_Status[Area_No].Step < 100)
   {
@@ -42,9 +49,15 @@ void Update_Pic_Data(INT8U Area_No)
       }
     }
   }
-  else if(Prog_Status.Area_Status[Area_No].Stay_Time <= Get_File_Stay_Time(Area_No)) //停留时间未到
+  else if(Prog_Status.Area_Status[Area_No].Stay_Time <= Stay_Time) //停留时间未到
   {
     Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
+    if(Prog_Status.Area_Status[Area_No].Stay_Time >= Stay_Time)
+    {
+      Prog_Status.Area_Status[Area_No].Step = 0;
+      Prog_Status.Area_Status[Area_No].Stay_Time = 0; 
+      Prog_Status.Area_Status[Area_No].Play_Flag = 0;
+    }
   }
 }
 #endif
