@@ -49,6 +49,7 @@ INPUT(
 ./debug\Border_Show.o
 ./debug\screenProperty.o
 ./debug\makeProto.o
+./debug\Screen_Status.o
 ./debug\moc_mainwindow.o
 ./debug\moc_showArea.o
 ./debug\moc_progManage.o

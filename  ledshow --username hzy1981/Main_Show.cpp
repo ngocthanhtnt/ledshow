@@ -408,6 +408,78 @@ INT8U Check_Screen_Play_Time()
   
 }
 
+//检查内存中的数据或者参数是否正确
+void Check_Show_Data_Para()
+{
+  INT8U i, Re = 1;
+  INT8U Flag;
+
+  Re &= CHK_HT(Screen_Para);
+  Re &= CHK_HT(Card_Para);  
+  Re &= CHK_HT(Prog_Para);
+  Re &= CHK_HT(Prog_Status);
+  Re &= CHK_HT(Cur_Block_Index);
+  Re &= CHK_HT(Show_Data);
+  Re &= CHK_HT(Show_Data_Bak);
+  Re &= CHK_HT(Cur_Time);
+  if(Re EQ 0)
+    ASSERT_FAILED();
+  
+  Re = 1;
+  for(i = 0; i < S_NUM(Prog_Status.Area_Status); i ++)
+  {
+    Re &= CHK_HT(Prog_Status.Area_Status[i]);
+    if(Re EQ 0)
+      ASSERT_FAILED();
+    
+    Flag = Prog_Status.File_Para[i].Pic_Para.Flag;
+    if(Flag EQ SHOW_NULL)
+      ;
+    else if(Flag EQ SHOW_PIC)
+      Re &= CHK_HT(Prog_Status.File_Para[i].Pic_Para);
+#if CLOCK_SHOW_EN    
+    else if(Flag EQ SHOW_CLOCK)
+      Re &= CHK_HT(Prog_Status.File_Para[i].Clock_Para);
+#endif
+#if TIME_SHOW_EN    
+    else if(Flag EQ SHOW_TIME)
+      Re &= CHK_HT(Prog_Status.File_Para[i].Time_Para);
+#endif
+#if TIMER_SHOW_EN    
+    else if(Flag EQ SHOW_TIMER)
+      Re &= CHK_HT(Prog_Status.File_Para[i].Timer_Para);
+#endif
+#if TEMP_SHOW_EN    
+    else if(Flag EQ SHOW_TEMP)
+      Re &= CHK_HT(Prog_Status.File_Para[i].Temp_Para);
+#endif
+#if LUN_SHOW_EN    
+    else if(Flag EQ SHOW_LUN)
+      Re &= CHK_HT(Prog_Status.File_Para[i].Lun_Para);
+#endif    
+    else
+      Re = 0;
+    
+    if(Re EQ 0)
+      ASSERT_FAILED();
+    
+  }
+  
+}
+
+//将内存中的变量初始化头尾
+void Ram_Init()
+{
+  SET_HT(Screen_Para);  
+  SET_HT(Card_Para);
+  SET_HT(Prog_Para);
+  SET_HT(Prog_Status);
+  SET_HT(Cur_Block_Index);
+  SET_HT(Show_Data);
+  SET_HT(Show_Data_Bak);
+  SET_HT(Cur_Time);  
+}
+
 //显示相关处理
 void Show_Main_Proc()
 {

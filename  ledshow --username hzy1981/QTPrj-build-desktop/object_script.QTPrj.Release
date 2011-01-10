@@ -49,6 +49,7 @@ INPUT(
 ./release\Border_Show.o
 ./release\screenProperty.o
 ./release\makeProto.o
+./release\Screen_Status.o
 ./release\moc_mainwindow.o
 ./release\moc_showArea.o
 ./release\moc_progManage.o
