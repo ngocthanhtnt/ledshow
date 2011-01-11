@@ -6,11 +6,11 @@
 //获取得颜色
 INT8U Get_Color()
 {
-  if(!(Screen_Para.Color <=2))
+  if(!(Screen_Para.Base_Para.Color <=2))
     return 0;
   else
   {
-    return Screen_Para.Color;
+    return Screen_Para.Base_Para.Color;
   } 
 }  
 */
@@ -148,7 +148,7 @@ INT16U Get_Area_Width(INT8U Area_No)
   if(Area_No < MAX_AREA_NUM)
     return Prog_Para.Area[Area_No].X_Len;
   else if(Area_No EQ MAX_AREA_NUM)
-    return Screen_Para.Width;
+    return Screen_Para.Base_Para.Width;
   else
   {
     ASSERT_FAILED();
@@ -163,7 +163,7 @@ INT16U Get_Area_Height(INT8U Area_No)
   if(Area_No < MAX_AREA_NUM)
     return Prog_Para.Area[Area_No].Y_Len;
   else if(Area_No EQ MAX_AREA_NUM)
-    return Screen_Para.Height;
+    return Screen_Para.Base_Para.Height;
   else
   {
     ASSERT_FAILED();
@@ -223,14 +223,14 @@ INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y)
   X += Prog_Para.Area[Area_No].X;
   Y += Prog_Para.Area[Area_No].Y;
  
-  if(X >= Screen_Para.Width ||\
-     Y >= Screen_Para.Height)
+  if(X >= Screen_Para.Base_Para.Width ||\
+     Y >= Screen_Para.Base_Para.Height)
   {
     ASSERT_FAILED();
     return 0;
   }
 
-  Index = (((Y>>3) * Screen_Para.Width) + X)*8 + (Y & 0x07);
+  Index = (((Y>>3) * Screen_Para.Base_Para.Width) + X)*8 + (Y & 0x07);
   return Index;
   */
   
@@ -246,26 +246,26 @@ INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y)
     X += Prog_Para.Area[Area_No].X;
     Y += Prog_Para.Area[Area_No].Y;
    
-    if(X >= Screen_Para.Width ||\
-       Y >= Screen_Para.Height)
+    if(X >= Screen_Para.Base_Para.Width ||\
+       Y >= Screen_Para.Base_Para.Height)
     {
       ASSERT_FAILED();
       return 0;
     }
   
-    Index = (((Y>>3) * Screen_Para.Width) + X)*8 + (Y & 0x07);
+    Index = (((Y>>3) * Screen_Para.Base_Para.Width) + X)*8 + (Y & 0x07);
     return Index; 
   }
   else if(Area_No EQ MAX_AREA_NUM) //表示整屏数据
   {
-    if(X >= Screen_Para.Width ||\
-       Y >= Screen_Para.Height)
+    if(X >= Screen_Para.Base_Para.Width ||\
+       Y >= Screen_Para.Base_Para.Height)
     {
       ASSERT_FAILED();
       return 0;
     }
   
-    Index = (((Y>>3) * Screen_Para.Width) + X)*8 + (Y & 0x07);
+    Index = (((Y>>3) * Screen_Para.Base_Para.Width) + X)*8 + (Y & 0x07);
     return Index;  
   }
   else
@@ -330,7 +330,7 @@ INT8U Get_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT16U Width,
   
  if(Color < 3 || Color EQ 4)  //0,1,2,4单色屏
     return Get_Buf_Bit(Buf, Buf_Len,Index);
-  else if(Color EQ 3 || Screen_Para.Color EQ 5 || Color EQ 6) //双色屏
+  else if(Color EQ 3 || Screen_Para.Base_Para.Color EQ 5 || Color EQ 6) //双色屏
     return Get_Buf_Bit(Buf, Buf_Len, ((Index>>3)<<4) + (Index & 0x07)) +\
       (Get_Buf_Bit(Buf, Buf_Len, ((Index>>3)<<4) + 8 + (Index & 0x07))<<1);
   else if(Color EQ 7) //三色屏
@@ -352,12 +352,12 @@ INT8U Get_Area_Point_Data(S_Show_Data *pSrc_Buf, INT8U Area_No, INT16U X, INT16U
 
   Index = Get_Area_Point_Index(Area_No, X, Y);
   
-  if(Screen_Para.Color < 3 || Screen_Para.Color EQ 4)  //0,1,2,4单色屏
+  if(Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)  //0,1,2,4单色屏
     return Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data),Index);
-  else if(Screen_Para.Color EQ 3 || Screen_Para.Color EQ 5 || Screen_Para.Color EQ 6) //双色屏
+  else if(Screen_Para.Base_Para.Color EQ 3 || Screen_Para.Base_Para.Color EQ 5 || Screen_Para.Base_Para.Color EQ 6) //双色屏
     return Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), ((Index>>3)<<4) + (Index & 0x07)) +\
       (Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), ((Index>>3)<<4) + 8 + (Index & 0x07))<<1);
-  else if(Screen_Para.Color EQ 7) //三色屏
+  else if(Screen_Para.Base_Para.Color EQ 7) //三色屏
     return Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), (Index>>3)*24 + (Index & 0x07)) +\
       (Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), (Index>>3)*24 + 8 + (Index & 0x07))<<1)+
       (Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), (Index>>3)*24 + 16 + (Index & 0x07))<<2);
@@ -371,12 +371,12 @@ INT8U Get_Area_Offset_Len(S_Show_Data *pBuf, INT8U Area_No, INT8U **pOff, INT16U
   
   Index = Get_Area_Point_Index(Area_No, X, Y);
  
-  if(Screen_Para.Color < 3 || Screen_Para.Color EQ 4)  //单色屏
+  if(Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)  //单色屏
     return Get_Buf_Bit(pSrc_Buf->One_Color_Data.Color0, sizeof(pSrc_Buf->One_Color_Data.Color0),Index);
-  else if(Screen_Para.Color EQ 3 || Screen_Para.Color EQ 5 || Screen_Para.Color EQ 6) //双色屏
+  else if(Screen_Para.Base_Para.Color EQ 3 || Screen_Para.Base_Para.Color EQ 5 || Screen_Para.Base_Para.Color EQ 6) //双色屏
     return Get_Buf_Bit(pSrc_Buf->Two_Color_Data.Color0, sizeof(pSrc_Buf->Two_Color_Data.Color0), Index) +\
       (Get_Buf_Bit(pSrc_Buf->Two_Color_Data.Color1, sizeof(pSrc_Buf->Two_Color_Data.Color1), Index) << 1);
-  else if(Screen_Para.Color EQ 7) //三色屏
+  else if(Screen_Para.Base_Para.Color EQ 7) //三色屏
     return Get_Buf_Bit(pSrc_Buf->Three_Color_Data.Color0, sizeof(pSrc_Buf->Two_Color_Data.Color0), Index) + \
       (Get_Buf_Bit(pSrc_Buf->Three_Color_Data.Color1, sizeof(pSrc_Buf->Three_Color_Data.Color1), Index) << 1) +\
         (Get_Buf_Bit(pSrc_Buf->Three_Color_Data.Color2, sizeof(pSrc_Buf->Three_Color_Data.Color2), Index) << 2);
@@ -419,14 +419,14 @@ void Set_Area_Point_Data(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U 
   
   Index = Get_Area_Point_Index(Area_No, X, Y);
   
-  if(Screen_Para.Color < 3 || Screen_Para.Color EQ 4)  //0,1,2,4单色屏
+  if(Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)  //0,1,2,4单色屏
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data),Index, (Value & 0x01));
-  else if(Screen_Para.Color EQ 3 || Screen_Para.Color EQ 5 || Screen_Para.Color EQ 6) //双色屏
+  else if(Screen_Para.Base_Para.Color EQ 3 || Screen_Para.Base_Para.Color EQ 5 || Screen_Para.Base_Para.Color EQ 6) //双色屏
   {
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data), ((Index>>3)<<4) + (Index & 0x07), (Value & 0x01));
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data), ((Index>>3)<<4) + 8+ (Index & 0x07), (Value & 0x02)>>1);
   }
-  else if(Screen_Para.Color EQ 7) //三色屏
+  else if(Screen_Para.Base_Para.Color EQ 7) //三色屏
   {
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data), (Index>>3)*24 + (Index & 0x07), (Value & 0x01));
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data), (Index>>3)*24 + 8 + (Index & 0x07), (Value & 0x02)>>1);

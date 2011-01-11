@@ -72,13 +72,13 @@ INT8U Para_Frame_Proc(INT16U Ctrl, INT8U Data[], INT16U Len)
   //Len = FrameLen - 11;
   
   if(Ctrl EQ C_SCREEN_WH && Len >= Frame_Data_Size[Ctrl])
-    mem_cpy((INT8U *)&Screen_Para.Width, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //屏幕参数
+    mem_cpy((INT8U *)&Screen_Para.Base_Para.Width, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //屏幕参数
   else if(Ctrl EQ C_SCREEN_ADDR && Len >= Frame_Data_Size[Ctrl])
-    mem_cpy((INT8U *)&Screen_Para.Addr, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //屏幕地址
+    mem_cpy((INT8U *)&Screen_Para.Base_Para.Addr, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //屏幕地址
   else if(Ctrl EQ C_SCREEN_IP && Len >= Frame_Data_Size[Ctrl])
-    mem_cpy((INT8U *)&Screen_Para.IP, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //IP地址	
+    mem_cpy((INT8U *)&Screen_Para.Base_Para.IP, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //IP地址
   else if(Ctrl EQ C_SCREEN_BAUD && Len >= Frame_Data_Size[Ctrl])
-    mem_cpy((INT8U *)&Screen_Para.Baud, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //通信波特率
+    mem_cpy((INT8U *)&Screen_Para.Base_Para.Baud, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //通信波特率
   else if(Ctrl EQ C_SCREEN_OC_TIME && Len >= Frame_Data_Size[Ctrl]) 	
     mem_cpy((INT8U *)&Screen_Para.Open_Close_Time, Data, Frame_Data_Size[Ctrl], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //定时开关机时间
   else if(Ctrl EQ C_SCREEN_LIGNTNESS && Len >= Frame_Data_Size[Ctrl])
@@ -112,7 +112,7 @@ void Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen)
     Re &= Para_Frame_Proc(Ctrl_Code, Frame + 8, FrameLen - 11); //更新内存中的参数
     Re &= Save_Para_Frame_Proc(Frame, FrameLen); //保存参数
   }
-  else if(Ctrl_Code EQ C_PROG_PROPERTY)//保存节目属性帧
+  else if(Ctrl_Code EQ C_PROG_PARA)//保存节目属性帧
   {
     Re &= Save_Prog_Property_Frame_Proc(Frame, FrameLen); 
   }

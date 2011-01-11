@@ -725,7 +725,7 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
   INT8U color,check;
   INT8U Re;
 
-  color = Screen_Para.Color;//w->screenArea->screenPara.Color;
+  color = Screen_Para.Base_Para.Color;//w->screenArea->screenPara.Color;
 
   settings.beginGroup(str);
   index = settings.value("style").toInt();
@@ -747,7 +747,7 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
       Re = Get_Rect_Buf_Bit((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data),\
                        para.Border_Width, i, j);
       Re = (Re << color);
-      Set_Buf_Point_Data((INT8U *)para.Border_Data, sizeof(para.Border_Data), Screen_Para.Color, para.Border_Width, i, j, Re);
+      Set_Buf_Point_Data((INT8U *)para.Border_Data, sizeof(para.Border_Data), Screen_Para.Base_Para.Color, para.Border_Width, i, j, Re);
    }
 /*
   for(int i = 0; i < para.Border_Width; i ++)
@@ -758,14 +758,14 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
 
     int Index = (((Y>>3) * para.Border_Width) + X)*8 + (Y & 0x07);
 
-    if(Screen_Para.Color EQ 0)  //单色屏
+    if(Screen_Para.Base_Para.Color EQ 0)  //单色屏
       Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data),Index, (Value & 0x01));
-    else if(Screen_Para.Color EQ 1) //双色屏
+    else if(Screen_Para.Base_Para.Color EQ 1) //双色屏
     {
       Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), ((Index>>3)<<4) + (Index & 0x07), (Value & 0x01));
       Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), ((Index>>3)<<4) + 8+ (Index & 0x07), (Value & 0x02)>>1);
     }
-    else if(Screen_Para.Color EQ 2) //三色屏
+    else if(Screen_Para.Base_Para.Color EQ 2) //三色屏
     {
       Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), (Index>>3)*24 + (Index & 0x07), (Value & 0x01));
       Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), (Index>>3)*24 + 8 + (Index & 0x07), (Value & 0x02)>>1);

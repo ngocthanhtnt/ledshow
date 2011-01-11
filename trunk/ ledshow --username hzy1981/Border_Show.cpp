@@ -7,7 +7,7 @@
 INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y) //获取一个区域内一个点的数据
 {
   if(Area_No EQ MAX_AREA_NUM)
-    return Get_Buf_Point_Data(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data), Screen_Para.Color, Prog_Para.Border_Width, X, Y);   
+    return Get_Buf_Point_Data(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data), Screen_Para.Base_Para.Color, Prog_Para.Border_Width, X, Y);
   else
     return 0;
 }

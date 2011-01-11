@@ -1567,7 +1567,7 @@ void Show_Char(INT16U Unicode, INT8U Font, INT8U Color, S_Show_Data *pData, INT8
           else
             Bit=Get_Bit((INT8U *)CN_ZK[i].CN32_Dot,Width,j,k);
 
-        //if(Screen_Para.Color EQ 0)  //单色屏
+        //if(Screen_Para.Base_Para.Color EQ 0)  //单色屏
           if(Bit>0)
             Set_Area_Point_Data(pData, Area_No, X + j, Y +k, Color);
           else

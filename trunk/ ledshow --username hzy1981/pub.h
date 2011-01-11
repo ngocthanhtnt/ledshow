@@ -31,6 +31,7 @@
 #endif
 
 #define S_NUM(X) (sizeof(X)/sizeof(X[0]))
+#define S_OFF(X,Y) ((INT32U)(&(((X *)0)->Y)))//获得一个结构体的偏移
 
 #define MAX_2(a,b) ((a)>(b)?(a):(b))
 #define MIN_2(a,b) ((a)>(b)?(b):(a))

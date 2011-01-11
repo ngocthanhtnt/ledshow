@@ -400,8 +400,8 @@ void CprogManage::newArea()
     int yLen = settings.value("yLen").toInt();
     settings.endGroup();
 */
-    int xLen = Screen_Para.Width;
-    int yLen = Screen_Para.Height;
+    int xLen = Screen_Para.Base_Para.Width;
+    int yLen = Screen_Para.Base_Para.Height;
 
     type = checkItemType(curItem); //该项目是哪种?
     if(type == SCREEN_PROPERTY)
