@@ -247,7 +247,7 @@ CsmLineEdit::CsmLineEdit(QWidget *parent):QGroupBox(parent)
 
     smLineCombo->addItem(tr("单行"));
     smLineCombo->addItem(tr("多行"));
-    label = new QLabel(tr("行间距"),this);
+    label = new QLabel(tr("间距"),this);
     lineSpaceEdit = new QSpinBox(this);
 
     lineSpaceEdit->setMinimum(0);

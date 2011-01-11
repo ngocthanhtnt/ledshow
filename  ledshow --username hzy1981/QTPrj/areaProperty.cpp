@@ -13,8 +13,8 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
     QGridLayout *gridLayout;
     int screenWidth, screenHeight;
 
-    screenWidth = Screen_Para.Width;
-    screenHeight = Screen_Para.Height;
+    screenWidth = Screen_Para.Base_Para.Width;
+    screenHeight = Screen_Para.Base_Para.Height;
     /*
     settings.beginGroup("screen");
     screenWidth = settings.value("xLen").toInt();//w->screenArea->width();

@@ -19,14 +19,16 @@
 #define C_SCREEN_ADDR 0x02 //屏幕地址
 #define C_SCREEN_IP   0x03 //IP地址
 #define C_SCREEN_BAUD 0x04 //通信速率
-#define C_SCREEN_OC_TIME 0x05 //定时开关机时间
-#define C_SCREEN_LIGNTNESS 0x06 //亮度
-#define C_SCREEN_TIME 0x07 //时间
-#define C_DEL_PROG    0x08 //删除节目
-#define C_PROG_PROPERTY  0x09 //节目属性
-#define C_PROG_DATA  0x0A //显示数据
-#define C_SCREEN_INFO 0x0B //屏幕信息
-#define C_UPDATE      0x0C //固件升级
+#define C_SCREEN_BASE_PARA 0x05
+#define C_SCREEN_OC_TIME 0x06 //定时开关机时间
+#define C_SCREEN_LIGNTNESS 0x07 //亮度
+#define C_SCREEN_TIME 0x08 //时间
+#define C_PROG_NUM    0x09 //节目数
+#define C_DEL_PROG    0x0A //删除节目
+#define C_PROG_PARA  0x0B //节目属性
+#define C_PROG_DATA  0x0C //显示数据
+#define C_SCREEN_INFO 0x0D //屏幕信息
+#define C_UPDATE      0x0E //固件升级
 
 #define FLEN   0x01
 #define FADDR  0x03

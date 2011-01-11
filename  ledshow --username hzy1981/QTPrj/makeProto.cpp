@@ -1,7 +1,13 @@
 #define MAKE_PROTO_C
 #include "makeProto.h"
 #include "..\Includes.h"
+#include <QSettings>
+#include "mainwindow.h"
 
+extern MainWindow *w;
+extern QSettings settings;
+
+#define MAX_FRAME_BUF_LEN (2000*1000)
 #define PROTO_SHOW_DATA_LEN (BLOCK_DATA_LEN - 20)
 /*
 #define FLEN   0x01
@@ -60,7 +66,7 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
 
   pDst[0] = FRAME_HEAD;//帧头
 
-  memcpy(pDst + FADDR, &Screen_Para.Addr, 2); //地址
+  memcpy(pDst + FADDR, &Screen_Para.Base_Para.Addr, 2); //地址
 
   if(seq != frameInfo.seq) //一条新的帧！
   {
@@ -118,7 +124,93 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
 }
 
 //生成协议数据
-void makeProtoData()
+//screenStr屏幕参数的str，保存在屏幕参数文件中
+//progStr节目参数文件,保存在节目文件中
+void makeProtoData(QString screenStr, INT8U mode)
 {
+    S_Screen_Para screenPara;
+    S_Prog_Para progPara;
+    int len;
+    INT8U seq = 0, progNum, areaNum, fileNum;
+    INT8U frameBuf[500], *dataBuf;
 
+    dataBuf = malloc(MAX_FRAME_BUF_LEN);
+
+    //读取屏幕参数
+    getScreenParaFromSettings(screenStr, &screenPara);
+    //设置屏幕基本参数
+    len = makeFrame((INT8U *)&screenPara.Base_Para, sizeof(screenPara.Base_Para),\
+               C_SCREEN_BASE_PARA, seq++, frameBuf);
+    sendProtoData(frameBuf, len, mode);
+
+    //定时开关机时间
+    len = makeFrame((INT8U *)screenPara.Open_Close_Time, sizeof(screenPara.Open_Close_Time),\
+               C_SCREEN_OC_TIME, seq++, frameBuf);
+    sendProtoData(frameBuf, len, mode);
+
+    //亮度
+    len = makeFrame((INT8U *)screenPara.Lightness, sizeof(screenPara.Lightness),\
+               C_SCREEN_LIGNTNESS, seq++, frameBuf);
+    sendProtoData(frameBuf, len, mode);
+
+    //节目数
+    settings.beginGroup(screenStr + "/program/");
+    QStringList progList = settings.childGroups();
+    settings.endGroup();
+    progNum = progList.size();
+
+    len = makeFrame((INT8U *)&progNum, sizeof(progNum),\
+               C_SCREEN_LIGNTNESS, seq++, frameBuf);
+    sendProtoData(frameBuf, len, mode);
+
+    QString progStr,areaStr, fileStr;
+
+    for(int i = 0; i < progNum; i ++)
+    {
+        progStr = screenStr + "/program/" + progList.at(i);
+        getProgParaFromSettings(progStr, &progPara);
+
+        //节目参数帧
+        len = makeFrame((INT8U *)&&progPara.Head + 1, S_OFF(progPara, CS) - 1,\
+                   C_PROG_PARA, seq++, frameBuf);
+        sendProtoData(frameBuf, len, mode);
+
+        settings.beginGroup(progStr + "/area/");
+        QStringList areaList = settings.childGroups();
+        settings.endGroup();
+
+        areaNum = areaList.size();
+        for(int j = 0; j < areaNum; j ++)
+        {
+            areaStr = progStr + "/area/" + areaList.at(j);
+
+            settings.beginGroup(areaStr + "/file/");
+            QStringList fileList = settings.childGroups();
+            settings.endGroup();
+
+            fileNum = fileList.size();
+            for(int k = 0; k < fileNum; k ++)
+            {
+                fileStr = areaStr + "/file/" + fileList.at(k);
+                len = getFileParaFromSettings(fileStr, dataBuf);
+
+                while(1)
+                {
+                  len = makeFrame(dataBuf, len, C_PROG_DATA, seq, frameBuf);
+                  if(len > 0)
+                  {
+                      sendProtoData(frameBuf, len, mode);
+                  }
+                  else
+                  {
+                      seq ++;
+                      break;
+                  }
+                }
+            }
+        }
+    }
+
+
+    free(dataBuf);
 }

@@ -85,6 +85,31 @@ typedef struct
   INT16U Y_Len; 	
 }S_Area;
 
+typedef struct
+{
+  INT8U Head;
+  INT32U Max_Points; //最大支持
+  INT8U Prog_Num; //最大节目数
+  INT8U Area_Num; //最大分区数
+  INT8U File_Num; //最大文件数
+  INT8U ROM_Size; //存储空间大小
+  INT16U File_En_Word; //支持的节目类型
+  INT8U Tail;
+}S_Card_Para;
+
+typedef struct
+{
+    INT8U Polarity; //数据极性
+    INT8U OE; //OE极性
+
+    INT16U Width; //宽度
+    INT16U Height; //高度
+    INT8U Color; //颜色 0单色，1双色，2三色，3-255级灰度
+
+    INT16U Addr; //地址
+    INT32U IP; //IP地址
+    INT8U Baud;  //波特率
+}S_Screen_Base_Para;
 //屏幕参数
 //数据级性--正、反
 //OE级性--低有效、高有效
@@ -95,6 +120,8 @@ typedef struct
 {
   INT8U Head;
 
+  //命令0
+  /*
   INT8U Polarity; //数据极性
   INT8U OE; //OE极性
 
@@ -105,10 +132,14 @@ typedef struct
   INT16U Addr; //地址
   INT32U IP; //IP地址
   INT8U Baud;  //波特率
-
+*/
+  S_Screen_Base_Para Base_Para;
+  //命令1
   S_Open_Close_Time Open_Close_Time[MAX_OPEN_CLOSE_TIME]; //开关机时间
+  //命令2
   S_Lightness Lightness[MAX_LIGHTNESS_TIME]; //强度
 
+  //命令3
   INT8U Prog_Num; //节目数
   INT8U CS[CS_BYTES];
 
@@ -453,18 +484,6 @@ typedef union
   S_Temp_Para Temp_Para;
 #endif  
 }U_File_Para;
-
-typedef struct
-{
-  INT8U Head;
-  INT32U Max_Points; //最大支持
-  INT8U Prog_Num; //最大节目数
-  INT8U Area_Num; //最大分区数
-  INT8U File_Num; //最大文件数
-  INT8U ROM_Size; //存储空间大小
-  INT16U File_En_Word; //支持的节目类型
-  INT8U Tail;
-}S_Card_Para;
 
 #pragma pack()
 

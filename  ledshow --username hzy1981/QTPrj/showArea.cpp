@@ -111,9 +111,9 @@ CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
         settings.setValue("color", 0x07);
     }
 */
-    xLen = Screen_Para.Width;
-    yLen = Screen_Para.Height;
-    color = Screen_Para.Color;
+    xLen = Screen_Para.Base_Para.Width;
+    yLen = Screen_Para.Base_Para.Height;
+    color = Screen_Para.Base_Para.Color;
 
     resize(xLen, yLen);
 
@@ -483,8 +483,9 @@ void CscreenArea::setFocusArea(CshowArea *area)
 //       w->screenArea->setFocusArea(this);
         for(int i = 0; i < MAX_AREA_NUM; i ++)
         {
-            if(pArea[i] == area)
+            if(pArea[i] == area) {
                 pArea[i]->focusFlag = true;
+            }
             else
                 pArea[i]->focusFlag = false;
           //focusArea = area;
@@ -597,7 +598,7 @@ CshowArea::CshowArea(QWidget *parent, int colorFlag):QWidget(parent)
     color = settings.value("color").toInt();
     settings.endGroup();
     */
-    color = Screen_Para.Color;
+    color = Screen_Para.Base_Para.Color;
 
     if(color > 0x02)
         color = 0x00;
@@ -1556,9 +1557,9 @@ void CshowArea::draw_point(int x,int y, int value)
 //重置节目和屏幕参数，为了显示用
 void CshowArea::resetProgramPara()
 {
-    Screen_Para.Width = geometry().width();
-    Screen_Para.Height = geometry().height();
-    //Screen_Para.Color = 0x07;//getColor();
+    Screen_Para.Base_Para.Width = geometry().width();
+    Screen_Para.Base_Para.Height = geometry().height();
+    //Screen_Para.Base_Para.Color = 0x07;//getColor();
 
     Prog_Para.Area_Num = 1;
     Prog_Para.Area[0].X = 0;

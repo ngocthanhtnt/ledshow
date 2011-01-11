@@ -22,9 +22,9 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     //--------------
-    Screen_Para.Width = 256;
-    Screen_Para.Height = 256;
-    Screen_Para.Color = 0x07;
+    Screen_Para.Base_Para.Width = 256;
+    Screen_Para.Base_Para.Height = 256;
+    Screen_Para.Base_Para.Color = 0x07;
 
     Card_Para.Max_Points = MAX_POINTS;
     Card_Para.Prog_Num = 8;
@@ -51,7 +51,9 @@ int main(int argc, char *argv[])
     w->setFixedSize(desktopRect.width(), desktopRect.height() - iTitleBarHeight);      // 固定窗体大小
 
     if(w->progManage->treeWidget->topLevelItemCount()>0)
+    {
       w->progManage->clickItem(w->progManage->treeWidget->topLevelItem(0), 0);
+    }
     //w->progManage->newProg();
     //w->progManage->newArea();
     w->show();
