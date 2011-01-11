@@ -41,6 +41,7 @@
 #define PROG_COUNTS_MODE 0x01
 #define PROG_TIME_MODE  0x02
 
+#pragma pack(1)
 typedef struct
 {
   //INT8U Head;
@@ -85,9 +86,17 @@ typedef struct
 }S_Area;
 
 //屏幕参数
+//数据级性--正、反
+//OE级性--低有效、高有效
+//行顺序--正常、+1、-1
+//行消隐时间--正常、加长、超长
+//扫描方式
 typedef struct
 {
   INT8U Head;
+
+  INT8U Polarity; //数据极性
+  INT8U OE; //OE极性
 
   INT16U Width; //宽度
   INT16U Height; //高度
@@ -448,6 +457,20 @@ typedef union
 typedef struct
 {
   INT8U Head;
+  INT32U Max_Points; //最大支持
+  INT8U Prog_Num; //最大节目数
+  INT8U Area_Num; //最大分区数
+  INT8U File_Num; //最大文件数
+  INT8U ROM_Size; //存储空间大小
+  INT16U File_En_Word; //支持的节目类型
+  INT8U Tail;
+}S_Card_Para;
+
+#pragma pack()
+
+typedef struct
+{
+  INT8U Head;
   STORA_DI Index[MAX_AREA_NUM][MAX_FILE_NUM+1]; //后一个文件的起始就是前一个文件的结束,[MAX_FILE_NUM + 1]表示最后一个文件的结束位置
   //INT16U Block_End;
   INT8U CS[CS_BYTES];
@@ -503,18 +526,6 @@ typedef struct
   INT16U Bak;
   
 }S_File_Para_Info;
-
-typedef struct
-{
-  INT8U Head;
-  INT32U Max_Points; //最大支持
-  INT8U Prog_Num; //最大节目数
-  INT8U Area_Num; //最大分区数
-  INT8U File_Num; //最大文件数
-  INT8U ROM_Size; //存储空间大小
-  INT16U File_En_Word; //支持的节目类型
-  INT8U Tail;
-}S_Card_Para;
 
 typedef struct
 {/*

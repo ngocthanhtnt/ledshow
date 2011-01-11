@@ -48,6 +48,11 @@ Bit0:0 表示无后续帧，1表示有后续帧
 Bit3->Bit7 备用
 
  */
+//生成一条帧
+//data为数据域,dataLen数据域长度
+//cmd控制码
+//seq序列号
+//pDst为目标缓冲区
 int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
 {
   int len;
@@ -110,4 +115,10 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
   pDst[len - 1] = FRAME_TAIL;
 
   return len;
+}
+
+//生成协议数据
+void makeProtoData()
+{
+
 }
