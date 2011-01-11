@@ -181,7 +181,10 @@ INT16U Get_Timer_Min_Width(INT8U Area_No)
 
    if(Prog_Status.File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//µ¥ÐÐ
    {
-      return Prog_Status.File_Para[Area_No].Timer_Para.Text_Width + Prog_Status.File_Para[Area_No].Timer_Para.LineSpace + StrWidth;
+       if(Prog_Status.File_Para[Area_No].Timer_Para.Text_Width > 0)
+         return Prog_Status.File_Para[Area_No].Timer_Para.Text_Width + Prog_Status.File_Para[Area_No].Timer_Para.LineSpace + StrWidth;
+       else
+         return StrWidth;
    }
    else
    {
