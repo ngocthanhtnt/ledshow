@@ -81,8 +81,8 @@ CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
     str = settings.allKeys();
     if(str.isEmpty() == false)
     {
-        xLen = settings.value("xLen").toInt();
-        yLen = settings.value("yLen").toInt();
+        xLen = settings.value("width").toInt();
+        yLen = settings.value("height").toInt();
         color = settings.value("color").toInt();
 
         if(xLen*yLen > MAX_POINTS)
@@ -90,8 +90,8 @@ CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
           xLen = 256;
           yLen = 256;
 
-          settings.setValue("xLen", xLen);
-          settings.setValue("yLen", yLen);
+          settings.setValue("width", xLen);
+          settings.setValue("height", yLen);
         }
 
         if(color > 0x07 || color == 0)
@@ -106,8 +106,8 @@ CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
         yLen = 256;
         color = 0x07;
 
-        settings.setValue("xLen", xLen);
-        settings.setValue("yLen", yLen);
+        settings.setValue("width", xLen);
+        settings.setValue("height", yLen);
         settings.setValue("color", 0x07);
     }
 */
@@ -255,8 +255,8 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
     {
         x = settings.value("x").toInt();
         y = settings.value("y").toInt();
-        xLen = settings.value("xLen").toInt();
-        yLen = settings.value("yLen").toInt();
+        xLen = settings.value("width").toInt();
+        yLen = settings.value("height").toInt();
     }
     else
     {
@@ -270,8 +270,8 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
 
         settings.setValue("x", x);
         settings.setValue("y", y);
-        settings.setValue("xLen", xLen);
-        settings.setValue("yLen", yLen);
+        settings.setValue("width", xLen);
+        settings.setValue("height", yLen);
         //qDebug("seeOneAreaVisible Error")
         //return;
     }
@@ -410,8 +410,8 @@ int CscreenArea::setOneAreaVisible(QString settingsStr)
     {
         x = settings.value("x").toInt();
         y = settings.value("y").toInt();
-        xLen = settings.value("xLen").toInt();
-        yLen = settings.value("yLen").toInt();
+        xLen = settings.value("width").toInt();
+        yLen = settings.value("height").toInt();
     }
     else
     {
@@ -424,8 +424,8 @@ int CscreenArea::setOneAreaVisible(QString settingsStr)
 
         settings.setValue("x", x);
         settings.setValue("y", y);
-        settings.setValue("xLen", xLen);
-        settings.setValue("yLen", yLen);
+        settings.setValue("width", xLen);
+        settings.setValue("height", yLen);
         //qDebug("seeOneAreaVisible Error")
         //return;
     }
@@ -741,8 +741,8 @@ void CshowArea::mouseReleaseEvent(QMouseEvent *event)
             settings.beginGroup(str);
             settings.setValue("x", x);
             settings.setValue("y", y);
-            settings.setValue("xLen", width);
-            settings.setValue("yLen", height);
+            settings.setValue("width", width);
+            settings.setValue("height", height);
             settings.endGroup();
         }
     }
@@ -1102,7 +1102,7 @@ void CshowArea::paintEvent(QPaintEvent *)
     //QPainter painter;
 
     saveScreenProgPara();
-    resetProgramPara();
+    resetShowPara(geometry().width(), geometry().height(), Screen_Para.Base_Para.Color);
     painter.begin(this);
 
     color =getColor();
@@ -1555,17 +1555,17 @@ void CshowArea::draw_point(int x,int y, int value)
 }
 
 //重置节目和屏幕参数，为了显示用
-void CshowArea::resetProgramPara()
+void resetShowPara(int width, int height, int color)
 {
-    Screen_Para.Base_Para.Width = geometry().width();
-    Screen_Para.Base_Para.Height = geometry().height();
-    //Screen_Para.Base_Para.Color = 0x07;//getColor();
+    Screen_Para.Base_Para.Width = width;//geometry().width();
+    Screen_Para.Base_Para.Height = height;//geometry().height();
+    Screen_Para.Base_Para.Color = color;//0x07;//getColor();
 
     Prog_Para.Area_Num = 1;
     Prog_Para.Area[0].X = 0;
     Prog_Para.Area[0].Y = 0;
-    Prog_Para.Area[0].X_Len = geometry().width();
-    Prog_Para.Area[0].Y_Len = geometry().height();
+    Prog_Para.Area[0].X_Len = width;//geometry().width();
+    Prog_Para.Area[0].Y_Len = height;//geometry().height();
 
 }
 

@@ -487,7 +487,8 @@ S_Point * Get_Right_Point(S_Point *pPoint0, S_Point *pPoint1)
         return pPoint1;
     else
         return pPoint0;
-  }}
+  }
+}
 
 S_Point * Get_Up_Point(S_Point *pPoint0, S_Point *pPoint1)
 {

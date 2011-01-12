@@ -85,7 +85,7 @@ public:
     int color;
     bool focusFlag;
     int getColor();
-    void resetProgramPara();
+
 
     QTreeWidgetItem *screenItem;
     QTreeWidgetItem *progItem;
@@ -146,5 +146,5 @@ INT8U Get_Lun_Show_En();
 INT8U Get_Temp_Show_En();
 INT8U Get_Time_Show_En();
 INT8U Get_Timer_Show_En();
-
+void resetShowPara(int width, int height, int color);
 #endif // MAINWINDOW_H

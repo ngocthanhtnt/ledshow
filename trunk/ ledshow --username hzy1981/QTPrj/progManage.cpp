@@ -396,8 +396,8 @@ void CprogManage::newArea()
         return;
 /*
     settings.beginGroup("screen");
-    int xLen = settings.value("xLen").toInt();
-    int yLen = settings.value("yLen").toInt();
+    int xLen = settings.value("width").toInt();
+    int yLen = settings.value("height").toInt();
     settings.endGroup();
 */
     int xLen = Screen_Para.Base_Para.Width;
@@ -455,8 +455,8 @@ void CprogManage::newArea()
     settings.setValue("index", index);
     settings.setValue("x", size*(xLen / 20));  //该分区的起点x
     settings.setValue("y", size*(yLen / 20));  //该分区的起点y
-    settings.setValue("xLen", xLen / 2);  //该分区的宽度
-    settings.setValue("yLen", yLen / 2);  //该分区的长度
+    settings.setValue("width", xLen / 2);  //该分区的宽度
+    settings.setValue("height", yLen / 2);  //该分区的长度
     settings.endGroup();
     settings.endGroup();
 
