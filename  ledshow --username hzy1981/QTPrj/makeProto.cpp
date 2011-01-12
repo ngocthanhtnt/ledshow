@@ -2,14 +2,20 @@
 #include "makeProto.h"
 #include "..\Includes.h"
 #include <QSettings>
+#include <QImage>
 #include "screenProperty.h"
 #include "mainwindow.h"
 
 extern MainWindow *w;
 extern QSettings settings;
 
+extern int linePosi[MAX_LINE_NUM];
+extern int pagePosi[MAX_LINE_NUM];
+S_Show_Data protoShowData;
+
 #define PROTO_DATA_BUF_LEN (2000*1000)
 #define PROTO_SHOW_DATA_LEN (BLOCK_DATA_LEN - 20)
+
 /*
 #define FLEN   0x01
 #define FADDR  0x03
@@ -129,13 +135,89 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
 //mode表示发送的模式，0表示串口，1表示u盘，2表示以太网
 INT8U sendProtoData(char *pFrame, int len, int mode)
 {
-  return 1;
+    if(mode EQ SIM_MODE)//仿真模式
+    {
+      Rcv_Frame_Proc((INT8U *)pFrame, (INT16U)len); //接收函数处理。在仿真情况下，将参数写入了硬盘文件。模拟写入EEROM
+    }
+    else if(mode EQ COM_MODE)
+    {
+
+    }
+    else if(mode EQ UDISK_MODE)
+    {
+
+    }
+
+    return 1;
 }
 
 //获取文件参数
-INT16U getFileParaFromSettings(QString fileStr, char *buf)
+//width,height所在显示分区的宽度和高度
+//fileStr文件的字符串
+//buf目标数据缓冲区
+INT16U getFileParaFromSettings(INT16U width, INT16U height, QString fileStr, char *buf, int bufLen)
 {
-  return 1;
+    int type, len, tmpLen;
+    U_File_Para filePara;
+
+    settings.beginGroup(fileStr);
+    type =settings.value("type").toInt(); //该文件的类型
+    settings.endGroup();
+
+    if(type EQ PIC_PROPERTY)
+    {
+      getPicParaFromSettings(fileStr, filePara);
+      memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para)); //前一个字节是头，不拷贝
+      len = sizeof(S_Pic_Para) - CHK_BYTE_LEN; //真正的参数长度，不包括头尾校验
+
+      settings.beginGroup(fileStr);
+      settings.beginGroup("textEdit");
+      QString picStr = settings.value("text").toString();
+      settings.endGroup();
+
+      settings.beginGroup("smLine");
+      bool smLineFlag = settings.value("smLineCheck").toBool();
+      settings.endGroup();
+      settings.endGroup();
+
+      int lineNum;
+      //整个文本的图形
+      QImage image = getTextImage(width, picStr, &lineNum, linePosi);
+      //整体的行数
+      int pageNum = getTextPageNum(smLineFlag, width, height, lineNum, linePosi, pagePosi);
+
+      for(int i = 0; i < pageNum; i ++)
+      {
+          //获取每页的图像
+          QImage imageBk = getTextPageImage(smLineFlag, image, width, height, i, pagePosi);
+          //获取的图形的宽度和高度应该和分区的宽度和高度一致
+          if(imageBk.width() != width || imageBk.height() != height)
+          {
+              ASSERT_FAILED();
+          }
+
+          //重置参数--
+          resetShowPara(width, height, Screen_Para.Base_Para.Color);
+          //转换图形数据到protoShowData中
+          getTextShowData(imageBk, &protoShowData, 0, 0);
+
+          if(Prog_Para.Area[0].Y_Len % 8 EQ 0)
+             tmpLen = Prog_Para.Area[0].X_Len * Prog_Para.Area[0].Y_Len / 8;
+          else
+             tmpLen = Prog_Para.Area[0].X_Len * (Prog_Para.Area[0].Y_Len / 8 + 1);
+
+          if(len + tmpLen >= bufLen)
+          {
+              ASSERT_FAILED();
+              return len;
+          }
+
+          memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+          len += tmpLen;
+      }
+    }
+
+    return len;
 }
 
 //生成协议数据
@@ -146,6 +228,7 @@ INT8U makeProtoData(QString screenStr, int mode)
     S_Screen_Para screenPara;
     S_Prog_Para progPara;
     int len;
+    INT16U areaWidth, areaHeight;
     INT8U seq = 0, progNum, areaNum, fileNum;
     char frameBuf[500], *dataBuf;
 
@@ -202,6 +285,11 @@ INT8U makeProtoData(QString screenStr, int mode)
         {
             areaStr = progStr + "/area/" + areaList.at(j);
 
+            settings.beginGroup(areaStr);
+            areaWidth = settings.value("width").toInt();
+            areaHeight = settings.value("height").toInt();
+            settings.endGroup();
+
             settings.beginGroup(areaStr + "/file/");
             QStringList fileList = settings.childGroups();
             settings.endGroup();
@@ -210,7 +298,7 @@ INT8U makeProtoData(QString screenStr, int mode)
             for(int k = 0; k < fileNum; k ++)
             {
                 fileStr = areaStr + "/file/" + fileList.at(k);
-                len = getFileParaFromSettings(fileStr, dataBuf);
+                len = getFileParaFromSettings(areaWidth, areaHeight, fileStr, dataBuf, PROTO_DATA_BUF_LEN);
 
                 while(1)
                 {

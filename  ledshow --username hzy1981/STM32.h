@@ -44,6 +44,8 @@ typedef unsigned char BOOL;
 #define START_SHOW_TIMER_INT
 #define STOP_SHOW_TIMER_INT
 
+#define debug OS_Debug_Print
+
 typedef struct
 {
   INT8U Head;

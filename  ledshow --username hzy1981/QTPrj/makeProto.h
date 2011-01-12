@@ -8,6 +8,9 @@
 #define EXT extern
 #endif
 
+#define COM_MODE   0x00 //´®¿Ú
+#define UDISK_MODE 0x01 //uÅÌ
+#define SIM_MODE   0x02 //Èí¼ş·ÂÕæ
 
 typedef struct
 {

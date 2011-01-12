@@ -403,8 +403,8 @@ void MainWindow::settingsInit()
         int yLen = 256;
         int color = 0x02;
 
-        settings.setValue("xLen", xLen);
-        settings.setValue("yLen", yLen);
+        settings.setValue("width", xLen);
+        settings.setValue("height", yLen);
         settings.setValue("color", color);
     }
     settings.endGroup();

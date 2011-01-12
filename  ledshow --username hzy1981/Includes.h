@@ -1,5 +1,6 @@
 #include "string.h"
 #include "stdio.h"
+#include "stdlib.h"
 #include "stdarg.h"
 #include "math.h"
 #include "time.h"
@@ -25,3 +26,5 @@
 #include "Border_Show.h"
 #include "Main_Show.h"
 #include "com.h"
+#include "Shell.h"
+

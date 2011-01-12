@@ -23,13 +23,13 @@
 #define TRACE() //OS_Trace
 #define Check_Sum OS_Check_Sum
 #define Set_Sum OS_Set_Sum
-
+/*
 #if QT_EN == 0
 #define debug OS_Debug_Print
 #else
 #define debug qDebug
 #endif
-
+*/
 #define S_NUM(X) (sizeof(X)/sizeof(X[0]))
 #define S_OFF(X,Y) (INT32U)(&(((X *)0)->Y))//获得一个结构体的偏移
 

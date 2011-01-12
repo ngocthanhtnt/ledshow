@@ -17,8 +17,8 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
     screenHeight = Screen_Para.Base_Para.Height;
     /*
     settings.beginGroup("screen");
-    screenWidth = settings.value("xLen").toInt();//w->screenArea->width();
-    screenHeight = settings.value("yLen").toInt();//w->screenArea->height();
+    screenWidth = settings.value("width").toInt();//w->screenArea->width();
+    screenHeight = settings.value("height").toInt();//w->screenArea->height();
     settings.endGroup();
 */
     //QValidator *xValidator = new QIntValidator(0,screenWidth,this);
@@ -201,7 +201,7 @@ void Carea::xLenEdited()
     str = item->data(0, Qt::UserRole).toString();
 
     settings.beginGroup(str);
-    settings.setValue("xLen", width);
+    settings.setValue("width", width);
     settings.endGroup();
 
     area = w->screenArea->getFocusArea(); //当前点中的分区
@@ -232,7 +232,7 @@ void Carea::yLenEdited()
     str = item->data(0, Qt::UserRole).toString();
 
     settings.beginGroup(str);
-    settings.setValue("yLen", height);
+    settings.setValue("height", height);
     settings.endGroup();
 
     area = w->screenArea->getFocusArea(); //当前点中的分区
@@ -253,8 +253,8 @@ void Carea::getSettingsFromWidget(QString str)
     //settings.setValue("name", nameEdit->value());
     settings.setValue("x", xEdit->value());
     settings.setValue("y", yEdit->value());
-    settings.setValue("xLen", widthEdit->value());
-    settings.setValue("yLen", heightEdit->value());
+    settings.setValue("width", widthEdit->value());
+    settings.setValue("height", heightEdit->value());
     settings.endGroup();
 
 }
@@ -281,8 +281,8 @@ void Carea::setSettingsToWidget(QString str)
     //nameEdit->setText(settings.value("name").toString());
     xEdit->setValue((settings.value("x").toInt()));
     yEdit->setValue((settings.value("y").toInt()));
-    widthEdit->setValue((settings.value("xLen").toInt()));
-    heightEdit->setValue((settings.value("yLen").toInt()));
+    widthEdit->setValue((settings.value("width").toInt()));
+    heightEdit->setValue((settings.value("height").toInt()));
 
 
     settings.endGroup();
