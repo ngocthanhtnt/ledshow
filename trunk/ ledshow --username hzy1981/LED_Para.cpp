@@ -407,8 +407,10 @@ INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
       break;
     
     if(Check_Prog_Show_Data(Prog_Para.Prog_No, Area_No, File_No, Pub_Buf) EQ 0)
+    {
+      ASSERT_FAILED();
       break;
-       
+    }
     //复制数据
     //Len0 = 0;
     mem_cpy(Pub_Buf, Pub_Buf + BLOCK_HEAD_DATA_LEN + Offset, BLOCK_DATA_LEN - (BLOCK_HEAD_DATA_LEN + Offset), Pub_Buf, sizeof(Pub_Buf));   
@@ -481,7 +483,8 @@ INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   static S_File_Para_Info File_Para_Info;
   INT8U Prog_No, Area_No, File_No, Type;
   INT16U Para_Len,Len;
-  INT8U Seq,Seq0,Re;
+  INT8U Seq,Re;
+  INT16U Seq0;
   STORA_DI SDI;
   S_Prog_Show_Data *pShow_Data;
 
@@ -495,7 +498,7 @@ INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
     return 0;
   }
   
-  Seq0 = Frame[FSEQ0];
+  Seq0 = Frame[FSEQ0] + (INT16U)Frame[FSEQ0 + 1] * 256;
   if(Seq0 EQ 0) //参数帧--多帧中的第一帧
   {
       Type = Frame[FDATA];//*(Frame + 8); //哪类数据?
@@ -540,13 +543,24 @@ INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
     Pub_Buf[0] = File_Para_Info.Prog_No;
     Pub_Buf[1] = (File_Para_Info.Area_No <<4) + File_Para_Info.File_No;
     Pub_Buf[2] = File_Para_Info.Type;   
-    Pub_Buf[3] = Seq0 - 1;
-    Pub_Buf[4] = Len % 256;
-    Pub_Buf[5] = Len / 256;
-    Pub_Buf[6] = 0; //下一帧的存储索引--备用 
-    Pub_Buf[7] = 0;
-    mem_cpy(Pub_Buf + 8, &Frame[FDATA], Len, Pub_Buf, sizeof(Pub_Buf));
+    Pub_Buf[3] = (Seq0 - 1)%256; //Seq0不是数据是参数，数据从0计，因此-1
+    Pub_Buf[4] = (Seq0 - 1)/256;
+    Pub_Buf[5] = Len % 256;
+    Pub_Buf[6] = Len / 256;
+    Pub_Buf[7] = 0; //下一帧的存储索引--备用
+    Pub_Buf[8] = 0;
+
+#if BLOCK_HEAD_DATA_LEN != 9
+#error "BLOCK_HEAD_DATA_LEN error"
+#endif
+
+    mem_cpy(Pub_Buf + 9, &Frame[FDATA], Len, Pub_Buf, sizeof(Pub_Buf));
     
+    if(9 + Len > BLOCK_DATA_LEN)
+    {
+        ASSERT_FAILED();
+        return 0;
+    }
     //当前分块数据
     Write_Storage_Data(SDI_SHOW_DATA + Cur_Block_Index.Index, Pub_Buf, BLOCK_DATA_LEN);
     
@@ -599,49 +613,8 @@ INT16U Read_Prog_Para(INT8U Prog_No)
   return Len;
 }
 
-//定时信息中，星期的第0位表示星期1，第6位表示星期六
-INT8U Check_Program_Time()
-{
-  //INT8U i;//Re = 1;
-  INT8U Temp[20];
-  memset(Temp, 0xFF, sizeof(Temp));
-  
-  if(Prog_Para.Timing[0].Week != 0xFF)  //按星期定时
-  {
-    if(GET_BIT(Prog_Para.Timing[0].Week, Cur_Time.Time[T_WEEK]) EQ 0)
-      return 0;
-  }      
-  
-  
-  //按日期定时
-  if(memcmp(Prog_Para.Timing[0].Start_Date, Temp, 3) != 0 &&\
-    memcmp(Prog_Para.Timing[0].End_Date, Temp, 3) != 0)
-  {
-    if(!(Cur_Time.Time[T_YEAR] >= Prog_Para.Timing[0].Start_Date[0] &&\
-      Cur_Time.Time[T_YEAR] <= Prog_Para.Timing[0].End_Date[0] &&\
-        Cur_Time.Time[T_MONTH] >= Prog_Para.Timing[0].Start_Date[1] &&\
-          Cur_Time.Time[T_MONTH] <= Prog_Para.Timing[0].End_Date[1] &&\
-            Cur_Time.Time[T_DATE] >= Prog_Para.Timing[0].Start_Date[2] &&\
-              Cur_Time.Time[T_DATE] <= Prog_Para.Timing[0].End_Date[2]))
-      return 0;
-    
-  } 
-  
-  //按时间定时
-  if(memcmp(Prog_Para.Timing[0].Start_Time, Temp, 2) != 0 &&\
-    memcmp(Prog_Para.Timing[0].End_Time, Temp, 2) != 0)
-  {
-    if(!(Cur_Time.Time[T_HOUR] >= Prog_Para.Timing[0].Start_Time[0] &&\
-      Cur_Time.Time[T_HOUR] <= Prog_Para.Timing[0].End_Time[0] &&\
-        Cur_Time.Time[T_MIN] >= Prog_Para.Timing[0].Start_Time[1] &&\
-          Cur_Time.Time[T_MIN] <= Prog_Para.Timing[0].End_Time[1]))
-      return 0;
-    
-  }         
-  
-  return 1;
-}
 
+/*
 //读取显示参数--调用Read_Prog_Para
 INT8U Update_Prog_Para()
 {
@@ -659,7 +632,8 @@ INT8U Update_Prog_Para()
   return 0;
   
 }
-
+*/
+/*
 //检查是否需要更新节目参数
 INT8U Check_Update_Prog_Para()
 {
@@ -684,7 +658,7 @@ INT8U Check_Update_Prog_Para()
   
   return 0;
 }
-
+*/
 //读取参数
 void Read_Para()
 {/*

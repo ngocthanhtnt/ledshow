@@ -2,19 +2,20 @@
 #include "makeProto.h"
 #include "..\Includes.h"
 #include <QSettings>
+#include "screenProperty.h"
 #include "mainwindow.h"
 
 extern MainWindow *w;
 extern QSettings settings;
 
-#define MAX_FRAME_BUF_LEN (2000*1000)
+#define PROTO_DATA_BUF_LEN (2000*1000)
 #define PROTO_SHOW_DATA_LEN (BLOCK_DATA_LEN - 20)
 /*
 #define FLEN   0x01
 #define FADDR  0x03
 #define FSEQ   0x05
 #define FSEQ0  0x06
-#define FCTRL  0x07
+#define FCMD  0x07
 #define FDATA  0x09
 
 1	0x5A	帧头低字节
@@ -110,8 +111,8 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
 
   pDst[FSEQ] = frameInfo.seq;
   pDst[FSEQ0] = frameInfo.seq0;
-  pDst[FCTRL] = cmd; //两个字节的控制码
-  pDst[FCTRL + 1] = cmd1;
+  pDst[FCMD] = cmd; //两个字节的控制码
+  pDst[FCMD + 1] = cmd1;
 
   len += F_NDATA_LEN; //数据域 + 非数据域 = 整个帧长
   memcpy(pDst + FLEN, &len, 2);
@@ -123,33 +124,51 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
   return len;
 }
 
+//发送协议数据
+//pFrame和len表示帧起始和帧长
+//mode表示发送的模式，0表示串口，1表示u盘，2表示以太网
+INT8U sendProtoData(char *pFrame, int len, int mode)
+{
+  return 1;
+}
+
+//获取文件参数
+INT16U getFileParaFromSettings(QString fileStr, char *buf)
+{
+  return 1;
+}
+
 //生成协议数据
-//screenStr屏幕参数的str，保存在屏幕参数文件中
-//progStr节目参数文件,保存在节目文件中
-void makeProtoData(QString screenStr, INT8U mode)
+//screenStr屏幕参数的str,例如"screen/1/"表示第一个屏幕
+//mode表示生成数据的方式：0表示串口传输，1表示生成u盘文件
+INT8U makeProtoData(QString screenStr, int mode)
 {
     S_Screen_Para screenPara;
     S_Prog_Para progPara;
     int len;
     INT8U seq = 0, progNum, areaNum, fileNum;
-    INT8U frameBuf[500], *dataBuf;
+    char frameBuf[500], *dataBuf;
 
-    dataBuf = malloc(MAX_FRAME_BUF_LEN);
+    //没有读取到正确的屏幕参数则返回0
+    if(getScreenParaFromSettings(screenStr, screenPara) EQ 0)
+        return 0;
+
+    dataBuf = (char *)malloc(PROTO_DATA_BUF_LEN);
 
     //读取屏幕参数
-    getScreenParaFromSettings(screenStr, &screenPara);
+
     //设置屏幕基本参数
-    len = makeFrame((INT8U *)&screenPara.Base_Para, sizeof(screenPara.Base_Para),\
+    len = makeFrame((char *)&screenPara.Base_Para, sizeof(screenPara.Base_Para),\
                C_SCREEN_BASE_PARA, seq++, frameBuf);
     sendProtoData(frameBuf, len, mode);
 
     //定时开关机时间
-    len = makeFrame((INT8U *)screenPara.Open_Close_Time, sizeof(screenPara.Open_Close_Time),\
+    len = makeFrame((char *)&screenPara.OC_Time, sizeof(screenPara.OC_Time),\
                C_SCREEN_OC_TIME, seq++, frameBuf);
     sendProtoData(frameBuf, len, mode);
 
     //亮度
-    len = makeFrame((INT8U *)screenPara.Lightness, sizeof(screenPara.Lightness),\
+    len = makeFrame((char *)&screenPara.Lightness, sizeof(screenPara.Lightness),\
                C_SCREEN_LIGNTNESS, seq++, frameBuf);
     sendProtoData(frameBuf, len, mode);
 
@@ -159,7 +178,7 @@ void makeProtoData(QString screenStr, INT8U mode)
     settings.endGroup();
     progNum = progList.size();
 
-    len = makeFrame((INT8U *)&progNum, sizeof(progNum),\
+    len = makeFrame((char *)&progNum, sizeof(progNum),\
                C_SCREEN_LIGNTNESS, seq++, frameBuf);
     sendProtoData(frameBuf, len, mode);
 
@@ -168,11 +187,10 @@ void makeProtoData(QString screenStr, INT8U mode)
     for(int i = 0; i < progNum; i ++)
     {
         progStr = screenStr + "/program/" + progList.at(i);
-        getProgParaFromSettings(progStr, &progPara);
+        getProgParaFromSettings(progStr, progPara);
 
         //节目参数帧
-        len = makeFrame((INT8U *)&&progPara.Head + 1, S_OFF(progPara, CS) - 1,\
-                   C_PROG_PARA, seq++, frameBuf);
+        len = makeFrame((char *)&progPara.Head + 1, sizeof(progPara) - CHK_BYTE_LEN,C_PROG_PARA, seq++, frameBuf);
         sendProtoData(frameBuf, len, mode);
 
         settings.beginGroup(progStr + "/area/");
@@ -214,3 +232,5 @@ void makeProtoData(QString screenStr, INT8U mode)
 
     free(dataBuf);
 }
+
+

@@ -49,7 +49,7 @@
 #define OS_MEM_EN        0  //使用动态内存管理
 #define OS_MEM_WAIT_WARN_TIME 1 //申请到的内存块的最长使用时间单位为s
 
-#define OS_SHELL_EN      0  //使用Shell
+#define OS_SHELL_EN      1  //使用Shell
 
 #if OS_MEM_EN>0 //定义动态内存的每个Block的大小
 

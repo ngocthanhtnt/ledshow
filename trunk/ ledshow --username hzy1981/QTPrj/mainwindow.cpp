@@ -6,7 +6,13 @@
 
 
 extern MainWindow *w;
-QSettings settings(INI_FILE,QSettings::IniFormat,0);
+//节目配置文件
+QSettings settings(PROG_INI_FILE,QSettings::IniFormat,0);
+//屏幕配置文件
+QSettings screenSettings(SCREEN_INI_FILE,QSettings::IniFormat,0);
+//控制卡配置文件
+QSettings cardSettings(CARD_INI_FILE,QSettings::IniFormat,0);
+
 void MainWindow::setupFileActions()
 {
     QToolBar *tb = new QToolBar(this);
@@ -303,7 +309,7 @@ void MainWindow::fileSave()
     fileName = settings.value("cfgFile").toString(); //配置文件名
     settings.endGroup();
 
-    QFile::copy(INI_FILE, fileName); //保存老的文件
+    QFile::copy(PROG_INI_FILE, fileName); //保存老的文件
 }
 
 //文件另存为
@@ -317,7 +323,7 @@ void MainWindow::fileSaveAs()
     if(newFileName.length()==0)
         return;
 
-    if(QFile::copy(INI_FILE, newFileName) == true) //保存老的文件
+    if(QFile::copy(PROG_INI_FILE, newFileName) == true) //保存老的文件
     {
       settings.beginGroup("file");
       settings.setValue("cfgFile", newFileName); //配置文件名
@@ -365,17 +371,17 @@ void MainWindow::fileOpen()
     settings.endGroup();
 
     QFile::remove(oldFileName);
-    if(QFile::copy(INI_FILE, oldFileName)==false) //保存老的文件
+    if(QFile::copy(PROG_INI_FILE, oldFileName)==false) //保存老的文件
     {
         ASSERT_FAILED();
         //qDebug("file open copy oldFileName error");
     }
 
-    QFile::remove(INI_FILE);
-    if(QFile::copy(newFileName, INI_FILE)==false)
+    QFile::remove(PROG_INI_FILE);
+    if(QFile::copy(newFileName, PROG_INI_FILE)==false)
     {
         ASSERT_FAILED();
-        //qDebug("file open copy INI_FILE error");
+        //qDebug("file open copy PROG_INI_FILE error");
     }
 
     settings.beginGroup("file");

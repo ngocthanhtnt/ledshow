@@ -162,11 +162,12 @@ void Clr_Area_Status(INT8U Area_No)
 INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 {
   INT16U Len,SNum;
-  INT8U File_No;
-  INT8U Counts;
+  //INT8U File_No;
+  //INT8U Counts;
   
   if(Prog_Status.Area_Status[Area_No].SNum EQ 0) //第一屏显示--表示更新到一个新的文件了，必须重读文件参数
   {
+    debug("prog %d area %d play new file: %d", Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
     //先将文件参数读出 
     Prog_Status.Area_Status[Area_No].Play_Flag = 0; //关闭本分区显示
     Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
@@ -190,6 +191,10 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 
   //读出显示数据
   Prog_Status.Area_Status[Area_No].Play_Flag = 0; //--读取显示数据过程中将播放标志置0，从而中断程序中不播放
+  
+  debug("read prog %d area %d, file %d %dth screen show data", \
+        Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,Prog_Status.Area_Status[Area_No].SNum);
+  
   Len = Read_Show_Data(Area_No, \
                  Prog_Status.Area_Status[Area_No].File_No, \
                  Prog_Status.File_Para[Area_No].Pic_Para.Flag,\
@@ -201,7 +206,11 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   if(Len > 0)
     Prog_Status.Area_Status[Area_No].Play_Flag = 1; //打开本分区显示
   else
+  {
+    //本屏显示数据没有读到则读下屏数据
     ASSERT_FAILED();
+    return 0;
+  }
   
   //SNum表示当前文件总的屏幕数，只有图文的屏幕数会大于1！！
   if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_PIC)
@@ -213,6 +222,8 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   //所有分屏都显示了则切换到下个显示文件
   if(Prog_Status.Area_Status[Area_No].SNum >= SNum)
   {
+    debug("prog %d area %d file %d play end!", Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
+    
     Prog_Status.Area_Status[Area_No].Play_Flag = 0; //关闭本分区显示
     Prog_Status.Area_Status[Area_No].SNum = 0; 
     
@@ -281,18 +292,29 @@ void Clr_Prog_Status()
 //返回0表示结束了，1表示还没有结束
 INT8U Check_Prog_End()
 {
+  if(Check_Prog_Play_Time() EQ 0)
+  {
+     debug("prog %d now not play time, end", Prog_Status.Prog_No);
+     return 0;
+  }
   //次数模式
   if(Prog_Para.Mode EQ PROG_COUNTS_MODE)
   {
     if(Prog_Status.Counts >= Prog_Para.Counts)
+    {
+      debug("prog %d play counts %d, end", Prog_Status.Prog_No, Prog_Status.Counts);      
       return 0;
+    }
     else
       return 1;
   }
   else if(Prog_Para.Mode EQ PROG_TIME_MODE)//时间模式
   {
     if(Prog_Status.Time >= Prog_Para.Time)
+    {
+      debug("prog %d play times %d, end", Prog_Status.Prog_No, Prog_Status.Time);      
       return 0;
+    }
     else
       return 1;    
   }
@@ -303,11 +325,56 @@ INT8U Check_Prog_End()
   } 
 }
 
+//定时信息中，星期的第0位表示星期1，第6位表示星期六
+//检查当前时间是否在节目播放允许时间内，是则返回1，否则返回0
+INT8U Check_Prog_Play_Time()
+{
+  //INT8U i;//Re = 1;
+  INT8U Temp[20];
+  memset(Temp, 0xFF, sizeof(Temp));
+
+  //按星期定时
+  if(Prog_Para.Timing[0].Week != 0xFF)
+  {
+    if(GET_BIT(Prog_Para.Timing[0].Week, Cur_Time.Time[T_WEEK]) EQ 0)
+      return 0;
+  }
+
+
+  //按日期定时
+  if(memcmp(Prog_Para.Timing[0].Start_Date, Temp, 3) != 0 &&\
+    memcmp(Prog_Para.Timing[0].End_Date, Temp, 3) != 0)
+  {
+    if(!(Cur_Time.Time[T_YEAR] >= Prog_Para.Timing[0].Start_Date[0] &&\
+        Cur_Time.Time[T_YEAR] <= Prog_Para.Timing[0].End_Date[0] &&\
+        Cur_Time.Time[T_MONTH] >= Prog_Para.Timing[0].Start_Date[1] &&\
+        Cur_Time.Time[T_MONTH] <= Prog_Para.Timing[0].End_Date[1] &&\
+        Cur_Time.Time[T_DATE] >= Prog_Para.Timing[0].Start_Date[2] &&\
+        Cur_Time.Time[T_DATE] <= Prog_Para.Timing[0].End_Date[2]))
+      return 0;
+
+  }
+
+  //按时间定时
+  if(memcmp(Prog_Para.Timing[0].Start_Time, Temp, 2) != 0 &&\
+    memcmp(Prog_Para.Timing[0].End_Time, Temp, 2) != 0)
+  {
+    if(!(Cur_Time.Time[T_HOUR] >= Prog_Para.Timing[0].Start_Time[0] &&\
+        Cur_Time.Time[T_HOUR] <= Prog_Para.Timing[0].End_Time[0] &&\
+        Cur_Time.Time[T_MIN] >= Prog_Para.Timing[0].Start_Time[1] &&\
+        Cur_Time.Time[T_MIN] <= Prog_Para.Timing[0].End_Time[1]))
+      return 0;
+
+  }
+
+  return 1;
+}
+/*
 INT8U Check_Prog_Play_Time()
 {
  return 1;
 }
-
+*/
 //每隔MOVE_STEP_TIMER ms 调用该函数，实现移动效果
 void Show_Timer_Proc()
 {
@@ -348,8 +415,10 @@ void Check_Update_Program_Para()
          Prog_Status.Prog_No >= MAX_PROG_NUM)
         Prog_Status.Prog_No = 0;
   
+      debug("update new prog %d para", Prog_Status.Prog_No);
+      
       Len = Read_Prog_Para(Prog_Status.Prog_No); //重新更新节目参数
-      if(Len > 0)
+      if(Len > 0 && Check_Prog_Play_Time() > 0)
       {   
         Len = Read_Prog_Block_Index(Prog_Status.Prog_No);//重新读取节目的存储索引
         if(Len > 0)
@@ -357,6 +426,14 @@ void Check_Update_Program_Para()
           Prog_Status.Play_Flag = 1; //进入播放状态！
           break;
         }
+      }
+      else
+      {
+        ASSERT_FAILED();
+        if(Len EQ 0)
+          debug("read prog para failed");
+        else
+          debug("prog %d now not play time", Prog_Status.Prog_No);
       }
       
       Prog_Status.Prog_No ++; //在没有读到节目参数的情况下，读取下一个节目的参数
@@ -399,13 +476,6 @@ void Check_Update_Program_Para()
         Prog_Status.Prog_No = 0;
     }
   }
-}
-
-//检查当前是否在正常播放时段，可能开启了定时开关机
-INT8U Check_Screen_Play_Time()
-{
-  
-  
 }
 
 //检查内存中的数据或者参数是否正确

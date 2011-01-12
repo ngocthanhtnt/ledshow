@@ -25,13 +25,13 @@
 #define Set_Sum OS_Set_Sum
 
 #if QT_EN == 0
-#define Debug_Print OS_Debug_Print
+#define debug OS_Debug_Print
 #else
-#define Debug_Print qDebug
+#define debug qDebug
 #endif
 
 #define S_NUM(X) (sizeof(X)/sizeof(X[0]))
-#define S_OFF(X,Y) ((INT32U)(&(((X *)0)->Y)))//获得一个结构体的偏移
+#define S_OFF(X,Y) (INT32U)(&(((X *)0)->Y))//获得一个结构体的偏移
 
 #define MAX_2(a,b) ((a)>(b)?(a):(b))
 #define MIN_2(a,b) ((a)>(b)?(b):(a))
