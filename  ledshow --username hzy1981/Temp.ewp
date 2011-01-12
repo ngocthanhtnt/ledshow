@@ -1753,6 +1753,12 @@
     <name>$PROJ_DIR$\Screen_Status.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\shell.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\shell.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\STM32.cpp</name>
   </file>
   <file>

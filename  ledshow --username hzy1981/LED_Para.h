@@ -52,6 +52,13 @@ typedef struct
   //INT8U Tail;
 }S_Lightness;
 
+typedef struct
+{
+    INT8U Mode; //手动调节还是定时调节?
+    INT8U Fixed_Lightness;
+    S_Lightness Time_Lightness[MAX_LIGHTNESS_TIME];
+
+}S_Screen_Lightness;
 //开关机时间设置
 typedef struct
 {
@@ -64,6 +71,12 @@ typedef struct
 
   //INT8U Tail;
 }S_Open_Close_Time;
+
+typedef struct
+{
+    INT8U Flag; //是否定时开关机?
+    S_Open_Close_Time Time[MAX_OPEN_CLOSE_TIME]; //定时开关机时段定义
+}S_Screen_OC_Time;
 
 typedef struct
 {
@@ -135,9 +148,9 @@ typedef struct
 */
   S_Screen_Base_Para Base_Para;
   //命令1
-  S_Open_Close_Time Open_Close_Time[MAX_OPEN_CLOSE_TIME]; //开关机时间
+  S_Screen_OC_Time OC_Time;//Open_Close_Time[MAX_OPEN_CLOSE_TIME]; //开关机时间
   //命令2
-  S_Lightness Lightness[MAX_LIGHTNESS_TIME]; //强度
+  S_Screen_Lightness Lightness;//[MAX_LIGHTNESS_TIME]; //强度
 
   //命令3
   INT8U Prog_Num; //节目数
@@ -539,7 +552,7 @@ typedef struct
   INT8U Area_No:4;
   INT8U Type;
   
-  INT8U Seq0;
+  INT16U Seq0;
    
   INT16U Len;
   INT16U Bak;
@@ -563,7 +576,7 @@ typedef struct
 #define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN)
 #define BLOCK_INDEX_LEN (sizeof(S_Prog_Block_Index) - CHK_BYTE_LEN)
 #define BLOCK_DATA_LEN 300
-#define BLOCK_HEAD_DATA_LEN 8
+#define BLOCK_HEAD_DATA_LEN 9
 #define BLOCK_SHOW_DATA_LEN (BLOCK_DATA_LEN -BLOCK_HEAD_DATA_LEN)
 
 EXT S_Screen_Para Screen_Para; //显示屏相关参数
@@ -585,7 +598,7 @@ EXT INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen);
 
-EXT INT8U Check_Update_Prog_Para();
+//EXT INT8U Check_Update_Prog_Para();
 EXT INT16U Read_Prog_Para(INT8U Prog_No);
 EXT INT16U Read_Prog_Block_Index(INT8U Prog_No);
 EXT INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \

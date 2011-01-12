@@ -22,7 +22,9 @@
 #include "property.h"
 #include "timerProperty.h"
 
-#define INI_FILE "d:\\temp.ini"
+#define CARD_INI_FILE "d:\\card.ini"
+#define SCREEN_INI_FILE "d:\\screen.ini"
+#define PROG_INI_FILE "d:\\temp.ini"
 
 //Ö÷´°¿Ú
 class MainWindow : public QMainWindow

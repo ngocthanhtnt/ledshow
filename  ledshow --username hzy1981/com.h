@@ -29,15 +29,33 @@
 #define C_PROG_DATA  0x0C //显示数据
 #define C_SCREEN_INFO 0x0D //屏幕信息
 #define C_UPDATE      0x0E //固件升级
+/*
+0	0x5A	帧头
+1	Len0	帧长度低字节(从帧头到帧尾)
+2	Len1	帧长度高字节
+3	Addr0	地址低字节
+4       Addr1   地址高字节
+5	Seq	帧序号, 0-255 循环计数,重发的数据序号不变
+6       Seq00   帧内序号低字节
+7       Seq01   帧内序号高字节
+8	Cmd0	命令码低字节
+9	Cmd1	命令码高字节
+A	…	帧数据域内容
+        …
+        CS0	校验码低字节,从帧头到CS0前一个字节的和
+        CS1	校验码高字节
+        0xAA	帧尾
+*/
+#define FHEAD  0x00 //帧头,1
+#define FLEN   0x01 //帧长度,2
+#define FADDR  0x03 //帧地址,2
+#define FSEQ   0x05 //帧序号,1
+#define FSEQ0  0x06 //帧内序号,2
+#define FCMD   0x08 //命令码,2
+#define FDATA  0x0A //数据域名
+//#define FTAIL  //帧尾巴
 
-#define FLEN   0x01
-#define FADDR  0x03
-#define FSEQ   0x05
-#define FSEQ0  0x06
-#define FCTRL  0x07
-#define FDATA  0x09
-
-#define F_NDATA_LEN 12 
+#define F_NDATA_LEN 13 //一条帧内非数据域的长度
 
 EXT INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len);
 EXT INT8U Para_Frame_Proc(INT16U Ctrl_Code, INT8U Data[], INT16U Len);
