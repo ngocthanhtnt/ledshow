@@ -710,7 +710,7 @@ void Copy_Filled_Triangle(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0
 
   Temp0.X = pLeft -> X;  //中间的X
 
-  do
+  do//while(Temp0.X < pRight -> X)
   {
     Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
     Temp1.X = Temp0.X;
@@ -724,7 +724,7 @@ void Copy_Filled_Triangle(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0
 
     Copy_Line(pSrc_Buf, 0, &Temp0, &Temp1, pDst_Buf, &Temp2);
     Temp0.X ++;
-  }while(Temp0.X <= pRight -> X);
+  }while(Temp0.X < pRight -> X);
 }
 
 //填充一个三角形
@@ -759,7 +759,7 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
   Temp1_Bk.X = pLeft->X;
   Temp1_Bk.Y = pLeft->Y;
 
-  do
+  do//while(Temp0.X < pRight -> X)
   {
     Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
     Temp1.X = Temp0.X;
@@ -777,7 +777,7 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
     Temp1_Bk.X = Temp1.X;
     Temp1_Bk.Y = Temp1.Y;
     Temp0.X ++;
-  }while(Temp0.X <= pRight -> X);
+  }while(Temp0.X < pRight -> X);
 }
 
 //复制一个多边形
@@ -791,8 +791,8 @@ void Copy_Filled_Polygon(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0,
 //填充一个多边形
 void Fill_Polygon(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *pPoint1,S_Point *pPoint2, S_Point *pPoint3, INT8U Value)
 {
-  Fill_Triangle(pDst_Buf, Area_No, pPoint0, pPoint3, pPoint2, Value);
   Fill_Triangle(pDst_Buf, Area_No, pPoint0, pPoint1, pPoint2, Value);
+  Fill_Triangle(pDst_Buf, Area_No, pPoint0, pPoint2, pPoint3, Value);
 
 }
 
@@ -838,18 +838,18 @@ void Fill_Round(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, INT16U R
   INT16U Temp,X;
   INT32S Temp0;
   
-  X = pCenter -> X - Radius; //最左边一点的X坐标
+  X = pCenter -> X - Radius + 1; //最左边一点的X坐标
   
-  for(; X <= pCenter -> X + Radius; X ++)
+  for(; X < pCenter -> X + Radius; X ++)
   {
     Temp0 = ((INT32S)Radius * Radius - ((INT32S)X - (INT32S)pCenter->X)*((INT32S)X - (INT32S)pCenter->X));
     Temp = (INT16U)sqrt(Temp0);
-    //上面一点
-    Up.Y = pCenter->Y + Temp;
-    Up.X = X;
     //下面一点
+    Up.Y = pCenter->Y + Temp - 1;
+    Up.X = X;
+    //上面一点
     if(pCenter->Y >= Temp)
-      Down.Y = pCenter->Y- Temp;
+      Down.Y = pCenter->Y- Temp + 1;
     else
       Down.Y = 0;
     Down.X = X;
@@ -869,16 +869,16 @@ void Copy_Filled_Round(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pCenter0, 
   S_Point Up, Down,Temp;
   INT16U X,Temp1;
   
-  X = pCenter0 -> X - Radius; //最左边一点的X坐标
+  X = pCenter0 -> X - Radius + 1; //最左边一点的X坐标
   
-  for(; X <= pCenter0 -> X + Radius; X ++)
+  for(; X < pCenter0 -> X + Radius; X ++)
   {
     Temp1 = (INT16U)sqrt((float)(Radius * Radius - (INT16U)((INT32S)X - (INT32S)pCenter0->X)*((INT32S)X - (INT32S)pCenter0->X)));
-    //上面一点
-    Up.Y = pCenter0->Y + Temp1;
-    Up.X = X;
     //下面一点
-    Down.Y = pCenter0->Y- Temp1;
+    Up.Y = pCenter0->Y + Temp1 - 1;
+    Up.X = X;
+    //上面一点
+    Down.Y = pCenter0->Y- Temp1 + 1;
     Down.X = X;
     
     Temp.X = (INT16U)((INT32S)Up.X + (INT32S)(pCenter1 -> X) - (INT32S)(pCenter0 -> X));
@@ -894,8 +894,16 @@ void Copy_Filled_Round(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pCenter0, 
 //
 void Get_Angle_Point(S_Point *pPoint0, INT16S Angle, INT16U Len, S_Point *pPoint1)
 {
-  pPoint1 -> X = (INT16U)((INT16S)pPoint0->X + (INT16S)Len * cos(2*PI*Angle/360) + 0.5);
-  pPoint1 -> Y = (INT16U)((INT16S)pPoint0->Y - (INT16S)Len * sin(2*PI*Angle/360) + 0.5);
+    if(Len >=1)
+    {
+      pPoint1 -> X = (INT16U)((INT16S)pPoint0->X + (INT16S)(Len-1) * cos(2*PI*Angle/360) + 0.5);
+      pPoint1 -> Y = (INT16U)((INT16S)pPoint0->Y - (INT16S)(Len-1) * sin(2*PI*Angle/360) - 0.5);
+    }
+    else
+    {
+      pPoint1 -> X = pPoint0 -> X;
+      pPoint1 -> Y = pPoint0 -> Y;
+    }
 }
 
 //pDst_Buf,显示目标缓冲区
@@ -906,12 +914,45 @@ void Get_Angle_Point(S_Point *pPoint0, INT16S Angle, INT16U Len, S_Point *pPoint
 //Radius,点的半径
 //Value,点的值也就是颜色
 void Fill_Clock_Point(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, \
-                      INT16S Angle, INT16U Len, INT16U Radius, INT8U Value)
+                      INT16S Angle, INT16U Len, INT16U Radius, INT8U Style, INT8U Value)
 {
    S_Point Point;
+   S_Point Point0, Point1, Point2, Point3;
    
    Get_Angle_Point(pCenter, Angle, Len, &Point); //找到圆的中心点
-   Fill_Round(pDst_Buf, Area_No, &Point, Radius, Value); //绘制一个圆
+
+   if(Style EQ 0) //圆形
+     Fill_Round(pDst_Buf, Area_No, &Point, Radius, Value); //绘制一个圆
+   else if(Style EQ 1) //方形
+   {
+     Point.X = Point.X - Radius;
+     Point.Y = Point.Y - Radius;
+     Fill_Rect(pDst_Buf, Area_No, &Point, Radius*2, Radius*2, Value);
+   }
+   else if(Style EQ 2) //线型
+   {
+    if(Radius > 0)
+    {
+        Get_Angle_Point(pCenter, Angle, Len * 8 / 10, &Point); //前端的顶点
+        Get_Angle_Point(&Point, Angle - 90, Radius, &Point0);
+        Get_Angle_Point(&Point, Angle + 90, Radius, &Point1);
+
+        Get_Angle_Point(pCenter, Angle, Len + Radius/2, &Point); //前端的顶点
+        Get_Angle_Point(&Point, Angle - 90, Radius, &Point2);
+        Get_Angle_Point(&Point, Angle + 90, Radius, &Point3);
+
+        Fill_Polygon(pDst_Buf, Area_No, &Point0, &Point2, &Point3, &Point1, Value);
+    }
+   }
+   else if(Style EQ 3) //数字
+   {
+     Point.X = Point.X - Get_Font_Width(FONT0)/2;
+     Point.Y = Point.Y - Get_Font_Height(FONT0)/2;;
+
+     LED_Print(FONT0, Value, pDst_Buf, Area_No, Point.X, Point.Y, "%d", ((360 - Angle)/(360/12) + 3) % 12);
+       //Fill_Rect(pDst_Buf, Area_No, &Point, Radius*2, Radius*2, Value);
+
+   }
 }
 
 //绘制时钟的时钟、分钟线
@@ -927,6 +968,9 @@ void Fill_Clock_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, \
 {
   S_Point Point0, Point1, Point2;
   
+  if(Width EQ 0)
+      return;
+
   Get_Angle_Point(pCenter, Angle, Len * 7 / 10, &Point0); //前端的顶点
   Get_Angle_Point(pCenter, Angle - 90, Width/2, &Point1);
   Get_Angle_Point(pCenter, Angle + 90, Width/2, &Point2);

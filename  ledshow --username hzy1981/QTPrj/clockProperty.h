@@ -39,6 +39,7 @@ private:
 
     QLabel *pointRadiusLabel; //整点半径
     QLabel *point369RadiusLabel; //369点半径
+    QLabel *pointMinRadiusLabel;  //分点
     QLabel *hourWidthLabel; //小时宽度
     QLabel *minWidthLabel; //分钟宽度
     QLabel *secWidthLabel; //秒钟宽度
@@ -51,15 +52,22 @@ private:
 
     QSpinBox *pointRadiusEdit; //整点半径
     QSpinBox *point369RadiusEdit; //
+    QSpinBox *pointMinRadiusEdit;
+
     QSpinBox *hourWidthEdit;
     QSpinBox *minWidthEdit;
     QSpinBox *secWidthEdit;
 
     CcolorCombo *pointColorCombo;
     CcolorCombo *point369ColorCombo;
+    CcolorCombo *pointMinColorCombo;
     CcolorCombo *hourColorCombo;
     CcolorCombo *minColorCombo;
     CcolorCombo *secColorCombo;
+
+    QComboBox *pointStyle; //整点式样
+    QComboBox *point369Style; //369点式样
+    QComboBox *pointMinStyle; //分点式样
 
     CtimeDiffEdit *timeDiffEdit;
     CsimpleTextEdit *simpleTextEdit;

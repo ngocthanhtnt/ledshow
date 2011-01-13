@@ -132,7 +132,7 @@ void CscreenArea::screenSettingsInit(QTreeWidgetItem *item)
     str = item->data(0, Qt::UserRole).toString();
 
    settings.beginGroup(str);
-   subIndex = settings.value("subIndex").toInt(); //焦点分区
+   subIndex = settings.value("subIndex").toInt(); //当前子节目
    settings.endGroup();
 
    settings.beginGroup(str + "/program/");

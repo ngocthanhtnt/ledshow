@@ -249,10 +249,16 @@ typedef struct
   
   INT8U Hour_Point_Radius; //整点半径
   INT8U Hour_Point_Color; ///整点颜色
+  INT8U Hour_Point_Style; //整点样式
   
   INT8U Hour369_Point_Radius; //369点半径
   INT8U Hour369_Point_Color;  //369点颜色
-  
+  INT8U Hour369_Point_Style;  //369点样式
+
+  INT8U Min_Point_Radius; //分点半径
+  INT8U Min_Point_Color;  //分点颜色
+  INT8U Min_Point_Style;  //分点样式,0圆形，1方形，2数字，3线型
+
   INT8U Hour_Line_Width;  //时钟宽度
   INT8U Hour_Line_Color;  //时钟颜色
   
