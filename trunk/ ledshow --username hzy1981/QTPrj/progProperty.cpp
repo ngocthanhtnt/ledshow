@@ -649,13 +649,13 @@ void CprogProperty::borderCheckProc(int state)
 //属性编辑的SLOT
 void CprogProperty::edited()
 {
-    CshowArea *area;
+    CscreenArea *area;
     QTreeWidgetItem *item;
 
     //qDebug("propertyEdited");
     area = w->screenArea; //当前焦点分区
 
-    if(area != (CshowArea *)0) //
+    if(area != (CscreenArea *)0) //
     {
         //当前选中的item
         item = area->progItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
@@ -669,13 +669,13 @@ void CprogProperty::edited()
 }
 
 //刷新显示区域
-void updateProgShowArea(CshowArea *area)
+void updateProgShowArea(CscreenArea *area)
 {
     //CshowArea *area;
     QString str;
     QTreeWidgetItem *item;
 
-    if(area != (CshowArea *)0) //
+    if(area != (CscreenArea *)0) //
     {
         //item = area->treeItem;
         str = area->progItem->data(0,Qt::UserRole).toString();

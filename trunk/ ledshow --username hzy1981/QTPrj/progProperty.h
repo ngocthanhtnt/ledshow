@@ -98,5 +98,5 @@ typedef struct
 }S_Border_Data;
 
 void getProgParaFromSettings(QString str, S_Prog_Para &para);
-void updateProgShowArea(CshowArea *area);
+void updateProgShowArea(CscreenArea *area);
 #endif // PROGPROPERTY_H
