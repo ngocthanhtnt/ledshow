@@ -848,7 +848,7 @@ void Fill_Round(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, INT16U R
     Up.Y = pCenter->Y + Temp - 1;
     Up.X = X;
     //上面一点
-    if(pCenter->Y >= Temp)
+    if(pCenter->Y >= Temp )
       Down.Y = pCenter->Y- Temp + 1;
     else
       Down.Y = 0;
