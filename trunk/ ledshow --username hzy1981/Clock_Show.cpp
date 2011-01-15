@@ -29,12 +29,14 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
    Point.X += Width/2;
    Point.Y += Height/2;
 
-   //369点
-   for(Angle = 0; Angle < 360; Angle = Angle + 90)
+   //分点
+   for(Angle = 0; Angle < 360; Angle = Angle + 360/60)
    {
+     if(Angle % 90 == 0 || Angle % (360/12) == 0) //369点已经绘制过了，跳过
+       continue;
      //距离中心点的角度是Angle，长度是Radius * 0.9, 该点半径为Hour369_Point_Radius,颜色为 Hour369_Point_Color
-      Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, Radius * 9 / 10, \
-         pClock_Para->Hour369_Point_Radius, pClock_Para->Hour369_Point_Style, pClock_Para->Hour369_Point_Color);
+     Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, (INT16S)(Radius * 0.9), \
+         pClock_Para->Min_Point_Radius, pClock_Para->Min_Point_Style, pClock_Para->Min_Point_Color);
    }
 
    //整点
@@ -47,15 +49,14 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
          pClock_Para->Hour_Point_Radius, pClock_Para->Hour_Point_Style, pClock_Para->Hour_Point_Color);
    }
 
-   //分点
-   for(Angle = 0; Angle < 360; Angle = Angle + 360/60)
+   //369点
+   for(Angle = 0; Angle < 360; Angle = Angle + 90)
    {
-     if(Angle % 90 == 0 || Angle % (360/12) == 0) //369点已经绘制过了，跳过
-       continue;
      //距离中心点的角度是Angle，长度是Radius * 0.9, 该点半径为Hour369_Point_Radius,颜色为 Hour369_Point_Color
-     Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, (INT16S)(Radius * 0.9), \
-         pClock_Para->Min_Point_Radius, pClock_Para->Min_Point_Style, pClock_Para->Min_Point_Color);
+      Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, Radius * 9 / 10, \
+         pClock_Para->Hour369_Point_Radius, pClock_Para->Hour369_Point_Style, pClock_Para->Hour369_Point_Color);
    }
+
    //----------至此0-11点所有的点都已经绘制完成------------
    //时钟
    if(pClock_Para->Hour_Line_Width)
@@ -66,6 +67,7 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
    Fill_Clock_Line(pDst_Buf, Area_No, &Point, 90 - 360 * pTime->Time[T_MIN] / 60, Radius * 10 / 10,\
                    pClock_Para->Min_Line_Width, pClock_Para->Min_Line_Color);
    //秒钟
+   //pTime->Time[T_SEC] = 0;
    if(pClock_Para->Sec_Line_Width)
    Fill_Clock_Line(pDst_Buf, Area_No, &Point, 90 - 360 * pTime->Time[T_SEC] / 60, Radius * 12 / 10,\
                    pClock_Para->Sec_Line_Width, pClock_Para->Sec_Line_Color);
