@@ -710,7 +710,7 @@ void Copy_Filled_Triangle(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0
 
   Temp0.X = pLeft -> X;  //中间的X
 
-  do//while(Temp0.X < pRight -> X)
+  while(Temp0.X <= pRight -> X)
   {
     Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
     Temp1.X = Temp0.X;
@@ -724,7 +724,7 @@ void Copy_Filled_Triangle(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0
 
     Copy_Line(pSrc_Buf, 0, &Temp0, &Temp1, pDst_Buf, &Temp2);
     Temp0.X ++;
-  }while(Temp0.X < pRight -> X);
+  }//while(Temp0.X < pRight -> X);
 }
 
 //填充一个三角形
@@ -759,7 +759,7 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
   Temp1_Bk.X = pLeft->X;
   Temp1_Bk.Y = pLeft->Y;
 
-  do//while(Temp0.X < pRight -> X)
+  while(Temp0.X <= pRight -> X)
   {
     Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
     Temp1.X = Temp0.X;
@@ -777,7 +777,7 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
     Temp1_Bk.X = Temp1.X;
     Temp1_Bk.Y = Temp1.Y;
     Temp0.X ++;
-  }while(Temp0.X < pRight -> X);
+  }//while(Temp0.X < pRight -> X);
 }
 
 //复制一个多边形
@@ -972,16 +972,16 @@ void Fill_Clock_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, \
       return;
 
   Get_Angle_Point(pCenter, Angle, Len * 7 / 10, &Point0); //前端的顶点
-  Get_Angle_Point(pCenter, Angle - 90, Width/2, &Point1);
-  Get_Angle_Point(pCenter, Angle + 90, Width/2, &Point2);
+  Get_Angle_Point(pCenter, Angle - 90, Width, &Point1);
+  Get_Angle_Point(pCenter, Angle + 90, Width, &Point2);
   
-  Fill_Triangle(pDst_Buf, Area_No, &Point0, &Point1, &Point2, Value);
+  Fill_Triangle(pDst_Buf, Area_No, &Point1, &Point2, &Point0, Value);
   
   Get_Angle_Point(pCenter, Angle + 180, Len * 3 / 10, &Point0); //后端的顶点
-  Get_Angle_Point(pCenter, Angle + 180 - 90, Width/2, &Point1);
-  Get_Angle_Point(pCenter, Angle + 180 + 90, Width/2, &Point2);
+  //Get_Angle_Point(pCenter, Angle + 180 - 90, Width, &Point1);
+  //Get_Angle_Point(pCenter, Angle + 180 + 90, Width, &Point2);
   
-  Fill_Triangle(pDst_Buf, Area_No, &Point0, &Point1, &Point2, Value); 
+  Fill_Triangle(pDst_Buf, Area_No, &Point1, &Point2, &Point0, Value);
 }
 
 //清除某个分区的显示
