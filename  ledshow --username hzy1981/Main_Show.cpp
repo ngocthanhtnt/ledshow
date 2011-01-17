@@ -19,32 +19,35 @@ const INT16U Step_Delay[]=
 
 
 //获取某个窗口区域某个步进的停留时间
-INT8U Get_Area_Step_Delay(INT8U Area_No)
+INT32U Get_Area_In_Step_Delay(INT8U Area_No)
 {
-  INT8U Step;
+  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Time)/(100/MOVE_STEP);
+}
 
-  if(Area_No >= MAX_AREA_NUM)
-  {
-    ASSERT_FAILED();
-    return Step_Delay[0];
-  }
+//获取某个窗口区域某个步进的停留时间
+INT32U Get_Area_Out_Step_Delay(INT8U Area_No)
+{
+  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.Out_Time)/(100/MOVE_STEP);
+}
 
-  Step = Prog_Status.File_Para[Area_No].Pic_Para.In_Speed; //引入速度
+//获取文件引入时间
+INT32U Get_File_In_Time(INT8U Area_No)
+{
+ return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Time);
   
-  if(Step >= S_NUM(Step_Delay))
-    Step = S_NUM(Step_Delay) - 1;
-
-  return Step_Delay[Step];
 }
 
 //获取文件的停留时间,单位为ms
 //原参数最高为表示单位，0为s，1为ms
 INT32U Get_File_Stay_Time(INT8U Area_No)
 {
-  if((Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x8000) > 0)
-    return (INT32U)(Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x7FFF);
-  else
-    return (INT32U)Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time * 1000;
+  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time);
+}
+
+//获取文件引出时间
+INT32U Get_File_Out_Time(INT8U Area_No)
+{
+  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.Out_Time);  
 }
 
 //设置文件的停留时间
@@ -258,7 +261,8 @@ INT8U Check_Update_Show_Data_Bak()
 
     //Step>=100表示整个移动过程完成，Stay_Time>=表示停留时间到，则需更新为下一屏数据
     if(Prog_Status.Area_Status[i].Step EQ 0 &&\
-       Prog_Status.Area_Status[i].Stay_Time EQ 0)
+       Prog_Status.Area_Status[i].Stay_Time EQ 0 &&\
+       Prog_Status.Area_Status[i].Out_Time EQ 0)
     {   
       Update_Show_Data_Bak(Prog_Para.Prog_No, i);// == FILE_END)
     }
