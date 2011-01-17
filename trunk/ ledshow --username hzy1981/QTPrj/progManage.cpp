@@ -583,7 +583,7 @@ void CprogManage::newLun() //新农历
 
 void CprogManage::preview()
 {
-  makeProtoData("screen/1/", PREVIEW_MODE);
+  makeProtoData("screen/1", PREVIEW_MODE);
 }
 //一个新的显示file
 void CprogManage::newFile(int fileType, int subType)

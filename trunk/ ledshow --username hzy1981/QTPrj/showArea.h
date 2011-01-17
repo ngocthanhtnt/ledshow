@@ -87,7 +87,6 @@ public:
     bool focusFlag;
     int getColor();
 
-
     QTreeWidgetItem *screenItem;
     QTreeWidgetItem *progItem;
     QTreeWidgetItem *areaItem; //¶ÔÓ¦µÄtreeitem

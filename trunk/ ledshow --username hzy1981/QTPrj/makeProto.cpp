@@ -339,10 +339,10 @@ INT8U makeProtoData(QString screenStr, int mode)
                 while(1)
                 {
                   //节目显示数据帧
-                  len = makeFrame(dataBuf, len, C_PROG_DATA, seq, frameBuf);
+                  int tmpLen = makeFrame(dataBuf, len, C_PROG_DATA, seq, frameBuf);
                   if(len > 0)
                   {
-                      sendProtoData(frameBuf, len, mode);
+                      sendProtoData(frameBuf, tmpLen, mode);
                   }
                   else
                   {

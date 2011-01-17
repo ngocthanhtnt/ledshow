@@ -510,7 +510,7 @@ typedef union
 #endif  
 }U_File_Para;
 
-#pragma pack()
+
 
 typedef struct
 {
@@ -570,6 +570,8 @@ typedef struct
   INT16U Bak;
   
 }S_File_Para_Info;
+
+#pragma pack()
 
 typedef struct
 {/*
