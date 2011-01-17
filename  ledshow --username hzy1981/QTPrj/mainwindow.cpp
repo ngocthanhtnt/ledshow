@@ -103,7 +103,7 @@ void MainWindow::setupEditActions()
 
     QAction *a;
 
-    a = new QAction(tr("显示屏"), this);
+    a = new QAction(tr("屏幕"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), progManage, SLOT(newScreen())); //新建节目

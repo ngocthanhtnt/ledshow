@@ -145,6 +145,10 @@ INT32U Get_Storage_Data_Off(STORA_DI SDI)
       Offset += (Data_Para_Storage[i].Len + ROM_CS_BYTES) * (SDI - Data_Para_Storage[i].SDI); 
       return Offset;
     }
+    else
+    {
+      Offset += (Data_Para_Storage[i].Len + ROM_CS_BYTES) * Data_Para_Storage[i].Num;
+    }
   }
 
   debug("get_storage_data_off error, data 0x%x not found\r\n", SDI);

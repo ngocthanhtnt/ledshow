@@ -19,6 +19,7 @@
 EXT INT32U Get_Area_In_Step_Delay(INT8U Area_No);
 EXT INT32U Get_Area_Out_Step_Delay(INT8U Area_No);
 EXT INT32U Get_File_Stay_Time(INT8U Area_No);
+EXT INT32U Get_File_Out_Time(INT8U Area_No);
 EXT void Set_File_Stay_Time(INT8U Area_No, INT16U ms);
 EXT void Update_Show_Data();
 EXT INT8U Check_Prog_Play_Time();

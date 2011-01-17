@@ -589,23 +589,11 @@ void CscreenArea::updateShowArea(QTreeWidgetItem *item)
 
 //分区的初始化函数
 CshowArea::CshowArea(QWidget *parent, int colorFlag):QWidget(parent)
-{/*
-    memset(color0, 0, sizeof(color0));
-    memset(color1, 0, sizeof(color1));
-    memset(color2, 0, sizeof(color2));
+{
+    memset(&screenPara, 0, sizeof(screenPara));
+    memset(&progPara, 0, sizeof(progPara));
+    memset(&filePara, 0, sizeof(filePara));
 
-    if(i == RED)
-        memset(color0, 0xFF, sizeof(color0));
-    else if(i == GREEN)
-        memset(color1, 0xFF, sizeof(color0));
-    else if(i == YELLOW)
-        memset(color2, 0xFF, sizeof(color0));
-*/
-    /*
-    settings.beginGroup("screen");
-    color = settings.value("color").toInt();
-    settings.endGroup();
-    */
     color = Screen_Para.Base_Para.Color;
 
     if(color > 0x02)
@@ -1510,21 +1498,23 @@ void CshowArea::paintEvent(QPaintEvent *)
            }
        }
     }*/
-}
+    }
     else //非0表示是背景
-    {      
+    {
         if(updateFlag == true)//鼠标在没有按下的情况下才更新数据
          {
             Clear_Area_Data(&Show_Data, 0);
             updateFlag = 0;
             memcpy(&Prog_Para, &progPara, sizeof(progPara));
 
-           Draw_Border(&Show_Data, MAX_AREA_NUM, Prog_Para.Border_Data, \
-                       Prog_Para.Border_Width, Prog_Para.Border_Height, 0);
-
+            if(Prog_Para.Border_Check)
+            {
+               Draw_Border(&Show_Data, MAX_AREA_NUM, Prog_Para.Border_Data, \
+                           Prog_Para.Border_Width, Prog_Para.Border_Height, 0);
+            }
             memcpy(showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
 
-   }
+        }
 
         //unsigned char colorData;
         for(i=0; i<Width; i++)
