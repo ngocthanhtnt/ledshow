@@ -1,6 +1,8 @@
 #ifndef MAKEPROTO_H
 #define MAKEPROTO_H
 
+#include "..\Includes.h"
+
 #undef EXT
 #ifdef MAKE_PROTO_C
 #define EXT
@@ -10,15 +12,16 @@
 
 #define COM_MODE   0x00 //串口
 #define UDISK_MODE 0x01 //u盘
-#define SIM_MODE   0x02 //软件仿真
+#define PREVIEW_MODE   0x02 //软件仿真
 
 typedef struct
 {
    char seq;
-   char seq0;
+   INT16U seq0;
    int len;
    int off;
 }S_Frame_Info;
 
 EXT S_Frame_Info frameInfo;
+INT8U makeProtoData(QString screenStr, int mode);
 #endif // MAKEPROTO_H

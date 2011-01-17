@@ -50,12 +50,17 @@ int main(int argc, char *argv[])
     w->setGeometry(0, iTitleBarHeight, desktopRect.width(), desktopRect.height() - iTitleBarHeight);  // 设置窗体充满桌面客户区
     w->setFixedSize(desktopRect.width(), desktopRect.height() - iTitleBarHeight);      // 固定窗体大小
 
+    w->progManage->settingsInit();
+    /*
     if(w->progManage->treeWidget->topLevelItemCount()>0)
     {
       w->progManage->clickItem(w->progManage->treeWidget->topLevelItem(0), 0);
     }
+    */
     //w->progManage->newProg();
     //w->progManage->newArea();
+    QObject::connect(w->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
+            w, SLOT(updateTreeWidget(QMdiSubWindow*)));
     w->show();
 
     return a.exec();

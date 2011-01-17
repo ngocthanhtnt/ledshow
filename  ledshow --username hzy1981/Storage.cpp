@@ -49,7 +49,7 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
 #endif                                   
                                    
   //节目显示数据
-  {SDI_SHOW_DATA, BLOCK_DATA_LEN + 8, MAX_BLOCK_NUM}
+  {SDI_SHOW_DATA, BLOCK_DATA_LEN, MAX_BLOCK_NUM}
 };
 
 //从存储器中读取某个重要等级的数据
@@ -189,8 +189,6 @@ INT16U Read_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, INT16U Len, void* 
 
   TRACE();
 
-  debug("read storage data:0x%x, Off = %d, Len = %d", SDI, Offset, Len);
-
   Off = Get_Storage_Data_Off(SDI); //获取数据偏移
   if(NULL_4BYTES EQ Off)//ASSERT(NULL_4BYTES != Off))
   {
@@ -198,6 +196,8 @@ INT16U Read_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, INT16U Len, void* 
     //*pErr = RD_STORAGE_DATA_DI_ERR; 
     return 0;
   }
+
+  debug("read storage data:ID = 0x%x, Addr = %d, Off = %d, Len = %d", SDI, Off, Offset, Len);
 
   Off += Offset; // + 内部偏移
 
@@ -234,7 +234,6 @@ INT8U Write_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, void* pSrc, INT16U
 
   TRACE();
 
-  debug("write storage data:0x%x, Off = %d, Len = %d", SDI, Offset, SrcLen);
 
   //Imp_Flag = Get_Storage_Data_ImpFlag(SDI); //获取该数据的重要标志
 
@@ -244,6 +243,8 @@ INT8U Write_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, void* pSrc, INT16U
     ASSERT_FAILED();
     return 0;
   }
+
+  debug("write storage data:ID = 0x%x, Addr = %d, Off = %d, Len = %d", SDI, Off, Offset, SrcLen);
 
   Off += Offset; // + 内部偏移
   //OS_Mutex_Pend(PUB_RW_ROM_ID);

@@ -1,6 +1,5 @@
 #define MAKE_PROTO_C
 #include "makeProto.h"
-#include "..\Includes.h"
 #include <QSettings>
 #include <QImage>
 #include "screenProperty.h"
@@ -69,6 +68,7 @@ Bit3->Bit7 备用
 int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
 {
   int len;
+  INT16U seq0;
   char type,cmd1 = 0;
 
   pDst[0] = FRAME_HEAD;//帧头
@@ -85,6 +85,7 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
   if(frameInfo.off >= dataLen)
       return 0;
 
+  seq0 = frameInfo.seq0;
   if(cmd EQ C_PROG_DATA) //控制码是显示数据则可能需要分帧
   {
     if(frameInfo.seq0 EQ 0) //第一帧全部是显示参数!!
@@ -92,31 +93,38 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
         frameInfo.len = 0;
         type = data[0];
         len = Get_Show_Para_Len(type); //第一帧长度
-        frameInfo.seq0 ++;
+
         frameInfo.off = 0;
         if(dataLen > len)
+        {
             cmd1 |= 0x01;
+            frameInfo.seq0 ++;//有后续帧
+        }
     }
     else
     {
         if(frameInfo.off + PROTO_SHOW_DATA_LEN >= dataLen)
+        {
           len = dataLen - frameInfo.off; //后续帧长度
+          frameInfo.seq0 = 0; //没有后续帧了
+        }
         else
         {
           len = PROTO_SHOW_DATA_LEN;
           cmd1 |= 0x01;
+          frameInfo.seq0 ++; // 有后续帧
         }
     }
   }
   else
       len = dataLen;
 
+  memcpy(pDst + FDATA, data + frameInfo.off, len);
   frameInfo.off += len;
 
-  memcpy(pDst + FDATA, data + frameInfo.off, len);
-
   pDst[FSEQ] = frameInfo.seq;
-  pDst[FSEQ0] = frameInfo.seq0;
+  memcpy(pDst + FSEQ0, &seq0, sizeof(seq0));
+  //pDst[FSEQ0] = frameInfo.seq0;
   pDst[FCMD] = cmd; //两个字节的控制码
   pDst[FCMD + 1] = cmd1;
 
@@ -124,7 +132,7 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
   memcpy(pDst + FLEN, &len, 2);
 
   INT16U sum = Sum_2Bytes((INT8U *)pDst, len - 3); //后3个字节是校验和和帧尾
-  memcpy((char *)pDst + FLEN, (char *)&sum, 2);
+  memcpy((char *)pDst + len - 3, (char *)&sum, 2);
   pDst[len - 1] = FRAME_TAIL;
 
   return len;
@@ -135,7 +143,7 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
 //mode表示发送的模式，0表示串口，1表示u盘，2表示以太网
 INT8U sendProtoData(char *pFrame, int len, int mode)
 {
-    if(mode EQ SIM_MODE)//仿真模式
+    if(mode EQ PREVIEW_MODE)//仿真模式
     {
       Rcv_Frame_Proc((INT8U *)pFrame, (INT16U)len); //接收函数处理。在仿真情况下，将参数写入了硬盘文件。模拟写入EEROM
     }
@@ -155,14 +163,26 @@ INT8U sendProtoData(char *pFrame, int len, int mode)
 //width,height所在显示分区的宽度和高度
 //fileStr文件的字符串
 //buf目标数据缓冲区
-INT16U getFileParaFromSettings(INT16U width, INT16U height, QString fileStr, char *buf, int bufLen)
+INT16U getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U width, INT16U height, QString fileStr, char *buf, int bufLen)
 {
     int type, len, tmpLen;
     U_File_Para filePara;
+    S_Screen_Para screenParaBak;
+    S_Prog_Para progParaBak;
 
     settings.beginGroup(fileStr);
     type =settings.value("type").toInt(); //该文件的类型
     settings.endGroup();
+
+    saveScreenPara(screenParaBak);
+    saveProgPara(progParaBak);
+
+    //重置参数--
+    resetShowPara(width, height, Screen_Para.Base_Para.Color);
+
+    filePara.Pic_Para.Prog_No = Prog_No;
+    filePara.Pic_Para.Area_No = Area_No;
+    filePara.Pic_Para.File_No = File_No;
 
     if(type EQ PIC_PROPERTY)
     {
@@ -196,9 +216,7 @@ INT16U getFileParaFromSettings(INT16U width, INT16U height, QString fileStr, cha
               ASSERT_FAILED();
           }
 
-          //重置参数--
-          resetShowPara(width, height, Screen_Para.Base_Para.Color);
-          //转换图形数据到protoShowData中
+           //转换图形数据到protoShowData中
           getTextShowData(imageBk, &protoShowData, 0, 0);
 
           if(Prog_Para.Area[0].Y_Len % 8 EQ 0)
@@ -217,6 +235,9 @@ INT16U getFileParaFromSettings(INT16U width, INT16U height, QString fileStr, cha
       }
     }
 
+    restoreScreenPara(screenParaBak);
+    restoreProgPara(progParaBak);
+
     return len;
 }
 
@@ -225,33 +246,44 @@ INT16U getFileParaFromSettings(INT16U width, INT16U height, QString fileStr, cha
 //mode表示生成数据的方式：0表示串口传输，1表示生成u盘文件
 INT8U makeProtoData(QString screenStr, int mode)
 {
-    S_Screen_Para screenPara;
+    //S_Screen_Para Screen_Para;
     S_Prog_Para progPara;
     int len;
     INT16U areaWidth, areaHeight;
     INT8U seq = 0, progNum, areaNum, fileNum;
     char frameBuf[500], *dataBuf;
+    S_Screen_Para screenParaBak;
+    S_Prog_Para progParaBak;
 
+    saveScreenPara(screenParaBak);
+    saveProgPara(progParaBak);
+    frameInfo.seq = 0xFF;
     //没有读取到正确的屏幕参数则返回0
-    if(getScreenParaFromSettings(screenStr, screenPara) EQ 0)
-        return 0;
+    if(getScreenParaFromSettings(screenStr, Screen_Para) EQ 0)
+    {
+        Screen_Para.Base_Para.Width = 256;
+        Screen_Para.Base_Para.Height = 256;
+        Screen_Para.Base_Para.Color = 0x07;
+        Screen_Para.Prog_Num = 1;
+        //return 0;
+    }
 
     dataBuf = (char *)malloc(PROTO_DATA_BUF_LEN);
 
     //读取屏幕参数
 
     //设置屏幕基本参数
-    len = makeFrame((char *)&screenPara.Base_Para, sizeof(screenPara.Base_Para),\
+    len = makeFrame((char *)&Screen_Para.Base_Para, sizeof(Screen_Para.Base_Para),\
                C_SCREEN_BASE_PARA, seq++, frameBuf);
     sendProtoData(frameBuf, len, mode);
 
     //定时开关机时间
-    len = makeFrame((char *)&screenPara.OC_Time, sizeof(screenPara.OC_Time),\
+    len = makeFrame((char *)&Screen_Para.OC_Time, sizeof(Screen_Para.OC_Time),\
                C_SCREEN_OC_TIME, seq++, frameBuf);
     sendProtoData(frameBuf, len, mode);
 
     //亮度
-    len = makeFrame((char *)&screenPara.Lightness, sizeof(screenPara.Lightness),\
+    len = makeFrame((char *)&Screen_Para.Lightness, sizeof(Screen_Para.Lightness),\
                C_SCREEN_LIGNTNESS, seq++, frameBuf);
     sendProtoData(frameBuf, len, mode);
 
@@ -262,16 +294,18 @@ INT8U makeProtoData(QString screenStr, int mode)
     progNum = progList.size();
 
     len = makeFrame((char *)&progNum, sizeof(progNum),\
-               C_SCREEN_LIGNTNESS, seq++, frameBuf);
+               C_PROG_NUM, seq++, frameBuf);
     sendProtoData(frameBuf, len, mode);
 
     QString progStr,areaStr, fileStr;
 
     for(int i = 0; i < progNum; i ++)
     {
+        //节目字符串
         progStr = screenStr + "/program/" + progList.at(i);
+        //获取节目参数
         getProgParaFromSettings(progStr, progPara);
-
+        progPara.Prog_No = i;
         //节目参数帧
         len = makeFrame((char *)&progPara.Head + 1, sizeof(progPara) - CHK_BYTE_LEN,C_PROG_PARA, seq++, frameBuf);
         sendProtoData(frameBuf, len, mode);
@@ -285,11 +319,13 @@ INT8U makeProtoData(QString screenStr, int mode)
         {
             areaStr = progStr + "/area/" + areaList.at(j);
 
+            //分区宽度和高度
             settings.beginGroup(areaStr);
             areaWidth = settings.value("width").toInt();
             areaHeight = settings.value("height").toInt();
             settings.endGroup();
 
+            //文件列表
             settings.beginGroup(areaStr + "/file/");
             QStringList fileList = settings.childGroups();
             settings.endGroup();
@@ -298,10 +334,11 @@ INT8U makeProtoData(QString screenStr, int mode)
             for(int k = 0; k < fileNum; k ++)
             {
                 fileStr = areaStr + "/file/" + fileList.at(k);
-                len = getFileParaFromSettings(areaWidth, areaHeight, fileStr, dataBuf, PROTO_DATA_BUF_LEN);
+                len = getFileParaFromSettings(i,j,k,areaWidth, areaHeight, fileStr, dataBuf, PROTO_DATA_BUF_LEN);
 
                 while(1)
                 {
+                  //节目显示数据帧
                   len = makeFrame(dataBuf, len, C_PROG_DATA, seq, frameBuf);
                   if(len > 0)
                   {
@@ -319,6 +356,8 @@ INT8U makeProtoData(QString screenStr, int mode)
 
 
     free(dataBuf);
-}
 
+    restoreScreenPara(screenParaBak);
+    restoreProgPara(progParaBak);
+}
 

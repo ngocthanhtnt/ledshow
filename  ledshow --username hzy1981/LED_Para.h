@@ -581,7 +581,7 @@ typedef struct
 #define PROG_PARA_LEN   (sizeof(S_Prog_Para)-CHK_BYTE_LEN)
 #define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN)
 #define BLOCK_INDEX_LEN (sizeof(S_Prog_Block_Index) - CHK_BYTE_LEN)
-#define BLOCK_DATA_LEN 300
+#define BLOCK_DATA_LEN 309
 #define BLOCK_HEAD_DATA_LEN 9
 #define BLOCK_SHOW_DATA_LEN (BLOCK_DATA_LEN -BLOCK_HEAD_DATA_LEN)
 
@@ -599,9 +599,9 @@ EXT INT8U Get_Screen_Color_Num();
 EXT void Read_Screen_Para();
 EXT INT8U Get_Show_Para_Len(INT8U Type);
 EXT STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No);
-EXT INT8U Save_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen);
-EXT INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen);
-EXT INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
+EXT INT8U Save_Screen_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen);
+EXT INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen);
+EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen);
 
 //EXT INT8U Check_Update_Prog_Para();

@@ -38,7 +38,7 @@ INT8U Get_Show_Para_Len(INT8U Type)
 }
 
 //保存参数帧处理
-INT8U Save_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen)
+INT8U Save_Screen_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen)
 {
   //INT8U Prog_No = Prog_Para.Prog_No;
   Write_Storage_Data(SDI_SCREEN_PARA , (INT8U *)&Screen_Para + CHK_HEAD_LEN, SCREEN_PARA_LEN);
@@ -60,11 +60,11 @@ INT8U Save_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen)
 }
 
 //保存节目属性帧
-INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen)
+INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 {
   INT8U Prog_No;
 
-  Prog_No = *(Frame + 8); //节目号
+  Prog_No = *(Frame + FDATA); //节目号
   Write_Storage_Data(SDI_PROG_PARA + Prog_No , (INT8U *)&Prog_Para + CHK_HEAD_LEN, PROG_PARA_LEN);
   
 #ifdef SDI_PROG_PARA_BK0 
@@ -78,8 +78,11 @@ INT8U Save_Prog_Property_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   
 #ifdef SDI_PROG_PARA_BK2 
   Write_Storage_Data(SDI_PROG_PARA_BK2 + Prog_No, (INT8U *)&Prog_Para + CHK_HEAD_LEN, PROG_PARA_LEN);
-#endif     
- 
+#endif
+
+  //读出这个节目的存储索引
+  Prog_Status.Prog_No = Prog_No;
+  Read_Prog_Block_Index(Prog_No);
   return 1;
 }
 
@@ -478,7 +481,7 @@ typedef struct
 }S_Prog_Show_Data;
 */
 //保存节目数据帧
-INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
+INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 {
   static S_File_Para_Info File_Para_Info;
   INT8U Prog_No, Area_No, File_No, Type;
@@ -519,9 +522,13 @@ INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
           File_Para_Info.File_No = File_No;
           //File_Para_Info.Block_Index = 
           File_Para_Info.Seq0 = Seq0;
+
+          if(Prog_No != Prog_Status.Prog_No)
+          {
+              Prog_Status.Prog_No = Prog_No;
+              Read_Prog_Block_Index(Prog_No);
+          }
           
-          //读出这个节目的存储索引
-          Read_Prog_Block_Index(Prog_No);
         }
         
         return Re;
@@ -554,9 +561,9 @@ INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 #error "BLOCK_HEAD_DATA_LEN error"
 #endif
 
-    mem_cpy(Pub_Buf + 9, &Frame[FDATA], Len, Pub_Buf, sizeof(Pub_Buf));
+    mem_cpy(Pub_Buf + BLOCK_HEAD_DATA_LEN, &Frame[FDATA], Len, Pub_Buf, sizeof(Pub_Buf));
     
-    if(9 + Len > BLOCK_DATA_LEN)
+    if(Len + BLOCK_HEAD_DATA_LEN> BLOCK_DATA_LEN)
     {
         ASSERT_FAILED();
         return 0;
@@ -570,10 +577,18 @@ INT8U Save_Show_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
     Write_Cur_Block_Index(&Cur_Block_Index, sizeof(Cur_Block_Index));
     
     //写当前节目的索引
-    Prog_Status.Block_Index.Index[File_Para_Info.Area_No][File_Para_Info.File_No + 1] = Cur_Block_Index.Index;
-    SET_SUM(Prog_Status.Block_Index);
-    Write_Prog_Block_Index(File_Para_Info.Prog_No, Prog_Status.Block_Index.Index, sizeof(Prog_Status.Block_Index.Index));
-    
+    if(File_Para_Info.Prog_No < MAX_PROG_NUM &&\
+       File_Para_Info.Area_No < MAX_AREA_NUM &&\
+       File_Para_Info.File_No < MAX_FILE_NUM)
+    {
+      Prog_Status.Block_Index.Index[File_Para_Info.Area_No][File_Para_Info.File_No + 1] = Cur_Block_Index.Index;
+      SET_SUM(Prog_Status.Block_Index);
+      Write_Prog_Block_Index(File_Para_Info.Prog_No, Prog_Status.Block_Index.Index, sizeof(Prog_Status.Block_Index.Index));
+    }
+    else
+    {
+      ASSERT_FAILED();
+    }
     return 1;
   }
     
@@ -676,7 +691,7 @@ void Read_Para()
   
   Len = File_Read_One_Frame(File, Offset, &Seq, &Ctrl_Code, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
   if(Len > 0)
-    Para_Frame_Proc(Ctrl_Code, Pub_Buf, Len);
+    Screen_Para_Frame_Proc(Ctrl_Code, Pub_Buf, Len);
   else
     ASSERT_FAILED();
   
@@ -691,7 +706,7 @@ void Read_Para()
     if(Len > 0)
     {
       Counts ++;
-      Para_Frame_Proc(Ctrl_Code, Pub_Buf, Len);
+      Screen_Para_Frame_Proc(Ctrl_Code, Pub_Buf, Len);
     }
     else
     {

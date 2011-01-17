@@ -12,9 +12,6 @@ extern QSettings settings;
 extern int linePosi[MAX_LINE_NUM];
 extern int pagePosi[MAX_LINE_NUM];
 
-S_Screen_Para Screen_Para_Bak;
-S_Prog_Para Prog_Para_Bak;
-
 INT8U Get_Border_Show_En()
 {
   return (Card_Para.File_En_Word >> BORDER_SHOW_BIT) & 0x01;
@@ -50,19 +47,29 @@ INT8U Get_Timer_Show_En()
     return (Card_Para.File_En_Word >> TIMER_SHOW_BIT) & 0x01;
 }
 
-//
-void saveScreenProgPara()
+//保存屏幕参数Screen_Para到Screen_Para_Bak
+void saveScreenPara(S_Screen_Para &Screen_Para_Bak)
 {
   memcpy(&Screen_Para_Bak, &Screen_Para, sizeof(Screen_Para));
+
+}
+//保存节目参数Prog_Para到Prog_Para_Bak
+void saveProgPara(S_Prog_Para &Prog_Para_Bak)
+{
   memcpy(&Prog_Para_Bak, &Prog_Para, sizeof(Prog_Para));
 }
 
-void restoreScreenProgPara()
+//从Screen_Para_Bak中恢复参数到Screen_Para
+void restoreScreenPara(S_Screen_Para &Screen_Para_Bak)
 {
   memcpy(&Screen_Para, &Screen_Para_Bak, sizeof(Screen_Para_Bak));
-  memcpy(&Prog_Para, &Prog_Para_Bak, sizeof(Prog_Para_Bak));
 }
 
+//从Prog_Para_Bak中恢复参数到Prog_Para
+void restoreProgPara(S_Prog_Para &Prog_Para_Bak)
+{
+  memcpy(&Prog_Para, &Prog_Para_Bak, sizeof(Prog_Para_Bak));
+}
 
 //背景区域构造函数
 CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
@@ -516,6 +523,7 @@ CshowArea * CscreenArea::newShowArea()
 }
 
 //根据当前item刷新显示区域
+//此函数更新了screenArea中的screenItem和progItem还有fileItem
 void CscreenArea::updateShowArea(QTreeWidgetItem *item)
 {
     int type, index;
@@ -673,6 +681,10 @@ void CshowArea::mousePressEvent(QMouseEvent *event)
 
     event->accept();
     //w->screenArea->setFocusArea(this);
+    //if(w->screenArea !=)
+    //更新当前的screenArea!!
+    w->screenArea = (CscreenArea *)this->parent();
+
     if(this->areaItem != 0)
     {
         if(areaItem == w->progManage->treeWidget->currentItem())
@@ -1098,10 +1110,14 @@ void CshowArea::paintEvent(QPaintEvent *)
     INT8U Area_No = 0;
     INT16U Width,Height,Min_Width, Min_Height;
     INT16S tmp;
-    //CshowArea *pArea;
-    //QPainter painter;
+    S_Screen_Para Screen_Para_Bak;
+    S_Prog_Para Prog_Para_Bak;
 
-    saveScreenProgPara();
+    //return;
+
+    saveScreenPara(Screen_Para_Bak);
+    saveProgPara(Prog_Para_Bak);
+
     resetShowPara(geometry().width(), geometry().height(), Screen_Para.Base_Para.Color);
     painter.begin(this);
 
@@ -1507,7 +1523,8 @@ void CshowArea::paintEvent(QPaintEvent *)
                        Prog_Para.Border_Width, Prog_Para.Border_Height, 0);
 
             memcpy(showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
-         }
+
+   }
 
         //unsigned char colorData;
         for(i=0; i<Width; i++)
@@ -1540,7 +1557,9 @@ void CshowArea::paintEvent(QPaintEvent *)
     //painter.setPen(QColor(Qt::yellow));
     //painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
     painter.end();
-    restoreScreenProgPara();
+
+    restoreScreenPara(Screen_Para_Bak);
+    restoreProgPara(Prog_Para_Bak);
 }
 
 void CshowArea::draw_point(int x,int y, int value)
@@ -1592,4 +1611,25 @@ CshowArea::~CshowArea()
 {
 }
 
+void CMdiSubWindow::closeEvent(QCloseEvent *closeEvent)
+{
+   closeEvent->ignore();
+   this->hide();
 
+   //将当前项目设置为0，因为在clickItem函数判定中，如果和前次项一致
+   //则不做操作，这样导致screen不会显示，因此将当前项目设置为0！！！
+   //下次点击同样项时，会显示当前显示屏
+   w->progManage->saveCurItem(0);
+}
+
+CMdiSubWindow::CMdiSubWindow(QWidget *parent):QMdiSubWindow(parent,0)
+{
+    Qt::WindowFlags flags = Qt::Window|Qt::WindowMinimizeButtonHint;
+
+    setWindowFlags(flags); // 设置禁止最大化
+}
+
+CMdiSubWindow::~CMdiSubWindow()
+{
+
+}
