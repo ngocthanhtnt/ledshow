@@ -43,6 +43,7 @@ private:
     void newFile(int fileType, int subType); //新文件
 
 public slots:
+    void newScreen(); //新屏幕
     void newProg(); //新节目
     void newArea(); //新分区
 
@@ -53,6 +54,7 @@ public slots:
     void newClock(); //新表盘
     void newTemp(); //新温度
     void newLun(); //新农历
+    void preview();
     void deleteItem();
     void clickItem(QTreeWidgetItem * item, int column);
 public:

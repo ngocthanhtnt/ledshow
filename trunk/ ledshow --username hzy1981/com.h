@@ -58,6 +58,6 @@ A	…	帧数据域内容
 #define F_NDATA_LEN 13 //一条帧内非数据域的长度
 
 EXT INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len);
-EXT INT8U Para_Frame_Proc(INT16U Ctrl_Code, INT8U Data[], INT16U Len);
+EXT INT8U Screen_Para_Frame_Proc(INT16U Ctrl_Code, INT8U Data[], INT16U Len);
 EXT void Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen);
 #endif

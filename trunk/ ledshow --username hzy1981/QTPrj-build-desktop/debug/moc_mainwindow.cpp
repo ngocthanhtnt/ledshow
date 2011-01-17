@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Thu Jan 13 22:08:28 2011
+** Created: Sun Jan 16 23:40:35 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_MainWindow[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -36,6 +36,7 @@ static const uint qt_meta_data_MainWindow[] = {
       36,   11,   11,   11, 0x08,
       46,   11,   11,   11, 0x08,
       57,   11,   11,   11, 0x08,
+      72,   11,   11,   11, 0x08,
 
        0        // eod
 };
@@ -43,6 +44,7 @@ static const uint qt_meta_data_MainWindow[] = {
 static const char qt_meta_stringdata_MainWindow[] = {
     "MainWindow\0\0fileSaveAs()\0fileSave()\0"
     "fileNew()\0fileOpen()\0settingsInit()\0"
+    "updateTreeWidget(QMdiSubWindow*)\0"
 };
 
 const QMetaObject MainWindow::staticMetaObject = {
@@ -79,9 +81,10 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 2: fileNew(); break;
         case 3: fileOpen(); break;
         case 4: settingsInit(); break;
+        case 5: updateTreeWidget((*reinterpret_cast< QMdiSubWindow*(*)>(_a[1]))); break;
         default: ;
         }
-        _id -= 5;
+        _id -= 6;
     }
     return _id;
 }

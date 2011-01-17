@@ -61,7 +61,7 @@ INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len)
 //Cmd控制码
 //Frame数据域起始
 //Len数据域长度
-INT8U Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
+INT8U Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 {
   //INT16U Cmd;
   //INT16U Len;
@@ -83,6 +83,8 @@ INT8U Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
     mem_cpy((INT8U *)&Screen_Para.Lightness, Data, sizeof(Screen_Para.Lightness), (INT8U *)&Screen_Para, sizeof(Screen_Para)); //亮度参数
   else if(Cmd EQ C_SCREEN_TIME && Len >= sizeof(Cur_Time.Time))
     ;//mem_cpy((INT8U *)&Screen_Para.Open_Close_Time, Frame, Frame_Data_Size[Cmd], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //定时开关机时间
+  else if(Cmd EQ C_SCREEN_BASE_PARA && Len >= sizeof(Screen_Para.Base_Para))
+    mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));
   else
   {
     ASSERT_FAILED();
@@ -98,25 +100,32 @@ void Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen)
   S_Time TempTime;
   INT8U Re;
   
+  if(Check_Frame_Format(Frame, FrameLen) EQ 0)
+  {
+      ASSERT_FAILED();
+      return;
+  }
+
   Re = 1;
-  Cmd_Code = Frame[FCMD] + (INT16U)Frame[FCMD + 1] * 256;
+  Cmd_Code = Frame[FCMD];// + (INT16U)Frame[FCMD + 1] * 256;
   if(Cmd_Code EQ C_SCREEN_WH ||\
       Cmd_Code EQ C_SCREEN_ADDR ||\
       Cmd_Code EQ C_SCREEN_IP  ||\
       Cmd_Code EQ C_SCREEN_BAUD ||\
       Cmd_Code EQ C_SCREEN_OC_TIME ||\
-      Cmd_Code EQ C_SCREEN_LIGNTNESS)
+      Cmd_Code EQ C_SCREEN_LIGNTNESS ||\
+      Cmd_Code EQ C_SCREEN_BASE_PARA)
   {
-    Re &= Para_Frame_Proc(Cmd_Code, Frame + FDATA, FrameLen - F_NDATA_LEN); //更新内存中的参数
-    Re &= Save_Para_Frame_Proc(Frame, FrameLen); //保存参数
+    Re &= Screen_Para_Frame_Proc(Cmd_Code, Frame + FDATA, FrameLen - F_NDATA_LEN); //更新内存中的参数
+    Re &= Save_Screen_Para_Frame_Proc(Frame, FrameLen); //保存参数
   }
   else if(Cmd_Code EQ C_PROG_PARA)//保存节目属性帧
   {
-    Re &= Save_Prog_Property_Frame_Proc(Frame, FrameLen); 
+    Re &= Save_Prog_Para_Frame_Proc(Frame, FrameLen);
   }
   else if(Cmd_Code EQ C_PROG_DATA) //显示数据
   {
-    Re &= Save_Show_Data_Frame_Proc(Frame, FrameLen); //保存节目显示数据
+    Re &= Save_Prog_Data_Frame_Proc(Frame, FrameLen); //保存节目显示数据
   }
   else if(Cmd_Code EQ C_SCREEN_TIME) //设置时间
   {

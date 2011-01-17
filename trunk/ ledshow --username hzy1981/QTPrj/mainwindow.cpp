@@ -103,6 +103,15 @@ void MainWindow::setupEditActions()
 
     QAction *a;
 
+    a = new QAction(tr("显示屏"), this);
+    a->setPriority(QAction::LowPriority);
+    a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), progManage, SLOT(newScreen())); //新建节目
+    tb->addAction(a);
+
+    menu->addAction(a);
+    menu->addSeparator();
+
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
     a = new QAction(tr("节目"), this);
     a->setPriority(QAction::LowPriority);
@@ -192,7 +201,7 @@ void MainWindow::setupCtrlActions()
     a = new QAction(tr("预览"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
-    //connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
+    connect(a, SIGNAL(triggered()), progManage, SLOT(preview()));
     tb->addAction(a);
     menu->addAction(a);
 
@@ -418,6 +427,23 @@ void MainWindow::closeEvent(QCloseEvent *event)
     //property->progProperty->getSettingsFromWidget();
 }
 
+void MainWindow::updateTreeWidget(QMdiSubWindow *subWin)
+{
+  QList<QMdiSubWindow *> subWinList;
+
+  subWinList = mdiArea->subWindowList(); //子窗口指针列表
+  int num = subWinList.size(); //子窗口个数
+  for(int i = 0; i < num; i ++)
+  {
+    if(subWin EQ subWinList.at(i))
+    {
+       if(w->progManage->treeWidget->topLevelItemCount() > i)
+       {
+          w->progManage->clickItem(w->progManage->treeWidget->topLevelItem(i),0);
+       }
+    }
+  }
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -426,24 +452,22 @@ MainWindow::MainWindow(QWidget *parent)
     //QGridLayout *gridLayout;
     setToolButtonStyle(Qt::ToolButtonFollowStyle);
 
-    //gridLayout = new QGridLayout(this);
+    mdiArea = new QMdiArea(this);
+    mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+
     property = new Cproperty(this);
     progManage = new CprogManage(this);
-
+/*
     widget = new QWidget(this);
     widget->setAutoFillBackground(true);
     QPalette *palette;
     palette = new QPalette();
     palette->setColor(QPalette::Background, QColor(Qt::white));
     widget->setPalette(*palette);
-
-    screenArea =  new CscreenArea(widget);//CshowArea(this, 1);
-
-    //CshowArea *p = new CshowArea(screenArea,2);
-    //p->update();
-    //p = new CshowArea(screenArea,1);
-
-    //settings = new QSettings();
+*/
+    //screenArea =  new CscreenArea;//CshowArea(this, 1);
 
     addDockWidget(Qt::LeftDockWidgetArea, progManage);
     addDockWidget(Qt::BottomDockWidgetArea, property);
@@ -466,15 +490,48 @@ MainWindow::MainWindow(QWidget *parent)
     //sArea = new showArea(this);
     //gridLayout ->addWidget(sArea, 0, 1);
     */
-    setCentralWidget(widget);
+    //setCentralWidget(widget);
 //screenArea->newShowArea();
     //setLayout(gridLayout);
-
+   setCentralWidget(mdiArea);
     //w->progManage->settingsInit();
 
 }
 
 MainWindow::~MainWindow()
 {
+
+}
+
+QMdiSubWindow *getSubWinByIndex(QMdiArea *parentArea, int index)
+{
+  QList<QMdiSubWindow *> subWinList;
+
+  subWinList = parentArea->subWindowList();
+  if(subWinList.size() > index)
+  {
+    return subWinList.at(index);
+  }
+  else
+  {
+    ASSERT_FAILED();
+    return (QMdiSubWindow *)0;
+  }
+}
+
+//返回-1表示没有这个子项
+int getIndexBySubWin(QMdiArea *parentArea, QMdiSubWindow *subWin)
+{
+    QList<QMdiSubWindow *> subWinList;
+
+    subWinList = parentArea->subWindowList();
+    for(int i = 0; i < subWinList.size();i ++)
+    {
+        if(subWinList.at(i) == subWin)
+         return i;
+    }
+
+    ASSERT_FAILED();
+    return -1;
 
 }

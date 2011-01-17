@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'showArea.h'
 **
-** Created: Thu Jan 13 20:50:12 2011
+** Created: Sun Jan 16 23:40:39 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -111,6 +111,55 @@ void *CscreenArea::qt_metacast(const char *_clname)
 int CscreenArea::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = CshowArea::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    return _id;
+}
+static const uint qt_meta_data_CMdiSubWindow[] = {
+
+ // content:
+       5,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       0,    0, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_CMdiSubWindow[] = {
+    "CMdiSubWindow\0"
+};
+
+const QMetaObject CMdiSubWindow::staticMetaObject = {
+    { &QMdiSubWindow::staticMetaObject, qt_meta_stringdata_CMdiSubWindow,
+      qt_meta_data_CMdiSubWindow, 0 }
+};
+
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject &CMdiSubWindow::getStaticMetaObject() { return staticMetaObject; }
+#endif //Q_NO_DATA_RELOCATION
+
+const QMetaObject *CMdiSubWindow::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+}
+
+void *CMdiSubWindow::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_CMdiSubWindow))
+        return static_cast<void*>(const_cast< CMdiSubWindow*>(this));
+    return QMdiSubWindow::qt_metacast(_clname);
+}
+
+int CMdiSubWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QMdiSubWindow::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     return _id;

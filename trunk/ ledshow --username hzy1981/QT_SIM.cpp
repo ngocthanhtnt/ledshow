@@ -113,7 +113,7 @@ INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, I
     file.read((char *)pDst, RD_Len);
     file.close();
 
-  return RD_Len;
+  return 1;
 }
 
 INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen)

@@ -11,6 +11,7 @@
 #include <Qmouseevent>
 #include <QPainter>
 #include <QTreeWidgetItem>
+#include <QMdiSubWindow>
 
 #define DRAG_MOVE  0x00
 //#define DRAG_FDIAG 0x01
@@ -139,6 +140,16 @@ public:
 
 };
 
+class CMdiSubWindow:public QMdiSubWindow
+{
+        Q_OBJECT
+protected:
+    void closeEvent(QCloseEvent *closeEvent);
+public:
+    CMdiSubWindow(QWidget *parent = 0);
+    ~CMdiSubWindow();
+};
+
 INT8U Get_Border_Show_En();
 INT8U Get_Clock_Show_En();
 INT8U Get_Pic_Show_En();
@@ -146,5 +157,12 @@ INT8U Get_Lun_Show_En();
 INT8U Get_Temp_Show_En();
 INT8U Get_Time_Show_En();
 INT8U Get_Timer_Show_En();
+void saveScreenPara(S_Screen_Para &Screen_Para_Bak);
+//保存节目参数Prog_Para到Prog_Para_Bak
+void saveProgPara(S_Prog_Para &Prog_Para_Bak);
+//从Screen_Para_Bak中恢复参数到Screen_Para
+void restoreScreenPara(S_Screen_Para &Screen_Para_Bak);
+//从Prog_Para_Bak中恢复参数到Prog_Para
+void restoreProgPara(S_Prog_Para &Prog_Para_Bak);
 void resetShowPara(int width, int height, int color);
 #endif // MAINWINDOW_H

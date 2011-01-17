@@ -2,8 +2,11 @@
 #include <QDockWidget>
 #include <QPainter>
 #include <QSettings>
+#include <QMdiSubWindow>
+#include <QMdiArea>
 #include "showArea.h"
 #include "mainwindow.h"
+#include "makeProto.h"
 #include <QLabel>
 
 extern MainWindow *w;
@@ -106,7 +109,7 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
           this, SLOT(clickItem(QTreeWidgetItem *, int)));
   setWidget(treeWidget);
 
-  settingsInit();
+
 }
 
 CprogManage::~CprogManage()
@@ -259,6 +262,63 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
         //---------------
         temp->setText(0, QString::number(i + 1) + Qstr + name); //设置text
     }
+}
+
+void CprogManage::newScreen()
+{
+    QTreeWidgetItem *curItem;
+    QTreeWidgetItem *parentItem;
+    QString QStr;
+    int i,size,type,index;
+    int max = 0,tmp;
+
+    //QStr = (parentItem ->data(0,Qt::UserRole)).toString();
+    QStr = "screen";//QStr + "/" + QString(tr("area"));
+
+    settings.beginGroup(QStr);
+    QStringList groups = settings.childGroups(); //area列表
+
+    size = groups.size();
+
+    for(i = 0; i < size; i ++)
+    {
+      tmp = groups.at(i).toInt();
+      if(tmp > max)
+          max=tmp;
+    }
+    max++;
+
+
+    //初始化分区属性
+    settings.beginGroup(QString::number(max));
+    settings.setValue("screenIndex", 1);//value("screenIndex").toString()
+    settings.endGroup();
+    settings.endGroup();
+
+    //读取屏幕参数
+    getScreenParaFromSettings(QStr + "/" + QString::number(max), Screen_Para);
+    //
+    QTreeWidgetItem* item = new QTreeWidgetItem(treeWidget,QStringList(QString::number(size + 1)+tr("屏幕")));
+    item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
+
+    treeWidget->addTopLevelItem(item);
+
+    w->setCentralWidget(w->mdiArea);
+    CMdiSubWindow *subWin = new CMdiSubWindow;
+    w->screenArea =  new CscreenArea;
+    subWin->setWidget(w->screenArea);
+    w->mdiArea->addSubWindow(subWin);
+    subWin->setWindowTitle(QString::number(size + 1) + tr("屏幕"));
+    subWin->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+
+    //Qt::WindowFlags flags = Qt::Window|Qt::WindowMinimizeButtonHint;
+
+    //subWin->setWindowFlags(flags); // 设置禁止最大化
+    subWin->setFixedSize(subWin->size());
+    subWin->show();
+
+    w->progManage->clickItem(item, 0);
+
 }
 
 // program/01
@@ -521,6 +581,10 @@ void CprogManage::newLun() //新农历
   newFile(LUN_PROPERTY,0);
 }
 
+void CprogManage::preview()
+{
+  makeProtoData("screen/1/", PREVIEW_MODE);
+}
 //一个新的显示file
 void CprogManage::newFile(int fileType, int subType)
 {
@@ -614,70 +678,86 @@ void CprogManage::deleteItem()
     type = checkItemType(curItem);
 
     if(type EQ SCREEN_PROPERTY)//---是屏幕的不能删除
-        return;
-
-    if(type != PROG_PROPERTY) //分区和文件类型
     {
-        if(type == AREA_PROPERTY)
-        {
-            settings.beginGroup(str);
-
-            int index = settings.value("index").toInt();
-            if(index < MAX_AREA_NUM)
-                w->screenArea->setAreaVisible(index, 0);
-            else
-                ASSERT_FAILED();
-
-            settings.endGroup();
-        }
-
-        parent = curItem->parent();
-        curItem->parent()->removeChild(curItem);
-        //updateItemSubIndex(curItem);
-        //updateTextHead(parent);
-
-    }
-    else
-    {/*
         index = treeWidget->indexOfTopLevelItem(curItem);
         treeWidget->takeTopLevelItem(index);
         updateTextHead(0);
-        */
-        parent = curItem->parent();
-        curItem->parent()->removeChild(curItem);
-        //updateItemSubIndex(curItem);
-        //updateTextHead(parent);
-        for(int i = 0; i < MAX_AREA_NUM; i ++)
-            w->screenArea->setAreaVisible(i, 0);
-    }
 
-    settings.beginGroup(str);
-    //qDebug("remove str:%s",(const char *)str.toLocal8Bit());
-    settings.remove("");
-    settings.endGroup();
+        curItem = treeWidget->currentItem(); //当前被选中的项
 
-    //settings.remove(str);//删除这个组
+        QList<QMdiSubWindow *>subWinList = w->mdiArea->subWindowList();
+        QMdiSubWindow *subWin = subWinList.at(index);
+        w->mdiArea->removeSubWindow(subWin);
 
-    if(parent->childCount() == 0)//子项都删除则将父项的子索引清0
-    {
-        str = parent->data(0, Qt::UserRole).toString();//.toString();
+        //删除所有配置项
         settings.beginGroup(str);
-        settings.setValue("subIndex", 0);
+        //qDebug("remove str:%s",(const char *)str.toLocal8Bit());
+        settings.remove("");
         settings.endGroup();
     }
-    //qDebug("remove : %s", (const char *)(Qvar.toString().toLocal8Bit()));
-    curItem = treeWidget->currentItem(); //当前被选中的项
-    if(curItem == 0)
+    else
     {
-        for(int i = 0; i < MAX_AREA_NUM; i ++)
-            w->screenArea->setAreaVisible(i, 0);
-        return;
+        if(type != PROG_PROPERTY) //分区和文件类型
+        {
+            if(type == AREA_PROPERTY)
+            {
+                settings.beginGroup(str);
+
+                int index = settings.value("index").toInt();
+                if(index < MAX_AREA_NUM)
+                    w->screenArea->setAreaVisible(index, 0);
+                else
+                    ASSERT_FAILED();
+
+                settings.endGroup();
+            }
+
+            parent = curItem->parent();
+            curItem->parent()->removeChild(curItem);
+            //updateItemSubIndex(curItem);
+            //updateTextHead(parent);
+
+        }
+        else
+        {/*
+            index = treeWidget->indexOfTopLevelItem(curItem);
+            treeWidget->takeTopLevelItem(index);
+            updateTextHead(0);
+            */
+            parent = curItem->parent();
+            curItem->parent()->removeChild(curItem);
+            //updateItemSubIndex(curItem);
+            //updateTextHead(parent);
+            for(int i = 0; i < MAX_AREA_NUM; i ++)
+                w->screenArea->setAreaVisible(i, 0);
+        }
+
+
+        settings.beginGroup(str);
+        //qDebug("remove str:%s",(const char *)str.toLocal8Bit());
+        settings.remove("");
+        settings.endGroup();
+
+        //settings.remove(str);//删除这个组
+
+        if(parent->childCount() == 0)//子项都删除则将父项的子索引清0
+        {
+            str = parent->data(0, Qt::UserRole).toString();//.toString();
+            settings.beginGroup(str);
+            settings.setValue("subIndex", 0);
+            settings.endGroup();
+        }
+        //qDebug("remove : %s", (const char *)(Qvar.toString().toLocal8Bit()));
+        curItem = treeWidget->currentItem(); //当前被选中的项
+        if(curItem == 0)
+        {
+            for(int i = 0; i < MAX_AREA_NUM; i ++)
+                w->screenArea->setAreaVisible(i, 0);
+            return;
+        }
     }
 
     saveCurItem(0); //删除后当前没有点中项
-
-    //updateItemSubIndex(curItem);
-    //updateTextHead(curItem->parent());
     w->progManage->clickItem(curItem, 0);
 
 }
@@ -687,12 +767,14 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
 {
     int type;
     QString QStr;
-    QTreeWidgetItem *lastItem;
+    QTreeWidgetItem *lastItem,*screenItem;
 
     lastItem = getCurItem();
 
     if(lastItem == item) //同一个项目点击
+    {
         return;
+    }
 
     if(lastItem != (QTreeWidgetItem *)0)
     {
@@ -702,6 +784,40 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     saveCurItem(item);
 
     type = checkItemType(item);
+    //更新当前屏幕
+    if(type EQ SCREEN_PROPERTY)
+    {
+        screenItem = item;
+    }
+    else if(type EQ PROG_PROPERTY)
+    {
+        screenItem = item->parent();
+    }
+    else if(type EQ AREA_PROPERTY)
+    {
+        screenItem = item->parent()->parent();
+    }
+    else
+    {
+       screenItem = item->parent()->parent()->parent();
+    }
+
+    int index = treeWidget->indexOfTopLevelItem(screenItem);
+    if(index >= 0)
+    {
+        QMdiSubWindow *subWin= getSubWinByIndex(w->mdiArea, index);
+        w->mdiArea->setActiveSubWindow(subWin);
+        w->screenArea = (CscreenArea *)subWin->widget();
+        if(subWin->isHidden())
+          subWin->show();
+
+        //更新当前显示屏参数
+        QString screenStr = screenItem->data(0, Qt::UserRole).toString();
+        getScreenParaFromSettings(screenStr, Screen_Para);
+    }
+    else
+        ASSERT_FAILED();
+
     if(type != SCREEN_PROPERTY)//PROG_PROPERTY) //&& type != AREA_PROPERTY) //既不是节目也不是分区
     {
         //int index =
@@ -725,6 +841,7 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     {
         //updateItemSubIndex(item);
         updateTextHead(item);
+
     }
 
     //treeWidget->setCurrentItem(item);//setCurrentItem()
@@ -845,6 +962,40 @@ void CprogManage::settingsInit()
         QTreeWidgetItem *screenItem = new QTreeWidgetItem(treeWidget);
         treeWidget->addTopLevelItem(screenItem);
         QString screenStr = "screen/" + screenGroups.at(m);
+
+        //获取当前屏幕参数
+        getScreenParaFromSettings(screenStr, Screen_Para);
+        //---
+
+        //w->screenArea->screenItem = screenItem;//在updateShowArea中更新screenItem等
+/*
+        QMdiSubWindow * subWin = w->mdiArea->addSubWindow(w->screenArea);
+        subWin->setWindowTitle(QString::number(m + 1) + tr("显示屏"));
+        //w->screenArea->parentWidget()->resize(w->screenArea->width(), w->screenArea->height());
+        //w->screenArea->show();
+        subWin->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+
+        Qt::WindowFlags flags = Qt::Window|Qt::WindowMinimizeButtonHint;
+                                //| Qt::WindowShadeButtonHint;
+        //flags |= Qt::WindowMinimizeButtonHint;
+        //flags |= Qt::WindowCloseButtonHint;
+        //flags |= Qt::WindowMaximizeButtonHint;
+        subWin->setWindowFlags(flags); // 设置禁止最大化
+*/
+        //subWin->setFixedSize(subWin->size());
+        //subWin->show();
+        //------
+        w->screenArea =  new CscreenArea;
+        CMdiSubWindow *subWin = new CMdiSubWindow;
+        subWin->setWidget(w->screenArea);
+        //subWin->setAttribute(Qt::WA_DeleteOnClose);
+        w->mdiArea->addSubWindow(subWin);
+        subWin->setWindowTitle(QString::number(m + 1) + tr("屏幕"));
+        subWin->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+
+
+        subWin->setFixedSize(subWin->size());
+
         screenItem->setData(0, Qt::UserRole, screenStr);
         screenItem->setText(0, QString::number(m + 1) + tr("显示屏"));
 
@@ -857,6 +1008,7 @@ void CprogManage::settingsInit()
         {
             QTreeWidgetItem *progItem = new QTreeWidgetItem(screenItem);
             QString progStr = screenStr + "/program/" + progGroups.at(i);
+
             progItem->setData(0, Qt::UserRole, progStr);
             progItem->setText(0, QString::number(i + 1) + tr("节目"));
             //treeWidget->addTopLevelItem(progItem);

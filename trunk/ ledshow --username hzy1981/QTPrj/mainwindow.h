@@ -16,11 +16,15 @@
 #include <QMenuBar>
 #include <QAction>
 #include <QSettings>
+#include <QMdiArea>
+#include <QMdiSubWindow>
+#include <QList>
 #include "showArea.h"
 #include "areaProperty.h"
 #include "progManage.h"
 #include "property.h"
 #include "timerProperty.h"
+
 
 #define CARD_INI_FILE "d:\\card.ini"
 #define SCREEN_INI_FILE "d:\\screen.ini"
@@ -36,6 +40,7 @@ private slots:
     void fileNew();
     void fileOpen();
     void settingsInit();
+    void updateTreeWidget(QMdiSubWindow*);
 private:
     int color;
 
@@ -56,6 +61,7 @@ public:
     Cproperty *property; // Ù–‘±‡º≠
 
     CscreenArea *screenArea; //œ‘ æ«¯”Ú
+    QMdiArea *mdiArea;
 
     //QString fileName;
     //QWidget *widget;
@@ -74,5 +80,8 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 };
+
+QMdiSubWindow *getSubWinByIndex(QMdiArea *parentArea, int index);
+int getIndexBySubWin(QMdiArea *parentArea, QMdiSubWindow *subWin);
 
 #endif // MAINWINDOW_H
