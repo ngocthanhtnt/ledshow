@@ -199,11 +199,11 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT8U In_Speed; //进入速度
+  INT16U In_Time; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式  
-  
+  INT16U Out_Time;
   INT8U Tail;
 }S__Para;
 
@@ -217,10 +217,11 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT8U In_Speed; //进入速度
+  INT16U In_Time; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
-  INT8U Out_Mode; //引出方式	
+  INT8U Out_Mode; //引出方式
+  INT16U Out_Time; //引出时间
   INT8U Color; //颜色
   INT16U SNum; //分屏个数
   INT8U CS[CS_BYTES];
@@ -237,11 +238,12 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT8U In_Speed; //进入速度
+  INT16U In_Time; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
- 
+  INT16U Out_Time; //引出时间
+  
   INT8U Diff_Flag;  //时差标志,0加，1减  
   INT8U Hour_Diff;  //时差小时
   INT8U Min_Diff;   //时差分钟
@@ -300,11 +302,12 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT8U In_Speed; //进入速度
+  INT16U In_Time; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
-
+  INT16U Out_Time; //引出时间
+  
   INT8U Dst_Year; //目标年
   INT8U Dst_Month; //目标月
   INT8U Dst_Date; //目标日
@@ -342,11 +345,12 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT8U In_Speed; //进入速度
+  INT16U In_Time; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
-
+  INT16U Out_Time; //引出时间
+  
   INT8U Diff_Flag;  //时差标志,0加，1减
   INT8U Hour_Diff;  //时差小时
   INT8U Min_Diff;   //时差分钟
@@ -400,11 +404,12 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT8U In_Speed; //进入速度
+  INT16U In_Time; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式
-
+  INT16U Out_Time; //引出时间
+  
   INT8U Show_Mode;  //显示方式
   INT8U Show_Color; //显示颜色
   INT8U Show_Font; //显示字号
@@ -453,11 +458,12 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT8U In_Speed; //进入速度
+  INT16U In_Time; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
-
+  INT16U Out_Time; //引出时间
+  
   INT8U Show_Mode;  //显示方式 
   INT8U Show_Color; //显示颜色
   INT8U Show_Font; //显示字号

@@ -7,10 +7,17 @@
 #else
 #define EXT extern
 #endif
+/*
+  if((Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x8000) > 0)
+    return (INT32U)(Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x7FFF);
+  else
+    return (INT32U)Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time * 1000;
+*/
 
+#define CONVERT_TIME(X) (((X) & 0x8000)?((X) & 0x7FFF):(X) * 1000)
 
-
-EXT INT8U Get_Area_Step_Delay(INT8U Area_No);
+EXT INT32U Get_Area_In_Step_Delay(INT8U Area_No);
+EXT INT32U Get_Area_Out_Step_Delay(INT8U Area_No);
 EXT INT32U Get_File_Stay_Time(INT8U Area_No);
 EXT void Set_File_Stay_Time(INT8U Area_No, INT16U ms);
 EXT void Update_Show_Data();

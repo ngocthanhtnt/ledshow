@@ -83,8 +83,9 @@ typedef struct
   
   INT8U File_No;    //当前文件号
   INT8U Step;        //当前移动的阶梯
-  INT16U Step_Timer;  //已经走过Timer，单位ms
+  INT32U Step_Timer;  //已经走过Timer，单位ms
   INT32U Stay_Time;   //已经停留的时间，单位ms
+  INT32U Out_Time;   //退出时间
   INT8U Counts;
   
   INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态--主要用于与中断显示同步
@@ -164,6 +165,8 @@ EXT void Draw_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
 EXT void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *pPoint1, S_Show_Data *pDst_Buf, S_Point *pPoint2);
 //复制一个填充好的矩形
 EXT void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, S_Show_Data *pDst_Buf, S_Point *pPoint1);
+//反向复制一个填充好的举行
+EXT void Rev_Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, S_Show_Data *pDst_Buf, S_Point *pPoint1);
 //填充一个矩形
 EXT void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,INT8U Value);
 //复制一个三角形数据
