@@ -2,6 +2,8 @@
 #include "Includes.h"
 
 #if QT_EN > 0
+#define MEM_FILE "d:\\phy.dat"
+
 #include <QDateTime>
 #include <QFile>
 
@@ -17,20 +19,23 @@ void Put_Char(char c)
 }
 
 //获取当前时间
-INT8U Get_Cur_Time(INT8U Time[])//S_Time *pTime)
+INT8U Get_Cur_Time()//S_Time *pTime)
 {
     QDateTime temp;
 
   temp =  QDateTime::currentDateTime();
-  Time[T_SEC] = temp.time().second();
-  Time[T_MIN] = temp.time().minute();
-  Time[T_HOUR] = temp.time().hour();
-  Time[T_DATE] = temp.date().day();
-  Time[T_MONTH] = temp.date().month();
+
+  Cur_Time.Time[T_SEC] = temp.time().second();
+  Cur_Time.Time[T_MIN] = temp.time().minute();
+  Cur_Time.Time[T_HOUR] = temp.time().hour();
+  Cur_Time.Time[T_DATE] = temp.date().day();
+  Cur_Time.Time[T_MONTH] = temp.date().month();
   if(temp.date().year() >= 2000)
-    Time[T_YEAR] = temp.date().year() - 2000;
+    Cur_Time.Time[T_YEAR] = temp.date().year() - 2000;
   else
-    Time[T_YEAR] = 0;
+    Cur_Time.Time[T_YEAR] = 0;
+
+  SET_SUM(Cur_Time);
   //qDebug("year = %d", Time[T_YEAR]);
   return 1;
 }
@@ -99,33 +104,70 @@ void printError(const char* msg)
     file.close();
 }
 */
-void Mem_Init()
+void Mem_Open()
 {
+  pFile.file = fopen(MEM_FILE, "wb+");
+  SET_HT(pFile);
+  SET_SUM(pFile);
+}
 
+void Mem_Close()
+{
+  fclose(pFile.file);
 }
 
 INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen)
 {
+    /*
     QFile file("d:\\phy.dat");
     file.open(QIODevice::ReadWrite);
     file.seek(Offset);
     //file.write(msg, qstrlen(msg));        // write to stderr
-    file.read((char *)pDst, RD_Len);
+    if(file.read((char *)pDst, RD_Len) <0)
+        ASSERT_FAILED();
     file.close();
 
   return 1;
+  */
+
+    if(fseek(pFile.file, Offset, SEEK_SET) != 0)
+    {
+      ASSERT_FAILED();
+    }
+
+    int re = fread(pDst, RD_Len, 1, pFile.file);
+    if(re != 1)
+    {
+      ASSERT_FAILED();
+    }
+
+    return 1;
 }
 
 INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen)
-{
+{/*
     QFile file("d:\\phy.dat");
     file.open(QIODevice::WriteOnly);
     file.seek(Offset);
     //file.write(msg, qstrlen(msg));        // write to stderr
-    file.write((char *)pSrc, SrcLen);
+    if(file.write((char *)pSrc, SrcLen) <0)
+        ASSERT_FAILED();
     file.close();
 
   return 1;
+*/
+    if(fseek(pFile.file, Offset, SEEK_SET) != 0)
+    {
+      ASSERT_FAILED();
+    }
+
+    if(fwrite(pSrc, SrcLen, 1, pFile.file) != 1)
+    {
+      ASSERT_FAILED();
+    }
+    //fclose(file);
+
+    return 1;
 }
 
 INT16S Get_Cur_Temp()

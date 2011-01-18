@@ -104,7 +104,7 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
   treeWidget = new QTreeWidget(this);
   treeWidget->setHeaderHidden(true);//header()->setVisible(false);
   //treeWidget->grabKeyboard();
-
+  timer = new QTimer(this);
   QObject::connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),\
           this, SLOT(clickItem(QTreeWidgetItem *, int)));
   setWidget(treeWidget);
@@ -303,7 +303,7 @@ void CprogManage::newScreen()
 
     treeWidget->addTopLevelItem(item);
 
-    w->setCentralWidget(w->mdiArea);
+    //w->setCentralWidget(w->mdiArea);
     CMdiSubWindow *subWin = new CMdiSubWindow;
     w->screenArea =  new CscreenArea;
     subWin->setWidget(w->screenArea);
@@ -583,8 +583,42 @@ void CprogManage::newLun() //新农历
 
 void CprogManage::preview()
 {
+    //生成仿真文件
+    Mem_Open();
   makeProtoData("screen/1", PREVIEW_MODE);
+
+  //w->setCentralWidget(w->mdiArea);
+  CMdiSubWindow *subWin = new CMdiSubWindow;
+  subWin->previewFlag = 1; //用于仿真的子窗口
+  w->screenArea =  new CscreenArea;
+  w->screenArea->previewFlag = 1;
+  subWin->setWidget(w->screenArea);
+  w->mdiArea->addSubWindow(subWin);
+  subWin->setWindowTitle(tr("预览"));
+  subWin->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  subWin->show();
+
+
+  Show_Init();
+  //新建定时器
+  connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
+
+  //关联定时器计满信号和相应的槽函数
+  timer->start(MOVE_STEP_TIMER);
+
 }
+
+void CprogManage::previewProc()
+{
+  w->screenArea->previewFlag = 1;//预览窗口
+
+  Show_Main_Proc();
+  Show_Timer_Proc();
+  w->screenArea->update(); //刷新显示区域
+}
+
+
+
 //一个新的显示file
 void CprogManage::newFile(int fileType, int subType)
 {

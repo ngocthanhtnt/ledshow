@@ -93,4 +93,5 @@ void Screen_Proc()
 {
   Screen_Lightness_Proc();
   Screen_Open_Close_Proc();
+  Get_Cur_Time();
 }

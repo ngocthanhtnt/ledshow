@@ -2,6 +2,7 @@
 #define MAKEPROTO_H
 
 #include "..\Includes.h"
+#include <QString>
 
 #undef EXT
 #ifdef MAKE_PROTO_C

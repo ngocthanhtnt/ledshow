@@ -14,7 +14,7 @@ void Put_Char(char c)
 }
 
 //获取当前时间
-INT8U Get_Cur_Time(INT8U Time[])//S_Time *pTime)
+INT8U Get_Cur_Time()//S_Time *pTime)
 {
   
 }

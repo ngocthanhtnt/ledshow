@@ -169,6 +169,8 @@ void getLunParaFromSettings(QString str, U_File_Para &para)
 
     settings.endGroup();
 
+    getShowModeParaFromSettings(str, para);
+
 }
 
 

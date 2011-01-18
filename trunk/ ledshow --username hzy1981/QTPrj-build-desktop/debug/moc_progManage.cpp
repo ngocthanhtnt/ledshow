@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'progManage.h'
 **
-** Created: Sun Jan 16 22:59:56 2011
+** Created: Tue Jan 18 15:10:20 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_CprogManage[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      13,   14, // methods
+      14,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -44,6 +44,7 @@ static const uint qt_meta_data_CprogManage[] = {
      116,   12,   12,   12, 0x0a,
      126,   12,   12,   12, 0x0a,
      151,  139,   12,   12, 0x0a,
+     183,   12,   12,   12, 0x0a,
 
        0        // eod
 };
@@ -54,6 +55,7 @@ static const char qt_meta_stringdata_CprogManage[] = {
     "newTimer()\0newClock()\0newTemp()\0"
     "newLun()\0preview()\0deleteItem()\0"
     "item,column\0clickItem(QTreeWidgetItem*,int)\0"
+    "previewProc()\0"
 };
 
 const QMetaObject CprogManage::staticMetaObject = {
@@ -98,9 +100,10 @@ int CprogManage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 10: preview(); break;
         case 11: deleteItem(); break;
         case 12: clickItem((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 13: previewProc(); break;
         default: ;
         }
-        _id -= 13;
+        _id -= 14;
     }
     return _id;
 }

@@ -31,13 +31,21 @@ class CshowModeEdit:public QGroupBox
 {
     Q_OBJECT
 private:
-    QLabel *showModeLabel; //显示模式
-    QLabel *speedLabel; //运行速度
+    QLabel *inModeLabel; //引入模式
+    QLabel *outModeLabel; //退出模式
     QLabel *stayTimeLabel; //停留时间
 
-    CshowModeCombo *showModeCombo;
-    CshowSpeedCombo *speedCombo;
-    QLineEdit *stayTimeEdit;
+    CshowModeCombo *inModeCombo;
+    CshowModeCombo *outModeCombo;
+    //CshowSpeedCombo *speedCombo;
+
+    QLineEdit *inTimeEdit; //引入时间
+    QLineEdit *stayTimeEdit; //停留时间
+    QLineEdit *outTimeEdit; //引出时间
+
+    QLabel *inTimeLabel;
+    QLabel *stayTimeUnitLabel;
+    QLabel *outTimeLabel;
 public:
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
@@ -245,6 +253,7 @@ public:
 
 };
 
+void getShowModeParaFromSettings(QString str, U_File_Para &para);
 QImage getLineTextImage(QString str);
 QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y);
 #endif // SIMPLETEXTEDIT_H

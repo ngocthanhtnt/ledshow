@@ -70,6 +70,8 @@ protected:
 public:
     bool updateFlag;
     S_Show_Data showData;
+    int previewFlag; //0表示是正常窗口，1表示是预览窗口
+
     //S_Show_Data showDataBak;
     QImage imageBk;
 
@@ -111,6 +113,7 @@ private:
 
 
 public:
+
     CshowArea *pArea[MAX_AREA_NUM];
     //U_File_Para File_Para[MAX_AREA_NUM]; //当前分区的文件参数，更换文件时刷新之
 
@@ -145,6 +148,7 @@ class CMdiSubWindow:public QMdiSubWindow
 protected:
     void closeEvent(QCloseEvent *closeEvent);
 public:
+    int previewFlag;
     CMdiSubWindow(QWidget *parent = 0);
     ~CMdiSubWindow();
 };

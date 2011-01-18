@@ -7,6 +7,7 @@
 #include <QTreeWidgetItem>
 #include <QList>
 #include <QVariant>
+#include <QTimer>
 
 #define FILE_TYPE 1
 #define AREA_TYPE 2
@@ -57,11 +58,14 @@ public slots:
     void preview();
     void deleteItem();
     void clickItem(QTreeWidgetItem * item, int column);
+
+    void previewProc();
 public:
     void updateTextHead(QTreeWidgetItem *item); //更新和item同级的所有item的文本头
     QTreeWidgetItem *getCurItem();
     void saveCurItem(QTreeWidgetItem *item);
 
+    QTimer *timer;
     QTreeWidget *treeWidget;
     void settingsInit(); //打开settings
     CprogManage(QWidget *parent = 0);

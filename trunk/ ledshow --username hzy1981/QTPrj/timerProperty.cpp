@@ -197,9 +197,9 @@ void getTimerParaFromSettings(QString str, U_File_Para &para)
     para.Timer_Para.SmLineFlag = settings.value("smLineCheck").toBool();
     para.Timer_Para.LineSpace = (INT8U)settings.value("lineSpace").toInt();
     settings.endGroup();
-
-
     settings.endGroup();
+
+    getShowModeParaFromSettings(str, para);
 }
 
 CtimerProperty::~CtimerProperty()
