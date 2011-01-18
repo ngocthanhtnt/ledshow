@@ -186,8 +186,6 @@ INT16U getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT1
 
     if(type EQ PIC_PROPERTY)
     {
-      getPicParaFromSettings(fileStr, filePara);
-      memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para)); //前一个字节是头，不拷贝
       len = sizeof(S_Pic_Para) - CHK_BYTE_LEN; //真正的参数长度，不包括头尾校验
 
       settings.beginGroup(fileStr);
@@ -205,6 +203,10 @@ INT16U getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT1
       QImage image = getTextImage(width, picStr, &lineNum, linePosi);
       //整体的行数
       int pageNum = getTextPageNum(smLineFlag, width, height, lineNum, linePosi, pagePosi);
+
+      getPicParaFromSettings(fileStr, filePara);
+      filePara.Pic_Para.SNum = pageNum;
+      memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para)); //前一个字节是头，不拷贝
 
       for(int i = 0; i < pageNum; i ++)
       {
@@ -257,6 +259,9 @@ INT8U makeProtoData(QString screenStr, int mode)
 
     saveScreenPara(screenParaBak);
     saveProgPara(progParaBak);
+
+    //Mem_Open();
+
     frameInfo.seq = 0xFF;
     //没有读取到正确的屏幕参数则返回0
     if(getScreenParaFromSettings(screenStr, Screen_Para) EQ 0)
@@ -340,7 +345,7 @@ INT8U makeProtoData(QString screenStr, int mode)
                 {
                   //节目显示数据帧
                   int tmpLen = makeFrame(dataBuf, len, C_PROG_DATA, seq, frameBuf);
-                  if(len > 0)
+                  if(tmpLen > 0)
                   {
                       sendProtoData(frameBuf, tmpLen, mode);
                   }
@@ -354,10 +359,13 @@ INT8U makeProtoData(QString screenStr, int mode)
         }
     }
 
+    //Mem_Close();
 
     free(dataBuf);
 
     restoreScreenPara(screenParaBak);
     restoreProgPara(progParaBak);
+
+
 }
 

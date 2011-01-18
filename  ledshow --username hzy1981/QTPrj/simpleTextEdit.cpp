@@ -10,11 +10,14 @@
 #include <QTextEdit>
 #include <QSettings>
 #include "showArea.h"
+//#include "includes.h"
 #include "..\led_show.h"
 #include "mainwindow.h"
 
 extern MainWindow *w;
 extern QSettings settings;
+
+#define TIME_EDIT_WIDTH 40
 /*
 const S_Mode_Func Mode_Func[]=
 {
@@ -91,28 +94,44 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     vLayout=new QVBoxLayout(this);
 
     setTitle(tr("显示特效"));
-    showModeLabel = new QLabel(tr("显示模式"), this);
-    showModeCombo = new CshowModeCombo(this);
+    inModeLabel = new QLabel(tr("引入模式"), this);
+    inModeCombo = new CshowModeCombo(this);
+    inTimeEdit = new QLineEdit(this);
+    inTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
+    inTimeLabel = new QLabel(tr("毫秒"), this);
+
     hLayout = new QHBoxLayout(this);
-    hLayout->addWidget(showModeLabel);
-    hLayout->addWidget(showModeCombo);
+    hLayout->addWidget(inModeLabel);
+    hLayout->addWidget(inModeCombo);
+    hLayout->addWidget(inTimeEdit);
+    hLayout->addWidget(inTimeLabel);
     hLayout->addStretch();
     vLayout->addLayout(hLayout);
 
-    speedLabel = new QLabel(tr("运行速度"), this);
-    speedCombo = new CshowSpeedCombo(this);
+    outModeLabel = new QLabel(tr("引入模式"), this);
+    outModeCombo = new CshowModeCombo(this);
+    outTimeEdit = new QLineEdit(this);
+    outTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
+    outTimeLabel = new QLabel(tr("毫秒"), this);
+
     hLayout = new QHBoxLayout(this);
-    hLayout->addWidget(speedLabel);
-    hLayout->addWidget(speedCombo);
+    hLayout->addWidget(outModeLabel);
+    hLayout->addWidget(outModeCombo);
+    hLayout->addWidget(outTimeEdit);
+    hLayout->addWidget(outTimeLabel);
     hLayout->addStretch();
     vLayout->addLayout(hLayout);
 
     stayTimeLabel = new QLabel(tr("停留时间"), this);
     stayTimeEdit = new QLineEdit(this);
-    stayTimeEdit->setFixedWidth(40);
+    stayTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
+    stayTimeUnitLabel = new QLabel(tr("秒"), this);
+
+
     hLayout = new QHBoxLayout(this);
     hLayout->addWidget(stayTimeLabel);
     hLayout->addWidget(stayTimeEdit);
+    hLayout->addWidget(stayTimeUnitLabel);
     hLayout->addStretch();
     vLayout->addLayout(hLayout);
 
@@ -135,12 +154,26 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
 */
 }
 
+void getShowModeParaFromSettings(QString str, U_File_Para &para)
+{
+  settings.beginGroup(str);
+  para.Pic_Para.In_Mode = (INT8U)settings.value("inMode").toInt();
+  para.Pic_Para.In_Time = (INT16U)settings.value("inTime").toInt();
+  para.Pic_Para.Out_Mode = (INT8U)settings.value("outMode").toInt();
+  para.Pic_Para.Out_Time = (INT16U)settings.value("outTime").toInt();
+  para.Pic_Para.Stay_Time = (INT16U)settings.value("stayTime").toInt();
+  para.Pic_Para.Stay_Time |= 0x8000; //停留时间单位为秒，因此最高位置1
+  settings.endGroup();
+}
+
 void CshowModeEdit::getSettingsFromWidget(QString str)
 {
     settings.beginGroup(str);
     settings.beginGroup("showMode");
-    settings.setValue("Mode", showModeCombo->currentIndex());
-    settings.setValue("speed", speedCombo->currentIndex());
+    settings.setValue("inMode", inModeCombo->currentIndex());
+    settings.setValue("inTime", inTimeEdit->text().toInt());
+    settings.setValue("outMode", outModeCombo->currentIndex());
+    settings.setValue("outTime", outTimeEdit->text().toInt());
     settings.setValue("stayTime", stayTimeEdit->text().toInt());
     //settings.setValue("text", edit->getEdit()->toPlainText());
     settings.endGroup();
@@ -160,14 +193,18 @@ void CshowModeEdit::setSettingsToWidget(QString str)
     {
       //名字
       settings.setValue("setFlag", 1);
-      settings.setValue("showMode", 0);
-      settings.setValue("speed", 1);
+      settings.setValue("inMode", 0);
+      settings.setValue("inTime", 50);
+      settings.setValue("outMode", 0);
+      settings.setValue("outTime", 50);
       settings.setValue("stayTime", 5);
       settings.setValue("text", QString(tr("图文显示")));
     }
 
-    showModeCombo->setCurrentIndex(settings.value("showMode").toInt());
-    speedCombo->setCurrentIndex(settings.value("speed").toInt());
+    inModeCombo->setCurrentIndex(settings.value("inMode").toInt());
+    inTimeEdit->setText(QString::number(settings.value("inTime").toInt()));
+    outModeCombo->setCurrentIndex(settings.value("outMode").toInt());
+    outTimeEdit->setText(QString::number(settings.value("outTime").toInt()));
     stayTimeEdit->setText(QString::number(settings.value("stayTime").toInt()));
     /*
     text = settings.value("text").toString();

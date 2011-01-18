@@ -16,6 +16,16 @@
 #define EXT
 #endif
 
+typedef struct
+{
+  INT8U Head;
+
+  INT32U Ms10;  //10ms
+  INT32U Sec;
+
+  INT8U Tail;
+}S_Pub_Timer;
+
 #define PUB_BUF_MUTEX_ID 0x00 //信号量ID，用于Pub_Buf使用的互斥
 
 #define mem_cpy OS_memcpy
@@ -62,7 +72,8 @@ typedef struct
 {
   INT8U Head;
   INT8U Time[7];
-  //INT8U CS[CS_BYTES];
+
+  INT8U CS[CS_BYTES];
   INT8U Tail;
 }S_Time;
 
@@ -82,7 +93,7 @@ EXT S_Pub_Buf _Pub_Buf;
 
 #define Pub_Buf _Pub_Buf.Buf
 
-
+EXT S_Pub_Timer Pub_Timer;
 EXT INT16U Sum_2Bytes(INT8U Src[], INT16U SrcLen);
 EXT void Check(void);
 EXT void Info_Print(void);

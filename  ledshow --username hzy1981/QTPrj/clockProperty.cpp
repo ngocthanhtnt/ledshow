@@ -488,6 +488,8 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     para.Clock_Para.Min_Diff = settings.value("min").toInt();
     settings.endGroup();
     settings.endGroup();
+
+    getShowModeParaFromSettings(str, para);
 }
 
 /*

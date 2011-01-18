@@ -28,7 +28,14 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
   
    Area_Width = Get_Area_Width(Area_No); //分区的宽度和高度
    Area_Height = Get_Area_Height(Area_No);
-   
+
+   //边框长宽是否合理
+   if(Width*Height > MAX_BORDER_POINTS || Width EQ 0 || Height EQ 0)
+   {
+       ASSERT_FAILED();
+       return;
+   }
+
    //上下边框
    for(i = 0; i < Area_Width; i ++)
      for(j = 0; j < Height; j ++)

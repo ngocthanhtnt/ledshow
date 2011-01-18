@@ -725,9 +725,74 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
   INT8U color,check;
   INT8U Re;
 
+  memset(&para, 0, sizeof(para));
   color = Screen_Para.Base_Para.Color;//w->screenArea->screenPara.Color;
 
   settings.beginGroup(str);
+
+  //按星期定时选择
+  para.Timing[0].Week_Check = settings.value("weekTimerCheck").toBool();
+  para.Timing[0].Week_Flag = 0;
+  if(para.Timing[0].Week_Check > 0)
+  {
+      if(settings.value("w0").toBool())
+        SET_BIT(para.Timing[0].Week_Flag, 0);
+      if(settings.value("w1").toBool())
+        SET_BIT(para.Timing[0].Week_Flag, 1);
+      if(settings.value("w2").toBool())
+        SET_BIT(para.Timing[0].Week_Flag, 2);
+      if(settings.value("w3").toBool())
+        SET_BIT(para.Timing[0].Week_Flag, 3);
+      if(settings.value("w4").toBool())
+        SET_BIT(para.Timing[0].Week_Flag, 4);
+      if(settings.value("w5").toBool())
+        SET_BIT(para.Timing[0].Week_Flag, 5);
+      if(settings.value("w6").toBool())
+        SET_BIT(para.Timing[0].Week_Flag, 6);
+  }
+
+  //按日期定时选择
+  para.Timing[0].Date_Check = settings.value("dateTimerCheck").toBool();
+  if(para.Timing[0].Date_Check > 0)
+  {
+      para.Timing[0].Start_Date[0] = (INT8U)settings.value("startYear").toInt();
+      para.Timing[0].Start_Date[1] = (INT8U)settings.value("startMonth").toInt();
+      para.Timing[0].Start_Date[2] = (INT8U)settings.value("startDay").toInt();
+
+      //结束年月日
+      para.Timing[0].End_Date[0] = (INT8U)settings.value("endYear").toInt();
+      para.Timing[0].End_Date[1] = (INT8U)settings.value("endMonth").toInt();
+      para.Timing[0].End_Date[2] = (INT8U)settings.value("endDay").toInt();
+  }
+
+  //按时间定时选择
+  para.Timing[0].Time_Check = settings.value("timeCheck").toBool();
+  if(para.Timing[0].Time_Check > 0)
+  {
+      para.Timing[0].Start_Time[0] = (INT8U)settings.value("startHour").toInt();
+      para.Timing[0].Start_Time[1] = (INT8U)settings.value("startMin").toInt();
+
+      //结束年月日
+      para.Timing[0].End_Time[0] = (INT8U)settings.value("endHour").toInt();
+      para.Timing[0].End_Time[1] = (INT8U)settings.value("endMin").toInt();
+  }
+
+  if(settings.value("playCountCheck").toBool())//按次数播放?
+  {
+    para.Mode = PROG_COUNTS_MODE;
+    para.Counts = (INT16U)settings.value("playCount").toInt();
+  }
+  else if(settings.value("playTimeCheck").toBool())//按时间播放
+  {
+    para.Mode = PROG_TIME_MODE;
+    para.Time = settings.value("playTime").toInt();
+  }
+  else
+  {
+    para.Mode = PROG_COUNTS_MODE;
+    para.Counts = 1;//(INT16U)settings.value("playCount").toInt();
+  }
+
   index = settings.value("style").toInt();
   color = settings.value("color").toInt();
   check = settings.value("borderCheck").toBool();
@@ -740,40 +805,50 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
 
   if(check > 0)
   {
-  for(int i = 0; i < para.Border_Width; i ++)
-      for(int j = 0; j < para.Border_Height; j++)
-      {
-     //Re = Get_Buf_Point_Data((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data), color, Border_Data[index].Width, i, j);
-      Re = Get_Rect_Buf_Bit((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data),\
-                       para.Border_Width, i, j);
-      Re = (Re << color);
-      Set_Buf_Point_Data((INT8U *)para.Border_Data, sizeof(para.Border_Data), Screen_Para.Base_Para.Color, para.Border_Width, i, j, Re);
-   }
-/*
-  for(int i = 0; i < para.Border_Width; i ++)
-      for(int j = 0; j < para.Border_Height; j ++)
-  {
-    Get_Rect_Buf_Bit(Border_Data[index].Data, sizeof(Border_Data[index].Data),\
-                     para.Border_Width, i, j);
-
-    int Index = (((Y>>3) * para.Border_Width) + X)*8 + (Y & 0x07);
-
-    if(Screen_Para.Base_Para.Color EQ 0)  //单色屏
-      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data),Index, (Value & 0x01));
-    else if(Screen_Para.Base_Para.Color EQ 1) //双色屏
-    {
-      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), ((Index>>3)<<4) + (Index & 0x07), (Value & 0x01));
-      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), ((Index>>3)<<4) + 8+ (Index & 0x07), (Value & 0x02)>>1);
-    }
-    else if(Screen_Para.Base_Para.Color EQ 2) //三色屏
-    {
-      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), (Index>>3)*24 + (Index & 0x07), (Value & 0x01));
-      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), (Index>>3)*24 + 8 + (Index & 0x07), (Value & 0x02)>>1);
-      Set_Buf_Bit(para.Border_Data, sizeof(para.Border_Data), (Index>>3)*24 + 16 + (Index & 0x07), (Value & 0x04)>>2);
-    }
-  }
-*/
+      for(int i = 0; i < para.Border_Width; i ++)
+          for(int j = 0; j < para.Border_Height; j++)
+          {
+         //Re = Get_Buf_Point_Data((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data), color, Border_Data[index].Width, i, j);
+          Re = Get_Rect_Buf_Bit((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data),\
+                           para.Border_Width, i, j);
+          Re = (Re << color);
+          Set_Buf_Point_Data((INT8U *)para.Border_Data, sizeof(para.Border_Data), Screen_Para.Base_Para.Color, para.Border_Width, i, j, Re);
+       }
   //memcpy(para.Border_Data, Border_Data[index].Data, sizeof(Border_Data[index].Data));
   }
+
   settings.endGroup();
+
+  settings.beginGroup(str + "/area");
+  QStringList areaList = settings.childGroups();
+  int areaNum = areaList.size();
+  settings.endGroup();
+
+  //分区数
+  if(areaNum > MAX_AREA_NUM)
+      para.Area_Num = MAX_AREA_NUM;
+  else
+      para.Area_Num = (INT8U)areaNum;
+
+  //每个分区的位置、大小和文件数
+  for(int i = 0; i < para.Area_Num; i ++)
+  {
+      QString areaStr = str + "/area/" + areaList.at(i) ;
+      settings.beginGroup(areaStr);
+
+      para.Area[i].X = (INT16U)settings.value("x").toInt();
+      para.Area[i].Y = (INT16U)settings.value("y").toInt();
+      para.Area[i].X_Len = (INT16U)settings.value("width").toInt();
+      para.Area[i].Y_Len = (INT16U)settings.value("height").toInt();
+
+      settings.beginGroup("file");
+      para.Area_File_Num[i] =settings.childGroups().size();//文件数
+      settings.endGroup();
+
+      settings.endGroup();
+  }
+
+  SET_HT(para);
+  SET_SUM(para);
+
 }

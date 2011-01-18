@@ -1,6 +1,7 @@
 #ifndef LED_PARA_H
 #define LED_PARA_H
 
+#include "pub.h"
 #include "Storage.h"
 #include "LED_Show.h"
 //extern "c"
@@ -37,9 +38,9 @@
 #define CHK_BYTE_LEN 3 //结构体中用于校验的字节数--一般是Head、Tail和CS
 #define CHK_HEAD_LEN 1 //结构体中用于校验的头字节数--一般是Head
 
-#define PROG_NULL_MODE 0x00
-#define PROG_COUNTS_MODE 0x01
-#define PROG_TIME_MODE  0x02
+//#define PROG_NULL_MODE 0x00
+#define PROG_COUNTS_MODE 0x00
+#define PROG_TIME_MODE  0x01
 
 #pragma pack(1)
 typedef struct
@@ -80,11 +81,14 @@ typedef struct
 
 typedef struct
 {
-  INT8U Week; //星期--全0表示都播放，第0位表示星期日，1-6表示星期1-星期6
+  INT8U Week_Check;
+  INT8U Week_Flag; //星期--全0表示都播放，第0位表示星期日，1-6表示星期1-星期6
   
+  INT8U Date_Check;
   INT8U Start_Date[3]; //起始年月日
   INT8U End_Date[3];	//结束年月日  
   
+  INT8U Time_Check;
   INT8U Start_Time[2]; //起始时分
   INT8U End_Time[2];	//结束时分
 }S_Program_Timing;
@@ -170,7 +174,7 @@ typedef struct
   INT16U Counts; //循环次数
   INT32U Time; //停留秒数
   
-  S_Program_Timing Timing[3]; //节目定时设置
+  S_Program_Timing Timing[3];//[3]; //节目定时设置
   INT8U Area_Num; //分区数
   INT8U Main_Area_No; //主分区号
   INT8U Area_File_Num[MAX_AREA_NUM]; //每分区文件数
@@ -604,7 +608,8 @@ EXT S_Cur_Block_Index Cur_Block_Index;
 EXT S_Time Cur_Time; //当前时间 
 
 EXT INT8U Get_Screen_Color_Num();
-EXT void Read_Screen_Para();
+EXT INT16U Read_Screen_Para();
+EXT INT8U Write_Screen_Para();
 EXT INT8U Get_Show_Para_Len(INT8U Type);
 EXT STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No);
 EXT INT8U Save_Screen_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen);

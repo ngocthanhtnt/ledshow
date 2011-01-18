@@ -40,7 +40,7 @@ void Update_Pic_Data(INT8U Area_No)
   //还在移动状态
   if(Prog_Status.Area_Status[Area_No].Step < 100)
   {
-    if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)
+    if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)//在进入阶段
     {
       if(Prog_Status.Area_Status[Area_No].Step_Timer < Get_Area_In_Step_Delay(Area_No))
         Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
@@ -52,7 +52,7 @@ void Update_Pic_Data(INT8U Area_No)
         Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
       }
     }
-    else
+    else //在退出阶段
     {
        if(Prog_Status.Area_Status[Area_No].Step_Timer < Get_Area_Out_Step_Delay(Area_No))
         Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
@@ -63,6 +63,7 @@ void Update_Pic_Data(INT8U Area_No)
         (*(Mode_Func[Out_Mode].Func))(Area_No);//执行移动操作
         Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
 
+        //已经完全退出了，则进入下个文件
         if(Prog_Status.Area_Status[Area_No].Step >= 100)
         {
           Prog_Status.Area_Status[Area_No].Step = 0;
@@ -77,7 +78,7 @@ void Update_Pic_Data(INT8U Area_No)
   else if(Prog_Status.Area_Status[Area_No].Stay_Time < Stay_Time) //停留时间未到
   {
     Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
-    if(Prog_Status.Area_Status[Area_No].Stay_Time >= Stay_Time)
+    if(Prog_Status.Area_Status[Area_No].Stay_Time >= Stay_Time)//进入退出的移动状态
     {
       Prog_Status.Area_Status[Area_No].Step = 0;
     }

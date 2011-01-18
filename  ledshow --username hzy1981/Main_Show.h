@@ -28,4 +28,5 @@ EXT INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No);
 EXT INT8U Check_Update_Show_Data_Bak();
 EXT void Show_Timer_Proc();
 EXT void Show_Main_Proc();
+EXT void Show_Init();
 #endif

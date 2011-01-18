@@ -83,6 +83,7 @@ CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
      pArea[i]->setVisible(0);
      //areaUsed[i] = 0;
     }
+
 /*
     settings.beginGroup("screen");
     str = settings.allKeys();
@@ -629,6 +630,9 @@ CshowArea::CshowArea(QWidget *parent, int colorFlag):QWidget(parent)
 
     fileItem = (QTreeWidgetItem *)0;
     areaItem = (QTreeWidgetItem *)0;
+    screenItem = (QTreeWidgetItem *)0;
+
+    previewFlag = 0; //不是预览窗口
     //setAttribute(Qt::WA_StaticContents);
   //resize(100,100);
   //setText("Test");
@@ -1188,7 +1192,7 @@ void CshowArea::paintEvent(QPaintEvent *)
         //memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
         if(filePara.Temp_Para.Flag == SHOW_CLOCK) //显示表盘
         {
-            Get_Cur_Time(Cur_Time.Time);
+            Get_Cur_Time();
             //Cur_Time.Time[T_SEC] = 0x00;
             //将背景文字放到Show_Data_Bak中
 
@@ -1232,7 +1236,7 @@ void CshowArea::paintEvent(QPaintEvent *)
         }
         else if(filePara.Temp_Para.Flag == SHOW_TIME)
         {
-            Get_Cur_Time(Cur_Time.Time);
+            Get_Cur_Time();
 
             //将背景文字放到Show_Data_Bak中
 
@@ -1287,7 +1291,7 @@ void CshowArea::paintEvent(QPaintEvent *)
         }
         else if(filePara.Temp_Para.Flag == SHOW_TIMER) //计时器
         {
-            Get_Cur_Time(Cur_Time.Time);
+            Get_Cur_Time();
 
             //将背景文字放到Show_Data_Bak中
 
@@ -1333,7 +1337,7 @@ void CshowArea::paintEvent(QPaintEvent *)
         }
         else if(filePara.Temp_Para.Flag == SHOW_LUN) //显示农历
         {
-            Get_Cur_Time(Cur_Time.Time);
+            Get_Cur_Time();
 
             //将背景文字放到Show_Data_Bak中
 
@@ -1471,33 +1475,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             painter.setPen(QColor(Qt::darkGray));
             painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
         }
-    }
-/*
-    painter.setPen(QColor(Qt::green));
-    for(i=0; i<w; i++)
-    {
-        for(j=0; j<h; j++)
-        {
-           if(Get_Bit(color1, w, i, j))
-           {
-             //painter.setPen(QColor(Qt::red));
-             painter.drawPoint(i,j);
-           }
-       }
-    }
-
-    painter.setPen(QColor(Qt::yellow));
-    for(i=0; i<w; i++)
-    {
-        for(j=0; j<h; j++)
-        {
-           if(Get_Bit(color2, w, i, j))
-           {
-             //painter.setPen(QColor(Qt::red));
-             painter.drawPoint(i,j);
-           }
-       }
-    }*/
+      }
     }
     else //非0表示是背景
     {
@@ -1603,19 +1581,25 @@ CshowArea::~CshowArea()
 
 void CMdiSubWindow::closeEvent(QCloseEvent *closeEvent)
 {
-   closeEvent->ignore();
-   this->hide();
+   if(previewFlag == 0)
+   {
+       closeEvent->ignore();
+       this->hide();
 
-   //将当前项目设置为0，因为在clickItem函数判定中，如果和前次项一致
-   //则不做操作，这样导致screen不会显示，因此将当前项目设置为0！！！
-   //下次点击同样项时，会显示当前显示屏
-   w->progManage->saveCurItem(0);
+       //将当前项目设置为0，因为在clickItem函数判定中，如果和前次项一致
+       //则不做操作，这样导致screen不会显示，因此将当前项目设置为0！！！
+       //下次点击同样项时，会显示当前显示屏
+       w->progManage->saveCurItem(0);
+   }
+   else
+       Mem_Open();
 }
 
 CMdiSubWindow::CMdiSubWindow(QWidget *parent):QMdiSubWindow(parent,0)
 {
     Qt::WindowFlags flags = Qt::Window|Qt::WindowMinimizeButtonHint;
 
+    previewFlag = 0;
     setWindowFlags(flags); // 设置禁止最大化
 }
 

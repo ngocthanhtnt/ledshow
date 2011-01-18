@@ -54,7 +54,7 @@ INT32U Get_File_Out_Time(INT8U Area_No)
 void Set_File_Stay_Time(INT8U Area_No, INT16U ms)
 {
   Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time = ms;
-  Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time = Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time | 0x80;
+  Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time = Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time | 0x8000;
   SET_SUM(Prog_Status.File_Para[Area_No].Pic_Para);
 }
 
@@ -338,16 +338,15 @@ INT8U Check_Prog_Play_Time()
   memset(Temp, 0xFF, sizeof(Temp));
 
   //按星期定时
-  if(Prog_Para.Timing[0].Week != 0xFF)
+  if(Prog_Para.Timing[0].Week_Check > 0)
   {
-    if(GET_BIT(Prog_Para.Timing[0].Week, Cur_Time.Time[T_WEEK]) EQ 0)
+    if(GET_BIT(Prog_Para.Timing[0].Week_Flag, Cur_Time.Time[T_WEEK]) EQ 0)
       return 0;
   }
 
 
   //按日期定时
-  if(memcmp(Prog_Para.Timing[0].Start_Date, Temp, 3) != 0 &&\
-    memcmp(Prog_Para.Timing[0].End_Date, Temp, 3) != 0)
+  if(Prog_Para.Timing[0].Date_Check > 0)
   {
     if(!(Cur_Time.Time[T_YEAR] >= Prog_Para.Timing[0].Start_Date[0] &&\
         Cur_Time.Time[T_YEAR] <= Prog_Para.Timing[0].End_Date[0] &&\
@@ -360,8 +359,7 @@ INT8U Check_Prog_Play_Time()
   }
 
   //按时间定时
-  if(memcmp(Prog_Para.Timing[0].Start_Time, Temp, 2) != 0 &&\
-    memcmp(Prog_Para.Timing[0].End_Time, Temp, 2) != 0)
+  if(Prog_Para.Timing[0].Time_Check > 0)
   {
     if(!(Cur_Time.Time[T_HOUR] >= Prog_Para.Timing[0].Start_Time[0] &&\
         Cur_Time.Time[T_HOUR] <= Prog_Para.Timing[0].End_Time[0] &&\
@@ -466,7 +464,7 @@ void Check_Update_Program_Para()
     
     Prog_Status.Counts = Min_Counts; //在所有分区内的最小播放次数就是节目的总播放次数
     
-    if(Check_Prog_End() > 0)//>0表示节目结束
+    if(Check_Prog_End() EQ 0)//==0表示节目结束
     {
       //读取该节目的存储索引
       Prog_Status.Play_Flag = 0;
@@ -565,4 +563,9 @@ void Show_Main_Proc()
   }
 }
 
-
+//显示初始化
+void Show_Init()
+{
+  Read_Screen_Para();
+  Ram_Init();
+}

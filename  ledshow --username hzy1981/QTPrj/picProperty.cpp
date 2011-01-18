@@ -9,6 +9,8 @@ extern QSettings settings;
 void getPicParaFromSettings(QString str, U_File_Para &para)
 {
    para.Clock_Para.Flag = SHOW_PIC;
+
+   getShowModeParaFromSettings(str, para);
 }
 
 //Ë¢ÐÂÏÔÊ¾ÇøÓò

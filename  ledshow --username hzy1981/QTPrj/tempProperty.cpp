@@ -135,6 +135,8 @@ void getTempParaFromSettings(QString str, U_File_Para &para)
     settings.endGroup();
     settings.endGroup();
 
+    getShowModeParaFromSettings(str, para);
+
 }
 //Ë¢ÐÂÏÔÊ¾ÇøÓò
 void updateTempShowArea(CshowArea *area)

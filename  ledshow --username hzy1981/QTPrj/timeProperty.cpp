@@ -188,6 +188,8 @@ void getTimeParaFromSettings(QString str, U_File_Para &para)
     settings.endGroup();
 
     settings.endGroup();
+
+    getShowModeParaFromSettings(str, para);
 }
 
 
