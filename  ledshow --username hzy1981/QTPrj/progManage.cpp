@@ -590,9 +590,9 @@ void CprogManage::preview()
   //w->setCentralWidget(w->mdiArea);
   CMdiSubWindow *subWin = new CMdiSubWindow;
   subWin->previewFlag = 1; //用于仿真的子窗口
-  w->screenArea =  new CscreenArea;
-  w->screenArea->previewFlag = 1;
-  subWin->setWidget(w->screenArea);
+  previewArea =  new CscreenArea;
+  previewArea->previewFlag = 1;
+  subWin->setWidget(previewArea);
   w->mdiArea->addSubWindow(subWin);
   subWin->setWindowTitle(tr("预览"));
   subWin->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
@@ -610,11 +610,13 @@ void CprogManage::preview()
 
 void CprogManage::previewProc()
 {
-  w->screenArea->previewFlag = 1;//预览窗口
+  previewArea->previewFlag = 1;//预览窗口
 
   Show_Main_Proc();
   Show_Timer_Proc();
-  w->screenArea->update(); //刷新显示区域
+
+  memcpy(previewArea->showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data));
+  previewArea->update(); //刷新显示区域
 }
 
 

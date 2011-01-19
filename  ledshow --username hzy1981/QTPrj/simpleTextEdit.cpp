@@ -94,7 +94,7 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     vLayout=new QVBoxLayout(this);
 
     setTitle(tr("显示特效"));
-    inModeLabel = new QLabel(tr("引入模式"), this);
+    inModeLabel = new QLabel(tr("引入"), this);
     inModeCombo = new CshowModeCombo(this);
     inTimeEdit = new QLineEdit(this);
     inTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
@@ -108,7 +108,7 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     hLayout->addStretch();
     vLayout->addLayout(hLayout);
 
-    outModeLabel = new QLabel(tr("引入模式"), this);
+    outModeLabel = new QLabel(tr("引出"), this);
     outModeCombo = new CshowModeCombo(this);
     outTimeEdit = new QLineEdit(this);
     outTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
@@ -122,7 +122,7 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     hLayout->addStretch();
     vLayout->addLayout(hLayout);
 
-    stayTimeLabel = new QLabel(tr("停留时间"), this);
+    stayTimeLabel = new QLabel(tr("停留"), this);
     stayTimeEdit = new QLineEdit(this);
     stayTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
     stayTimeUnitLabel = new QLabel(tr("秒"), this);
