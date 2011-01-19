@@ -11,6 +11,7 @@
 
 extern MainWindow *w;
 extern QSettings settings;
+
 /*
  QSettings：
  program
@@ -580,11 +581,24 @@ void CprogManage::newLun() //新农历
 {
   newFile(LUN_PROPERTY,0);
 }
-
+/*
+CMdiSubWindow *newSubWin(QString title, int width, int height)
+{
+    CMdiSubWindow *subWin = new CMdiSubWindow;
+    //subWin->previewFlag = 1; //用于仿真的子窗口
+    previewArea =  new CscreenArea;
+    //previewArea->previewFlag = 1;
+    subWin->setWidget(previewArea);
+    w->mdiArea->addSubWindow(subWin);
+    subWin->setWindowTitle(tr("预览"));
+    subWin->setGeometry(0,0,Screen_Para.Base_Para.Width + 8, Screen_Para.Base_Para.Height + 32); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+    subWin->show();
+}
+*/
 void CprogManage::preview()
 {
-    //生成仿真文件
-    Mem_Open();
+  //生成仿真文件
+  Mem_Open();
   makeProtoData("screen/1", PREVIEW_MODE);
 
   //w->setCentralWidget(w->mdiArea);
@@ -595,7 +609,7 @@ void CprogManage::preview()
   subWin->setWidget(previewArea);
   w->mdiArea->addSubWindow(subWin);
   subWin->setWindowTitle(tr("预览"));
-  subWin->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  subWin->setGeometry(0,0,Screen_Para.Base_Para.Width + 8, Screen_Para.Base_Para.Height + 32); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
   subWin->show();
 
 
@@ -606,6 +620,8 @@ void CprogManage::preview()
   //关联定时器计满信号和相应的槽函数
   timer->start(MOVE_STEP_TIMER);
 
+  //previewProc();
+
 }
 
 void CprogManage::previewProc()
@@ -615,7 +631,7 @@ void CprogManage::previewProc()
   Show_Main_Proc();
   Show_Timer_Proc();
 
-  memcpy(previewArea->showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data));
+  memcpy(previewArea->showData.Color_Data, Show_Data_Bak.Color_Data, sizeof(Show_Data.Color_Data));
   previewArea->update(); //刷新显示区域
 }
 
@@ -1027,7 +1043,7 @@ void CprogManage::settingsInit()
         //subWin->setAttribute(Qt::WA_DeleteOnClose);
         w->mdiArea->addSubWindow(subWin);
         subWin->setWindowTitle(QString::number(m + 1) + tr("屏幕"));
-        subWin->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+        subWin->setGeometry(0,0,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
 
 
         subWin->setFixedSize(subWin->size());

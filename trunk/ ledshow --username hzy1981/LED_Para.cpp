@@ -1,6 +1,10 @@
 #define LED_PARA_C
 #include "Includes.h"
 
+#if QT_SIM > 0
+extern S_Show_Data protoShowData;
+#endif
+
 //返回屏幕支持的颜色数
 INT8U Get_Screen_Color_Num()
 {
@@ -324,18 +328,32 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
   Len = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1)); //每屏显示的数据长度
   Len = Len * Screen_Color_Num; //每一幕显示需要的字节数!
   
+#if QT_SIM > 0
+  if(Off + SrcLen > Len)
+  {
+    if(memcmp(pSrc, protoShowData.Color_Data + Off, Len - Off) != 0)
+     ASSERT_FAILED();
+  }
+  else
+  {
+    if(memcmp(pSrc, protoShowData.Color_Data + Off, SrcLen) != 0)
+      ASSERT_FAILED();
+  }
+#endif
   if((Off % Len) % Screen_Color_Num != 0)
       ASSERT_FAILED();
 
-  Off0 = Off / Screen_Color_Num * 8;
-  Off = (Off % Len) / Screen_Color_Num * 8; //Off在一屏显示数据中的偏移, Off/Len表示是第多少幕
+  Off0 = Off * 8 / Screen_Color_Num;
+  Off = (Off % Len) * 8 / Screen_Color_Num; //Off在一屏显示数据中的偏移, Off/Len表示是第多少幕
+
+  qDebug("copy show data, start x = %d, y = %d", (((Off)/8) % Width), (((Off)/8) / Width)*8 + (Off)%8);
 
   //本次复制有多少点数？SrcLen*8/Screen_Color_Num
   for(i = 0; i <SrcLen*8/Screen_Color_Num && (i + Off0)<Len*8/Screen_Color_Num; i ++)
   {
     //第i个点对应在该分区内的坐标??
-    X0 = (Off + i) % Width;
-    Y0 = (Off + i) / Width;
+    X0 = (((Off + i)/8) % Width);
+    Y0 = (((Off + i)/8) / Width)*8 + (Off + i)%8;
 
     if(X0 < Width && Y0 < Height) //X0,Y0必须在X_Len和Y_Len的范围内
     {
@@ -349,10 +367,15 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
             (Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + 8 + (i & 0x07))<<1)+
             (Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + 16 + (i & 0x07))<<2);
   
+        //if(Re > 0)
+            //qDebug("re = %d, x = %d, y = %d", Re, X0, Y0);
         Set_Area_Point_Data(pDst, Area_No, X + X0, Y + Y0, Re);
      }
+    // else
+      // qDebug("out x0 = %d, y0 = %d", X0, Y0);
   }
   
+  qDebug("copy show data, off = %d, len = %d", Off, i);
   return i*Screen_Color_Num/8;
 }
 
@@ -478,10 +501,10 @@ INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     }
     //复制数据
     //Len0 = 0;
-    mem_cpy(Pub_Buf, Pub_Buf + BLOCK_HEAD_DATA_LEN + Offset, BLOCK_DATA_LEN - (BLOCK_HEAD_DATA_LEN + Offset), Pub_Buf, sizeof(Pub_Buf));   
+    mem_cpy(Pub_Buf, Pub_Buf + BLOCK_HEAD_DATA_LEN + Offset, BLOCK_SHOW_DATA_LEN - Offset, Pub_Buf, sizeof(Pub_Buf));
     //将读到的数据复制到显示备份区
     
-    Len += Copy_Show_Data(Pub_Buf, Len, BLOCK_DATA_LEN - (BLOCK_HEAD_DATA_LEN + Offset), \
+    Len += Copy_Show_Data(Pub_Buf, Len, BLOCK_SHOW_DATA_LEN - Offset,\
                            pShow_Data, Area_No, X, Y, Width, Height);
     Index++;
     Offset = 0;
