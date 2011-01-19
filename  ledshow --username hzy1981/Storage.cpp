@@ -201,7 +201,7 @@ INT16U Read_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, INT16U Len, void* 
     return 0;
   }
 
-  debug("read storage data:ID = 0x%x, Addr = %d, Off = %d, Len = %d", SDI, Off, Offset, Len);
+  debug("read data:ID = 0x%x, Addr = %d, Off = %d, Len = %d", SDI, Off, Offset, Len);
 
   Off += Offset; // + 内部偏移
 
@@ -248,7 +248,7 @@ INT8U Write_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, void* pSrc, INT16U
     return 0;
   }
 
-  debug("write storage data:ID = 0x%x, Addr = %d, Off = %d, Len = %d", SDI, Off, Offset, SrcLen);
+  debug("write data:ID = 0x%x, Addr = %d, Off = %d, Len = %d", SDI, Off, Offset, SrcLen);
 
   Off += Offset; // + 内部偏移
   //OS_Mutex_Pend(PUB_RW_ROM_ID);

@@ -219,13 +219,15 @@ INT16U getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT1
           }
 
            //转换图形数据到protoShowData中
+          memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
           getTextShowData(imageBk, &protoShowData, 0, 0);
 
-          if(Prog_Para.Area[0].Y_Len % 8 EQ 0)
-             tmpLen = Prog_Para.Area[0].X_Len * Prog_Para.Area[0].Y_Len / 8;
+          if(height % 8 EQ 0)
+             tmpLen = width * height/ 8;
           else
-             tmpLen = Prog_Para.Area[0].X_Len * (Prog_Para.Area[0].Y_Len / 8 + 1);
+             tmpLen = width * (height / 8 + 1);
 
+          tmpLen = tmpLen * Get_Screen_Color_Num();
           if(len + tmpLen >= bufLen)
           {
               ASSERT_FAILED();

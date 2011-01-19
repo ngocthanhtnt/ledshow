@@ -1,7 +1,6 @@
 #define MAIN_SHOW_C
 #include "includes.h"
 
-
 //每档速度的延时,单位为毫秒
 const INT16U Step_Delay[]=
 {

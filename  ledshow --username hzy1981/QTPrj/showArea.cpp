@@ -626,6 +626,7 @@ CshowArea::CshowArea(QWidget *parent, int colorFlag):QWidget(parent)
     setMouseTracking(true);
     mousePressed = false;
     focusFlag = false;
+    updateFlag = false;
     filePara.Temp_Para.Flag = SHOW_NULL;
 
     fileItem = (QTreeWidgetItem *)0;
