@@ -13,7 +13,7 @@ extern int pagePosi[MAX_LINE_NUM];
 S_Show_Data protoShowData;
 
 #define PROTO_DATA_BUF_LEN (2000*1000)
-#define PROTO_SHOW_DATA_LEN (BLOCK_DATA_LEN - 20)
+//#define BLOCK_SHOW_DATA_LEN (BLOCK_DATA_LEN - 20)
 
 /*
 #define FLEN   0x01
@@ -103,14 +103,14 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
     }
     else
     {
-        if(frameInfo.off + PROTO_SHOW_DATA_LEN >= dataLen)
+        if(frameInfo.off + BLOCK_SHOW_DATA_LEN >= dataLen)
         {
           len = dataLen - frameInfo.off; //后续帧长度
           frameInfo.seq0 = 0; //没有后续帧了
         }
         else
         {
-          len = PROTO_SHOW_DATA_LEN;
+          len = BLOCK_SHOW_DATA_LEN;
           cmd1 |= 0x01;
           frameInfo.seq0 ++; // 有后续帧
         }

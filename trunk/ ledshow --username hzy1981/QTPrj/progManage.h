@@ -8,6 +8,7 @@
 #include <QList>
 #include <QVariant>
 #include <QTimer>
+#include <showArea.h>
 
 #define FILE_TYPE 1
 #define AREA_TYPE 2
@@ -61,6 +62,7 @@ public slots:
 
     void previewProc();
 public:
+    CscreenArea *previewArea;
     void updateTextHead(QTreeWidgetItem *item); //更新和item同级的所有item的文本头
     QTreeWidgetItem *getCurItem();
     void saveCurItem(QTreeWidgetItem *item);

@@ -311,40 +311,49 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
                      S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT16U Width, INT16U Height)
 {
   //INT16U Width,Height;
-  //INT32U X,Y;
+  INT16U X0,Y0,Off0;
   INT32U i,Len;
   INT8U Re;
   INT8U Screen_Color_Num;
-
-  
+/*
+  Area_Width = Get_Area_Width(Area_No);
+  Area_Height = Get_Area_Height(Area_No);
+  Dst_Off = X *
+*/
   Screen_Color_Num = Get_Screen_Color_Num();
   Len = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1)); //每屏显示的数据长度
-  Len = Len * Screen_Color_Num; //屏幕支持的颜色数
+  Len = Len * Screen_Color_Num; //每一幕显示需要的字节数!
   
-  Off = Off % Len; //Off在一屏显示数据中的偏移 
+  if((Off % Len) % Screen_Color_Num != 0)
+      ASSERT_FAILED();
 
-  for(i = 0; i <SrcLen*8/Screen_Color_Num && i<Len*8/Screen_Color_Num; i ++)
+  Off0 = Off / Screen_Color_Num * 8;
+  Off = (Off % Len) / Screen_Color_Num * 8; //Off在一屏显示数据中的偏移, Off/Len表示是第多少幕
+
+  //本次复制有多少点数？SrcLen*8/Screen_Color_Num
+  for(i = 0; i <SrcLen*8/Screen_Color_Num && (i + Off0)<Len*8/Screen_Color_Num; i ++)
   {
-    if(Screen_Color_Num EQ 1)  //单色屏
-      Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, i);
-    else if(Screen_Color_Num EQ 2) //双色屏
-      Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, ((i>>3)<<4) + (i & 0x07)) +\
-        (Get_Buf_Bit((INT8U *)pSrc, SrcLen, ((i>>3)<<4) + 8 + (i & 0x07))<<1);
-    else if(Screen_Color_Num EQ 3) //三色屏
-      Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + (i & 0x07)) +\
-        (Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + 8 + (i & 0x07))<<1)+
-        (Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + 16 + (i & 0x07))<<2);
+    //第i个点对应在该分区内的坐标??
+    X0 = (Off + i) % Width;
+    Y0 = (Off + i) / Width;
+
+    if(X0 < Width && Y0 < Height) //X0,Y0必须在X_Len和Y_Len的范围内
+    {
+        if(Screen_Color_Num EQ 1)  //单色屏
+          Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, i);
+        else if(Screen_Color_Num EQ 2) //双色屏
+          Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, ((i>>3)<<4) + (i & 0x07)) +\
+            (Get_Buf_Bit((INT8U *)pSrc, SrcLen, ((i>>3)<<4) + 8 + (i & 0x07))<<1);
+        else if(Screen_Color_Num EQ 3) //三色屏
+          Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + (i & 0x07)) +\
+            (Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + 8 + (i & 0x07))<<1)+
+            (Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + 16 + (i & 0x07))<<2);
   
-    X = (Off*8 + i) % Width;
-    Y = (Off*8 + i) / Width;
-    
-    if(X < Width && Y < Height) //X0,Y0必须在X_Len和Y_Len的范围内
-      Set_Area_Point_Data(pDst, Area_No, X, Y, Re);
-    else
-      break;
+        Set_Area_Point_Data(pDst, Area_No, X + X0, Y + Y0, Re);
+     }
   }
   
-  return i/8;
+  return i*Screen_Color_Num/8;
 }
 
 //读取当前节目的分区Area_No的第File_No文件的第SIndex屏的显示数据
@@ -368,7 +377,7 @@ INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     Index = (DstLen * SIndex) / BLOCK_SHOW_DATA_LEN;//块偏移
     Index += Prog_Status.Block_Index.Index[Area_No][File_No]; //起始块号
       
-    Offset = (DstLen * SIndex) % BLOCK_SHOW_DATA_LEN; //在该块中的索引   
+    Offset = (DstLen * SIndex) % BLOCK_SHOW_DATA_LEN; //在该块中的索引
     X = 0;
     Y = 0;   
   }  
