@@ -149,6 +149,7 @@ protected:
     void closeEvent(QCloseEvent *closeEvent);
 public:
     int previewFlag;
+
     CMdiSubWindow(QWidget *parent = 0);
     ~CMdiSubWindow();
 };

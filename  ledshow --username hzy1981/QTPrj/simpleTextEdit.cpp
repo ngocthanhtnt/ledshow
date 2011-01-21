@@ -42,6 +42,10 @@ const S_Mode_Func Mode_Func[]=
 */
 CshowModeCombo::CshowModeCombo(QWidget *parent):QComboBox(parent)
 {
+    addItem(tr("连续左移"));
+    addItem(tr("连续右移"));
+    addItem(tr("连续上移"));
+    addItem(tr("连续下移"));
     addItem(tr("左移"));
     addItem(tr("右移"));
     addItem(tr("上移"));
@@ -152,18 +156,45 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     gridLayout -> addWidget(stayTimeEdit, 2, 1);
     setLayout(gridLayout);
 */
+
+    connectSignal();
 }
 
 void getShowModeParaFromSettings(QString str, U_File_Para &para)
 {
   settings.beginGroup(str);
+  settings.beginGroup("showMode");
+
   para.Pic_Para.In_Mode = (INT8U)settings.value("inMode").toInt();
   para.Pic_Para.In_Time = (INT16U)settings.value("inTime").toInt();
+  para.Pic_Para.In_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
   para.Pic_Para.Out_Mode = (INT8U)settings.value("outMode").toInt();
   para.Pic_Para.Out_Time = (INT16U)settings.value("outTime").toInt();
+  para.Pic_Para.Out_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
   para.Pic_Para.Stay_Time = (INT16U)settings.value("stayTime").toInt();
-  para.Pic_Para.Stay_Time |= 0x8000; //停留时间单位为秒，因此最高位置1
+
   settings.endGroup();
+  settings.endGroup();
+}
+
+void CshowModeEdit::connectSignal()
+{
+    connect(inModeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(outModeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(inTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+    connect(outTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+    connect(stayTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+
+}
+
+void CshowModeEdit::disconnectSignal()
+{
+    disconnect(inModeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    disconnect(outModeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    disconnect(inTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+    disconnect(outTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+    disconnect(stayTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+
 }
 
 void CshowModeEdit::getSettingsFromWidget(QString str)
@@ -185,6 +216,9 @@ void CshowModeEdit::setSettingsToWidget(QString str)
 {
     QStringList keys;
     QString text;
+
+
+    disconnectSignal();
 
     settings.beginGroup(str);
     settings.beginGroup("showMode");
@@ -214,6 +248,8 @@ void CshowModeEdit::setSettingsToWidget(QString str)
     edit->getEdit()->setPlainText(text);*/
     settings.endGroup();
     settings.endGroup();
+
+    connectSignal();
 }
 
 CshowModeEdit::~CshowModeEdit()

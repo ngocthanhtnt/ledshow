@@ -192,6 +192,10 @@ EXT void Fill_Clock_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter,
 EXT void Copy_Buf_2_Area_Rect_0(INT8U *pSrc, INT16U Src_Len, INT16U Src_Off, \
                             S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT16U X_Len, INT16U Y_Len);
 
+EXT void Move_Left_Continuous(INT8U Area_No);
+EXT void Move_Right_Continuous(INT8U Area_No);
+EXT void Move_Up_Continuous(INT8U Area_No);
+EXT void Move_Down_Continuous(INT8U Area_No);
 EXT void Move_Left(INT8U Area_No);
 EXT void Move_Right(INT8U Area_No);
 EXT void Move_Up(INT8U Area_No);

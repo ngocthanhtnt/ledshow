@@ -36,6 +36,8 @@ public slots:
 public:
     CnameEdit *nameEdit;
     Carea *area;
+    void connectSignal();
+    void disconnectSignal();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CtimeProperty(QWidget *parent=0);

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'simpleTextEdit.h'
 **
-** Created: Wed Jan 19 22:03:05 2011
+** Created: Fri Jan 21 21:44:35 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,18 +23,21 @@ static const uint qt_meta_data_CshowModeEdit[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
+       1,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       0,       // signalCount
+       1,       // signalCount
+
+ // signals: signature, parameters, type, tag, flags
+      15,   14,   14,   14, 0x05,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_CshowModeEdit[] = {
-    "CshowModeEdit\0"
+    "CshowModeEdit\0\0edited()\0"
 };
 
 const QMetaObject CshowModeEdit::staticMetaObject = {
@@ -64,7 +67,20 @@ int CshowModeEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QGroupBox::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: edited(); break;
+        default: ;
+        }
+        _id -= 1;
+    }
     return _id;
+}
+
+// SIGNAL 0
+void CshowModeEdit::edited()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, 0);
 }
 static const uint qt_meta_data_CsmLineCombo[] = {
 

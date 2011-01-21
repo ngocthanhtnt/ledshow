@@ -654,7 +654,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
          File_Para_Info.Area_No < MAX_AREA_NUM &&\
          File_Para_Info.File_No < MAX_FILE_NUM)
       {
-        Prog_Status.Block_Index.Index[File_Para_Info.Area_No][File_Para_Info.File_No + 1] = Cur_Block_Index.Index;
+        Prog_Status.Block_Index.Index[File_Para_Info.Area_No][File_Para_Info.File_No] = Cur_Block_Index.Index;
         SET_SUM(Prog_Status.Block_Index);
         Write_Prog_Block_Index(File_Para_Info.Prog_No);//, Prog_Status.Block_Index.Index, sizeof(Prog_Status.Block_Index.Index));
       }

@@ -88,6 +88,8 @@ extern MainWindow *w;
 extern QSettings settings;
 
 #define LINE_POSI_ADJ 3
+#define TEXT_LEFT_BORDER_WIDTH 4
+#define TEXT_RIGHT_BORDER_WIDTH 4
 
 int linePosi[MAX_LINE_NUM];
 int pagePosi[MAX_LINE_NUM];
@@ -860,7 +862,7 @@ void TextEdit::showInit()
     {
         //connect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
         textEdit->setLineWrapMode(QTextEdit::FixedPixelWidth);
-        textEdit->setLineWrapColumnOrWidth(area->width());
+        textEdit->setLineWrapColumnOrWidth(area->width() + TEXT_LEFT_BORDER_WIDTH + TEXT_RIGHT_BORDER_WIDTH);
 
         int mode;
         if(smLineCombo->currentIndex() == 0)
@@ -1016,7 +1018,7 @@ QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[])
     QTextLayout *layout;
 
     edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
-    edit.setLineWrapColumnOrWidth(w);
+    edit.setLineWrapColumnOrWidth(w + TEXT_LEFT_BORDER_WIDTH + TEXT_RIGHT_BORDER_WIDTH);
     edit.setHtml(str);
 
     QSize size = edit.document()->documentLayout()->documentSize().toSize();
@@ -1030,6 +1032,8 @@ QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[])
 
     QImage image(edit.width(), edit.height(),QImage::Format_RGB32);
     edit.render(&image);
+
+    image = image.copy(TEXT_LEFT_BORDER_WIDTH, 0, image.width() - TEXT_LEFT_BORDER_WIDTH - TEXT_RIGHT_BORDER_WIDTH, image.height());
 
     //每个Block
     qreal blockPosi = 0;

@@ -30,6 +30,8 @@ public:
 class CshowModeEdit:public QGroupBox
 {
     Q_OBJECT
+signals:
+    void edited();
 private:
     QLabel *inModeLabel; //引入模式
     QLabel *outModeLabel; //退出模式
@@ -49,6 +51,8 @@ private:
 public:
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
+    void connectSignal();
+    void disconnectSignal();
     CshowModeEdit(QWidget *parent);
     ~CshowModeEdit();
 };

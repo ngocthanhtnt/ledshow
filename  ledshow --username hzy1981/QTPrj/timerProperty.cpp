@@ -86,14 +86,7 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     hLayout->addStretch(10);
     setLayout(hLayout);
 
-    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    //connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
-
-    connect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
-    connect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connectSignal();
 }
 
 //ÊôÐÔ±à¼­µÄSLOT
@@ -207,6 +200,34 @@ CtimerProperty::~CtimerProperty()
 
 }
 
+void CtimerProperty::connectSignal()
+{
+    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    //connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+
+    connect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
+    connect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+
+    connect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+}
+
+void CtimerProperty::disconnectSignal()
+{
+    disconnect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    //connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+
+    disconnect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
+    disconnect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+
+    disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+}
+
 void CtimerProperty::getSettingsFromWidget(QString str)
 {
   settings.beginGroup(str);
@@ -242,14 +263,7 @@ void CtimerProperty::setSettingsToWidget(QString str)
     QDate date;
     QTime time;
 
-    disconnect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    //disconnect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
-    disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
-
-    disconnect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
-    disconnect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    disconnect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnectSignal();
 
     settings.beginGroup(str);
     int type = settings.value("type").toInt();
@@ -284,13 +298,5 @@ void CtimerProperty::setSettingsToWidget(QString str)
     else
         ASSERT_FAILED();
 
-    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    //connect(dstDateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
-
-    connect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
-    connect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-
+    connectSignal();
 }

@@ -54,7 +54,7 @@ void updatePicShowArea(CshowArea *area)
 }
 
 //属性编辑的SLOT
-void CpicProperty::propertyEdited()
+void CpicProperty::showModeEdited()
 {
     CshowArea *area;
     QTreeWidgetItem *item;
@@ -69,8 +69,9 @@ void CpicProperty::propertyEdited()
         if(item != (QTreeWidgetItem *)0)
         {
             QString str = item->data(0,Qt::UserRole).toString();
-            getSettingsFromWidget(str);
-            updatePicShowArea(area);
+            showModeEdit->getSettingsFromWidget(str);
+            //getSettingsFromWidget(str);
+            //updatePicShowArea(area);
         }
     }
 }
@@ -113,7 +114,7 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
 
     edit = new TextEdit(this);
     //edit->getEdit()->clear();
-    connect(editButton, SIGNAL(clicked()), edit, SLOT(showInit()));
+    connectSignal();
     //connect(editButton, SIGNAL(clicked()), this, SLOT(propertyEdited()));
 }
 
@@ -122,6 +123,17 @@ CpicProperty::~CpicProperty()
 
 }
 
+void CpicProperty::connectSignal()
+{
+    connect(editButton, SIGNAL(clicked()), edit, SLOT(showInit()));
+    connect(showModeEdit, SIGNAL(edited()), this, SLOT(showModeEdited()));
+}
+
+void CpicProperty::disconnectSignal()
+{
+    disconnect(editButton, SIGNAL(clicked()), edit, SLOT(showInit()));
+    disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(showModeEdited()));
+}
 
 //获取settings到
 void CpicProperty::getSettingsFromWidget(QString str)
@@ -133,9 +145,13 @@ void CpicProperty::getSettingsFromWidget(QString str)
 
 void CpicProperty::setSettingsToWidget(QString str)
 {
+    disconnectSignal();
+
     nameEdit->setSettingsToWidget(str);
     showModeEdit->setSettingsToWidget(str);
     edit->setSettingsToWidget(str);
+
+    connectSignal();
 }
 
 

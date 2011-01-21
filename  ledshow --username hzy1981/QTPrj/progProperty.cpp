@@ -308,17 +308,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    speedCombo->addItem(tr("10最慢"));
 
    //connect(weekCheck[7], SIGNAL(stateChanged(int)),this,SLOT(allWeekDayCheckProc(int)));
-   connect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(dateTimerCheckProc(int)));
-   connect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(weekTimerCheckProc(int)));
-   connect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
-   connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
-   connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
-   connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
-
-   //-----------------
-   connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
-   connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-   connect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+   connectSignal();
 }
 
 
@@ -367,6 +357,39 @@ CprogProperty::~CprogProperty()
     QLineEdit *stepCombo, *speedCombo;
     QComboBox *styleCombo, *modeCombo;
  */
+
+void CprogProperty::connectSignal()
+{
+    connect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(dateTimerCheckProc(int)));
+    connect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(weekTimerCheckProc(int)));
+    connect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
+    connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
+    connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
+    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+
+    //-----------------
+    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+
+}
+
+void CprogProperty::disconnectSignal()
+{
+    disconnect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(dateTimerCheckProc(int)));
+    disconnect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(weekTimerCheckProc(int)));
+    disconnect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
+    disconnect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
+    disconnect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
+    disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+
+    //-----------------
+    disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+
+}
+
 //从settings设置到widget中
 void CprogProperty::setSettingsToWidget(QString str)
 {
@@ -375,16 +398,7 @@ void CprogProperty::setSettingsToWidget(QString str)
     QDate date;
     QTime time;
 
-    disconnect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(dateTimerCheckProc(int)));
-    disconnect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(weekTimerCheckProc(int)));
-    disconnect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
-    disconnect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
-    disconnect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
-    disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
-
-    disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
-    disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    disconnect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnectSignal();
 
     settings.beginGroup(str);
     int setFlag = settings.value("setFlag").toBool();
@@ -461,16 +475,7 @@ void CprogProperty::setSettingsToWidget(QString str)
 
     settings.endGroup();
 
-    connect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(dateTimerCheckProc(int)));
-    connect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(weekTimerCheckProc(int)));
-    connect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
-    connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
-    connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
-    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
-
-    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
-    connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    connect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connectSignal();
 
     //按日期定时选择
     dateTimerCheckProc((int)dateTimerCheck->checkState());

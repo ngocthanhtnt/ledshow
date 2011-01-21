@@ -43,10 +43,13 @@ private:
     CshowModeEdit *showModeEdit;
     TextEdit *edit;
 public slots:
-    void propertyEdited();
+    void showModeEdited();
+    //void getSettings();
 public:
     Carea *area;
     CnameEdit *nameEdit;
+    void connectSignal();
+    void disconnectSignal();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     QPushButton *editButton; //±à¼­°´Å¥
