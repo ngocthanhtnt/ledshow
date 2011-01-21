@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'picProperty.h'
 **
-** Created: Wed Jan 19 22:02:40 2011
+** Created: Fri Jan 21 21:44:26 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -37,7 +37,7 @@ static const uint qt_meta_data_CpicProperty[] = {
 };
 
 static const char qt_meta_stringdata_CpicProperty[] = {
-    "CpicProperty\0\0propertyEdited()\0"
+    "CpicProperty\0\0showModeEdited()\0"
 };
 
 const QMetaObject CpicProperty::staticMetaObject = {
@@ -69,7 +69,7 @@ int CpicProperty::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
-        case 0: propertyEdited(); break;
+        case 0: showModeEdited(); break;
         default: ;
         }
         _id -= 1;

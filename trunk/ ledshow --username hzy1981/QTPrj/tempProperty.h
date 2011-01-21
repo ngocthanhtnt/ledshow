@@ -50,6 +50,7 @@ private:
     QLabel *textLabel;  //文本
     CsimpleTextEdit *simpleTextEdit;
     Ctemp *tempStyle;
+    CshowModeEdit *showModeEdit;
     //QTextEdit *textEdit; //显示文本
     //QPushButton *editButton; //编辑按钮
 
@@ -58,6 +59,8 @@ private:
 public:
     CnameEdit *nameEdit;
     Carea *area;
+    void connectSignal();
+    void disconnectSignal();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CtempProperty(QWidget *parent=0);

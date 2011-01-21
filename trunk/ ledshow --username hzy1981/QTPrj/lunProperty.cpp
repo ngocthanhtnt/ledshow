@@ -66,10 +66,7 @@ ClunProperty::ClunProperty(QWidget *parent):QWidget(parent)
     //mainLayout->addWidget(textGroup, 0, 0);
     setLayout(hLayout);
 
-    //connect(nameEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(lunEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connectSignal();
 }
 
 //ÊôÐÔ±à¼­µÄSLOT
@@ -179,6 +176,24 @@ ClunProperty::~ClunProperty()
 
 }
 
+void ClunProperty::connectSignal()
+{
+    //connect(nameEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(lunEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+}
+
+void ClunProperty::disconnectSignal()
+{
+    //connect(nameEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(lunEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+}
+
 void ClunProperty::getSettingsFromWidget(QString str)
 {
     settings.beginGroup(str);
@@ -200,10 +215,7 @@ void ClunProperty::getSettingsFromWidget(QString str)
 
 void ClunProperty::setSettingsToWidget(QString str)
 {
-    //disconnect(nameEdit, SIGNAL(edited()), this, SLOT(edited()));
-    disconnect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    disconnect(lunEdit, SIGNAL(edited()), this, SLOT(edited()));
-    disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnectSignal();
 
     settings.beginGroup(str);
     int type = settings.value("type").toInt();
@@ -219,9 +231,5 @@ void ClunProperty::setSettingsToWidget(QString str)
     else
         ASSERT_FAILED();
 
-
-    //connect(nameEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(lunEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connectSignal();
 }

@@ -12,6 +12,14 @@
 extern MainWindow *w;
 extern QSettings settings;
 
+#define QT_MOVE_STEP_TIMER MOVE_STEP_TIMER //仿真时定时间隔
+
+#if QT_MOVE_STEP_TIMER > MOVE_STEP_TIMER
+#error "QT_MOVE_STEP_TIMER error"
+#endif
+
+int stepTimer = 0;
+
 /*
  QSettings：
  program
@@ -109,6 +117,8 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
   QObject::connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),\
           this, SLOT(clickItem(QTreeWidgetItem *, int)));
   setWidget(treeWidget);
+
+  connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
 
 
 }
@@ -308,9 +318,10 @@ void CprogManage::newScreen()
     CMdiSubWindow *subWin = new CMdiSubWindow;
     w->screenArea =  new CscreenArea;
     subWin->setWidget(w->screenArea);
+    subWin->setAttribute(Qt::WA_DeleteOnClose);
     w->mdiArea->addSubWindow(subWin);
     subWin->setWindowTitle(QString::number(size + 1) + tr("屏幕"));
-    subWin->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+    subWin->setGeometry(0,0,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+36); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
 
     //Qt::WindowFlags flags = Qt::Window|Qt::WindowMinimizeButtonHint;
 
@@ -604,35 +615,45 @@ void CprogManage::preview()
   //w->setCentralWidget(w->mdiArea);
   CMdiSubWindow *subWin = new CMdiSubWindow;
   subWin->previewFlag = 1; //用于仿真的子窗口
+  timerFlag = 0;
   previewArea =  new CscreenArea;
   previewArea->previewFlag = 1;
+  stepTimer = 0;
   subWin->setWidget(previewArea);
+  subWin->setAttribute(Qt::WA_DeleteOnClose);
   w->mdiArea->addSubWindow(subWin);
   subWin->setWindowTitle(tr("预览"));
-  subWin->setGeometry(0,0,Screen_Para.Base_Para.Width + 8, Screen_Para.Base_Para.Height + 32); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  subWin->setGeometry(0,0,Screen_Para.Base_Para.Width + 8, Screen_Para.Base_Para.Height + 36); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
   subWin->show();
 
 
   Show_Init();
   //新建定时器
-  connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
+
 
   //关联定时器计满信号和相应的槽函数
-  timer->start(MOVE_STEP_TIMER);
+  timer->start(QT_MOVE_STEP_TIMER);
+  timer->stop();
 
+  timer->start(QT_MOVE_STEP_TIMER);
   //previewProc();
 
 }
 
 void CprogManage::previewProc()
 {
-  previewArea->previewFlag = 1;//预览窗口
-
+  stepTimer += QT_MOVE_STEP_TIMER;
   Show_Main_Proc();
-  Show_Timer_Proc();
 
-  memcpy(previewArea->showData.Color_Data, Show_Data_Bak.Color_Data, sizeof(Show_Data.Color_Data));
-  previewArea->update(); //刷新显示区域
+  if(stepTimer >= MOVE_STEP_TIMER)
+  {
+      stepTimer = 0;
+      Show_Timer_Proc();
+
+      previewArea->previewFlag = 1;//预览窗口
+      memcpy(previewArea->showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
+      previewArea->update(); //刷新显示区域
+  }
 }
 
 
@@ -1040,10 +1061,10 @@ void CprogManage::settingsInit()
         w->screenArea =  new CscreenArea;
         CMdiSubWindow *subWin = new CMdiSubWindow;
         subWin->setWidget(w->screenArea);
-        //subWin->setAttribute(Qt::WA_DeleteOnClose);
+        subWin->setAttribute(Qt::WA_DeleteOnClose);
         w->mdiArea->addSubWindow(subWin);
         subWin->setWindowTitle(QString::number(m + 1) + tr("屏幕"));
-        subWin->setGeometry(0,0,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+        subWin->setGeometry(0,0,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+36); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
 
 
         subWin->setFixedSize(subWin->size());

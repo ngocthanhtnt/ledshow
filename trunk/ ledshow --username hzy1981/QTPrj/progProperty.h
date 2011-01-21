@@ -80,7 +80,8 @@ public slots:
     void borderCheckProc(int state);
     void edited();
 public:
-
+    void connectSignal();
+    void disconnectSignal();
     void setSettingsToWidget(QString str);
     void getSettingsFromWidget(QString str);
 

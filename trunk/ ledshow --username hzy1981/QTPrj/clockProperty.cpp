@@ -235,6 +235,8 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     connect(point369Style, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
     connect(pointMinStyle, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
 
+    connect(showModeEdit, SIGNAL(edited()), this, SIGNAL(edited()));
+
     connect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
 
     connect(posiEdit->left, SIGNAL(clicked()), this, SLOT(leftEdit()));

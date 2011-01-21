@@ -52,9 +52,9 @@
 #define ASSERT_EN 1
 
 //显示效果配置
-#define MOVE_STEP_TIMER 10 //移动步进时间,单位为ms
+#define MOVE_STEP_TIMER 100 //移动步进时间,单位为ms
 #define MIN_STAY_TIME  10//每屏最小停留时间,单位为ms
-#define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
+#define MOVE_STEP 5 //每个调度单位移动的数据百分比 单位%
 
 
 //----根据不同的屏幕和硬件配置下列项目

@@ -101,14 +101,15 @@ CtempProperty::CtempProperty(QWidget *parent):QWidget(parent)
     vLayout->addWidget(simpleTextEdit);
     vLayout->addWidget(tempStyle);
 
+    showModeEdit = new CshowModeEdit(this);
+    vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(showModeEdit);
+
     hLayout->addLayout(vLayout);
     hLayout->addStretch(10);
     setLayout(hLayout);
 
-    //connect(timeDiffEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(tempStyle, SIGNAL(edited()), this, SLOT(edited()));
-    //connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connectSignal();
 
 }
 
@@ -188,6 +189,23 @@ void CtempProperty::edited()
     }
 }
 
+void CtempProperty::connectSignal()
+{
+    //connect(timeDiffEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(tempStyle, SIGNAL(edited()), this, SLOT(edited()));
+    connect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    //connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+}
+
+void CtempProperty::disconnectSignal()
+{
+    //connect(timeDiffEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(tempStyle, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    //connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+}
 
 void CtempProperty::getSettingsFromWidget(QString str)
 {
@@ -199,7 +217,9 @@ void CtempProperty::getSettingsFromWidget(QString str)
 
 void CtempProperty::setSettingsToWidget(QString str)
 {
+    disconnectSignal();
     simpleTextEdit->setSettingsToWidget(str);
     tempStyle->setSettingsToWidget(str);
     nameEdit->setSettingsToWidget(str);
+    connectSignal();
 }

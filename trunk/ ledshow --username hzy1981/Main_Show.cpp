@@ -20,13 +20,13 @@ const INT16U Step_Delay[]=
 //获取某个窗口区域某个步进的停留时间
 INT32U Get_Area_In_Step_Delay(INT8U Area_No)
 {
-  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Time)/(100/MOVE_STEP);
+  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Time);///(100/MOVE_STEP);
 }
 
 //获取某个窗口区域某个步进的停留时间
 INT32U Get_Area_Out_Step_Delay(INT8U Area_No)
 {
-  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.Out_Time)/(100/MOVE_STEP);
+  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.Out_Time);///(100/MOVE_STEP);
 }
 
 //获取文件引入时间
@@ -158,6 +158,22 @@ void Clr_Area_Status(INT8U Area_No)
   SET_HT(Prog_Status.Area_Status[Area_No]);
 }
 
+void Clr_All_Area_Status()
+{
+    INT8U i;
+
+    for(i = 0; i < MAX_AREA_NUM; i++)
+    {
+        Clr_Area_Status(i);
+    }
+}
+
+void Clr_Show_Data()
+{
+  memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
+  memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
+}
+
 //读取一屏显示数据
 //prog节目号
 //area分区号
@@ -169,7 +185,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   
   if(Prog_Status.Area_Status[Area_No].SNum EQ 0) //第一屏显示--表示更新到一个新的文件了，必须重读文件参数
   {
-    debug("prog %d area %d play new file: %d", Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
+    debug("\r\nprog %d area %d play new file: %d", Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
     //先将文件参数读出 
     Prog_Status.Area_Status[Area_No].Play_Flag = 0; //关闭本分区显示
     Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
@@ -179,6 +195,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
     {
       ASSERT_FAILED();
       
+      //文件参数读取失败则切换到下个文件
       Prog_Status.Area_Status[Area_No].File_No ++;
       if(Prog_Status.Area_Status[Area_No].File_No >= Prog_Para.Area_File_Num[Area_No] ||\
          Prog_Status.Area_Status[Area_No].File_No >= MAX_FILE_NUM) //所有文件全部都播放了一遍
@@ -194,7 +211,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   //读出显示数据
   Prog_Status.Area_Status[Area_No].Play_Flag = 0; //--读取显示数据过程中将播放标志置0，从而中断程序中不播放
   
-  debug("read prog %d area %d, file %d %dth screen show data", \
+  debug("\r\nread prog %d area %d, file %d %dth screen show data", \
         Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,Prog_Status.Area_Status[Area_No].SNum);
   
   Len = Read_Show_Data(Area_No, \
@@ -203,42 +220,15 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
                  Prog_Status.Area_Status[Area_No].SNum,\
                  &Show_Data_Bak);
   
-  Prog_Status.Area_Status[Area_No].SNum ++; //显示屏数增加
-  
   if(Len > 0)
     Prog_Status.Area_Status[Area_No].Play_Flag = 1; //打开本分区显示
   else
   {
     //本屏显示数据没有读到则读下屏数据
+    Prog_Status.Area_Status[Area_No].SNum ++; //显示屏数增加
     ASSERT_FAILED();
     return 0;
   }
-  
-  //SNum表示当前文件总的屏幕数，只有图文的屏幕数会大于1！！
-  if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_PIC)
-    SNum = Prog_Status.File_Para[Area_No].Pic_Para.SNum;
-  else
-    SNum = 1;
-  
-  
-  //所有分屏都显示了则切换到下个显示文件
-  if(Prog_Status.Area_Status[Area_No].SNum >= SNum)
-  {
-    debug("prog %d area %d file %d play end!", Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
-    
-    Prog_Status.Area_Status[Area_No].Play_Flag = 0; //关闭本分区显示
-    Prog_Status.Area_Status[Area_No].SNum = 0; 
-    
-    //文件号
-    Prog_Status.Area_Status[Area_No].File_No ++;
-    if(Prog_Status.Area_Status[Area_No].File_No >= Prog_Para.Area_File_Num[Area_No] ||\
-       Prog_Status.Area_Status[Area_No].File_No >= MAX_FILE_NUM) //所有文件全部都播放了一遍
-    {
-      Prog_Status.Area_Status[Area_No].File_No = 0;
-      Prog_Status.Area_Status[Area_No].Counts++; //所有文件都播放了一次，则将播放次数+1
-    }  
-  }
-  
   
   return AREA_OK;
 }
@@ -251,17 +241,21 @@ INT8U Check_Update_Show_Data_Bak()
   INT32U Stay_Time;
   S_Int8U Sec = {CHK_BYTE, 0xFF, CHK_BYTE};
   
+  if(Prog_Status.Play_Flag EQ 0)
+      return 0;
+
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
+      /*
     Stay_Time = Get_File_Stay_Time(i);
     //目前显示的步进已经到100%并且目前停留时间已经达到文件的停留时间，则认为该屏已经显示完毕，切换到下屏
     if(Stay_Time < MIN_STAY_TIME)
       Set_File_Stay_Time(i, MIN_STAY_TIME);
-
+*/
     //Step>=100表示整个移动过程完成，Stay_Time>=表示停留时间到，则需更新为下一屏数据
-    if(Prog_Status.Area_Status[i].Step EQ 0 &&\
-       Prog_Status.Area_Status[i].Stay_Time EQ 0 &&\
-       Prog_Status.Area_Status[i].Out_Time EQ 0)
+    if(Prog_Status.Area_Status[i].Play_Flag EQ 0 &&\
+       Prog_Status.Area_Status[i].Step EQ 0 &&\
+       Prog_Status.Area_Status[i].Stay_Time EQ 0)
     {   
       Update_Show_Data_Bak(Prog_Para.Prog_No, i);// == FILE_END)
     }
@@ -397,52 +391,14 @@ void Check_Update_Program_Para()
   static S_Int8U Sec = {CHK_BYTE, 0xFF, CHK_BYTE};
   static S_Int8U Min = {CHK_BYTE, 0xFF, CHK_BYTE};
   
-  if(Sec.Var EQ Cur_Time.Time[T_SEC])
-    return;
+  //if(Sec.Var EQ Cur_Time.Time[T_SEC])
+    //return;
   
-  Sec.Var = Cur_Time.Time[T_SEC];
+  //Sec.Var = Cur_Time.Time[T_SEC];
   
   Re = CHK_HT(Prog_Status);
   if(Re EQ 0)
     ASSERT_FAILED();
-  
-  if(Prog_Status.Play_Flag EQ 0) //还未进入节目播放状态
-  {
-    while(1) //寻找下一个可播放的节目
-    {
-      Count ++;
-      
-      if(Prog_Status.Prog_No >= Screen_Para.Prog_Num ||\
-         Prog_Status.Prog_No >= MAX_PROG_NUM)
-        Prog_Status.Prog_No = 0;
-  
-      debug("update new prog %d para", Prog_Status.Prog_No);
-      
-      Len = Read_Prog_Para(Prog_Status.Prog_No); //重新更新节目参数
-      if(Len > 0 && Check_Prog_Play_Time() > 0)
-      {   
-        Len = Read_Prog_Block_Index(Prog_Status.Prog_No);//重新读取节目的存储索引
-        if(Len > 0)
-        {       
-          Prog_Status.Play_Flag = 1; //进入播放状态！
-          break;
-        }
-      }
-      else
-      {
-        ASSERT_FAILED();
-        if(Len EQ 0)
-          debug("read prog para failed");
-        else
-          debug("prog %d now not play time", Prog_Status.Prog_No);
-      }
-      
-      Prog_Status.Prog_No ++; //在没有读到节目参数的情况下，读取下一个节目的参数
-      //最多查询次数不超过Screen_Para.Prog_Num和MAX_PROG_NUM次
-      if(Count > Screen_Para.Prog_Num || Count > MAX_PROG_NUM)
-        break;
-    } 
-  }
   
   if(Prog_Status.Play_Flag > 0)//--当前在节目播放状态
   {
@@ -463,6 +419,7 @@ void Check_Update_Program_Para()
     
     Prog_Status.Counts = Min_Counts; //在所有分区内的最小播放次数就是节目的总播放次数
     
+    //debug("check prog end! counts = %d", Min_Counts);
     if(Check_Prog_End() EQ 0)//==0表示节目结束
     {
       //读取该节目的存储索引
@@ -475,6 +432,46 @@ void Check_Update_Program_Para()
       if(Prog_Status.Prog_No >= Screen_Para.Prog_Num ||\
          Prog_Status.Prog_No >= MAX_PROG_NUM)
         Prog_Status.Prog_No = 0;
+    }
+  }
+
+  if(Prog_Status.Play_Flag EQ 0) //还未进入节目播放状态
+  {
+    while(1) //寻找下一个可播放的节目
+    {
+      Count ++;
+
+      if(Prog_Status.Prog_No >= Screen_Para.Prog_Num ||\
+         Prog_Status.Prog_No >= MAX_PROG_NUM)
+        Prog_Status.Prog_No = 0;
+
+      debug("\r\n-----update new prog %d para-----\r\n", Prog_Status.Prog_No);
+
+      Len = Read_Prog_Para(Prog_Status.Prog_No); //重新更新节目参数
+      if(Len > 0 && Check_Prog_Play_Time() > 0)
+      {
+        Len = Read_Prog_Block_Index(Prog_Status.Prog_No);//重新读取节目的存储索引
+        if(Len > 0)
+        {
+          Clr_All_Area_Status();
+          Clr_Show_Data();
+          Prog_Status.Play_Flag = 1; //进入播放状态！
+          break;
+        }
+      }
+      else
+      {
+        ASSERT_FAILED();
+        if(Len EQ 0)
+          debug("read prog para failed");
+        else
+          debug("prog %d now not play time", Prog_Status.Prog_No);
+      }
+
+      Prog_Status.Prog_No ++; //在没有读到节目参数的情况下，读取下一个节目的参数
+      //最多查询次数不超过Screen_Para.Prog_Num和MAX_PROG_NUM次
+      if(Count > Screen_Para.Prog_Num || Count > MAX_PROG_NUM)
+        break;
     }
   }
 }
@@ -541,13 +538,25 @@ void Check_Show_Data_Para()
 //将内存中的变量初始化头尾
 void Ram_Init()
 {
+  memset(&Screen_Para, 0, sizeof(Screen_Para));
+  memset(&Card_Para, 0, sizeof(Card_Para));
+  memset(&Prog_Para, 0, sizeof(Prog_Para));
+  memset(&Screen_Status, 0, sizeof(Screen_Status));
+  memset(&Prog_Status, 0, sizeof(Prog_Status));
+  memset(&Show_Data, 0, sizeof(Show_Data));
+  memset(&Show_Data_Bak, 0, sizeof(Show_Data_Bak));
+  memset(&Cur_Block_Index, 0, sizeof(Cur_Block_Index));
+  memset(&Cur_Time, 0, sizeof(Cur_Time));
+
   SET_HT(Screen_Para);  
   SET_HT(Card_Para);
   SET_HT(Prog_Para);
+  SET_HT(Screen_Status);
   SET_HT(Prog_Status);
   SET_HT(Cur_Block_Index);
   SET_HT(Show_Data);
   SET_HT(Show_Data_Bak);
+  SET_HT(Cur_Block_Index);
   SET_HT(Cur_Time);  
 }
 
@@ -565,6 +574,6 @@ void Show_Main_Proc()
 //显示初始化
 void Show_Init()
 {
-  Read_Screen_Para();
   Ram_Init();
+  Read_Screen_Para();
 }

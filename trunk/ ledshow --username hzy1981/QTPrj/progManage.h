@@ -68,6 +68,8 @@ public:
     void saveCurItem(QTreeWidgetItem *item);
 
     QTimer *timer;
+    int timerFlag;
+
     QTreeWidget *treeWidget;
     void settingsInit(); //´ò¿ªsettings
     CprogManage(QWidget *parent = 0);

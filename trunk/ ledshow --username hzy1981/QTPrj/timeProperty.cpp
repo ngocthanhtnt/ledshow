@@ -68,10 +68,7 @@ CtimeProperty::CtimeProperty(QWidget *parent):QWidget(parent)
     //mainLayout->addWidget(textGroup, 0, 0);
     setLayout(hLayout);
 
-    connect(timeDiffEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(dateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connectSignal();
 }
 
 //ÊôÐÔ±à¼­µÄSLOT
@@ -198,6 +195,26 @@ CtimeProperty::~CtimeProperty()
 
 }
 
+void CtimeProperty::connectSignal()
+{
+    connect(timeDiffEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(dateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+
+    connect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+}
+
+void CtimeProperty::disconnectSignal()
+{
+    disconnect(timeDiffEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(dateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+
+    disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+}
+
 void CtimeProperty::getSettingsFromWidget(QString str)
 {
     settings.beginGroup(str);
@@ -220,10 +237,7 @@ void CtimeProperty::getSettingsFromWidget(QString str)
 
 void CtimeProperty::setSettingsToWidget(QString str)
 {
-    disconnect(timeDiffEdit, SIGNAL(edited()), this, SLOT(edited()));
-    disconnect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    disconnect(dateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
-    disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnectSignal();
 
     settings.beginGroup(str);
     int type = settings.value("type").toInt();
@@ -240,10 +254,5 @@ void CtimeProperty::setSettingsToWidget(QString str)
     else
         ASSERT_FAILED();
 
-
-
-    connect(timeDiffEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(simpleTextEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(dateTimeEdit, SIGNAL(edited()), this, SLOT(edited()));
-    connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connectSignal();
 }

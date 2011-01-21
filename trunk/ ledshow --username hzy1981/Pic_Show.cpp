@@ -5,6 +5,10 @@
 //数据移入方式
 const S_Mode_Func Mode_Func[]=
 {
+  {&Move_Left_Continuous},//0
+  {&Move_Right_Continuous},//1
+  {&Move_Up_Continuous},//2
+  {&Move_Down_Continuous},//3
   {&Move_Left},//0
   {&Move_Right},//1
   {&Move_Up},//2
@@ -26,6 +30,7 @@ const S_Mode_Func Mode_Func[]=
 
 void Update_Pic_Data(INT8U Area_No)
 {
+  INT8U SNum;
   INT8U In_Mode, Out_Mode;
   INT32U Stay_Time;
   INT32U Out_Time;
@@ -46,34 +51,73 @@ void Update_Pic_Data(INT8U Area_No)
         Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
       else
       {
+        Prog_Status.Area_Status[Area_No].Step_Timer = 0;
         In_Mode = Prog_Status.File_Para[Area_No].Pic_Para.In_Mode;
-
-        (*(Mode_Func[In_Mode].Func))(Area_No);//执行移动操作
         Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
+        (*(Mode_Func[In_Mode].Func))(Area_No);//执行移动操作
+
       }
     }
     else //在退出阶段
     {
-       if(Prog_Status.Area_Status[Area_No].Step_Timer < Get_Area_Out_Step_Delay(Area_No))
-        Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
-      else
-      {
-        Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
-
-        (*(Mode_Func[Out_Mode].Func))(Area_No);//执行移动操作
-        Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
-
-        //已经完全退出了，则进入下个文件
-        if(Prog_Status.Area_Status[Area_No].Step >= 100)
+        //刚进入
+      if(Prog_Status.Area_Status[Area_No].Step EQ 0 &&\
+         Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
         {
-          Prog_Status.Area_Status[Area_No].Step = 0;
-          Prog_Status.Area_Status[Area_No].Step_Timer = 0;
-          Prog_Status.Area_Status[Area_No].Stay_Time = 0;
-          Prog_Status.Area_Status[Area_No].Out_Time = 0;
-          Prog_Status.Area_Status[Area_No].Play_Flag = 0;          
+         if(Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 4) //前4个是连续移动不清屏
+            memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
+         else
+           Prog_Status.Area_Status[Area_No].Step = 100;
+       }
+
+      //在移动阶段
+      if(Prog_Status.Area_Status[Area_No].Step < 100)
+      {
+          if(Prog_Status.Area_Status[Area_No].Step_Timer < Get_Area_Out_Step_Delay(Area_No))
+            Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
+          else
+          {
+            Prog_Status.Area_Status[Area_No].Step_Timer = 0;
+            Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
+            Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
+            (*(Mode_Func[Out_Mode].Func))(Area_No);//执行移动操作
+         }
+     }
+
+     if(Prog_Status.Area_Status[Area_No].Step >= 100)
+     {
+        //SNum表示当前文件总的屏幕数，只有图文的屏幕数会大于1！！
+        if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_PIC)
+          SNum = Prog_Status.File_Para[Area_No].Pic_Para.SNum;
+        else
+          SNum = 1;
+
+        Prog_Status.Area_Status[Area_No].SNum ++;
+        //所有分屏都显示了则切换到下个显示文件
+        if(Prog_Status.Area_Status[Area_No].SNum >= SNum)
+        {
+          debug("prog %d area %d file %d play end!", Prog_Status.Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
+
+          //Prog_Status.Area_Status[Area_No].Play_Flag = 0; //关闭本分区显示
+          Prog_Status.Area_Status[Area_No].SNum = 0;
+
+          //文件号
+          Prog_Status.Area_Status[Area_No].File_No ++;
+          if(Prog_Status.Area_Status[Area_No].File_No >= Prog_Para.Area_File_Num[Area_No] ||\
+             Prog_Status.Area_Status[Area_No].File_No >= MAX_FILE_NUM) //所有文件全部都播放了一遍
+          {
+            Prog_Status.Area_Status[Area_No].File_No = 0;
+            Prog_Status.Area_Status[Area_No].Counts++; //所有文件都播放了一次，则将播放次数+1
+          }
         }
-      }     
+
+        Prog_Status.Area_Status[Area_No].Step = 0;
+        Prog_Status.Area_Status[Area_No].Step_Timer = 0;
+        Prog_Status.Area_Status[Area_No].Stay_Time = 0;
+        Prog_Status.Area_Status[Area_No].Out_Time = 0;
+        Prog_Status.Area_Status[Area_No].Play_Flag = 0;
     }
+   }
   }
   else if(Prog_Status.Area_Status[Area_No].Stay_Time < Stay_Time) //停留时间未到
   {
