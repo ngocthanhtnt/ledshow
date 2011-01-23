@@ -1202,8 +1202,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             filePara.Clock_Para.Text_Width = size.width();
             filePara.Clock_Para.Text_Height = size.height();
 
-            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
-
+            /*
             tmp = (INT16S)(Width * Prog_Status.File_Para[Area_No].Clock_Para.Text_X / 100) - (INT16S)Prog_Status.File_Para[Area_No].Clock_Para.Text_Width/2;
             if(tmp > 0)
               P0.X = (INT16U)tmp;
@@ -1214,10 +1213,15 @@ void CshowArea::paintEvent(QPaintEvent *)
             if(tmp > 0)
               P0.Y = (INT16U)tmp;
             else
-              P0.Y = 0;
+              P0.Y = 0;*/
+            Get_Clock_Text_Point(Width, Height, &filePara.Clock_Para, &P0);
+            filePara.Clock_Para.Text_X = P0.X;
+            filePara.Clock_Para.Text_Y = P0.Y;
+
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
-            Update_Clock_Data_Bak(0);
+            Update_Clock_Data(&Show_Data_Bak, 0);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_PIC) //显示图文
@@ -1287,7 +1291,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Time_Para.Text_Width, Prog_Status.File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
-            Update_Time_Data_Bak(Area_No);
+            Update_Time_Data(&Show_Data_Bak, Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_TIMER) //计时器
@@ -1333,7 +1337,7 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Timer_Para.Text_Width, Prog_Status.File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
-            Update_Timer_Data_Bak(Area_No);
+            Update_Timer_Data(&Show_Data_Bak, Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_LUN) //显示农历
@@ -1388,7 +1392,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Lun_Para.Text_Width, Prog_Status.File_Para[Area_No].Lun_Para.Text_Height, &Show_Data, &P0);//&Point);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
-            Update_Lun_Data_Bak(Area_No);
+            Update_Lun_Data(&Show_Data_Bak, Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_FLASH) //显示动画
@@ -1425,7 +1429,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Temp_Para.Text_Width, Prog_Status.File_Para[Area_No].Temp_Para.Text_Height, &Show_Data, &P0);//&Point);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
-            Update_Temp_Data_Bak(Area_No);
+            Update_Temp_Data(&Show_Data_Bak, Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         memcpy(showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));

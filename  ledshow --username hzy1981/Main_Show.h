@@ -25,7 +25,7 @@ EXT INT32U Get_File_Out_Time(INT8U Area_No);
 EXT void Set_File_Stay_Time(INT8U Area_No, INT16U ms);
 EXT void Update_Show_Data();
 EXT INT8U Check_Prog_Play_Time();
-EXT INT8U Update_XXX_Data_Bak(INT8U Area_No);
+EXT INT8U Update_XXX_Data(S_Show_Data *pDst, INT8U Area_No);
 EXT INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No);
 EXT INT8U Check_Update_Show_Data_Bak();
 EXT void Show_Timer_Proc();

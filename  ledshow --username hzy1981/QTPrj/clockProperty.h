@@ -100,4 +100,5 @@ public:
 
 void getClockParaFromSettings(QString str, U_File_Para &para);
 void updateClockShowArea(CshowArea *area);
+void Get_Clock_Text_Point(INT16U Width, INT16U Height, S_Clock_Para *pPara, S_Point *pPoint);
 #endif // CLOCKPROPERTY_H

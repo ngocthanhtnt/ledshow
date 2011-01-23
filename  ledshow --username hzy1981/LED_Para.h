@@ -624,10 +624,10 @@ EXT INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen);
 
-//EXT INT8U Check_Update_Prog_Para();
+EXT INT8U Write_Prog_Block_Index();
 EXT INT16U Read_Prog_Para(INT8U Prog_No);
 EXT INT16U Read_Prog_Block_Index(INT8U Prog_No);
-EXT INT16U Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
+EXT INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
                       S_Show_Data *pShow_Data);
 //}
 #endif // LED_PARA_H
