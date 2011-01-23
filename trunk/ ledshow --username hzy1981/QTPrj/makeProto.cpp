@@ -251,6 +251,7 @@ INT16U getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT1
     {
       getClockParaFromSettings(fileStr, filePara);
       QImage image = getLineTextImage(fileStr);
+      resetShowPara(image.width(), image.height(), Screen_Para.Base_Para.Color);
       getTextShowData(image, &protoShowData, 0, 0);
 
       tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
@@ -258,11 +259,12 @@ INT16U getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT1
 
       filePara.Clock_Para.Text_Width = image.size().width();
       filePara.Clock_Para.Text_Height = image.size().height();
-      if(filePara.Clock_Para.Text_Width*filePara.Clock_Para.Text_Height > 0)
-          filePara.Clock_Para.SNum = 1;
-      else
-          filePara.Clock_Para.SNum = 0;
+      filePara.Clock_Para.SNum = 1;
 
+      S_Point Point;
+      Get_Clock_Text_Point(width, height, &filePara.Clock_Para, &Point);
+      filePara.Clock_Para.Text_X = Point.X;
+      filePara.Clock_Para.Text_Y = Point.Y;
 
       memcpy(buf, (char *)&filePara.Clock_Para.Head + 1, sizeof(S_Clock_Para)); //前一个字节是头，不拷贝
       len = sizeof(S_Clock_Para) - CHK_BYTE_LEN;

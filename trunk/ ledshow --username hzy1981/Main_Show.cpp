@@ -108,7 +108,7 @@ void Update_Show_Data()
 }
 
 //更新显示备份区数据、显示非固定文本类信息
-INT8U Update_XXX_Data_Bak(INT8U Area_No)
+INT8U Update_XXX_Data(S_Show_Data *pDst, INT8U Area_No)
 {
   INT8U Flag; 
   
@@ -119,23 +119,23 @@ INT8U Update_XXX_Data_Bak(INT8U Area_No)
     ;
 #if CLOCK_SHOW_EN  
   else if(Flag EQ SHOW_CLOCK)
-    Update_Clock_Data_Bak(Area_No);
+    Update_Clock_Data(pDst, Area_No);
 #endif
 #if TIME_SHOW_EN  
   else if(Flag EQ SHOW_TIME)
-    Update_Time_Data_Bak(Area_No);
+    Update_Time_Data(pDst, Area_No);
 #endif
 #if TIMER_SHOW_EN  
   else if(Flag EQ SHOW_TIMER)
-    Update_Timer_Data_Bak(Area_No);
+    Update_Timer_Data(pDst, Area_No);
 #endif
 #if TEMP_SHOW_EN  
   else if(Flag EQ SHOW_TEMP)
-    Update_Temp_Data_Bak(Area_No);
+    Update_Temp_Data(pDst, Area_No);
 #endif
 #if LUN_SHOW_EN  
   else if(Flag EQ SHOW_LUN)
-    Update_Lun_Data_Bak(Area_No);
+    Update_Lun_Data(pDst, Area_No);
 #endif  
   //else if(Flag EQ SHOW_FLASH)
     //Update_Flash_Data_Bak(Area_No);
@@ -186,7 +186,8 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   if(Prog_Status.New_Prog_Flag) //在节目更新状态中，不更新文件参数
       return 0;
 
-  if(Prog_Status.Play_Flag)
+  if(Prog_Status.Area_Status[Area_No].New_File_Flag EQ 0 &&\
+     Prog_Status.Area_Status[Area_No].New_SCN_Flag EQ 0)
   {
       if(Prog_Status.Area_Status[Area_No].SNum >= Prog_Status.File_Para[Area_No].Pic_Para.SNum)
       {
@@ -199,7 +200,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   if(Prog_Status.Area_Status[Area_No].New_File_Flag)//SNum > Prog_Status.File_Para[Area_No].Pic_Para.SNum)
   {
 
-    debug("prog %d area %d file %d play end!", Prog_Status.Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
+    //debug("prog %d area %d file %d play end!", Prog_Status.Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
 
     Prog_Status.Area_Status[Area_No].SNum = 0;
     //文件参数读取失败则切换到下个文件
@@ -259,7 +260,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
                      Prog_Status.Area_Status[Area_No].SNum,\
                      &Show_Data_Bak);
 
-      if(Len > 0)
+      if(Len >= 0)
       {
         Prog_Status.Area_Status[Area_No].Play_Flag = 1; //打开本分区显示
         Prog_Status.Area_Status[Area_No].New_SCN_Flag = 0;
@@ -299,10 +300,14 @@ INT8U Check_Update_Show_Data_Bak()
       Set_File_Stay_Time(i, MIN_STAY_TIME);
 */
     //Step>=100表示整个移动过程完成，Stay_Time>=表示停留时间到，则需更新为下一屏数据
-    if(Prog_Status.Area_Status[i].Play_Flag EQ 0 &&\
+    /*
+      if(Prog_Status.Area_Status[i].Play_Flag EQ 0 &&\
        Prog_Status.Area_Status[i].Step EQ 0 &&\
        Prog_Status.Area_Status[i].Stay_Time EQ 0)
-    {   
+    */
+     if(Prog_Status.Area_Status[i].New_File_Flag ||\
+        Prog_Status.Area_Status[i].New_SCN_Flag)
+     {
       Update_Show_Data_Bak(Prog_Para.Prog_No, i);// == FILE_END)
     }
   }

@@ -296,6 +296,7 @@ void CclockProperty::getSettingsFromWidget(QString str)
       simpleTextEdit->getSettingsFromWidget(str);
       dateEdit->getSettingsFromWidget(str);
       weekEdit->getSettingsFromWidget(str);
+      showModeEdit->getSettingsFromWidget(str);
     }
 }
 
@@ -516,6 +517,7 @@ void CclockProperty::setSettingsToWidget(QString str)
     QString text;
 
     disconnect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
+
     settings.beginGroup(str);
     int setFlag = settings.value("setFlag").toBool();
     if(setFlag EQ 0)
@@ -574,6 +576,7 @@ void CclockProperty::setSettingsToWidget(QString str)
     simpleTextEdit->setSettingsToWidget(str);
     dateEdit->setSettingsToWidget(str);
     weekEdit->setSettingsToWidget(str);
+    showModeEdit->setSettingsToWidget(str);
 
     connect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
 }
@@ -732,4 +735,22 @@ void CclockProperty::defEdit()
 
         propertyEdited();
     }
+}
+
+
+void Get_Clock_Text_Point(INT16U Width, INT16U Height, S_Clock_Para *pPara, S_Point *pPoint)
+{
+    INT16S tmp;
+
+    tmp = (INT16S)(Width * pPara->Text_X / 100) - (INT16S)pPara->Text_Width/2;
+    if(tmp > 0)
+      pPoint->X = (INT16U)tmp;
+    else
+      pPoint->X = 0;
+
+    tmp = (INT16S)(Height * pPara->Text_Y / 100) - (INT16S)(pPara->Text_Height/2);
+    if(tmp > 0)
+      pPoint->Y = (INT16U)tmp;
+    else
+      pPoint->Y = 0;
 }

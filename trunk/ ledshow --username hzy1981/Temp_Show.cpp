@@ -92,7 +92,7 @@ void Show_Temp(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, INT16S 
 }
 
 //更新温度数据
-void Update_Temp_Data_Bak(INT8U Area_No)
+void Update_Temp_Data(S_Show_Data *pDst, INT8U Area_No)
 {
     S_Point P0;
     INT16U Width,Height;
@@ -127,10 +127,10 @@ void Update_Temp_Data_Bak(INT8U Area_No)
       P0.Y = 0;
 
     Temp = Get_Cur_Temp(); //--获取当前温度
-    Show_Temp(&Show_Data_Bak, Area_No, P0.X, P0.Y, Temp, \
+    Show_Temp(pDst, Area_No, P0.X, P0.Y, Temp, \
                Prog_Status.File_Para[Area_No].Temp_Para.Temp_Type, Prog_Status.File_Para[Area_No].Temp_Para.Temp_Font,Prog_Status.File_Para[Area_No].Temp_Para.Temp_Color);
 
       
-    Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
+    //Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
 }
 #endif

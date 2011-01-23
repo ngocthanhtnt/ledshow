@@ -302,7 +302,7 @@ INT16U Get_Time_Min_Height(INT8U Area_No)
 }
 
 //更新时间数据
-void Update_Time_Data_Bak(INT8U Area_No)
+void Update_Time_Data(S_Show_Data *pDst, INT8U Area_No)
 {
   INT16U X, Y;
   S_Point P0;
@@ -371,7 +371,7 @@ void Update_Time_Data_Bak(INT8U Area_No)
         else
           P0.Y = 0;
 
-        Show_Date(&Show_Data_Bak, Area_No, P0.X, P0.Y, &sTime, \
+        Show_Date(pDst, Area_No, P0.X, P0.Y, &sTime, \
                   Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font, Prog_Status.File_Para[Area_No].Time_Para.Date_Color);
 
         X +=  Prog_Status.File_Para[Area_No].Time_Para.LineSpace + Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
@@ -385,7 +385,7 @@ void Update_Time_Data_Bak(INT8U Area_No)
         else
           P0.Y = 0;
 
-        Show_Week(&Show_Data_Bak, Area_No, P0.X, P0.Y, &sTime, \
+        Show_Week(pDst, Area_No, P0.X, P0.Y, &sTime, \
                   Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font, Prog_Status.File_Para[Area_No].Time_Para.Week_Color);
 
         X += Prog_Status.File_Para[Area_No].Time_Para.LineSpace + Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
@@ -399,7 +399,7 @@ void Update_Time_Data_Bak(INT8U Area_No)
         else
           P0.Y = 0;
 
-        Show_Time(&Show_Data_Bak, Area_No, P0.X, P0.Y, &sTime, \
+        Show_Time(pDst, Area_No, P0.X, P0.Y, &sTime, \
                   Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font, Prog_Status.File_Para[Area_No].Time_Para.Time_Color);
 
         X += Prog_Status.File_Para[Area_No].Time_Para.LineSpace + Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
@@ -435,7 +435,7 @@ void Update_Time_Data_Bak(INT8U Area_No)
           else
             P0.X = 0;
 
-          Show_Date(&Show_Data_Bak, Area_No, P0.X, P0.Y, &sTime, \
+          Show_Date(pDst, Area_No, P0.X, P0.Y, &sTime, \
                     Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font, Prog_Status.File_Para[Area_No].Time_Para.Date_Color);
 
           Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Date_Font);//Get_DateStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Date_Font);
@@ -450,7 +450,7 @@ void Update_Time_Data_Bak(INT8U Area_No)
           else
             P0.X = 0;
 
-          Show_Week(&Show_Data_Bak, Area_No, P0.X, P0.Y, &sTime, \
+          Show_Week(pDst, Area_No, P0.X, P0.Y, &sTime, \
                     Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font, Prog_Status.File_Para[Area_No].Time_Para.Week_Color);
 
           Y += Get_Font_Height(Prog_Status.File_Para[Area_No].Time_Para.Week_Font);//Prog_Status.File_Para[Area_No].Time_Para.LineSpace + Get_WeekStr_Type_Max_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Week_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Week_Font);
@@ -465,13 +465,13 @@ void Update_Time_Data_Bak(INT8U Area_No)
           else
             P0.X = 0;
 
-          Show_Time(&Show_Data_Bak, Area_No, P0.X, P0.Y, &sTime, \
+          Show_Time(pDst, Area_No, P0.X, P0.Y, &sTime, \
                     Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font, Prog_Status.File_Para[Area_No].Time_Para.Time_Color);
 
           //X += Prog_Status.File_Para[Area_No].Time_Para.LineSpace + Get_TimeStr_Pix_Width(Prog_Status.File_Para[Area_No].Time_Para.Time_Type - 1, Prog_Status.File_Para[Area_No].Time_Para.Time_Font);
       }
   }
   
-  Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
+  //Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
 }
 #endif

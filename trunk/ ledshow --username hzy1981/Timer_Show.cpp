@@ -220,7 +220,7 @@ INT16U Get_Timer_Min_Height(INT8U Area_No)
 }
 
 //更新定时器数据
-void Update_Timer_Data_Bak(INT8U Area_No)
+void Update_Timer_Data(S_Show_Data *pDst, INT8U Area_No)
 {
     //INT16U X, Y;
     S_Point P0;
@@ -264,7 +264,7 @@ void Update_Timer_Data_Bak(INT8U Area_No)
       else
         P0.Y = 0;
 
-      Show_Timer(&Show_Data_Bak, Area_No, P0.X, P0.Y, &Cur_Time, &Dst_Time, \
+      Show_Timer(pDst, Area_No, P0.X, P0.Y, &Cur_Time, &Dst_Time, \
                  Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font,Prog_Status.File_Para[Area_No].Timer_Para.Timer_Color);
   }
   else
@@ -290,11 +290,11 @@ void Update_Timer_Data_Bak(INT8U Area_No)
       else
         P0.X = 0;
 
-      Show_Timer(&Show_Data_Bak, Area_No, P0.X, P0.Y, &Cur_Time, &Dst_Time, \
+      Show_Timer(pDst, Area_No, P0.X, P0.Y, &Cur_Time, &Dst_Time, \
                  Prog_Status.File_Para[Area_No].Timer_Para.Timer_Type, Prog_Status.File_Para[Area_No].Timer_Para.Timer_Font,Prog_Status.File_Para[Area_No].Timer_Para.Timer_Color);
 
   }
   
-  Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
+  //Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
 }
 #endif
