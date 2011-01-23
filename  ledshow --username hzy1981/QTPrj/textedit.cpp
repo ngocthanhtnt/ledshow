@@ -87,7 +87,7 @@ const QString rsrcPath = ":/images/win";
 extern MainWindow *w;
 extern QSettings settings;
 
-#define LINE_POSI_ADJ 3
+#define LINE_POSI_ADJ 2
 #define TEXT_LEFT_BORDER_WIDTH 4
 #define TEXT_RIGHT_BORDER_WIDTH 4
 

@@ -179,9 +179,9 @@ EXT void Copy_Filled_Round(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pCente
 //填充一个实心圆
 EXT void Fill_Round(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, INT16U Radius, INT8U Value);
 //复制一个多边形
-EXT void Copy_Filled_Polygon(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *pPoint1,S_Point *pPoint2, S_Point *pPoint3,S_Show_Data *pDst_Buf, S_Point *pPoint4);
+EXT void Copy_Filled_Polygon(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT8U Point_Num, S_Show_Data *pDst_Buf, S_Point *pPoint1);
 //填充一个多边形
-EXT void Fill_Polygon(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *pPoint1,S_Point *pPoint2, S_Point *pPoint3, INT8U Value);
+EXT void Fill_Polygon(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT8U Point_Num, INT8U Value);
 //获取某点对一个一个角度和长度的点
 EXT void Get_Angle_Point(S_Point *pPoint0, INT16S Angle, INT16U Len, S_Point *pPoint1);
 //填充表盘时钟整点
@@ -212,7 +212,7 @@ EXT void Move_Left_Right_Open(INT8U Area_No);
 EXT void Move_Up_Down_Open(INT8U Area_No);
 EXT void Move_Left_Right_Close(INT8U Area_No);
 EXT void Move_Up_Down_Close(INT8U Area_No);
-
-
+EXT void Move_Spin_CW(INT8U Area_No);
+EXT void Move_Spin_CCW(INT8U Area_No);
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
 #endif

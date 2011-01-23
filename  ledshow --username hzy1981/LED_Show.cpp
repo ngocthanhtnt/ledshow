@@ -581,7 +581,7 @@ S_Point * Get_Y_Mid_Point(S_Point *pPoint0, S_Point *pPoint1, S_Point *pPoint2)
 //pPoint2, 目标线的起始位置
 void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *pPoint1, \
   S_Show_Data *pDst_Buf, S_Point *pPoint2)  //复制一条线
-{
+{/*
   INT8U Data;
   S_Point *p0, *p1;
   INT32S i,j;
@@ -589,7 +589,7 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
   p0 = Get_Left_Point(pPoint0, pPoint1);
   p1 = Get_Right_Point(pPoint0, pPoint1);
   
-  if(p0 != p1) //不是在垂直的一条线上
+  if(p0->X != p1->X) //不是在垂直的一条线上
   {
       for(i = p0 -> X; i <= p1->X ; i ++)
       {
@@ -613,6 +613,60 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
         Set_Area_Point_Data(pDst_Buf, Area_No, pPoint2->X, j + pPoint2->Y - pPoint0->Y, Data);
       }
   }
+  */
+    S_Point *p0, *p1;
+    INT32S i,j;
+    INT16U Y,k;
+    INT8U Value;
+
+    p0 = Get_Left_Point(pPoint0, pPoint1);
+    p1 = Get_Right_Point(pPoint0, pPoint1);
+
+    Y = p0->Y;
+    if(p0->X != p1->X)
+    {
+        for(i = p0 -> X; i <= p1->X ; i ++)
+        {
+          j = GET_LINE_Y((INT32S)p0->X,(INT32S)p0->Y, (INT32S)p1->X, (INT32S)p1->Y, i);//(INT32S)pLeft->Y + (INT32S)(i - pLeft ->X)((INT32S)(pRgiht->Y) - (INT32S)(pLeft->Y))/(pRight -> X - pLeft->X) ;
+          if(j < 0)
+            ASSERT_FAILED();
+
+          if((INT16U)j > Y + 1)
+          {
+            for(k = Y + 1; k < j; k ++)
+            {
+                Value = Get_Area_Point_Data(pSrc_Buf, Area_No, (INT16U)i, (INT16U)k);
+                Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)k, Value);
+            }
+          }
+          else if(Y > (INT16U)j + 1)
+          {
+              for(k = (INT16U)j + 1; k < Y; k ++)
+              {
+                  Value = Get_Area_Point_Data(pSrc_Buf, Area_No, (INT16U)i, (INT16U)k);
+                  Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)k, Value);
+              }
+          }
+          else
+          {
+             Value = Get_Area_Point_Data(pSrc_Buf, Area_No, (INT16U)i, (INT16U)j);
+             Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)j, Value);
+          }
+          Y = j;
+       }
+    }
+    else
+    {
+        p0 = Get_Up_Point(pPoint0, pPoint1);
+        p1 = Get_Down_Point(pPoint0, pPoint1);
+
+        for(j = p0->Y; j <=p1->Y; j ++)
+        {
+          Value = Get_Area_Point_Data(pSrc_Buf, Area_No, (INT16U)p0->X, (INT16U)j);
+          Set_Area_Point_Data(pDst_Buf, Area_No, p0->X, j, Value);
+        }
+    }
+
 }
 
 //绘制一条线
@@ -637,6 +691,8 @@ void Draw_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
       {
         j = GET_LINE_Y((INT32S)p0->X,(INT32S)p0->Y, (INT32S)p1->X, (INT32S)p1->Y, i);//(INT32S)pLeft->Y + (INT32S)(i - pLeft ->X)((INT32S)(pRgiht->Y) - (INT32S)(pLeft->Y))/(pRight -> X - pLeft->X) ;
 
+        if(j < 0)
+          ASSERT_FAILED();
 //--------------
         if((INT16U)j > Y + 1)
         {
@@ -648,11 +704,9 @@ void Draw_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
             for(k = (INT16U)j + 1; k < Y; k ++)
                 Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)k, Value);
         }
-//----------------
-        if(j < 0)
-          ASSERT_FAILED();
+        else
+          Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)j, Value);
 
-        Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)j, Value);
         Y = j;
      }
   }
@@ -675,56 +729,99 @@ void Draw_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
 void Copy_Filled_Triangle(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *pPoint1,S_Point *pPoint2,\
   S_Show_Data *pDst_Buf, S_Point *pPoint3)  //复制一个三角形区域
 
-{/*
-  S_Point *pLeft;  //最左边的点
-  S_Point *pRight; //最右边的点
-  S_Point Temp;
-  S_Point Temp1;
-  
-  pLeft = Get_Left_Point(pPoint0, pPoint1);
-  pRight = Get_Right_Point(pPoint0, pPoint1);
-  
-  Temp.X = pLeft -> X;  //中间的X
-  
-  while(Temp.X != pRight -> X)
-  {
-    Temp.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp.X);
-    Temp1.X = (INT16U)((INT32S)Temp.X + (INT32S)(pPoint3 -> X) - (INT32S)(pPoint0 -> X));
-    Temp1.Y = (INT16U)((INT32S)Temp.Y + (INT32S)(pPoint3 -> Y) - (INT32S)(pPoint0 -> Y));
-    Copy_Line(pSrc_Buf, Area_No, &Temp, pPoint2, pDst_Buf, &Temp1);
-    Temp.X ++;
-  }
-  */
-  S_Point *pLeft;  //最左边的点
-  S_Point *pRight; //最右边的点
-  S_Point *pMid;  //中间的点
-  S_Point Temp0, Temp1, Temp2;
+{
+    S_Point *pLeft;  //最左边的点
+    S_Point *pRight; //最右边的点
+    S_Point *pMid;  //中间的点
+    S_Point Temp0, Temp1,Temp0_Bk,Temp1_Bk, Temp2;
 
-  pLeft = Get_Left_Point(pPoint0, pPoint1);
-  pLeft = Get_Left_Point(pLeft, pPoint2);
 
-  pRight = Get_Right_Point(pPoint0, pPoint1);
-  pRight = Get_Right_Point(pRight, pPoint2);
+    pLeft = Get_Left_Point(pPoint0, pPoint1);
+    pLeft = Get_Left_Point(pLeft, pPoint2);
 
-  pMid = Get_X_Mid_Point(pPoint0, pPoint1, pPoint2);
+    pRight = Get_Right_Point(pPoint0, pPoint1);
+    pRight = Get_Right_Point(pRight, pPoint2);
 
-  Temp0.X = pLeft -> X;  //中间的X
+    pMid = Get_X_Mid_Point(pPoint0, pPoint1, pPoint2);
 
-  while(Temp0.X <= pRight -> X)
-  {
-    Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
-    Temp1.X = Temp0.X;
-    if(Temp1.X < pMid->X)
-      Temp1.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)Temp1.X);
-    else
-      Temp1.Y = GET_LINE_Y((INT32S)pRight ->X, (INT32S)pRight->Y, (INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)Temp1.X);
-    //Draw_Line(pDst_Buf, Area_No, &Temp0, &Temp1, Value);
-    Temp2.X = Temp0.X + pPoint3->X - pPoint0->X;
-    Temp2.Y = Temp0.Y + pPoint3->Y - pPoint0->Y;
+    //Draw_Line(pDst_Buf, Area_No, pPoint0, pPoint1, Value);
+    //Draw_Line(pDst_Buf, Area_No, pPoint1, pPoint2, Value);
+    //Draw_Line(pDst_Buf, Area_No, pPoint2, pPoint0, Value);
 
-    Copy_Line(pSrc_Buf, 0, &Temp0, &Temp1, pDst_Buf, &Temp2);
-    Temp0.X ++;
-  }//while(Temp0.X < pRight -> X);
+    Temp0.X = pLeft -> X;  //中间的X
+    Temp0_Bk.X = pLeft->X;
+    Temp0_Bk.Y = pLeft->Y;
+
+    Temp1_Bk.X = pLeft->X;
+    Temp1_Bk.Y = pLeft->Y;
+
+    Temp2.X = pLeft->X + pPoint3->X - pPoint0->X;
+    Temp2.Y = pLeft->Y + pPoint3->Y - pPoint0->Y;
+    Copy_Line(pSrc_Buf, Area_No, pLeft, pRight, pDst_Buf, &Temp2);
+    Copy_Line(pSrc_Buf, Area_No, pLeft, pMid, pDst_Buf, &Temp2);
+    Temp2.X = pMid->X + pPoint3->X - pPoint0->X;
+    Temp2.Y = pMid->Y + pPoint3->Y - pPoint0->Y;
+    Copy_Line(pSrc_Buf, Area_No, pMid, pRight, pDst_Buf, &Temp2);
+
+    while(Temp0.X <= pRight -> X)
+    {
+      Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
+      Temp1.X = Temp0.X;
+      if(Temp1.X < pMid->X)
+        Temp1.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)Temp1.X);
+      else
+        Temp1.Y = GET_LINE_Y((INT32S)pRight ->X, (INT32S)pRight->Y, (INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)Temp1.X);
+
+
+      Temp2.X = Temp0.X + pPoint3->X - pPoint0->X;
+      Temp2.Y = Temp0.Y + pPoint3->Y - pPoint0->Y;
+      Copy_Line(pSrc_Buf, Area_No, &Temp0, &Temp1, pDst_Buf, &Temp2);
+/*
+      Copy_Line(pSrc_Buf, Area_No, &Temp0, &Temp0_Bk, pDst_Buf, &Temp2);
+      Temp2.X = Temp1.X + pPoint3->X - pPoint0->X;
+      Temp2.Y = Temp1.Y + pPoint3->Y - pPoint0->Y;
+      Copy_Line(pSrc_Buf, Area_No, &Temp1, &Temp1_Bk, pDst_Buf, &Temp2);
+
+      Temp0_Bk.X = Temp0.X;
+      Temp0_Bk.Y = Temp0.Y;
+
+      Temp1_Bk.X = Temp1.X;
+      Temp1_Bk.Y = Temp1.Y;
+ */
+      Temp0.X ++;
+    }//while(Temp0.X < pRight -> X);
+/*
+    S_Point *pLeft;  //最左边的点
+    S_Point *pRight; //最右边的点
+    S_Point *pMid;  //中间的点
+    S_Point Temp0, Temp1, Temp2;
+
+    pLeft = Get_Left_Point(pPoint0, pPoint1);
+    pLeft = Get_Left_Point(pLeft, pPoint2);
+
+    pRight = Get_Right_Point(pPoint0, pPoint1);
+    pRight = Get_Right_Point(pRight, pPoint2);
+
+    pMid = Get_X_Mid_Point(pPoint0, pPoint1, pPoint2);
+
+    Temp0.X = pLeft -> X;  //中间的X
+
+    Temp2.X = pLeft->X + pPoint3->X - pPoint0->X;
+    Temp2.Y = pLeft->Y + pPoint3->Y - pPoint0->Y;
+    Copy_Line(pSrc_Buf, Area_No, pLeft, pRight, pDst_Buf, &Temp2);
+
+    while(Temp0.X <= pRight -> X)
+    {
+      Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
+
+      //Draw_Line(pDst_Buf, Area_No, &Temp0, &Temp1, Value);
+      Temp2.X = Temp0.X + pPoint3->X - pPoint0->X;
+      Temp2.Y = Temp0.Y + pPoint3->Y - pPoint0->Y;
+
+      Copy_Line(pSrc_Buf, Area_No, &Temp0, pMid, pDst_Buf, &Temp2);
+      Temp0.X ++;
+    }//while(Temp0.X < pRight -> X);
+    */
 }
 
 //填充一个三角形
@@ -759,6 +856,10 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
   Temp1_Bk.X = pLeft->X;
   Temp1_Bk.Y = pLeft->Y;
 
+  Draw_Line(pDst_Buf, Area_No, pLeft, pRight, Value);
+  Draw_Line(pDst_Buf, Area_No, pLeft, pMid, Value);
+  Draw_Line(pDst_Buf, Area_No, pMid, pRight, Value);
+
   while(Temp0.X <= pRight -> X)
   {
     Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
@@ -767,7 +868,9 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
       Temp1.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)Temp1.X);
     else
       Temp1.Y = GET_LINE_Y((INT32S)pRight ->X, (INT32S)pRight->Y, (INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)Temp1.X);
+
     Draw_Line(pDst_Buf, Area_No, &Temp0, &Temp1, Value);
+/*
     Draw_Line(pDst_Buf, Area_No, &Temp0, &Temp0_Bk, Value);
     Draw_Line(pDst_Buf, Area_No, &Temp1, &Temp1_Bk, Value);
 
@@ -776,23 +879,66 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
 
     Temp1_Bk.X = Temp1.X;
     Temp1_Bk.Y = Temp1.Y;
+*/
     Temp0.X ++;
   }//while(Temp0.X < pRight -> X);
+
+/*
+  S_Point *pLeft;  //最左边的点
+  S_Point *pRight; //最右边的点
+  S_Point *pMid;  //中间的点
+  S_Point Temp0, Temp1, Temp2;
+
+  pLeft = Get_Left_Point(pPoint0, pPoint1);
+  pLeft = Get_Left_Point(pLeft, pPoint2);
+
+  pRight = Get_Right_Point(pPoint0, pPoint1);
+  pRight = Get_Right_Point(pRight, pPoint2);
+
+  pMid = Get_X_Mid_Point(pPoint0, pPoint1, pPoint2);
+
+  Temp0.X = pLeft -> X;  //中间的X
+
+  Draw_Line(pDst_Buf, Area_No, pLeft, pRight, Value);
+  //Draw_Line(pDst_Buf, Area_No, pLeft, pMid, Value);
+  //Draw_Line(pDst_Buf, Area_No, pMid, pRight, Value);
+  while(Temp0.X <= pRight -> X)
+  {
+    Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
+
+    //Draw_Line(pDst_Buf, Area_No, &Temp0, &Temp1, Value);
+    //Temp2.X = Temp0.X + pPoint3->X - pPoint0->X;
+    //Temp2.Y = Temp0.Y + pPoint3->Y - pPoint0->Y;
+
+    Draw_Line(pDst_Buf, Area_No, &Temp0, pMid, Value);
+    Temp0.X ++;
+  }//while(Temp0.X < pRight -> X);
+*/
 }
 
 //复制一个多边形
-void Copy_Filled_Polygon(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *pPoint1,S_Point *pPoint2, S_Point *pPoint3,\
-  S_Show_Data *pDst_Buf, S_Point *pPoint4)
+void Copy_Filled_Polygon(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT8U Point_Num,\
+  S_Show_Data *pDst_Buf, S_Point *pPoint1)
 {
-  Copy_Filled_Triangle(pSrc_Buf, Area_No, pPoint0, pPoint1, pPoint2, pDst_Buf, pPoint4);
-  Copy_Filled_Triangle(pSrc_Buf, Area_No, pPoint0, pPoint2, pPoint3, pDst_Buf, pPoint4);
+    INT8U i;
+
+    for(i = 1; i < Point_Num - 1; i ++)
+    {
+      Copy_Filled_Triangle(pSrc_Buf, Area_No, pPoint0, pPoint0 + i, pPoint0 + 1 + i, pDst_Buf, pPoint1);
+      //Copy_Filled_Triangle(pSrc_Buf, Area_No, pPoint0, pPoint2, pPoint3, pDst_Buf, pPoint4);
+    }
 }
 
 //填充一个多边形
-void Fill_Polygon(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *pPoint1,S_Point *pPoint2, S_Point *pPoint3, INT8U Value)
+void Fill_Polygon(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT8U Point_Num, INT8U Value)
 {
-  Fill_Triangle(pDst_Buf, Area_No, pPoint0, pPoint1, pPoint2, Value);
-  Fill_Triangle(pDst_Buf, Area_No, pPoint0, pPoint2, pPoint3, Value);
+    INT8U i;
+
+    for(i = 1; i < Point_Num - 1; i ++)
+    {
+      Fill_Triangle(pDst_Buf, Area_No, pPoint0, pPoint0 + i, pPoint0 + 1 + i, Value);
+      //Copy_Filled_Triangle(pSrc_Buf, Area_No, pPoint0, pPoint2, pPoint3, pDst_Buf, pPoint4);
+    }
 
 }
 
@@ -910,10 +1056,14 @@ void Copy_Filled_Round(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pCenter0, 
 //
 void Get_Angle_Point(S_Point *pPoint0, INT16S Angle, INT16U Len, S_Point *pPoint1)
 {
+    INT16S Temp;
+
     if(Len >=1)
     {
-      pPoint1 -> X = (INT16U)((INT16S)pPoint0->X + (INT16S)(Len-1) * cos(2*PI*Angle/360) + 0.5);
-      pPoint1 -> Y = (INT16U)((INT16S)pPoint0->Y - (INT16S)(Len-1) * sin(2*PI*Angle/360) - 0.5);
+      Temp = ((INT16S)pPoint0->X + (INT16S)(Len-1) * cos(2*PI*Angle/360) + 0.5);
+      pPoint1->X = Temp>0?(INT16U)Temp:0;
+      Temp = (INT16U)((INT16S)pPoint0->Y - (INT16S)(Len-1) * sin(2*PI*Angle/360) - 0.5);
+      pPoint1->Y = Temp>0?(INT16U)Temp:0;
     }
     else
     {
@@ -932,40 +1082,39 @@ void Get_Angle_Point(S_Point *pPoint0, INT16S Angle, INT16U Len, S_Point *pPoint
 void Fill_Clock_Point(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, \
                       INT16S Angle, INT16U Len, INT16U Radius, INT8U Style, INT8U Value)
 {
-   S_Point Point;
-   S_Point Point0, Point1, Point2, Point3;
+   S_Point Point[5];
    
-   Get_Angle_Point(pCenter, Angle, Len, &Point); //找到圆的中心点
+   Get_Angle_Point(pCenter, Angle, Len, &Point[0]); //找到圆的中心点
 
    if(Style EQ 0) //圆形
-     Fill_Round(pDst_Buf, Area_No, &Point, Radius, Value); //绘制一个圆
+     Fill_Round(pDst_Buf, Area_No, &Point[0], Radius, Value); //绘制一个圆
    else if(Style EQ 1) //方形
    {
-     Point.X = Point.X - Radius;
-     Point.Y = Point.Y - Radius;
-     Fill_Rect(pDst_Buf, Area_No, &Point, Radius*2, Radius*2, Value);
+     Point[0].X = Point[0].X - Radius;
+     Point[0].Y = Point[0].Y - Radius;
+     Fill_Rect(pDst_Buf, Area_No, &Point[0], Radius*2, Radius*2, Value);
    }
    else if(Style EQ 2) //线型
    {
     if(Radius > 0)
     {
-        Get_Angle_Point(pCenter, Angle, Len * 8 / 10, &Point); //前端的顶点
-        Get_Angle_Point(&Point, Angle - 90, Radius, &Point0);
-        Get_Angle_Point(&Point, Angle + 90, Radius, &Point1);
+        Get_Angle_Point(pCenter, Angle, Len * 8 / 10, &Point[0]); //前端的顶点
+        Get_Angle_Point(&Point[0], Angle - 90, Radius, &Point[1]);
+        Get_Angle_Point(&Point[0], Angle + 90, Radius, &Point[4]);
 
-        Get_Angle_Point(pCenter, Angle, Len + Radius/2, &Point); //前端的顶点
-        Get_Angle_Point(&Point, Angle - 90, Radius, &Point2);
-        Get_Angle_Point(&Point, Angle + 90, Radius, &Point3);
+        Get_Angle_Point(pCenter, Angle, Len + Radius/2, &Point[0]); //前端的顶点
+        Get_Angle_Point(&Point[0], Angle - 90, Radius, &Point[2]);
+        Get_Angle_Point(&Point[0], Angle + 90, Radius, &Point[3]);
 
-        Fill_Polygon(pDst_Buf, Area_No, &Point0, &Point2, &Point3, &Point1, Value);
+        Fill_Polygon(pDst_Buf, Area_No, &Point[1], 4, Value);
     }
    }
    else if(Style EQ 3) //数字
    {
-     Point.X = Point.X - Get_Font_Width(FONT0)/2;
-     Point.Y = Point.Y - Get_Font_Height(FONT0)/2;;
+     Point[0].X = Point[0].X - Get_Font_Width(FONT0)/2;
+     Point[0].Y = Point[0].Y - Get_Font_Height(FONT0)/2;;
 
-     LED_Print(FONT0, Value, pDst_Buf, Area_No, Point.X, Point.Y, "%d", ((360 - Angle)/(360/12) + 3) % 12);
+     LED_Print(FONT0, Value, pDst_Buf, Area_No, Point[0].X, Point[0].Y, "%d", ((360 - Angle)/(360/12) + 3) % 12);
        //Fill_Rect(pDst_Buf, Area_No, &Point, Radius*2, Radius*2, Value);
 
    }
@@ -1181,7 +1330,7 @@ void Move_Right_Continuous(INT8U Area_No)
   Move_Right(Area_No);
 }
 
-//上划
+//上覆盖
 void Move_Up_Cover(INT8U Area_No)
 {
   S_Point Temp;
@@ -1189,15 +1338,15 @@ void Move_Up_Cover(INT8U Area_No)
   //if(Prog_Status.Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
     Temp.X = 0;// + (100 - Prog_Status.Area_Status[Area_No].Step) * Prog_Para.Area[Area_No].Y_Len / 100;
-    Temp.Y = (100 - Prog_Status.Area_Status[Area_No].Step) * Prog_Para.Area[Area_No].Y_Len / 100;
+    Temp.Y = Prog_Para.Area[Area_No].Y_Len - Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, MOVE_STEP * Prog_Para.Area[Area_No].Y_Len / 100,\
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100,\
       &Show_Data, &Temp);
     //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
   }  
 }
 
-//下划
+//下覆盖
 void Move_Down_Cover(INT8U Area_No)
 {
   S_Point Temp;
@@ -1205,31 +1354,31 @@ void Move_Down_Cover(INT8U Area_No)
   //if(Prog_Status.Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
     Temp.X = 0;// + Step +
-    Temp.Y = Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;
+    Temp.Y = 0;//;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, MOVE_STEP * Prog_Para.Area[Area_No].Y_Len / 100,\
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100,\
       &Show_Data, &Temp);
     //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
   }  
 }
 
-//左划
+//左覆盖
 void Move_Left_Cover(INT8U Area_No)
 {
   S_Point Temp;
   
   //if(Prog_Status.Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
-    Temp.X = (100 - Prog_Status.Area_Status[Area_No].Step) * Prog_Para.Area[Area_No].X_Len / 100;// + Step +
+    Temp.X = Prog_Para.Area[Area_No].X_Len - Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / 100;// + Step +
     Temp.Y = 0;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, MOVE_STEP * Prog_Para.Area[Area_No].X_Len / 100, Prog_Para.Area[Area_No].Y_Len,\
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / 100, Prog_Para.Area[Area_No].Y_Len,\
       &Show_Data, &Temp);
     //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
   }  
 }
 
-//右划
+//右覆盖
 void Move_Right_Cover(INT8U Area_No)
 {
   S_Point Temp;
@@ -1237,98 +1386,234 @@ void Move_Right_Cover(INT8U Area_No)
   
   //if(Prog_Status.Area_Status[Area_No].Step < 100) //是否已经移动完成100%
   {
-    Temp.X = Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;// + Step +
+    Temp.X = 0;//Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;// + Step +
     Temp.Y = 0;
     
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp,  MOVE_STEP * Prog_Para.Area[Area_No].X_Len / 100,Prog_Para.Area[Area_No].Y_Len,\
-      &Show_Data, &Temp1);
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / 100, Prog_Para.Area[Area_No].Y_Len,\
+      &Show_Data, &Temp);
     //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
   }  
 }
 
-//左上划
+//左上覆盖
 void Move_Left_Up_Cover(INT8U Area_No)
 {
-  S_Point Left,Up,Right;
-  
-  //if(Prog_Status.Area_Status[Area_No].Step < 100)
+  S_Point Point[6];
+  INT8U i = 0;
+  INT16U Area_Width, Area_Height,Step_Len;
+
+  Area_Width = Get_Area_Width(Area_No);
+  Area_Height = Get_Area_Height(Area_No);
+  Step_Len = (Area_Width + Area_Height) * Prog_Status.Area_Status[Area_No].Step / 100;
+
+  //Step_Len = Area_Width + Area_Height;
+
+  if(Step_Len > Area_Height)
   {
-    Left.X = (100 - Prog_Status.Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].X_Len / 100;
-    Left.Y = Prog_Para.Area[Area_No].Y_Len;
-    
-    Up.X = Prog_Para.Area[Area_No].X_Len;
-    Up.Y = (100 - Prog_Status.Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].Y_Len / 100;
-    
-    Right.X = Prog_Para.Area[Area_No].X_Len;
-    Right.Y = Prog_Para.Area[Area_No].Y_Len;
-    
-    Copy_Filled_Triangle(&Show_Data_Bak, Area_No, &Left, &Up, &Right, &Show_Data, &Left);
-    //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
+    Point[i].X = Area_Width + Area_Height - Step_Len;
+    Point[i].Y = 0;
+    i ++;
+
+    Point[i].X = Area_Width - 1;
+    Point[i].Y = 0;
+    i ++;
   }
+  else
+  {
+    Point[i].X = Area_Width - 1;
+    Point[i].Y = Area_Height - Step_Len;
+    i ++;
+  }
+
+  Point[i].X = Area_Width - 1;
+  Point[i].Y = Area_Height - 1;
+  i++;
+
+  if(Step_Len < Area_Width)
+  {
+    Point[i].X = Area_Width - 1 - Step_Len;
+    Point[i].Y = Area_Height - 1;
+    i ++;
+  }
+  else
+  {
+    Point[i].X = 0;//Area_Width - Step_Len;
+    Point[i].Y = Area_Height - 1;
+    i ++;
+
+    Point[i].X = 0;//Area_Width - Step_Len;
+    Point[i].Y = Area_Height + Area_Width - Step_Len;
+    i ++;
+  }
+
+  //i = 3;
+  Copy_Filled_Polygon(&Show_Data_Bak, Area_No, &Point[0], i, &Show_Data, &Point[0]);
+
 }
 
-//右上划
+//右上覆盖
 void Move_Right_Up_Cover(INT8U Area_No)
 {
-  S_Point Left,Up,Right;
-  
-  //if(Prog_Status.Area_Status[Area_No].Step < 100)
-  {
-    Left.X = 0;//Prog_Para.Area[Area_No].X;
-    Left.Y = Prog_Para.Area[Area_No].Y_Len;
-    
-    Right.X = Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / 100;
-    Right.Y = Prog_Para.Area[Area_No].Y_Len;
-    
-    Up.X = 0;//Prog_Para.Area[Area_No].X;
-    Up.Y = (100 - Prog_Status.Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].Y_Len / 100;
-    
-    Copy_Filled_Triangle(&Show_Data_Bak, Area_No, &Left, &Up, &Right, &Show_Data, &Left);
-    //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
-  }
+    S_Point Point[6];
+    INT8U i = 0;
+    INT16U Area_Width, Area_Height,Step_Len;
+
+    Area_Width = Get_Area_Width(Area_No);
+    Area_Height = Get_Area_Height(Area_No);
+    Step_Len = (Area_Width + Area_Height) * Prog_Status.Area_Status[Area_No].Step / 100;
+
+    //Step_Len = Area_Width + Area_Height;
+    Point[i].X = 0;
+    Point[i].Y = Area_Height - 1;
+    i ++;
+
+    if(Step_Len < Area_Height)
+    {
+      Point[i].X = 0;
+      Point[i].Y = Area_Height - 1 - Step_Len;
+      i++;
+    }
+    else//if(Step_Len >= Area_Height)
+    {
+      Point[i].X = 0;
+      Point[i].Y = 0;
+      i++;
+
+      Point[i].X = Step_Len - Area_Height;
+      Point[i].Y = 0;
+      i ++;
+    }
+
+    if(Step_Len >= Area_Width)
+    {
+        Point[i].X = Area_Width - 1;
+        Point[i].Y = Area_Width + Area_Height - Step_Len;
+        i ++;
+
+        Point[i].X = Area_Width - 1;
+        Point[i].Y = Area_Height - 1;
+        i ++;
+    }
+    else
+    {
+        Point[i].X = Step_Len;
+        Point[i].Y = Area_Height - 1;
+        i ++;
+    }
+
+    //i = 3;
+    Copy_Filled_Polygon(&Show_Data_Bak, Area_No, &Point[0], i, &Show_Data, &Point[0]);
+
   
 }
 
-//左下划
+//左下覆盖
 void Move_Left_Down_Cover(INT8U Area_No)
 {
-  S_Point Left,Up,Right;
-  
-  //if(Prog_Status.Area_Status[Area_No].Step < 100)
-  {
-    Left.X = (100 - Prog_Status.Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].X_Len / 100;
-    Left.Y = 0;
-    
-    Right.X = Prog_Para.Area[Area_No].X_Len;
-    Right.Y = Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;
-    
-    Up.X = Prog_Para.Area[Area_No].X_Len;
-    Up.Y = 0;
-    
-    Copy_Filled_Triangle(&Show_Data_Bak, Area_No, &Left, &Up, &Right, &Show_Data, &Left);
-    //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
-  }  
+    S_Point Point[6];
+    INT8U i = 0;
+    INT16U Area_Width, Area_Height,Step_Len;
+
+    Area_Width = Get_Area_Width(Area_No);
+    Area_Height = Get_Area_Height(Area_No);
+    Step_Len = (Area_Width + Area_Height) * Prog_Status.Area_Status[Area_No].Step / 100;
+
+    //Step_Len = (Area_Width + Area_Height) * 30 / 100;
+    Point[i].X = Area_Width - 1;
+    Point[i].Y = 0;
+    i ++;
+
+    if(Step_Len < Area_Height)
+    {
+      Point[i].X = Area_Width - 1;
+      Point[i].Y = Step_Len;
+      i++;
+    }
+    else//if(Step_Len >= Area_Height)
+    {
+      Point[i].X = Area_Width - 1;
+      Point[i].Y = Area_Height - 1;
+      i++;
+
+      Point[i].X = Area_Width + Area_Height - Step_Len;
+      Point[i].Y = Area_Height - 1;
+      i ++;
+    }
+
+    if(Step_Len >= Area_Width)
+    {
+        Point[i].X = 0;//Area_Width - 1;
+        Point[i].Y = Step_Len - Area_Width;
+        i ++;
+
+        Point[i].X = 0;//Area_Width - 1;
+        Point[i].Y = 0;//Area_Height - 1;
+        i ++;
+    }
+    else
+    {
+        Point[i].X = Area_Width - 1- Step_Len;
+        Point[i].Y = 0;//Area_Height - 1;
+        i ++;
+    }
+
+    //i = 3;
+    Copy_Filled_Polygon(&Show_Data_Bak, Area_No, &Point[0], i, &Show_Data, &Point[0]);
+
 }
 
-//右下划
+//右下覆盖
 void Move_Right_Down_Cover(INT8U Area_No)
 {
-  S_Point Left,Up,Right;
-  
-  //if(Prog_Status.Area_Status[Area_No].Step < 100)
-  {
-    Left.X = 0;// + (100 - Prog_Status.Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].X_Len / 100;
-    Left.Y = Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;
-    
-    Right.X = Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;
-    Right.Y = 0;// + Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / 100;
-    
-    Up.X = 0;// + Prog_Para.Area[Area_No].X_Len;
-    Up.Y = 0;
-    
-    Copy_Filled_Triangle(&Show_Data_Bak, Area_No, &Left, &Up, &Right, &Show_Data, &Left);
-    //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
-  }  
+    S_Point Point[6];
+    INT8U i = 0;
+    INT16U Area_Width, Area_Height,Step_Len;
+
+    Area_Width = Get_Area_Width(Area_No);
+    Area_Height = Get_Area_Height(Area_No);
+    Step_Len = (Area_Width + Area_Height) * Prog_Status.Area_Status[Area_No].Step / 100;
+
+    //Step_Len = (Area_Width + Area_Height) * 30 / 100;
+    Point[i].X = 0;
+    Point[i].Y = 0;
+    i ++;
+
+    if(Step_Len < Area_Width)
+    {
+      Point[i].X = Step_Len;
+      Point[i].Y = 0;
+      i++;
+    }
+    else//if(Step_Len >= Area_Height)
+    {
+      Point[i].X = Area_Width - 1;
+      Point[i].Y = 0;
+      i ++;
+
+      Point[i].X = Area_Width - 1;
+      Point[i].Y = Step_Len - Area_Width;
+      i++;
+    }
+
+    if(Step_Len >= Area_Height)
+    {
+        Point[i].X = Step_Len - Area_Height;//Area_Width - 1;
+        Point[i].Y = Area_Height - 1;
+        i ++;
+
+        Point[i].X = 0;//Area_Width - 1;
+        Point[i].Y = Area_Height - 1;//Area_Height - 1;
+        i ++;
+    }
+    else
+    {
+        Point[i].X = 0;
+        Point[i].Y = Step_Len;//Area_Height - 1;
+        i ++;
+    }
+
+    //i = 3;
+    Copy_Filled_Polygon(&Show_Data_Bak, Area_No, &Point[0], i, &Show_Data, &Point[0]);
 }
 
 //上下拉帘
@@ -1396,6 +1681,185 @@ void Move_Left_Right_Close(INT8U Area_No)
     //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
   }  
 }
+
+//判断三个点是否在一条直线上，同时pPoint1和pPoint2在pPoint0的同一侧
+INT8U Check_Point_One_Line(S_Point *pPoint0, S_Point *pPoint1, S_Point *pPoint2)
+{
+    if(pPoint0->X != pPoint1->X && pPoint0->X != pPoint2->X)
+    {
+      if(((float)pPoint0->Y - (float)pPoint1->Y)/((float)pPoint0->X - (float)pPoint1->X) <=\
+         ((float)pPoint0->Y - (float)pPoint2->Y)/((float)pPoint0->X - (float)pPoint2->X)) //斜率相等
+        {
+          if(((INT16S)pPoint0->X - (INT16S)pPoint1->X)*((INT16S)pPoint0->X - (INT16S)pPoint2->X) > 0)
+              return 1;
+          else
+              return 0;
+        }
+        else
+            return 0;
+    }
+    else
+    {
+        if(pPoint0->X EQ pPoint1->X && pPoint0->X EQ pPoint2->X)
+        {
+            if(((INT16S)pPoint0->Y - (INT16S)pPoint1->Y)*((INT16S)pPoint0->Y - (INT16S)pPoint2->Y) > 0)
+               return 1;
+            else
+               return 0;
+        }
+        else
+            return 0;
+    }
+}
+
+//顺时针旋转
+void Move_Spin_CW(INT8U Area_No)
+{
+   INT16U X,Y;
+   INT16U Arg;
+   INT16U Area_Width, Area_Height;
+   S_Point Point[8],CPoint;
+   INT8U i = 0;
+   INT16U Len;
+
+   Area_Width = Get_Area_Width(Area_No);
+   Area_Height = Get_Area_Height(Area_No);
+
+   Len = (Area_Width + Area_Height)*2 * Prog_Status.Area_Status[Area_No].Step/100;
+
+   Point[i].X = Area_Width / 2;
+   Point[i].Y = Area_Height / 2;
+   i++;
+
+   Point[i].X = Area_Width - 1;
+   Point[i].Y = Area_Height / 2;
+   i++;
+
+   Point[i].X = Area_Width - 1;
+   Point[i].Y = Area_Height / 2 + Len;
+
+   //Get_Angle_Point(&Point[0], 360 - Arg, (Area_Width>Area_Height?Area_Height:Area_Width)/2, &CPoint);
+
+   if(Len > Area_Height / 2)
+   {
+     Point[i].X = Area_Width -1;
+     Point[i].Y = Area_Height - 1;
+     i++;
+
+     Point[i].X = Area_Width + Area_Height / 2 -Len;
+     Point[i].Y = Area_Height - 1;
+   }
+
+   if(Len > Area_Height / 2 + Area_Width)
+   {
+     Point[i].X = 0;
+     Point[i].Y = Area_Height - 1;
+     i++;
+
+     Point[i].X = 0;
+     Point[i].Y = Area_Height / 2 + Area_Width + Area_Height - Len;
+   }
+
+   if(Len > Area_Height / 2 + Area_Width + Area_Height)
+   {
+     Point[i].X = 0;
+     Point[i].Y = 0;
+     i++;
+
+     Point[i].X = Len - (Area_Height / 2 + Area_Width + Area_Height);
+     Point[i].Y = 0;
+   }
+
+   if(Len > Area_Height / 2 + Area_Width + Area_Height + Area_Width)
+   {
+     Point[i].X = Area_Width - 1;
+     Point[i].Y = 0;
+     i ++;
+
+     Point[i].X = Area_Width - 1;
+     Point[i].Y = Len - (Area_Height / 2 + Area_Width + Area_Height + Area_Width);
+   }
+
+   i++;
+   Copy_Filled_Polygon(&Show_Data_Bak, Area_No, &Point[0], i, &Show_Data, &Point[0]);
+
+   return;
+}
+
+//逆时针旋转
+void Move_Spin_CCW(INT8U Area_No)
+{
+    INT16U X,Y;
+    INT16U Arg;
+    INT16U Area_Width, Area_Height;
+    S_Point Point[8],CPoint;
+    INT8U i = 0;
+    INT16U Len;
+
+    Area_Width = Get_Area_Width(Area_No);
+    Area_Height = Get_Area_Height(Area_No);
+
+    Len = (Area_Width + Area_Height)*2 * Prog_Status.Area_Status[Area_No].Step/100;
+
+    Point[i].X = Area_Width / 2;
+    Point[i].Y = Area_Height / 2;
+    i++;
+
+    Point[i].X = Area_Width - 1;
+    Point[i].Y = Area_Height / 2;
+    i++;
+
+    Point[i].X = Area_Width - 1;
+    Point[i].Y = Area_Height / 2 - Len;
+
+    //Get_Angle_Point(&Point[0], 360 - Arg, (Area_Width>Area_Height?Area_Height:Area_Width)/2, &CPoint);
+
+    if(Len > Area_Height / 2)
+    {
+      Point[i].X = Area_Width -1;
+      Point[i].Y = 0;
+      i++;
+
+      Point[i].X = Area_Width + Area_Height / 2 -Len;
+      Point[i].Y = 0;
+    }
+
+    if(Len > Area_Height / 2 + Area_Width)
+    {
+      Point[i].X = 0;
+      Point[i].Y = 0;
+      i++;
+
+      Point[i].X = 0;
+      Point[i].Y = Len - (Area_Height / 2 + Area_Width);
+    }
+
+    if(Len > Area_Height / 2 + Area_Width + Area_Height)
+    {
+      Point[i].X = 0;
+      Point[i].Y = Area_Height - 1;
+      i++;
+
+      Point[i].X = Len - (Area_Height / 2 + Area_Width + Area_Height);
+      Point[i].Y = Area_Height - 1;
+    }
+
+    if(Len > Area_Height / 2 + Area_Width + Area_Height + Area_Width)
+    {
+      Point[i].X = Area_Width - 1;
+      Point[i].Y = Area_Height - 1;
+      i ++;
+
+      Point[i].X = Area_Width - 1;
+      Point[i].Y = Area_Height -(Len - (Area_Height / 2 + Area_Width + Area_Height + Area_Width));
+    }
+
+    i++;
+    Copy_Filled_Polygon(&Show_Data_Bak, Area_No, &Point[0], i, &Show_Data, &Point[0]);
+
+    return;
+}
+
 /*
     dateCombo->addItem(tr("2000年12月30日"));
     dateCombo->addItem(tr("00年12月30日"));
