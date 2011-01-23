@@ -182,9 +182,35 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   INT16U Len,SNum;
   //INT8U File_No;
   //INT8U Counts;
-  
-  if(Prog_Status.Area_Status[Area_No].SNum EQ 0) //第一屏显示--表示更新到一个新的文件了，必须重读文件参数
+  //所有分屏都显示了则切换到下个显示文件
+  if(Prog_Status.New_Prog_Flag) //在节目更新状态中，不更新文件参数
+      return 0;
+
+  if(Prog_Status.Play_Flag)
   {
+      if(Prog_Status.Area_Status[Area_No].SNum >= Prog_Status.File_Para[Area_No].Pic_Para.SNum)
+      {
+          Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
+          Prog_Status.Area_Status[Area_No].File_No ++;
+      }
+  }
+
+  //检查是否需要更新到下一文件
+  if(Prog_Status.Area_Status[Area_No].New_File_Flag)//SNum > Prog_Status.File_Para[Area_No].Pic_Para.SNum)
+  {
+
+    debug("prog %d area %d file %d play end!", Prog_Status.Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
+
+    Prog_Status.Area_Status[Area_No].SNum = 0;
+    //文件参数读取失败则切换到下个文件
+
+    if(Prog_Status.Area_Status[Area_No].File_No >= Prog_Para.Area_File_Num[Area_No] ||\
+       Prog_Status.Area_Status[Area_No].File_No >= MAX_FILE_NUM) //所有文件全部都播放了一遍
+    {
+      Prog_Status.Area_Status[Area_No].File_No = 0;
+      Prog_Status.Area_Status[Area_No].Counts++; //所有文件都播放了一次，则将播放次数+1
+    }
+
     debug("\r\nprog %d area %d play new file: %d", Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
     //先将文件参数读出 
     Prog_Status.Area_Status[Area_No].Play_Flag = 0; //关闭本分区显示
@@ -194,42 +220,62 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
     if(Len EQ 0)
     {
       ASSERT_FAILED();
-      
-      //文件参数读取失败则切换到下个文件
+      Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
       Prog_Status.Area_Status[Area_No].File_No ++;
-      if(Prog_Status.Area_Status[Area_No].File_No >= Prog_Para.Area_File_Num[Area_No] ||\
-         Prog_Status.Area_Status[Area_No].File_No >= MAX_FILE_NUM) //所有文件全部都播放了一遍
-      {
-        Prog_Status.Area_Status[Area_No].File_No = 0;
-        Prog_Status.Area_Status[Area_No].Counts++; //所有文件都播放了一次，则将播放次数+1
-      } 
-      return 0;
+
+     // return 0;
     }
-
+    else
+    {
+      Prog_Status.Area_Status[Area_No].New_File_Flag = 0;
+      Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
+    }
   }
 
-  //读出显示数据
-  Prog_Status.Area_Status[Area_No].Play_Flag = 0; //--读取显示数据过程中将播放标志置0，从而中断程序中不播放
-  
-  debug("\r\nread prog %d area %d, file %d %dth screen show data", \
-        Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,Prog_Status.Area_Status[Area_No].SNum);
-  
-  Len = Read_Show_Data(Area_No, \
-                 Prog_Status.Area_Status[Area_No].File_No, \
-                 Prog_Status.File_Para[Area_No].Pic_Para.Flag,\
-                 Prog_Status.Area_Status[Area_No].SNum,\
-                 &Show_Data_Bak);
-  
-  if(Len > 0)
-    Prog_Status.Area_Status[Area_No].Play_Flag = 1; //打开本分区显示
-  else
-  {
-    //本屏显示数据没有读到则读下屏数据
-    Prog_Status.Area_Status[Area_No].SNum ++; //显示屏数增加
-    ASSERT_FAILED();
+  //更新文件参数过程中不更新分屏数据
+  if(Prog_Status.Area_Status[Area_No].New_File_Flag)// EQ 0 &&
     return 0;
+
+  //更新数据到新的一屏
+  if(Prog_Status.Area_Status[Area_No].New_SCN_Flag)
+  {
+      //已经到了最大的一幕则切换到下个文件
+      if(Prog_Status.Area_Status[Area_No].SNum >= Prog_Status.File_Para[Area_No].Pic_Para.SNum)
+      {
+          Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
+          Prog_Status.Area_Status[Area_No].File_No ++;
+          return 0;
+      }
+
+      //读出显示数据
+      Prog_Status.Area_Status[Area_No].Play_Flag = 0; //--读取显示数据过程中将播放标志置0，从而中断程序中不播放
+
+      debug("\r\nread prog %d area %d, file %d %dth screen show data", \
+            Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,Prog_Status.Area_Status[Area_No].SNum);
+
+      Len = Read_Show_Data(Area_No, \
+                     Prog_Status.Area_Status[Area_No].File_No, \
+                     Prog_Status.File_Para[Area_No].Pic_Para.Flag,\
+                     Prog_Status.Area_Status[Area_No].SNum,\
+                     &Show_Data_Bak);
+
+      if(Len > 0)
+      {
+        Prog_Status.Area_Status[Area_No].Play_Flag = 1; //打开本分区显示
+        Prog_Status.Area_Status[Area_No].New_SCN_Flag = 0;
+      }
+      else
+      {
+        //本屏显示数据没有读到则读下屏数据
+
+        ASSERT_FAILED();
+        Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
+        Prog_Status.Area_Status[Area_No].SNum ++; //显示屏数增加
+      }
   }
-  
+
+
+//-----------------
   return AREA_OK;
 }
 
@@ -241,8 +287,8 @@ INT8U Check_Update_Show_Data_Bak()
   INT32U Stay_Time;
   S_Int8U Sec = {CHK_BYTE, 0xFF, CHK_BYTE};
   
-  if(Prog_Status.Play_Flag EQ 0)
-      return 0;
+  //if(Prog_Status.Play_Flag EQ 0)
+      //return 0;
 
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
@@ -427,21 +473,20 @@ void Check_Update_Program_Para()
       Prog_Status.Play_Flag = 0;
       Prog_No = Prog_Status.Prog_No;
       Clr_Prog_Status(); //清除节目状态--进入下个节目
-      Prog_Status.Prog_No = Prog_No + 1;
 
-      //节目循环播放
-      if(Prog_Status.Prog_No >= Screen_Para.Prog_Num ||\
-         Prog_Status.Prog_No >= MAX_PROG_NUM)
-        Prog_Status.Prog_No = 0;
+      Prog_Status.Prog_No = Prog_No ++;
+      Prog_Status.New_Prog_Flag = NEW_FLAG;
     }
   }
 
-  if(Prog_Status.Play_Flag EQ 0) //还未进入节目播放状态
-  {
-    while(1) //寻找下一个可播放的节目
+  //if(Prog_Status.Play_Flag EQ 0) //还未进入节目播放状态
+  //{
+    if(Prog_Status.New_Prog_Flag)//while(1) //寻找下一个可播放的节目
     {
-      Count ++;
 
+      //Prog_Status.Play_Flag = 0;
+
+      //
       if(Prog_Status.Prog_No >= Screen_Para.Prog_Num ||\
          Prog_Status.Prog_No >= MAX_PROG_NUM)
         Prog_Status.Prog_No = 0;
@@ -456,12 +501,21 @@ void Check_Update_Program_Para()
         {
           Clr_All_Area_Status();
           Clr_Show_Data();
-          Prog_Status.Play_Flag = 1; //进入播放状态！
-          break;
+
+          Prog_Status.New_Prog_Flag = 0;
+
+          for(i = 0; i < MAX_AREA_NUM; i ++)
+          {
+            Prog_Status.Area_Status[i].File_No = 0;
+            Prog_Status.Area_Status[i].New_File_Flag = NEW_FLAG;
+          }
         }
       }
       else
       {
+        Prog_Status.New_Prog_Flag = NEW_FLAG;
+        Prog_Status.Prog_No ++;
+
         ASSERT_FAILED();
         if(Len EQ 0)
           debug("read prog para failed");
@@ -469,12 +523,12 @@ void Check_Update_Program_Para()
           debug("prog %d now not play time", Prog_Status.Prog_No);
       }
 
-      Prog_Status.Prog_No ++; //在没有读到节目参数的情况下，读取下一个节目的参数
+      //Prog_Status.Prog_No ++; //在没有读到节目参数的情况下，读取下一个节目的参数
       //最多查询次数不超过Screen_Para.Prog_Num和MAX_PROG_NUM次
-      if(Count > Screen_Para.Prog_Num || Count > MAX_PROG_NUM)
-        break;
+      //if(Count > Screen_Para.Prog_Num || Count > MAX_PROG_NUM)
+        //break;
     }
-  }
+  //}
 }
 
 //检查内存中的数据或者参数是否正确
@@ -558,7 +612,9 @@ void Ram_Init()
   SET_HT(Show_Data);
   SET_HT(Show_Data_Bak);
   SET_HT(Cur_Block_Index);
-  SET_HT(Cur_Time);  
+  SET_HT(Cur_Time);
+
+  Prog_Status.New_Prog_Flag = NEW_FLAG;
 }
 
 //显示相关处理

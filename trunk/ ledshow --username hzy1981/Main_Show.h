@@ -7,6 +7,8 @@
 #else
 #define EXT extern
 #endif
+
+#define NEW_FLAG 0x0A
 /*
   if((Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x8000) > 0)
     return (INT32U)(Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x7FFF);

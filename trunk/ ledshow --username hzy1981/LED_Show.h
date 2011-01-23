@@ -80,7 +80,10 @@ typedef struct
   INT8U Head;
 
   INT16U SNum;      //当前已经读到第几屏数据了?
-  
+
+  INT8U New_File_Flag:4;
+  INT8U New_SCN_Flag:4;
+
   INT8U File_No;    //当前文件号
   INT8U Step;        //当前移动的阶梯
   INT32U Step_Timer;  //已经走过Timer，单位ms
@@ -111,8 +114,9 @@ typedef struct
   INT32U Time; //已经播放时长
   INT16U Counts; //已经播放次数
 
-  INT8U Play_Flag; //是否播放标志--主要用于与中断显示同步
-  
+  INT8U Play_Flag:4; //是否播放标志--主要用于与中断显示同步
+  INT8U New_Prog_Flag:4;
+
   S_Border_Status Border_Status;
   U_File_Para File_Para[MAX_AREA_NUM]; //每个分区的当前文件参数
   S_Area_Status Area_Status[MAX_AREA_NUM]; //每个分区的状态 
