@@ -37,8 +37,9 @@ void Update_Pic_Data(INT8U Area_No)
   INT32U Stay_Time;
   INT32U Out_Time;
   
-  if(Prog_Status.Play_Flag EQ 0 ||\
-     Prog_Status.Area_Status[Area_No].Play_Flag EQ 0) //该节目或该分区还没有进入播放状态?
+  if(Prog_Status.New_Prog_Flag ||\
+     Prog_Status.Area_Status[Area_No].New_File_Flag ||\
+     Prog_Status.Area_Status[Area_No].New_SCN_Flag) //该节目或该分区还没有进入播放状态?
     return;
   
   Stay_Time = Get_File_Stay_Time(Area_No);
@@ -97,28 +98,11 @@ void Update_Pic_Data(INT8U Area_No)
      {
         //SNum表示当前文件总的屏幕数，只有图文的屏幕数会大于1！！
         //if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_PIC)
-          SNum = Prog_Status.File_Para[Area_No].Pic_Para.SNum;
+          //SNum = Prog_Status.File_Para[Area_No].Pic_Para.SNum;
         //else
           //SNum = 1;
 
         Prog_Status.Area_Status[Area_No].SNum ++;
-        //所有分屏都显示了则切换到下个显示文件
-        if(Prog_Status.Area_Status[Area_No].SNum >= SNum)
-        {
-          debug("prog %d area %d file %d play end!", Prog_Status.Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
-
-          //Prog_Status.Area_Status[Area_No].Play_Flag = 0; //关闭本分区显示
-          Prog_Status.Area_Status[Area_No].SNum = 0;
-
-          //文件号
-          Prog_Status.Area_Status[Area_No].File_No ++;
-          if(Prog_Status.Area_Status[Area_No].File_No >= Prog_Para.Area_File_Num[Area_No] ||\
-             Prog_Status.Area_Status[Area_No].File_No >= MAX_FILE_NUM) //所有文件全部都播放了一遍
-          {
-            Prog_Status.Area_Status[Area_No].File_No = 0;
-            Prog_Status.Area_Status[Area_No].Counts++; //所有文件都播放了一次，则将播放次数+1
-          }
-        }
 
         Prog_Status.Area_Status[Area_No].Step = 0;
         Prog_Status.Area_Status[Area_No].Step_Timer = 0;
