@@ -25,6 +25,8 @@ const S_Mode_Func Mode_Func[]=
   {&Move_Up_Down_Open},//13
   {&Move_Left_Right_Close},//14
   {&Move_Up_Down_Close},//15
+  {&Move_Spin_CW},
+  {&Move_Spin_CCW}
 
 };
 
@@ -47,6 +49,13 @@ void Update_Pic_Data(INT8U Area_No)
   {
     if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)//在进入阶段
     {
+        //第一次
+      if(Prog_Status.Area_Status[Area_No].Step_Timer EQ 0 &&\
+         Prog_Status.Area_Status[Area_No].Step EQ 0)
+        {
+         Update_XXX_Data_Bak(Area_No);
+      }
+
       if(Prog_Status.Area_Status[Area_No].Step_Timer < Get_Area_In_Step_Delay(Area_No))
         Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
       else
@@ -87,10 +96,10 @@ void Update_Pic_Data(INT8U Area_No)
      if(Prog_Status.Area_Status[Area_No].Step >= 100)
      {
         //SNum表示当前文件总的屏幕数，只有图文的屏幕数会大于1！！
-        if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_PIC)
+        //if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_PIC)
           SNum = Prog_Status.File_Para[Area_No].Pic_Para.SNum;
-        else
-          SNum = 1;
+        //else
+          //SNum = 1;
 
         Prog_Status.Area_Status[Area_No].SNum ++;
         //所有分屏都显示了则切换到下个显示文件
@@ -121,6 +130,9 @@ void Update_Pic_Data(INT8U Area_No)
   }
   else if(Prog_Status.Area_Status[Area_No].Stay_Time < Stay_Time) //停留时间未到
   {
+    if(Prog_Status.Area_Status[Area_No].Stay_Time % 1000 EQ 0)
+        Update_XXX_Data_Bak(Area_No);
+
     Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
     if(Prog_Status.Area_Status[Area_No].Stay_Time >= Stay_Time)//进入退出的移动状态
     {

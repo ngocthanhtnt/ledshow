@@ -260,7 +260,7 @@ INT8U Check_Update_Show_Data_Bak()
       Update_Show_Data_Bak(Prog_Para.Prog_No, i);// == FILE_END)
     }
   }
-  
+ /*
   //每秒更新一下时钟、温度、计时等数据
   if(Sec.Var != Cur_Time.Time[T_SEC])
   {
@@ -270,6 +270,7 @@ INT8U Check_Update_Show_Data_Bak()
       Update_XXX_Data_Bak(i);
     }
   }
+  */
   return 1;
 }
 

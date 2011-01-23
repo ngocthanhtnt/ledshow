@@ -13,6 +13,13 @@ extern int pagePosi[MAX_LINE_NUM];
 S_Show_Data protoShowData;
 
 #define PROTO_DATA_BUF_LEN (2000*1000)
+/*
+    if(height % 8 EQ 0)
+       tmpLen = width * height/ 8;
+    else
+       tmpLen = width * (height / 8 + 1);
+*/
+#define GET_TEXT_LEN(W,H) ((H%8) EQ 0)?(W*H/8):(W*(H/8+1))
 //#define BLOCK_SHOW_DATA_LEN (BLOCK_DATA_LEN - 20)
 
 /*
@@ -159,6 +166,7 @@ INT8U sendProtoData(char *pFrame, int len, int mode)
     return 1;
 }
 
+
 //获取文件参数
 //width,height所在显示分区的宽度和高度
 //fileStr文件的字符串
@@ -221,12 +229,13 @@ INT16U getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT1
            //转换图形数据到protoShowData中
           memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
           getTextShowData(imageBk, &protoShowData, 0, 0);
-
+/*
           if(height % 8 EQ 0)
              tmpLen = width * height/ 8;
           else
              tmpLen = width * (height / 8 + 1);
-
+*/
+          tmpLen = GET_TEXT_LEN(width, height);
           tmpLen = tmpLen * Get_Screen_Color_Num();
           if(len + tmpLen >= bufLen)
           {
@@ -237,6 +246,28 @@ INT16U getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT1
           memcpy(buf + len, protoShowData.Color_Data, tmpLen);
           len += tmpLen;
       }
+    }
+    else if(type EQ CLOCK_PROPERTY)
+    {
+      getClockParaFromSettings(fileStr, filePara);
+      QImage image = getLineTextImage(fileStr);
+      getTextShowData(image, &protoShowData, 0, 0);
+
+      tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
+      tmpLen = tmpLen * Get_Screen_Color_Num();
+
+      filePara.Clock_Para.Text_Width = image.size().width();
+      filePara.Clock_Para.Text_Height = image.size().height();
+      if(filePara.Clock_Para.Text_Width*filePara.Clock_Para.Text_Height > 0)
+          filePara.Clock_Para.SNum = 1;
+      else
+          filePara.Clock_Para.SNum = 0;
+
+
+      memcpy(buf, (char *)&filePara.Clock_Para.Head + 1, sizeof(S_Clock_Para)); //前一个字节是头，不拷贝
+      len = sizeof(S_Clock_Para) - CHK_BYTE_LEN;
+      memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+      len +=tmpLen;
     }
 
     restoreScreenPara(screenParaBak);
