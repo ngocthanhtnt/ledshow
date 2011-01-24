@@ -30,12 +30,29 @@ const S_Mode_Func Mode_Func[]=
 
 };
 
+INT8U Check_XXX_Data(INT8U Area_No)
+{
+    INT8U Flag;
+
+    Flag = Prog_Status.File_Para[Area_No].Pic_Para.Flag;
+  if(Flag EQ SHOW_CLOCK ||\
+     Flag EQ SHOW_TIME ||\
+     Flag EQ SHOW_TIMER ||\
+     Flag EQ SHOW_TEMP ||\
+     Flag EQ SHOW_LUN)
+      return 1;
+  else
+      return 0;
+}
+
 void Update_Pic_Data(INT8U Area_No)
 {
   INT8U SNum;
   INT8U In_Mode, Out_Mode;
+  INT16U Area_Width, Area_Height;
   INT32U Stay_Time,In_Delay, Out_Delay;
   INT32U Out_Time;
+  S_Point P0;
   
   if(Prog_Status.New_Prog_Flag ||\
      Prog_Status.Area_Status[Area_No].New_File_Flag ||\
@@ -104,8 +121,8 @@ void Update_Pic_Data(INT8U Area_No)
         //else
           //SNum = 1;
 
-        Prog_Status.Area_Status[Area_No].SNum ++;
         Prog_Status.Area_Status[Area_No].New_SCN_Flag = 1;
+        Prog_Status.Area_Status[Area_No].SNum ++;
         Prog_Status.Area_Status[Area_No].Step = 0;
         Prog_Status.Area_Status[Area_No].Step_Timer = 0;
         Prog_Status.Area_Status[Area_No].Stay_Time = 0;
@@ -119,13 +136,24 @@ void Update_Pic_Data(INT8U Area_No)
     if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)
     {
       Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
-      Prog_Status.Area_Status[Area_No].SNum = 0; //重新更新背景
       Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
+      Prog_Status.Area_Status[Area_No].SNum = 0; //重新更新背景
       return;
     }
 
-    //if(Prog_Status.Area_Status[Area_No].Stay_Time % 1000 EQ 0)
-      //  Update_XXX_Data(&Show_Data, Area_No);
+    if(Prog_Status.Area_Status[Area_No].Stay_Time EQ MOVE_STEP_TIMER ||\
+       Prog_Status.Area_Status[Area_No].Stay_Time % 1000 EQ 0)
+    {
+        if(Check_XXX_Data(Area_No))
+        {
+          //Clear_Area_Data(&Show_Data, Area_No);
+          P0.X = P0.Y = 0;
+          Area_Width = Get_Area_Width(Area_No);
+          Area_Height = Get_Area_Height(Area_No);
+          Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Area_Width, Area_Height, &Show_Data, &P0);
+          Update_XXX_Data(&Show_Data, Area_No);
+        }
+    }
 
     Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
     if(Prog_Status.Area_Status[Area_No].Stay_Time >= Stay_Time)//进入退出的移动状态
