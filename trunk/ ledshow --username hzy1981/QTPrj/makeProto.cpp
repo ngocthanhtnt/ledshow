@@ -249,27 +249,28 @@ INT16U getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT1
     }
     else if(type EQ CLOCK_PROPERTY)
     {
-      getClockParaFromSettings(fileStr, filePara);
-      QImage image = getLineTextImage(fileStr);
-      resetShowPara(image.width(), image.height(), Screen_Para.Base_Para.Color);
-      getTextShowData(image, &protoShowData, 0, 0);
+        getClockParaFromSettings(fileStr, filePara);
+        QImage image = getLineTextImage(fileStr);
 
-      tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
-      tmpLen = tmpLen * Get_Screen_Color_Num();
+        filePara.Clock_Para.Text_Width = image.size().width();
+        filePara.Clock_Para.Text_Height = image.size().height();
+        filePara.Clock_Para.SNum = 1;
 
-      filePara.Clock_Para.Text_Width = image.size().width();
-      filePara.Clock_Para.Text_Height = image.size().height();
-      filePara.Clock_Para.SNum = 1;
+        S_Point Point;
+        Get_Clock_Text_Point(width, height, &filePara.Clock_Para, &Point);
+        filePara.Clock_Para.Text_X = Point.X;
+        filePara.Clock_Para.Text_Y = Point.Y;
 
-      S_Point Point;
-      Get_Clock_Text_Point(width, height, &filePara.Clock_Para, &Point);
-      filePara.Clock_Para.Text_X = Point.X;
-      filePara.Clock_Para.Text_Y = Point.Y;
+        memcpy(buf, (char *)&filePara.Clock_Para.Head + 1, sizeof(S_Clock_Para)); //前一个字节是头，不拷贝
+        len = sizeof(S_Clock_Para) - CHK_BYTE_LEN;
 
-      memcpy(buf, (char *)&filePara.Clock_Para.Head + 1, sizeof(S_Clock_Para)); //前一个字节是头，不拷贝
-      len = sizeof(S_Clock_Para) - CHK_BYTE_LEN;
-      memcpy(buf + len, protoShowData.Color_Data, tmpLen);
-      len +=tmpLen;
+        resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
+        getTextShowData(image, &protoShowData, 0, 0);
+
+        tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
+        tmpLen = tmpLen * Get_Screen_Color_Num();
+        memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+        len +=tmpLen;
     }
 
     restoreScreenPara(screenParaBak);
@@ -291,9 +292,11 @@ INT8U makeProtoData(QString screenStr, int mode)
     char frameBuf[500], *dataBuf;
     S_Screen_Para screenParaBak;
     S_Prog_Para progParaBak;
+    S_Card_Para cardParaBak;
 
     saveScreenPara(screenParaBak);
     saveProgPara(progParaBak);
+    saveCardPara(cardParaBak);
 
     //Mem_Open();
 
@@ -400,6 +403,7 @@ INT8U makeProtoData(QString screenStr, int mode)
 
     restoreScreenPara(screenParaBak);
     restoreProgPara(progParaBak);
+    restoreCardPara(cardParaBak);
 
 
 }

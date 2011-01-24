@@ -59,6 +59,12 @@ void saveProgPara(S_Prog_Para &Prog_Para_Bak)
   memcpy(&Prog_Para_Bak, &Prog_Para, sizeof(Prog_Para));
 }
 
+//保存节目参数Prog_Para到Prog_Para_Bak
+void saveCardPara(S_Card_Para &Card_Para_Bak)
+{
+  memcpy(&Card_Para_Bak, &Card_Para, sizeof(Card_Para));
+}
+
 //从Screen_Para_Bak中恢复参数到Screen_Para
 void restoreScreenPara(S_Screen_Para &Screen_Para_Bak)
 {
@@ -71,6 +77,11 @@ void restoreProgPara(S_Prog_Para &Prog_Para_Bak)
   memcpy(&Prog_Para, &Prog_Para_Bak, sizeof(Prog_Para_Bak));
 }
 
+//保存节目参数Prog_Para到Prog_Para_Bak
+void restoreCardPara(S_Card_Para &Card_Para_Bak)
+{
+  memcpy(&Card_Para, &Card_Para_Bak, sizeof(Card_Para_Bak));
+}
 //背景区域构造函数
 CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
 {
@@ -1202,21 +1213,10 @@ void CshowArea::paintEvent(QPaintEvent *)
             filePara.Clock_Para.Text_Width = size.width();
             filePara.Clock_Para.Text_Height = size.height();
 
-            /*
-            tmp = (INT16S)(Width * Prog_Status.File_Para[Area_No].Clock_Para.Text_X / 100) - (INT16S)Prog_Status.File_Para[Area_No].Clock_Para.Text_Width/2;
-            if(tmp > 0)
-              P0.X = (INT16U)tmp;
-            else
-              P0.X = 0;
-
-            tmp = (INT16S)(Height * Prog_Status.File_Para[Area_No].Clock_Para.Text_Y / 100) - (INT16S)(Prog_Status.File_Para[Area_No].Clock_Para.Text_Height/2);
-            if(tmp > 0)
-              P0.Y = (INT16U)tmp;
-            else
-              P0.Y = 0;*/
             Get_Clock_Text_Point(Width, Height, &filePara.Clock_Para, &P0);
-            filePara.Clock_Para.Text_X = P0.X;
-            filePara.Clock_Para.Text_Y = P0.Y;
+            //此处不可对filePara.Clock_Para.Text_X、filePara.Clock_Para.Text_Y直接复制，否则会导致移位
+            //filePara.Clock_Para.Text_X = P0.X;
+            //filePara.Clock_Para.Text_Y = P0.Y;
 
             mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 

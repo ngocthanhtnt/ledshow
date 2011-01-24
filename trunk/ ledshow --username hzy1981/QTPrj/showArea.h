@@ -164,9 +164,11 @@ INT8U Get_Timer_Show_En();
 void saveScreenPara(S_Screen_Para &Screen_Para_Bak);
 //保存节目参数Prog_Para到Prog_Para_Bak
 void saveProgPara(S_Prog_Para &Prog_Para_Bak);
+void saveCardPara(S_Card_Para &Card_Para_Bak);
 //从Screen_Para_Bak中恢复参数到Screen_Para
 void restoreScreenPara(S_Screen_Para &Screen_Para_Bak);
 //从Prog_Para_Bak中恢复参数到Prog_Para
 void restoreProgPara(S_Prog_Para &Prog_Para_Bak);
 void resetShowPara(int width, int height, int color);
+void restoreCardPara(S_Card_Para &Card_Para_Bak);
 #endif // MAINWINDOW_H

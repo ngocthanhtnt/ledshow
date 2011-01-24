@@ -24,7 +24,9 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
 
    Radius = ((Width < Height)? Width:Height) * 95 /100 / 2; //表盘的半径
 
-   Get_Area_TopLeft(Area_No, &Point); //分区左上位置
+   //Get_Area_TopLeft(Area_No, &Point); //分区左上位置
+   Point.X = 0;
+   Point.Y = 0;
    //分区中心位置
    Point.X += Width/2;
    Point.Y += Height/2;
