@@ -71,13 +71,15 @@ void Update_Pic_Data(INT8U Area_No)
       if(Prog_Status.Area_Status[Area_No].Step_Timer EQ 0 &&\
          Prog_Status.Area_Status[Area_No].Step EQ 0)
         {
-         Update_XXX_Data(&Show_Data_Bak, Area_No);
+          if(Check_XXX_Data(Area_No))
+            Update_XXX_Data(&Show_Data_Bak, Area_No);
       }
 
       In_Delay = Get_Area_In_Step_Delay(Area_No);
       if(Prog_Status.Area_Status[Area_No].Step_Timer < In_Delay)
         Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
-      else
+
+      if(Prog_Status.Area_Status[Area_No].Step_Timer >= In_Delay)
       {
         Prog_Status.Area_Status[Area_No].Step_Timer = 0;
         In_Mode = Prog_Status.File_Para[Area_No].Pic_Para.In_Mode;
@@ -104,7 +106,8 @@ void Update_Pic_Data(INT8U Area_No)
           Out_Delay = Get_Area_Out_Step_Delay(Area_No);
           if(Prog_Status.Area_Status[Area_No].Step_Timer < Out_Delay)
             Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
-          else
+
+          if(Prog_Status.Area_Status[Area_No].Step_Timer >= Out_Delay)
           {
             Prog_Status.Area_Status[Area_No].Step_Timer = 0;
             Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
@@ -142,7 +145,7 @@ void Update_Pic_Data(INT8U Area_No)
     }
 
     if(Prog_Status.Area_Status[Area_No].Stay_Time EQ MOVE_STEP_TIMER ||\
-       Prog_Status.Area_Status[Area_No].Stay_Time % 1000 EQ 0)
+       Prog_Status.Area_Status[Area_No].Stay_Time % 500 EQ 0)
     {
         if(Check_XXX_Data(Area_No))
         {

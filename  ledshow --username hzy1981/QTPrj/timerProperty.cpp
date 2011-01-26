@@ -254,6 +254,7 @@ void CtimerProperty::getSettingsFromWidget(QString str)
       nameEdit->getSettingsFromWidget(str);
       simpleTextEdit->getSettingsFromWidget(str);
       smLineEdit->getSettingsFromWidget(str);
+      showModeEdit->getSettingsFromWidget(str);
   }
 }
 
@@ -294,9 +295,44 @@ void CtimerProperty::setSettingsToWidget(QString str)
         nameEdit->setSettingsToWidget(str);
         simpleTextEdit->setSettingsToWidget(str);
         smLineEdit->setSettingsToWidget(str);
+        showModeEdit->setSettingsToWidget(str);
     }
     else
         ASSERT_FAILED();
 
     connectSignal();
+}
+
+void Get_Timer_Text_Point(INT8U Area_No, INT16U Width, INT16U Height, S_Point &P0)
+{
+    INT16U Min_Width,Min_Height;
+
+    Min_Width = Get_Timer_Min_Width(Area_No);
+    Min_Height = Get_Timer_Min_Height(Area_No);
+
+    if(Prog_Status.File_Para[Area_No].Timer_Para.SmLineFlag == SLINE_MODE)//µ¥ÐÐ
+    {
+      if(Width > Min_Width)
+        P0.X = (Width - Min_Width) / 2;
+      else
+        P0.X = 0;
+
+      if(Height > Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)
+        P0.Y = (Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
+      else
+        P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
+    }
+    else
+    {
+        if(Height > Min_Height)
+          P0.Y = (Height - Min_Height) / 2;
+        else
+          P0.Y = 0;
+
+        if(Width > Prog_Status.File_Para[Area_No].Timer_Para.Text_Width)
+          P0.X = (Width - Prog_Status.File_Para[Area_No].Timer_Para.Text_Width)/2;
+        else
+          P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
+    }
+
 }

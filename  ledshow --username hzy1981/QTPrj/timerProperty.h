@@ -53,4 +53,5 @@ public:
 
 void getTimerParaFromSettings(QString str, U_File_Para &para);
 void updateTimerShowArea(CshowArea *area);
+void Get_Timer_Text_Point(INT8U Area_No, INT16U Width, INT16U Height, S_Point &P0);
 #endif // TIMERPROPERTY_H

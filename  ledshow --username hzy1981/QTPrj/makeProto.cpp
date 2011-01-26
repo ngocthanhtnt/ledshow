@@ -272,6 +272,110 @@ INT16U getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT1
         memcpy(buf + len, protoShowData.Color_Data, tmpLen);
         len +=tmpLen;
     }
+    else if(type EQ LUN_PROPERTY)
+    {
+        getLunParaFromSettings(fileStr, filePara);
+        QImage image = getLineTextImage(fileStr);
+        QSize size = image.size();
+
+        filePara.Lun_Para.Text_Width = size.width();
+        filePara.Lun_Para.Text_Height = size.height();
+        filePara.Lun_Para.SNum = 1;
+
+        memcpy(buf, (char *)&filePara.Lun_Para.Head + 1, sizeof(S_Lun_Para)); //前一个字节是头，不拷贝
+        len = sizeof(S_Lun_Para) - CHK_BYTE_LEN;
+
+        resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
+        getTextShowData(image, &protoShowData, 0, 0);
+
+        tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
+        tmpLen = tmpLen * Get_Screen_Color_Num();
+        memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+        len +=tmpLen;
+
+    }
+    else if(type EQ TIME_PROPERTY)
+    {
+        getTimeParaFromSettings(fileStr, filePara);
+        QImage image = getLineTextImage(fileStr);
+        QSize size = image.size();
+
+        filePara.Time_Para.Text_Width = size.width();
+        filePara.Time_Para.Text_Height = size.height();
+        filePara.Time_Para.SNum = 1;
+
+        mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+        S_Point P0;
+        Get_Time_Text_Point(0, width, height, P0);
+        filePara.Time_Para.Text_X = P0.X;
+        filePara.Time_Para.Text_Y = P0.Y;
+        memcpy(buf, (char *)&filePara.Time_Para.Head + 1, sizeof(S_Time_Para)); //前一个字节是头，不拷贝
+        len = sizeof(S_Time_Para) - CHK_BYTE_LEN;
+
+        resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
+        getTextShowData(image, &protoShowData, 0, 0);
+
+        tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
+        tmpLen = tmpLen * Get_Screen_Color_Num();
+        memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+        len +=tmpLen;
+    }
+    else if(type EQ LUN_PROPERTY)
+    {
+        getLunParaFromSettings(fileStr, filePara);
+        QImage image = getLineTextImage(fileStr);
+        QSize size = image.size();
+
+        filePara.Lun_Para.Text_Width = size.width();
+        filePara.Lun_Para.Text_Height = size.height();
+        filePara.Lun_Para.SNum = 1;
+
+        mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+        S_Point P0;
+        Get_Lun_Text_Point(0, width, height, P0);
+        filePara.Lun_Para.Text_X = P0.X;
+        filePara.Lun_Para.Text_Y = P0.Y;
+        memcpy(buf, (char *)&filePara.Lun_Para.Head + 1, sizeof(S_Lun_Para)); //前一个字节是头，不拷贝
+        len = sizeof(S_Lun_Para) - CHK_BYTE_LEN;
+
+        resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
+        getTextShowData(image, &protoShowData, 0, 0);
+
+        tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
+        tmpLen = tmpLen * Get_Screen_Color_Num();
+        memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+        len +=tmpLen;
+
+    }
+    else if(type EQ TIMER_PROPERTY)
+    {
+        getTimerParaFromSettings(fileStr, filePara);
+        QImage image = getLineTextImage(fileStr);
+        QSize size = image.size();
+
+        filePara.Timer_Para.Text_Width = size.width();
+        filePara.Timer_Para.Text_Height = size.height();
+        filePara.Timer_Para.SNum = 1;
+
+        mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+        S_Point P0;
+        Get_Timer_Text_Point(0, width, height, P0);
+        filePara.Timer_Para.Text_X = P0.X;
+        filePara.Timer_Para.Text_Y = P0.Y;
+        memcpy(buf, (char *)&filePara.Timer_Para.Head + 1, sizeof(S_Timer_Para)); //前一个字节是头，不拷贝
+        len = sizeof(S_Timer_Para) - CHK_BYTE_LEN;
+
+        resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
+        getTextShowData(image, &protoShowData, 0, 0);
+
+        tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
+        tmpLen = tmpLen * Get_Screen_Color_Num();
+        memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+        len +=tmpLen;
+    }
 
     restoreScreenPara(screenParaBak);
     restoreProgPara(progParaBak);

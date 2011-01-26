@@ -206,6 +206,7 @@ void ClunProperty::getSettingsFromWidget(QString str)
         simpleTextEdit->getSettingsFromWidget(str);
         smLineEdit->getSettingsFromWidget(str);
         lunEdit->getSettingsFromWidget(str);
+        showModeEdit->getSettingsFromWidget(str);
     }
     else
         ASSERT_FAILED();
@@ -227,9 +228,53 @@ void ClunProperty::setSettingsToWidget(QString str)
         simpleTextEdit->setSettingsToWidget(str);
         smLineEdit->setSettingsToWidget(str);
         lunEdit->setSettingsToWidget(str);
+        showModeEdit->setSettingsToWidget(str);
     }
     else
         ASSERT_FAILED();
 
     connectSignal();
+}
+
+void Get_Lun_Text_Point(INT8U Area_No, INT16U Width, INT16U Height, S_Point &P0)
+{
+    INT16U Min_Width,Min_Height;
+
+
+    Min_Width = Get_Lun_Min_Width(Area_No); //显示农历的最小宽度
+    Min_Height = Get_Lun_Min_Height(Area_No); //先死农历的最小高度
+
+    if(Prog_Status.File_Para[Area_No].Lun_Para.SmLineFlag == SLINE_MODE)//单行
+    {
+      if(Width > Min_Width)
+      {
+        P0.X = (Width - Min_Width) / 2;
+      }
+      else
+      {
+        P0.X = 0;
+      }
+
+      if(Height > Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)
+        P0.Y = (Height - Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)/2;
+      else
+        P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)/2;
+    }
+    else
+    {
+        if(Height > Min_Height)
+        {
+          P0.Y = (Height - Min_Height) / 2;
+        }
+        else
+        {
+          P0.Y = 0;
+        }
+
+        if(Width > Prog_Status.File_Para[Area_No].Lun_Para.Text_Width)
+          P0.X = (Width - Prog_Status.File_Para[Area_No].Lun_Para.Text_Width)/2;
+        else
+          P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)/2;
+      }
+
 }

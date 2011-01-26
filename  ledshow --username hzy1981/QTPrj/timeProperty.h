@@ -46,4 +46,5 @@ public:
 
 void getTimeParaFromSettings(QString str, U_File_Para &para);
 void updateTimeShowArea(CshowArea *area);
+void Get_Time_Text_Point(INT8U Area_No, INT16U Width, INT16U Height, S_Point &P0);
 #endif // TIMEPROPERTY_H

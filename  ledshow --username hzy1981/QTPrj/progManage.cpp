@@ -12,7 +12,7 @@
 extern MainWindow *w;
 extern QSettings settings;
 
-#define QT_MOVE_STEP_TIMER MOVE_STEP_TIMER //仿真时定时间隔
+#define QT_MOVE_STEP_TIMER MOVE_STEP_TIMER/2 //仿真时定时间隔
 
 #if QT_MOVE_STEP_TIMER > MOVE_STEP_TIMER
 #error "QT_MOVE_STEP_TIMER error"
