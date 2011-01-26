@@ -1252,42 +1252,7 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 
-            Min_Width = Get_Time_Min_Width(Area_No);
-            Min_Height = Get_Time_Min_Height(Area_No);
-
-            if(Prog_Status.File_Para[Area_No].Time_Para.SmLineFlag == SLINE_MODE)//单行
-            {
-              if(Width > Min_Width)
-              {
-                P0.X = (Width - Min_Width) / 2;
-              }
-              else
-              {
-                P0.X = 0;
-              }
-
-              if(Height > Prog_Status.File_Para[Area_No].Time_Para.Text_Height)
-                P0.Y = (Height - Prog_Status.File_Para[Area_No].Time_Para.Text_Height)/2;
-              else
-                P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Time_Para.Text_Height)/2;
-            }
-            else
-            {
-                if(Height > Min_Height)
-                {
-                  P0.Y = (Height - Min_Height) / 2;
-                }
-                else
-                {
-                  P0.Y = 0;
-                }
-
-                if(Width > Prog_Status.File_Para[Area_No].Time_Para.Text_Width)
-                  P0.X = (Width - Prog_Status.File_Para[Area_No].Time_Para.Text_Width)/2;
-                else
-                  P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Time_Para.Text_Height)/2;
-            }
-
+            Get_Time_Text_Point(Area_No, Width, Height, P0);
             //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Time_Para.Text_Width, Prog_Status.File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
@@ -1306,7 +1271,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             filePara.Timer_Para.Text_Height = size.height();
 
             mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
-
+/*
             Min_Width = Get_Timer_Min_Width(Area_No);
             Min_Height = Get_Timer_Min_Height(Area_No);
 
@@ -1334,6 +1299,8 @@ void CshowArea::paintEvent(QPaintEvent *)
                 else
                   P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Timer_Para.Text_Height)/2;
             }
+*/
+            Get_Timer_Text_Point(Area_No, Width, Height, P0);
 
             //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Timer_Para.Text_Width, Prog_Status.File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
@@ -1353,43 +1320,8 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 
-            Min_Width = Get_Lun_Min_Width(Area_No); //显示农历的最小宽度
-            Min_Height = Get_Lun_Min_Height(Area_No); //先死农历的最小高度
-
-            if(Prog_Status.File_Para[Area_No].Lun_Para.SmLineFlag == SLINE_MODE)//单行
-            {
-              if(Width > Min_Width)
-              {
-                P0.X = (Width - Min_Width) / 2;
-              }
-              else
-              {
-                P0.X = 0;
-              }
-
-              if(Height > Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)
-                P0.Y = (Height - Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)/2;
-              else
-                P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)/2;
-            }
-            else
-            {
-                if(Height > Min_Height)
-                {
-                  P0.Y = (Height - Min_Height) / 2;
-                }
-                else
-                {
-                  P0.Y = 0;
-                }
-
-                if(Width > Prog_Status.File_Para[Area_No].Lun_Para.Text_Width)
-                  P0.X = (Width - Prog_Status.File_Para[Area_No].Lun_Para.Text_Width)/2;
-                else
-                  P0.X = 0;//(Height - Prog_Status.File_Para[Area_No].Lun_Para.Text_Height)/2;
-              }
-
             //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Lun_Para.Text_Width, Prog_Status.File_Para[Area_No].Lun_Para.Text_Height, &Show_Data, &P0);//&Point);
+            Get_Lun_Text_Point(Area_No, Width, Height, P0);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
             Update_Lun_Data(&Show_Data_Bak, Area_No);
