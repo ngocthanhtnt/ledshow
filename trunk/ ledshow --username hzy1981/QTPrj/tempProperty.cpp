@@ -100,6 +100,7 @@ CtempProperty::CtempProperty(QWidget *parent):QWidget(parent)
     vLayout = new QVBoxLayout(this);
     vLayout->addWidget(simpleTextEdit);
     vLayout->addWidget(tempStyle);
+    hLayout->addLayout(vLayout);
 
     showModeEdit = new CshowModeEdit(this);
     vLayout = new QVBoxLayout(this);
@@ -212,6 +213,7 @@ void CtempProperty::getSettingsFromWidget(QString str)
   simpleTextEdit->getSettingsFromWidget(str);
   tempStyle->getSettingsFromWidget(str);
   nameEdit->getSettingsFromWidget(str);
+  showModeEdit->getSettingsFromWidget(str);
 
 }
 
@@ -221,5 +223,25 @@ void CtempProperty::setSettingsToWidget(QString str)
     simpleTextEdit->setSettingsToWidget(str);
     tempStyle->setSettingsToWidget(str);
     nameEdit->setSettingsToWidget(str);
+    showModeEdit->setSettingsToWidget(str);
     connectSignal();
+}
+
+void Get_Temp_Text_Point(INT8U Area_No, INT16U Width, INT16U Height, S_Point &P0)
+{
+    INT16U Min_Width,Min_Height;
+
+    Min_Width = Get_Temp_Min_Width(Area_No);
+    //Min_Height = Get_Temp_Min_Height(Area_No);
+
+    if(Width > Min_Width)
+      P0.X = (Width - Min_Width) / 2;
+    else
+      P0.X = 0;
+
+    if(Height > Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)
+      P0.Y = (Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
+    else
+      P0.Y = 0;
+
 }
