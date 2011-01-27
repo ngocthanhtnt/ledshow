@@ -86,9 +86,20 @@ void Update_Pic_Data(INT8U Area_No)
         Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
         (*(Mode_Func[In_Mode].Func))(Area_No);//执行移动操作
 
+        //进入阶段如果达到100%同时停留时间为0则直接跳到退出阶段
+        if(Prog_Status.Area_Status[Area_No].Step >= 100)
+        {
+          if(Stay_Time EQ 0) //进入阶段走完，如果停留时间是0则直接进入退出阶段!
+          {
+            Prog_Status.Area_Status[Area_No].Stay_Time = 1;
+            Prog_Status.Area_Status[Area_No].Step = 0;
+          }
+
+        }
       }
     }
-    else //在退出阶段
+    //else
+    if(Prog_Status.Area_Status[Area_No].Stay_Time > 0)//在退出阶段
     {
         //刚进入
       if(Prog_Status.Area_Status[Area_No].Step EQ 0 &&\
@@ -136,18 +147,18 @@ void Update_Pic_Data(INT8U Area_No)
   }
   else if(Prog_Status.Area_Status[Area_No].Stay_Time < Stay_Time) //停留时间未到
   {
-    if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)
+    if(Check_XXX_Data(Area_No))
     {
-      Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
-      Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
-      Prog_Status.Area_Status[Area_No].SNum = 0; //重新更新背景
-      return;
-    }
+        if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)
+        {
+          Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
+          Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
+          Prog_Status.Area_Status[Area_No].SNum = 0; //重新更新背景
+          return;
+        }
 
-    if(Prog_Status.Area_Status[Area_No].Stay_Time EQ MOVE_STEP_TIMER ||\
-       Prog_Status.Area_Status[Area_No].Stay_Time % 500 EQ 0)
-    {
-        if(Check_XXX_Data(Area_No))
+        if(Prog_Status.Area_Status[Area_No].Stay_Time EQ MOVE_STEP_TIMER ||\
+           Prog_Status.Area_Status[Area_No].Stay_Time % 500 EQ 0)
         {
           //Clear_Area_Data(&Show_Data, Area_No);
           P0.X = P0.Y = 0;

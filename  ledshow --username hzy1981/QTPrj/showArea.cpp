@@ -1343,6 +1343,8 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 
+            Get_Temp_Text_Point(Area_No, Width, Height, P0);
+            /*
             Width = Get_Area_Width(Area_No);
             Height = Get_Area_Height(Area_No);
 
@@ -1357,7 +1359,9 @@ void CshowArea::paintEvent(QPaintEvent *)
             if(Height > Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)
               P0.Y = (Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
             else
-              P0.Y = 0;//(Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
+              P0.Y = 0;
+            */
+            //(Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
             //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Temp_Para.Text_Width, Prog_Status.File_Para[Area_No].Temp_Para.Text_Height, &Show_Data, &P0);//&Point);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);

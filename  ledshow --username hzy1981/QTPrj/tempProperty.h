@@ -67,5 +67,7 @@ public:
     ~CtempProperty();
 };
 
+void getTempParaFromSettings(QString str, U_File_Para &para);
 void updateTempShowArea(CshowArea *area);
+void Get_Temp_Text_Point(INT8U Area_No, INT16U Width, INT16U Height, S_Point &P0);
 #endif // TEMPPROPERTY_H
