@@ -16,7 +16,7 @@
 class CshowModeCombo:public QComboBox
 {
 public:
-    CshowModeCombo(QWidget *parent = 0);
+    CshowModeCombo(bool flag, QWidget *parent = 0);
     ~CshowModeCombo();
 };
 

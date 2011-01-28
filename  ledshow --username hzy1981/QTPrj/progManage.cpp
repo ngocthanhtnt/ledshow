@@ -30,20 +30,9 @@ int stepTimer = 0;
         |-01
            |-
  */
-int checkItemType(QTreeWidgetItem *item)
+int checkStrType(QString str)
 {
-    //QVariant QVar;
-
-    QString QStr = item ->data(0,Qt::UserRole).toString();
-/*
-    if(QStr.contains("file"))
-        return FILE_TYPE;
-    else if(QStr.contains("area"))
-        return AREA_TYPE;
-    else if(QStr.contains("program"))
-        return PROG_TYPE;
-        */
-    settings.beginGroup(QStr);
+    settings.beginGroup(str);
     int type = settings.value("type").toInt();
     int subType = settings.value("subType").toInt();
     settings.endGroup();
@@ -59,6 +48,15 @@ int checkItemType(QTreeWidgetItem *item)
      return subType;
     else
      return type;
+}
+
+int checkItemType(QTreeWidgetItem *item)
+{
+    //QVariant QVar;
+
+    QString QStr = item ->data(0,Qt::UserRole).toString();
+
+    return checkStrType(QStr);
 }
 
 void updateItemSubIndex(QTreeWidgetItem *item)

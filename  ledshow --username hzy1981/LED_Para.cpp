@@ -599,7 +599,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   INT16U Seq0;
   STORA_DI SDI;
   INT16U Cmd1;
-  S_Prog_Show_Data *pShow_Data;
+  //S_Prog_Show_Data *pShow_Data;
 
   memcpy(&Len, &Frame[FLEN], sizeof(Len)); //帧长
   //计算数据域长度

@@ -1266,6 +1266,17 @@ void Move_Left(INT8U Area_No)
    
 }
 
+void Move_Show_RightNow(INT8U Area_No)
+{
+    S_Point Temp;
+
+    Temp.X = 0;
+    Temp.Y = 0;
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
+                     &Show_Data, &Temp);
+
+}
+
 //Á¬Ðø×óÒÆ
 void Move_Left_Continuous(INT8U Area_No)
 {

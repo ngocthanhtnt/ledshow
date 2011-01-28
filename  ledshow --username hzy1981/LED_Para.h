@@ -540,6 +540,7 @@ typedef struct
   INT16U Len;
 }S_File_Para_Info;
 */
+/*
 typedef struct
 {
   INT8U Prog_No;  //╫зд©╨е
@@ -551,7 +552,7 @@ typedef struct
   INT8U Buf[ONE_BLOCK_SIZE];
   
 }S_Prog_Show_Data;
-
+*/
 typedef struct
 {
   INT8U Head;
@@ -600,7 +601,7 @@ typedef struct
 #define PROG_PARA_LEN   (sizeof(S_Prog_Para)-CHK_BYTE_LEN)
 #define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN)
 #define BLOCK_INDEX_LEN (sizeof(S_Prog_Block_Index) - CHK_BYTE_LEN)
-#define BLOCK_DATA_LEN 249
+//#define BLOCK_DATA_LEN 249
 #define BLOCK_HEAD_DATA_LEN 9
 #define BLOCK_SHOW_DATA_LEN (BLOCK_DATA_LEN -BLOCK_HEAD_DATA_LEN)
 

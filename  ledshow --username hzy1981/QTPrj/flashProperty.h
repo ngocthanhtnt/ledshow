@@ -50,4 +50,6 @@ public:
 void getFlashParaFromSettings(QString str, U_File_Para &para);
 void updateFlashShowArea(CshowArea *area);
 QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y);
+void getFlashPageShowData(QString str, INT8U page, S_Show_Data *pDst, INT16U x, INT16U y);
+INT8U getFlashFrameCount(QString str);
 #endif // FLASHPROPERTY_H

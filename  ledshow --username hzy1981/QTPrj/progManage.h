@@ -76,5 +76,5 @@ public:
     ~CprogManage();
 };
 int checkItemType(QTreeWidgetItem *item);
-
+int checkStrType(QString str);
 #endif // PROGMANAGE_H

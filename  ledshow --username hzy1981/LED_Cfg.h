@@ -26,8 +26,8 @@
 #define MAX_PROG_NUM 10 //最大节目数
 #define MAX_AREA_NUM 8 //每个节目下最大分区数
 #define MAX_FILE_NUM 8 //每个分区下最大文件数
-#define MAX_BLOCK_NUM  200 //显示数据块的大小
-#define ONE_BLOCK_SIZE 250 //一个显示数据块的大小
+#define MAX_BLOCK_NUM  4000 //显示数据块的大小
+#define BLOCK_DATA_LEN 249 //一个显示数据块的大小
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
 #define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
@@ -62,8 +62,8 @@
 #define MAX_PROG_NUM 10 //最大节目数
 #define MAX_AREA_NUM 8 //每个节目下最大分区数
 #define MAX_FILE_NUM 8 //每个分区下最大文件数
-#define MAX_BLOCK_NUM  200
-#define ONE_BLOCK_SIZE 250
+#define MAX_BLOCK_NUM  4000
+#define BLOCK_DATA_LEN 249
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
 #define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
