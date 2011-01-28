@@ -216,50 +216,13 @@ void CflashProperty::setSettingsToWidget(QString str)
 
 QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
 {
-    /*
-  QSize size;
-  QRgb rgb,r,g,b,ye;
-  int i,j;
-
-  for(i = 0; i < image.width(); i ++)
-      for(j = 0; j < image.height(); j ++)
-      {
-        rgb = image.pixel(i,j);
-        r = qRed(rgb);
-        g = qGreen(rgb);
-        b = qBlue(rgb);
-        //ye = QColor(rgb).yellow();
-        if(r > FLASH_VALUE && g>FLASH_VALUE && b <FLASH_VALUE)
-        {
-            Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x04);
-            //qDebug("yellow");
-        }
-        else if(r > FLASH_VALUE)// && g<FLASH_VALUE && b <FLASH_VALUE)
-        {
-            Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x01);
-            //qDebug("red");
-        }
-        else if(g > FLASH_VALUE)// && r < FLASH_VALUE && b <FLASH_VALUE)
-        {
-            Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x02);
-            //qDebug("green");
-        }
-
-        else //if((r == 0 && g == 0 && b == 0) || rgb == 0xFF7F9DB9)
-        {
-            Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x00);
-            //qDebug("black");
-        }
-
-      }
-  size.setWidth(image.width());
-  size.setHeight(image.height());
-  return size;
-*/
+    INT8U colorData=0;
     QSize size;
     QRgb rgb,r,g,b,ye;
+    int h,s,v,a;
     int i,j;
 
+    image.save("d:\\flash.png");
     for(i = 0; i < image.width(); i ++)
         for(j = 0; j < image.height(); j ++)
         {
@@ -267,33 +230,60 @@ QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
           r = qRed(rgb);
           g = qGreen(rgb);
           b = qBlue(rgb);
+          QColor color(r,g,b);
+
+          color.getHsv(&h,&s,&v,&a);
+        //  qDebug("%d,%d, h = %d, s = %d, v = %d, ",i,j,h,s,v);
+          if(v < 80 || s < 20)
+            colorData = 0;
           //ye = QColor(rgb).yellow();
-          if(r > FLASH_MIN_VALUE && r < FLASH_MAX_VALUE &&
-             g > FLASH_MIN_VALUE && g < FLASH_MAX_VALUE &&
-             b > 35 && b < 165)
+          else if(h >=300 || h < 30)
           {
-              Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x04);
+              colorData = getColorData(QColor(Qt::red));
+              //Set_Area_Point_Data(pDst, 0, x + i, y + j, colorData);
               //qDebug("yellow");
           }
-          else if(r > FLASH_MIN_VALUE && r < FLASH_MAX_VALUE)// && g<FLASH_VALUE && b <FLASH_VALUE)
+          else if(h > 30 && h < 90)
           {
-              Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x01);
+              colorData = getColorData(QColor(Qt::yellow));
+              //Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x01);
               //qDebug("red");
           }
-          else if(g > FLASH_MIN_VALUE && g < FLASH_MAX_VALUE)// && r < FLASH_VALUE && b <FLASH_VALUE)
+          else if(h >= 90 && h< 180)// && r < FLASH_VALUE && b <FLASH_VALUE)
           {
-              Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x02);
+              colorData = getColorData(QColor(Qt::green));
+              //Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x02);
               //qDebug("green");
           }
-
           else //if((r == 0 && g == 0 && b == 0) || rgb == 0xFF7F9DB9)
           {
-              Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x00);
+              //Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x00);
               //qDebug("black");
           }
-
+          Set_Area_Point_Data(pDst, 0, x + i, y + j, colorData);
         }
     size.setWidth(image.width());
     size.setHeight(image.height());
     return size;
+}
+
+void getFlashPageShowData(QString str, INT8U page, S_Show_Data *pDst, INT16U x, INT16U y)
+{
+    settings.beginGroup(str);
+    QMovie *movie = new QMovie(settings.value("fileName").toString());
+    settings.endGroup();
+    //totalFrameNumEdit->setText(QString::number(movie->frameCount()));
+    movie->jumpToFrame(page);
+
+    QImage image = movie->currentImage();
+    getFlashShowData(image, pDst, x, y);
+}
+
+INT8U getFlashFrameCount(QString str)
+{
+    settings.beginGroup(str);
+    QMovie *movie = new QMovie(settings.value("fileName").toString());
+    settings.endGroup();
+    //totalFrameNumEdit->setText(QString::number(movie->frameCount()));
+    return movie->frameCount();
 }

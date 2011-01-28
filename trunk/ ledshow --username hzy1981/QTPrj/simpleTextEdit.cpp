@@ -40,30 +40,60 @@ const S_Mode_Func Mode_Func[]=
 
 };
 */
-CshowModeCombo::CshowModeCombo(QWidget *parent):QComboBox(parent)
+CshowModeCombo::CshowModeCombo(bool flag, QWidget *parent):QComboBox(parent)
 {
-    addItem(tr("连续左移"));
-    addItem(tr("连续右移"));
-    addItem(tr("连续上移"));
-    addItem(tr("连续下移"));
-    addItem(tr("左移"));
-    addItem(tr("右移"));
-    addItem(tr("上移"));
-    addItem(tr("下移"));
-    addItem(tr("左划"));
-    addItem(tr("右划"));
-    addItem(tr("上划"));
-    addItem(tr("下划"));
-    addItem(tr("左上划"));
-    addItem(tr("右上划"));
-    addItem(tr("左下划"));
-    addItem(tr("右下划"));
-    addItem(tr("左右开帘"));
-    addItem(tr("上下开帘"));
-    addItem(tr("左右合帘"));
-    addItem(tr("上下合帘"));
-    addItem(tr("顺时针旋转"));
-    addItem(tr("逆时针旋转"));
+    if(flag EQ 0)
+    {
+        addItem(tr("随机"));
+        addItem(tr("立即显示"));
+        addItem(tr("连续左移"));
+        addItem(tr("连续上移"));
+        //addItem(tr("连续上移"));
+        //addItem(tr("连续下移"));
+        addItem(tr("左移"));
+        addItem(tr("右移"));
+        addItem(tr("上移"));
+        addItem(tr("下移"));
+        addItem(tr("左覆盖"));
+        addItem(tr("右覆盖"));
+        addItem(tr("上覆盖"));
+        addItem(tr("下覆盖"));
+        addItem(tr("左上覆盖"));
+        addItem(tr("右上覆盖"));
+        addItem(tr("左下覆盖"));
+        addItem(tr("右下覆盖"));
+        addItem(tr("左右开帘"));
+        addItem(tr("上下开帘"));
+        addItem(tr("左右合帘"));
+        addItem(tr("上下合帘"));
+        addItem(tr("顺时针旋转"));
+        addItem(tr("逆时针旋转"));
+    }
+    else
+    {
+        addItem(tr("随机"));
+        addItem(tr("不清屏"));
+        addItem(tr("立即清屏"));
+        addItem(tr("左移"));
+        addItem(tr("右移"));
+        addItem(tr("上移"));
+        addItem(tr("下移"));
+        addItem(tr("左覆盖"));
+        addItem(tr("右覆盖"));
+        addItem(tr("上覆盖"));
+        addItem(tr("下覆盖"));
+        addItem(tr("左上覆盖"));
+        addItem(tr("右上覆盖"));
+        addItem(tr("左下覆盖"));
+        addItem(tr("右下覆盖"));
+        addItem(tr("左右开帘"));
+        addItem(tr("上下开帘"));
+        addItem(tr("左右合帘"));
+        addItem(tr("上下合帘"));
+        addItem(tr("顺时针旋转"));
+        addItem(tr("逆时针旋转"));
+
+    }
  }
 
 CshowModeCombo::~CshowModeCombo()
@@ -101,7 +131,7 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
 
     setTitle(tr("显示特效"));
     inModeLabel = new QLabel(tr("引入"), this);
-    inModeCombo = new CshowModeCombo(this);
+    inModeCombo = new CshowModeCombo(0, this);
     inTimeEdit = new QLineEdit(this);
     inTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
     inTimeLabel = new QLabel(tr("毫秒"), this);
@@ -115,7 +145,7 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     vLayout->addLayout(hLayout);
 
     outModeLabel = new QLabel(tr("引出"), this);
-    outModeCombo = new CshowModeCombo(this);
+    outModeCombo = new CshowModeCombo(1, this);
     outTimeEdit = new QLineEdit(this);
     outTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
     outTimeLabel = new QLabel(tr("毫秒"), this);
