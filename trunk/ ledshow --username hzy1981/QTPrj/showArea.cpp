@@ -1330,8 +1330,8 @@ void CshowArea::paintEvent(QPaintEvent *)
         else if(filePara.Temp_Para.Flag == SHOW_FLASH) //显示动画
         {
             P0.X = P0.Y = 0;
-            QImage image = imageBk.scaled(size());
-            getFlashShowData(image, &Show_Data, P0.X, P0.Y);
+            QImage image = imageBk.scaled(Width,Height);//size());
+            getFlashShowData(image, &Show_Data, Area_No, P0.X, P0.Y);
             //Update_Lun_Data(Area_No);
         }
         else if(filePara.Temp_Para.Flag == SHOW_TEMP) //显示温度
@@ -1497,7 +1497,7 @@ void resetShowPara(int width, int height, int color)
 
 }
 
-QString CscreenArea::getCurrentStr()
+QString CscreenArea::getCurrentFileStr()
 {
     CshowArea *area = getFocusArea();
     if(area == (CshowArea *)0)

@@ -91,6 +91,9 @@ typedef struct
   INT32U Out_Time;   //退出时间
   INT8U Counts;
   
+  INT8U In_Mode;
+  INT8U Out_Mode;
+
   INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态--主要用于与中断显示同步
   INT8U Tail;
 }S_Area_Status;
