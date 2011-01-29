@@ -104,6 +104,16 @@ void Update_Pic_Data(INT8U Area_No)
         {
           Prog_Status.Area_Status[Area_No].Step_Timer = In_Delay;///---进来第一次直接显示第一次的步进效果
 
+          //---------
+          In_Mode = Prog_Status.File_Para[Area_No].Pic_Para.In_Mode;
+          if(In_Mode EQ 0) //随机
+              In_Mode = Cur_Time.Time[T_SEC] % S_NUM(In_Mode_Func);
+          else
+              In_Mode = In_Mode - 1;
+
+          Prog_Status.Area_Status[Area_No].In_Mode = In_Mode;
+          //---------
+
           if(Check_XXX_Data(Area_No))
             Update_XXX_Data(&Show_Data_Bak, Area_No);
       }
@@ -115,21 +125,15 @@ void Update_Pic_Data(INT8U Area_No)
       if(Prog_Status.Area_Status[Area_No].Step_Timer >= In_Delay)
       {
         Prog_Status.Area_Status[Area_No].Step_Timer = 0;
-        In_Mode = Prog_Status.File_Para[Area_No].Pic_Para.In_Mode;
         Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
 
-        //---------
-        if(In_Mode EQ 0) //随机
-            In_Mode = Cur_Time.Time[T_SEC] % S_NUM(In_Mode_Func);
-        else
-            In_Mode = In_Mode - 1;
+        In_Mode = Prog_Status.Area_Status[Area_No].In_Mode;
 
         if(In_Mode >= S_NUM(In_Mode_Func))
         {
             In_Mode = 0;
             ASSERT_FAILED();
         }
-        //---------
 
         (*(In_Mode_Func[In_Mode].Func))(Area_No);//执行移动操作
 
@@ -143,7 +147,8 @@ void Update_Pic_Data(INT8U Area_No)
           {
             Prog_Status.Area_Status[Area_No].Stay_Time = 1;
             Prog_Status.Area_Status[Area_No].Step = 0;
-          }
+            Prog_Status.Area_Status[Area_No].Step_Timer = 0;
+           }
 
         }
       }
@@ -158,7 +163,18 @@ void Update_Pic_Data(INT8U Area_No)
         {
          Prog_Status.Area_Status[Area_No].Step_Timer = Out_Delay;
 
-         if(Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 4) //前4个是连续移动不清屏
+         //------------
+         Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
+         if(Out_Mode EQ 0) //随机
+           Out_Mode = Cur_Time.Time[T_SEC] % S_NUM(Out_Mode_Func);
+         else if(Out_Mode >= 2)
+           Out_Mode = Out_Mode - 2;
+
+         Prog_Status.Area_Status[Area_No].Out_Mode = Out_Mode;
+         //-------------------------
+
+         if(Prog_Status.Area_Status[Area_No].In_Mode != 1 &&\
+            Prog_Status.Area_Status[Area_No].In_Mode != 2) //前4个是连续移动不清屏
             memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
          else
            Prog_Status.Area_Status[Area_No].Step = 100;
@@ -173,22 +189,16 @@ void Update_Pic_Data(INT8U Area_No)
           if(Prog_Status.Area_Status[Area_No].Step_Timer >= Out_Delay)
           {
             Prog_Status.Area_Status[Area_No].Step_Timer = 0;
-            Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
             Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
 
             //---------
+            Out_Mode = Prog_Status.Area_Status[Area_No].Out_Mode;
             if(Out_Mode EQ 1) //不清屏
             {
                Prog_Status.Area_Status[Area_No].Step = 100;
             }
             else
             {
-              //------------
-              if(Out_Mode EQ 0) //随机
-                Out_Mode = Cur_Time.Time[T_SEC] % S_NUM(Out_Mode_Func);
-              else
-                Out_Mode = Out_Mode - 2;
-
               if(Out_Mode >= S_NUM(Out_Mode_Func))
               {
                 Out_Mode = 0;

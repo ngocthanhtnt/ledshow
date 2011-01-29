@@ -887,7 +887,7 @@ void TextEdit::edit()
 {
     CshowArea *area;
 
-  QString str = w->screenArea->getCurrentStr();//getCurrentStr
+  QString str = w->screenArea->getCurrentFileStr();//getCurrentStr
   //setSettingsToWidget(str);
   getSettingsFromWidget(str);
   area = w->screenArea->getFocusArea();

@@ -22,7 +22,7 @@ private:
     QLabel *frameNumLabel; //帧数标志
     QLineEdit *frameNumEdit; //帧数编辑
     QLabel *runSpeedLabel; //运行速度标志
-    QLineEdit *runSpeedCheck; //运行速度编辑
+    QLineEdit *stayTimeEdit; //运行速度编辑
     QLabel *speedUnitLabel; //速度单位
 
     QLabel *totalFrameNumLabel; //总帧数
@@ -64,26 +64,28 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
    frameNumEdit = new QSpinBox(this);
 
    runSpeedLabel = new QLabel(tr("运行速度"), this);
-   runSpeedCheck = new QComboBox(this);
+   stayTimeEdit = new QLineEdit(this);
    speedUnitLabel = new QLabel(tr("微秒"), this);
-
-   runSpeedCheck->addItem(tr("0最快"));
-   runSpeedCheck->addItem(tr("1"));
-   runSpeedCheck->addItem(tr("2"));
-   runSpeedCheck->addItem(tr("3"));
-   runSpeedCheck->addItem(tr("4"));
-   runSpeedCheck->addItem(tr("5"));
-   runSpeedCheck->addItem(tr("6"));
-   runSpeedCheck->addItem(tr("7"));
-   runSpeedCheck->addItem(tr("8"));
-   runSpeedCheck->addItem(tr("9最慢"));
-
+/*
+   stayTimeEdit->addItem(tr("0最快"));
+   stayTimeEdit->addItem(tr("1"));
+   stayTimeEdit->addItem(tr("2"));
+   stayTimeEdit->addItem(tr("3"));
+   stayTimeEdit->addItem(tr("4"));
+   stayTimeEdit->addItem(tr("5"));
+   stayTimeEdit->addItem(tr("6"));
+   stayTimeEdit->addItem(tr("7"));
+   stayTimeEdit->addItem(tr("8"));
+   stayTimeEdit->addItem(tr("9最慢"));
+*/
 
    flashSourceEdit->setEnabled(false);
    totalFrameNumEdit->setEnabled(false);
 
    totalFrameNumEdit->setFixedWidth(40);
    frameNumEdit->setFixedWidth(40);
+
+   frameNumEdit->setMinimum(1);
 
    gridLayout = new QGridLayout(this);
    gridLayout->addWidget(flashSourceLabel, 0, 0);
@@ -95,7 +97,7 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
    gridLayout->addWidget(frameNumLabel, 1, 2);
    gridLayout->addWidget(frameNumEdit, 1, 3);
    gridLayout->addWidget(runSpeedLabel, 1, 4);
-   gridLayout->addWidget(runSpeedCheck, 1, 5);
+   gridLayout->addWidget(stayTimeEdit, 1, 5);
    gridLayout->addWidget(speedUnitLabel, 1, 6);
    groupBox->setLayout(gridLayout);
 
@@ -106,8 +108,15 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
    hLayout->addStretch(10);
    setLayout(hLayout);
 
-   //connect(nameEdit, SIGNAL(edited()), this, SIGNAL(edited()));
-   connect(openButton, SIGNAL(clicked()), this, SLOT(openFlashFile()));
+   connectSignal();
+
+}
+
+void CflashProperty::edited()
+{
+  QString str;
+  str = w->screenArea->getCurrentFileStr();//getCurrentFileStr();
+  getSettingsFromWidget(str);
 }
 
 void CflashProperty::openFlashFile()
@@ -123,7 +132,7 @@ void CflashProperty::openFlashFile()
         flashSourceEdit->setText(fileName);
         QMovie *movie = new QMovie(fileName);
         totalFrameNumEdit->setText(QString::number(movie->frameCount()));
-
+        frameNumEdit->setMaximum(movie->frameCount());
 
         area = w->screenArea->getFocusArea(); //当前焦点分区
 
@@ -145,7 +154,20 @@ void CflashProperty::openFlashFile()
 
 void getFlashParaFromSettings(QString str, U_File_Para &para)
 {
-   para.Temp_Para.Flag = SHOW_FLASH;
+   para.Pic_Para.Flag = SHOW_FLASH;
+   para.Pic_Para.In_Mode = 1;//(INT8U)settings.value("inMode").toInt();
+   para.Pic_Para.In_Time = 1;//(INT16U)settings.value("inTime").toInt();
+   para.Pic_Para.In_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
+   para.Pic_Para.Out_Mode = 1;//(INT8U)settings.value("outMode").toInt();
+   para.Pic_Para.Out_Time = 1;//(INT16U)settings.value("outTime").toInt();
+   para.Pic_Para.Out_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
+
+   settings.beginGroup(str);
+   para.Pic_Para.SNum = (INT16U)settings.value("frameCount").toInt();
+   para.Pic_Para.Stay_Time = (INT16U)settings.value("stayTime").toInt();
+   para.Pic_Para.Stay_Time |= 0x8000;
+   settings.endGroup();
+
 }
 
 CflashProperty::~CflashProperty()
@@ -170,11 +192,15 @@ void updateFlashShowArea(CshowArea *area)
         settings.beginGroup(str);
         QMovie *movie = new QMovie(settings.value("fileName").toString());
         settings.endGroup();
+        movie->setCacheMode(QMovie::CacheAll);
         //totalFrameNumEdit->setText(QString::number(movie->frameCount()));
-        movie->jumpToFrame(0);
+        if(movie->jumpToFrame(0) EQ false)
+        {
+            ASSERT_FAILED();
+        }
 
         area->imageBk = movie->currentImage();
-        area->imageBk.save("d:\\flash.png");
+        //area->imageBk.save("d:\\flash.png");
         area->updateFlag = true;
         //area->imageBk = getTextEditImage(MLINE_MODE, area->width(), area->height(), str, 0);
 
@@ -188,11 +214,31 @@ void updateFlashShowArea(CshowArea *area)
     }
 
 }
+
+void CflashProperty::connectSignal()
+{
+    //connect(frameNumEdit, SIGNAL(edited()), this, SIGNAL(edited()));
+    connect(frameNumEdit, SIGNAL(valueChanged(int)), this, SLOT(edited()));
+    connect(stayTimeEdit, SIGNAL(textEdited(const QString &)),this, SLOT(edited()));
+    connect(openButton, SIGNAL(clicked()), this, SLOT(openFlashFile()));
+
+}
+
+void CflashProperty::disconnectSignal()
+{
+    //connect(frameNumEdit, SIGNAL(edited()), this, SIGNAL(edited()));
+    disconnect(frameNumEdit, SIGNAL(valueChanged(int)), this, SLOT(edited()));
+    disconnect(stayTimeEdit, SIGNAL(textEdited(const QString &)),this, SLOT(edited()));
+    disconnect(openButton, SIGNAL(clicked()), this, SLOT(openFlashFile()));
+
+}
+
 void CflashProperty::getSettingsFromWidget(QString str)
 {
   settings.beginGroup(str);
   settings.setValue("fileName", flashSourceEdit->text());
-  settings.setValue("speed", runSpeedCheck->currentIndex());
+  settings.setValue("frameCount", frameNumEdit->value());
+  settings.setValue("stayTime", stayTimeEdit->text().toInt());
   settings.endGroup();
 
   nameEdit->getSettingsFromWidget(str);
@@ -200,21 +246,29 @@ void CflashProperty::getSettingsFromWidget(QString str)
 
 void CflashProperty::setSettingsToWidget(QString str)
 {
+    disconnectSignal();
+
     settings.beginGroup(str);
     flashSourceEdit->setText(settings.value("fileName").toString());
-    runSpeedCheck->setCurrentIndex(settings.value("speed").toInt());
+    stayTimeEdit->setText(QString::number(settings.value("stayTime").toInt()));//setCurrentIndex(settings.value("speed").toInt());
+    frameNumEdit->setValue(settings.value("frameCount").toInt());
     settings.endGroup();
 
     if(flashSourceEdit->text().isEmpty() == false)
     {
-        QMovie *movie = new QMovie(flashSourceEdit->text());
-        totalFrameNumEdit->setText(QString::number(movie->frameCount()));
+        //QMovie *movie = new QMovie(flashSourceEdit->text());
+        QMovie movie;
+        movie.setFileName(flashSourceEdit->text());
+        totalFrameNumEdit->setText(QString::number(movie.frameCount()));
+        frameNumEdit->setMaximum(movie.frameCount());
     }
 
     nameEdit->setSettingsToWidget(str);
+
+    connectSignal();
 }
 
-QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
+QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT8U Area_No, INT16U x, INT16U y)
 {
     INT8U colorData=0;
     QSize size;
@@ -222,7 +276,7 @@ QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
     int h,s,v,a;
     int i,j;
 
-    image.save("d:\\flash.png");
+    //image.save("d:\\flash.png");
     for(i = 0; i < image.width(); i ++)
         for(j = 0; j < image.height(); j ++)
         {
@@ -260,26 +314,29 @@ QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
               //Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x00);
               //qDebug("black");
           }
-          Set_Area_Point_Data(pDst, 0, x + i, y + j, colorData);
+          Set_Area_Point_Data(pDst, Area_No, x + i, y + j, colorData);
         }
     size.setWidth(image.width());
     size.setHeight(image.height());
     return size;
 }
 
-void getFlashPageShowData(QString str, INT8U page, S_Show_Data *pDst, INT16U x, INT16U y)
+void getFlashPageShowData(QString str, INT8U page, S_Show_Data *pDst, INT8U Area_No, INT16U x, INT16U y, INT16U width, INT16U height)
 {
-    settings.beginGroup(str);
-    QMovie *movie = new QMovie(settings.value("fileName").toString());
-    settings.endGroup();
-    //totalFrameNumEdit->setText(QString::number(movie->frameCount()));
-    movie->jumpToFrame(page);
+    QMovie movie;
 
-    QImage image = movie->currentImage();
-    getFlashShowData(image, pDst, x, y);
+    settings.beginGroup(str);
+    movie.setFileName(settings.value("fileName").toString());
+    settings.endGroup();
+    movie.setCacheMode(QMovie::CacheAll);
+    //totalFrameNumEdit->setText(QString::number(movie->frameCount()));
+    movie.jumpToFrame(page);
+
+    QImage image = movie.currentImage().scaled(width,height);
+    getFlashShowData(image, pDst,Area_No, x, y);
 }
 
-INT8U getFlashFrameCount(QString str)
+int getFlashFrameCount(QString str)
 {
     settings.beginGroup(str);
     QMovie *movie = new QMovie(settings.value("fileName").toString());

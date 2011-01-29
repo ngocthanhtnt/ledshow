@@ -377,38 +377,45 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
     }
     else if(type EQ PIC_FLASH_PROPERTY)
     {
+        getFlashParaFromSettings(fileStr, filePara);
         filePara.Pic_Para.Flag = SHOW_PIC;
 
-        filePara.Pic_Para.In_Mode = 0;//(INT8U)settings.value("inMode").toInt();
-        filePara.Pic_Para.In_Time = 1;//(INT16U)settings.value("inTime").toInt();
-        filePara.Pic_Para.In_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
-        filePara.Pic_Para.Out_Mode = 0;//(INT8U)settings.value("outMode").toInt();
-        filePara.Pic_Para.Out_Time = 1;//(INT16U)settings.value("outTime").toInt();
-        filePara.Pic_Para.Out_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
-        filePara.Pic_Para.Stay_Time = 1;//(INT16U)settings.value("stayTime").toInt();
+        int count = getFlashFrameCount(fileStr);
+        //filePara.Pic_Para.SNum = count;
 
-        INT8U count = getFlashFrameCount(fileStr);
-        filePara.Pic_Para.SNum = count;
-
-        memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Pic_Para) - CHK_BYTE_LEN;
 
-        for(int i = 0; i < count; i ++)
+        INT16U num = 0;
+
+        if(filePara.Pic_Para.SNum > 0)
         {
-          getFlashPageShowData(fileStr, i, &protoShowData, 0, 0);
+            for(int i = 0; i < count; i += count / filePara.Pic_Para.SNum)
+            {
+              getFlashPageShowData(fileStr, i, &protoShowData, 0, 0, 0, width, height);
 
-          tmpLen = GET_TEXT_LEN(width, height);
-          tmpLen = tmpLen * Get_Screen_Color_Num();
-          if(len + tmpLen >= bufLen)
-          {
-              ASSERT_FAILED();
-              return len;
-          }
+              tmpLen = GET_TEXT_LEN(width, height);
+              tmpLen = tmpLen * Get_Screen_Color_Num();
+              if(len + tmpLen >= bufLen)
+              {
+                  filePara.Pic_Para.SNum = num;
+                  memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para) - CHK_BYTE_LEN); //前一个字节是头，不拷贝
 
-          memcpy(buf + len, protoShowData.Color_Data, tmpLen);
-          len += tmpLen;
+                  ASSERT_FAILED();
+                  return len;
+              }
+              num ++;
 
-      }
+              memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+              len += tmpLen;
+
+              if(num>=filePara.Pic_Para.SNum)
+                  break;
+            }
+        }
+
+        filePara.Pic_Para.SNum = num;
+        memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para) - CHK_BYTE_LEN); //前一个字节是头，不拷贝
+
     }
 
     restoreScreenPara(screenParaBak);
