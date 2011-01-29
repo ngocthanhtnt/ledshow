@@ -125,6 +125,8 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     //QGridLayout *gridLayout;
     QHBoxLayout *hLayout;
     QVBoxLayout *vLayout;
+    QValidator *inOutTimeValidator = new QIntValidator(0,999,this);
+    QValidator *stayTimeValidator = new QIntValidator(0,9999,this);
 
     //gridLayout = new QGridLayout(this);
     vLayout=new QVBoxLayout(this);
@@ -135,6 +137,7 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     inTimeEdit = new QLineEdit(this);
     inTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
     inTimeLabel = new QLabel(tr("ºÁÃë"), this);
+    inTimeEdit->setValidator(inOutTimeValidator);
 
     hLayout = new QHBoxLayout(this);
     hLayout->addWidget(inModeLabel);
@@ -149,6 +152,7 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     outTimeEdit = new QLineEdit(this);
     outTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
     outTimeLabel = new QLabel(tr("ºÁÃë"), this);
+    outTimeEdit->setValidator(inOutTimeValidator);
 
     hLayout = new QHBoxLayout(this);
     hLayout->addWidget(outModeLabel);
@@ -162,7 +166,7 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     stayTimeEdit = new QLineEdit(this);
     stayTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
     stayTimeUnitLabel = new QLabel(tr("Ãë"), this);
-
+    stayTimeEdit->setValidator(stayTimeValidator);
 
     hLayout = new QHBoxLayout(this);
     hLayout->addWidget(stayTimeLabel);

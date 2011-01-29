@@ -41,7 +41,8 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
     QGridLayout *gridLayout;
     hLayout = new QHBoxLayout(this);
     vLayout = new QVBoxLayout(this);
-
+    //QValidator *inOutTimeValidator = new QIntValidator(0,999,this);
+    QValidator *stayTimeValidator = new QIntValidator(0,999,this);
 
     area = new Carea(this);
     nameEdit = new CnameEdit(this);
@@ -63,9 +64,11 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
    frameNumLabel = new QLabel(tr("提取帧数"), this);
    frameNumEdit = new QSpinBox(this);
 
-   runSpeedLabel = new QLabel(tr("运行速度"), this);
+   runSpeedLabel = new QLabel(tr("每屏停留时间"), this);
    stayTimeEdit = new QLineEdit(this);
-   speedUnitLabel = new QLabel(tr("微秒"), this);
+   stayTimeEdit->setFixedWidth(40);
+   stayTimeEdit->setValidator(stayTimeValidator);
+   speedUnitLabel = new QLabel(tr("毫秒"), this);
 /*
    stayTimeEdit->addItem(tr("0最快"));
    stayTimeEdit->addItem(tr("1"));
