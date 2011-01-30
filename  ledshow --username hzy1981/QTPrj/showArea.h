@@ -154,6 +154,18 @@ public:
     ~CMdiSubWindow();
 };
 
+class CpreviewWin:public QMainWindow
+{
+    Q_OBJECT
+protected:
+    void closeEvent(QCloseEvent *closeEvent);
+public:
+    //int previewFlag;
+
+    CpreviewWin(QWidget *parent = 0);
+    ~CpreviewWin();
+};
+
 INT8U Get_Border_Show_En();
 INT8U Get_Clock_Show_En();
 INT8U Get_Pic_Show_En();

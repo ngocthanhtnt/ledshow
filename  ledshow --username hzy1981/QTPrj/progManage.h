@@ -62,6 +62,7 @@ public slots:
 
     void previewProc();
 public:
+    QMainWindow *previewWin;
     CscreenArea *previewArea;
     void updateTextHead(QTreeWidgetItem *item); //更新和item同级的所有item的文本头
     QTreeWidgetItem *getCurItem();
