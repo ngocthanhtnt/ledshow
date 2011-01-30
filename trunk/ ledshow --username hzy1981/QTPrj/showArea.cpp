@@ -1415,7 +1415,7 @@ void CshowArea::paintEvent(QPaintEvent *)
 
         if(focusFlag == true) //当前分区是焦点
         {
-          painter.setPen(QColor(Qt::yellow));
+          painter.setPen(QColor(Qt::lightGray));
           painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
         }
         else
@@ -1559,6 +1559,42 @@ CMdiSubWindow::CMdiSubWindow(QWidget *parent):QMdiSubWindow(parent,0)
 }
 
 CMdiSubWindow::~CMdiSubWindow()
+{
+
+}
+
+void CpreviewWin::closeEvent(QCloseEvent *closeEvent)
+{/*
+   if(previewFlag == 0)
+   {
+       this->hide();
+
+       //将当前项目设置为0，因为在clickItem函数判定中，如果和前次项一致
+       //则不做操作，这样导致screen不会显示，因此将当前项目设置为0！！！
+       //下次点击同样项时，会显示当前显示屏
+       w->progManage->saveCurItem(0);
+       closeEvent->ignore();
+   }
+   else*/
+   {
+       Mem_Close();
+
+       w->progManage->timer->stop();
+       //disconnect(w->progManage->timer,SIGNAL(timeout()),w->progManage,SLOT(previewProc()));
+       closeEvent->accept();
+
+   }
+}
+
+CpreviewWin::CpreviewWin(QWidget *parent):QMainWindow(parent)
+{
+    Qt::WindowFlags flags = Qt::Window|Qt::WindowMinimizeButtonHint;
+
+    //previewFlag = 0;
+    setWindowFlags(flags); // 设置禁止最大化
+}
+
+CpreviewWin::~CpreviewWin()
 {
 
 }

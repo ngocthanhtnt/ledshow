@@ -116,6 +116,19 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
           this, SLOT(clickItem(QTreeWidgetItem *, int)));
   setWidget(treeWidget);
 
+  //previewWin = new QMainWindow(w);
+  //previewArea =  new CscreenArea;
+/*
+  previewWin = new QMainWindow(w);
+  previewWin->setWindowModality(Qt::WindowModal);
+
+  previewArea =  new CscreenArea;//(previewWin);
+  previewArea->setWindowModality(Qt::WindowModal);
+  previewArea->previewFlag = 1;
+
+  previewWin->setCentralWidget(previewArea);
+  //QDialog d(previewArea);
+*/
   connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
 
 
@@ -273,6 +286,20 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
     }
 }
 
+void _newScreen(QString name, int x, int y, int width, int height)
+{
+    CMdiSubWindow *subWin = new CMdiSubWindow;
+    w->screenArea =  new CscreenArea(subWin);
+    //w->screenArea->setGeometry(10,10,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34);
+    subWin->setWidget(w->screenArea);
+    subWin->setAttribute(Qt::WA_DeleteOnClose);
+    w->mdiArea->addSubWindow(subWin);
+    subWin->setWindowTitle(name);
+    subWin->setGeometry(x,y,width,height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+    subWin->setFixedSize(subWin->size());
+    subWin->show();
+}
+
 void CprogManage::newScreen()
 {
     QTreeWidgetItem *curItem;
@@ -311,21 +338,23 @@ void CprogManage::newScreen()
     item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
 
     treeWidget->addTopLevelItem(item);
-
+/*
     //w->setCentralWidget(w->mdiArea);
     CMdiSubWindow *subWin = new CMdiSubWindow;
-    w->screenArea =  new CscreenArea;
+    w->screenArea =  new CscreenArea(subWin);
+    //w->screenArea->setGeometry(10,10,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34);
     subWin->setWidget(w->screenArea);
     subWin->setAttribute(Qt::WA_DeleteOnClose);
     w->mdiArea->addSubWindow(subWin);
     subWin->setWindowTitle(QString::number(size + 1) + tr("屏幕"));
-    subWin->setGeometry(0,0,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+36); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-
+    subWin->setGeometry(size*50,size*50,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+    //w->screenArea->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+    //subWin->setc
     //Qt::WindowFlags flags = Qt::Window|Qt::WindowMinimizeButtonHint;
-
+*/
+    _newScreen(QString::number(size + 1) + tr("屏幕"), 0, 0, Screen_Para.Base_Para.Width+8,Screen_Para.Base_Para.Height+34);
     //subWin->setWindowFlags(flags); // 设置禁止最大化
-    subWin->setFixedSize(subWin->size());
-    subWin->show();
+
 
     w->progManage->clickItem(item, 0);
 
@@ -611,19 +640,29 @@ void CprogManage::preview()
   makeProtoData("screen/1", PREVIEW_MODE);
 
   //w->setCentralWidget(w->mdiArea);
-  CMdiSubWindow *subWin = new CMdiSubWindow;
-  subWin->previewFlag = 1; //用于仿真的子窗口
+  //CMdiSubWindow *subWin = new CMdiSubWindow;
+  //subWin->previewFlag = 1; //用于仿真的子窗口
   timerFlag = 0;
-  previewArea =  new CscreenArea;
-  previewArea->previewFlag = 1;
   stepTimer = 0;
-  subWin->setWidget(previewArea);
-  subWin->setAttribute(Qt::WA_DeleteOnClose);
-  w->mdiArea->addSubWindow(subWin);
-  subWin->setWindowTitle(tr("预览"));
-  subWin->setGeometry(0,0,Screen_Para.Base_Para.Width + 8, Screen_Para.Base_Para.Height + 36); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-  subWin->show();
 
+  previewWin = new CpreviewWin(w);//new QMainWindow(w);
+  previewWin->setWindowModality(Qt::WindowModal);
+
+  previewArea =  new CscreenArea(previewWin);
+  previewArea->setWindowModality(Qt::WindowModal);
+  previewArea->previewFlag = 1;
+
+
+
+  //previewArea->setWindowTitle(tr("预览"));
+  previewArea->setGeometry(100,100,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  previewArea->setFixedSize(previewArea->size());
+
+  previewWin->setCentralWidget(previewArea);
+  previewWin->setAttribute(Qt::WA_DeleteOnClose);
+  //d.show();
+  previewWin->show();
+  //d.show();
 
   Show_Init();
   //新建定时器
@@ -1056,17 +1095,20 @@ void CprogManage::settingsInit()
         //subWin->setFixedSize(subWin->size());
         //subWin->show();
         //------
-        w->screenArea =  new CscreenArea;
+/*
         CMdiSubWindow *subWin = new CMdiSubWindow;
+        w->screenArea =  new CscreenArea(subWin);
         subWin->setWidget(w->screenArea);
         subWin->setAttribute(Qt::WA_DeleteOnClose);
         w->mdiArea->addSubWindow(subWin);
         subWin->setWindowTitle(QString::number(m + 1) + tr("屏幕"));
-        subWin->setGeometry(0,0,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+36); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+        subWin->setGeometry(10,10,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+        //w->screenArea->setGeometry(10,10,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
 
 
         subWin->setFixedSize(subWin->size());
-
+*/
+        _newScreen(QString::number(m + 1) + tr("屏幕"), 0, 0, Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34);
         screenItem->setData(0, Qt::UserRole, screenStr);
         screenItem->setText(0, QString::number(m + 1) + tr("显示屏"));
 
