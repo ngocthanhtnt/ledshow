@@ -83,6 +83,7 @@ void Update_Pic_Data(INT8U Area_No)
   INT32U Stay_Time,In_Delay, Out_Delay;
   INT32U Out_Time;
   S_Point P0;
+  static S_Int8U Sec ={CHK_BYTE, 0xFF, CHK_BYTE};
   
   if(Prog_Status.New_Prog_Flag ||\
      Prog_Status.Area_Status[Area_No].New_File_Flag ||\
@@ -148,13 +149,26 @@ void Update_Pic_Data(INT8U Area_No)
             Prog_Status.Area_Status[Area_No].Stay_Time = 1;
             Prog_Status.Area_Status[Area_No].Step = 0;
             Prog_Status.Area_Status[Area_No].Step_Timer = 0;
-           }
+
+            if(Prog_Status.Area_Status[Area_No].In_Mode EQ 1 ||\
+               Prog_Status.Area_Status[Area_No].In_Mode EQ 2) //前4个是连续移动不清屏
+            {
+                Prog_Status.Area_Status[Area_No].Stay_Time = 0;
+                Prog_Status.Area_Status[Area_No].New_SCN_Flag = 1;
+                Prog_Status.Area_Status[Area_No].SNum ++;
+                //Prog_Status.Area_Status[Area_No].Step = 0;
+                //Prog_Status.Area_Status[Area_No].Step_Timer = 0;
+                //Prog_Status.Area_Status[Area_No].Stay_Time = 0;
+                Prog_Status.Area_Status[Area_No].Out_Time = 0;
+                Prog_Status.Area_Status[Area_No].Play_Flag = 0;
+            }
+          }
 
         }
       }
     }
-    //else
-    if(Prog_Status.Area_Status[Area_No].Stay_Time > 0)//在退出阶段
+    else
+    //if(Prog_Status.Area_Status[Area_No].Stay_Time > 0)//在退出阶段
     {
       Out_Delay = Get_Area_Out_Step_Delay(Area_No);
         //刚进入
@@ -174,8 +188,11 @@ void Update_Pic_Data(INT8U Area_No)
          //-------------------------
 
          if(Prog_Status.Area_Status[Area_No].In_Mode != 1 &&\
-            Prog_Status.Area_Status[Area_No].In_Mode != 2) //前4个是连续移动不清屏
-            memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
+            Prog_Status.Area_Status[Area_No].In_Mode != 2) //不是连续左移、连续右移
+         {
+             //memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
+           Clear_Area_Data(&Show_Data_Bak, Area_No);
+         }
          else
            Prog_Status.Area_Status[Area_No].Step = 100;
        }
@@ -245,9 +262,9 @@ void Update_Pic_Data(INT8U Area_No)
         }
 
         if(Prog_Status.Area_Status[Area_No].Stay_Time EQ MOVE_STEP_TIMER ||\
-           Prog_Status.Area_Status[Area_No].Stay_Time % 500 EQ 0)
+           Prog_Status.Area_Status[Area_No].Stay_Time % 500 EQ 0)//Sec.Var != Cur_Time.Time[T_SEC])//
         {
-          //Clear_Area_Data(&Show_Data, Area_No);
+          //Sec.Var = Cur_Time.Time[T_SEC];
           P0.X = P0.Y = 0;
           Area_Width = Get_Area_Width(Area_No);
           Area_Height = Get_Area_Height(Area_No);
