@@ -50,40 +50,46 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
      for(j = 0; j < Height; j ++)
      {
        Re = Get_Border_Point_Data(Area_No, (i + Prog_Para.Border_Width *Step / 100) % Prog_Para.Border_Width, j);  
-       Set_Area_Point_Data(pDst, Area_No, j, i, Re); //左边框
-       Set_Area_Point_Data(pDst, Area_No, Area_Width-1 -j, Area_Height-1-i, Re); //右边框
+       Set_Area_Point_Data(pDst, Area_No, j, Area_Height - 1 - i, Re); //左边框
+       Set_Area_Point_Data(pDst, Area_No, Area_Width-1 -j, i, Re); //右边框
      }   
 }
 
 //清除边界--闪烁时调用
 void Clr_Border(S_Show_Data *pDst, INT8U Area_No, INT8U Width, INT8U Height)
 {
-   INT8U Re;
-   INT16U i,j;
-   INT16U Area_Width, Area_Height;
-   
-  
-   Area_Width = Get_Area_Width(Area_No); //分区的宽度和高度
-   Area_Height = Get_Area_Height(Area_No);
-   
-   //上下边框
-   for(i = 0; i < Area_Width; i ++)
-     for(j = 0; j < Height; j ++)
-     {
-       Re = 0;//Get_Border_Point_Data((i + Prog_Para.Border_Width *Step / 100) % Prog_Para.Border_Width, j);  
-       Set_Area_Point_Data(pDst, Area_No, i, j, Re); //上边框
-       Set_Area_Point_Data(pDst, Area_No, Area_Width - i, Area_Height - j, Re); //下边框
-     }
-  
-   //左右边框
-   for(i = 0; i < Area_Height; i ++)
-     for(j = 0; j < Height; j ++)
-     {
-       Re = 0;//Get_Border_Point_Data((i + Prog_Para.Border_Width *Step / 100) % Prog_Para.Border_Width, j);  
-       Set_Area_Point_Data(pDst, Area_No, j, i, Re); //左边框
-       Set_Area_Point_Data(pDst, Area_No, Area_Width -j, Area_Height-j, Re); //右边框
-     }  
-  
+    INT8U Re;
+    INT16U i,j;
+    INT16U Area_Width, Area_Height;
+
+
+    Area_Width = Get_Area_Width(Area_No); //分区的宽度和高度
+    Area_Height = Get_Area_Height(Area_No);
+
+    //边框长宽是否合理
+    if(Width*Height > MAX_BORDER_POINTS || Width EQ 0 || Height EQ 0)
+    {
+        ASSERT_FAILED();
+        return;
+    }
+
+    //上下边框
+    for(i = 0; i < Area_Width; i ++)
+      for(j = 0; j < Height; j ++)
+      {
+        Re = 0;//Get_Border_Point_Data(Area_No, (i + Prog_Para.Border_Width *Step / 100) % Prog_Para.Border_Width, j);
+        Set_Area_Point_Data(pDst, Area_No, i, j, Re); //上边框
+        Set_Area_Point_Data(pDst, Area_No, Area_Width-1 - i, Area_Height-1 - j, Re); //下边框
+      }
+
+    //左右边框
+    for(i = 0; i < Area_Height; i ++)
+      for(j = 0; j < Height; j ++)
+      {
+        Re = 0;//Get_Border_Point_Data(Area_No, (i + Prog_Para.Border_Width *Step / 100) % Prog_Para.Border_Width, j);
+        Set_Area_Point_Data(pDst, Area_No, j, Area_Height - 1 - i, Re); //左边框
+        Set_Area_Point_Data(pDst, Area_No, Area_Width-1 -j, i, Re); //右边框
+      }
 }
 
 //获取某个分区的宽度
@@ -109,30 +115,32 @@ void Update_Border_Data(INT8U Area_No)
 {
   //INT8U In_Mode;
   //还在移动状态
+    static S_Int16U Timer = {CHK_BYTE, 0, CHK_BYTE};
   static S_Int8U Flag = {CHK_BYTE, 0, CHK_BYTE}; 
     
-  INT32U Step_Time = 0; //步进时间
+  INT16U Step_Time = 0; //步进时间
   INT8U Border_Width,Border_Height;
   
   if(Prog_Para.Border_Check EQ 0)
       return;
 
+  Step_Time = Prog_Para.Border_StayTime;//(Prog_Para.Border_Speed+ 1)*100; //100ms的的一个速度步进
   Prog_Status.Border_Status.Timer += MOVE_STEP_TIMER;
-  
+  Timer.Var += MOVE_STEP_TIMER;
+
   Border_Width = Get_Area_Border_Width(Area_No);
   Border_Height = Get_Area_Border_Height(Area_No);
   
   if(Prog_Status.Border_Status.Timer >= Step_Time)
   {
     Prog_Status.Border_Status.Timer = 0;
-    Step_Time = (Prog_Para.Border_Speed+ 1)*100; //100ms的的一个速度步进
-  
+
+    if(Prog_Status.Border_Status.Step >= 100)
+      Prog_Status.Border_Status.Step = 0;
+
     if(Prog_Status.Border_Status.Step < 100)
       Prog_Status.Border_Status.Step += MOVE_STEP;
-    
-    if(Prog_Status.Border_Status.Step > 100)
-      Prog_Status.Border_Status.Step = 0;
-    
+        
     if(Prog_Para.Border_Mode EQ BORDER_STATIC) //静态 
     {
       Draw_Border(&Show_Data, Area_No, Prog_Para.Border_Data, \
@@ -175,10 +183,14 @@ void Update_Border_Data(INT8U Area_No)
       
   }
   
-  if(Flag.Var > 0)
-    Flag.Var = 0;
-  else
-    Flag.Var = 1;
+  if(Timer.Var >= 500)
+  {
+      Timer.Var = 0;
+      if(Flag.Var > 0)
+        Flag.Var = 0;
+      else
+        Flag.Var = 1;
+    }
 }
 #endif
 #undef BORDER_SHOW_C

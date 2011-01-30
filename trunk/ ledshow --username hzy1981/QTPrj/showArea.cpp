@@ -645,10 +645,10 @@ CshowArea::CshowArea(QWidget *parent, int colorFlag):QWidget(parent)
     screenItem = (QTreeWidgetItem *)0;
 
     previewFlag = 0; //不是预览窗口
-    //setAttribute(Qt::WA_StaticContents);
-  //resize(100,100);
-  //setText("Test");
-   // Painter = new QPainter(this);
+
+    QPalette palette(QPalette::Base,QColor(Qt::black));
+    setPalette(palette);//->setPalette(palette);
+    setAutoFillBackground(true);
 }
 
 //设置分区类型,0表示
@@ -1379,8 +1379,15 @@ void CshowArea::paintEvent(QPaintEvent *)
            colorData = Get_Area_Point_Data(&showData, 0, i, j);
             //if(colorData != 0)
               //qDebug("point %d,%d = %d", i, j, colorData);
-           painter.setPen(getQColor(colorData));
-           painter.drawPoint(i,j);
+           if(colorData > 0)
+           {
+             painter.setPen(getQColor(colorData));
+             painter.drawPoint(i,j);
+           }
+           else
+           {
+
+           }
            /*
            if(colorData & 0x01)
            {
@@ -1450,8 +1457,8 @@ void CshowArea::paintEvent(QPaintEvent *)
                 }
                 else
                 {
-                    painter.setPen(QColor(Qt::black));
-                    painter.drawPoint(i,j);
+                    //painter.setPen(QColor(Qt::black));
+                    //painter.drawPoint(i,j);
                 }
               }
            }

@@ -181,7 +181,8 @@ typedef struct
   S_Area Area[MAX_AREA_NUM]; //区域定义
   
   INT8U Border_Check; //是否显示边框
-  INT8U Border_Speed; //边框运行速度
+  INT16U Border_StayTime;
+  //INT8U Border_Speed; //边框运行速度
   INT8U Border_Mode;  //边框模式
   INT8U Border_Width;   //边框宽度
   INT8U Border_Height;  //边框高度

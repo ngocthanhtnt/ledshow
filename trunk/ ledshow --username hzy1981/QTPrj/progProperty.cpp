@@ -365,13 +365,14 @@ void CprogProperty::connectSignal()
     connect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
     connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
     connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
-    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+    //connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 
     //-----------------
     connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     connect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-
+    connect(speedCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(modeCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
 }
 
 void CprogProperty::disconnectSignal()
@@ -381,12 +382,14 @@ void CprogProperty::disconnectSignal()
     disconnect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
     disconnect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
     disconnect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
-    disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+    //disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 
     //-----------------
     disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     disconnect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnect(speedCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnect(modeCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
 
 }
 
@@ -462,16 +465,16 @@ void CprogProperty::setSettingsToWidget(QString str)
     //±ß¿òÑ¡Ôñ
     borderCheck->setChecked(settings.value("borderCheck").toBool());
     //stepCombo->setText(QString::number(settings.value("width").toInt()));
-    stepCombo->setCurrentIndex(settings.value("step").toInt());
+    stepCombo->setCurrentIndex(settings.value("borderStep").toInt());
 
     //stepCombo->addItem(tr("2"));
 
-    speedCombo->setCurrentIndex(settings.value("speed").toInt());
+    speedCombo->setCurrentIndex(settings.value("borderSpeed").toInt());
 
 
-    styleCombo->setCurrentIndex(settings.value("style").toInt());
-    colorCombo->setCurrentIndex(settings.value("color").toInt());
-    modeCombo->setCurrentIndex(settings.value("mode").toInt());
+    styleCombo->setCurrentIndex(settings.value("borderStyle").toInt());
+    colorCombo->setCurrentIndex(settings.value("borderColor").toInt());
+    modeCombo->setCurrentIndex(settings.value("borderMode").toInt());
 
     settings.endGroup();
 
@@ -554,14 +557,14 @@ void CprogProperty::getSettingsFromWidget(QString str)
       //borderCheck->setChecked(settings.value("boderCheck").toBool());
     settings.setValue("borderCheck", QVariant(borderCheck->checkState()));
     //stepCombo->setText(settings.value("width").toString());
-    settings.setValue("step", QVariant(stepCombo->currentIndex()));
-    //speedCombo->setText(settings.value("speed").toString());
-    settings.setValue("speed", QVariant(speedCombo->currentIndex()));
-    //styleCombo->setCurrentIndex(settings.value("style").toInt());
-    settings.setValue("style", QVariant(styleCombo->currentIndex()));
-    //modeCombo->setCurrentIndex(settings.value("color").toInt());
-    settings.setValue("color", QVariant(colorCombo->currentIndex()));
-    settings.setValue("mode", QVariant(modeCombo->currentIndex()));
+    settings.setValue("borderStep", QVariant(stepCombo->currentIndex()));
+    //speedCombo->setText(settings.value(bo).toString());
+    settings.setValue("borderSpeed", QVariant(speedCombo->currentIndex()));
+    //styleCombo->setCurrentIndex(settings.value( m,).toInt());
+    settings.setValue("borderStyle", QVariant(styleCombo->currentIndex()));
+    //modeCombo->setCurrentIndex(settings.value("borderColor").toInt());
+    settings.setValue("borderColor", QVariant(colorCombo->currentIndex()));
+    settings.setValue("borderMode", QVariant(modeCombo->currentIndex()));
    }
 
     settings.endGroup();
@@ -798,13 +801,18 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
     para.Counts = 1;//(INT16U)settings.value("playCount").toInt();
   }
 
-  index = settings.value("style").toInt();
-  color = settings.value("color").toInt();
+  index = settings.value("borderStyle").toInt();
+  color = settings.value("borderColor").toInt();
   check = settings.value("borderCheck").toBool();
+
+  para.Border_Mode = settings.value("borderMode").toInt();
+  //para.Border_Speed = settings.value("borderSpeed").toInt();
+  para.Border_StayTime = (INT16U)(settings.value("borderSpeed").toInt() + 1)*MOVE_STEP_TIMER;
 
   para.Border_Check = check;
   para.Border_Width = Border_Data[index].Width;
   para.Border_Height = Border_Data[index].Height;
+
 
   memset(para.Border_Data, 0, sizeof(para.Border_Data));
 

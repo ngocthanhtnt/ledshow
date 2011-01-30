@@ -102,7 +102,7 @@ typedef struct
 {
   INT8U Head;
   INT8U Step;   //步长
-  INT32U Timer; //已经走过的Timer
+  INT16U Timer; //已经走过的Timer
   INT8U Tail;  
 }S_Border_Status;
 

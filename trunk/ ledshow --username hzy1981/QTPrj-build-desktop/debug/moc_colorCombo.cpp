@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'colorCombo.h'
 **
-** Created: Sat Jan 29 09:34:44 2011
+** Created: Sun Jan 30 21:16:37 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!

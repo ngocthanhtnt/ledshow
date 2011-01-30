@@ -62,7 +62,7 @@ private:
 
     QLabel *stepLabel,*styleLabel,*modeLabel,*speedLabel;
     QLabel *pointsLabel,*usLabel;
-    QComboBox *stepCombo, *speedCombo;
+    QComboBox *stepCombo,*speedCombo;
     QComboBox *styleCombo;
     QComboBox *modeCombo;
     CcolorCombo *colorCombo;
