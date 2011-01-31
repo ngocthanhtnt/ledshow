@@ -1,6 +1,7 @@
 #define MAIN_SHOW_C
 #include "includes.h"
 
+
 //每档速度的延时,单位为毫秒
 const INT16U Step_Delay[]=
 {
@@ -184,6 +185,9 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   //INT8U Counts;
   //所有分屏都显示了则切换到下个显示文件
   if(Prog_Status.New_Prog_Flag) //在节目更新状态中，不更新文件参数
+      return 0;
+
+  if(Prog_Para.Area_File_Num[Area_No] EQ 0)
       return 0;
 
   if(Prog_Status.Area_Status[Area_No].New_File_Flag EQ 0 &&\
@@ -513,6 +517,9 @@ void Check_Update_Program_Para()
       if(Prog_Status.Prog_No >= Screen_Para.Prog_Num ||\
          Prog_Status.Prog_No >= MAX_PROG_NUM)
         Prog_Status.Prog_No = 0;
+#if QT_EN
+      Prog_Status.Prog_No = Preview_Prog_No;
+#endif
 
       debug("\r\n-----update new prog %d para-----\r\n", Prog_Status.Prog_No);
 

@@ -51,6 +51,7 @@
 #else
 #define ASSERT_EN 1
 
+#define APP_NAME "LED播放系统"
 //显示效果配置
 #define MOVE_STEP_TIMER 20 //移动步进时间,单位为ms
 //#define MIN_STAY_TIME  10//每屏最小停留时间,单位为ms

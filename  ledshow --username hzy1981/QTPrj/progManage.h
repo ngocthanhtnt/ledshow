@@ -70,6 +70,7 @@ public:
 
     QTimer *timer;
     int timerFlag;
+    INT8U previewProgNo;
 
     QTreeWidget *treeWidget;
     void settingsInit(); //´ò¿ªsettings

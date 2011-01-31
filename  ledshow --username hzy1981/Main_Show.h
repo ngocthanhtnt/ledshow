@@ -18,6 +18,7 @@
 
 #define CONVERT_TIME(X) (((X) & 0x8000)?((X) & 0x7FFF):(X) * 1000)
 
+EXT INT8U Preview_Prog_No;
 EXT INT32U Get_Area_In_Step_Delay(INT8U Area_No);
 EXT INT32U Get_Area_Out_Step_Delay(INT8U Area_No);
 EXT INT32U Get_File_Stay_Time(INT8U Area_No);

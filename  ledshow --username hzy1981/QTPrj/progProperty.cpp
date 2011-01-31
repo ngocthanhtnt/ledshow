@@ -365,7 +365,7 @@ void CprogProperty::connectSignal()
     connect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
     connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
     connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
-    //connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 
     //-----------------
     connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
@@ -382,7 +382,7 @@ void CprogProperty::disconnectSignal()
     disconnect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
     disconnect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
     disconnect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
-    //disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+    disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 
     //-----------------
     disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));

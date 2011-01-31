@@ -8,6 +8,7 @@
 #include "mainwindow.h"
 #include "makeProto.h"
 #include <QLabel>
+#include <QMessageBox>
 
 extern MainWindow *w;
 extern QSettings settings;
@@ -369,8 +370,12 @@ void CprogManage::newProg()
 
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == (QTreeWidgetItem *)0)
-        return;
+    {
+        QMessageBox::information(0, tr(APP_NAME),
+                                 tr("请在节目管理栏选定一个屏幕"),tr("确定"));
 
+        return;
+    }
     type = checkItemType(curItem); //该项目是哪种?
 
     //找到该分区对应的节目的treeWidgetItem
@@ -388,6 +393,9 @@ void CprogManage::newProg()
     if(parentItem EQ (QTreeWidgetItem *)0)
     {
         ASSERT_FAILED();
+        QMessageBox::information(0, tr(APP_NAME),
+                                 tr("请在节目管理栏选定一个屏幕"),tr("确定"));
+
         return;
     }
 
@@ -401,6 +409,9 @@ void CprogManage::newProg()
     if(size >= Card_Para.Prog_Num)
     {
         settings.endGroup();
+        QMessageBox::information(0, tr(APP_NAME),
+                                 tr("当前屏幕节目数达到上限！"),tr("确定"));
+
         return;
     }
     //qDebug("groups size = %d", size);
@@ -492,7 +503,12 @@ void CprogManage::newArea()
 
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == (QTreeWidgetItem *)0)
+    {
+        QMessageBox::information(0, tr(APP_NAME),
+                                 tr("请在节目管理栏选定一个节目"),tr("确定"));
+
         return;
+    }
 /*
     settings.beginGroup("screen");
     int xLen = settings.value("width").toInt();
@@ -504,8 +520,12 @@ void CprogManage::newArea()
 
     type = checkItemType(curItem); //该项目是哪种?
     if(type == SCREEN_PROPERTY)
-        return;
+    {
+        QMessageBox::information(0, tr(APP_NAME),
+                                 tr("请在节目管理栏选定一个节目"),tr("确定"));
 
+        return;
+    }
     //找到该分区对应的节目的treeWidgetItem
     if(type == PROG_PROPERTY)
         parentItem = curItem;
@@ -526,6 +546,9 @@ void CprogManage::newArea()
     if(size >= Card_Para.Area_Num)
     {
         settings.endGroup();
+        QMessageBox::information(0, tr(APP_NAME),
+                                 tr("当前节目分区数达到上限！"),tr("确定"));
+
         return;
     }
 
@@ -633,12 +656,31 @@ CMdiSubWindow *newSubWin(QString title, int width, int height)
     subWin->show();
 }
 */
+
+QString getItemStr(QTreeWidgetItem *item)
+{
+    return item->data(0,Qt::UserRole).toString();
+}
+
 void CprogManage::preview()
 {
+  QString screenStr;//progStr;
+  INT8U Screen_No;
   //生成仿真文件
   Mem_Open();
-  makeProtoData("screen/1", PREVIEW_MODE);
 
+  screenStr = getItemStr(w->screenArea->screenItem);
+  makeProtoData(screenStr, PREVIEW_MODE);
+
+  Screen_No = treeWidget->indexOfTopLevelItem(w->screenArea->screenItem);
+  if(w->screenArea->screenItem->childCount() EQ 0)
+  {
+      QMessageBox::information(0, tr(APP_NAME),
+                               tr("请先选择一个预览的节目"),tr("确定"));
+
+      return;
+  }
+  Preview_Prog_No = w->screenArea->screenItem->indexOfChild(w->screenArea->progItem);
   //w->setCentralWidget(w->mdiArea);
   //CMdiSubWindow *subWin = new CMdiSubWindow;
   //subWin->previewFlag = 1; //用于仿真的子窗口
@@ -652,15 +694,13 @@ void CprogManage::preview()
   previewArea->setWindowModality(Qt::WindowModal);
   previewArea->previewFlag = 1;
 
-
-
-  //previewArea->setWindowTitle(tr("预览"));
-  previewArea->setGeometry(100,100,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  previewArea->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
   previewArea->setFixedSize(previewArea->size());
 
   previewWin->setCentralWidget(previewArea);
   previewWin->setAttribute(Qt::WA_DeleteOnClose);
-  //d.show();
+  previewWin->setWindowTitle(tr("预览-")+QString::number(Screen_No + 1) + tr("号屏幕-") + QString::number(Preview_Prog_No + 1) + tr("号节目"));
+  //previewWin->setFixedSize(previewWin->size());
   previewWin->show();
   //d.show();
 
@@ -706,13 +746,18 @@ void CprogManage::newFile(int fileType, int subType)
 
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == (QTreeWidgetItem *)0)
+    {
+        QMessageBox::information(0, tr(APP_NAME),
+                                 tr("请先在节目管理栏选择一个分区"),tr("确定"));
         return;
-
+    }
     type = checkItemType(curItem); //该项目是哪种?
 
     if(type == PROG_PROPERTY || type == SCREEN_PROPERTY)
     {
-        return;
+        QMessageBox::information(0, tr(APP_NAME),
+                                 tr("请先在节目管理栏选择一个分区"),tr("确定"));
+          return;
     }
     else if(type == AREA_PROPERTY) //area型
         parentItem = curItem;
@@ -731,6 +776,9 @@ void CprogManage::newFile(int fileType, int subType)
     if(size >= Card_Para.File_Num)
     {
         settings.endGroup();
+        QMessageBox::information(0, tr(APP_NAME),
+                                 tr("当前分区文件数达到上限！"),tr("确定"));
+
         return;
     }
 

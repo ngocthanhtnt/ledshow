@@ -69,7 +69,7 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
    Fill_Clock_Line(pDst_Buf, Area_No, &Point, 90 - 360 * pTime->Time[T_MIN] / 60, Radius * 10 / 10,\
                    pClock_Para->Min_Line_Width, pClock_Para->Min_Line_Color);
    //ÃëÖÓ
-   //pTime->Time[T_SEC] = 0;
+   //pTime->Time[T_SEC] = 59;
    if(pClock_Para->Sec_Line_Width)
    Fill_Clock_Line(pDst_Buf, Area_No, &Point, 90 - 360 * pTime->Time[T_SEC] / 60, Radius * 12 / 10,\
                    pClock_Para->Sec_Line_Width, pClock_Para->Sec_Line_Color);
