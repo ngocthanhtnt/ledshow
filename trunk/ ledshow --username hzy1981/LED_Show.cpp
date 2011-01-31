@@ -758,11 +758,12 @@ void Copy_Filled_Triangle(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0
     Temp2.X = pLeft->X + pPoint3->X - pPoint0->X;
     Temp2.Y = pLeft->Y + pPoint3->Y - pPoint0->Y;
     Copy_Line(pSrc_Buf, Area_No, pLeft, pRight, pDst_Buf, &Temp2);
+/*
     Copy_Line(pSrc_Buf, Area_No, pLeft, pMid, pDst_Buf, &Temp2);
     Temp2.X = pMid->X + pPoint3->X - pPoint0->X;
     Temp2.Y = pMid->Y + pPoint3->Y - pPoint0->Y;
-    Copy_Line(pSrc_Buf, Area_No, pMid, pRight, pDst_Buf, &Temp2);
-
+    Copy_Line(pSrc_Buf, Area_No, pRight, pMid, pDst_Buf, &Temp2);
+*/
     while(Temp0.X <= pRight -> X)
     {
       Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
@@ -857,8 +858,8 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
   Temp1_Bk.Y = pLeft->Y;
 
   Draw_Line(pDst_Buf, Area_No, pLeft, pRight, Value);
-  Draw_Line(pDst_Buf, Area_No, pLeft, pMid, Value);
-  Draw_Line(pDst_Buf, Area_No, pMid, pRight, Value);
+  //Draw_Line(pDst_Buf, Area_No, pLeft, pMid, Value);
+  //Draw_Line(pDst_Buf, Area_No, pRight,pMid,  Value);
 
   while(Temp0.X <= pRight -> X)
   {

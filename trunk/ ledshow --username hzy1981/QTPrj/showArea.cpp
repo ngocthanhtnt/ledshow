@@ -1415,7 +1415,7 @@ void CshowArea::paintEvent(QPaintEvent *)
 
         if(focusFlag == true) //当前分区是焦点
         {
-          painter.setPen(QColor(Qt::lightGray));
+          painter.setPen(QColor(Qt::white));
           painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
         }
         else
