@@ -289,6 +289,8 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
 
 void _newScreen(QString name, int x, int y, int width, int height)
 {
+
+    //--------------
     CMdiSubWindow *subWin = new CMdiSubWindow;
     w->screenArea =  new CscreenArea(subWin);
     //w->screenArea->setGeometry(10,10,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34);
@@ -309,7 +311,9 @@ void CprogManage::newScreen()
     int i,size,type,index;
     int max = 0,tmp;
 
-    //QStr = (parentItem ->data(0,Qt::UserRole)).toString();
+    CsetFacPara *setFacPara = new CsetFacPara(this);
+    setFacPara->show();
+
     QStr = "screen";//QStr + "/" + QString(tr("area"));
 
     settings.beginGroup(QStr);
