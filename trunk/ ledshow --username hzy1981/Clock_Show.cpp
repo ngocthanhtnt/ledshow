@@ -126,8 +126,7 @@ void Update_Clock_Data(S_Show_Data *pDst, INT8U Area_No)
     mem_cpy(&sTime, &Cur_Time, sizeof(Cur_Time), &sTime, sizeof(sTime)); 
   }
   
-  Show_Clock(pDst, Area_No, &sTime, &Prog_Status.File_Para[Area_No].Clock_Para);
-/*
+  /*
   //----------固定文本---------
   tmp = (INT16S)(Width * Prog_Status.File_Para[Area_No].Clock_Para.Text_X / 100) - (INT16S)Prog_Status.File_Para[Area_No].Clock_Para.Text_Width/2;
   if(tmp > 0)
@@ -187,7 +186,7 @@ void Update_Clock_Data(S_Show_Data *pDst, INT8U Area_No)
       Show_Date(pDst, 0, P0.X, P0.Y, &Cur_Time, Prog_Status.File_Para[Area_No].Clock_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Clock_Para.Week_Font, Prog_Status.File_Para[Area_No].Clock_Para.Date_Color);
    }
   
-   //Prog_Status.Area_Status[Area_No].Step = 100; //一步显示到位，直接100%
+   Show_Clock(pDst, Area_No, &sTime, &Prog_Status.File_Para[Area_No].Clock_Para);
 }
 #endif
 
