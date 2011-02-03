@@ -27,7 +27,9 @@ const S_Mode_Func In_Mode_Func[]=
   {&Move_Left_Right_Close},//14
   {&Move_Up_Down_Close},//15
   {&Move_Spin_CW},
-  {&Move_Spin_CCW}
+  {&Move_Spin_CCW},
+  {&Move_Up_Snow},
+  {Move_Down_Snow},
 
 };
 
@@ -94,7 +96,7 @@ void Update_Pic_Data(INT8U Area_No)
   Out_Time = Get_File_Out_Time(Area_No);
   
   //还在移动状态
-  if(Prog_Status.Area_Status[Area_No].Step < 100)
+  if(Prog_Status.Area_Status[Area_No].Step < MAX_STEP_NUM)
   {
     if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)//在进入阶段
     {
@@ -139,10 +141,10 @@ void Update_Pic_Data(INT8U Area_No)
         (*(In_Mode_Func[In_Mode].Func))(Area_No);//执行移动操作
 
         if(In_Mode EQ 0) //立即显示
-          Prog_Status.Area_Status[Area_No].Step = 100;
+          Prog_Status.Area_Status[Area_No].Step = MAX_STEP_NUM;
 
-        //进入阶段如果达到100%同时停留时间为0则直接跳到退出阶段
-        if(Prog_Status.Area_Status[Area_No].Step >= 100)
+        //进入阶段如果达到MAX_STEP_NUM%同时停留时间为0则直接跳到退出阶段
+        if(Prog_Status.Area_Status[Area_No].Step >= MAX_STEP_NUM)
         {
           if(Stay_Time EQ 0) //进入阶段走完，如果停留时间是0则直接进入退出阶段!
           {
@@ -194,11 +196,11 @@ void Update_Pic_Data(INT8U Area_No)
            Clear_Area_Data(&Show_Data_Bak, Area_No);
          }
          else
-           Prog_Status.Area_Status[Area_No].Step = 100;
+           Prog_Status.Area_Status[Area_No].Step = MAX_STEP_NUM;
        }
 
       //在移动阶段
-      if(Prog_Status.Area_Status[Area_No].Step < 100)
+      if(Prog_Status.Area_Status[Area_No].Step < MAX_STEP_NUM)
       {
           if(Prog_Status.Area_Status[Area_No].Step_Timer < Out_Delay)
             Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
@@ -212,7 +214,7 @@ void Update_Pic_Data(INT8U Area_No)
             Out_Mode = Prog_Status.Area_Status[Area_No].Out_Mode;
             if(Out_Mode EQ 1) //不清屏
             {
-               Prog_Status.Area_Status[Area_No].Step = 100;
+               Prog_Status.Area_Status[Area_No].Step = MAX_STEP_NUM;
             }
             else
             {
@@ -226,12 +228,12 @@ void Update_Pic_Data(INT8U Area_No)
               (*(Out_Mode_Func[Out_Mode].Func))(Area_No);//执行移动操作
 
               if(Out_Mode EQ 0) //立即显示
-                Prog_Status.Area_Status[Area_No].Step = 100;
+                Prog_Status.Area_Status[Area_No].Step = MAX_STEP_NUM;
            }
          }
      }
 
-     if(Prog_Status.Area_Status[Area_No].Step >= 100)
+     if(Prog_Status.Area_Status[Area_No].Step >= MAX_STEP_NUM)
      {
         //SNum表示当前文件总的屏幕数，只有图文的屏幕数会大于1！！
         //if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_PIC)
