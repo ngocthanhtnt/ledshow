@@ -18,7 +18,7 @@
 #define BORDER_CCLKWS_FLASH 0x05 //ƒÊ ±’Î…¡À∏
 
 EXT INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y);
-EXT void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, INT8U Height,  INT8U Step);
+EXT void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, INT8U Height,  INT32U Step);
 EXT void Update_Border_Data(INT8U Area_No);
 #endif
 

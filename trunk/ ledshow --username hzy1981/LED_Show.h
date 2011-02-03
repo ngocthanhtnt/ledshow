@@ -15,7 +15,7 @@
 
 #define PI 3.1415926535
 
-
+#define MAX_STEP_NUM 1000
 
 #define SLINE_MODE 0x00
 #define MLINE_MODE 0x01
@@ -85,7 +85,7 @@ typedef struct
   INT8U New_SCN_Flag:4;
 
   INT8U File_No;    //当前文件号
-  INT8U Step;        //当前移动的阶梯
+  INT32U Step;        //当前移动的阶梯
   INT32U Step_Timer;  //已经走过Timer，单位ms
   INT32U Stay_Time;   //已经停留的时间，单位ms
   INT32U Out_Time;   //退出时间
@@ -101,7 +101,7 @@ typedef struct
 typedef struct
 {
   INT8U Head;
-  INT8U Step;   //步长
+  INT32U Step;   //步长
   INT16U Timer; //已经走过的Timer
   INT8U Tail;  
 }S_Border_Status;
@@ -222,5 +222,7 @@ EXT void Move_Left_Right_Close(INT8U Area_No);
 EXT void Move_Up_Down_Close(INT8U Area_No);
 EXT void Move_Spin_CW(INT8U Area_No);
 EXT void Move_Spin_CCW(INT8U Area_No);
+EXT void Move_Up_Snow(INT8U Area_No);
+EXT void Move_Down_Snow(INT8U Area_No);
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
 #endif
