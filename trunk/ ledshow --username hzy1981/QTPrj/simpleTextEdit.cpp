@@ -70,6 +70,17 @@ CshowModeCombo::CshowModeCombo(bool flag, QWidget *parent):QComboBox(parent)
         addItem(tr("逆时针旋转"));
         addItem(tr("向上飘雪"));
         addItem(tr("向下飘雪"));
+        addItem(tr("闪烁"));
+        addItem(tr("左镭射"));
+        addItem(tr("右镭射"));
+        addItem(tr("上镭射"));
+        addItem(tr("下镭射"));
+        addItem(tr("左拉伸"));
+        addItem(tr("右拉伸"));
+        addItem(tr("上拉伸"));
+        addItem(tr("下拉伸"));
+        addItem(tr("垂直拉伸"));
+        addItem(tr("水平拉伸"));
     }
     else
     {

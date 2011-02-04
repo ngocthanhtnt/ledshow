@@ -26,11 +26,21 @@ const S_Mode_Func In_Mode_Func[]=
   {&Move_Up_Down_Open},//13
   {&Move_Left_Right_Close},//14
   {&Move_Up_Down_Close},//15
-  {&Move_Spin_CW},
-  {&Move_Spin_CCW},
-  {&Move_Up_Snow},
-  {Move_Down_Snow},
-
+  {&Move_Spin_CW}, //顺时针覆盖
+  {&Move_Spin_CCW}, //逆时针覆盖
+  {&Move_Up_Snow}, //上飘雪
+  {&Move_Down_Snow}, //下飘雪
+  {&Move_Flash}, //闪烁
+  {&Move_Left_Laser}, //左镭射
+  {&Move_Right_Laser}, //右镭射
+  {&Move_Up_Laser}, //上镭射
+  {&Move_Down_Laser}, //下镭射
+  {&Move_Left_Tensile},//左拉伸
+  {&Move_Right_Tensile},//右拉伸
+  {&Move_Up_Tensile},//上拉伸
+  {&Move_Down_Tensile},//下拉伸
+  {&Move_Vertical_Tensile},//垂直拉伸
+  {&Move_Horizontal_Tensile}//水平拉伸
 };
 
 //数据移入方式

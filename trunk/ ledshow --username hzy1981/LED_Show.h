@@ -224,5 +224,16 @@ EXT void Move_Spin_CW(INT8U Area_No);
 EXT void Move_Spin_CCW(INT8U Area_No);
 EXT void Move_Up_Snow(INT8U Area_No);
 EXT void Move_Down_Snow(INT8U Area_No);
+EXT void Move_Flash(INT8U Area_No);
+EXT void Move_Left_Laser(INT8U Area_No);
+EXT void Move_Right_Laser(INT8U Area_No);
+EXT void Move_Up_Laser(INT8U Area_No);
+EXT void Move_Down_Laser(INT8U Area_No);
+EXT void Move_Left_Tensile(INT8U Area_No);//左拉伸
+EXT void Move_Right_Tensile(INT8U Area_No);//右拉伸
+EXT void Move_Up_Tensile(INT8U Area_No);//上拉伸
+EXT void Move_Down_Tensile(INT8U Area_No);//下拉伸
+EXT void Move_Vertical_Tensile(INT8U Area_No);//水平拉伸
+EXT void Move_Horizontal_Tensile(INT8U Area_No);//垂直拉伸
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
 #endif
