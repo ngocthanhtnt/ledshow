@@ -1,7 +1,9 @@
 #define LED_SHOW_C
 #include "Includes.h"
 
-
+#define SNOW_RATIO 4 //飘雪的数据比例
+#define TENSILE_STEP 10//Tensile
+//#define COMPRESSION_RATIO
 /*
 //获取得颜色
 INT8U Get_Color()
@@ -614,13 +616,18 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
       }
   }
   */
-    S_Point *p0, *p1;
+    S_Point *p0, *p1, *p2;
     INT32S i,j;
     INT16U Y,k;
     INT8U Value;
+    INT16S Xdiff,Ydiff;
 
     p0 = Get_Left_Point(pPoint0, pPoint1);
     p1 = Get_Right_Point(pPoint0, pPoint1);
+    p2 = pPoint2;
+
+    Xdiff = (INT16S)pPoint2->X - (INT16S)pPoint0->X;
+    Ydiff = (INT16S)pPoint2->Y - (INT16S)pPoint0->Y;
 
     Y = p0->Y;
     if(p0->X != p1->X)
@@ -636,7 +643,7 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
             for(k = Y + 1; k < j; k ++)
             {
                 Value = Get_Area_Point_Data(pSrc_Buf, Area_No, (INT16U)i, (INT16U)k);
-                Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)k, Value);
+                Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i + Xdiff, (INT16U)k + Ydiff, Value);
             }
           }
           else if(Y > (INT16U)j + 1)
@@ -644,13 +651,13 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
               for(k = (INT16U)j + 1; k < Y; k ++)
               {
                   Value = Get_Area_Point_Data(pSrc_Buf, Area_No, (INT16U)i, (INT16U)k);
-                  Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)k, Value);
+                  Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i + Xdiff, (INT16U)k + Ydiff, Value);
               }
           }
           else
           {
              Value = Get_Area_Point_Data(pSrc_Buf, Area_No, (INT16U)i, (INT16U)j);
-             Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)j, Value);
+             Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i + Xdiff, (INT16U)j + Ydiff, Value);
           }
           Y = j;
        }
@@ -663,7 +670,7 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
         for(j = p0->Y; j <=p1->Y; j ++)
         {
           Value = Get_Area_Point_Data(pSrc_Buf, Area_No, (INT16U)p0->X, (INT16U)j);
-          Set_Area_Point_Data(pDst_Buf, Area_No, p0->X, j, Value);
+          Set_Area_Point_Data(pDst_Buf, Area_No, p0->X + Xdiff, j + Ydiff, Value);
         }
     }
 
@@ -1872,8 +1879,6 @@ void Move_Spin_CCW(INT8U Area_No)
     return;
 }
 
-#define SNOW_RATIO 4 //飘雪的数据比例
-
 void Copy_Snow_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
                     S_Show_Data *pDst, S_Point *pPoint1)
 {
@@ -1908,8 +1913,8 @@ void Copy_Snow_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X
 
         Set_Area_Point_Data(pDst, Area_No, pPoint1->X + i, y,Re);
 
-        //for(k = 1; k < SNOW_RATIO; k++)
-          // Set_Area_Point_Data(pDst, Area_No, pPoint1->X + i, pPoint1->Y + j * SNOW_RATIO + k, 0);
+        for(k = 1; k < SNOW_RATIO; k++)
+          Set_Area_Point_Data(pDst, Area_No, pPoint1->X + i, pPoint1->Y + j * SNOW_RATIO + k, 0);
 
   }
 }
@@ -2009,6 +2014,232 @@ void Move_Down_Snow(INT8U Area_No)
 
     }
 
+}
+
+//复制横向的压缩窗口
+void Copy_Compresssion_H_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
+                              S_Show_Data *pDst, S_Point *pPoint1, INT16U Ratio)
+{
+
+    INT16U i, j;
+    S_Point P0, P1,P2;
+
+    if(Ratio EQ 0)
+        return;
+
+    Ratio = Ratio / (MAX_STEP_NUM / TENSILE_STEP);//100;//每10个里点亮几个;
+    for(i = 0; i < X_Len; i ++)
+        //for(j = 0; j < Y_Len; j ++)
+        {
+          if((i % TENSILE_STEP) < Ratio)
+          {
+              P0.X = pPoint0->X + i;
+              P0.Y = pPoint0->Y;
+
+              P1.X = pPoint0->X + i;
+              P1.Y = pPoint0->Y + Y_Len - 1;
+
+              P2.X = pPoint1->X + (i / TENSILE_STEP)*Ratio + (i % TENSILE_STEP);
+              P2.Y = pPoint1->Y;
+              Copy_Line(pSrc, Area_No, &P0, &P1, pDst, &P2);
+          }
+    }
+}
+
+//复制纵向的压缩窗口
+void Copy_Compresssion_V_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
+                              S_Show_Data *pDst, S_Point *pPoint1, INT16U Ratio)
+{
+    INT16U i, j;
+
+    if(Ratio EQ 0)
+        return;
+
+    for(i = 0; i < X_Len; i ++)
+        for(j = 0; j < Y_Len; j ++)
+        {
+
+    }
+}
+
+//左拉伸
+void Move_Left_Tensile(INT8U Area_No)
+{
+    S_Point P0;
+
+    P0.X = 0;
+    P0.Y = 0;
+    Copy_Compresssion_H_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
+                             &Show_Data, &P0, Prog_Status.Area_Status[Area_No].Step);
+}
+
+//右拉伸
+void Move_Right_Tensile(INT8U Area_No)
+{
+
+}
+
+//上拉伸
+void Move_Up_Tensile(INT8U Area_No)
+{
+
+}
+
+//下拉伸
+void Move_Down_Tensile(INT8U Area_No)
+{
+
+}
+
+//水平拉伸
+void Move_Vertical_Tensile(INT8U Area_No)
+{
+
+}
+
+//垂直拉伸
+void Move_Horizontal_Tensile(INT8U Area_No)
+{
+
+}
+
+//闪烁
+void Move_Flash(INT8U Area_No)
+{
+   S_Point P0;
+
+   P0.X = 0;
+   P0.Y = 0;
+
+   if((Prog_Status.Area_Status[Area_No].Step / 20) % 2 EQ 0)
+    {
+      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
+                       &Show_Data, &P0);
+   }
+   else
+       Clear_Area_Data(&Show_Data, Area_No);
+}
+
+//上镭射
+void Move_Up_Laser(INT8U Area_No)
+{
+    S_Point Temp,Temp1;
+    INT8U Re;
+    INT16U i;
+
+
+    Clear_Area_Data(&Show_Data, Area_No);
+    Temp.X = 0;// + (MAX_STEP_NUM - Prog_Status.Area_Status[Area_No].Step) * Prog_Para.Area[Area_No].Y_Len / MAX_STEP_NUM;
+    Temp.Y = Prog_Para.Area[Area_No].Y_Len - Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / MAX_STEP_NUM;
+
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / MAX_STEP_NUM,\
+                     &Show_Data, &Temp);
+
+
+    for(i = 0; i < Prog_Para.Area[Area_No].X_Len; i ++)
+    {
+       Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, i, Temp.Y);
+       if(Re)// && (i % 2))
+       {
+           Temp1.X = i;
+           Temp1.Y = 0;
+
+           Temp.X = i;
+           Draw_Line(&Show_Data, Area_No, &Temp, &Temp1,Re);
+       }
+    }
+}
+
+//下镭射
+void Move_Down_Laser(INT8U Area_No)
+{
+    S_Point Temp,Temp1;
+    INT8U Re;
+    INT16U i;
+
+    Clear_Area_Data(&Show_Data, Area_No);
+
+    Temp.X = 0;// + Step +
+    Temp.Y = 0;//;
+
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / MAX_STEP_NUM,\
+                     &Show_Data, &Temp);
+
+    Temp.Y = Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / MAX_STEP_NUM;
+    for(i = 0; i < Prog_Para.Area[Area_No].X_Len; i ++)
+    {
+       //Temp.Y = i;
+       Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, i, Temp.Y);
+       if(Re)// && (i % 2))
+       {
+           Temp1.X = i;
+           Temp1.Y = Prog_Para.Area[Area_No].Y_Len - 1;
+
+           Temp.X = i;
+           Draw_Line(&Show_Data, Area_No, &Temp, &Temp1,Re);
+       }
+    }
+
+}
+
+//左镭射
+void Move_Left_Laser(INT8U Area_No)
+{
+    INT8U Re;
+    S_Point Temp,Temp1;
+    INT16U i;
+
+    Clear_Area_Data(&Show_Data, Area_No);
+    Temp.X = Prog_Para.Area[Area_No].X_Len - Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / MAX_STEP_NUM;// + Step +
+    Temp.Y = 0;
+
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / MAX_STEP_NUM, Prog_Para.Area[Area_No].Y_Len,\
+      &Show_Data, &Temp);
+
+    for(i = 0; i < Prog_Para.Area[Area_No].Y_Len; i ++)
+    {
+       Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, Temp.X, i);
+       if(Re)// && (i % 2))
+       {
+           Temp1.X = 0;
+           Temp1.Y = i;
+
+           Temp.Y = i;
+           Draw_Line(&Show_Data, Area_No, &Temp, &Temp1,Re);
+       }
+    }
+}
+
+//右镭射
+void Move_Right_Laser(INT8U Area_No)
+{
+    S_Point Temp;
+    INT8U Re;
+    INT16U i;
+    S_Point Temp1;
+
+
+    Clear_Area_Data(&Show_Data, Area_No);
+    Temp.X = 0;//Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / MAX_STEP_NUM;// + Step +
+    Temp.Y = 0;
+
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / MAX_STEP_NUM, Prog_Para.Area[Area_No].Y_Len,\
+    &Show_Data, &Temp);
+
+    Temp.X = Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / MAX_STEP_NUM;
+    for(i = 0; i < Prog_Para.Area[Area_No].Y_Len; i ++)
+    {
+       //Temp.Y = i;
+       Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, Temp.X, i);
+       if(Re)// && (i % 2))
+       {
+           Temp1.X = Prog_Para.Area[Area_No].X_Len - 1;
+           Temp1.Y = i;
+
+           Temp.Y = i;
+           Draw_Line(&Show_Data, Area_No, &Temp, &Temp1,Re);
+       }
+    }
 }
 
 /*
