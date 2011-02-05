@@ -2018,7 +2018,7 @@ void Move_Down_Snow(INT8U Area_No)
 
 //复制横向的压缩窗口
 void Copy_Compresssion_H_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
-                              S_Show_Data *pDst, S_Point *pPoint1, INT16U Ratio)
+                              S_Show_Data *pDst, S_Point *pPoint1, INT16U Ratio, INT8U Direct)
 {
 
     INT16U i, j;
@@ -2031,7 +2031,8 @@ void Copy_Compresssion_H_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0
     for(i = 0; i < X_Len; i ++)
         //for(j = 0; j < Y_Len; j ++)
         {
-          if((i % TENSILE_STEP) < Ratio)
+          if(Direct EQ 0 && (i % TENSILE_STEP) < Ratio ||\
+             Direct EQ 1 && (i % TENSILE_STEP) >= (TENSILE_STEP - Ratio))
           {
               P0.X = pPoint0->X + i;
               P0.Y = pPoint0->Y;
@@ -2048,17 +2049,31 @@ void Copy_Compresssion_H_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0
 
 //复制纵向的压缩窗口
 void Copy_Compresssion_V_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
-                              S_Show_Data *pDst, S_Point *pPoint1, INT16U Ratio)
+                              S_Show_Data *pDst, S_Point *pPoint1, INT16U Ratio, INT8U Direct)
 {
     INT16U i, j;
+    S_Point P0, P1,P2;
 
     if(Ratio EQ 0)
         return;
 
-    for(i = 0; i < X_Len; i ++)
-        for(j = 0; j < Y_Len; j ++)
+    Ratio = Ratio / (MAX_STEP_NUM / TENSILE_STEP);//100;//每10个里点亮几个;
+    for(i = 0; i < Y_Len; i ++)
+        //for(j = 0; j < Y_Len; j ++)
         {
+        if(Direct EQ 0 && (i % TENSILE_STEP) < Ratio ||\
+           Direct EQ 1 && (i % TENSILE_STEP) >= (TENSILE_STEP - Ratio))          {
+              P0.X = pPoint0->X;// + i;
+              P0.Y = pPoint0->Y + i;
 
+              P1.X = pPoint0->X + X_Len - 1;
+              P1.Y = pPoint0->Y + i;
+
+              P2.X = pPoint1->X;
+              P2.Y = pPoint1->Y + (i / TENSILE_STEP)*Ratio + (i % TENSILE_STEP);
+
+              Copy_Line(pSrc, Area_No, &P0, &P1, pDst, &P2);
+          }
     }
 }
 
@@ -2070,36 +2085,90 @@ void Move_Left_Tensile(INT8U Area_No)
     P0.X = 0;
     P0.Y = 0;
     Copy_Compresssion_H_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
-                             &Show_Data, &P0, Prog_Status.Area_Status[Area_No].Step);
+                             &Show_Data, &P0, Prog_Status.Area_Status[Area_No].Step, 0);
 }
 
 //右拉伸
 void Move_Right_Tensile(INT8U Area_No)
 {
+    S_Point P0,P1;
+
+    P0.X = 0;
+    P0.Y = 0;
+
+    P1.X = Prog_Para.Area[Area_No].X_Len - Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / MAX_STEP_NUM;
+    P1.Y = 0;
+    Copy_Compresssion_H_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
+                             &Show_Data, &P1, Prog_Status.Area_Status[Area_No].Step, 1);
 
 }
 
 //上拉伸
 void Move_Up_Tensile(INT8U Area_No)
 {
+    S_Point P0;
+
+    P0.X = 0;
+    P0.Y = 0;
+    Copy_Compresssion_V_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
+                             &Show_Data, &P0, Prog_Status.Area_Status[Area_No].Step, 0);
 
 }
 
 //下拉伸
 void Move_Down_Tensile(INT8U Area_No)
 {
+    S_Point P0,P1;
 
-}
+    P0.X = 0;
+    P0.Y = 0;
 
-//水平拉伸
-void Move_Vertical_Tensile(INT8U Area_No)
-{
+    P1.X = 0;
+    P1.Y = Prog_Para.Area[Area_No].Y_Len - Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / MAX_STEP_NUM;
+    Copy_Compresssion_V_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
+                             &Show_Data, &P1, Prog_Status.Area_Status[Area_No].Step, 1);
 
 }
 
 //垂直拉伸
+void Move_Vertical_Tensile(INT8U Area_No)
+{
+    S_Point P0,P1;
+
+    P0.X = 0;
+    P0.Y = 0;
+
+    P1.X = 0;
+    P1.Y = Prog_Para.Area[Area_No].Y_Len - Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / MAX_STEP_NUM;
+    P1.Y = P1.Y / 2;
+    Copy_Compresssion_V_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len / 2,\
+                             &Show_Data, &P1, Prog_Status.Area_Status[Area_No].Step, 0);
+
+
+    P0.X = 0;
+    P0.Y = Prog_Para.Area[Area_No].Y_Len / 2;
+
+    P1.X = 0;
+    P1.Y = Prog_Para.Area[Area_No].Y_Len / 2;//Prog_Para.Area[Area_No].Y_Len - Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / MAX_STEP_NUM;
+    //P1.Y = P1.Y / 2;
+    Copy_Compresssion_V_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len / 2,\
+                             &Show_Data, &P1, Prog_Status.Area_Status[Area_No].Step, 0);
+
+}
+
+//水平拉伸
 void Move_Horizontal_Tensile(INT8U Area_No)
 {
+    S_Point P0,P1;
+
+    P0.X = 0;
+    P0.Y = 0;
+
+    P1.X = Prog_Para.Area[Area_No].X_Len - Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / MAX_STEP_NUM;
+    P1.Y = 0;
+    P1.X = P1.X / 2;
+    Copy_Compresssion_H_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
+                             &Show_Data, &P1, Prog_Status.Area_Status[Area_No].Step, 1);
 
 }
 
