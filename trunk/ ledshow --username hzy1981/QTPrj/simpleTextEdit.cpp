@@ -76,11 +76,17 @@ CshowModeCombo::CshowModeCombo(bool flag, QWidget *parent):QComboBox(parent)
         addItem(tr("上镭射"));
         addItem(tr("下镭射"));
         addItem(tr("左拉伸"));
-        addItem(tr("右拉伸"));
+        //addItem(tr("右拉伸"));
         addItem(tr("上拉伸"));
-        addItem(tr("下拉伸"));
+        //addItem(tr("下拉伸"));
         addItem(tr("垂直拉伸"));
         addItem(tr("水平拉伸"));
+        addItem(tr("左移弹出"));
+        addItem(tr("上移弹出"));
+        addItem(tr("水平百叶窗"));
+        addItem(tr("垂直百叶窗"));
+        addItem(tr("向左压缩"));
+        addItem(tr("向上压缩"));
     }
     else
     {
@@ -136,13 +142,14 @@ CshowSpeedCombo::~CshowSpeedCombo()
 CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
 {
     //QGridLayout *gridLayout;
-    QHBoxLayout *hLayout;
-    QVBoxLayout *vLayout;
+    //QHBoxLayout *hLayout;
+    //QVBoxLayout *vLayout;
     QValidator *inOutTimeValidator = new QIntValidator(0,999,this);
     QValidator *stayTimeValidator = new QIntValidator(0,9999,this);
 
     //gridLayout = new QGridLayout(this);
-    vLayout=new QVBoxLayout(this);
+    //vLayout=new QVBoxLayout(this);
+    QGridLayout *mainLayout = new QGridLayout(this);
 
     setTitle(tr("显示特效"));
     inModeLabel = new QLabel(tr("引入"), this);
@@ -152,13 +159,13 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     inTimeLabel = new QLabel(tr("毫秒"), this);
     inTimeEdit->setValidator(inOutTimeValidator);
 
-    hLayout = new QHBoxLayout(this);
-    hLayout->addWidget(inModeLabel);
-    hLayout->addWidget(inModeCombo);
-    hLayout->addWidget(inTimeEdit);
-    hLayout->addWidget(inTimeLabel);
-    hLayout->addStretch();
-    vLayout->addLayout(hLayout);
+    //inModeCombo->setFixedWidth(100);
+    mainLayout->addWidget(inModeLabel, 0, 0);
+    mainLayout->addWidget(inModeCombo, 0, 1, 1, 6);
+    mainLayout->addWidget(inTimeEdit,  1, 1);
+    mainLayout->addWidget(inTimeLabel, 1, 2);
+    //mainLayout->addStretch();
+    //vLayout->addLayout(hLayout);
 
     outModeLabel = new QLabel(tr("引出"), this);
     outModeCombo = new CshowModeCombo(1, this);
@@ -167,13 +174,13 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     outTimeLabel = new QLabel(tr("毫秒"), this);
     outTimeEdit->setValidator(inOutTimeValidator);
 
-    hLayout = new QHBoxLayout(this);
-    hLayout->addWidget(outModeLabel);
-    hLayout->addWidget(outModeCombo);
-    hLayout->addWidget(outTimeEdit);
-    hLayout->addWidget(outTimeLabel);
-    hLayout->addStretch();
-    vLayout->addLayout(hLayout);
+    //outModeCombo->setFixedWidth(100);
+    mainLayout->addWidget(outModeLabel, 2, 0);
+    mainLayout->addWidget(outModeCombo, 2, 1, 1, 6);
+    mainLayout->addWidget(outTimeEdit, 3, 1);
+    mainLayout->addWidget(outTimeLabel, 3, 2);
+    //hLayout->addStretch();
+    //vLayout->addLayout(hLayout);
 
     stayTimeLabel = new QLabel(tr("停留"), this);
     stayTimeEdit = new QLineEdit(this);
@@ -181,15 +188,15 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     stayTimeUnitLabel = new QLabel(tr("秒"), this);
     stayTimeEdit->setValidator(stayTimeValidator);
 
-    hLayout = new QHBoxLayout(this);
-    hLayout->addWidget(stayTimeLabel);
-    hLayout->addWidget(stayTimeEdit);
-    hLayout->addWidget(stayTimeUnitLabel);
-    hLayout->addStretch();
-    vLayout->addLayout(hLayout);
+    //hLayout = new QHBoxLayout(this);
+    mainLayout->addWidget(stayTimeLabel, 4, 0);
+    mainLayout->addWidget(stayTimeEdit, 4, 1);
+    mainLayout->addWidget(stayTimeUnitLabel, 4, 2);
+    //mainLayout->addStretch();
+    //mainLayout->addLayout(hLayout);
 
     //vLayout->addStretch();
-    setLayout(vLayout);
+    setLayout(mainLayout);
 /*
     int width = 80;
     showModeCombo->setFixedWidth(width);
@@ -367,8 +374,8 @@ CsmLineEdit::CsmLineEdit(QWidget *parent):QGroupBox(parent)
     //editGroup = new QGroupBox(this);
     smLineCombo = new QComboBox(this);
 
-    smLineCombo->addItem(tr("单行"));
-    smLineCombo->addItem(tr("多行"));
+    smLineCombo->addItem(tr("单行显示"));
+    smLineCombo->addItem(tr("多行显示"));
     label = new QLabel(tr("间距"),this);
     lineSpaceEdit = new QSpinBox(this);
 
@@ -377,10 +384,10 @@ CsmLineEdit::CsmLineEdit(QWidget *parent):QGroupBox(parent)
 
     gridLayout = new QGridLayout(this);
     gridLayout->addWidget(smLineCombo,0,0,1,2);
-    gridLayout->addWidget(label, 1, 0);
-    gridLayout->addWidget(lineSpaceEdit, 1,1);
+    gridLayout->addWidget(label, 0, 2);
+    gridLayout->addWidget(lineSpaceEdit, 0,3);
 
-    setTitle(tr("单/多行"));
+    setTitle(tr("单/多行显示"));
     setLayout(gridLayout);
 
     connect(smLineCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
@@ -493,7 +500,7 @@ void CdateEdit::setSettingsToWidget(QString str)
     int setFlag = settings.value("setFlag").toBool();
     if(setFlag EQ 0)
     {
-       settings.setValue("checked", 0);
+       settings.setValue("checked", 1);
        settings.setValue("type", 0);
        settings.setValue("color", 0);
        settings.setValue("size", 0);
@@ -1007,7 +1014,7 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   bButton = new QPushButton(tr("粗体"),this);
   iButton = new QPushButton(tr("斜体"),this);
   uButton = new QPushButton(tr("下划"), this);
-  editCheck = new QCheckBox(tr("固定文本"), this);
+  editCheck = new QCheckBox(tr("启用背景文字"), this);
 
   //oButton = new QPushButton(tr("打开"),this);
   int width = 30;
@@ -1059,7 +1066,7 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   //textGroup = new QGroupBox(tr("固定文本"), this);
   //textGroup -> setLayout(gridLayout);
   //mainLayout->addWidget(textGroup, 0, 0);
-  setTitle(tr("固定文本"));
+  setTitle(tr("背景文字"));
   setLayout(gridLayout);
 
   //所有的消息统一到一个消息

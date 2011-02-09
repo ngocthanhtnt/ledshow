@@ -892,17 +892,31 @@ void TextEdit::edit()
   getSettingsFromWidget(str);
   area = w->screenArea->getFocusArea();
 
-  if(smLineCombo->currentIndex() == 0)
-      area->smLineFlag = SLINE_MODE;//smLineCombo->currentIndex();
+  if(smLineCombo->currentIndex() == 0) {
+      area->smLineFlag = SLINE_MODE;
+  }//smLineCombo->currentIndex();
   else
       area->smLineFlag = MLINE_MODE;
 
   area->picStr = textEdit->toHtml();
+  area->moveLeftFlag = checkSLineMoveLeftContinuous(str);
 
-  int lineNum;
-  getTextImage(area->width(), area->picStr, &lineNum, linePosi);
-  int pageNum = getTextPageNum(area->smLineFlag, area->width(), area->height(), lineNum, linePosi, pagePosi);
-  //int pageNum = getTextImagePageNum(area->smLineFlag, area->width(),area->height(),area->picStr, linePosi);
+  int lineNum,pageNum;
+  if(area->moveLeftFlag EQ false)
+  {
+      getTextImage(area->width(), area->picStr, &lineNum, linePosi);
+      pageNum = getTextPageNum(area->smLineFlag, area->width(), area->height(), lineNum, linePosi, pagePosi);
+      //int pageNum = getTextImagePageNum(area->smLineFlag, area->width(),area->height(),area->picStr, linePosi);
+
+
+  }
+  else
+  {
+      pageNum = getSLineTextPageNum(area->picStr, area->width());
+    //getSLineTextImage(area->picStr, area->width(),area->height());
+
+  }
+
   spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
   area->page = spinPage->value(); //页号
   area->updateFlag = true;
@@ -957,7 +971,14 @@ void TextEdit::setSettingsToWidget(QString str)
     connect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));
 
     disconnect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));
-    smLineCombo->setSettingsToWidget(str);
+    if(checkStrType(str) EQ PIC_STEXT_PROPERTY)
+    {
+      smLineCombo->setCurrentIndex(0);
+      smLineCombo->setEnabled(false);
+    }
+    else
+      smLineCombo->setSettingsToWidget(str);
+
     connect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));
 }
 /*
@@ -1184,5 +1205,141 @@ int getTextImagePageNum(int mode, int w, int h, QString str, int posi[])
       pageNum++;
       return pageNum;
   }
+}
+*/
+
+int getSLineTextPageNum(QString str, int w)
+{
+    QTextEdit edit;
+    QTextLayout *layout;
+
+    edit.setLineWrapMode(QTextEdit::NoWrap);
+    //edit.setLineWrapColumnOrWidth(w + TEXT_LEFT_BORDER_WIDTH + TEXT_RIGHT_BORDER_WIDTH);
+    edit.setHtml(str);
+
+    QSize size = edit.document()->documentLayout()->documentSize().toSize();
+    edit.resize(size.width(), size.height());
+
+    QPalette *palette = new QPalette(QPalette::Base,QColor(Qt::black));
+    edit.setPalette(*palette);
+
+    edit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    edit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    //QImage image(edit.width(), edit.height(),QImage::Format_RGB32);
+    //edit.render(&image);
+    //image.save("d:\\slinetext.png");
+
+    int num = 0, blockPageNum = 0;
+    for(int i = 0; i < edit.document()->blockCount(); i ++)
+    {
+      int width =edit.document()->findBlockByNumber(i).layout()->boundingRect().width() - TEXT_LEFT_BORDER_WIDTH  - TEXT_RIGHT_BORDER_WIDTH;
+
+      if((width % w) == 0)
+          blockPageNum = width / w;
+      else
+          blockPageNum = width / w + 1;
+
+          num += blockPageNum;
+    }
+
+    return num;
+}
+
+QImage getSLineTextImage(QString str, int w, int h, int page)
+{
+    QTextEdit edit;
+    QTextLayout *layout;
+    QImage reImage(w,h,QImage::Format_RGB32);
+    QRgb rgb;
+
+    edit.setLineWrapMode(QTextEdit::NoWrap);
+    //edit.setLineWrapColumnOrWidth(w + TEXT_LEFT_BORDER_WIDTH + TEXT_RIGHT_BORDER_WIDTH);
+    edit.setHtml(str);
+
+    QSize size = edit.document()->documentLayout()->documentSize().toSize();
+    edit.resize(size.width(), size.height());
+
+    QPalette *palette = new QPalette(QPalette::Base,QColor(Qt::black));
+    edit.setPalette(*palette);
+
+    edit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    edit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    QImage image(edit.width(), edit.height(),QImage::Format_RGB32);
+    edit.render(&image);
+    //image.save("d:\\slinetext.png");
+
+    //edit.document()->findBlockByNumber(0).clearLayout();
+
+    int num = 0, blockPageNum = 0;
+    for(int i = 0; i < edit.document()->blockCount(); i ++)
+    {
+      int x,y;
+
+      layout = edit.document()->findBlockByNumber(i).layout();
+
+      int width = layout->boundingRect().width() - TEXT_LEFT_BORDER_WIDTH - TEXT_RIGHT_BORDER_WIDTH;
+      int height = layout->boundingRect().height();// - LINE_POSI_ADJ;
+
+      //int diff = edit.document()->findBlockByNumber(i + 1).layout()->position().y() - layout->position().y();
+      //qDebug("height = %d, diff = %d", height, diff);
+
+      if((width % w) == 0)
+          blockPageNum = width / w;
+      else
+          blockPageNum = width / w + 1;
+
+      if(num + blockPageNum >= page)
+      {
+          x = TEXT_LEFT_BORDER_WIDTH + layout->boundingRect().x();
+          x += (page - num) * w;
+          y = LINE_POSI_ADJ + 4 + layout->boundingRect().y() + layout->lineAt(0).position().y();
+          //y值需要+4，才能匹配，经验值
+
+          reImage.fill(Qt::black);
+          if(height > h) //行高度比窗口高度高?
+          {
+              for(int i = 0; i < w; i ++)
+                for(int j = 0; j < h; j ++)
+                {
+                  rgb = image.pixel(x + i,y + j);
+                  reImage.setPixel(i, j, rgb);
+                }
+          }
+          else
+          {
+              for(int i = 0; i < w; i ++)
+                for(int j = 0; j < height; j ++)
+                {
+                  rgb = image.pixel(x + i, y + j);
+                  reImage.setPixel(i, (h - height) / 2 + j, rgb);
+                }
+
+          }
+
+          //image = image.copy(, 0, w, height);
+          reImage.save("d:\\slinepage.png");
+          return reImage;
+      }
+       else
+          num += blockPageNum;
+
+    }
+
+    //qDebug("text width = %f, height = %f", layout->boundingRect().width(),layout->boundingRect().height());
+
+
+    return image;
+}
+/*
+INT16U getSLineTextPageNum(QString str, INT16U width)
+{
+  QImage image = getSLineTextImage(str);
+
+  if((image.width() % width) EQ 0)
+      return image.width() / width;
+  else
+      return image.width() / width + 1;
 }
 */

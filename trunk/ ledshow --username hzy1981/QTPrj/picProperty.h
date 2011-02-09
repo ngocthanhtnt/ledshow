@@ -57,5 +57,6 @@ public:
     ~CpicProperty();
 };
 void updatePicShowArea(CshowArea *area);
+bool checkSLineMoveLeftContinuous(QString str);
 void getPicParaFromSettings(QString str, U_File_Para &para);
 #endif // picProperty_H

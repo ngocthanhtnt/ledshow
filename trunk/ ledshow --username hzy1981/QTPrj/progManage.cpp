@@ -111,7 +111,9 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
   setAllowedAreas(Qt::LeftDockWidgetArea);
   treeWidget = new QTreeWidget(this);
   treeWidget->setHeaderHidden(true);//header()->setVisible(false);
-  //treeWidget->grabKeyboard();
+
+  previewWin = new CpreviewWin(w);//new QMainWindow(w);
+
   timer = new QTimer(this);
   QObject::connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),\
           this, SLOT(clickItem(QTreeWidgetItem *, int)));
@@ -162,6 +164,8 @@ QString getTypeString(int type)
         Qstr = QObject::tr("节目");
     else if(type == AREA_PROPERTY)
         Qstr = QObject::tr("分区");
+    else if(type == PIC_STEXT_PROPERTY)
+        Qstr = QObject::tr("字幕");
     else if(type == PIC_MTEXT_PROPERTY)
         Qstr = QObject::tr("图文");
     else if(type == PIC_FLASH_PROPERTY)
@@ -610,6 +614,10 @@ void CprogManage::newArea()
     w->progManage->clickItem(item, 0);
 }
 
+void CprogManage::newSText()
+{
+  newFile(PIC_PROPERTY,PIC_STEXT_PROPERTY);
+}
 
 void CprogManage::newPic() //新图文
 {
@@ -691,7 +699,7 @@ void CprogManage::preview()
   timerFlag = 0;
   stepTimer = 0;
 
-  previewWin = new CpreviewWin(w);//new QMainWindow(w);
+  //previewWin = new CpreviewWin(w);//new QMainWindow(w);
   previewWin->setWindowModality(Qt::WindowModal);
 
   previewArea =  new CscreenArea(previewWin);
@@ -702,7 +710,7 @@ void CprogManage::preview()
   previewArea->setFixedSize(previewArea->size());
 
   previewWin->setCentralWidget(previewArea);
-  previewWin->setAttribute(Qt::WA_DeleteOnClose);
+  //previewWin->setAttribute(Qt::WA_DeleteOnClose);
   previewWin->setWindowTitle(tr("预览-")+QString::number(Screen_No + 1) + tr("号屏幕-") + QString::number(Preview_Prog_No + 1) + tr("号节目"));
   //previewWin->setFixedSize(previewWin->size());
   previewWin->show();

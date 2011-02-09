@@ -24,14 +24,7 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     hLayout->addLayout(vLayout);
 
     smLineEdit = new CsmLineEdit(this);
-    vLayout = new QVBoxLayout(this);
-    vLayout->addWidget(smLineEdit);
-    hLayout->addLayout(vLayout);
-
-    simpleTextEdit = new CsimpleTextEdit(this);
-    vLayout = new QVBoxLayout(this);
-    vLayout->addWidget(simpleTextEdit);
-    hLayout->addLayout(vLayout);
+    //hLayout->addLayout(vLayout);
 
     //--------------------
     dstTimeGroup = new QGroupBox(tr("目标时间编辑"), this);
@@ -75,7 +68,13 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     dstTimeGroup -> setLayout(gridLayout);
 
     vLayout = new QVBoxLayout(this);
-    vLayout->addWidget(dstTimeGroup);
+    vLayout->addWidget(smLineEdit,1);
+    vLayout->addWidget(dstTimeGroup,2);
+    hLayout->addLayout(vLayout);
+
+    simpleTextEdit = new CsimpleTextEdit(this);
+    vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(simpleTextEdit);
     hLayout->addLayout(vLayout);
 
     showModeEdit = new CshowModeEdit(this);

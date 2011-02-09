@@ -197,29 +197,29 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     gridLayout = new QGridLayout(this);
     borderGroup = new QGroupBox(tr("流水边框选择"), this);
     borderCheck = new QCheckBox(tr("启用流水边框"), this);
-    stepLabel = new QLabel(tr("步长"), this);
-    pointsLabel = new QLabel(tr("点数"), this);
+    //stepLabel = new QLabel(tr("步长"), this);
+    //pointsLabel = new QLabel(tr("点数"), this);
     styleLabel = new QLabel(tr("样式"), this);
     modeLabel = new QLabel(tr("特效"), this);
     speedLabel = new QLabel(tr("速度"), this);
     usLabel = new QLabel(tr("微秒"), this);
-    stepCombo = new QComboBox(this);//new QLineEdit(this); //步长
+    //stepCombo = new QComboBox(this);//new QLineEdit(this); //步长
     speedCombo = new QComboBox(this);
     colorCombo = new CcolorCombo(this);
     styleCombo = new QComboBox(this);
     modeCombo = new QComboBox(this);//CmodeCombo(this);
     gridLayout -> addWidget(borderCheck, 0, 0, 1, 2);
-    gridLayout -> addWidget(stepLabel, 1, 0);
-    gridLayout -> addWidget(stepCombo, 1, 1);
-    gridLayout -> addWidget(pointsLabel, 1, 2);
-    gridLayout -> addWidget(styleLabel, 2, 0);
-    gridLayout -> addWidget(styleCombo, 2, 1);
-     gridLayout -> addWidget(colorCombo, 2, 2);
-    gridLayout -> addWidget(modeLabel, 3, 0);
-    gridLayout -> addWidget(modeCombo, 3, 1);
-    gridLayout -> addWidget(speedLabel, 4, 0);
-    gridLayout -> addWidget(speedCombo, 4, 1);
-    gridLayout -> addWidget(usLabel, 4, 2);
+    //gridLayout -> addWidget(stepLabel, 1, 0);
+    //gridLayout -> addWidget(stepCombo, 1, 1);
+    //gridLayout -> addWidget(pointsLabel, 1, 2);
+    gridLayout -> addWidget(styleLabel, 1, 0);
+    gridLayout -> addWidget(styleCombo, 1, 1);
+     gridLayout -> addWidget(colorCombo, 1, 2);
+    gridLayout -> addWidget(modeLabel, 2, 0);
+    gridLayout -> addWidget(modeCombo, 2, 1);
+    gridLayout -> addWidget(speedLabel, 3, 0);
+    gridLayout -> addWidget(speedCombo, 3, 1);
+    gridLayout -> addWidget(usLabel, 3, 2);
     borderGroup -> setLayout(gridLayout);
     //mainLayout -> addWidget(borderGroup, 1, 2);
     vLayout = new QVBoxLayout(this);
@@ -286,7 +286,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    playCountCheckProc((int)playCountCheck->checkState());
    //边框选择
    borderCheckProc((int)borderCheck->checkState());
-
+/*
    stepCombo->addItem(tr("1"));
    stepCombo->addItem(tr("2"));
    stepCombo->addItem(tr("3"));
@@ -295,7 +295,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    stepCombo->addItem(tr("6"));
    stepCombo->addItem(tr("7"));
    stepCombo->addItem(tr("8"));
-
+*/
    speedCombo->addItem(tr("1最快"));
    speedCombo->addItem(tr("2"));
    speedCombo->addItem(tr("3"));
@@ -465,7 +465,7 @@ void CprogProperty::setSettingsToWidget(QString str)
     //边框选择
     borderCheck->setChecked(settings.value("borderCheck").toBool());
     //stepCombo->setText(QString::number(settings.value("width").toInt()));
-    stepCombo->setCurrentIndex(settings.value("borderStep").toInt());
+    //stepCombo->setCurrentIndex(settings.value("borderStep").toInt());
 
     //stepCombo->addItem(tr("2"));
 
@@ -557,7 +557,7 @@ void CprogProperty::getSettingsFromWidget(QString str)
       //borderCheck->setChecked(settings.value("boderCheck").toBool());
     settings.setValue("borderCheck", QVariant(borderCheck->checkState()));
     //stepCombo->setText(settings.value("width").toString());
-    settings.setValue("borderStep", QVariant(stepCombo->currentIndex()));
+    //settings.setValue("borderStep", QVariant(stepCombo->currentIndex()));
     //speedCombo->setText(settings.value(bo).toString());
     settings.setValue("borderSpeed", QVariant(speedCombo->currentIndex()));
     //styleCombo->setCurrentIndex(settings.value( m,).toInt());
@@ -648,7 +648,7 @@ void CprogProperty::borderCheckProc(int state)
 
     flag = (state==Qt::Unchecked)?false:true;
 
-    stepCombo->setEnabled(flag);
+    //stepCombo->setEnabled(flag);
     speedCombo->setEnabled(flag);
     styleCombo->setEnabled(flag);
     modeCombo->setEnabled(flag);

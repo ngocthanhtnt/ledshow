@@ -13,6 +13,9 @@
 #include "progManage.h"
 #include "..\Includes.h"
 
+
+#define MOVE_LEFT_CONTINUOUS_INDEX 2
+
 class CshowModeCombo:public QComboBox
 {
 public:

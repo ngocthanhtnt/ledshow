@@ -36,11 +36,17 @@ const S_Mode_Func In_Mode_Func[]=
   {&Move_Up_Laser}, //上镭射
   {&Move_Down_Laser}, //下镭射
   {&Move_Left_Tensile},//左拉伸
-  {&Move_Right_Tensile},//右拉伸
+  //{&Move_Right_Tensile},//右拉伸
   {&Move_Up_Tensile},//上拉伸
-  {&Move_Down_Tensile},//下拉伸
+  //{&Move_Down_Tensile},//下拉伸
   {&Move_Vertical_Tensile},//垂直拉伸
-  {&Move_Horizontal_Tensile}//水平拉伸
+  {&Move_Horizontal_Tensile},//水平拉伸
+  {&Move_Left_Stretch},
+  {&Move_Up_Stretch},
+  {&Move_Horizontal_Window}, //水平百叶窗
+  {&Move_Vertical_Window}, //垂直百叶窗
+  {&Move_Left_Compress}, //向左压缩
+  {&Move_Up_Compress} //向上压缩
 };
 
 //数据移入方式

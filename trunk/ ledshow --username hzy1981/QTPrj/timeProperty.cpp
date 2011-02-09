@@ -22,29 +22,29 @@ CtimeProperty::CtimeProperty(QWidget *parent):QWidget(parent)
     vLayout = new QVBoxLayout(this);
     vLayout->addWidget(nameEdit);
     vLayout->addWidget(area);
-    //vLayout->addStretch();
+    //vLayout->addStretch(10);
     hLayout->addLayout(vLayout);
 
     smLineEdit = new CsmLineEdit(this);
+    timeDiffEdit = new CtimeDiffEdit(this);
+
     vLayout = new QVBoxLayout(this);
     vLayout->addWidget(smLineEdit);
-    //vLayout->addStretch();
+    vLayout->addWidget(timeDiffEdit);
     hLayout->addLayout(vLayout);
 
     //textGroup = new QGroupBox(tr("¹Ì¶¨ÎÄ±¾"), this);
-    timeDiffEdit = new CtimeDiffEdit(this);
-    simpleTextEdit = new CsimpleTextEdit(this);
-    vLayout = new QVBoxLayout(this);
-    vLayout->addWidget(timeDiffEdit);
-    vLayout->addWidget(simpleTextEdit);
-    //vLayout->addStretch();
-    hLayout->addLayout(vLayout);
 
     dateTimeEdit = new CdateTimeEdit(this);
     vLayout = new QVBoxLayout(this);
     vLayout->addWidget(dateTimeEdit);
     hLayout->addLayout(vLayout);
-    //vLayout->addStretch();
+
+    simpleTextEdit = new CsimpleTextEdit(this);
+    vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(simpleTextEdit);
+    hLayout->addLayout(vLayout);
+
     showModeEdit = new CshowModeEdit(this);
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(showModeEdit);
