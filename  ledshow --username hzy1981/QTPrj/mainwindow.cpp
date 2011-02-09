@@ -129,6 +129,13 @@ void MainWindow::setupEditActions()
     menu->addAction(a);
     menu->addSeparator();
 
+    actionSave = a = new QAction(tr("字幕"), this);
+    a->setShortcut(QKeySequence::Save);
+    a->setEnabled(true);//(bool)Get_Pic_Show_En());
+    connect(a, SIGNAL(triggered()), progManage, SLOT(newSText())); //新建节目
+    tb->addAction(a);
+    menu->addAction(a);
+
     actionSave = a = new QAction(tr("图文"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Pic_Show_En());

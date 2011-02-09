@@ -49,6 +49,7 @@ public slots:
     void newProg(); //新节目
     void newArea(); //新分区
 
+    void newSText(); //字幕
     void newPic(); //新图文
     void newFlash(); //新动画
     void newTime(); //新日期

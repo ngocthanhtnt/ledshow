@@ -69,6 +69,7 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
 
     vLayout->addWidget(nameEdit);
     vLayout ->addWidget(area);
+    //vLayout->addStretch(10);
     hLayout->addLayout(vLayout);
 
     editGroup = new QGroupBox(tr("外形属性"),this);
@@ -166,21 +167,11 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
 
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(editGroup);
+    //vLayout ->addStretch(10);
     hLayout->addLayout(vLayout);
+
 
     timeDiffEdit = new CtimeDiffEdit(this);
-    simpleTextEdit = new CsimpleTextEdit(this);
-    vLayout = new QVBoxLayout(this);
-    vLayout ->addWidget(timeDiffEdit);
-    vLayout ->addWidget(simpleTextEdit);
-    //vLayout->addStretch();
-    hLayout->addLayout(vLayout);
-
-
-
-    //vLayout = new QVBoxLayout(this);
-    //vLayout ->addWidget(timeGroup);
-    //hLayout->addLayout(vLayout);
     timeGroup = new QGroupBox(tr("日期星期"),this);
     dateEdit = new CdateEdit(this);
     weekEdit = new CweekEdit(this);
@@ -190,18 +181,25 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     vLayout->addStretch();
     timeGroup->setLayout(vLayout);
 
+    vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(timeDiffEdit);
+    vLayout ->addWidget(timeGroup);
+    //vLayout ->addStretch(10);
+    hLayout->addLayout(vLayout);
+
+    simpleTextEdit = new CsimpleTextEdit(this);
     posiEdit = new CposiEdit(this);
     vLayout = new QVBoxLayout(this);
-    vLayout ->addWidget(timeGroup);
-    vLayout ->addWidget(posiEdit);
+    vLayout ->addWidget(simpleTextEdit,3);
+    vLayout ->addWidget(posiEdit,1);
+    //vLayout ->addStretch(10);
     hLayout->addLayout(vLayout);
-    //vLayout->addStretch();
 
     showModeEdit = new CshowModeEdit(this);
 
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(showModeEdit);
-    //vLayout->addStretch();
+    //vLayout->addStretch(10);
     hLayout->addLayout(vLayout);
 
     hLayout ->addStretch(10);

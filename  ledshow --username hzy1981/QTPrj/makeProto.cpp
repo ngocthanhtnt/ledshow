@@ -200,25 +200,46 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
       QString picStr = settings.value("text").toString();
       settings.endGroup();
 
-      settings.beginGroup("smLine");
-      bool smLineFlag = settings.value("smLineCheck").toBool();
-      settings.endGroup();
+      bool smLineFlag;
+      if(type EQ PIC_MTEXT_PROPERTY)
+      {
+          settings.beginGroup("smLine");
+          smLineFlag = settings.value("smLineCheck").toBool();
+          settings.endGroup();
+      }
+      else
+          smLineFlag = false; //单行
       settings.endGroup();
 
-      int lineNum;
+      bool moveLeftFlag = checkSLineMoveLeftContinuous(fileStr);
+      int lineNum,pageNum;
+      QImage image;
       //整个文本的图形
-      QImage image = getTextImage(width, picStr, &lineNum, linePosi);
-      //整体的行数
-      int pageNum = getTextPageNum(smLineFlag, width, height, lineNum, linePosi, pagePosi);
-
+      if(moveLeftFlag EQ false)
+      {
+          image = getTextImage(width, picStr, &lineNum, linePosi);
+          //整体的行数
+          pageNum = getTextPageNum(smLineFlag, width, height, lineNum, linePosi, pagePosi);
+      }
+      else
+      {
+          pageNum = getSLineTextPageNum(picStr, width);
+          //image = getSLineTextImage(picStr, width,height,page);
+      }
       getPicParaFromSettings(fileStr, filePara);
       filePara.Pic_Para.SNum = pageNum;
       memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para)); //前一个字节是头，不拷贝
 
+      QImage imageBk;
       for(int i = 0; i < pageNum; i ++)
       {
           //获取每页的图像
-          QImage imageBk = getTextPageImage(smLineFlag, image, width, height, i, pagePosi);
+          if(moveLeftFlag EQ false)
+            imageBk = getTextPageImage(smLineFlag, image, width, height, i, pagePosi);
+          else
+            imageBk = getSLineTextImage(picStr, width,height,i);
+
+          imageBk.save("d:\\mkprotoimag.png");
           //获取的图形的宽度和高度应该和分区的宽度和高度一致
           if(imageBk.width() != width || imageBk.height() != height)
           {

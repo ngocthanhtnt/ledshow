@@ -128,7 +128,7 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     }
     else if(type == AREA_PROPERTY)
         area = areaProperty->area;//->setSettingsToWidget(str);
-    else if(type == PIC_MTEXT_PROPERTY)
+    else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY)
     {
         //picProperty->setSettingsToWidget(str);
         area = picProperty->area;//->setSettingsToWidget(str);
@@ -213,7 +213,7 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
         areaProperty->setSettingsToWidget(str);
         areaProperty->area->setSettingsToWidget(str);
     }
-    else if(type == PIC_MTEXT_PROPERTY)
+    else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY)
     {
         picProperty->setSettingsToWidget(str);
         picProperty->area->setSettingsToWidget(pstr);
@@ -283,7 +283,12 @@ void Cproperty::getSettingsFromWidget(QTreeWidgetItem *item)
         areaProperty->getSettingsFromWidget(str);
         areaProperty->area->getSettingsFromWidget(str);
     }
-    else if(type == PIC_MTEXT_PROPERTY)
+    else if(type == PIC_STEXT_PROPERTY)
+    {
+        picProperty->getSettingsFromWidget(str);
+        picProperty->area->getSettingsFromWidget(pstr);
+    }
+    else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY)
     {
         picProperty->getSettingsFromWidget(str);
         picProperty->area->getSettingsFromWidget(pstr);

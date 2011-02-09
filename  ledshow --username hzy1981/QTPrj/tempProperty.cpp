@@ -98,8 +98,9 @@ CtempProperty::CtempProperty(QWidget *parent):QWidget(parent)
     simpleTextEdit = new CsimpleTextEdit(this);
     tempStyle = new Ctemp(this);
     vLayout = new QVBoxLayout(this);
-    vLayout->addWidget(simpleTextEdit);
-    vLayout->addWidget(tempStyle);
+    vLayout->addWidget(tempStyle,1);
+    vLayout->addWidget(simpleTextEdit,3);
+
     hLayout->addLayout(vLayout);
 
     showModeEdit = new CshowModeEdit(this);

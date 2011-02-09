@@ -363,7 +363,7 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     {
         updateClockShowArea(area);
     }
-    else if(type EQ PIC_MTEXT_PROPERTY)
+    else if(type EQ PIC_STEXT_PROPERTY || type EQ PIC_MTEXT_PROPERTY)
     {
         updatePicShowArea(area);
     }
@@ -1226,15 +1226,21 @@ void CshowArea::paintEvent(QPaintEvent *)
         }
         else if(filePara.Temp_Para.Flag == SHOW_PIC) //ÏÔÊ¾Í¼ÎÄ
         {
-            //imageBk = getTextEditImage(smLineFlag, w,h, picStr, page);
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
             int lineNum = 0;
             int pageNum = 0;
 
-            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
-
-            QImage image = getTextImage(Width, picStr, &lineNum, linePosi);
-            pageNum = getTextPageNum(smLineFlag, Width, Height, lineNum, linePosi, pagePosi);
-            imageBk = getTextPageImage(smLineFlag, image, Width, Height, page, pagePosi);
+            QImage image;
+            if(moveLeftFlag EQ false)
+            {
+                image = getTextImage(Width, picStr, &lineNum, linePosi);
+                pageNum = getTextPageNum(smLineFlag, Width, Height, lineNum, linePosi, pagePosi);
+                imageBk = getTextPageImage(smLineFlag, image, Width, Height, page, pagePosi);
+            }
+            else
+            {
+                imageBk = getSLineTextImage(picStr, Width,Height,page);
+            }
             //getTextPageNum(area->smLineFlag, area->width(), area->height(), lineNum, linePosi, pagePosi);
 
             getTextShowData(imageBk, &Show_Data, 0, 0);

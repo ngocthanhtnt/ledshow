@@ -26,9 +26,10 @@ ClunProperty::ClunProperty(QWidget *parent):QWidget(parent)
     hLayout->addLayout(vLayout);
 
     smLineEdit = new CsmLineEdit(this);
+    lunEdit = new ClunEdit(this);
     vLayout = new QVBoxLayout(this);
-    vLayout->addWidget(smLineEdit);
-    //vLayout->addStretch();
+    vLayout->addWidget(smLineEdit,1);
+    vLayout->addWidget(lunEdit,3);
     hLayout->addLayout(vLayout);
 
     //textGroup = new QGroupBox(tr("¹Ì¶¨ÎÄ±¾"), this);
@@ -38,11 +39,11 @@ ClunProperty::ClunProperty(QWidget *parent):QWidget(parent)
     //vLayout->addStretch();
     hLayout->addLayout(vLayout);
 
-    lunEdit = new ClunEdit(this);
-    vLayout = new QVBoxLayout(this);
-    vLayout->addWidget(lunEdit);
+
+    //vLayout = new QVBoxLayout(this);
+
     //vLayout->addStretch();
-    hLayout->addLayout(vLayout);
+    //hLayout->addLayout(vLayout);
 
     showModeEdit = new CshowModeEdit(this);
     vLayout = new QVBoxLayout(this);
@@ -135,7 +136,7 @@ void getLunParaFromSettings(QString str, U_File_Para &para)
         tmp = settings.value("tianganColor").toInt();
         para.Lun_Para.Tiangan_Color = 0;
         SET_BIT(para.Lun_Para.Tiangan_Color, tmp);
-        para.Lun_Para.Tiangan_Font = settings.value("size").toInt();
+        para.Lun_Para.Tiangan_Font = settings.value("tianganSize").toInt();
     }
 
     para.Lun_Para.Nongli_Type = settings.value("nongliCheck").toBool();
@@ -144,7 +145,7 @@ void getLunParaFromSettings(QString str, U_File_Para &para)
         tmp = settings.value("nongliColor").toInt();
         para.Lun_Para.Nongli_Color = 0;
         SET_BIT(para.Lun_Para.Nongli_Color, tmp);
-        para.Lun_Para.Nongli_Font = settings.value("size").toInt();
+        para.Lun_Para.Nongli_Font = settings.value("nongliSize").toInt();
     }
 
     para.Lun_Para.Jieqi_Type = settings.value("jieqiCheck").toBool();
@@ -153,7 +154,7 @@ void getLunParaFromSettings(QString str, U_File_Para &para)
         tmp = settings.value("jieqiColor").toInt();
         para.Lun_Para.Jieqi_Color = 0;
         SET_BIT(para.Lun_Para.Jieqi_Color, tmp);
-        para.Lun_Para.Jieqi_Font = settings.value("size").toInt();
+        para.Lun_Para.Jieqi_Font = settings.value("jieqiSize").toInt();
     }
 
     settings.endGroup();

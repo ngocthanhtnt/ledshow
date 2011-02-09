@@ -183,7 +183,7 @@ void Update_Clock_Data(S_Show_Data *pDst, INT8U Area_No)
       else
         P0.Y = 0;
 
-      Show_Date(pDst, 0, P0.X, P0.Y, &Cur_Time, Prog_Status.File_Para[Area_No].Clock_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Clock_Para.Week_Font, Prog_Status.File_Para[Area_No].Clock_Para.Date_Color);
+      Show_Date(pDst, 0, P0.X, P0.Y, &Cur_Time, Prog_Status.File_Para[Area_No].Clock_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Clock_Para.Date_Font, Prog_Status.File_Para[Area_No].Clock_Para.Date_Color);
    }
   
    Show_Clock(pDst, Area_No, &sTime, &Prog_Status.File_Para[Area_No].Clock_Para);
