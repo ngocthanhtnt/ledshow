@@ -16,14 +16,15 @@ void Put_Char(char c)
 //获取当前时间
 INT8U Get_Cur_Time()//S_Time *pTime)
 {
-  
+  return 1;
 }
 
 //设置当前时间
 INT8U Set_Cur_Time(INT8U Time[])
 {
-  
+  return 1;
 }
+/*
 //文件打开
 //File_Name表示文件名
 //WR_Flag表示读写标志--当文件不存在时，创建该文件
@@ -70,7 +71,7 @@ INT8S File_Size(char File_Name[])
 {
 
 }
-
+*/
 void Mem_Init()
 {
 
