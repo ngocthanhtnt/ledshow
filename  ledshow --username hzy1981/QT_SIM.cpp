@@ -45,7 +45,7 @@ INT8U Set_Cur_Time(INT8U Time[])//S_Time *pTime)
 {
   return 1;
 }
-
+/*
 //文件打开
 //File_Name表示文件名
 //WR_Flag表示读写标志--当文件不存在时，创建该文件
@@ -92,16 +92,6 @@ INT32S File_Size(FILE_T File)
 INT8S File_Delete(char File_Name[])
 {
   return 1;
-}
-/*
-#include <stdio.h>
-
-void printError(const char* msg)
-{
-    QFile file;
-    file.open(stderr, QIODevice::WriteOnly);
-    file.write(msg, qstrlen(msg));        // write to stderr
-    file.close();
 }
 */
 void Mem_Open()

@@ -147,6 +147,8 @@ INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   }
   else
       ASSERT_FAILED();
+  
+  return 1;
 }
 
 //获取节目prog_no分区Area_No的第File_No个文件的参数的存储索引
@@ -369,7 +371,7 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
   Off0 = Off * 8 / Screen_Color_Num;
   Off = (Off % Len) * 8 / Screen_Color_Num; //Off在一屏显示数据中的偏移, Off/Len表示是第多少幕
 
-  qDebug("copy show data, start x = %d, y = %d", (((Off)/8) % Width), (((Off)/8) / Width)*8 + (Off)%8);
+  debug("copy show data, start x = %d, y = %d", (((Off)/8) % Width), (((Off)/8) / Width)*8 + (Off)%8);
 
   //本次复制有多少点数？SrcLen*8/Screen_Color_Num
   for(i = 0; i <SrcLen*8/Screen_Color_Num && (i + Off0)<Len*8/Screen_Color_Num; i ++)
@@ -398,7 +400,7 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
       // qDebug("out x0 = %d, y0 = %d", X0, Y0);
   }
   
-  qDebug("copy show data, off = %d, len = %d", Off, i);
+  debug("copy show data, off = %d, len = %d", Off, i);
   return i*Screen_Color_Num/8;
 }
 
@@ -409,7 +411,7 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
   INT16U Width,Height,X,Y;
   INT32U Offset;
   INT16U Len,DstLen,Index;
-  S_Point Point;
+  //S_Point Point;
    
 #if PIC_SHOW_EN 
   if(Flag EQ SHOW_PIC) //图文
@@ -595,9 +597,8 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   static S_File_Para_Info File_Para_Info;
   INT8U Prog_No, Area_No, File_No, Type;
   INT16U Para_Len,Len;
-  INT8U Seq,Re;
+  INT8U Re;
   INT16U Seq0;
-  STORA_DI SDI;
   INT16U Cmd1;
   //S_Prog_Show_Data *pShow_Data;
 

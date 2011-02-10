@@ -1612,7 +1612,22 @@
     <name>$PROJ_DIR$\Includes.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\LED_A_Cfg.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\LED_B_Cfg.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\LED_C_Cfg.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\LED_Cfg.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\LED_D_Cfg.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\LED_E_Cfg.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\LED_Para.cpp</name>
@@ -1753,10 +1768,10 @@
     <name>$PROJ_DIR$\Screen_Status.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\shell.cpp</name>
+    <name>$PROJ_DIR$\Shell.cpp</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\shell.h</name>
+    <name>$PROJ_DIR$\Shell.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\STM32.cpp</name>
