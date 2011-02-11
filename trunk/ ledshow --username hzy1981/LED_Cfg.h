@@ -3,11 +3,11 @@
 #define ROM_CS_BYTES 2
 #define MAX_BORDER_POINTS (40*8)
 
-#define CARD_A 0x00
-#define CARD_B 0x01
-#define CARD_C 0x02
-#define CARD_D 0x03
-#define CARD_E 0x04
+#define CARD_A0 0x00
+#define CARD_B0 0x01
+#define CARD_C0 0x02
+#define CARD_D0 0x03
+#define CARD_E0 0x04
 
 //½ÚÄ¿ÌØÕ÷×Ö
 #define BORDER_SHOW_BIT 0x00
@@ -24,16 +24,16 @@
 #define ASSERT_EN 1
 #define CARD_TYPE CARD_A
 
-#if CARD_TYPE == CARD_A
-#include "LED_A_Cfg.h"
-#elif CARD_TYPE == CARD_B
-#include "LED_B_Cfg.h"
-#elif CARD_TYPE == CARD_C
-#include "LED_C_Cfg.h"
-#elif CARD_TYPE == CARD_D
-#include "LED_D_Cfg.h"
-#elif CARD_TYPE == CARD_E
-#include "LED_E_Cfg.h"
+#if CARD_TYPE == CARD_A0
+#include "LED_A0_Cfg.h"
+#elif CARD_TYPE == CARD_B0
+#include "LED_B0_Cfg.h"
+#elif CARD_TYPE == CARD_C0
+#include "LED_C0_Cfg.h"
+#elif CARD_TYPE == CARD_D0
+#include "LED_D0_Cfg.h"
+#elif CARD_TYPE == CARD_E0
+#include "LED_E0_Cfg.h"
 #else
 #error "Card type error"
 #endif

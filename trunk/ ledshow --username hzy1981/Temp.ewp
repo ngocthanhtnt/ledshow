@@ -1612,22 +1612,22 @@
     <name>$PROJ_DIR$\Includes.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\LED_A_Cfg.h</name>
+    <name>$PROJ_DIR$\LED_A0_Cfg.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\LED_B_Cfg.h</name>
+    <name>$PROJ_DIR$\LED_B0_Cfg.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\LED_C_Cfg.h</name>
+    <name>$PROJ_DIR$\LED_C0_Cfg.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\LED_Cfg.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\LED_D_Cfg.h</name>
+    <name>$PROJ_DIR$\LED_D0_Cfg.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\LED_E_Cfg.h</name>
+    <name>$PROJ_DIR$\LED_E0_Cfg.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\LED_Para.cpp</name>
