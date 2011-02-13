@@ -24,12 +24,13 @@ int main(int argc, char *argv[])
     //--------------
     Screen_Para.Base_Para.Width = 256;
     Screen_Para.Base_Para.Height = 256;
-    Screen_Para.Base_Para.Color = 0x07;
+    Screen_Para.Base_Para.Color = 0x03;
 
     Card_Para.Max_Points = MAX_POINTS;
     Card_Para.Prog_Num = 8;
     Card_Para.Area_Num = 8;
     Card_Para.File_Num = 8;
+    Card_Para.Font_Num = 1;
     Card_Para.File_En_Word = 0xFF;
 
     memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
@@ -61,6 +62,8 @@ int main(int argc, char *argv[])
     //w->progManage->newArea();
     QObject::connect(w->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
             w, SLOT(updateTreeWidget(QMdiSubWindow*)));
+
+    traversalControl(w->children());
     w->show();
 
     return a.exec();

@@ -151,6 +151,11 @@ void CpicProperty::disconnectSignal()
     disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(showModeEdited()));
 }
 
+void CpicProperty::screenCardParaChangeProc()
+{
+  edit->screenCardParaChangeProc();
+}
+
 //ªÒ»°settingsµΩ
 void CpicProperty::getSettingsFromWidget(QString str)
 {

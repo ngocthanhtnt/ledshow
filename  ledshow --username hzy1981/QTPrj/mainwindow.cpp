@@ -505,6 +505,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
+void MainWindow::screenCardParaChangeProc()
+{
+  this->property->screenCardParaChangeProc();
+}
+
 MainWindow::~MainWindow()
 {
 
@@ -541,4 +546,25 @@ int getIndexBySubWin(QMdiArea *parentArea, QMdiSubWindow *subWin)
     ASSERT_FAILED();
     return -1;
 
+}
+
+void traversalControl(const QObjectList& q)
+{
+   for(int i=0;i<q.length();i++)
+    {
+        if(!q.at(i)->children().empty())
+        {
+           traversalControl(q.at(i)->children());
+        }
+        else
+        {
+
+            QObject* o = q.at(i);
+            if(o->inherits("QComboBox"))
+            {
+              QComboBox* b = qobject_cast<QComboBox *>(o);
+              b->clear();//setText("<>");
+            }
+        }
+    }
 }

@@ -17,6 +17,7 @@ class CsizeCombo:public QComboBox
 {
     Q_OBJECT
 public:
+    void setItems();
     CsizeCombo(QWidget *parent = 0);
     ~CsizeCombo();
 
@@ -26,6 +27,7 @@ class CcolorCombo:public QComboBox
 {
     Q_OBJECT
 public:
+    void setItems();
     QColor getColor();
     void setColor(const QColor &col);
     CcolorCombo(QWidget *parent = 0);

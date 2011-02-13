@@ -48,6 +48,7 @@ public slots:
 public:
     Carea *area;
     CnameEdit *nameEdit;
+    void screenCardParaChangeProc();
     void connectSignal();
     void disconnectSignal();
     void getSettingsFromWidget(QString str);

@@ -735,6 +735,15 @@ void CclockProperty::defEdit()
     }
 }
 
+void CclockProperty::screenCardParaChangeProc()
+{
+    pointColorCombo->setItems();
+    point369ColorCombo->setItems();
+    pointMinColorCombo->setItems();
+    hourColorCombo->setItems();
+    minColorCombo->setItems();
+    secColorCombo->setItems();
+}
 
 void Get_Clock_Text_Point(INT16U Width, INT16U Height, S_Clock_Para *pPara, S_Point *pPoint)
 {

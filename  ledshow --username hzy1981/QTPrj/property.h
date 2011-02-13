@@ -40,6 +40,7 @@ public:
     CareaProperty *areaProperty; //分区属性
     CpicProperty *picProperty;  //图文
 
+    void screenCardParaChangeProc();
     void setSettingsToWidget(QTreeWidgetItem *item);
     void getSettingsFromWidget(QTreeWidgetItem *item);
 

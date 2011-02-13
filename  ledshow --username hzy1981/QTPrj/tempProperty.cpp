@@ -44,6 +44,12 @@ Ctemp::Ctemp(QWidget *parent):QGroupBox(parent)
     connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
 }
 
+void Ctemp::screenCardParaChangeProc()
+{
+  colorCombo->setItems();
+  sizeCombo->setItems();
+}
+
 void Ctemp::getSettingsFromWidget(QString str)
 {
     settings.beginGroup(str);

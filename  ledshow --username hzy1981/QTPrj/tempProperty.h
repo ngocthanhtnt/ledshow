@@ -29,7 +29,7 @@ signals:
     void edited();
 
 public:
-
+    void screenCardParaChangeProc();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     Ctemp(QWidget *parent=0);

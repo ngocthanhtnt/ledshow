@@ -5,76 +5,185 @@
 //数据移入方式
 const S_Mode_Func In_Mode_Func[]=
 {
-  {&Move_Show_RightNow},
-  {&Move_Left_Continuous},//0
-  //{&Move_Right_Continuous},//1
-  {&Move_Up_Continuous},//2
-  //{&Move_Down_Continuous},//3
-  {&Move_Left},//0
-  {&Move_Right},//1
-  {&Move_Up},//2
-  {&Move_Down},//3
-  {&Move_Left_Cover},//4
-  {&Move_Right_Cover},//5
-  {&Move_Up_Cover},//6
-  {&Move_Down_Cover},//7
-  {&Move_Left_Up_Cover},//8
-  {&Move_Right_Up_Cover},//9
-  {&Move_Left_Down_Cover},//10
-  {&Move_Right_Down_Cover},//11
-  {&Move_Left_Right_Open},//12
-  {&Move_Up_Down_Open},//13
-  {&Move_Left_Right_Close},//14
-  {&Move_Up_Down_Close},//15
-  {&Move_Spin_CW}, //顺时针覆盖
-  {&Move_Spin_CCW}, //逆时针覆盖
-  {&Move_Up_Snow}, //上飘雪
-  {&Move_Down_Snow}, //下飘雪
-  {&Move_Flash}, //闪烁
-  {&Move_Left_Laser}, //左镭射
-  {&Move_Right_Laser}, //右镭射
-  {&Move_Up_Laser}, //上镭射
-  {&Move_Down_Laser}, //下镭射
-  {&Move_Left_Tensile},//左拉伸
-  //{&Move_Right_Tensile},//右拉伸
-  {&Move_Up_Tensile},//上拉伸
-  //{&Move_Down_Tensile},//下拉伸
-  {&Move_Vertical_Tensile},//垂直拉伸
-  {&Move_Horizontal_Tensile},//水平拉伸
-  {&Move_Left_Stretch},
-  {&Move_Up_Stretch},
-  {&Move_Horizontal_Window}, //水平百叶窗
-  {&Move_Vertical_Window}, //垂直百叶窗
-  {&Move_Left_Compress}, //向左压缩
-  {&Move_Up_Compress} //向上压缩
+#if IN_SPEC_EFFECT_NUM > 0  
+  {&Move_Show_RightNow}
+#endif  
+#if IN_SPEC_EFFECT_NUM > 1 
+  ,{&Move_Left_Continuous}
+#endif
+#if IN_SPEC_EFFECT_NUM > 2  
+  ,{&Move_Up_Continuous}//2
+#endif
+#if IN_SPEC_EFFECT_NUM > 3 
+  ,{&Move_Left}//0
+#endif
+#if IN_SPEC_EFFECT_NUM > 4   
+  ,{&Move_Right}//1
+#endif
+#if IN_SPEC_EFFECT_NUM > 5   
+  ,{&Move_Up}//2
+#endif
+#if IN_SPEC_EFFECT_NUM > 6   
+  ,{&Move_Down}//3
+#endif
+#if IN_SPEC_EFFECT_NUM > 7   
+  ,{&Move_Left_Cover}//4
+#endif
+#if IN_SPEC_EFFECT_NUM > 8   
+  ,{&Move_Right_Cover}//5
+#endif
+#if IN_SPEC_EFFECT_NUM > 9   
+  ,{&Move_Up_Cover}//6
+#endif
+#if IN_SPEC_EFFECT_NUM > 10   
+  ,{&Move_Down_Cover}//7
+#endif
+#if IN_SPEC_EFFECT_NUM > 11   
+  ,{&Move_Left_Up_Cover}//8
+#endif
+#if IN_SPEC_EFFECT_NUM > 12 
+  ,{&Move_Right_Up_Cover}//9
+#endif
+#if IN_SPEC_EFFECT_NUM > 13   
+  ,{&Move_Left_Down_Cover}//10
+#endif
+#if IN_SPEC_EFFECT_NUM > 14   
+  ,{&Move_Right_Down_Cover}//11
+#endif
+#if IN_SPEC_EFFECT_NUM > 15   
+  ,{&Move_Left_Right_Open}//12
+#endif
+#if IN_SPEC_EFFECT_NUM > 16   
+  ,{&Move_Up_Down_Open}//13
+#endif
+#if IN_SPEC_EFFECT_NUM > 17   
+  ,{&Move_Left_Right_Close}//14
+#endif
+#if IN_SPEC_EFFECT_NUM > 18   
+  ,{&Move_Up_Down_Close}//15
+#endif
+#if IN_SPEC_EFFECT_NUM > 19   
+  ,{&Move_Spin_CW} //顺时针覆盖
+#endif
+#if IN_SPEC_EFFECT_NUM > 20   
+  ,{&Move_Spin_CCW} //逆时针覆盖
+#endif
+#if IN_SPEC_EFFECT_NUM > 21 
+  ,{&Move_Up_Snow} //上飘雪
+#endif
+#if IN_SPEC_EFFECT_NUM > 22   
+  ,{&Move_Down_Snow} //下飘雪
+#endif
+#if IN_SPEC_EFFECT_NUM > 23   
+  ,{&Move_Flash} //闪烁
+#endif
+#if IN_SPEC_EFFECT_NUM > 24   
+  ,{&Move_Left_Laser} //左镭射
+#endif
+#if IN_SPEC_EFFECT_NUM > 25   
+  ,{&Move_Right_Laser} //右镭射
+#endif
+#if IN_SPEC_EFFECT_NUM > 26   
+  ,{&Move_Up_Laser} //上镭射
+#endif
+#if IN_SPEC_EFFECT_NUM > 27   
+  ,{&Move_Down_Laser} //下镭射
+#endif
+#if IN_SPEC_EFFECT_NUM > 28   
+  ,{&Move_Left_Tensile}//左拉伸
+#endif
+#if IN_SPEC_EFFECT_NUM > 29   
+  //{&Move_Right_Tensile}//右拉伸
+  ,{&Move_Up_Tensile}//上拉伸
+#endif
+#if IN_SPEC_EFFECT_NUM > 30   
+  //{&Move_Down_Tensile}//下拉伸
+  ,{&Move_Vertical_Tensile}//垂直拉伸
+#endif
+#if IN_SPEC_EFFECT_NUM > 31   
+  ,{&Move_Horizontal_Tensile}//水平拉伸
+#endif
+#if IN_SPEC_EFFECT_NUM > 32   
+  ,{&Move_Left_Stretch}
+#endif
+#if IN_SPEC_EFFECT_NUM > 33   
+  ,{&Move_Up_Stretch}
+#endif
+#if IN_SPEC_EFFECT_NUM > 34   
+  ,{&Move_Horizontal_Window} //水平百叶窗
+#endif
+#if IN_SPEC_EFFECT_NUM > 35   
+  ,{&Move_Vertical_Window} //垂直百叶窗
+#endif
+#if IN_SPEC_EFFECT_NUM > 36   
+  ,{&Move_Left_Compress} //向左压缩
+#endif
+#if IN_SPEC_EFFECT_NUM > 37   
+  ,{&Move_Up_Compress} //向上压缩
+#endif
 };
 
 //数据移入方式
 const S_Mode_Func Out_Mode_Func[]=
 {
-  {&Move_Show_RightNow},
-  //{&Move_Left_Continuous},//0
-  //{&Move_Right_Continuous},//1
-  //{&Move_Up_Continuous},//2
-  //{&Move_Down_Continuous},//3
-  {&Move_Left},//0
-  {&Move_Right},//1
-  {&Move_Up},//2
-  {&Move_Down},//3
-  {&Move_Left_Cover},//4
-  {&Move_Right_Cover},//5
-  {&Move_Up_Cover},//6
-  {&Move_Down_Cover},//7
-  {&Move_Left_Up_Cover},//8
-  {&Move_Right_Up_Cover},//9
-  {&Move_Left_Down_Cover},//10
-  {&Move_Right_Down_Cover},//11
-  {&Move_Left_Right_Open},//12
-  {&Move_Up_Down_Open},//13
-  {&Move_Left_Right_Close},//14
-  {&Move_Up_Down_Close},//15
-  {&Move_Spin_CW},
-  {&Move_Spin_CCW}
+#if OUT_SPEC_EFFECT_NUM > 0   
+  {&Move_Show_RightNow}
+#endif
+#if OUT_SPEC_EFFECT_NUM > 1
+  ,{&Move_Left}//0
+#endif
+#if OUT_SPEC_EFFECT_NUM > 2  
+  ,{&Move_Right}//1
+#endif
+#if OUT_SPEC_EFFECT_NUM > 3  
+  ,{&Move_Up}//2
+#endif
+#if OUT_SPEC_EFFECT_NUM >4  
+  ,{&Move_Down}//3
+#endif
+#if OUT_SPEC_EFFECT_NUM > 5  
+  ,{&Move_Left_Cover}//4
+#endif
+#if OUT_SPEC_EFFECT_NUM > 6  
+  ,{&Move_Right_Cover}//5
+#endif
+#if OUT_SPEC_EFFECT_NUM > 7  
+  ,{&Move_Up_Cover}//6
+#endif
+#if OUT_SPEC_EFFECT_NUM > 8  
+  ,{&Move_Down_Cover}//7
+#endif
+#if OUT_SPEC_EFFECT_NUM > 9  
+  ,{&Move_Left_Up_Cover}//8
+#endif
+#if OUT_SPEC_EFFECT_NUM > 10  
+  ,{&Move_Right_Up_Cover}//9
+#endif
+#if OUT_SPEC_EFFECT_NUM > 11  
+  ,{&Move_Left_Down_Cover}//10
+#endif
+#if OUT_SPEC_EFFECT_NUM > 12  
+  ,{&Move_Right_Down_Cover}//11
+#endif
+#if OUT_SPEC_EFFECT_NUM > 13  
+  ,{&Move_Left_Right_Open}//12
+#endif
+#if OUT_SPEC_EFFECT_NUM > 14  
+  ,{&Move_Up_Down_Open}//13
+#endif
+#if OUT_SPEC_EFFECT_NUM > 15
+  ,{&Move_Left_Right_Close}//14
+#endif
+#if OUT_SPEC_EFFECT_NUM > 16  
+  ,{&Move_Up_Down_Close}//15
+#endif
+#if OUT_SPEC_EFFECT_NUM > 17  
+  ,{&Move_Spin_CW}
+#endif
+#if OUT_SPEC_EFFECT_NUM > 18  
+  ,{&Move_Spin_CCW}
+#endif
+ 
 
 };
 

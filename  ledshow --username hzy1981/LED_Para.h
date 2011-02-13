@@ -109,6 +109,7 @@ typedef struct
   INT8U Prog_Num; //最大节目数
   INT8U Area_Num; //最大分区数
   INT8U File_Num; //最大文件数
+  INT8U Font_Num; //板上字体个数
   INT8U ROM_Size; //存储空间大小
   INT16U File_En_Word; //支持的节目类型
   INT8U Tail;
@@ -594,7 +595,7 @@ typedef struct
   S_Show_3Color_Data Three_Color_Data;
   */
   INT8U Head;
-  INT8U Color_Data[3*MAX_POINTS/8];//---连续的3个字节表示八个点3个颜色!!
+  INT8U Color_Data[2*MAX_POINTS/8];//---连续的2个字节表示八个点3个颜色!!
   INT8U Tail;
 }S_Show_Data;
 

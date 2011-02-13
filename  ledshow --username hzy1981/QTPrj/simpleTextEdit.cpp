@@ -480,6 +480,12 @@ CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
     connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
 }
 
+void CdateEdit::screenCardParaChangeProc()
+{
+  colorCombo->setItems();
+  sizeCombo->setItems();
+}
+
 //从Widget上获取设置
 void CdateEdit::getSettingsFromWidget(QString str)
 {
@@ -556,6 +562,12 @@ CweekEdit::CweekEdit(QWidget *parent):QWidget(parent)
     connect(weekCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+}
+
+void CweekEdit::screenCardParaChangeProc()
+{
+  colorCombo->setItems();
+  sizeCombo->setItems();
 }
 
 //从Widget上获取设置
@@ -637,6 +649,12 @@ CtimeEdit::CtimeEdit(QWidget *parent):QWidget(parent)
     connect(timeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+}
+
+void CtimeEdit::screenCardParaChangeProc()
+{
+  colorCombo->setItems();
+  sizeCombo->setItems();
 }
 
 //从Widget上获取设置
@@ -783,6 +801,13 @@ CdateTimeEdit::CdateTimeEdit(QWidget *parent):QGroupBox(parent)
     connect(weekEdit, SIGNAL(edited()),this,SIGNAL(edited()));
 }
 
+void CdateTimeEdit::screenCardParaChangeProc()
+{
+  dateEdit->screenCardParaChangeProc();
+  weekEdit->screenCardParaChangeProc();
+  timeEdit->screenCardParaChangeProc();
+}
+
 //从Widget上获取设置
 void CdateTimeEdit::getSettingsFromWidget(QString str)
 {
@@ -891,6 +916,16 @@ void ClunEdit::setSettingsToWidget(QString str)
     jieqiColor->setCurrentIndex(settings.value("jieqiColor").toInt());
     settings.endGroup();
     settings.endGroup();
+}
+void ClunEdit::screenCardParaChangeProc()
+{
+    tianganColor->setItems();
+    nongliColor->setItems();
+    jieqiColor->setItems();
+
+    tianganFont->setItems();
+    nongliFont->setItems();
+    jieqiFont->setItems();
 }
 
 ClunEdit::~ClunEdit()
@@ -1080,6 +1115,10 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   connect(lineEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
 }
 
+void CsimpleTextEdit::screenCardParaChangeProc()
+{
+    colorCombo->setItems();
+}
 /*
 QFont font("times", 24);
 QFontMetrics fm(font);

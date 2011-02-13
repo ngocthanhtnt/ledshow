@@ -71,6 +71,13 @@ CtimeProperty::CtimeProperty(QWidget *parent):QWidget(parent)
     connectSignal();
 }
 
+void CtimeProperty::screenCardParaChangeProc()
+{
+    simpleTextEdit->screenCardParaChangeProc();
+    dateTimeEdit->screenCardParaChangeProc();
+
+}
+
 //ÊôĞÔ±à¼­µÄSLOT
 void CtimeProperty::edited()
 {

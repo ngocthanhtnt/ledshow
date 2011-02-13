@@ -1,6 +1,7 @@
 #ifndef ZK_H
 #define ZK_H
 
+#include "led_cfg.h"
 #include "led_show.h"
 
 #undef EXT
@@ -22,8 +23,10 @@
 typedef struct{
   INT16U Code;
   INT8U CN16_Dot[32]; //16*16
+#if FONT_NUM > 1  
   INT8U CN24_Dot[72]; //24*24
-  INT8U CN32_Dot[128]; //32*32
+#endif
+  //INT8U CN32_Dot[128]; //32*32
 }CNZK_Info;
 
 EXT INT8U Get_Font_Width(INT8U Font);

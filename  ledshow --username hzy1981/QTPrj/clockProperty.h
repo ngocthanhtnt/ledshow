@@ -90,6 +90,7 @@ public slots:
 public:
     Carea *area;
     CnameEdit *nameEdit;
+    void screenCardParaChangeProc();
     void updateShowAreaa(CshowArea *area);
 
     void getSettingsFromWidget(QString str);

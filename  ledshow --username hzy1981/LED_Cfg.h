@@ -18,11 +18,11 @@
 #define LUN_SHOW_BIT    0x05
 #define TEMP_SHOW_BIT   0x06
 
-#define QT_EN 0 //使用QT仿真
+#define QT_EN 1 //使用QT仿真
 
 #if QT_EN == 0 //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 1
-#define CARD_TYPE CARD_A
+#define CARD_TYPE CARD_A0
 
 #if CARD_TYPE == CARD_A0
 #include "LED_A0_Cfg.h"
@@ -56,6 +56,9 @@
 //#define MIN_STAY_TIME  10//每屏最小停留时间,单位为ms
 #define MOVE_STEP 10 //每个调度单位移动的数据百分比 单位%
 
+#define IN_SPEC_EFFECT_NUM 5 //进入特效个数
+#define OUT_SPEC_EFFECT_NUM 5 //退出特效个数
+#define FONT_NUM 2 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
 #define MAX_POINTS (1024*256L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
@@ -74,5 +77,7 @@
 #define TEMP_SHOW_EN   1 //温度显示使能
 #define TIME_SHOW_EN   1 //时间显示使能
 #define TIMER_SHOW_EN  1 //定时显示使能 
+
+
 #endif
 
