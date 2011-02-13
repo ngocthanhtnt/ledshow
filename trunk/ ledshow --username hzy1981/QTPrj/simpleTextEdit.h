@@ -106,6 +106,7 @@ private:
 signals:
     void edited();
 public:
+    void screenCardParaChangeProc();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CdateEdit(QWidget *parent =0);
@@ -125,6 +126,7 @@ private:
 signals:
     void edited();
 public:
+    void screenCardParaChangeProc();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CweekEdit(QWidget *parent =0);
@@ -143,6 +145,7 @@ private:
 signals:
     void edited();
 public:
+    void screenCardParaChangeProc();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CtimeEdit(QWidget *parent =0);
@@ -178,6 +181,7 @@ private:
 signals:
     void edited();
 public:
+    void screenCardParaChangeProc();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CdateTimeEdit(QWidget *parent =0);
@@ -204,6 +208,7 @@ private:
 signals:
     void edited();
 public:
+    void screenCardParaChangeProc();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     ClunEdit(QWidget *parent =0);
@@ -253,6 +258,7 @@ private:
 signals:
     void edited();
 public:
+    void screenCardParaChangeProc();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CsimpleTextEdit(QWidget *parent =0);

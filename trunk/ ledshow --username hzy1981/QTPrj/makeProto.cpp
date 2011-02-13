@@ -472,7 +472,7 @@ INT8U makeProtoData(QString screenStr, int mode)
     {
         Screen_Para.Base_Para.Width = 256;
         Screen_Para.Base_Para.Height = 256;
-        Screen_Para.Base_Para.Color = 0x07;
+        Screen_Para.Base_Para.Color = 0x03; //Ë«É«ÆÁ
         Screen_Para.Prog_Num = 1;
         //return 0;
     }

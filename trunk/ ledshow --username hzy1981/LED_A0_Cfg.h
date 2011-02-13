@@ -2,10 +2,14 @@
 //#define MIN_STAY_TIME  10//每屏最小停留时间,单位为ms
 #define MOVE_STEP 10 //每个调度单位移动的数据百分比 单位%
 
+#define IN_SPEC_EFFECT_NUM 5 //进入特效个数
+#define OUT_SPEC_EFFECT_NUM 5 //退出特效个数
+#define FONT_NUM 1 //内嵌字体个数
+
 //----根据不同的屏幕和硬件配置下列项目
-#define MAX_POINTS (1024*75L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
+#define MAX_POINTS (256*32L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
 #define MAX_PROG_NUM 10 //最大节目数
-#define MAX_AREA_NUM 8 //每个节目下最大分区数
+#define MAX_AREA_NUM 5 //每个节目下最大分区数
 #define MAX_FILE_NUM 8 //每个分区下最大文件数
 #define MAX_BLOCK_NUM  4000 //显示数据块的大小
 #define BLOCK_DATA_LEN 249 //一个显示数据块的大小

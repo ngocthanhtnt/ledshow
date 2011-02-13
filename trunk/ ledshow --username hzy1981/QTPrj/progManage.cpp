@@ -977,6 +977,7 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     {
         QMdiSubWindow *subWin= getSubWinByIndex(w->mdiArea, index);
         w->mdiArea->setActiveSubWindow(subWin);
+        QTreeWidgetItem *oldScreenItem = w->screenArea->screenItem;
         w->screenArea = (CscreenArea *)subWin->widget();
         if(subWin->isHidden())
           subWin->show();
@@ -984,6 +985,11 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
         //更新当前显示屏参数
         QString screenStr = screenItem->data(0, Qt::UserRole).toString();
         getScreenParaFromSettings(screenStr, Screen_Para);
+
+        if(oldScreenItem != w->screenArea->screenItem)
+        {
+          w->screenCardParaChangeProc();
+        }
     }
     else
         ASSERT_FAILED();

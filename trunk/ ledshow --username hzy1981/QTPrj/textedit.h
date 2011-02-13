@@ -65,6 +65,7 @@ class TextEdit : public QMainWindow
     Q_OBJECT
 
 public:
+    void screenCardParaChangeProc();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     TextEdit(QWidget *parent = 0);

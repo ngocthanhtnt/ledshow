@@ -136,6 +136,13 @@ void updateTimerShowArea(CshowArea *area)
     }
 
 }
+
+void CtimerProperty::screenCardParaChangeProc()
+{
+  colorCombo->setItems();
+  fontSizeCombo->setItems();
+}
+
 /*
   INT8U Dst_Year; //目标年
   INT8U Dst_Month; //目标月

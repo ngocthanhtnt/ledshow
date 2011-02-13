@@ -924,6 +924,11 @@ void TextEdit::edit()
 
 }
 
+void TextEdit::screenCardParaChangeProc()
+{
+  colorCombo->setItems();
+}
+
 void TextEdit::getSettingsFromWidget(QString str)
 {
 

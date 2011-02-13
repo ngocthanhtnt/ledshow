@@ -19,6 +19,7 @@
 #include <QMdiArea>
 #include <QMdiSubWindow>
 #include <QList>
+#include <QObjectList>
 #include "showArea.h"
 #include "areaProperty.h"
 #include "progManage.h"
@@ -70,7 +71,7 @@ public:
 //protected:
     //void paintEvent(QPaintEvent *);
 public:
-
+    void screenCardParaChangeProc();
     void setCurSettingsStr(QString str);  //获取当前的settings的str
     QString getCurSettingsStr();   //设置当前settings的str
 
@@ -83,5 +84,5 @@ public:
 
 QMdiSubWindow *getSubWinByIndex(QMdiArea *parentArea, int index);
 int getIndexBySubWin(QMdiArea *parentArea, QMdiSubWindow *subWin);
-
+void traversalControl(const QObjectList& q);
 #endif // MAINWINDOW_H

@@ -186,6 +186,15 @@ Cproperty ::~Cproperty()
 #define TEMP_PROPERTY   0x07 //ÎÂ¶È
 
  */
+
+void Cproperty::screenCardParaChangeProc()
+{
+    clockProperty->screenCardParaChangeProc();
+    timeProperty->screenCardParaChangeProc();
+    timerProperty->screenCardParaChangeProc();
+    picProperty->screenCardParaChangeProc();
+}
+
 void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
 {
     QString str;
