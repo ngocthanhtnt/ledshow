@@ -1636,6 +1636,9 @@
     <name>$PROJ_DIR$\LED_Para.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\LED_Scan.cpp</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\LED_Show.cpp</name>
   </file>
   <file>

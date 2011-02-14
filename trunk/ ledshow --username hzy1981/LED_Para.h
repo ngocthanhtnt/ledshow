@@ -58,6 +58,23 @@ typedef struct
 
 typedef struct
 {
+  INT8U Direct; //进入方向
+  INT8U Rows; //扫描1，2，4，8，16扫
+  INT8U Rows_Fold; //每驱行折数
+  INT8U Cols_Fold; //每驱列折数
+  INT8U Row_Seq; //行序号
+  
+  INT8U Row_Shade; //行消隐时间
+  INT8U Shift_Freq; //移位时钟频率
+  INT8U Screen_Freq; //屏幕刷新频率
+  
+  INT8U Data_Polarity; //数据极性
+  INT8U OE_Polarity; //OE极性
+  INT8U RG_Reverse; //红绿反转
+}S_Scan_Mode;
+
+typedef struct
+{
     INT8U Mode; //手动调节还是定时调节?
     INT8U Fixed_Lightness;
     S_Lightness Time_Lightness[MAX_LIGHTNESS_TIME];
@@ -120,9 +137,6 @@ typedef struct
 
 typedef struct
 {
-    INT8U Polarity; //数据极性
-    INT8U OE; //OE极性
-
     INT16U Width; //宽度
     INT16U Height; //高度
     INT8U Color; //颜色 0单色，1双色，2三色，3-255级灰度
@@ -155,6 +169,8 @@ typedef struct
   INT8U Baud;  //波特率
 */
   S_Screen_Base_Para Base_Para;
+  
+  S_Scan_Mode Scan_Mode; //扫描参数  
   //命令1
   S_Screen_OC_Time OC_Time;//Open_Close_Time[MAX_OPEN_CLOSE_TIME]; //开关机时间
   //命令2
