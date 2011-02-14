@@ -186,8 +186,8 @@ void getTimerParaFromSettings(QString str, U_File_Para &para)
     para.Timer_Para.Dst_Sec = (INT8U)settings.value("dstSec").toInt();
 
     tmp = (INT8U)settings.value("color").toInt();
-    para.Timer_Para.Timer_Color = 0;
-    SET_BIT(para.Timer_Para.Timer_Color, tmp);
+    para.Timer_Para.Timer_Color = getColorDataFromIndex(tmp);
+    //SET_BIT(para.Timer_Para.Timer_Color, tmp);
 
     para.Timer_Para.Timer_Font = (INT8U)settings.value("size").toInt();
     para.Timer_Para.Timer_Type = (INT8U)settings.value("style").toInt();

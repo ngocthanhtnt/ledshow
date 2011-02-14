@@ -57,6 +57,7 @@ private:
 
     QAction *actionSave;
 public:
+    int MDISubWinClickFlag;
     QWidget *widget;
     CprogManage *progManage; //节目管理
     Cproperty *property; //属性编辑

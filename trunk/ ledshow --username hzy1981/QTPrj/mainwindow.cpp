@@ -436,6 +436,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::updateTreeWidget(QMdiSubWindow *subWin)
 {
+
+    //subWin->childAt()
   QList<QMdiSubWindow *> subWinList;
 
   subWinList = mdiArea->subWindowList(); //子窗口指针列表
@@ -446,10 +448,16 @@ void MainWindow::updateTreeWidget(QMdiSubWindow *subWin)
     {
        if(w->progManage->treeWidget->topLevelItemCount() > i)
        {
+          qDebug("update screen %d",i);
+          w->MDISubWinClickFlag = 1;
           w->progManage->clickItem(w->progManage->treeWidget->topLevelItem(i),0);
        }
     }
   }
+
+
+//w->progManage->clickItem(((CscreenArea *)(subWin->widget()))->screenItem,0);
+
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -501,6 +509,7 @@ MainWindow::MainWindow(QWidget *parent)
 //screenArea->newShowArea();
     //setLayout(gridLayout);
    setCentralWidget(mdiArea);
+   MDISubWinClickFlag = 0;
     //w->progManage->settingsInit();
 
 }

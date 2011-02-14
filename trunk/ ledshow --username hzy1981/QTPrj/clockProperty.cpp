@@ -384,33 +384,33 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     para.Clock_Para.Sec_Line_Width = (unsigned char)tmp;
 
     tmp = settings.value("point369Color").toInt(); //369点颜色
-    para.Clock_Para.Hour369_Point_Color = 0;
-    SET_BIT(para.Clock_Para.Hour369_Point_Color, tmp);
+    para.Clock_Para.Hour369_Point_Color = getColorDataFromIndex(tmp);
+    //SET_BIT(para.Clock_Para.Hour369_Point_Color, tmp);
     //qDebug("point369color = %d", para.Clock_Para.Hour369_Point_Color);
 
     tmp = settings.value("pointColor").toInt(); //整点颜色
-    para.Clock_Para.Hour_Point_Color = 0;
-    SET_BIT(para.Clock_Para.Hour_Point_Color, tmp);
+    para.Clock_Para.Hour_Point_Color = getColorDataFromIndex(tmp);
+    //SET_BIT(para.Clock_Para.Hour_Point_Color, tmp);
     //qDebug("pointColor = %d", para.Clock_Para.Hour_Point_Color);
 
     tmp = settings.value("pointMinColor").toInt(); //分点颜色
-    para.Clock_Para.Min_Point_Color = 0;
-    SET_BIT(para.Clock_Para.Min_Point_Color, tmp);
+    para.Clock_Para.Min_Point_Color = getColorDataFromIndex(tmp);
+    //SET_BIT(para.Clock_Para.Min_Point_Color, tmp);
     //qDebug("pointMinColor = %d", para.Clock_Para.Min_Point_Color);
 
     tmp = settings.value("hourColor").toInt(); //小时颜色
-    para.Clock_Para.Hour_Line_Color = 0;
-    SET_BIT(para.Clock_Para.Hour_Line_Color, tmp);
+    para.Clock_Para.Hour_Line_Color = getColorDataFromIndex(tmp);
+    //SET_BIT(para.Clock_Para.Hour_Line_Color, tmp);
     //qDebug("hourColor = %d", para.Clock_Para.Hour_Line_Color);
 
     tmp = settings.value("minColor").toInt(); //分钟颜色
-    para.Clock_Para.Min_Line_Color = 0;
-    SET_BIT(para.Clock_Para.Min_Line_Color, tmp);
+    para.Clock_Para.Min_Line_Color = getColorDataFromIndex(tmp);
+    //SET_BIT(para.Clock_Para.Min_Line_Color, tmp);
     //qDebug("minColor = %d", para.Clock_Para.Min_Line_Color);
 
     tmp = settings.value("secColor").toInt(); //秒钟颜色
-    para.Clock_Para.Sec_Line_Color = 0;
-    SET_BIT(para.Clock_Para.Sec_Line_Color, tmp);
+    para.Clock_Para.Sec_Line_Color = getColorDataFromIndex(tmp);
+    //SET_BIT(para.Clock_Para.Sec_Line_Color, tmp);
     //qDebug("secColor = %d", para.Clock_Para.Sec_Line_Color);
 
     settings.beginGroup("dateEdit");
@@ -426,8 +426,8 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     tmp = settings.value("size").toInt();
     para.Clock_Para.Date_Font = tmp;
     tmp = settings.value("color").toInt();
-    para.Clock_Para.Date_Color = 0;
-    SET_BIT(para.Clock_Para.Date_Color, tmp);
+    para.Clock_Para.Date_Color = getColorDataFromIndex(tmp);
+    //SET_BIT(para.Clock_Para.Date_Color, tmp);
     settings.endGroup();
 
     settings.beginGroup("weekEdit");
@@ -442,8 +442,8 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
     tmp = settings.value("size").toInt();
     para.Clock_Para.Week_Font = tmp;
     tmp = settings.value("color").toInt();
-    para.Clock_Para.Week_Color = 0;
-    SET_BIT(para.Clock_Para.Week_Color, tmp);
+    para.Clock_Para.Week_Color = getColorDataFromIndex(tmp);
+    //SET_BIT(para.Clock_Para.Week_Color, tmp);
     settings.endGroup();
 
     tmp = settings.value("textX").toInt();

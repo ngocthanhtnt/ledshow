@@ -60,10 +60,11 @@ int main(int argc, char *argv[])
     */
     //w->progManage->newProg();
     //w->progManage->newArea();
+
     QObject::connect(w->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
             w, SLOT(updateTreeWidget(QMdiSubWindow*)));
 
-    traversalControl(w->children());
+    //traversalControl(w->children());
     w->show();
 
     return a.exec();

@@ -137,8 +137,8 @@ void getTempParaFromSettings(QString str, U_File_Para &para)
 
     para.Temp_Para.Temp_Type = settings.value("tempCombo").toInt();
     tmp = settings.value("color").toInt();
-    para.Temp_Para.Temp_Color = 0;
-    SET_BIT(para.Temp_Para.Temp_Color, tmp);
+    para.Temp_Para.Temp_Color = getColorDataFromIndex(tmp);
+    //SET_BIT(para.Temp_Para.Temp_Color, tmp);
     para.Temp_Para.Temp_Font = settings.value("size").toInt();
 
     settings.endGroup();

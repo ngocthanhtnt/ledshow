@@ -42,6 +42,9 @@
 #define PROG_COUNTS_MODE 0x00
 #define PROG_TIME_MODE  0x01
 
+#define GET_TEXT_LEN(W,H) ((W%8) EQ 0)?(W*H/8):((W/8+1)*H)//((H%8) EQ 0)?(W*H/8):(W*(H/8+1))
+#define GET_POINT_INDEX(W,X,Y) (((W%8)?(W/8 + 1)*8:W)*Y + X)//(((Y>>3) * Width) + X)*8 + (Y & 0x07);
+
 #pragma pack(1)
 typedef struct
 {

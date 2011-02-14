@@ -350,7 +350,7 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
                      S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT16U Width, INT16U Height)
 {
   //INT16U Width,Height;
-  INT16U X0,Y0,Off0;
+  INT16U X0,Y0,Off0,Row_Points;
   INT32U i,Len;
   INT8U Re;
   INT8U Screen_Color_Num;
@@ -360,7 +360,7 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
   Dst_Off = X *
 */
   Screen_Color_Num = Get_Screen_Color_Num();
-  Len = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1)); //每屏显示的数据长度
+  Len = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1)); //每屏显示的数据长度
   Len = Len * Screen_Color_Num; //每一幕显示需要的字节数!
   
 #if QT_SIM > 0
@@ -383,12 +383,20 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
 
   debug("copy show data, start x = %d, y = %d", (((Off)/8) % Width), (((Off)/8) / Width)*8 + (Off)%8);
 
+  Row_Points = ((Width % 8) EQ 0)?Width:((Width / 8 + 1)*8);
+
+  if(Row_Points EQ 0)
+      return 0;
+
   //本次复制有多少点数？SrcLen*8/Screen_Color_Num
   for(i = 0; i <SrcLen*8/Screen_Color_Num && (i + Off0)<Len*8/Screen_Color_Num; i ++)
   {
     //第i个点对应在该分区内的坐标??
-    X0 = (((Off + i)/8) % Width);
-    Y0 = (((Off + i)/8) / Width)*8 + (Off + i)%8;
+    //X0 = //(((Off + i)/8) % Width);
+    //Y0 = //(((Off + i)/8) / Width)*8 + (Off + i)%8;
+
+    X0 = (Off + i) % Row_Points;
+    Y0 = (Off + i) / Row_Points;
 
     if(X0 < Width && Y0 < Height) //X0,Y0必须在X_Len和Y_Len的范围内
     {
@@ -430,7 +438,7 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     Width = Get_Area_Width(Area_No);
     Height = Get_Area_Height(Area_No);
    
-    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
     DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
     
     Index = (DstLen * SIndex) / BLOCK_SHOW_DATA_LEN;//块偏移
@@ -447,7 +455,7 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     Width = Prog_Status.File_Para[Area_No].Clock_Para.Text_Width;
     Height = Prog_Status.File_Para[Area_No].Clock_Para.Text_Height;
     
-    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
     DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
 
     Index = Prog_Status.Block_Index.Index[Area_No][File_No];
@@ -462,7 +470,7 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     Width = Prog_Status.File_Para[Area_No].Timer_Para.Text_Width;
     Height = Prog_Status.File_Para[Area_No].Timer_Para.Text_Height;
     
-    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
     DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
 
     Index = Prog_Status.Block_Index.Index[Area_No][File_No];
@@ -477,7 +485,7 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     Width = Prog_Status.File_Para[Area_No].Time_Para.Text_Width;
     Height = Prog_Status.File_Para[Area_No].Time_Para.Text_Height;
     
-    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
     DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
 
     Index = Prog_Status.Block_Index.Index[Area_No][File_No];
@@ -492,7 +500,7 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     Width = Prog_Status.File_Para[Area_No].Lun_Para.Text_Width;
     Height = Prog_Status.File_Para[Area_No].Lun_Para.Text_Height;
     
-    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
     DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
 
     Index = Prog_Status.Block_Index.Index[Area_No][File_No];
@@ -507,7 +515,7 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     Width = Prog_Status.File_Para[Area_No].Temp_Para.Text_Width;
     Height = Prog_Status.File_Para[Area_No].Temp_Para.Text_Height;
     
-    DstLen = (INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
     DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
 
     Index = Prog_Status.Block_Index.Index[Area_No][File_No];

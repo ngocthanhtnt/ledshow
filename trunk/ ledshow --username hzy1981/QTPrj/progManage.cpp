@@ -362,6 +362,7 @@ void CprogManage::newScreen()
     //Qt::WindowFlags flags = Qt::Window|Qt::WindowMinimizeButtonHint;
 */
     _newScreen(QString::number(size + 1) + tr("屏幕"), 0, 0, Screen_Para.Base_Para.Width+8,Screen_Para.Base_Para.Height+34);
+    w->screenArea->screenItem = item;
     //subWin->setWindowFlags(flags); // 设置禁止最大化
 
 
@@ -940,6 +941,11 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     QTreeWidgetItem *lastItem,*screenItem;
 
     lastItem = getCurItem();
+/*
+    qDebug("lastItem str:%s,\r\ncurItem str:%s", \
+           (lastItem == 0)?"null":(const char *)lastItem->data(0, Qt::UserRole).toString().toLocal8Bit(),\
+           (const char *)item->data(0, Qt::UserRole).toString().toLocal8Bit());
+*/
 
     if(lastItem == item) //同一个项目点击
     {
@@ -976,20 +982,34 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     if(index >= 0)
     {
         QMdiSubWindow *subWin= getSubWinByIndex(w->mdiArea, index);
-        w->mdiArea->setActiveSubWindow(subWin);
+
         QTreeWidgetItem *oldScreenItem = w->screenArea->screenItem;
-        w->screenArea = (CscreenArea *)subWin->widget();
+        if((CscreenArea *)subWin->widget() != w->screenArea)
+        {
+           w->screenArea = (CscreenArea *)subWin->widget();
+           //w->screenArea->screenSettingsInit(screenItem);
+        }
+
         if(subWin->isHidden())
           subWin->show();
 
+        QObject::disconnect(w->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
+                w, SLOT(updateTreeWidget(QMdiSubWindow*)));
+        if(w->mdiArea->activeSubWindow()!=subWin)
+          w->mdiArea->setActiveSubWindow(subWin);
+        QObject::connect(w->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
+                w, SLOT(updateTreeWidget(QMdiSubWindow*)));
+
+        w->MDISubWinClickFlag = 0;
         //更新当前显示屏参数
         QString screenStr = screenItem->data(0, Qt::UserRole).toString();
         getScreenParaFromSettings(screenStr, Screen_Para);
-
+/*
         if(oldScreenItem != w->screenArea->screenItem)
         {
           w->screenCardParaChangeProc();
         }
+*/
     }
     else
         ASSERT_FAILED();
@@ -1175,6 +1195,7 @@ void CprogManage::settingsInit()
         subWin->setFixedSize(subWin->size());
 */
         _newScreen(QString::number(m + 1) + tr("屏幕"), 0, 0, Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34);
+        w->screenArea->screenItem = screenItem;
         screenItem->setData(0, Qt::UserRole, screenStr);
         screenItem->setText(0, QString::number(m + 1) + tr("显示屏"));
 
