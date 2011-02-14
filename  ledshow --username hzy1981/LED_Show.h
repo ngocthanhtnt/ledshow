@@ -134,6 +134,7 @@ typedef struct
   INT8U Head;
   INT8U Lightness;
   INT8U Open_Flag;
+  INT16U Scan_Row; 
   INT8U CS[CS_BYTES];
   INT8U Tail;  
 }S_Screen_Status;
