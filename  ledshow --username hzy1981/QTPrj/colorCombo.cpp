@@ -37,6 +37,16 @@ void CcolorCombo::setItems()
     }
 }
 
+INT8U getColorDataFromIndex(INT8U Index)
+{
+  if(Index EQ 0)
+      return 0x01;
+  else if(Index EQ 1)
+      return 0x02;
+  else if(Index EQ 2)
+      return 0x03;
+}
+
 INT8U getColorData(const QColor &col)
 {
     INT8U data = 0;

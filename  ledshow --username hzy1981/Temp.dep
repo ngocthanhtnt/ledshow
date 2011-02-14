@@ -182,13 +182,17 @@
       <outputs>
         <tool>
           <name>ILINK</name>
-          <file> 91 88</file>
+          <file> 88 91</file>
         </tool>
       </outputs>
     </file>
     <file>
       <name>$PROJ_DIR$\Border_Show.cpp</name>
       <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 24</file>
+        </tool>
         <tool>
           <name>BICOMP</name>
           <file> 75</file>
@@ -975,10 +979,6 @@
         </tool>
       </outputs>
       <inputs>
-        <tool>
-          <name>ICCARM</name>
-          <file> 159 50 18 71 21 51 45 1 74 12 22 33 5 140 137 152 169 30 97 154 158 103 156 167 101</file>
-        </tool>
         <tool>
           <name>BICOMP</name>
           <file> 159 50 18 71 21 45 1 74 12 22 33 5 140 152 169 30 97 154 158 103 156 167 101</file>

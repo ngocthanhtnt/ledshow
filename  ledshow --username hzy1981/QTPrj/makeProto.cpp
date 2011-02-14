@@ -19,7 +19,6 @@ S_Show_Data protoShowData;
     else
        tmpLen = width * (height / 8 + 1);
 */
-#define GET_TEXT_LEN(W,H) ((H%8) EQ 0)?(W*H/8):(W*(H/8+1))
 //#define BLOCK_SHOW_DATA_LEN (BLOCK_DATA_LEN - 20)
 
 /*

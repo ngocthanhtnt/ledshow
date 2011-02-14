@@ -50,7 +50,8 @@ INT8U Get_Rect_Buf_Bit(INT8U Buf[], INT16U Buf_Size, INT16U Width, INT16U X, INT
 {
   INT16U Index;
   
-  Index = ((Y/8 * Width) + X)*8 + Y %8;
+  //Index = ((Y/8 * Width) + X)*8 + Y %8;
+  Index = GET_POINT_INDEX(Width,X,Y);
   return Get_Buf_Bit(Buf, Buf_Size, Index);//Index;
   
 }
@@ -63,7 +64,8 @@ void Set_Rect_Buf_Bit(INT8U Buf[], INT16U Buf_Size, INT16U Width, INT16U X, INT1
 {
   INT16U Index;
   
-  Index = ((Y/8 * Width) + X)*8 + Y %8;
+  //Index = ((Y/8 * Width) + X)*8 + Y %8;
+  Index = GET_POINT_INDEX(Width,X,Y);
   Set_Buf_Bit(Buf, Buf_Size, Index, Value);//Index;  
 }
 
@@ -113,12 +115,20 @@ void Copy_Buf_2_Area_Rect_0(INT8U *pSrc, INT16U Src_Len, INT16U Src_Off, \
   INT32U i;//j,Index;
   INT16U X0,Y0;
   INT8U Re;
+  INT16U Row_Points;
 
+  Row_Points = ((X_Len % 8) EQ 0)?X_Len:((X_Len / 8 + 1)*8);
+  
+  if(Row_Points EQ 0)
+    return;
+  
   for(i = 0; i <Src_Len *8; i ++)
   {
     Re = Get_Buf_Bit(pSrc, Src_Len, i);
-    X0 = (Src_Off*8 + i) % X_Len;
-    Y0 = (Src_Off*8 + i) / X_Len;
+
+    X0 = (Src_Off*8 + i) % Row_Points;
+    Y0 = (Src_Off*8 + i) / Row_Points;
+
     if(X0 < X_Len && Y0 < Y_Len) //X0,Y0必须在X_Len和Y_Len的范围内
       Set_Area_Point_Data(pDst, Area_No, X+X0, Y+Y0, Re);
   }
@@ -255,7 +265,8 @@ INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y)
       return 0;
     }
   
-    Index = (((Y>>3) * Screen_Para.Base_Para.Width) + X)*8 + (Y & 0x07);
+    //Index = (((Y>>3) * Screen_Para.Base_Para.Width) + X)*8 + (Y & 0x07);
+    Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
     return Index; 
   }
   else if(Area_No EQ MAX_AREA_NUM) //表示整屏数据
@@ -267,7 +278,8 @@ INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y)
       return 0;
     }
   
-    Index = (((Y>>3) * Screen_Para.Base_Para.Width) + X)*8 + (Y & 0x07);
+    //Index = (((Y>>3) * Screen_Para.Base_Para.Width) + X)*8 + (Y & 0x07);
+    Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
     return Index;  
   }
   else
@@ -328,8 +340,9 @@ INT8U Get_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT16U Width,
 {
   INT32U Index;
 
-  Index = (((Y>>3) * Width) + X)*8 + (Y & 0x07);
-  
+  //Index = (((Y>>3) * Width) + X)*8 + (Y & 0x07);
+ Index = Index = GET_POINT_INDEX(Width,X,Y);
+ 
  if(Color < 3 || Color EQ 4)  //0,1,2,4单色屏
     return Get_Buf_Bit(Buf, Buf_Len,Index);
   else if(Color EQ 3 || Screen_Para.Base_Para.Color EQ 5 || Color EQ 6) //双色屏
@@ -411,7 +424,8 @@ void Set_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT8U Width, I
 {
   INT32U Index;
   
-  Index = (((Y>>3) * Width) + X)*8 + (Y & 0x07);
+  //Index = (((Y>>3) * Width) + X)*8 + (Y & 0x07);
+  Index = GET_POINT_INDEX(Width,X,Y);
   
   if(Color < 3 || Color EQ 4)  //单色屏
     Set_Buf_Bit(Buf, Buf_Len,Index, (Value & 0x01));

@@ -134,8 +134,8 @@ void getLunParaFromSettings(QString str, U_File_Para &para)
     if(para.Lun_Para.Tiangan_Type > 0)
     {
         tmp = settings.value("tianganColor").toInt();
-        para.Lun_Para.Tiangan_Color = 0;
-        SET_BIT(para.Lun_Para.Tiangan_Color, tmp);
+        para.Lun_Para.Tiangan_Color = getColorDataFromIndex(tmp);
+        //SET_BIT(para.Lun_Para.Tiangan_Color, tmp);
         para.Lun_Para.Tiangan_Font = settings.value("tianganSize").toInt();
     }
 
@@ -143,8 +143,8 @@ void getLunParaFromSettings(QString str, U_File_Para &para)
     if(para.Lun_Para.Tiangan_Type > 0)
     {
         tmp = settings.value("nongliColor").toInt();
-        para.Lun_Para.Nongli_Color = 0;
-        SET_BIT(para.Lun_Para.Nongli_Color, tmp);
+        para.Lun_Para.Nongli_Color = getColorDataFromIndex(tmp);
+        //SET_BIT(para.Lun_Para.Nongli_Color, tmp);
         para.Lun_Para.Nongli_Font = settings.value("nongliSize").toInt();
     }
 
@@ -152,8 +152,8 @@ void getLunParaFromSettings(QString str, U_File_Para &para)
     if(para.Lun_Para.Jieqi_Type > 0)
     {
         tmp = settings.value("jieqiColor").toInt();
-        para.Lun_Para.Jieqi_Color = 0;
-        SET_BIT(para.Lun_Para.Jieqi_Color, tmp);
+        para.Lun_Para.Jieqi_Color = getColorDataFromIndex(tmp);
+        //SET_BIT(para.Lun_Para.Jieqi_Color, tmp);
         para.Lun_Para.Jieqi_Font = settings.value("jieqiSize").toInt();
     }
 
