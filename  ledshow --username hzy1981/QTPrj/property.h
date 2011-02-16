@@ -12,6 +12,8 @@
 #include "timeProperty.h"
 #include "tempProperty.h"
 #include "lunProperty.h"
+#include "humidityProperty.h"
+#include "noiseProperty.h"
 #include "textedit.h"
 #include <QDockWidget>
 #include <QStackedWidget>
@@ -34,7 +36,8 @@ private:
     CflashProperty *flashProperty; //flash动画
     CtempProperty *tempProperty; //温度
     ClunProperty *lunProperty; //农历
-
+    ChumidityProperty *humidityProperty;
+    CnoiseProperty *noiseProperty;
 public:
     Carea *area;
     CareaProperty *areaProperty; //分区属性

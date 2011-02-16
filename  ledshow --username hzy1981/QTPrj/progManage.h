@@ -28,6 +28,8 @@
 #define TIMER_PROPERTY  0x07 //定时
 #define TEMP_PROPERTY   0x08 //温度
 #define LUN_PROPERTY    0x09    //农历
+#define HUMIDITY_PROPERTY 0x0A //湿度
+#define NOISE_PROPERTY 0x0B //噪音
 
 #define PIC_TABLE_PROPERTY  0x30
 #define PIC_FLASH_PROPERTY  0x31 //动画
@@ -57,6 +59,8 @@ public slots:
     void newClock(); //新表盘
     void newTemp(); //新温度
     void newLun(); //新农历
+    void newHumidity(); //新湿度
+    void newNoise(); //新噪音
     void preview();
     void deleteItem();
     void clickItem(QTreeWidgetItem * item, int column);

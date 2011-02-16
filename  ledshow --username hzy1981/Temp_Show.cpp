@@ -74,12 +74,18 @@ void Show_Temp(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, INT16S 
     
     if(Temp >= 0)
     {
+      if(Type >= S_NUM(TempStr0))
+        return;
+     
       p = TempStr0[Type].str;
       d = Temp % 10;
       i = Temp / 10;
     }
     else
     {
+      if(Type >= S_NUM(TempStr1))
+        return;
+      
       p = TempStr1[Type].str;
       d = (0 - Temp)% 10;
       i = (0 - Temp)/ 10;

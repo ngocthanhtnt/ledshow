@@ -180,6 +180,10 @@ QString getTypeString(int type)
         Qstr = QObject::tr("温度");
     else if(type == LUN_PROPERTY)
         Qstr = QObject::tr("农历");
+    else if(type == HUMIDITY_PROPERTY)
+        Qstr = QObject::tr("湿度");
+    else if(type == NOISE_PROPERTY)
+        Qstr = QObject::tr("噪音");
     else
     {
         //ASSERT_FAILED();
@@ -655,6 +659,17 @@ void CprogManage::newLun() //新农历
 {
   newFile(LUN_PROPERTY,0);
 }
+
+void CprogManage::newHumidity()
+{
+  newFile(HUMIDITY_PROPERTY, 0);
+}
+
+void CprogManage::newNoise()
+{
+    newFile(NOISE_PROPERTY, 0);
+}
+
 /*
 CMdiSubWindow *newSubWin(QString title, int width, int height)
 {

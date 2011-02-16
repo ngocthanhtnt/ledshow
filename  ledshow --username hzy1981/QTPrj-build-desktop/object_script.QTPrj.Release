@@ -50,6 +50,10 @@ INPUT(
 ./release\screenProperty.o
 ./release\makeProto.o
 ./release\Screen_Status.o
+./release\humidityProperty.o
+./release\Noise_Show.o
+./release\Humidity_Show.o
+./release\noiseProperty.o
 ./release\moc_mainwindow.o
 ./release\moc_showArea.o
 ./release\moc_progManage.o
@@ -67,5 +71,7 @@ INPUT(
 ./release\moc_colorCombo.o
 ./release\moc_lunProperty.o
 ./release\moc_screenProperty.o
+./release\moc_humidityProperty.o
+./release\moc_noiseProperty.o
 ./release\qrc_textedit.o
 );

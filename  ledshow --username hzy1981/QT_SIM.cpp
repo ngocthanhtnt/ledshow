@@ -45,6 +45,16 @@ INT8U Set_Cur_Time(INT8U Time[])//S_Time *pTime)
 {
   return 1;
 }
+
+INT16U Get_Cur_Humidity()
+{
+  return 60; 
+}
+
+INT16U Get_Cur_Noise()
+{
+  return 60;
+}
 /*
 //文件打开
 //File_Name表示文件名

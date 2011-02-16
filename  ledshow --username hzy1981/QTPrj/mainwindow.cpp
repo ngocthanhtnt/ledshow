@@ -178,6 +178,20 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
+    actionSave = a = new QAction(tr("Êª¶È"), this);
+    a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Humidity_Show_En());
+    connect(a, SIGNAL(triggered()), progManage, SLOT(newHumidity()));
+    tb->addAction(a);
+    menu->addAction(a);
+
+    actionSave = a = new QAction(tr("ÔëÒô"), this);
+    a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Humidity_Show_En());
+    connect(a, SIGNAL(triggered()), progManage, SLOT(newNoise()));
+    tb->addAction(a);
+    menu->addAction(a);
+
     actionSave = a = new QAction(tr("Å©Àú"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Lun_Show_En());

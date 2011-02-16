@@ -60,7 +60,11 @@ SOURCES += main.cpp\
     ../Border_Show.cpp \
     screenProperty.cpp \
     makeProto.cpp \
-    ../Screen_Status.cpp
+    ../Screen_Status.cpp \
+    humidityProperty.cpp \
+    ../Noise_Show.cpp \
+    ../Humidity_Show.cpp \
+    noiseProperty.cpp
 
 HEADERS  += mainwindow.h \
     ../LED_Cfg.h \
@@ -115,7 +119,12 @@ HEADERS  += mainwindow.h \
     ../Border_Show.h \
     screenProperty.h \
     makeProto.h \
-    ../Screen_Status.h
+    ../Screen_Status.h \
+    humidityProperty.h \
+    ../Humidity_Show.h \
+    ../Noise_Show.h \
+    ../noiseProperty.h \
+    noiseProperty.h
 
 RESOURCES += \
     textedit.qrc

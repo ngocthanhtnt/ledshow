@@ -2,7 +2,8 @@
 #define QT_SIM_H
 
 #if QT_EN > 0
-//#include "LED_Cfg.h"
+//#include "Includes.h"
+#include "stdio.h"
 #include <QtGlobal>
 
 #undef EXT
@@ -60,12 +61,8 @@ EXT S_PFILE pFile;
 EXT void Put_Char(char c);
 EXT INT8U Get_Cur_Time();//S_Time *pTime);
 EXT INT8U Set_Cur_Time(INT8U Time[]);//S_Time *pTime);
-EXT FILE_T File_Open(char File_Name[], INT8U WR_Flag);
-EXT INT8S File_Read(FILE_T file, INT32U Offset, INT16U Len, INT8U *pDst, INT8U *pDst_Start, INT16U DstLen);
-EXT INT8S File_Write(FILE_T file, INT32U Offset, INT8U Buf[], INT16U Len);
-EXT INT8S File_Close(FILE_T file);
-EXT INT8S File_Delete(char File_Name[]);
-EXT INT32S File_Size(FILE_T File);
+EXT INT16U Get_Cur_Humidity();
+EXT INT16U Get_Cur_Noise();
 EXT void Mem_Open();
 EXT void Mem_Close();
 EXT INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen);
