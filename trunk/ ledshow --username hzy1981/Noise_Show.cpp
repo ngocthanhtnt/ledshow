@@ -31,8 +31,10 @@ INT16U Get_Noise_Min_Width(INT8U Area_No)
                                      Prog_Status.File_Para[Area_No].Noise_Para.Noise_Font);
 
 
-    return Prog_Status.File_Para[Area_No].Noise_Para.Text_Width + SPACE_WIDTH + StrWidth;
-
+    if(Prog_Status.File_Para[Area_No].Noise_Para.Text_Width)
+      return Prog_Status.File_Para[Area_No].Noise_Para.Text_Width + SPACE_WIDTH + StrWidth;
+    else
+      return StrWidth;
 }
 
 //显示定时信息的最小高度
@@ -100,7 +102,7 @@ void Update_Noise_Data(S_Show_Data *pDst, INT8U Area_No)
 */
 
     P0.X = P0.X + Prog_Status.File_Para[Area_No].Noise_Para.Text_Width;
-    if(P0.X > 0)
+    if(Prog_Status.File_Para[Area_No].Noise_Para.Text_Width)
       P0.X += SPACE_WIDTH;//Get_Font_Width(Prog_Status.File_Para[Area_No].Noise_Para.);
 
     if(Height > Get_Font_Height(Prog_Status.File_Para[Area_No].Noise_Para.Noise_Font))
