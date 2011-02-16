@@ -135,6 +135,7 @@ typedef struct
   INT8U Lightness;
   INT8U Open_Flag;
   INT16U Scan_Row; 
+  INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3];
   INT8U CS[CS_BYTES];
   INT8U Tail;  
 }S_Screen_Status;

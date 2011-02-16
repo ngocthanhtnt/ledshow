@@ -69,12 +69,20 @@ Cproperty::Cproperty(QWidget *parent):QDockWidget(parent)
     stackedWidget->addWidget(lunProperty);
     setWidget(stackedWidget);
 
+    //10
+    humidityProperty = new ChumidityProperty(stackedWidget);
+    stackedWidget->addWidget(humidityProperty);
+    setWidget(stackedWidget);
 
+    //11
+    noiseProperty = new CnoiseProperty(stackedWidget);
+    stackedWidget->addWidget(noiseProperty);
+    setWidget(stackedWidget);
 }
 
 INT8U getStackedWidgetIndex(INT8U type)
 {
-    if(type < 10)
+    if(type < 12)
         return type;
     else if(type EQ PIC_MTEXT_PROPERTY ||\
             type EQ PIC_STEXT_PROPERTY)
@@ -161,6 +169,14 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     else if(type == LUN_PROPERTY)
     {
         area = lunProperty->area;
+    }
+    else if(type == HUMIDITY_PROPERTY)
+    {
+        area = humidityProperty->area;
+    }
+    else if(type == NOISE_PROPERTY)
+    {
+        area = noiseProperty->area;
     }
     else
     {
@@ -257,6 +273,16 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
         lunProperty->setSettingsToWidget(str);
         lunProperty->area->setSettingsToWidget(pstr);
     }
+    else if(type == HUMIDITY_PROPERTY)
+    {
+        humidityProperty->setSettingsToWidget(str);
+        humidityProperty->area->setSettingsToWidget(pstr);
+    }
+    else if(type == NOISE_PROPERTY)
+    {
+        noiseProperty->setSettingsToWidget(str);
+        noiseProperty->area->setSettingsToWidget(pstr);
+    }
     else
     {
         ASSERT_FAILED();
@@ -331,6 +357,16 @@ void Cproperty::getSettingsFromWidget(QTreeWidgetItem *item)
     {
         lunProperty->getSettingsFromWidget(str);
         lunProperty->area->getSettingsFromWidget(pstr);
+    }
+    else if(type == HUMIDITY_PROPERTY)
+    {
+        humidityProperty->getSettingsFromWidget(str);
+        humidityProperty->area->getSettingsFromWidget(pstr);
+    }
+    else if(type == NOISE_PROPERTY)
+    {
+        noiseProperty->getSettingsFromWidget(str);
+        noiseProperty->area->getSettingsFromWidget(pstr);
     }
     else
     {

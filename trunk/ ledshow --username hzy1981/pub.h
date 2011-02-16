@@ -3,11 +3,8 @@
 
 //extern "c"
 //{
-
+#include "OS_Includes.h"
 #include "LED_Cfg.h"
-#include "STM32.h"
-#include "QT_SIM.h"
-
 
 #undef EXT
 #ifndef PUB_C
@@ -25,6 +22,9 @@ typedef struct
 
   INT8U Tail;
 }S_Pub_Timer;
+
+//#define CHK_BYTE 0x55
+//#define EQ  ==
 
 #define PUB_BUF_MUTEX_ID 0x00 //信号量ID，用于Pub_Buf使用的互斥
 

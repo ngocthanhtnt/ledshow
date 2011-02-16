@@ -279,7 +279,9 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state></state>
+          <state>$PROJ_DIR$\Cfg\</state>
+          <state>$PROJ_DIR$\Drv\</state>
+          <state>$PROJ_DIR$</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1578,6 +1580,57 @@
       <data/>
     </settings>
   </configuration>
+  <group>
+    <name>CFG</name>
+    <file>
+      <name>$PROJ_DIR$\Cfg\LED_A0_Cfg.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Cfg\LED_B0_Cfg.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Cfg\LED_C0_Cfg.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Cfg\LED_D0_Cfg.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Cfg\LED_E0_Cfg.h</name>
+    </file>
+  </group>
+  <group>
+    <name>DRV</name>
+    <file>
+      <name>$PROJ_DIR$\Drv\Led_A0_Drv.cpp</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Drv\Led_A0_Drv.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Drv\LED_B0_Drv.cpp</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Drv\LED_B0_Drv.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Drv\LED_C0_Drv.cpp</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Drv\LED_C0_Drv.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Drv\LED_D0_Drv.cpp</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Drv\LED_D0_Drv.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Drv\LED_E0_Drv.cpp</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Drv\LED_E0_Drv.h</name>
+    </file>
+  </group>
   <file>
     <name>$PROJ_DIR$\Border_Show.cpp</name>
   </file>
@@ -1609,25 +1662,16 @@
     <name>$PROJ_DIR$\Flash_Show.h</name>
   </file>
   <file>
+    <name>$PROJ_DIR$\Humidity_Show.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Humidity_Show.h</name>
+  </file>
+  <file>
     <name>$PROJ_DIR$\Includes.h</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\LED_A0_Cfg.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\LED_B0_Cfg.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\LED_C0_Cfg.h</name>
-  </file>
-  <file>
     <name>$PROJ_DIR$\LED_Cfg.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\LED_D0_Cfg.h</name>
-  </file>
-  <file>
-    <name>$PROJ_DIR$\LED_E0_Cfg.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\LED_Para.cpp</name>
@@ -1658,6 +1702,12 @@
   </file>
   <file>
     <name>$PROJ_DIR$\Main_Show.h</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Noise_Show.cpp</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\Noise_Show.h</name>
   </file>
   <file>
     <name>$PROJ_DIR$\nongli.cpp</name>

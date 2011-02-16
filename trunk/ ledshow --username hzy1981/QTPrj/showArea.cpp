@@ -47,6 +47,16 @@ INT8U Get_Timer_Show_En()
     return (Card_Para.File_En_Word >> TIMER_SHOW_BIT) & 0x01;
 }
 
+INT8U Get_Humidity_Show_En()
+{
+  return (Card_Para.File_En_Word >> HUMIDITY_SHOW_BIT) & 0x01;
+}
+
+INT8U Get_Noise_Show_En()
+{
+  return (Card_Para.File_En_Word >> NOISE_SHOW_BIT) & 0x01;
+}
+
 //保存屏幕参数Screen_Para到Screen_Para_Bak
 void saveScreenPara(S_Screen_Para &Screen_Para_Bak)
 {
@@ -386,6 +396,14 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     else if(type EQ TEMP_PROPERTY)
     {
         updateTempShowArea(area);
+    }
+    else if(type EQ HUMIDITY_PROPERTY)
+    {
+        updateHumidityShowArea(area);
+    }
+    else if(type EQ NOISE_PROPERTY)
+    {
+        updateNoiseShowArea(area);
     }
 }
 
@@ -1350,30 +1368,42 @@ void CshowArea::paintEvent(QPaintEvent *)
             mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 
             Get_Temp_Text_Point(Area_No, Width, Height, P0);
-            /*
-            Width = Get_Area_Width(Area_No);
-            Height = Get_Area_Height(Area_No);
-
-            Min_Width = Get_Temp_Min_Width(Area_No);
-            //Min_Height = Get_Temp_Min_Height(Area_No);
-
-            if(Width > Min_Width)
-              P0.X = (Width - Min_Width) / 2;
-            else
-              P0.X = 0;
-
-            if(Height > Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)
-              P0.Y = (Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
-            else
-              P0.Y = 0;
-            */
-            //(Height - Prog_Status.File_Para[Area_No].Temp_Para.Text_Height)/2;
-            //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Temp_Para.Text_Width, Prog_Status.File_Para[Area_No].Temp_Para.Text_Height, &Show_Data, &P0);//&Point);
 
             getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
             Update_Temp_Data(&Show_Data_Bak, Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
+        else if(filePara.Temp_Para.Flag == SHOW_HUMIDITY) //显示温度
+        {
+            QSize size = imageBk.size();
+
+            filePara.Humidity_Para.Text_Width = size.width();
+            filePara.Humidity_Para.Text_Height = size.height();
+
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+            Get_Humidity_Text_Point(Area_No, Width, Height, P0);
+
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            Update_Humidity_Data(&Show_Data_Bak, Area_No);
+            memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
+        }
+        else if(filePara.Temp_Para.Flag == SHOW_NOISE) //显示温度
+        {
+            QSize size = imageBk.size();
+
+            filePara.Noise_Para.Text_Width = size.width();
+            filePara.Noise_Para.Text_Height = size.height();
+
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+            Get_Noise_Text_Point(Area_No, Width, Height, P0);
+
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            Update_Noise_Data(&Show_Data_Bak, Area_No);
+            memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
+        }
+
         memcpy(showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
     }
 

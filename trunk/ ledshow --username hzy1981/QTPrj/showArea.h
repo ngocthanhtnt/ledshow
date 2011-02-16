@@ -174,6 +174,8 @@ INT8U Get_Lun_Show_En();
 INT8U Get_Temp_Show_En();
 INT8U Get_Time_Show_En();
 INT8U Get_Timer_Show_En();
+INT8U Get_Humidity_Show_En();
+INT8U Get_Noise_Show_En();
 void saveScreenPara(S_Screen_Para &Screen_Para_Bak);
 //保存节目参数Prog_Para到Prog_Para_Bak
 void saveProgPara(S_Prog_Para &Prog_Para_Bak);

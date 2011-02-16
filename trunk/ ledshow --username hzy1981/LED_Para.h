@@ -29,7 +29,9 @@
 #define SHOW_TIMER 0x04 //计时
 #define SHOW_TEMP  0x05 //温度
 #define SHOW_LUN   0x06 //农历
-#define SHOW_FLASH 0x07 //动画
+#define SHOW_HUMIDITY 0x07
+#define SHOW_NOISE    0x08
+#define SHOW_FLASH 0x09 //动画
 
 //#define MAX_FILE_NAME_SIZE 20
 
@@ -519,6 +521,86 @@ typedef struct
   INT8U Tail;
 }S_Temp_Para;
 
+//湿度参数
+typedef struct
+{
+  INT8U Head;
+  
+  INT8U Flag; //标志
+  INT8U Prog_No; //节目号
+  INT8U Area_No; //分区号
+  INT8U File_No; //文件号
+  INT8U In_Mode; //引入方式
+  INT16U In_Time; //进入速度
+  INT8U Add_Mode; //追加方式
+  INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
+  INT8U Out_Mode; //引出方式	
+  INT16U Out_Time; //引出时间
+  INT16U SNum; //分屏个数
+
+  INT8U Show_Mode;  //显示方式 
+  INT8U Show_Color; //显示颜色
+  INT8U Show_Font; //显示字号
+  INT8U Show_Posi; //显示位置
+  
+  INT8U Humidity; //备用
+
+  INT8U Humidity_Type;  //湿度显示方式
+  INT8U Humidity_Font;  //湿度字体
+  INT8U Humidity_Color; //湿度颜色
+  INT16U Humidity_X;    
+  INT16U Humidity_Y;
+  
+  INT8U Text_Color; //背景颜色
+  INT16U Text_X; //背景X
+  INT16U Text_Y; //背景Y
+  INT16U Text_Width; //背景宽度
+  INT16U Text_Height; //背景高度
+
+  INT8U CS[CS_BYTES];
+  INT8U Tail;
+}S_Humidity_Para;
+
+//噪音参数
+typedef struct
+{
+  INT8U Head;
+  
+  INT8U Flag; //标志
+  INT8U Prog_No; //节目号
+  INT8U Area_No; //分区号
+  INT8U File_No; //文件号
+  INT8U In_Mode; //引入方式
+  INT16U In_Time; //进入速度
+  INT8U Add_Mode; //追加方式
+  INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
+  INT8U Out_Mode; //引出方式	
+  INT16U Out_Time; //引出时间
+  INT16U SNum; //分屏个数
+
+  INT8U Show_Mode;  //显示方式 
+  INT8U Show_Color; //显示颜色
+  INT8U Show_Font; //显示字号
+  INT8U Show_Posi; //显示位置
+  
+  INT8U Noise; //备用
+
+  INT8U Noise_Type;  //噪音显示方式
+  INT8U Noise_Font;  //噪音字体
+  INT8U Noise_Color; //噪音颜色
+  INT16U Noise_X;    
+  INT16U Noise_Y;
+  
+  INT8U Text_Color; //背景颜色
+  INT16U Text_X; //背景X
+  INT16U Text_Y; //背景Y
+  INT16U Text_Width; //背景宽度
+  INT16U Text_Height; //背景高度
+
+  INT8U CS[CS_BYTES];
+  INT8U Tail;
+}S_Noise_Para;
+
 //所有参数的联合
 typedef union
 {
@@ -539,6 +621,12 @@ typedef union
 #endif
 #if TEMP_SHOW_EN  
   S_Temp_Para Temp_Para;
+#endif  
+#if HUMIDITY_SHOW_EN
+  S_Humidity_Para Humidity_Para;
+#endif
+#if NOISE_SHOW_EN
+  S_Noise_Para Noise_Para;
 #endif  
 }U_File_Para;
 
