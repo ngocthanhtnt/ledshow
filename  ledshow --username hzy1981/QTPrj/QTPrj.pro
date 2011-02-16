@@ -123,7 +123,6 @@ HEADERS  += mainwindow.h \
     humidityProperty.h \
     ../Humidity_Show.h \
     ../Noise_Show.h \
-    ../noiseProperty.h \
     noiseProperty.h
 
 RESOURCES += \
