@@ -43,6 +43,10 @@ INT8U Get_Show_Para_Len(INT8U Type)
     return sizeof(S_Temp_Para) - CHK_BYTE_LEN;
   else if(Type EQ SHOW_LUN)
     return sizeof(S_Lun_Para) - CHK_BYTE_LEN;
+  else if(Type EQ SHOW_HUMIDITY)
+    return sizeof(S_Humidity_Para) - CHK_BYTE_LEN;
+  else if(Type EQ SHOW_NOISE)
+    return sizeof(S_Noise_Para) - CHK_BYTE_LEN;
   else
   {
     ASSERT_FAILED();
@@ -523,7 +527,37 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
     X = Prog_Status.File_Para[Area_No].Temp_Para.Text_X;
     Y = Prog_Status.File_Para[Area_No].Temp_Para.Text_Y;    
   }
-#endif  
+#endif
+#if HUMIDITY_SHOW_EN
+    else if(Flag EQ SHOW_HUMIDITY) //湿度
+    {
+        Width = Prog_Status.File_Para[Area_No].Humidity_Para.Text_Width;
+        Height = Prog_Status.File_Para[Area_No].Humidity_Para.Text_Height;
+
+        DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+        DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
+
+        Index = Prog_Status.Block_Index.Index[Area_No][File_No];
+        Offset = 0;
+        X = Prog_Status.File_Para[Area_No].Humidity_Para.Text_X;
+        Y = Prog_Status.File_Para[Area_No].Humidity_Para.Text_Y;
+    }
+#endif
+#if NOISE_SHOW_EN
+    else if(Flag EQ SHOW_NOISE) //噪音
+    {
+        Width = Prog_Status.File_Para[Area_No].Noise_Para.Text_Width;
+        Height = Prog_Status.File_Para[Area_No].Noise_Para.Text_Height;
+
+        DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+        DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
+
+        Index = Prog_Status.Block_Index.Index[Area_No][File_No];
+        Offset = 0;
+        X = Prog_Status.File_Para[Area_No].Noise_Para.Text_X;
+        Y = Prog_Status.File_Para[Area_No].Noise_Para.Text_Y;
+    }
+#endif
   else
   {
     ASSERT_FAILED();

@@ -368,6 +368,62 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         len +=tmpLen;
 
     }
+    else if(type EQ HUMIDITY_PROPERTY)
+    {
+        getHumidityParaFromSettings(fileStr, filePara);
+        QImage image = getLineTextImage(fileStr);
+        QSize size = image.size();
+
+        filePara.Humidity_Para.Text_Width = size.width();
+        filePara.Humidity_Para.Text_Height = size.height();
+        filePara.Humidity_Para.SNum = 1;
+
+        mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+        S_Point P0;
+        Get_Humidity_Text_Point(0, width, height, P0);
+        filePara.Humidity_Para.Text_X = P0.X;
+        filePara.Humidity_Para.Text_Y = P0.Y;
+        memcpy(buf, (char *)&filePara.Humidity_Para.Head + 1, sizeof(S_Humidity_Para)); //前一个字节是头，不拷贝
+        len = sizeof(S_Humidity_Para) - CHK_BYTE_LEN;
+
+        resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
+        getTextShowData(image, &protoShowData, 0, 0);
+
+        tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
+        tmpLen = tmpLen * Get_Screen_Color_Num();
+        memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+        len +=tmpLen;
+
+    }
+    else if(type EQ NOISE_PROPERTY)
+    {
+        getNoiseParaFromSettings(fileStr, filePara);
+        QImage image = getLineTextImage(fileStr);
+        QSize size = image.size();
+
+        filePara.Noise_Para.Text_Width = size.width();
+        filePara.Noise_Para.Text_Height = size.height();
+        filePara.Noise_Para.SNum = 1;
+
+        mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+        S_Point P0;
+        Get_Noise_Text_Point(0, width, height, P0);
+        filePara.Noise_Para.Text_X = P0.X;
+        filePara.Noise_Para.Text_Y = P0.Y;
+        memcpy(buf, (char *)&filePara.Noise_Para.Head + 1, sizeof(S_Noise_Para)); //前一个字节是头，不拷贝
+        len = sizeof(S_Noise_Para) - CHK_BYTE_LEN;
+
+        resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
+        getTextShowData(image, &protoShowData, 0, 0);
+
+        tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
+        tmpLen = tmpLen * Get_Screen_Color_Num();
+        memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+        len +=tmpLen;
+
+    }
     else if(type EQ TIMER_PROPERTY)
     {
         getTimerParaFromSettings(fileStr, filePara);
