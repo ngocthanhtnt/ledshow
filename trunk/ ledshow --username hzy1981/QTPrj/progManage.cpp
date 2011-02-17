@@ -115,8 +115,8 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
   previewWin = new CpreviewWin(w);//new QMainWindow(w);
 
   timer = new QTimer(this);
-  QObject::connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),\
-          this, SLOT(clickItem(QTreeWidgetItem *, int)));
+  //QObject::connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),\
+    //      this, SLOT(clickItem(QTreeWidgetItem *, int)));
   setWidget(treeWidget);
 
   //previewWin = new QMainWindow(w);
