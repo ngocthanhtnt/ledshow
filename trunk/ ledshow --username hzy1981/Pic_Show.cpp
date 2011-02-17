@@ -196,7 +196,9 @@ INT8U Check_XXX_Data(INT8U Area_No)
      Flag EQ SHOW_TIME ||\
      Flag EQ SHOW_TIMER ||\
      Flag EQ SHOW_TEMP ||\
-     Flag EQ SHOW_LUN)
+     Flag EQ SHOW_LUN ||\
+     Flag EQ SHOW_HUMIDITY ||\
+     Flag EQ SHOW_NOISE)
       return 1;
   else
       return 0;

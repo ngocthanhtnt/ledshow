@@ -137,9 +137,15 @@ INT8U Update_XXX_Data(S_Show_Data *pDst, INT8U Area_No)
 #if LUN_SHOW_EN  
   else if(Flag EQ SHOW_LUN)
     Update_Lun_Data(pDst, Area_No);
-#endif  
-  //else if(Flag EQ SHOW_FLASH)
-    //Update_Flash_Data_Bak(Area_No);
+#endif
+#if HUMIDITY_SHOW_EN
+  else if(Flag EQ SHOW_HUMIDITY)
+    Update_Humidity_Data(pDst, Area_No);
+#endif
+#if NOISE_SHOW_EN
+  else if(Flag EQ SHOW_NOISE)
+    Update_Noise_Data(pDst, Area_No);
+#endif
   else
     ASSERT_FAILED(); 
   
@@ -613,7 +619,15 @@ void Check_Show_Data_Para()
 #if LUN_SHOW_EN    
     else if(Flag EQ SHOW_LUN)
       Re &= CHK_HT(Prog_Status.File_Para[i].Lun_Para);
-#endif    
+#endif
+#if HUMIDITY_SHOW_EN
+    else if(Flag EQ SHOW_HUMIDITY)
+      Re &= CHK_HT(Prog_Status.File_Para[i].Humidity_Para);
+#endif
+#if NOISE_SHOW_EN
+    else if(Flag EQ SHOW_NOISE)
+      Re &= CHK_HT(Prog_Status.File_Para[i].Noise_Para);
+#endif
     else
       Re = 0;
     
