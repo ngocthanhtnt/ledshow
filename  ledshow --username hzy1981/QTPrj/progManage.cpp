@@ -134,7 +134,6 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
 */
   connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
 
-
 }
 
 CprogManage::~CprogManage()
@@ -167,7 +166,7 @@ QString getTypeString(int type)
     else if(type == PIC_STEXT_PROPERTY)
         Qstr = QObject::tr("字幕");
     else if(type == PIC_MTEXT_PROPERTY)
-        Qstr = QObject::tr("图文");
+        Qstr = QObject::tr("文本");
     else if(type == PIC_FLASH_PROPERTY)
         Qstr = QObject::tr("动画");
     else if(type == CLOCK_PROPERTY)
@@ -370,7 +369,8 @@ void CprogManage::newScreen()
     //subWin->setWindowFlags(flags); // 设置禁止最大化
 
 
-    w->progManage->clickItem(item, 0);
+    //w->progManage->clickItem(item, 0);
+    w->progManage->treeWidget->setCurrentItem(item);
 
 }
 
@@ -494,7 +494,8 @@ void CprogManage::newProg()
     //treeWidget->setCurrentItem(item);
     //saveCurItem(item); //当前点钟的
 
-    w->progManage->clickItem(item, 0);
+    //w->progManage->clickItem(item, 0);
+    w->progManage->treeWidget->setCurrentItem(item);
 /*
     updateTextHead(parentItem);
     w->property->updateProperty(item);
@@ -616,7 +617,8 @@ void CprogManage::newArea()
     w->screenArea->updateShowArea(item);//w->getCurSettingsStr());//显示一个分区,该分区之前处于隐藏状态
     */
 
-    w->progManage->clickItem(item, 0);
+    //w->progManage->clickItem(item, 0);
+    w->progManage->treeWidget->setCurrentItem(item);
 }
 
 void CprogManage::newSText()
@@ -830,7 +832,8 @@ void CprogManage::newFile(int fileType, int subType)
     item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
     parentItem->addChild(item);
 
-    w->progManage->clickItem(item, 0);
+    //w->progManage->clickItem(item, 0);
+    w->progManage->treeWidget->setCurrentItem(item);
     /*
     updateItemSubIndex(item);
     updateTextHead(item->parent());
@@ -944,7 +947,8 @@ void CprogManage::deleteItem()
     }
 
     saveCurItem(0); //删除后当前没有点中项
-    w->progManage->clickItem(curItem, 0);
+    //w->progManage->clickItem(curItem, 0);
+    w->progManage->treeWidget->setCurrentItem(curItem);
 
 }
 
@@ -1058,7 +1062,7 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     //treeWidget->setCurrentItem(item);//setCurrentItem()
     w->property->updateProperty(item);
     w->screenArea->updateShowArea(item);
-    treeWidget->setCurrentItem(item);//setCurrentItem()---这句话要放到最后！否则前面的两个函数触发槽，槽函数还是引用之前的curitem
+    //treeWidget->setCurrentItem(item);//setCurrentItem()---这句话要放到最后！否则前面的两个函数触发槽，槽函数还是引用之前的curitem
 }
 /*
 //progManage中的treeWidget的初始化,根据settings进行初始化
@@ -1143,6 +1147,11 @@ void CprogManage::settingsInit()
    }
 }
 */
+void CprogManage::currentItemChangedProc(QTreeWidgetItem * current, QTreeWidgetItem * previous )
+{
+  clickItem(current, 0);
+
+}
 
 //progManage中的treeWidget的初始化,根据settings进行初始化
 void CprogManage::settingsInit()

@@ -1273,7 +1273,7 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
 
     QImage image(edit.width(), edit.height(),QImage::Format_RGB32);
     edit.render(&image);
-    //image.save("d:\\slinetext.png");
+    image.save("d:\\slinetext.png");
 
     //edit.document()->findBlockByNumber(0).clearLayout();
 
@@ -1295,11 +1295,11 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
       else
           blockPageNum = width / w + 1;
 
-      if(num + blockPageNum >= page)
+      if(num + blockPageNum > page)
       {
           x = TEXT_LEFT_BORDER_WIDTH + layout->boundingRect().x();
           x += (page - num) * w;
-          y = LINE_POSI_ADJ + 4 + layout->boundingRect().y() + layout->lineAt(0).position().y();
+          y = LINE_POSI_ADJ + layout->boundingRect().y() + layout->position().y();
           //y值需要+4，才能匹配，经验值
 
           reImage.fill(Qt::black);
@@ -1308,7 +1308,10 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
               for(int i = 0; i < w; i ++)
                 for(int j = 0; j < h; j ++)
                 {
-                  rgb = image.pixel(x + i,y + j);
+                  if(x + i < image.width() && y + j < image.height())
+                    rgb = image.pixel(x + i,y + j);
+                  else
+                    rgb = Qt::black;
                   reImage.setPixel(i, j, rgb);
                 }
           }
@@ -1317,7 +1320,10 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
               for(int i = 0; i < w; i ++)
                 for(int j = 0; j < height; j ++)
                 {
-                  rgb = image.pixel(x + i, y + j);
+                  if(x + i < image.width() && y + j < image.height())
+                    rgb = image.pixel(x + i,y + j);
+                  else
+                    rgb = Qt::black;
                   reImage.setPixel(i, (h - height) / 2 + j, rgb);
                 }
 

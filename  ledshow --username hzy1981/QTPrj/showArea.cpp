@@ -727,11 +727,13 @@ void CshowArea::mousePressEvent(QMouseEvent *event)
         if(fileItem != (QTreeWidgetItem *)0)
         {
             //QTreeWidgetItem *item = areaItem->child(subIndex-1);
-            w->progManage->clickItem(fileItem, 0);
+            //w->progManage->clickItem(fileItem, 0);
+            w->progManage->treeWidget->setCurrentItem(fileItem);
         }
         else //if(areaItem != (QTreeWidgetItem *)0)
         {
-            w->progManage->clickItem(areaItem, 0);
+            //w->progManage->clickItem(areaItem, 0);
+            w->progManage->treeWidget->setCurrentItem(areaItem);
         }
         //else
             //ASSERT_FAILED();

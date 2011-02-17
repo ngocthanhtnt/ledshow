@@ -85,7 +85,9 @@ typedef struct
   INT8U New_SCN_Flag:4;
 
   INT8U File_No;    //当前文件号
-  INT32U Step;        //当前移动的阶梯
+  INT16U Step;        //当前移动的阶梯
+  INT16U Max_Step;
+
   INT32U Step_Timer;  //已经走过Timer，单位ms
   INT32U Stay_Time;   //已经停留的时间，单位ms
   INT32U Out_Time;   //退出时间
@@ -93,6 +95,12 @@ typedef struct
   
   INT8U In_Mode;
   INT8U Out_Mode;
+
+  INT16U In_Step;
+  INT16U Out_Step;
+
+  INT16U In_Max_Step;
+  INT16U Out_Max_Step;
 
   INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态--主要用于与中断显示同步
   INT8U Tail;
