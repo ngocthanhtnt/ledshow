@@ -64,7 +64,7 @@ public slots:
     void preview();
     void deleteItem();
     void clickItem(QTreeWidgetItem * item, int column);
-
+    void currentItemChangedProc(QTreeWidgetItem * current, QTreeWidgetItem * previous);
     void previewProc();
 public:
     QMainWindow *previewWin;

@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(w->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
             w, SLOT(updateTreeWidget(QMdiSubWindow*)));
+    QObject::connect(w->progManage->treeWidget,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),w->progManage,SLOT(currentItemChangedProc(QTreeWidgetItem*,QTreeWidgetItem*)));
 
     //traversalControl(w->children());
     w->show();

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'progManage.h'
 **
-** Created: Thu Feb 17 09:11:47 2011
+** Created: Fri Feb 18 01:12:16 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_CprogManage[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      17,   14, // methods
+      18,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -47,7 +47,8 @@ static const uint qt_meta_data_CprogManage[] = {
      152,   12,   12,   12, 0x0a,
      162,   12,   12,   12, 0x0a,
      187,  175,   12,   12, 0x0a,
-     219,   12,   12,   12, 0x0a,
+     236,  219,   12,   12, 0x0a,
+     294,   12,   12,   12, 0x0a,
 
        0        // eod
 };
@@ -59,6 +60,8 @@ static const char qt_meta_stringdata_CprogManage[] = {
     "newTemp()\0newLun()\0newHumidity()\0"
     "newNoise()\0preview()\0deleteItem()\0"
     "item,column\0clickItem(QTreeWidgetItem*,int)\0"
+    "current,previous\0"
+    "currentItemChangedProc(QTreeWidgetItem*,QTreeWidgetItem*)\0"
     "previewProc()\0"
 };
 
@@ -107,10 +110,11 @@ int CprogManage::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 13: preview(); break;
         case 14: deleteItem(); break;
         case 15: clickItem((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 16: previewProc(); break;
+        case 16: currentItemChangedProc((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])),(*reinterpret_cast< QTreeWidgetItem*(*)>(_a[2]))); break;
+        case 17: previewProc(); break;
         default: ;
         }
-        _id -= 17;
+        _id -= 18;
     }
     return _id;
 }

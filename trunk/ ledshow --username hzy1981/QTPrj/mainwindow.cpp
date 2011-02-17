@@ -136,7 +136,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("图文"), this);
+    actionSave = a = new QAction(tr("文本"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newPic())); //新建节目
@@ -464,7 +464,8 @@ void MainWindow::updateTreeWidget(QMdiSubWindow *subWin)
        {
           qDebug("update screen %d",i);
           w->MDISubWinClickFlag = 1;
-          w->progManage->clickItem(w->progManage->treeWidget->topLevelItem(i),0);
+          //w->progManage->clickItem(w->progManage->treeWidget->topLevelItem(i),0);
+          w->progManage->treeWidget->setCurrentItem(w->progManage->treeWidget->topLevelItem(i));
        }
     }
   }
