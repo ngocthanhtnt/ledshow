@@ -39,16 +39,16 @@ const S_Mode_Func In_Mode_Func[]=
   ,{&Move_Down_Cover, V_MODE, 1}
 #endif
 #if IN_SPEC_EFFECT_NUM > 11   
-  ,{&Move_Left_Up_Cover, HV_MODE, 1}
+  ,{&Move_Left_Up_Cover, HV_ADD_MODE, 1}
 #endif
 #if IN_SPEC_EFFECT_NUM > 12 
-  ,{&Move_Right_Up_Cover, HV_MODE, 1}
+  ,{&Move_Right_Up_Cover, HV_ADD_MODE, 1}
 #endif
 #if IN_SPEC_EFFECT_NUM > 13   
-  ,{&Move_Left_Down_Cover, HV_MODE, 1}
+  ,{&Move_Left_Down_Cover, HV_ADD_MODE, 1}
 #endif
 #if IN_SPEC_EFFECT_NUM > 14   
-  ,{&Move_Right_Down_Cover, HV_MODE, 1}
+  ,{&Move_Right_Down_Cover, HV_ADD_MODE, 1}
 #endif
 #if IN_SPEC_EFFECT_NUM > 15   
   ,{&Move_Left_Right_Open, H_MODE, 1}
@@ -63,19 +63,19 @@ const S_Mode_Func In_Mode_Func[]=
   ,{&Move_Up_Down_Close, H_MODE, 1}
 #endif
 #if IN_SPEC_EFFECT_NUM > 19   
-  ,{&Move_Spin_CW, HV_MODE, 1} //Ë³Ê±Õë
+  ,{&Move_Spin_CW, HV_ADD_MODE, 2} //Ë³Ê±Õë
 #endif
 #if IN_SPEC_EFFECT_NUM > 20   
-  ,{&Move_Spin_CCW, H_MODE, 1}//ÄæÊ±Õë¸²¸Ç
+  ,{&Move_Spin_CCW, HV_ADD_MODE, 2}//ÄæÊ±Õë¸²¸Ç
 #endif
 #if IN_SPEC_EFFECT_NUM > 21 
-  ,{&Move_Up_Snow, H_MODE, 1} //ÉÏÆ®Ñ©
+  ,{&Move_Up_Snow, H_MODE, 3} //ÉÏÆ®Ñ©
 #endif
 #if IN_SPEC_EFFECT_NUM > 22   
-  ,{&Move_Down_Snow, H_MODE, 1} //ÏÂÆ®Ñ©
+  ,{&Move_Down_Snow, H_MODE, 3} //ÏÂÆ®Ñ©
 #endif
 #if IN_SPEC_EFFECT_NUM > 23   
-  ,{&Move_Flash, H_MODE, 1} //ÉÁË¸
+  ,{&Move_Flash, FIX_MODE, 20} //ÉÁË¸
 #endif
 #if IN_SPEC_EFFECT_NUM > 24   
   ,{&Move_Left_Laser, H_MODE, 1} //×óÀØÉä
@@ -84,21 +84,21 @@ const S_Mode_Func In_Mode_Func[]=
   ,{&Move_Right_Laser, H_MODE, 1} //ÓÒÀØÉä
 #endif
 #if IN_SPEC_EFFECT_NUM > 26   
-  ,{&Move_Up_Laser, H_MODE, 1} //ÉÏÀØÉä
+  ,{&Move_Up_Laser, V_MODE, 1} //ÉÏÀØÉä
 #endif
 #if IN_SPEC_EFFECT_NUM > 27   
-  ,{&Move_Down_Laser, H_MODE, 1} //ÏÂÀØÉä
+  ,{&Move_Down_Laser, V_MODE, 1} //ÏÂÀØÉä
 #endif
 #if IN_SPEC_EFFECT_NUM > 28   
   ,{&Move_Left_Tensile, H_MODE, 1}//×óÀ­Éì
 #endif
 #if IN_SPEC_EFFECT_NUM > 29   
   //{&Move_Right_Tensile}//ÓÒÀ­Éì
-  ,{&Move_Up_Tensile, H_MODE, 1}//ÉÏÀ­Éì
+  ,{&Move_Up_Tensile, V_MODE, 1}//ÉÏÀ­Éì
 #endif
 #if IN_SPEC_EFFECT_NUM > 30   
   //{&Move_Down_Tensile}//ÏÂÀ­Éì
-  ,{&Move_Vertical_Tensile, H_MODE, 1}//´¹Ö±À­Éì
+  ,{&Move_Vertical_Tensile, V_MODE, 1}//´¹Ö±À­Éì
 #endif
 #if IN_SPEC_EFFECT_NUM > 31   
   ,{&Move_Horizontal_Tensile, H_MODE, 1}//Ë®Æ½À­Éì
@@ -107,19 +107,19 @@ const S_Mode_Func In_Mode_Func[]=
   ,{&Move_Left_Stretch, H_MODE, 1}
 #endif
 #if IN_SPEC_EFFECT_NUM > 33   
-  ,{&Move_Up_Stretch, H_MODE, 1}
+  ,{&Move_Up_Stretch, V_MODE, 1}
 #endif
 #if IN_SPEC_EFFECT_NUM > 34   
-  ,{&Move_Horizontal_Window, H_MODE, 1} //Ë®Æ½°ÙÒ¶´°
+  ,{&Move_Horizontal_Window, FIX_MODE, WIN_LEAF_WIDTH} //Ë®Æ½°ÙÒ¶´°
 #endif
 #if IN_SPEC_EFFECT_NUM > 35   
-  ,{&Move_Vertical_Window, H_MODE, 1} //´¹Ö±°ÙÒ¶´°
+  ,{&Move_Vertical_Window, FIX_MODE, WIN_LEAF_WIDTH} //´¹Ö±°ÙÒ¶´°
 #endif
 #if IN_SPEC_EFFECT_NUM > 36   
-  ,{&Move_Left_Compress, H_MODE, 1} //Ïò×óÑ¹Ëõ
+  ,{&Move_Left_Compress, FIX_MODE, 100} //Ïò×óÑ¹Ëõ
 #endif
 #if IN_SPEC_EFFECT_NUM > 37   
-  ,{&Move_Up_Compress, H_MODE, 1}//ÏòÉÏÑ¹Ëõ
+  ,{&Move_Up_Compress, FIX_MODE, 100}//ÏòÉÏÑ¹Ëõ
 #endif
 };
 
@@ -154,16 +154,16 @@ const S_Mode_Func Out_Mode_Func[]=
   ,{&Move_Down_Cover, V_MODE, 1}//7
 #endif
 #if OUT_SPEC_EFFECT_NUM > 9  
-  ,{&Move_Left_Up_Cover, HV_MODE, 1}//8
+  ,{&Move_Left_Up_Cover, HV_ADD_MODE, 1}//8
 #endif
 #if OUT_SPEC_EFFECT_NUM > 10  
-  ,{&Move_Right_Up_Cover, HV_MODE, 1}//9
+  ,{&Move_Right_Up_Cover, HV_ADD_MODE, 1}//9
 #endif
 #if OUT_SPEC_EFFECT_NUM > 11  
-  ,{&Move_Left_Down_Cover, HV_MODE, 1}//10
+  ,{&Move_Left_Down_Cover, HV_ADD_MODE, 1}//10
 #endif
 #if OUT_SPEC_EFFECT_NUM > 12  
-  ,{&Move_Right_Down_Cover, HV_MODE, 1}//11
+  ,{&Move_Right_Down_Cover, HV_ADD_MODE, 1}//11
 #endif
 #if OUT_SPEC_EFFECT_NUM > 13  
   ,{&Move_Left_Right_Open, H_MODE, 1}//12
@@ -178,10 +178,10 @@ const S_Mode_Func Out_Mode_Func[]=
   ,{&Move_Up_Down_Close, V_MODE, 1}//15
 #endif
 #if OUT_SPEC_EFFECT_NUM > 17  
-  ,{&Move_Spin_CW, HV_MODE, 1}
+  ,{&Move_Spin_CW, HV_ADD_MODE, 1}
 #endif
 #if OUT_SPEC_EFFECT_NUM > 18  
-  ,{&Move_Spin_CCW, HV_MODE, 1}
+  ,{&Move_Spin_CCW, HV_ADD_MODE, 1}
 #endif
  
 
@@ -189,12 +189,73 @@ const S_Mode_Func Out_Mode_Func[]=
 
 INT16U Get_In_Max_Step(INT16U Width, INT16U Height, INT8U In_Mode)
 {
-    return Width;
+    INT16U Re;
+
+    if(In_Mode >= S_NUM(In_Mode_Func))
+    {
+       ASSERT_FAILED();
+       In_Mode = 0;
+    }
+
+    switch(In_Mode_Func[In_Mode].Step_Mode)
+    {
+    case H_MODE:
+        Re = Width*In_Mode_Func[In_Mode].Fac;
+        break;
+    case V_MODE:
+        Re = Height*In_Mode_Func[In_Mode].Fac;
+        break;
+    case HV_ADD_MODE:
+        Re = (Width + Height)*In_Mode_Func[In_Mode].Fac;
+        break;
+    case HV_SQRT_MODE:
+        Re = sqrt(Width*Width + Height*Height)*In_Mode_Func[In_Mode].Fac;
+        break;
+    case FIX_MODE:
+        Re = 100;
+        break;
+    default:
+        Re = 100;
+        break;
+    }
+
+    return Re;
+
 }
 
 INT16U Get_Out_Max_Step(INT16U Width, INT16U Height, INT8U Out_Mode)
 {
-    return 1000;
+    INT16U Re;
+
+    if(Out_Mode >= S_NUM(Out_Mode_Func))
+    {
+       ASSERT_FAILED();
+       Out_Mode = 0;
+    }
+
+    switch(Out_Mode_Func[Out_Mode].Step_Mode)
+    {
+    case H_MODE:
+        Re = Width*Out_Mode_Func[Out_Mode].Fac;
+        break;
+    case V_MODE:
+        Re = Height*Out_Mode_Func[Out_Mode].Fac;
+        break;
+    case HV_ADD_MODE:
+        Re = (Width + Height)*Out_Mode_Func[Out_Mode].Fac;
+        break;
+    case HV_SQRT_MODE:
+        Re = sqrt(Width*Width + Height*Height)*Out_Mode_Func[Out_Mode].Fac;
+        break;
+    case FIX_MODE:
+        Re = 100;
+        break;
+    default:
+        Re = 100;
+        break;
+    }
+
+    return Re;
 }
 
 INT8U Check_XXX_Data(INT8U Area_No)

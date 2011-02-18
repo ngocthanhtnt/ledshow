@@ -70,8 +70,8 @@
 //#define MIN_STAY_TIME  10//每屏最小停留时间,单位为ms
 #define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 
-#define IN_SPEC_EFFECT_NUM 5 //进入特效个数
-#define OUT_SPEC_EFFECT_NUM 5 //退出特效个数
+#define IN_SPEC_EFFECT_NUM 38 //进入特效个数
+#define OUT_SPEC_EFFECT_NUM 19 //退出特效个数
 #define FONT_NUM 2 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
