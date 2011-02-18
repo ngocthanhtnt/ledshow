@@ -29,6 +29,8 @@
 
 #define PROG_END 0 //节目结束
 #define PROG_OK  1 //节目ok
+
+#define WIN_LEAF_WIDTH 8
 //#define PUB_BUF Show_Data_Bak.Pub_Buf.Buf //公共数据区，与显示数据公用
 /*
 //时间

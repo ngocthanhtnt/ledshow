@@ -12,15 +12,17 @@
 #define EXT extern
 #endif
 
-#define H_MODE  0x00
-#define V_MODE  0x01
-#define HV_MODE 0x02
+#define FIX_MODE 0x00 //固定系数
+#define H_MODE  0x01 //横向
+#define V_MODE  0x02//纵向
+#define HV_ADD_MODE 0x03 //+
+#define HV_SQRT_MODE 0x04 //开方,对角
 
 typedef struct
 {
   void (*Func)(INT8U);
   INT8U Step_Mode; //步进模式,0-横向，1纵向，3纵横同步
-  INT8U Fac; //0,1表示1，其他表示
+  float Fac; //0,1表示1，其他表示
 }S_Mode_Func;
 
 EXT void Update_Pic_Data(INT8U Area_No);

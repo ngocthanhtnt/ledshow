@@ -2527,7 +2527,7 @@ void Move_Horizontal_Window(INT8U Area_No)
   INT16U Width,Num;
   //INT32U Step;
 
-  Width = 16;
+  Width = WIN_LEAF_WIDTH;
   Num = Prog_Para.Area[Area_No].X_Len / Width;
   if(Num EQ 0)
       Num = 1;
@@ -2549,7 +2549,7 @@ void Move_Vertical_Window(INT8U Area_No)
     INT16U Width,Num;
     //INT32U Step;
 
-    Width = 16;
+    Width = WIN_LEAF_WIDTH;
     Num = Prog_Para.Area[Area_No].Y_Len / Width;
     if(Num EQ 0)
         Num = 1;
@@ -2569,9 +2569,12 @@ void Move_Left_Compress(INT8U Area_No)
   S_Point P0,P1,P2;
   INT16U Step;
 
-  Clear_Area_Data(&Show_Data, Area_No);
   Step = 10 - Prog_Status.Area_Status[Area_No].Step / (Prog_Status.Area_Status[Area_No].Max_Step / 10);
   Step++;
+  if(Step EQ 0)
+      return;
+
+  Clear_Area_Data(&Show_Data, Area_No);
   for(i = 0; i < Prog_Para.Area[Area_No].X_Len / Step; i ++)
   {
       P0.X = i;
@@ -2603,9 +2606,12 @@ void Move_Up_Compress(INT8U Area_No)
     S_Point P0,P1,P2;
     INT16U Step;
 
-    Clear_Area_Data(&Show_Data, Area_No);
     Step = 10 - Prog_Status.Area_Status[Area_No].Step / (Prog_Status.Area_Status[Area_No].Max_Step / 10);
     Step++;
+    if(Step EQ 0)
+        return;
+
+    Clear_Area_Data(&Show_Data, Area_No);
     for(i = 0; i < Prog_Para.Area[Area_No].Y_Len / Step; i ++)
     {
         P0.X = 0;
