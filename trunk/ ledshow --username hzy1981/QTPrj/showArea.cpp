@@ -1581,7 +1581,7 @@ void CMdiSubWindow::closeEvent(QCloseEvent *closeEvent)
    {
        Mem_Close();
 
-       w->progManage->timer->stop();
+       w->timer->stop();
        //disconnect(w->progManage->timer,SIGNAL(timeout()),w->progManage,SLOT(previewProc()));
        closeEvent->accept();
 
@@ -1617,7 +1617,7 @@ void CpreviewWin::closeEvent(QCloseEvent *closeEvent)
    {
        Mem_Close();
 
-       w->progManage->timer->stop();
+       w->timer->stop();
        //disconnect(w->progManage->timer,SIGNAL(timeout()),w->progManage,SLOT(previewProc()));
        closeEvent->accept();
 

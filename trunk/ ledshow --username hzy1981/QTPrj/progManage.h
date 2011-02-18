@@ -61,21 +61,24 @@ public slots:
     void newLun(); //新农历
     void newHumidity(); //新湿度
     void newNoise(); //新噪音
-    void preview();
+
     void deleteItem();
     void clickItem(QTreeWidgetItem * item, int column);
     void currentItemChangedProc(QTreeWidgetItem * current, QTreeWidgetItem * previous);
-    void previewProc();
+
 public:
+    /*
     QMainWindow *previewWin;
     CscreenArea *previewArea;
+    QTimer *timer;
+    int timerFlag;
+    INT8U previewProgNo;
+*/
     void updateTextHead(QTreeWidgetItem *item); //更新和item同级的所有item的文本头
     QTreeWidgetItem *getCurItem();
     void saveCurItem(QTreeWidgetItem *item);
 
-    QTimer *timer;
-    int timerFlag;
-    INT8U previewProgNo;
+
 
     QTreeWidget *treeWidget;
     void settingsInit(); //打开settings
