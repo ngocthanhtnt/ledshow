@@ -166,16 +166,16 @@ const S_Mode_Func Out_Mode_Func[]=
   ,{&Move_Right_Down_Cover, HV_ADD_MODE, 1}//11
 #endif
 #if OUT_SPEC_EFFECT_NUM > 13  
-  ,{&Move_Left_Right_Open, H_MODE, 1}//12
+  ,{&Move_Left_Right_Open, H_MODE, 0.5}//12
 #endif
 #if OUT_SPEC_EFFECT_NUM > 14  
-  ,{&Move_Up_Down_Open, V_MODE, 1}//13
+  ,{&Move_Up_Down_Open, V_MODE, 0.5}//13
 #endif
 #if OUT_SPEC_EFFECT_NUM > 15
-  ,{&Move_Left_Right_Close, H_MODE, 1}//14
+  ,{&Move_Left_Right_Close, H_MODE, 0.5}//14
 #endif
 #if OUT_SPEC_EFFECT_NUM > 16  
-  ,{&Move_Up_Down_Close, V_MODE, 1}//15
+  ,{&Move_Up_Down_Close, V_MODE, 0.5}//15
 #endif
 #if OUT_SPEC_EFFECT_NUM > 17  
   ,{&Move_Spin_CW, HV_ADD_MODE, 1}

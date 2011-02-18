@@ -66,8 +66,8 @@ CshowModeCombo::CshowModeCombo(bool flag, QWidget *parent):QComboBox(parent)
         addItem(tr("上下开帘"));
         addItem(tr("左右合帘"));
         addItem(tr("上下合帘"));
-        addItem(tr("顺时针旋转"));
-        addItem(tr("逆时针旋转"));
+        addItem(tr("顺时针覆盖"));
+        addItem(tr("逆时针覆盖"));
         addItem(tr("向上飘雪"));
         addItem(tr("向下飘雪"));
         addItem(tr("闪烁"));
@@ -109,8 +109,8 @@ CshowModeCombo::CshowModeCombo(bool flag, QWidget *parent):QComboBox(parent)
         addItem(tr("上下开帘"));
         addItem(tr("左右合帘"));
         addItem(tr("上下合帘"));
-        addItem(tr("顺时针旋转"));
-        addItem(tr("逆时针旋转"));
+        addItem(tr("顺时针覆盖"));
+        addItem(tr("逆时针覆盖"));
 
     }
  }

@@ -275,6 +275,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         filePara.Clock_Para.Text_Height = image.size().height();
         filePara.Clock_Para.SNum = 1;
 
+        mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
         S_Point Point;
         Get_Clock_Text_Point(width, height, &filePara.Clock_Para, &Point);
         filePara.Clock_Para.Text_X = Point.X;
@@ -300,6 +302,13 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         filePara.Lun_Para.Text_Width = size.width();
         filePara.Lun_Para.Text_Height = size.height();
         filePara.Lun_Para.SNum = 1;
+
+        mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+        S_Point P0;
+        Get_Lun_Text_Point(0, width, height, P0);
+        filePara.Lun_Para.Text_X = P0.X;
+        filePara.Lun_Para.Text_Y = P0.Y;
 
         memcpy(buf, (char *)&filePara.Lun_Para.Head + 1, sizeof(S_Lun_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Lun_Para) - CHK_BYTE_LEN;

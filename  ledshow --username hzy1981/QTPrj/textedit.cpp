@@ -982,8 +982,11 @@ void TextEdit::setSettingsToWidget(QString str)
       smLineCombo->setEnabled(false);
     }
     else
-      smLineCombo->setSettingsToWidget(str);
-
+    {
+      //smLineCombo->setSettingsToWidget(str);
+      smLineCombo->setCurrentIndex(1);
+      smLineCombo->setEnabled(true);
+    }
     connect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));
 }
 /*

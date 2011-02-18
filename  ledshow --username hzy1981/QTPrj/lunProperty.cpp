@@ -140,7 +140,7 @@ void getLunParaFromSettings(QString str, U_File_Para &para)
     }
 
     para.Lun_Para.Nongli_Type = settings.value("nongliCheck").toBool();
-    if(para.Lun_Para.Tiangan_Type > 0)
+    if(para.Lun_Para.Nongli_Type > 0)
     {
         tmp = settings.value("nongliColor").toInt();
         para.Lun_Para.Nongli_Color = getColorDataFromIndex(tmp);
