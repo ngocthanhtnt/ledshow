@@ -56,6 +56,9 @@ private:
     //void settingsInit();
 
     QAction *actionSave;
+public slots:
+    void preview();
+    void previewProc();
 public:
     int MDISubWinClickFlag;
     QWidget *widget;
@@ -65,13 +68,12 @@ public:
     CscreenArea *screenArea; //显示区域
     QMdiArea *mdiArea;
 
-    //QString fileName;
-    //QWidget *widget;
+    QMainWindow *previewWin;
+    CscreenArea *previewArea;
+    QTimer *timer;
+    int timerFlag;
+    INT8U previewProgNo;
 
-    //QLabel *Label;
-//protected:
-    //void paintEvent(QPaintEvent *);
-public:
     void screenCardParaChangeProc();
     void setCurSettingsStr(QString str);  //获取当前的settings的str
     QString getCurSettingsStr();   //设置当前settings的str

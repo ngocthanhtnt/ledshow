@@ -13,13 +13,6 @@
 extern MainWindow *w;
 extern QSettings settings;
 
-#define QT_MOVE_STEP_TIMER MOVE_STEP_TIMER/2 //仿真时定时间隔
-
-#if QT_MOVE_STEP_TIMER > MOVE_STEP_TIMER
-#error "QT_MOVE_STEP_TIMER error"
-#endif
-
-int stepTimer = 0;
 
 /*
  QSettings：
@@ -112,9 +105,6 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
   treeWidget = new QTreeWidget(this);
   treeWidget->setHeaderHidden(true);//header()->setVisible(false);
 
-  previewWin = new CpreviewWin(w);//new QMainWindow(w);
-
-  timer = new QTimer(this);
   //QObject::connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),\
     //      this, SLOT(clickItem(QTreeWidgetItem *, int)));
   setWidget(treeWidget);
@@ -132,7 +122,7 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
   previewWin->setCentralWidget(previewArea);
   //QDialog d(previewArea);
 */
-  connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
+
 
 }
 
@@ -686,84 +676,6 @@ CMdiSubWindow *newSubWin(QString title, int width, int height)
     subWin->show();
 }
 */
-
-QString getItemStr(QTreeWidgetItem *item)
-{
-    return item->data(0,Qt::UserRole).toString();
-}
-
-void CprogManage::preview()
-{
-  QString screenStr;//progStr;
-  INT8U Screen_No;
-  //生成仿真文件
-  Mem_Open();
-
-  screenStr = getItemStr(w->screenArea->screenItem);
-  makeProtoData(screenStr, PREVIEW_MODE);
-
-  Screen_No = treeWidget->indexOfTopLevelItem(w->screenArea->screenItem);
-  if(w->screenArea->screenItem->childCount() EQ 0)
-  {
-      QMessageBox::information(0, tr(APP_NAME),
-                               tr("请先选择一个预览的节目"),tr("确定"));
-
-      return;
-  }
-  Preview_Prog_No = w->screenArea->screenItem->indexOfChild(w->screenArea->progItem);
-  //w->setCentralWidget(w->mdiArea);
-  //CMdiSubWindow *subWin = new CMdiSubWindow;
-  //subWin->previewFlag = 1; //用于仿真的子窗口
-  timerFlag = 0;
-  stepTimer = 0;
-
-  //previewWin = new CpreviewWin(w);//new QMainWindow(w);
-  previewWin->setWindowModality(Qt::WindowModal);
-
-  previewArea =  new CscreenArea(previewWin);
-  previewArea->setWindowModality(Qt::WindowModal);
-  previewArea->previewFlag = 1;
-
-  previewArea->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-  previewArea->setFixedSize(previewArea->size());
-
-  previewWin->setCentralWidget(previewArea);
-  //previewWin->setAttribute(Qt::WA_DeleteOnClose);
-  previewWin->setWindowTitle(tr("预览-")+QString::number(Screen_No + 1) + tr("号屏幕-") + QString::number(Preview_Prog_No + 1) + tr("号节目"));
-  //previewWin->setFixedSize(previewWin->size());
-  previewWin->show();
-  //d.show();
-
-  Show_Init();
-  //新建定时器
-
-
-  //关联定时器计满信号和相应的槽函数
-  timer->start(QT_MOVE_STEP_TIMER);
-  timer->stop();
-
-  timer->start(QT_MOVE_STEP_TIMER);
-  //previewProc();
-
-}
-
-void CprogManage::previewProc()
-{
-  stepTimer += QT_MOVE_STEP_TIMER;
-  Show_Main_Proc();
-
-  if(stepTimer >= MOVE_STEP_TIMER)
-  {
-      stepTimer = 0;
-      Show_Timer_Proc();
-
-      previewArea->previewFlag = 1;//预览窗口
-      memcpy(previewArea->showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
-      previewArea->update(); //刷新显示区域
-  }
-}
-
-
 
 //一个新的显示file
 void CprogManage::newFile(int fileType, int subType)

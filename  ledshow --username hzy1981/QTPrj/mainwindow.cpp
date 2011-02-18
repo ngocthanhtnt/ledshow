@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "progProperty.h"
 #include "progManage.h"
+#include "makeProto.h"
 #include <QFileDialog>
 #include <QMessageBox>
 
@@ -12,6 +13,21 @@ QSettings settings(PROG_INI_FILE,QSettings::IniFormat,0);
 QSettings screenSettings(SCREEN_INI_FILE,QSettings::IniFormat,0);
 //控制卡配置文件
 QSettings cardSettings(CARD_INI_FILE,QSettings::IniFormat,0);
+
+
+
+#define QT_MOVE_STEP_TIMER MOVE_STEP_TIMER/2 //仿真时定时间隔
+
+#if QT_MOVE_STEP_TIMER > MOVE_STEP_TIMER
+#error "QT_MOVE_STEP_TIMER error"
+#endif
+
+int stepTimer = 0;
+
+QString getItemStr(QTreeWidgetItem *item)
+{
+    return item->data(0,Qt::UserRole).toString();
+}
 
 void MainWindow::setupFileActions()
 {
@@ -222,7 +238,7 @@ void MainWindow::setupCtrlActions()
     a = new QAction(tr("预览"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
-    connect(a, SIGNAL(triggered()), progManage, SLOT(preview()));
+    connect(a, SIGNAL(triggered()), this, SLOT(preview()));
     tb->addAction(a);
     menu->addAction(a);
 
@@ -379,9 +395,9 @@ void MainWindow::fileNew()
     settings.setValue("cfgFile", newFileName);
     settings.endGroup();
 
-    w->progManage->settingsInit();
-    w->progManage->newProg();
-    w->progManage->newArea();
+    progManage->settingsInit();
+    progManage->newProg();
+    progManage->newArea();
 }
 
 //打开文件
@@ -418,7 +434,7 @@ void MainWindow::fileOpen()
     settings.setValue("cfgFile", newFileName);
     settings.endGroup();
 
-    w->progManage->settingsInit();
+    progManage->settingsInit();
 }
 
 void MainWindow::settingsInit()
@@ -460,18 +476,18 @@ void MainWindow::updateTreeWidget(QMdiSubWindow *subWin)
   {
     if(subWin EQ subWinList.at(i))
     {
-       if(w->progManage->treeWidget->topLevelItemCount() > i)
+       if(progManage->treeWidget->topLevelItemCount() > i)
        {
           qDebug("update screen %d",i);
-          w->MDISubWinClickFlag = 1;
-          //w->progManage->clickItem(w->progManage->treeWidget->topLevelItem(i),0);
-          w->progManage->treeWidget->setCurrentItem(w->progManage->treeWidget->topLevelItem(i));
+          MDISubWinClickFlag = 1;
+          //progManage->clickItem(progManage->treeWidget->topLevelItem(i),0);
+          progManage->treeWidget->setCurrentItem(progManage->treeWidget->topLevelItem(i));
        }
     }
   }
 
 
-//w->progManage->clickItem(((CscreenArea *)(subWin->widget()))->screenItem,0);
+//progManage->clickItem(((CscreenArea *)(subWin->widget()))->screenItem,0);
 
 }
 
@@ -525,7 +541,14 @@ MainWindow::MainWindow(QWidget *parent)
     //setLayout(gridLayout);
    setCentralWidget(mdiArea);
    MDISubWinClickFlag = 0;
-    //w->progManage->settingsInit();
+
+   previewWin = new CpreviewWin(this);//new QMainWindow(w);
+   previewArea =  new CscreenArea(previewWin);
+   previewWin->setCentralWidget(previewArea);
+   //previewArea->setWindowModality(Qt::WindowModal);
+
+   timer = new QTimer(this);
+   connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
 
 }
 
@@ -570,6 +593,78 @@ int getIndexBySubWin(QMdiArea *parentArea, QMdiSubWindow *subWin)
     ASSERT_FAILED();
     return -1;
 
+}
+
+void MainWindow::preview()
+{
+  QString screenStr;//progStr;
+  INT8U Screen_No;
+  //生成仿真文件
+  Mem_Open();
+
+  screenStr = getItemStr(screenArea->screenItem);
+  makeProtoData(screenStr, PREVIEW_MODE);
+
+  Screen_No = progManage->treeWidget->indexOfTopLevelItem(screenArea->screenItem);
+  if(screenArea->screenItem->childCount() EQ 0)
+  {
+      QMessageBox::information(0, tr(APP_NAME),
+                               tr("请先选择一个预览的节目"),tr("确定"));
+
+      return;
+  }
+  Preview_Prog_No = screenArea->screenItem->indexOfChild(screenArea->progItem);
+  //setCentralWidget(mdiArea);
+  //CMdiSubWindow *subWin = new CMdiSubWindow;
+  //subWin->previewFlag = 1; //用于仿真的子窗口
+  timerFlag = 0;
+  stepTimer = 0;
+
+  //previewWin = new CpreviewWin(w);//new QMainWindow(w);
+  previewWin->setWindowModality(Qt::WindowModal);
+/*
+  previewArea =  new CscreenArea(previewWin);
+  previewArea->setWindowModality(Qt::WindowModal);
+  */
+  previewArea->previewFlag = 1;
+
+  previewArea->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  previewArea->setFixedSize(previewArea->size());
+
+
+  //previewWin->setAttribute(Qt::WA_DeleteOnClose);
+  previewWin->setWindowTitle(tr("预览-")+QString::number(Screen_No + 1) + tr("号屏幕-") + QString::number(Preview_Prog_No + 1) + tr("号节目"));
+  //previewWin->setFixedSize(previewWin->size());
+  previewWin->show();
+  //d.show();
+
+  Show_Init();
+  //新建定时器
+
+
+  //关联定时器计满信号和相应的槽函数
+  timer->start(QT_MOVE_STEP_TIMER);
+  timer->stop();
+
+  timer->start(QT_MOVE_STEP_TIMER);
+  //previewProc();
+
+}
+
+void MainWindow::previewProc()
+{
+  stepTimer += QT_MOVE_STEP_TIMER;
+  Show_Main_Proc();
+
+  if(stepTimer >= MOVE_STEP_TIMER)
+  {
+      stepTimer = 0;
+      Show_Timer_Proc();
+
+      previewArea->previewFlag = 1;//预览窗口
+      memcpy(previewArea->showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
+      previewArea->update(); //刷新显示区域
+  }
 }
 
 void traversalControl(const QObjectList& q)
