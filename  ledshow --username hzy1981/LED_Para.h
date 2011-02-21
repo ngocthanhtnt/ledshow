@@ -735,8 +735,9 @@ EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen);
 
 EXT INT8U Write_Prog_Block_Index();
-EXT INT16U Read_Prog_Para(INT8U Prog_No);
+EXT INT16U Read_Prog_Para(INT8U Prog_No, S_Prog_Para *pProg_Para);
 EXT INT16U Read_Prog_Block_Index(INT8U Prog_No);
+EXT INT16U _Read_Prog_Block_Index(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen);
 EXT INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
                       S_Show_Data *pShow_Data);
 //}

@@ -187,6 +187,7 @@ void Clr_Show_Data()
 INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 {
   INT16U Len,SNum;
+  INT16S Len0;
   //INT8U File_No;
   //INT8U Counts;
   //所有分屏都显示了则切换到下个显示文件
@@ -274,13 +275,13 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
             Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,Prog_Status.Area_Status[Area_No].SNum);
 
       Clear_Area_Data(&Show_Data_Bak, Area_No);
-      Len = Read_Show_Data(Area_No, \
+      Len0 = Read_Show_Data(Area_No, \
                      Prog_Status.Area_Status[Area_No].File_No, \
                      Prog_Status.File_Para[Area_No].Pic_Para.Flag,\
                      Prog_Status.Area_Status[Area_No].SNum,\
                      &Show_Data_Bak);
 
-      if(Len >= 0)
+      if(Len0 >= 0)
       {
         Prog_Status.Area_Status[Area_No].Play_Flag = 1; //打开本分区显示
         Prog_Status.Area_Status[Area_No].New_SCN_Flag = 0;
@@ -529,7 +530,7 @@ void Check_Update_Program_Para()
 
       debug("\r\n-----update new prog %d para-----\r\n", Prog_Status.Prog_No);
 
-      Len = Read_Prog_Para(Prog_Status.Prog_No); //重新更新节目参数
+      Len = Read_Prog_Para(Prog_Status.Prog_No, &Prog_Para); //重新更新节目参数
       if(Len > 0 && Check_Prog_Play_Time() > 0)
       {
         Prog_No = Prog_Status.Prog_No;
@@ -569,6 +570,148 @@ void Check_Update_Program_Para()
         //break;
     }
   //}
+}
+
+//检查是否更新预准备数据
+void Check_Update_Data_Prep()
+{
+  INT8U Prog_No,File_Flag;
+  INT8U File_No, Prog_End_Flag;
+  INT16U SNum,Len;
+  INT16U Counts,i,j;
+  
+
+  if(Prog_Status.New_Prog_Flag)
+    return;
+  
+  //准备每个分区的参数和数据
+  for(i =0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
+  {
+    if(Prog_Status.Area_Status[i].New_File_Flag ||\
+       Prog_Status.Area_Status[i].New_SCN_Flag)
+      return;
+    
+    //获取下一屏数据
+    if(Prep_Data.SCN_Data_Flag[i] EQ 0) //需要获取下一屏的参数
+    {
+      SNum = Prog_Status.Area_Status[i].SNum + 1; //下一个屏号
+
+      Prog_No = Prog_Status.Prog_No;
+      File_No = Prog_Status.Area_Status[i].File_No;
+      File_Flag = Prep_Data.File_Para[i].Pic_Para.Flag;
+            
+      if(SNum >= Prog_Status.File_Para[i].Pic_Para.SNum) //读取下个文件
+      {
+        SNum = 0;
+        File_No = Prog_Status.Area_Status[i].File_No + 1; 
+        if(File_No >= Prog_Para.Area_File_Num[i])
+          File_No = 0;
+        
+        Counts = Prog_Status.Area_Status[i].Counts;  
+        Prog_Status.Area_Status[i].Counts++;
+        Prog_End_Flag = Check_Prog_End();
+        Prog_Status.Area_Status[i].Counts = Counts;
+            
+        if(Prep_Data.Prog_Para_Flag EQ 0 && Prog_End_Flag > 0) //当前播放的文件马上就要结束了
+        {
+          Prog_No ++;
+          if(Prog_No >= Screen_Para.Prog_Num)
+            Prog_No = 0;
+            
+          Prep_Data.Prog_Para_No = Prog_No;
+          Prep_Data.Prog_Para_Flag = DATA_ERR;
+          Prep_Data.Block_Index_Flag = DATA_ERR;
+          
+          debug("prepaid prog %d para",Prog_No);
+          if(Read_Prog_Para(Prog_No, &Prep_Data.Prog_Para)) //更新到下个节目
+          {
+            Prep_Data.Prog_Para_Flag = DATA_OK;
+            
+            if(_Read_Prog_Block_Index(Prog_No, &Prep_Data.Block_Index, \
+               &Prep_Data.Block_Index, sizeof(Prep_Data.Block_Index)))
+              Prep_Data.Block_Index_Flag = DATA_OK;     
+          }
+          
+          if(Prep_Data.Prog_Para_Flag EQ DATA_ERR ||\
+             Prep_Data.Block_Index_Flag EQ DATA_ERR)
+          {
+            for(j = 0; j < MAX_AREA_NUM; j++)
+            {
+                Prep_Data.File_Para_Flag[i] = DATA_ERR;
+                Prep_Data.SCN_Data_Flag[i] = DATA_ERR;         
+            }
+            
+            return;
+          }
+          else
+          {
+            for(j = 0; j < MAX_AREA_NUM; j++)
+            {
+                Prep_Data.File_Para_Flag[i] = 0;
+                Prep_Data.SCN_Data_Flag[i] = 0;         
+            }            
+          }
+        }
+          
+        //重新读取文件参数
+        if(Prep_Data.File_Para_Flag[i] EQ 0)
+        {
+          debug("prepaid prog %d,file %d para", Prog_No, File_No);
+          Prep_Data.Para_Prog_No = Prog_No;
+          Prep_Data.Para_File_No[i] = File_No;
+          Prep_Data.File_Para_Flag[i] = DATA_ERR;
+          
+          Len = Read_File_Para(Prog_No, i, File_No, \
+             &Prep_Data.File_Para[i], &Prep_Data.File_Para[i], sizeof(Prep_Data.File_Para[i]));
+          
+          if(Len > 0)
+          {
+            Prep_Data.File_Para_Flag[i] = DATA_OK; 
+            File_Flag = Prep_Data.File_Para[i].Pic_Para.Flag;
+          }
+          else
+          {
+            Prep_Data.SCN_Data_Flag[i] = DATA_ERR;
+            return;
+          }
+          
+          Prep_Data.Data_Prog_No = Prog_No; 
+          Prep_Data.Data_File_No[i] = File_No;
+          Prep_Data.SNum[i] = SNum;     
+          Prep_Data.SCN_Data_Flag[i] = DATA_ERR;
+          
+          Len = Read_Show_Data(i, \
+                       File_No, \
+                       File_Flag,\
+                       SNum,\
+                       &Prep_Data.Show_Data);
+          
+          
+          if(Len > 0)
+           Prep_Data.SCN_Data_Flag[i] = DATA_OK;          
+        }
+ 
+        return;
+      }
+
+      debug("prepaid prog %d, file %d, scn %d data",Prog_No, File_No, SNum);
+      Len = Read_Show_Data(i, \
+                   File_No, \
+                   Prog_Status.File_Para[i].Pic_Para.Flag,\
+                   SNum,\
+                   &Prep_Data.Show_Data);
+
+     Prep_Data.Data_Prog_No = Prog_No; 
+     Prep_Data.Data_File_No[i] = File_No;
+     Prep_Data.SNum[i] = SNum;     
+     Prep_Data.SCN_Data_Flag[i] = DATA_ERR;
+
+     if(Len > 0)
+       Prep_Data.SCN_Data_Flag[i] = DATA_OK;
+      
+    }
+  }  
+  
 }
 
 //检查内存中的数据或者参数是否正确
@@ -646,6 +789,7 @@ void Ram_Init()
   memset(&Prog_Para, 0, sizeof(Prog_Para));
   memset(&Screen_Status, 0, sizeof(Screen_Status));
   memset(&Prog_Status, 0, sizeof(Prog_Status));
+  memset(&Prep_Data, 0, sizeof(Prep_Data));
   memset(&Show_Data, 0, sizeof(Show_Data));
   memset(&Show_Data_Bak, 0, sizeof(Show_Data_Bak));
   memset(&Cur_Block_Index, 0, sizeof(Cur_Block_Index));
@@ -656,6 +800,7 @@ void Ram_Init()
   SET_HT(Prog_Para);
   SET_HT(Screen_Status);
   SET_HT(Prog_Status);
+  SET_HT(Prep_Data);
   SET_HT(Cur_Block_Index);
   SET_HT(Show_Data);
   SET_HT(Show_Data_Bak);
@@ -673,6 +818,7 @@ void Show_Main_Proc()
   {
     Check_Update_Program_Para(); //检查是否需要更新节目
     Check_Update_Show_Data_Bak(); //检查是否需要更新显示备份区数据
+    Check_Update_Data_Prep();
   }
 }
 

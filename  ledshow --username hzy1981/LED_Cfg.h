@@ -84,6 +84,8 @@
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
 #define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
+#define DATA_PREP_EN 1
+
 #define MAX_SCAN_BLOCK_NUM 10
 
 #define BORDER_SHOW_EN 1 //边框显示使能
