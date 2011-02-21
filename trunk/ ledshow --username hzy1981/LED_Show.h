@@ -93,7 +93,7 @@ typedef struct
   INT32U Step_Timer;  //已经走过Timer，单位ms
   INT32U Stay_Time;   //已经停留的时间，单位ms
   INT32U Out_Time;   //退出时间
-  INT8U Counts;
+  INT16U Counts;
   
   INT8U In_Mode;
   INT8U Out_Mode;
@@ -157,6 +157,9 @@ EXT S_Screen_Status Screen_Status;
 EXT S_Show_Data Show_Data;  //显示数据
 EXT S_Show_Data Show_Data_Bak; //显示数据备份
 
+#if DATA_PREP_EN
+EXT S_Show_Data Show_Data_Prep;
+#endif
 //#define Pub_Buf Show_Data.Color_Data
 
 //获取当前颜色方案

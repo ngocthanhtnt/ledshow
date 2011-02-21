@@ -790,27 +790,27 @@ INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen)
 //读取节目参数
 //Prog节目号
 //返回值1 表示读取成功。0表示没有这个节目或者读取不成功
-INT16U Read_Prog_Para(INT8U Prog_No)
+INT16U Read_Prog_Para(INT8U Prog_No, S_Prog_Para *pProg_Para)
 {
   INT16U Len;
   
-  Len = Read_Storage_Data(SDI_PROG_PARA + Prog_No, &Prog_Para.Prog_No, &Prog_Para, sizeof(Prog_Para));
+  Len = Read_Storage_Data(SDI_PROG_PARA + Prog_No, &pProg_Para->Prog_No, pProg_Para, sizeof(S_Prog_Para));
 
 #ifdef SDI_PROG_PARA_BK0
   if(Len EQ 0)
-    Len = Read_Storage_Data(SDI_PROG_PARA_BK0 + Prog_No, &Prog_Para.Prog_No, &Prog_Para, sizeof(Prog_Para));
+    Len = Read_Storage_Data(SDI_PROG_PARA_BK0 + Prog_No, &pProg_Para->Prog_No, pProg_Para, sizeof(S_Prog_Para));
 #endif
 
 #ifdef SDI_PROG_PARA_BK1
   if(Len EQ 0)
-    Len = Read_Storage_Data(SDI_PROG_PARA_BK1 + Prog_No, &Prog_Para.Prog_No, &Prog_Para, sizeof(Prog_Para));
+    Len = Read_Storage_Data(SDI_PROG_PARA_BK1 + Prog_No, &pProg_Para->Prog_No, pProg_Para, sizeof(S_Prog_Para));
 #endif 
 
   if(Len EQ 0)
   {
-    memset(&Prog_Para, 0, sizeof(Prog_Para));
-    SET_HT(Prog_Para);
-    SET_SUM(Prog_Para);
+    memset(pProg_Para, 0, sizeof(S_Prog_Para));
+    SET_HT((*pProg_Para));
+    SET_SUM((*pProg_Para));
   }
   
   return Len;

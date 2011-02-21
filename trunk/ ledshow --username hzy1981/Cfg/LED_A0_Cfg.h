@@ -18,6 +18,8 @@
 
 #define MAX_SCAN_BLOCK_NUM 8 //最大扫描块
 
+#define DATA_PREP_EN 1
+
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define CLOCK_SHOW_EN  1 //表盘显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
