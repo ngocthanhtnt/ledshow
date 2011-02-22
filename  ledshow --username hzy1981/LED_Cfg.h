@@ -20,7 +20,7 @@
 #define HUMIDITY_SHOW_BIT 0x07
 #define NOISE_SHOW_BIT  0x08
 
-#define QT_EN 0 //使用QT仿真
+#define QT_EN 1 //使用QT仿真
 
 #if QT_EN == 0 //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 1
@@ -80,7 +80,7 @@
 #define MAX_AREA_NUM 8 //每个节目下最大分区数
 #define MAX_FILE_NUM 8 //每个分区下最大文件数
 #define MAX_BLOCK_NUM  4000
-#define BLOCK_DATA_LEN 249
+#define BLOCK_DATA_LEN 489
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
 #define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
