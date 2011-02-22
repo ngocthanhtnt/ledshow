@@ -385,7 +385,7 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
   Off0 = Off * 8 / Screen_Color_Num;
   Off = (Off % Len) * 8 / Screen_Color_Num; //Off在一屏显示数据中的偏移, Off/Len表示是第多少幕
 
-  debug("copy show data, start x = %d, y = %d", (((Off)/8) % Width), (((Off)/8) / Width)*8 + (Off)%8);
+  //debug("copy show data, start x = %d, y = %d", (((Off)/8) % Width), (((Off)/8) / Width)*8 + (Off)%8);
 
   Row_Points = ((Width % 8) EQ 0)?Width:((Width / 8 + 1)*8);
 
@@ -422,7 +422,7 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
       // qDebug("out x0 = %d, y0 = %d", X0, Y0);
   }
   
-  debug("copy show data, off = %d, len = %d", Off, i);
+  //debug("copy show data, off = %d, len = %d", Off, i);
   return i*Screen_Color_Num/8;
 }
 /*

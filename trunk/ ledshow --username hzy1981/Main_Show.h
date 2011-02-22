@@ -14,6 +14,7 @@
 
 #define DATA_ERR 0x0A
 #define DATA_OK  0x05
+#define DATA_READ 0x06
 
 typedef struct
 {
@@ -27,9 +28,10 @@ typedef struct
   INT8U Block_Index_Flag; //Block_Index标志
   
   U_File_Para File_Para[MAX_AREA_NUM]; //文件参数
-  INT8U Para_Prog_No;
+  INT8U Para_Prog_No[MAX_AREA_NUM];
   INT8U Para_File_No[MAX_AREA_NUM];
-  INT8U File_Para_Flag[MAX_AREA_NUM];
+  INT8U File_Para_Ok_Flag[MAX_AREA_NUM];
+  INT8U File_Para_Read_Flag[MAX_AREA_NUM];
   
   S_Show_Data Show_Data;
   INT8U Data_Prog_No[MAX_AREA_NUM];
@@ -39,8 +41,9 @@ typedef struct
   INT16U Data_Y[MAX_AREA_NUM];
   INT16U Data_Width[MAX_AREA_NUM];
   INT16U Data_Height[MAX_AREA_NUM];
-  INT8U Data_Flag[MAX_AREA_NUM];
-  
+  INT8U Data_Ok_Flag[MAX_AREA_NUM];
+  INT8U Data_Read_Flag[MAX_AREA_NUM];
+
   INT8U CS[CS_BYTES];
   
   INT8U Tail;

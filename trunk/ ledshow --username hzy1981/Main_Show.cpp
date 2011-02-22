@@ -235,9 +235,28 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
     debug("\r\nprog %d area %d play new file: %d", Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
     //先将文件参数读出 
     Prog_Status.Area_Status[Area_No].Play_Flag = 0; //关闭本分区显示
+
+    Len = 0;
+#if DATA_PREP_EN
+    if(Prep_Data.Para_Prog_No[Area_No] EQ Prog_Status.Prog_No &&\
+       Prep_Data.Para_File_No[Area_No] EQ Prog_Status.Area_Status[Area_No].File_No &&\
+       Prep_Data.File_Para_Ok_Flag[Area_No] EQ DATA_OK)
+    {
+        memcpy(&Prog_Status.File_Para[Area_No], &Prep_Data.File_Para[Area_No], sizeof(U_File_Para));
+        Len = 1;
+    }
+    else
+        Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
+                       &Prog_Status.File_Para[Area_No].Pic_Para.Flag, \
+                       &Prog_Status.File_Para[Area_No], sizeof(U_File_Para));
+
+    Prep_Data.File_Para_Read_Flag[Area_No] = DATA_READ;
+#else
     Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
                    &Prog_Status.File_Para[Area_No].Pic_Para.Flag, \
                    &Prog_Status.File_Para[Area_No], sizeof(U_File_Para)); 
+#endif
+
     if(Len EQ 0)
     {
       ASSERT_FAILED();
@@ -276,10 +295,12 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
             Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,Prog_Status.Area_Status[Area_No].SNum);
 
       Clear_Area_Data(&Show_Data_Bak, Area_No);
+
+      Len0 = -1;
 #if DATA_PREP_EN > 0      
       if(Prep_Data.Data_Prog_No[Area_No] EQ Prog_Status.Prog_No &&\
          Prep_Data.Data_File_No[Area_No] EQ Prog_Status.Area_Status[Area_No].File_No &&\
-         Prep_Data.Data_Flag[Area_No] EQ DATA_OK &&\
+         Prep_Data.Data_Ok_Flag[Area_No] EQ DATA_OK &&\
          Prep_Data.Data_SNum[Area_No] EQ Prog_Status.Area_Status[Area_No].SNum)
       {
 
@@ -297,8 +318,14 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
         
         Len0 = 1;//GET_TEXT_LEN(Prep_Data.Data_Width[Area_No]
       }
+      else
+          Len0 = Read_Show_Data(Area_No, \
+                         Prog_Status.Area_Status[Area_No].File_No, \
+                         &Prog_Status.File_Para[Area_No],\
+                         Prog_Status.Area_Status[Area_No].SNum,\
+                         &Show_Data_Bak,&X,&Y,&Width,&Height);
 
-      Prep_Data.Data_Flag[Area_No] = 0;                      
+      Prep_Data.Data_Read_Flag[Area_No] = DATA_READ;
 #else      
       Len0 = Read_Show_Data(Area_No, \
                      Prog_Status.Area_Status[Area_No].File_No, \
@@ -619,8 +646,9 @@ void Check_Update_Data_Prep()
       return;
     
     //获取下一屏数据
-    if(Prep_Data.Data_Flag[i] EQ 0) //需要获取下一屏的参数
+    if(Prep_Data.Data_Read_Flag[i] EQ DATA_READ) //需要获取下一屏的参数
     {
+      Prep_Data.Data_Read_Flag[i] = 0;
       SNum = Prog_Status.Area_Status[i].SNum + 1; //下一个屏号
 
       Prog_No = Prog_Status.Prog_No;
@@ -632,106 +660,75 @@ void Check_Update_Data_Prep()
         File_No ++; 
         if(File_No >= Prog_Para.Area_File_Num[i])
           File_No = 0;
-       /* 
-        Counts = Prog_Status.Area_Status[i].Counts;  
-        Prog_Status.Area_Status[i].Counts++;
-        Prog_End_Flag = Check_Prog_End();
-        Prog_Status.Area_Status[i].Counts = Counts;
-            
-        if(Prep_Data.Prog_Para_Flag EQ 0 && Prog_End_Flag > 0) //当前播放的文件马上就要结束了
-        {
-          Prog_No ++;
-          if(Prog_No >= Screen_Para.Prog_Num)
-            Prog_No = 0;
-            
-          Prep_Data.Prog_Para_No = Prog_No;
-          Prep_Data.Prog_Para_Flag = DATA_ERR;
-          Prep_Data.Block_Index_Flag = DATA_ERR;
-          
-          debug("prepaid prog %d para",Prog_No);
-          if(Read_Prog_Para(Prog_No, &Prep_Data.Prog_Para)) //更新到下个节目
-          {
-            Prep_Data.Prog_Para_Flag = DATA_OK;
-            
-            if(_Read_Prog_Block_Index(Prog_No, &Prep_Data.Block_Index, \
-               &Prep_Data.Block_Index, sizeof(Prep_Data.Block_Index)))
-              Prep_Data.Block_Index_Flag = DATA_OK;     
-          }
-          
-          if(Prep_Data.Prog_Para_Flag EQ DATA_ERR ||\
-             Prep_Data.Block_Index_Flag EQ DATA_ERR)
-          {
-            for(j = 0; j < MAX_AREA_NUM; j++)
-            {
-                Prep_Data.File_Para_Flag[i] = DATA_ERR;
-                Prep_Data.Data_Flag[i] = DATA_ERR;         
-            }
-            
-            return;
-          }
-          else
-          {
-            for(j = 0; j < MAX_AREA_NUM; j++)
-            {
-                Prep_Data.File_Para_Flag[i] = 0;
-                Prep_Data.Data_Flag[i] = 0;         
-            }            
-          }
-        }
-         */ 
+
         //重新读取文件参数
-        if(Prep_Data.File_Para_Flag[i] EQ 0)
+        if(Prep_Data.File_Para_Read_Flag[i] EQ DATA_READ)
         {
-          debug("prepaid prog %d,file %d para", Prog_No, File_No);
+          debug("\r\nprepaid prog %d, area %d,file %d para", Prog_No, i, File_No);
           
-          Len = Read_File_Para(Prog_No, i, File_No, \
-             &Prep_Data.File_Para[i].Pic_Para.Flag, &Prep_Data.File_Para[i], sizeof(Prep_Data.File_Para[i]));
-          
-          Prep_Data.Para_Prog_No = Prog_No;
-          Prep_Data.Para_File_No[i] = File_No;
-          Prep_Data.File_Para_Flag[i] = (Len >0)?DATA_OK:DATA_ERR;
+          Prep_Data.File_Para_Read_Flag[i] = 0;
 
-          if(Len EQ 0)
-            return;
-          
-    
-          Len = Read_Show_Data(i, \
-                       File_No, \
-                       &Prep_Data.File_Para[i],\
-                       SNum,\
-                       &Prep_Data.Show_Data,&X,&Y,&Width,&Height);
-          
-         
-          Prep_Data.Data_Prog_No[i] = Prog_No; 
-          Prep_Data.Data_File_No[i] = File_No;
-          Prep_Data.Data_SNum[i] = SNum; 
-          Prep_Data.Data_X[i] = X;
-          Prep_Data.Data_Y[i] = Y;
-          Prep_Data.Data_Width[i] = Width;
-          Prep_Data.Data_Height[i] = Height;
-          Prep_Data.Data_Flag[i] = (Len > 0)?DATA_OK:DATA_ERR;
+          if(Prep_Data.File_Para_Ok_Flag[i] != DATA_OK ||\
+             Prep_Data.Para_Prog_No[i] != Prog_No ||\
+             Prep_Data.Para_File_No[i] != File_No)
+          {
+              Len = Read_File_Para(Prog_No, i, File_No, \
+                 &Prep_Data.File_Para[i].Pic_Para.Flag, &Prep_Data.File_Para[i], sizeof(Prep_Data.File_Para[i]));
 
+              Prep_Data.Para_Prog_No[i] = Prog_No;
+              Prep_Data.Para_File_No[i] = File_No;
+              Prep_Data.File_Para_Ok_Flag[i] = (Len >0)?DATA_OK:DATA_ERR;
+
+              if(Len EQ 0)
+                return;
+
+              debug("\r\nprepaid prog %d, area %d, file %d, scn %d data",Prog_No, i, File_No, SNum);
+
+              if(Prep_Data.Data_Ok_Flag[i] != DATA_OK ||\
+                 Prep_Data.Data_Prog_No[i] != Prog_No ||\
+                 Prep_Data.Data_SNum[i] != SNum)
+              {
+                  Len = Read_Show_Data(i, \
+                               File_No, \
+                               &Prep_Data.File_Para[i],\
+                               SNum,\
+                               &Prep_Data.Show_Data,&X,&Y,&Width,&Height);
+
+                  Prep_Data.Data_Prog_No[i] = Prog_No;
+                  Prep_Data.Data_File_No[i] = File_No;
+                  Prep_Data.Data_SNum[i] = SNum;
+                  Prep_Data.Data_X[i] = X;
+                  Prep_Data.Data_Y[i] = Y;
+                  Prep_Data.Data_Width[i] = Width;
+                  Prep_Data.Data_Height[i] = Height;
+                  Prep_Data.Data_Ok_Flag[i] = (Len > 0)?DATA_OK:DATA_ERR;
+             }
+              return;
+          }
         }
- 
-        return;
       }
 
-      debug("prepaid prog %d, file %d, scn %d data",Prog_No, File_No, SNum);
-      Len = Read_Show_Data(i, \
-                   File_No, \
-                   &Prog_Status.File_Para[i],\
-                   SNum,\
-                   &Prep_Data.Show_Data, &X, &Y, &Width, &Height);
+      debug("\r\nprepaid prog %d, file %d, area %d, scn %d data",Prog_No, i, File_No, SNum);
 
-     Prep_Data.Data_Prog_No[i] = Prog_No; 
-     Prep_Data.Data_File_No[i] = File_No;
-     Prep_Data.Data_SNum[i] = SNum;     
-     Prep_Data.Data_X[i] = X;
-     Prep_Data.Data_Y[i] = Y;
-     Prep_Data.Data_Width[i] = Width;
-     Prep_Data.Data_Height[i] = Height;     
-     Prep_Data.Data_Flag[i] = (Len > 0)?DATA_OK:DATA_ERR;
+      if(Prep_Data.Data_Ok_Flag[i] != DATA_OK ||\
+         Prep_Data.Data_Prog_No[i] != Prog_No ||\
+         Prep_Data.Data_SNum[i] != SNum)
+      {
+          Len = Read_Show_Data(i, \
+                       File_No, \
+                       &Prog_Status.File_Para[i],\
+                       SNum,\
+                       &Prep_Data.Show_Data, &X, &Y, &Width, &Height);
 
+         Prep_Data.Data_Prog_No[i] = Prog_No;
+         Prep_Data.Data_File_No[i] = File_No;
+         Prep_Data.Data_SNum[i] = SNum;
+         Prep_Data.Data_X[i] = X;
+         Prep_Data.Data_Y[i] = Y;
+         Prep_Data.Data_Width[i] = Width;
+         Prep_Data.Data_Height[i] = Height;
+         Prep_Data.Data_Ok_Flag[i] = (Len > 0)?DATA_OK:DATA_ERR;
+     }
       
     }
   }  
