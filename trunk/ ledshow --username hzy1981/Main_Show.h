@@ -32,10 +32,14 @@ typedef struct
   INT8U File_Para_Flag[MAX_AREA_NUM];
   
   S_Show_Data Show_Data;
-  INT8U Data_Prog_No;
-  INT8U Data_File_No[MAX_FILE_NUM];
-  INT16U SNum[MAX_AREA_NUM];
-  INT8U SCN_Data_Flag[MAX_AREA_NUM];
+  INT8U Data_Prog_No[MAX_AREA_NUM];
+  INT8U Data_File_No[MAX_AREA_NUM];
+  INT16U Data_SNum[MAX_AREA_NUM];
+  INT16U Data_X[MAX_AREA_NUM];
+  INT16U Data_Y[MAX_AREA_NUM];
+  INT16U Data_Width[MAX_AREA_NUM];
+  INT16U Data_Height[MAX_AREA_NUM];
+  INT8U Data_Flag[MAX_AREA_NUM];
   
   INT8U CS[CS_BYTES];
   
