@@ -50,14 +50,32 @@ public:
     ~CscreenProperty();
 };
 
+//定时开关机调节
+class CopenCloseProperty:public QWidget
+{
+    Q_OBJECT
+    //QRadioButton *manualButton;
+    //QRadioButton *timerButton;
+
+public:
+    QCheckBox *timeCheck[MAX_OPEN_CLOSE_TIME];
+    QTimeEdit *openTimeEdit[MAX_OPEN_CLOSE_TIME];
+    QTimeEdit *closeTimeEdit[MAX_OPEN_CLOSE_TIME];
+    //QSlider *timerSlider[MAX_LIGHTNESS_TIME];
+
+    //QSlider *manualSlider;
+    //void getSettingsFromWidget(QString str);
+   //void setSettingsToWidget(QString str);
+    CopenCloseProperty(QWidget *parent=0);
+    ~CopenCloseProperty();
+};
 
 //亮度调节
-class ClightnessProperty:public QGroupBox
+class ClightnessProperty:public QWidget
 {
     Q_OBJECT
     QRadioButton *manualButton;
     QRadioButton *timerButton;
-
 public:
     QCheckBox *timerCheck[MAX_LIGHTNESS_TIME];
     QTimeEdit *timerEdit[MAX_LIGHTNESS_TIME];
