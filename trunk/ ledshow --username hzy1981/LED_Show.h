@@ -76,20 +76,43 @@ typedef struct
   INT16U Y;
 }S_Point;
 
+typedef struct
+{
+  INT8U Head;
+  INT8U File_No;
+  INT8U CS[CS_BYTES];
+  INT8U Tail;
+}S_File_No;
+
+typedef struct
+{
+    INT8U Head;
+    INT16U SCN_No;
+    INT8U CS[CS_BYTES];
+    INT8U Tail;
+}S_SCN_No;
+
 //定义分区状态
 typedef struct
 {
   INT8U Head;
 
-  INT16U SNum;      //当前已经读到第几屏数据了?
+  INT16U SCN_No;      //当前已经读到第几屏数据了?
 
   INT8U New_File_Flag:4;
   INT8U New_SCN_Flag:4;
 
   INT8U File_No;    //当前文件号
+
+  INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态--主要用于与中断显示同步
+
+  INT8U Last_File_No; //上次读取的文件参数
+  INT8U Last_SCN_No; //前次读取的屏幕号
+
+  INT8U CS[CS_BYTES];//前面的数据都带校验和
+
   INT16U Step;        //当前移动的阶梯
   INT16U Max_Step;
-
   INT32U Step_Timer;  //已经走过Timer，单位ms
   INT32U Stay_Time;   //已经停留的时间，单位ms
   INT32U Out_Time;   //退出时间
@@ -104,7 +127,8 @@ typedef struct
   INT16U In_Max_Step;
   INT16U Out_Max_Step;
 
-  INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态--主要用于与中断显示同步
+
+
   INT8U Tail;
 }S_Area_Status;
 
@@ -116,22 +140,31 @@ typedef struct
   INT8U Tail;  
 }S_Border_Status;
 
+typedef struct
+{
+    INT8U Head;
+    INT8U Last_Prog_No; //上个节目
+    INT8U Prog_No; //当前节目号
+    INT32U Time; //已经播放时长
+    INT16U Counts; //已经播放次数
 
+    INT8U Play_Flag:4; //是否播放标志--主要用于与中断显示同步
+    INT8U New_Prog_Flag:4;
+    INT8U CS[CS_BYTES];
+    INT8U Tail;
+}S_Play_Status;
 
 //定义节目状态
 typedef struct
 {
   INT8U Head;
   
-  INT8U Prog_No; //当前节目号
-  INT32U Time; //已经播放时长
-  INT16U Counts; //已经播放次数
-
-  INT8U Play_Flag:4; //是否播放标志--主要用于与中断显示同步
-  INT8U New_Prog_Flag:4;
+  S_Play_Status Play_Status;
 
   S_Border_Status Border_Status;
   U_File_Para File_Para[MAX_AREA_NUM]; //每个分区的当前文件参数
+
+
   S_Area_Status Area_Status[MAX_AREA_NUM]; //每个分区的状态 
   S_Prog_Block_Index Block_Index; //当前节目的索引
 

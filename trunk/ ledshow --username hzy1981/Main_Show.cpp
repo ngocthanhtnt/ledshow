@@ -151,7 +151,7 @@ INT8U Update_XXX_Data(S_Show_Data *pDst, INT8U Area_No)
   
   return 1;
 }
-
+/*
 //清楚某个分区的状态
 void Clr_Area_Status(INT8U Area_No)
 {
@@ -174,11 +174,13 @@ void Clr_All_Area_Status()
         Clr_Area_Status(i);
     }
 }
-
+*/
 void Clr_Show_Data()
 {
   memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
   memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
+  SET_HT(Show_Data);
+  SET_HT(Show_Data_Bak);
 }
 
 //读取一屏显示数据
@@ -189,10 +191,18 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   INT16U Len,SNum;
   INT16S Len0;
   INT16U X,Y,Width,Height;
+  INT8U Re = 1;
   //INT8U File_No;
   //INT8U Counts;
+
+  Re &= CHK_SUM(Prog_Status.Play_Status);
+  Re &= CHK_SUM(Prog_Status.Area_Status[Area_No]);
+  Re &= CHK_SUM(Prog_Para);
+  if(Re EQ 0)
+      ASSERT_FAILED();
+
   //所有分屏都显示了则切换到下个显示文件
-  if(Prog_Status.New_Prog_Flag) //在节目更新状态中，不更新文件参数
+  if(Prog_Status.Play_Status.New_Prog_Flag) //在节目更新状态中，不更新文件参数
       return 0;
 
   if(Prog_Para.Area_File_Num[Area_No] EQ 0)
@@ -201,10 +211,11 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   if(Prog_Status.Area_Status[Area_No].New_File_Flag EQ 0 &&\
      Prog_Status.Area_Status[Area_No].New_SCN_Flag EQ 0)
   {
-      if(Prog_Status.Area_Status[Area_No].SNum >= Prog_Status.File_Para[Area_No].Pic_Para.SNum)
+      if(Prog_Status.Area_Status[Area_No].SCN_No >= Prog_Status.File_Para[Area_No].Pic_Para.SNum)
       {
           Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
           Prog_Status.Area_Status[Area_No].File_No ++;
+          SET_SUM(Prog_Status.Area_Status[Area_No]);
       }
   }
 
@@ -212,9 +223,10 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   if(Prog_Status.Area_Status[Area_No].New_File_Flag)//SNum > Prog_Status.File_Para[Area_No].Pic_Para.SNum)
   {
 
-    //debug("prog %d area %d file %d play end!", Prog_Status.Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
+    //debug("prog %d area %d file %d play end!", Prog_Status.Play_Status.Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
 
-    Prog_Status.Area_Status[Area_No].SNum = 0;
+    Prog_Status.Area_Status[Area_No].SCN_No = 0;
+    SET_SUM(Prog_Status.Area_Status[Area_No]);
     //文件参数读取失败则切换到下个文件
 
     if(Prog_Status.Area_Status[Area_No].File_No >= Prog_Para.Area_File_Num[Area_No] ||\
@@ -222,12 +234,14 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
     {
       Prog_Status.Area_Status[Area_No].File_No = 0;
       Prog_Status.Area_Status[Area_No].Counts++; //所有文件都播放了一次，则将播放次数+1
+      SET_SUM(Prog_Status.Area_Status[Area_No]);
 
       Check_Prog_Play_Counts();
       if(Check_Prog_End() > 0) //节目结束了！
       {
-         Prog_Status.New_Prog_Flag = NEW_FLAG;
-         Prog_Status.Prog_No ++;
+         Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+         Prog_Status.Play_Status.Prog_No ++;
+         SET_SUM(Prog_Status.Play_Status);
          return 0;
       }
    }
@@ -235,42 +249,63 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
     debug("\r\nprog %d area %d play new file: %d", Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
     //先将文件参数读出 
     Prog_Status.Area_Status[Area_No].Play_Flag = 0; //关闭本分区显示
+    SET_SUM(Prog_Status.Area_Status[Area_No]);
 
-    Len = 0;
-#if DATA_PREP_EN
-    if(Prep_Data.Para_Prog_No[Area_No] EQ Prog_Status.Prog_No &&\
-       Prep_Data.Para_File_No[Area_No] EQ Prog_Status.Area_Status[Area_No].File_No &&\
-       Prep_Data.File_Para_Ok_Flag[Area_No] EQ DATA_OK)
+    if(Prog_Status.Area_Status[Area_No].Last_File_No EQ Prog_Status.Area_Status[Area_No].File_No &&\
+       CHK_HT(Prog_Status.Area_Status[Area_No]) &&\
+       CHK_SUM(Prog_Status.Area_Status[Area_No]) &&\
+       Chk_File_Para_HT_Sum(&Prog_Status.File_Para[Area_No]))
     {
-        memcpy(&Prog_Status.File_Para[Area_No], &Prep_Data.File_Para[Area_No], sizeof(U_File_Para));
-        Len = 1;
+        debug("the same as last file ,no update");
+       Len = 1;
     }
     else
+    {
+        Len = 0;
+        Prog_Status.Area_Status[Area_No].Last_File_No = 0xFF;
+        SET_SUM(Prog_Status.Area_Status[Area_No]);
+
+    #if DATA_PREP_EN
+        if(GET_VAR(Prep_Data.Para_Prog_No[Area_No]) EQ Prog_Status.Play_Status.Prog_No &&\
+           GET_VAR(Prep_Data.Para_File_No[Area_No]) EQ Prog_Status.Area_Status[Area_No].File_No &&\
+           GET_VAR(Prep_Data.File_Para_Ok_Flag[Area_No]) EQ DATA_OK &&\
+           Chk_File_Para_HT_Sum(&Prep_Data.File_Para[Area_No]))
+        {
+            memcpy(&Prog_Status.File_Para[Area_No], &Prep_Data.File_Para[Area_No], sizeof(U_File_Para));
+            Len = 1;
+        }
+        else
+            Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
+                           &Prog_Status.File_Para[Area_No].Pic_Para.Flag, \
+                           &Prog_Status.File_Para[Area_No], sizeof(U_File_Para));
+
+        SET_VAR(Prep_Data.File_Para_Read_Flag[Area_No], DATA_READ);
+    #else
         Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
                        &Prog_Status.File_Para[Area_No].Pic_Para.Flag, \
                        &Prog_Status.File_Para[Area_No], sizeof(U_File_Para));
-
-    Prep_Data.File_Para_Read_Flag[Area_No] = DATA_READ;
-#else
-    Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
-                   &Prog_Status.File_Para[Area_No].Pic_Para.Flag, \
-                   &Prog_Status.File_Para[Area_No], sizeof(U_File_Para)); 
-#endif
+    #endif
+    }
 
     if(Len EQ 0)
     {
       ASSERT_FAILED();
+
+      //memset(&Prog_Status.File_Para[Area_No], 0, sizeof());
       Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
       Prog_Status.Area_Status[Area_No].File_No ++;
 
-     // return 0;
     }
     else
     {
+      Prog_Status.Area_Status[Area_No].Last_File_No = Prog_Status.Area_Status[Area_No].File_No;
       Prog_Status.Area_Status[Area_No].New_File_Flag = 0;
       Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
-      Prog_Status.Area_Status[Area_No].SNum = 0;
+      Prog_Status.Area_Status[Area_No].SCN_No = 0;
     }
+
+    SET_SUM(Prog_Status.Area_Status[Area_No]);
+    Set_File_Para_HT_Sum(&Prog_Status.File_Para[Area_No]);
   }
 
   //更新文件参数过程中不更新分屏数据
@@ -281,62 +316,81 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   if(Prog_Status.Area_Status[Area_No].New_SCN_Flag)
   {
       //已经到了最大的一幕则切换到下个文件
-      if(Prog_Status.Area_Status[Area_No].SNum >= Prog_Status.File_Para[Area_No].Pic_Para.SNum)
+      if(Prog_Status.Area_Status[Area_No].SCN_No >= Prog_Status.File_Para[Area_No].Pic_Para.SNum)
       {
           Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
           Prog_Status.Area_Status[Area_No].File_No ++;
+          SET_SUM(Prog_Status.Area_Status[Area_No]);
           return 0;
       }
 
       //读出显示数据
       Prog_Status.Area_Status[Area_No].Play_Flag = 0; //--读取显示数据过程中将播放标志置0，从而中断程序中不播放
+      SET_SUM(Prog_Status.Area_Status[Area_No]);
 
-      debug("\r\nread prog %d area %d, file %d %dth screen show data", \
-            Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,Prog_Status.Area_Status[Area_No].SNum);
+      debug("\r\nread prog %d area %d, file %d %dth SCN show data", \
+            Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,Prog_Status.Area_Status[Area_No].SCN_No);
 
       Clear_Area_Data(&Show_Data_Bak, Area_No);
 
-      Len0 = -1;
-#if DATA_PREP_EN > 0      
-      if(Prep_Data.Data_Prog_No[Area_No] EQ Prog_Status.Prog_No &&\
-         Prep_Data.Data_File_No[Area_No] EQ Prog_Status.Area_Status[Area_No].File_No &&\
-         Prep_Data.Data_Ok_Flag[Area_No] EQ DATA_OK &&\
-         Prep_Data.Data_SNum[Area_No] EQ Prog_Status.Area_Status[Area_No].SNum)
+      if(Prog_Status.Area_Status[Area_No].Last_SCN_No EQ Prog_Status.Area_Status[Area_No].SCN_No &&\
+         CHK_HT(Prog_Status.Area_Status[Area_No]) &&\
+         CHK_SUM(Prog_Status.Area_Status[Area_No]) &&\
+         Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag) EQ 0)
       {
-
-        S_Point P0;
-        debug("use prepaid data: area_no:%d, snum:%d", Area_No, Prep_Data.Data_SNum[Area_No]);
-        P0.X = Prep_Data.Data_X[Area_No];
-        P0.Y = Prep_Data.Data_Y[Area_No];
-        Copy_Filled_Rect(&Prep_Data.Show_Data, \
-                         Area_No,\
-                         &P0,\
-                         Prep_Data.Data_Width[Area_No],\
-                         Prep_Data.Data_Height[Area_No],\
-                         &Show_Data_Bak,\
-                         &P0);
-        
-        Len0 = 1;//GET_TEXT_LEN(Prep_Data.Data_Width[Area_No]
+         debug("the same as last SCN ,no update");
+         Len0 = 1;
       }
       else
+      {
+          Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFFFF;
+          SET_SUM(Prog_Status.Area_Status[Area_No]);
+
+          Len0 = -1;
+    #if DATA_PREP_EN > 0
+          if(GET_VAR(Prep_Data.Data_Prog_No[Area_No]) EQ Prog_Status.Play_Status.Prog_No &&\
+             GET_VAR(Prep_Data.Data_File_No[Area_No]) EQ Prog_Status.Area_Status[Area_No].File_No &&\
+             GET_VAR(Prep_Data.Data_Ok_Flag[Area_No]) EQ DATA_OK &&\
+             GET_VAR(Prep_Data.Data_SCN_No[Area_No]) EQ Prog_Status.Area_Status[Area_No].SCN_No)
+          {
+
+            S_Point P0;
+            debug("use prepaid data: area_no:%d, SCN_No:%d", Area_No, GET_VAR(Prep_Data.Data_SCN_No[Area_No]));
+            P0.X = GET_VAR(Prep_Data.Data_X[Area_No]);
+            P0.Y = GET_VAR(Prep_Data.Data_Y[Area_No]);
+            Copy_Filled_Rect(&Prep_Data.Show_Data, \
+                             Area_No,\
+                             &P0,\
+                             GET_VAR(Prep_Data.Data_Width[Area_No]),\
+                             GET_VAR(Prep_Data.Data_Height[Area_No]),\
+                             &Show_Data_Bak,\
+                             &P0);
+
+            Len0 = 1;//GET_TEXT_LEN(Prep_Data.Data_Width[Area_No]
+          }
+          else
+              Len0 = Read_Show_Data(Area_No, \
+                             Prog_Status.Area_Status[Area_No].File_No, \
+                             &Prog_Status.File_Para[Area_No],\
+                             Prog_Status.Area_Status[Area_No].SCN_No,\
+                             &Show_Data_Bak,&X,&Y,&Width,&Height);
+
+          SET_VAR(Prep_Data.Data_Read_Flag[Area_No] , DATA_READ);
+    #else
           Len0 = Read_Show_Data(Area_No, \
                          Prog_Status.Area_Status[Area_No].File_No, \
                          &Prog_Status.File_Para[Area_No],\
-                         Prog_Status.Area_Status[Area_No].SNum,\
+                         Prog_Status.Area_Status[Area_No].SCN_No,\
                          &Show_Data_Bak,&X,&Y,&Width,&Height);
+    #endif
+      }
 
-      Prep_Data.Data_Read_Flag[Area_No] = DATA_READ;
-#else      
-      Len0 = Read_Show_Data(Area_No, \
-                     Prog_Status.Area_Status[Area_No].File_No, \
-                     &Prog_Status.File_Para[Area_No],\ 
-                     Prog_Status.Area_Status[Area_No].SNum,\
-                     &Show_Data_Bak,&X,&Y,&Width,&Height);
-#endif
       if(Len0 >= 0)
       {
+        Prog_Status.Area_Status[Area_No].Last_SCN_No = Prog_Status.Area_Status[Area_No].SCN_No;
         Prog_Status.Area_Status[Area_No].Play_Flag = 1; //打开本分区显示
         Prog_Status.Area_Status[Area_No].New_SCN_Flag = 0;
+        SET_SUM(Prog_Status.Area_Status[Area_No]);
       }
       else
       {
@@ -344,7 +398,8 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 
         ASSERT_FAILED();
         Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
-        Prog_Status.Area_Status[Area_No].SNum ++; //显示屏数增加
+        Prog_Status.Area_Status[Area_No].SCN_No ++; //显示屏数增加
+        SET_SUM(Prog_Status.Area_Status[Area_No]);
       }
   }
 
@@ -359,9 +414,9 @@ INT8U Check_Update_Show_Data_Bak()
 {
   INT8U i;
   INT32U Stay_Time;
-  S_Int8U Sec = {CHK_BYTE, 0xFF, CHK_BYTE};
+  S_Int8U Sec = {CHK_BYTE, 0xFF, {0},CHK_BYTE};
   
-  //if(Prog_Status.Play_Flag EQ 0)
+  //if(Prog_Status.Play_Status.Play_Flag EQ 0)
       //return 0;
 
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
@@ -406,7 +461,7 @@ void Check_Update_Show_Data()
 void Clr_Prog_Status()
 {
   memset(&Prog_Status, 0, sizeof(Prog_Status));
-  SET_HT(Prog_Status);
+  //SET_HT(Prog_Status);
   
 }
 
@@ -416,15 +471,15 @@ INT8U Check_Prog_End()
 {
   if(Check_Prog_Play_Time() EQ 0)
   {
-     debug("prog %d now not play time, end", Prog_Status.Prog_No);
+     debug("prog %d now not play time, end", Prog_Status.Play_Status.Prog_No);
      return 1;
   }
   //次数模式
   if(Prog_Para.Mode EQ PROG_COUNTS_MODE)
   {
-    if(Prog_Status.Counts >= Prog_Para.Counts)
+    if(Prog_Status.Play_Status.Counts >= Prog_Para.Counts)
     {
-      debug("prog %d play counts %d, end", Prog_Status.Prog_No, Prog_Status.Counts);      
+      debug("prog %d play counts %d, end", Prog_Status.Play_Status.Prog_No, Prog_Status.Play_Status.Counts);
       return 1;
     }
     else
@@ -432,9 +487,9 @@ INT8U Check_Prog_End()
   }
   else if(Prog_Para.Mode EQ PROG_TIME_MODE)//时间模式
   {
-    if(Prog_Status.Time >= Prog_Para.Time)
+    if(Prog_Status.Play_Status.Time >= Prog_Para.Time)
     {
-      debug("prog %d play times %d, end", Prog_Status.Prog_No, Prog_Status.Time);      
+      debug("prog %d play times %d, end", Prog_Status.Play_Status.Prog_No, Prog_Status.Play_Status.Time);
       return 1;
     }
     else
@@ -520,8 +575,8 @@ void Check_Prog_Play_Counts()
         Min_Counts = Prog_Status.Area_Status[i].Counts;
     }
 
-    Prog_Status.Counts = Min_Counts; //在所有分区内的最小播放次数就是节目的总播放次数
-
+    Prog_Status.Play_Status.Counts = Min_Counts; //在所有分区内的最小播放次数就是节目的总播放次数
+    SET_SUM(Prog_Status.Play_Status);
 }
 //检查是否需要更新节目参数
 void Check_Update_Program_Para()
@@ -529,8 +584,8 @@ void Check_Update_Program_Para()
   INT8U Re;
   INT8U i,Prog_No,Count = 0;
   INT16U Len;
-  static S_Int8U Sec = {CHK_BYTE, 0xFF, CHK_BYTE};
-  static S_Int8U Min = {CHK_BYTE, 0xFF, CHK_BYTE};
+  static S_Int8U Sec = {CHK_BYTE, 0xFF, {0}, CHK_BYTE};
+  static S_Int8U Min = {CHK_BYTE, 0xFF, {0}, CHK_BYTE};
   
   //if(Sec.Var EQ Cur_Time.Time[T_SEC])
     //return;
@@ -541,12 +596,13 @@ void Check_Update_Program_Para()
   if(Re EQ 0)
     ASSERT_FAILED();
   
-  if(Prog_Status.New_Prog_Flag EQ 0)//--当前在节目播放状态
+  if(Prog_Status.Play_Status.New_Prog_Flag EQ 0)//--当前在节目播放状态
   {
-    if(Min.Var != Cur_Time.Time[T_MIN]) //每分钟+1，当前节目的播放时间
+    if(GET_VAR(Min) != Cur_Time.Time[T_MIN]) //每分钟+1，当前节目的播放时间
     {
       Min.Var = Cur_Time.Time[T_MIN];
-      Prog_Status.Time ++;
+      Prog_Status.Play_Status.Time ++;
+      SET_SUM(Prog_Status.Play_Status);
     }
    
     
@@ -554,71 +610,131 @@ void Check_Update_Program_Para()
     if(Check_Prog_End() > 0)//==0表示节目结束
     {
       //读取该节目的存储索引
-      Prog_Status.Play_Flag = 0;
-      Prog_No = Prog_Status.Prog_No;
-
-      Prog_Status.New_Prog_Flag = NEW_FLAG;
-      Clr_Prog_Status(); //清除节目状态--进入下个节目
-
-      Prog_Status.Prog_No = Prog_No ++;
+      Prog_Status.Play_Status.Play_Flag = 0;
+      Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+      Prog_Status.Play_Status.Prog_No ++;
+      SET_SUM(Prog_Status.Play_Status);
 
     }
   }
 
-  //if(Prog_Status.Play_Flag EQ 0) //还未进入节目播放状态
+  //if(Prog_Status.Play_Status.Play_Flag EQ 0) //还未进入节目播放状态
   //{
-    if(Prog_Status.New_Prog_Flag)//while(1) //寻找下一个可播放的节目
+    if(Prog_Status.Play_Status.New_Prog_Flag)//while(1) //寻找下一个可播放的节目
     {
-
-      //Prog_Status.Play_Flag = 0;
-
-      //
-      if(Prog_Status.Prog_No >= Screen_Para.Prog_Num ||\
-         Prog_Status.Prog_No >= MAX_PROG_NUM)
-        Prog_Status.Prog_No = 0;
 #if QT_EN
-      Prog_Status.Prog_No = Preview_Prog_No;
+      Prog_Status.Play_Status.Prog_No = Preview_Prog_No;
+      SET_SUM(Prog_Status.Play_Status);
 #endif
 
-      debug("\r\n-----update new prog %d para-----\r\n", Prog_Status.Prog_No);
+      if(Prog_Status.Play_Status.Prog_No >= Screen_Para.Prog_Num ||\
+         Prog_Status.Play_Status.Prog_No >= MAX_PROG_NUM)
+      {
+        Prog_Status.Play_Status.Prog_No = 0;
+        SET_SUM(Prog_Status.Play_Status);
+      }
 
-      Len = Read_Prog_Para(Prog_Status.Prog_No, &Prog_Para); //重新更新节目参数
+      debug("\r\n-----update new prog %d para-----\r\n", Prog_Status.Play_Status.Prog_No);
+
+      Re = 1;
+      Re &=(Prog_Status.Play_Status.Prog_No EQ Prog_Status.Play_Status.Last_Prog_No)?1:0;
+      Re &= CHK_HT(Prog_Status.Play_Status);
+      Re &= CHK_SUM(Prog_Status.Play_Status);
+      Re &= CHK_SUM(Prog_Para);
+      Re &= CHK_SUM(Prog_Status.Block_Index);
+
+      //如果上次播放和当次播放的节目是一样的，则不更新节目参数等
+      if(Re)//Prog_Status.Play_Status.Play_Flag = 0;
+      {
+        debug("same prog, no update");
+        for(i = 0; i < MAX_AREA_NUM; i ++)
+        {
+          Prog_Status.Area_Status[i].Counts = 0;
+          SET_SUM(Prog_Status.Area_Status[i]);
+        }
+            //memset((INT8U *)Prog_Status.Area_Status[i].CS + CS_BYTES, 0, S_OFF(S_Area_Status, Tail) - S_OFF(S_Area_Status, CS) - CS_BYTES);
+
+        Prog_Status.Play_Status.Time = 0;
+        Prog_Status.Play_Status.Counts = 0;
+        Prog_Status.Play_Status.New_Prog_Flag = 0;
+        SET_SUM(Prog_Status.Play_Status);
+
+        //---------------------
+        /*
+        Prog_No = Prog_Status.Play_Status.Prog_No;
+        Prog_Status_Init();//Clr_Prog_Status();换了个新节目，重新设置状态
+        Prog_Status.Play_Status.Prog_No = Prog_No;
+
+        INT8U i;
+
+        memset(&Prog_Status, 0, sizeof(Prog_Status));
+        SET_HT(Prog_Status);
+        for(i = 0; i < MAX_AREA_NUM; i ++)
+        {
+          SET_HT(Prog_Status.Area_Status[i]);
+
+          Prog_Status.Area_Status[i].Last_File_No = 0x00;
+          Prog_Status.Area_Status[i].Last_SCN_No = 0x00;
+
+          SET_SUM(Prog_Status.Area_Status[i]);
+        }
+
+        SET_HT(Prog_Status.Play_Status);
+        SET_SUM(Prog_Status.Play_Status);
+
+        SET_SUM(Prog_Status.Play_Status);
+*/
+        //Clr_Show_Data();
+
+        return;
+      }
+      
+      Prog_Status.Play_Status.Last_Prog_No = 0xFF; //设置为一个不存在的节目号
+      //SET_HT(Prog_Status.Play_Status);
+      SET_SUM(Prog_Status.Play_Status);
+
+      Len = Read_Prog_Para(Prog_Status.Play_Status.Prog_No, &Prog_Para); //重新更新节目参数
       
       if(Len > 0 && Check_Prog_Play_Time() > 0)
       {
-        Prog_No = Prog_Status.Prog_No;
-        Clr_Prog_Status();
-        Prog_Status.Prog_No = Prog_No;
-        
-        Len = Read_Prog_Block_Index(Prog_Status.Prog_No);//重新读取节目的存储索引
-        
+        Prog_No = Prog_Status.Play_Status.Prog_No;
+        Prog_Status_Init();//Clr_Prog_Status();换了个新节目，重新设置状态
+        Prog_Status.Play_Status.Prog_No = Prog_No;
+        SET_SUM(Prog_Status.Play_Status);
+
+        Len = Read_Prog_Block_Index(Prog_Status.Play_Status.Prog_No);//重新读取节目的存储索引
+
         if(Len > 0)
         {
           Clr_Show_Data();
 
-          Prog_Status.New_Prog_Flag = 0;
+          Prog_Status.Play_Status.Last_Prog_No = Prog_No;
+          Prog_Status.Play_Status.New_Prog_Flag = 0;
+          //SET_HT(Prog_Status.Play_Status);
+          SET_SUM(Prog_Status.Play_Status);
 
           for(i = 0; i < MAX_AREA_NUM; i ++)
           {
             Prog_Status.Area_Status[i].New_File_Flag = NEW_FLAG;
             Prog_Status.Area_Status[i].File_No = 0;
-
+            SET_SUM(Prog_Status.Area_Status[i]);
           }
         }
       }
       else
       {
-        Prog_Status.New_Prog_Flag = NEW_FLAG;
-        Prog_Status.Prog_No ++;
+        Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+        Prog_Status.Play_Status.Prog_No ++;
+        SET_SUM(Prog_Status.Play_Status);
 
         ASSERT_FAILED();
         if(Len EQ 0)
           debug("read prog para failed");
         else
-          debug("prog %d now not play time", Prog_Status.Prog_No);
+          debug("prog %d now not play time", Prog_Status.Play_Status.Prog_No);
       }
 
-      //Prog_Status.Prog_No ++; //在没有读到节目参数的情况下，读取下一个节目的参数
+      //Prog_Status.Play_Status.Prog_No ++; //在没有读到节目参数的情况下，读取下一个节目的参数
       //最多查询次数不超过Screen_Para.Prog_Num和MAX_PROG_NUM次
       //if(Count > Screen_Para.Prog_Num || Count > MAX_PROG_NUM)
         //break;
@@ -635,7 +751,7 @@ void Check_Update_Data_Prep()
   INT16U Counts,i,j,X,Y,Width,Height;
   
 
-  if(Prog_Status.New_Prog_Flag)
+  if(Prog_Status.Play_Status.New_Prog_Flag)
     return;
   
   //准备每个分区的参数和数据
@@ -646,12 +762,12 @@ void Check_Update_Data_Prep()
       return;
     
     //获取下一屏数据
-    if(Prep_Data.Data_Read_Flag[i] EQ DATA_READ) //需要获取下一屏的参数
+    if(GET_VAR(Prep_Data.Data_Read_Flag[i]) EQ DATA_READ) //需要获取下一屏的参数
     {
-      Prep_Data.Data_Read_Flag[i] = 0;
-      SNum = Prog_Status.Area_Status[i].SNum + 1; //下一个屏号
+      SET_VAR(Prep_Data.Data_Read_Flag[i] , 0);
+      SNum = Prog_Status.Area_Status[i].SCN_No + 1; //下一个屏号
 
-      Prog_No = Prog_Status.Prog_No;
+      Prog_No = Prog_Status.Play_Status.Prog_No;
       File_No = Prog_Status.Area_Status[i].File_No;
             
       if(SNum >= Prog_Status.File_Para[i].Pic_Para.SNum) //读取下个文件
@@ -662,31 +778,31 @@ void Check_Update_Data_Prep()
           File_No = 0;
 
         //重新读取文件参数
-        if(Prep_Data.File_Para_Read_Flag[i] EQ DATA_READ)
+        if(GET_VAR(Prep_Data.File_Para_Read_Flag[i]) EQ DATA_READ)
         {
           debug("\r\nprepaid prog %d, area %d,file %d para", Prog_No, i, File_No);
           
-          Prep_Data.File_Para_Read_Flag[i] = 0;
+          SET_VAR(Prep_Data.File_Para_Read_Flag[i], 0);
 
-          if(Prep_Data.File_Para_Ok_Flag[i] != DATA_OK ||\
-             Prep_Data.Para_Prog_No[i] != Prog_No ||\
-             Prep_Data.Para_File_No[i] != File_No)
+          if(GET_VAR(Prep_Data.File_Para_Ok_Flag[i]) != DATA_OK ||\
+             GET_VAR(Prep_Data.Para_Prog_No[i]) != Prog_No ||\
+             GET_VAR(Prep_Data.Para_File_No[i]) != File_No)
           {
               Len = Read_File_Para(Prog_No, i, File_No, \
                  &Prep_Data.File_Para[i].Pic_Para.Flag, &Prep_Data.File_Para[i], sizeof(Prep_Data.File_Para[i]));
 
-              Prep_Data.Para_Prog_No[i] = Prog_No;
-              Prep_Data.Para_File_No[i] = File_No;
-              Prep_Data.File_Para_Ok_Flag[i] = (Len >0)?DATA_OK:DATA_ERR;
+              SET_VAR(Prep_Data.Para_Prog_No[i], Prog_No);
+              SET_VAR(Prep_Data.Para_File_No[i] , File_No);
+              SET_VAR(Prep_Data.File_Para_Ok_Flag[i], (Len >0)?DATA_OK:DATA_ERR);
 
               if(Len EQ 0)
                 return;
 
               debug("\r\nprepaid prog %d, area %d, file %d, scn %d data",Prog_No, i, File_No, SNum);
 
-              if(Prep_Data.Data_Ok_Flag[i] != DATA_OK ||\
-                 Prep_Data.Data_Prog_No[i] != Prog_No ||\
-                 Prep_Data.Data_SNum[i] != SNum)
+              if(GET_VAR(Prep_Data.Data_Ok_Flag[i])= DATA_OK ||\
+                 GET_VAR(Prep_Data.Data_Prog_No[i]) != Prog_No ||\
+                 GET_VAR(Prep_Data.Data_SCN_No[i]) != SNum)
               {
                   Len = Read_Show_Data(i, \
                                File_No, \
@@ -694,25 +810,25 @@ void Check_Update_Data_Prep()
                                SNum,\
                                &Prep_Data.Show_Data,&X,&Y,&Width,&Height);
 
-                  Prep_Data.Data_Prog_No[i] = Prog_No;
-                  Prep_Data.Data_File_No[i] = File_No;
-                  Prep_Data.Data_SNum[i] = SNum;
-                  Prep_Data.Data_X[i] = X;
-                  Prep_Data.Data_Y[i] = Y;
-                  Prep_Data.Data_Width[i] = Width;
-                  Prep_Data.Data_Height[i] = Height;
-                  Prep_Data.Data_Ok_Flag[i] = (Len > 0)?DATA_OK:DATA_ERR;
+                  SET_VAR(Prep_Data.Data_Prog_No[i] , Prog_No);
+                  SET_VAR(Prep_Data.Data_File_No[i] , File_No);
+                  SET_VAR(Prep_Data.Data_SCN_No[i] , SNum);
+                  SET_VAR(Prep_Data.Data_X[i] , X);
+                  SET_VAR(Prep_Data.Data_Y[i] , Y);
+                  SET_VAR(Prep_Data.Data_Width[i] , Width);
+                  SET_VAR(Prep_Data.Data_Height[i] , Height);
+                  SET_VAR(Prep_Data.Data_Ok_Flag[i] , (Len > 0)?DATA_OK:DATA_ERR);
              }
               return;
           }
         }
       }
 
-      debug("\r\nprepaid prog %d, file %d, area %d, scn %d data",Prog_No, i, File_No, SNum);
+      debug("\r\nprepaid prog %d, area %d, file %d, scn %d data",Prog_No, i, File_No, SNum);
 
-      if(Prep_Data.Data_Ok_Flag[i] != DATA_OK ||\
-         Prep_Data.Data_Prog_No[i] != Prog_No ||\
-         Prep_Data.Data_SNum[i] != SNum)
+      if(GET_VAR(Prep_Data.Data_Ok_Flag[i]) != DATA_OK ||\
+         GET_VAR(Prep_Data.Data_Prog_No[i]) != Prog_No ||\
+         GET_VAR(Prep_Data.Data_SCN_No[i]) != SNum)
       {
           Len = Read_Show_Data(i, \
                        File_No, \
@@ -720,14 +836,14 @@ void Check_Update_Data_Prep()
                        SNum,\
                        &Prep_Data.Show_Data, &X, &Y, &Width, &Height);
 
-         Prep_Data.Data_Prog_No[i] = Prog_No;
-         Prep_Data.Data_File_No[i] = File_No;
-         Prep_Data.Data_SNum[i] = SNum;
-         Prep_Data.Data_X[i] = X;
-         Prep_Data.Data_Y[i] = Y;
-         Prep_Data.Data_Width[i] = Width;
-         Prep_Data.Data_Height[i] = Height;
-         Prep_Data.Data_Ok_Flag[i] = (Len > 0)?DATA_OK:DATA_ERR;
+         SET_VAR(Prep_Data.Data_Prog_No[i] , Prog_No);
+         SET_VAR(Prep_Data.Data_File_No[i] , File_No);
+         SET_VAR(Prep_Data.Data_SCN_No[i] , SNum);
+         SET_VAR(Prep_Data.Data_X[i] , X);
+         SET_VAR(Prep_Data.Data_Y[i] , Y);
+         SET_VAR(Prep_Data.Data_Width[i] , Width);
+         SET_VAR(Prep_Data.Data_Height[i] , Height);
+         SET_VAR(Prep_Data.Data_Ok_Flag[i] , (Len > 0)?DATA_OK:DATA_ERR);
      }
       
     }
@@ -757,8 +873,19 @@ void Check_Show_Data_Para()
   {
     Re &= CHK_HT(Prog_Status.Area_Status[i]);
     if(Re EQ 0)
+    {
       ASSERT_FAILED();
-    
+      Re = 1;
+    }
+
+    //Re &= CHK_HT(Prog_Status.Area_Status[i].Last_File_No);
+    Re &= CHK_SUM(Prog_Status.Area_Status[i]);
+    if(Re EQ 0)
+    {
+        ASSERT_FAILED();
+        Re = 1;
+    }
+
     Flag = Prog_Status.File_Para[i].Pic_Para.Flag;
     if(Flag EQ SHOW_NULL)
       ;
@@ -802,6 +929,26 @@ void Check_Show_Data_Para()
   
 }
 
+void Prog_Status_Init()
+{
+    INT8U i;
+
+  memset(&Prog_Status, 0, sizeof(Prog_Status));
+  SET_HT(Prog_Status);
+  for(i = 0; i < MAX_AREA_NUM; i ++)
+  {
+      SET_HT(Prog_Status.Area_Status[i]);
+
+      Prog_Status.Area_Status[i].Last_File_No = 0xFF;
+      Prog_Status.Area_Status[i].Last_SCN_No = 0xFFFF;
+
+      SET_SUM(Prog_Status.Area_Status[i]);
+  }
+
+  SET_HT(Prog_Status.Play_Status);
+  SET_SUM(Prog_Status.Play_Status);
+}
+
 //将内存中的变量初始化头尾
 void Ram_Init()
 {
@@ -809,18 +956,18 @@ void Ram_Init()
   //memset(&Card_Para, 0, sizeof(Card_Para));
   memset(&Prog_Para, 0, sizeof(Prog_Para));
   memset(&Screen_Status, 0, sizeof(Screen_Status));
-  memset(&Prog_Status, 0, sizeof(Prog_Status));
+
   memset(&Prep_Data, 0, sizeof(Prep_Data));
   memset(&Show_Data, 0, sizeof(Show_Data));
   memset(&Show_Data_Bak, 0, sizeof(Show_Data_Bak));
   memset(&Cur_Block_Index, 0, sizeof(Cur_Block_Index));
   memset(&Cur_Time, 0, sizeof(Cur_Time));
 
-  SET_HT(Screen_Para);  
-  //SET_HT(Card_Para);
+  SET_HT(Screen_Para);
+  SET_HT(Card_Para);
   SET_HT(Prog_Para);
   SET_HT(Screen_Status);
-  SET_HT(Prog_Status);
+
   SET_HT(Prep_Data);
   SET_HT(Cur_Block_Index);
   SET_HT(Show_Data);
@@ -828,7 +975,13 @@ void Ram_Init()
   SET_HT(Cur_Block_Index);
   SET_HT(Cur_Time);
 
-  Prog_Status.New_Prog_Flag = NEW_FLAG;
+  Prog_Status_Init();
+
+  Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+  SET_HT(Prog_Status.Play_Status);
+  SET_SUM(Prog_Status.Play_Status);
+
+
 }
 
 //显示相关处理
@@ -840,6 +993,7 @@ void Show_Main_Proc()
     Check_Update_Program_Para(); //检查是否需要更新节目
     Check_Update_Show_Data_Bak(); //检查是否需要更新显示备份区数据
     Check_Update_Data_Prep();
+    Check_Show_Data_Para();
   }
 }
 

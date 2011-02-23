@@ -133,7 +133,7 @@ INT8U Write_Prog_Para(INT8U Prog_No, INT8U *pSrc,INT16U SrcLen)
 #endif
 
   //读出这个节目的存储索引
-  //Prog_Status.Prog_No = Prog_No;
+  //Prog_Status.Play_Status.Prog_No = Prog_No;
   //Read_Prog_Block_Index(Prog_No);
   return 1;
 }
@@ -152,7 +152,8 @@ INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   if(Write_Prog_Para(Prog_No, Frame + FDATA, PROG_PARA_LEN))
   {
       //
-      Prog_Status.Prog_No = Prog_No;
+      Prog_Status.Play_Status.Prog_No = Prog_No;
+      SET_SUM(Prog_Status.Play_Status);
       memset(&Prog_Status.Block_Index, 0, sizeof(Prog_Status.Block_Index));
 
       SET_HT(Prog_Status.Block_Index);
@@ -213,12 +214,13 @@ INT16U Read_Prog_Block_Index(INT8U Prog_No)
   
   Len = _Read_Prog_Block_Index(Prog_No, Prog_Status.Block_Index.Index, &Prog_Status.Block_Index, sizeof(Prog_Status.Block_Index));
   
-  if(Len > 0)
+  if(Len EQ 0)
   {
-    SET_HT(Prog_Status.Block_Index);
-    SET_SUM(Prog_Status.Block_Index);
+      memset(Prog_Status.Block_Index.Index, 0, sizeof(Prog_Status.Block_Index.Index));
   }
-  
+
+  SET_HT(Prog_Status.Block_Index);
+  SET_SUM(Prog_Status.Block_Index);
   return Len;
 }
 
@@ -242,7 +244,7 @@ INT8U _Write_Prog_Block_Index(INT8U Prog_No, void *pSrc, INT16U SrcLen)
 
 INT8U Write_Prog_Block_Index()
 {
-  return _Write_Prog_Block_Index(Prog_Status.Prog_No, &Prog_Status.Block_Index.Head + 1, BLOCK_INDEX_LEN);
+  return _Write_Prog_Block_Index(Prog_Status.Play_Status.Prog_No, &Prog_Status.Block_Index.Head + 1, BLOCK_INDEX_LEN);
 }
 
 //读取文件参数
@@ -271,6 +273,16 @@ INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, v
 #endif 
   
   return Len;
+
+}
+
+INT8U Chk_File_Para_HT_Sum(U_File_Para *pPara)
+{
+    return 1;
+}
+
+void Set_File_Para_HT_Sum(U_File_Para *pPara)
+{
 
 }
 
@@ -873,7 +885,8 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 
           if(Area_No EQ 0 && File_No EQ 0) //设置第0分区第0文件表示是一个新节目
           {
-              Prog_Status.Prog_No = Prog_No;
+              Prog_Status.Play_Status.Prog_No = Prog_No;
+              SET_SUM(Prog_Status.Play_Status);
               memset(&Prog_Status.Block_Index, 0, sizeof(Prog_Status.Block_Index));
 
               SET_HT(Prog_Status.Block_Index);
@@ -907,7 +920,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
          File_Para_Info.Area_No < MAX_AREA_NUM &&\
          File_Para_Info.File_No < MAX_FILE_NUM)
       {
-        Prog_Status.Prog_No = File_Para_Info.Prog_No;
+        Prog_Status.Play_Status.Prog_No = File_Para_Info.Prog_No;
         Prog_Status.Block_Index.Index[File_Para_Info.Area_No][File_Para_Info.File_No] = Cur_Block_Index.Index;
         SET_SUM(Prog_Status.Block_Index);
         Write_Prog_Block_Index();//, Prog_Status.Block_Index.Index, sizeof(Prog_Status.Block_Index.Index));
@@ -985,10 +998,10 @@ INT16U Read_Prog_Para(INT8U Prog_No, S_Prog_Para *pProg_Para)
   if(Len EQ 0)
   {
     memset(pProg_Para, 0, sizeof(S_Prog_Para));
-    SET_HT((*pProg_Para));
-    SET_SUM((*pProg_Para));
   }
-  
+
+  SET_HT((*pProg_Para));
+  SET_SUM((*pProg_Para));
   return Len;
 }
 

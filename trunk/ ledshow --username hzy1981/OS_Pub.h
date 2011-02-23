@@ -75,6 +75,7 @@
 #define DECLARE_HT_VAR_TYPE(Type,Name) typedef struct{\
                                       OS_INT8U Head;\
                                       Type Var;\
+                                      OS_INT8U CS[CS_BYTES];\
                                       OS_INT8U Tail;\
                                       }Name;
 //定义一个带头尾的单数据类型变量
