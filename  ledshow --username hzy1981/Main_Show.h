@@ -19,33 +19,33 @@
 typedef struct
 {
   INT8U Head;
-  
+
   S_Prog_Para Prog_Para;
-  INT8U Prog_Para_No;
-  INT8U Prog_Para_Flag; //参数读出标志
+  S_Int8U Prog_Para_No;
+  S_Int8U Prog_Para_Flag; //参数读出标志
 
   S_Prog_Block_Index Block_Index;
-  INT8U Block_Index_Flag; //Block_Index标志
-  
+  S_Int8U Block_Index_Flag; //Block_Index标志
+
   U_File_Para File_Para[MAX_AREA_NUM]; //文件参数
-  INT8U Para_Prog_No[MAX_AREA_NUM];
-  INT8U Para_File_No[MAX_AREA_NUM];
-  INT8U File_Para_Ok_Flag[MAX_AREA_NUM];
-  INT8U File_Para_Read_Flag[MAX_AREA_NUM];
-  
+  S_Int8U Para_Prog_No[MAX_AREA_NUM];
+  S_Int8U Para_File_No[MAX_AREA_NUM];
+  S_Int8U File_Para_Ok_Flag[MAX_AREA_NUM];
+  S_Int8U File_Para_Read_Flag[MAX_AREA_NUM];
+
   S_Show_Data Show_Data;
-  INT8U Data_Prog_No[MAX_AREA_NUM];
-  INT8U Data_File_No[MAX_AREA_NUM];
-  INT16U Data_SNum[MAX_AREA_NUM];
-  INT16U Data_X[MAX_AREA_NUM];
-  INT16U Data_Y[MAX_AREA_NUM];
-  INT16U Data_Width[MAX_AREA_NUM];
-  INT16U Data_Height[MAX_AREA_NUM];
-  INT8U Data_Ok_Flag[MAX_AREA_NUM];
-  INT8U Data_Read_Flag[MAX_AREA_NUM];
+  S_Int8U Data_Prog_No[MAX_AREA_NUM];
+  S_Int8U Data_File_No[MAX_AREA_NUM];
+  S_Int16U Data_SCN_No[MAX_AREA_NUM];
+  S_Int16U Data_X[MAX_AREA_NUM];
+  S_Int16U Data_Y[MAX_AREA_NUM];
+  S_Int16U Data_Width[MAX_AREA_NUM];
+  S_Int16U Data_Height[MAX_AREA_NUM];
+  S_Int8U Data_Ok_Flag[MAX_AREA_NUM];
+  S_Int8U Data_Read_Flag[MAX_AREA_NUM];
 
   INT8U CS[CS_BYTES];
-  
+
   INT8U Tail;
 }S_Prep_Data;
 
@@ -79,4 +79,5 @@ EXT void Check_Prog_Play_Counts();
 EXT void Show_Timer_Proc();
 EXT void Show_Main_Proc();
 EXT void Show_Init();
+EXT void Prog_Status_Init();
 #endif

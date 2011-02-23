@@ -115,8 +115,8 @@ void Update_Border_Data(INT8U Area_No)
 {
   //INT8U In_Mode;
   //还在移动状态
-    static S_Int16U Timer = {CHK_BYTE, 0, CHK_BYTE};
-  static S_Int8U Flag = {CHK_BYTE, 0, CHK_BYTE}; 
+    static S_Int16U Timer = {CHK_BYTE, 0, {0},CHK_BYTE};
+    static S_Int8U Flag = {CHK_BYTE, 0, {0},CHK_BYTE};
     
   INT16U Step_Time = 0; //步进时间
   INT8U Border_Width,Border_Height;

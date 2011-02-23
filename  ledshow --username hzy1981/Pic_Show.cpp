@@ -258,11 +258,11 @@ INT16U Get_Out_Max_Step(INT16U Width, INT16U Height, INT8U Out_Mode)
     return Re;
 }
 
-INT8U Check_XXX_Data(INT8U Area_No)
+INT8U Check_XXX_Data(INT8U Flag)
 {
-    INT8U Flag;
+    //INT8U Flag;
 
-    Flag = Prog_Status.File_Para[Area_No].Pic_Para.Flag;
+    //Flag = Prog_Status.File_Para[Area_No].Pic_Para.Flag;
   if(Flag EQ SHOW_CLOCK ||\
      Flag EQ SHOW_TIME ||\
      Flag EQ SHOW_TIMER ||\
@@ -283,9 +283,9 @@ void Update_Pic_Data(INT8U Area_No)
   INT32U Stay_Time,In_Delay, Out_Delay;
   INT32U Out_Time;
   S_Point P0;
-  static S_Int8U Sec ={CHK_BYTE, 0xFF, CHK_BYTE};
+  static S_Int8U Sec ={CHK_BYTE, 0xFF, {0}, CHK_BYTE};
   
-  if(Prog_Status.New_Prog_Flag ||\
+  if(Prog_Status.Play_Status.New_Prog_Flag ||\
      Prog_Status.Area_Status[Area_No].New_File_Flag ||\
      Prog_Status.Area_Status[Area_No].New_SCN_Flag) //该节目或该分区还没有进入播放状态?
     return;
@@ -340,7 +340,7 @@ void Update_Pic_Data(INT8U Area_No)
           //Prog_Status.Area_Status[Area_No].In_Mode = In_Mode;
           //---------
 
-          if(Check_XXX_Data(Area_No))
+          if(Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag))
             Update_XXX_Data(&Show_Data_Bak, Area_No);
       }
 
@@ -382,12 +382,13 @@ void Update_Pic_Data(INT8U Area_No)
             {
                 Prog_Status.Area_Status[Area_No].Stay_Time = Stay_Time;
                 Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
-                Prog_Status.Area_Status[Area_No].SNum ++;
+                Prog_Status.Area_Status[Area_No].SCN_No ++;
                 Prog_Status.Area_Status[Area_No].In_Step = 0;
                 //Prog_Status.Area_Status[Area_No].Step_Timer = 0;
                 //Prog_Status.Area_Status[Area_No].Stay_Time = 0;
                 Prog_Status.Area_Status[Area_No].Out_Time = 0;
                 Prog_Status.Area_Status[Area_No].Play_Flag = 0;
+                SET_SUM(Prog_Status.Area_Status[Area_No]);
             }
           }
 
@@ -396,13 +397,15 @@ void Update_Pic_Data(INT8U Area_No)
   }
   else if(Prog_Status.Area_Status[Area_No].Stay_Time < Stay_Time) //停留时间未到
   {
-    if(Check_XXX_Data(Area_No))
+    if(Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag))
     {
         if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)
         {
           Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
           Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
-          Prog_Status.Area_Status[Area_No].SNum = 0; //重新更新背景
+          Prog_Status.Area_Status[Area_No].SCN_No = 0; //重新更新背景
+          Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFF;
+          SET_SUM(Prog_Status.Area_Status[Area_No]);
           return;
         }
 
@@ -493,7 +496,7 @@ void Update_Pic_Data(INT8U Area_No)
             //SNum = 1;
 
           Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
-          Prog_Status.Area_Status[Area_No].SNum ++;
+          Prog_Status.Area_Status[Area_No].SCN_No ++;
           Prog_Status.Area_Status[Area_No].In_Step = 0;
           Prog_Status.Area_Status[Area_No].Out_Step = 0;
           Prog_Status.Area_Status[Area_No].Step_Timer = 0;

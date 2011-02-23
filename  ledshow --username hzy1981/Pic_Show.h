@@ -26,6 +26,7 @@ typedef struct
 }S_Mode_Func;
 
 EXT void Update_Pic_Data(INT8U Area_No);
+EXT INT8U Check_XXX_Data(INT8U Flag);
 #endif
 #endif
 
