@@ -118,12 +118,13 @@ CscreenProperty::CscreenProperty(QWidget *parent):QWidget(parent)
     //QGroupBox *lightnessGroup = new QGroupBox(tr("亮度调节"),this);
     //vLayout = new QVBoxLayout(this);
     ClightnessProperty *lightnessProperty = new ClightnessProperty(this);
+    CopenCloseProperty *openCloseProperty = new CopenCloseProperty(this);
     //vLayout->addWidget(lightnessProperty);
     //lightnessGroup->setLayout(vLayout);
     //facProperty->setEnabled(false);
     //facProperty->lockParaButton->setEnabled(true);
-    tab->addTab(lightnessProperty, tr("常用参数"));
-
+    tab->addTab(lightnessProperty, tr("亮度参数"));
+    tab->addTab(openCloseProperty, tr("定时开关机"));
 
     tab->addTab(facProperty, tr("工厂参数"));
     hLayout->addWidget(tab);
@@ -170,7 +171,7 @@ public:
     ~ClightnessProperty();
 };
 */
-ClightnessProperty::ClightnessProperty(QWidget *parent):QGroupBox(parent)
+ClightnessProperty::ClightnessProperty(QWidget *parent):QWidget(parent)
 {
     INT8U i;
 
@@ -219,10 +220,43 @@ ClightnessProperty::ClightnessProperty(QWidget *parent):QGroupBox(parent)
    mainLayout->addWidget(groupBox);
    mainLayout->addStretch(10);
    this->setLayout(mainLayout);
-   this->setTitle(tr("亮度参数"));
+   //this->setTitle(tr("亮度参数"));
 }
 
 ClightnessProperty::~ClightnessProperty()
+{
+
+}
+
+CopenCloseProperty::CopenCloseProperty(QWidget *parent):QWidget(parent)
+{
+    INT8U i;
+
+    QHBoxLayout *hLayout;
+   QVBoxLayout *vLayout;
+   QLabel *openTimeLabel, *closeTimeLabel;
+
+   QGridLayout *mainLayout = new QGridLayout(this);
+   closeTimeLabel = new QLabel(tr("关闭时间"),this);
+   openTimeLabel = new QLabel(tr("开启时间"),this);
+   mainLayout->addWidget(closeTimeLabel,0,0);
+   mainLayout->addWidget(openTimeLabel,0,1);
+
+   for(i = 0; i < MAX_OPEN_CLOSE_TIME; i ++)
+   {
+     timeCheck[i] = new QCheckBox(tr("使用"),this);
+     openTimeEdit[i] = new QTimeEdit(this);
+     closeTimeEdit[i] = new QTimeEdit(this);
+
+     mainLayout->addWidget(timeCheck[i], 1 + i, 0, 1, 1);
+     mainLayout->addWidget(openTimeEdit[i], 1 + i, 1, 1, 2);
+     mainLayout->addWidget(closeTimeEdit[i], 1 + i, 3, 1, 2);
+   }
+
+   this->setLayout(mainLayout);
+}
+
+CopenCloseProperty::~CopenCloseProperty()
 {
 
 }
