@@ -113,17 +113,17 @@ CscreenProperty::CscreenProperty(QWidget *parent):QWidget(parent)
     hLayout->addLayout(vLayout);
 
     tab = new QTabWidget(this);
-    CfacScreenProperty *facProperty = new CfacScreenProperty(this);
+    facProperty = new CfacScreenProperty(this);
 
     //QGroupBox *lightnessGroup = new QGroupBox(tr("亮度调节"),this);
     //vLayout = new QVBoxLayout(this);
-    ClightnessProperty *lightnessProperty = new ClightnessProperty(this);
-    CopenCloseProperty *openCloseProperty = new CopenCloseProperty(this);
+    lightnessProperty = new ClightnessProperty(this);
+    openCloseProperty = new CopenCloseProperty(this);
     //vLayout->addWidget(lightnessProperty);
     //lightnessGroup->setLayout(vLayout);
     //facProperty->setEnabled(false);
     //facProperty->lockParaButton->setEnabled(true);
-    tab->addTab(lightnessProperty, tr("亮度参数"));
+    tab->addTab(lightnessProperty, tr("亮度调节"));
     tab->addTab(openCloseProperty, tr("定时开关机"));
 
     tab->addTab(facProperty, tr("工厂参数"));
@@ -145,12 +145,12 @@ CscreenProperty::~CscreenProperty()
 
 void CscreenProperty::getSettingsFromWidget(QString str)
 {
-
+lightnessProperty->getSettingsFromWidget(str);
 }
 
 void CscreenProperty::setSettingsToWidget(QString str)
 {
-
+lightnessProperty->setSettingsToWidget(str);
 }
 /*
 class ClightnessProperty:public QWidget
@@ -185,24 +185,29 @@ ClightnessProperty::ClightnessProperty(QWidget *parent):QWidget(parent)
    vLayout = new QVBoxLayout(this);
    manualButton = new QRadioButton(tr("手动调亮"),this);
    timerButton = new QRadioButton(tr("定时调亮"),this);
+   autoButton = new QRadioButton(tr("自动调亮"),this);
+
    vLayout->addWidget(manualButton);
    vLayout->addWidget(timerButton);
+   vLayout->addWidget(autoButton);
    groupBox->setLayout(vLayout);
 
    mainLayout->addWidget(groupBox);//addLayout(hLayout);
 
    groupBox = new QGroupBox(this);
+   vLayout = new QVBoxLayout(this);
+
    hLayout = new QHBoxLayout(this);
    manualSlider = new QSlider(Qt::Horizontal,this);
-   //manualSlider->setTickPosition(QSlider::TicksBelow);
-
    hLayout->addWidget(manualSlider);
-   groupBox->setLayout(hLayout);
-   groupBox->setVisible(false);
+   vLayout->addLayout(hLayout);
 
-   mainLayout->addWidget(groupBox);
+   hLayout = new QHBoxLayout(this);
+   autoLabel = new QLabel(tr("请确认已安装光照传感器"),this);
+   hLayout->addWidget(autoLabel);
+   vLayout->addLayout(hLayout);
 
-   groupBox = new QGroupBox(this);
+
    QVBoxLayout *timerVLayout = new QVBoxLayout(this);
    for(i = 0; i < MAX_LIGHTNESS_TIME; i ++)
    {
@@ -216,11 +221,142 @@ ClightnessProperty::ClightnessProperty(QWidget *parent):QWidget(parent)
 
      timerVLayout->addLayout(hLayout);
    }
-   groupBox->setLayout(timerVLayout);
+
+   vLayout->addLayout(timerVLayout);
+   groupBox->setLayout(vLayout);
    mainLayout->addWidget(groupBox);
    mainLayout->addStretch(10);
+
    this->setLayout(mainLayout);
-   //this->setTitle(tr("亮度参数"));
+
+   connect(manualButton, SIGNAL(clicked()),this,SIGNAL(adjModeEditSignal()));
+   connect(timerButton, SIGNAL(clicked()),this,SIGNAL(adjModeEditSignal()));
+   connect(autoButton, SIGNAL(clicked()),this,SIGNAL(adjModeEditSignal()));
+
+   connect(manualButton, SIGNAL(clicked()),this,SIGNAL(allEditSignal()));
+   connect(timerButton, SIGNAL(clicked()),this,SIGNAL(allEditSignal()));
+   connect(autoButton, SIGNAL(clicked()),this,SIGNAL(allEditSignal()));
+
+   for(int i =0;i < MAX_LIGHTNESS_TIME; i ++)
+   {
+     connect(timerCheck[i],SIGNAL(clicked()),this,SIGNAL(allEditSignal()));
+     connect(timerEdit[i],SIGNAL(timeChanged(QTime)),this,SIGNAL(allEditSignal()));
+     connect(timerSlider[i],SIGNAL(valueChanged(int)),this,SIGNAL(allEditSignal()));
+   }
+
+   connect(this,SIGNAL(adjModeEditSignal()),this,SLOT(adjModeEditSlot()));
+   connect(this,SIGNAL(allEditSignal()),this,SLOT(allEditSlot()));
+}
+
+void ClightnessProperty::allEditSlot()
+{
+
+}
+
+void ClightnessProperty::adjModeEditSlot()
+{
+    if(manualButton->isChecked())
+    {
+        for(int i=0; i < MAX_LIGHTNESS_TIME; i ++)
+        {
+            timerCheck[i]->setVisible(false);
+            timerEdit[i]->setVisible(false);
+            timerSlider[i]->setVisible(false);
+        }
+
+        autoLabel->setVisible(false);
+
+        manualSlider->setVisible(true);
+    }
+    else if(timerButton->isChecked())
+    {
+      for(int i=0; i < MAX_LIGHTNESS_TIME; i ++)
+      {
+          timerCheck[i]->setVisible(true);
+          timerEdit[i]->setVisible(true);
+          timerSlider[i]->setVisible(true);
+      }
+
+      autoLabel->setVisible(false);
+      manualSlider->setVisible(false);
+    }
+    else if(autoButton->isChecked())
+    {
+        for(int i=0; i < MAX_LIGHTNESS_TIME; i ++)
+        {
+            timerCheck[i]->setVisible(false);
+            timerEdit[i]->setVisible(false);
+            timerSlider[i]->setVisible(false);
+        }
+
+        autoLabel->setVisible(true);
+
+        manualSlider->setVisible(false);
+    }
+}
+
+void ClightnessProperty::getSettingsFromWidget(QString str)
+{
+    settings.beginGroup(str);
+  settings.beginGroup("lightness");
+  //亮度调节方式
+  if(timerButton->isChecked())
+      settings.setValue("adjMode", 1);
+  else if(autoButton->isChecked())
+      settings.setValue("adjMode", 2);
+  else
+      settings.setValue("adjMode", 0);
+
+  for(int i=0; i < MAX_LIGHTNESS_TIME; i++)
+  {
+     settings.setValue("timeCheck" + QString::number(i), timerCheck[i]->isChecked());
+     settings.setValue("startHour" + QString::number(i),timerEdit[i]->time().hour());
+     settings.setValue("startMin" + QString::number(i), timerEdit[i]->time().minute());
+     settings.setValue("startSec" + QString::number(i),timerEdit[i]->time().second());
+     settings.setValue("timerLightness" + QString::number(i), timerSlider[i]->value());
+  }
+
+  settings.setValue("manualLightness", manualSlider->value());
+  settings.endGroup();
+  settings.endGroup();
+}
+
+void ClightnessProperty::setSettingsToWidget(QString str)
+{
+    settings.beginGroup(str);
+    settings.beginGroup("lightness");
+    //亮度调节方式
+    int adjMode = settings.value("adjMode").toInt();
+    if(adjMode EQ 0)
+       manualButton->setChecked(1);
+    else
+       manualButton->setChecked(0);
+
+    if(adjMode EQ 1)
+       timerButton->setChecked(1);
+    else
+       timerButton->setChecked(0);
+
+    if(adjMode EQ 2)
+       autoButton->setChecked(1);
+    else
+       autoButton->setChecked(0);
+
+    for(int i=0; i < MAX_LIGHTNESS_TIME; i++)
+    {
+      timerCheck[i]->setChecked(settings.value("timeCheck" + QString::number(i)).toBool());
+      QTime time;
+      time.setHMS(settings.value("startHour" + QString::number(i)).toInt(), \
+                  settings.value("startMin" + QString::number(i)).toInt(),\
+                  settings.value("startSec" + QString::number(i)).toInt());
+      timerEdit[i]->setTime(time);
+      timerSlider[i]->setValue(settings.value("timerLightness" + QString::number(i)).toInt());
+     }
+
+    manualSlider->setValue(settings.value("manualLightness").toInt());
+
+    settings.endGroup();
+    settings.endGroup();
 }
 
 ClightnessProperty::~ClightnessProperty()
@@ -236,11 +372,12 @@ CopenCloseProperty::CopenCloseProperty(QWidget *parent):QWidget(parent)
    QVBoxLayout *vLayout;
    QLabel *openTimeLabel, *closeTimeLabel;
 
+   hLayout = new QHBoxLayout(this);
    QGridLayout *mainLayout = new QGridLayout(this);
    closeTimeLabel = new QLabel(tr("关闭时间"),this);
    openTimeLabel = new QLabel(tr("开启时间"),this);
-   mainLayout->addWidget(closeTimeLabel,0,0);
-   mainLayout->addWidget(openTimeLabel,0,1);
+   mainLayout->addWidget(closeTimeLabel,0,1,1,1,Qt::AlignVCenter|Qt::AlignHCenter);
+   mainLayout->addWidget(openTimeLabel,0,3,1,1,Qt::AlignVCenter|Qt::AlignHCenter);
 
    for(i = 0; i < MAX_OPEN_CLOSE_TIME; i ++)
    {
@@ -248,12 +385,14 @@ CopenCloseProperty::CopenCloseProperty(QWidget *parent):QWidget(parent)
      openTimeEdit[i] = new QTimeEdit(this);
      closeTimeEdit[i] = new QTimeEdit(this);
 
-     mainLayout->addWidget(timeCheck[i], 1 + i, 0, 1, 1);
-     mainLayout->addWidget(openTimeEdit[i], 1 + i, 1, 1, 2);
-     mainLayout->addWidget(closeTimeEdit[i], 1 + i, 3, 1, 2);
+     mainLayout->addWidget(timeCheck[i], 1 + i, 0, 1, 1,Qt::AlignTop);
+     mainLayout->addWidget(openTimeEdit[i], 1 + i, 1, 1, 2,Qt::AlignTop);
+     mainLayout->addWidget(closeTimeEdit[i], 1 + i, 3, 1, 2,Qt::AlignTop);
    }
 
-   this->setLayout(mainLayout);
+   hLayout->addLayout(mainLayout);
+   hLayout->addStretch(10);
+   setLayout(hLayout);
 }
 
 CopenCloseProperty::~CopenCloseProperty()

@@ -229,7 +229,7 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
 
     if(type == SCREEN_PROPERTY)
     {
-        ; //фад╩
+        screenProperty->setSettingsToWidget(str);; //фад╩
     }
     else if(type == PROG_PROPERTY)
         progProperty->setSettingsToWidget(str);//stackedWidget->setCurrentIndex();
@@ -309,7 +309,7 @@ void Cproperty::getSettingsFromWidget(QTreeWidgetItem *item)
 
     if(type == SCREEN_PROPERTY)
     {
-        ;//фад╩
+        screenProperty->getSettingsFromWidget(str);//фад╩
     }
     else if(type == PROG_PROPERTY)
         progProperty->getSettingsFromWidget(str);//stackedWidget->setCurrentIndex();

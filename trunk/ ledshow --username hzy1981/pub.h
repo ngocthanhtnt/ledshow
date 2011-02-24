@@ -50,12 +50,13 @@ typedef struct
 #define MIN_3(a,b,c) (MIN_2(a,b) < (c)?MIN_2(a,b):(c))
 
 //定义设置某个变量的宏方法
+/*
 #define SET_VAR(X,Y,X_Addr,X_Len) do{if(((INT8U *)&(X))>=(INT8U *)(X_Addr) && ((INT8U *)&(X))<(INT8U *)(X_Addr)+(X_Len))\
                                                                                    X=Y;\
                                                                                  else\
-                                                                                   ASSERT_FAILED();\
+                                                                                  ASSERT_FAILED();\
                                                                                 }while(0)
-
+ */
 #define SET_SUM OS_SET_STRUCT_SUM
 #define CHK_SUM OS_CHECK_STRUCT_SUM
 #define SET_HT(V) do{V.Head = CHK_BYTE; V.Tail = CHK_BYTE;}while(0)
