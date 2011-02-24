@@ -37,18 +37,6 @@ public:
 };
 */
 
-//screen属性窗
-class CscreenProperty:public QWidget
-{
-    Q_OBJECT
-CnameEdit *nameEdit;
-
-public:
-    void getSettingsFromWidget(QString str);
-    void setSettingsToWidget(QString str);
-    CscreenProperty(QWidget *parent=0);
-    ~CscreenProperty();
-};
 
 //定时开关机调节
 class CopenCloseProperty:public QWidget
@@ -76,14 +64,22 @@ class ClightnessProperty:public QWidget
     Q_OBJECT
     QRadioButton *manualButton;
     QRadioButton *timerButton;
+    QRadioButton *autoButton;
+signals:
+    void adjModeEditSignal();
+    void allEditSignal();
+public slots:
+    void adjModeEditSlot();
+    void allEditSlot();
 public:
     QCheckBox *timerCheck[MAX_LIGHTNESS_TIME];
     QTimeEdit *timerEdit[MAX_LIGHTNESS_TIME];
     QSlider *timerSlider[MAX_LIGHTNESS_TIME];
 
     QSlider *manualSlider;
-    //void getSettingsFromWidget(QString str);
-   //void setSettingsToWidget(QString str);
+    QLabel *autoLabel;
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
     ClightnessProperty(QWidget *parent=0);
     ~ClightnessProperty();
 };
@@ -159,5 +155,21 @@ public:
     CsetFacPara(QWidget *parent=0);
     ~CsetFacPara();
 };
+
+//screen属性窗
+class CscreenProperty:public QWidget
+{
+    Q_OBJECT
+    CnameEdit *nameEdit;
+    CfacScreenProperty *facProperty;
+    ClightnessProperty *lightnessProperty;
+    CopenCloseProperty *openCloseProperty;
+public:
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CscreenProperty(QWidget *parent=0);
+    ~CscreenProperty();
+};
+
 INT8U getScreenParaFromSettings(QString screenStr, S_Screen_Para &screenPara);
 #endif // SCREENPROPERTY_H
