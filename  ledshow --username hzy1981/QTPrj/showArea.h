@@ -137,6 +137,7 @@ public:
     void setAreaVisible(int index, bool flag);
 
     QString getCurrentFileStr();
+    QString getCurrentScreenStr();
     CshowArea * newShowArea();
     CscreenArea(QWidget *parent = 0);
     ~CscreenArea();

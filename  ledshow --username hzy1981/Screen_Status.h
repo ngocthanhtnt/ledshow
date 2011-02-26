@@ -8,7 +8,7 @@
 #define EXT extern
 #endif
 
-#define MAX_LIGHTNESS_LEVEL 0x09
+//#define MAX_LIGHTNESS_LEVEL 0x09
 
 EXT void Screen_Lightness_Proc();
 EXT void Screen_Open_Close_Proc();

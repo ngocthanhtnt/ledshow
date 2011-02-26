@@ -8,7 +8,7 @@ INT8U Get_Cur_Time_Lightness(S_Time *pTime)
   INT8U Min = 0xFF,Diff;
   INT8U Lightness;
   
-  Lightness = MAX_LIGHTNESS_LEVEL; //最高亮度登记
+  Lightness = MAX_LIGHTNESS_LEVEL-1; //最高亮度登记
   
   for(i = 0; i < MAX_LIGHTNESS_TIME; i++)
   {

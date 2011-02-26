@@ -742,6 +742,7 @@ void Check_Update_Program_Para()
   //}
 }
 
+#if DATA_PREP_EN >0
 //检查是否更新预准备数据
 void Check_Update_Data_Prep()
 {
@@ -850,6 +851,7 @@ void Check_Update_Data_Prep()
   }  
   
 }
+#endif
 
 //检查内存中的数据或者参数是否正确
 void Check_Show_Data_Para()
@@ -957,7 +959,9 @@ void Ram_Init()
   memset(&Prog_Para, 0, sizeof(Prog_Para));
   memset(&Screen_Status, 0, sizeof(Screen_Status));
 
+#if DATA_PREP_EN >0
   memset(&Prep_Data, 0, sizeof(Prep_Data));
+#endif  
   memset(&Show_Data, 0, sizeof(Show_Data));
   memset(&Show_Data_Bak, 0, sizeof(Show_Data_Bak));
   memset(&Cur_Block_Index, 0, sizeof(Cur_Block_Index));
@@ -967,8 +971,9 @@ void Ram_Init()
   SET_HT(Card_Para);
   SET_HT(Prog_Para);
   SET_HT(Screen_Status);
-
+#if DATA_PREP_EN >0
   SET_HT(Prep_Data);
+#endif  
   SET_HT(Cur_Block_Index);
   SET_HT(Show_Data);
   SET_HT(Show_Data_Bak);
@@ -992,7 +997,9 @@ void Show_Main_Proc()
   {
     Check_Update_Program_Para(); //检查是否需要更新节目
     Check_Update_Show_Data_Bak(); //检查是否需要更新显示备份区数据
+#if DATA_PREP_EN >0    
     Check_Update_Data_Prep();
+#endif    
     Check_Show_Data_Para();
   }
 }
