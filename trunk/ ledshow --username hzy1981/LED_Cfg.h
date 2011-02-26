@@ -2,6 +2,7 @@
 #define CS_BYTES 1
 #define ROM_CS_BYTES 2
 #define MAX_BORDER_POINTS (40*8)
+#define MAX_LIGHTNESS_LEVEL 16
 
 #define CARD_A0 0x00
 #define CARD_B0 0x01

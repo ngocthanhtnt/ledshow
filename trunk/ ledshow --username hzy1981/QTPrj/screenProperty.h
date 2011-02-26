@@ -44,16 +44,20 @@ class CopenCloseProperty:public QWidget
     Q_OBJECT
     //QRadioButton *manualButton;
     //QRadioButton *timerButton;
-
+signals:
+    void TimeEditSignal();
+public slots:
+    void allEditSlot();
 public:
+    void timeCheckProc();
     QCheckBox *timeCheck[MAX_OPEN_CLOSE_TIME];
     QTimeEdit *openTimeEdit[MAX_OPEN_CLOSE_TIME];
     QTimeEdit *closeTimeEdit[MAX_OPEN_CLOSE_TIME];
     //QSlider *timerSlider[MAX_LIGHTNESS_TIME];
 
     //QSlider *manualSlider;
-    //void getSettingsFromWidget(QString str);
-   //void setSettingsToWidget(QString str);
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
     CopenCloseProperty(QWidget *parent=0);
     ~CopenCloseProperty();
 };
@@ -75,9 +79,13 @@ public:
     QCheckBox *timerCheck[MAX_LIGHTNESS_TIME];
     QTimeEdit *timerEdit[MAX_LIGHTNESS_TIME];
     QSlider *timerSlider[MAX_LIGHTNESS_TIME];
+    QLabel *timerLabel[MAX_LIGHTNESS_TIME];
 
     QSlider *manualSlider;
+    QLabel *manualLabel;
+
     QLabel *autoLabel;
+    void sliderEditProc();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     ClightnessProperty(QWidget *parent=0);

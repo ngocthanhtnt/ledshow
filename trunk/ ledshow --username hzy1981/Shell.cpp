@@ -161,7 +161,7 @@ INT8U Shell_Print_Prog_Status(INT8U argc, INT8S **argv)
   INT8U i;
   
   debug("cur prog %d, play time = %d, counts = %d, play_flag = %d",\
-         Prog_Status.Prog_No, Prog_Status.Time, Prog_Status.Counts);
+         Prog_Status.Play_Status.Prog_No, Prog_Status.Play_Status.Time, Prog_Status.Play_Status.Counts);
   
   debug("prog border step = %d, timer = %d", \
          Prog_Status.Border_Status.Step, Prog_Status.Border_Status.Timer);

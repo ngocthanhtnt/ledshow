@@ -1542,11 +1542,26 @@ void resetShowPara(int width, int height, int color)
 
 }
 
+QString CscreenArea::getCurrentScreenStr()
+{
+    QTreeWidgetItem *item = screenItem;//area->fileItem;
+    if(item == (QTreeWidgetItem *)0)
+    {
+        ASSERT_FAILED();
+        return "";
+    }
+
+    return item->data(0, Qt::UserRole).toString();
+}
+
 QString CscreenArea::getCurrentFileStr()
 {
     CshowArea *area = getFocusArea();
     if(area == (CshowArea *)0)
+    {
+        ASSERT_FAILED();
         return "";
+    }
 
     QTreeWidgetItem *item = area->fileItem;
     if(item == (QTreeWidgetItem *)0)
