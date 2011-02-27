@@ -53,6 +53,7 @@ int checkItemType(QTreeWidgetItem *item)
     return checkStrType(QStr);
 }
 
+//更新item的parent使其当前的subindex为item
 void updateItemSubIndex(QTreeWidgetItem *item)
 {
     QString QStr;

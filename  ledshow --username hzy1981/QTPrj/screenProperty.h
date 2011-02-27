@@ -37,6 +37,23 @@ public:
 };
 */
 
+class CcomTest:public QGroupBox
+{
+    Q_OBJECT
+
+public:
+    QComboBox *comModeCombo; //通信方式
+    QSpinBox *screenIDEdit; //屏幕ID，硬件地址
+    QComboBox *comPortEdit; //串口号
+    QLineEdit *ipEdit; //IP地址
+    QPushButton *connectButton; //链接按钮
+
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+
+    CcomTest(QWidget *parent=0);
+    ~CcomTest();
+};
 
 //定时开关机调节
 class CopenCloseProperty:public QWidget
@@ -108,22 +125,23 @@ public slots:
  QTextEdit *cardParaEdit; //卡参数
 
  //通信参数
- QLineEdit *screenIDEdit; // 屏幕ID
- QLineEdit *newScreenIDEdit; //新设屏幕ID
- QComboBox *comModeCombo; //通信方式
- QComboBox *baudCombo; //波特率
+
  QComboBox *ipModeCombo; //IP获取方式
  QLineEdit *ipEdit; //IP地址
- QLineEdit *newIpEdit; //新IP地址
+ //QLineEdit *newIpEdit; //新IP地址
  QLineEdit *maskEdit; //子网掩码
  QLineEdit *gateEdit; //网关掩码
+ QLineEdit *macEdit; //mac地址
  //基本参数
-
+ QSpinBox *screenIDEdit; // 屏幕ID
+ QComboBox *baudCombo; //波特率
+ QCheckBox *redGreenRevCheck; //红绿
  QComboBox *dataPolarityCombo; //数据极性
  QComboBox *oePolarityCombo; //OE极性
+
  QComboBox *colorCombo; //颜色
- QLineEdit *widthEdit; //屏宽
- QLineEdit *heightEdit; //屏高
+ QSpinBox *widthEdit; //屏宽
+ QSpinBox *heightEdit; //屏高
  QCheckBox *_138Check;     //是否有138译码器
  QComboBox *scanModeCombo; //扫描方式
 
@@ -135,6 +153,7 @@ public slots:
  QComboBox *lineOrderCombo; //行顺序
  //------------------
 
+ CcomTest *comTest;
  //导入参数
  QTextEdit *readParaEdit;
  QPushButton *readParaButton;
