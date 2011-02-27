@@ -954,7 +954,7 @@ void CnameEdit::edited()
     CshowArea *area;
     QTreeWidgetItem *item;
 
-    area = w->screenArea->getFocusArea(); //当前焦点分区
+    //area = w->screenArea->getFocusArea(); //当前焦点分区
 
     //if(area != (CshowArea *)0) //
     {
@@ -964,7 +964,11 @@ void CnameEdit::edited()
         {
             QString str = item->data(0,Qt::UserRole).toString();
             getSettingsFromWidget(str);
-            w->progManage->updateTextHead(item->parent());
+
+            if(checkStrType(str)!=SCREEN_PROPERTY)
+              w->progManage->updateTextHead(item->parent());
+            else
+              w->progManage->updateTextHead(item);
          }
     }
 }

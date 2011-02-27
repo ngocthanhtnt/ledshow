@@ -563,7 +563,7 @@ void CscreenArea::updateShowArea(QTreeWidgetItem *item)
 
     if(type == SCREEN_PROPERTY)
     {
-        if(w->screenArea->screenItem != item)
+        //if(w->screenArea->screenItem != item)
            w->screenArea->screenSettingsInit(item);
     }
     else if(type == PROG_PROPERTY)
