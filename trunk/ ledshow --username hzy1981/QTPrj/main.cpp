@@ -16,11 +16,31 @@ MainWindow *w;
 #define TIMER_SHOW_EN  0 //定时显示使能
  */
 
+void resetCardtoCardParaFile()
+{
+  QSettings cardIniFile(CARD_INI_FILE,QSettings::IniFormat,0);
+
+  cardIniFile.beginGroup("AS-A0");
+  cardIniFile.setValue("maxPoints", 1024);
+  cardIniFile.setValue("maxHeight", 128);
+  cardIniFile.setValue("areas", 8);
+  cardIniFile.setValue("comMode", 0x01); //第0位串口、第1位u盘、第2位以太网、第3位GPRS
+  cardIniFile.endGroup();
+
+  cardIniFile.beginGroup("AS-B0");
+  cardIniFile.setValue("maxPoints", 512);
+  cardIniFile.setValue("maxHeight", 128);
+  cardIniFile.setValue("areas", 8);
+  cardIniFile.setValue("comMode", 0x03); //第0位串口、第1位u盘、第2位以太网、第3位GPRS
+  cardIniFile.endGroup();
+
+}
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    resetCardtoCardParaFile();
     //--------------
     Screen_Para.Base_Para.Width = 256;
     Screen_Para.Base_Para.Height = 256;

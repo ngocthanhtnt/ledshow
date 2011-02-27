@@ -37,6 +37,23 @@ public:
 };
 */
 
+class CipInput:public QWidget
+{
+    Q_OBJECT
+
+public:
+    QLineEdit *edit;
+
+    int getIP();
+    void setIP(int ip);
+
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+
+    CipInput(QWidget *parent=0);
+    ~CipInput();
+};
+
 class CcomTest:public QGroupBox
 {
     Q_OBJECT
@@ -45,7 +62,8 @@ public:
     QComboBox *comModeCombo; //通信方式
     QSpinBox *screenIDEdit; //屏幕ID，硬件地址
     QComboBox *comPortEdit; //串口号
-    QLineEdit *ipEdit; //IP地址
+    QComboBox *comBaudCombo; //波特率
+    CipInput *ipEdit; //IP地址
     QPushButton *connectButton; //链接按钮
 
     void getSettingsFromWidget(QString str);
@@ -108,6 +126,7 @@ public:
     ClightnessProperty(QWidget *parent=0);
     ~ClightnessProperty();
 };
+
 //screen属性窗
 class CfacScreenProperty:public QWidget
 {
@@ -116,7 +135,7 @@ public slots:
  void lockParaProc();
  public:
  QWidget *cardGroup;
- QWidget *comParaGroup;
+ QWidget *netParaGroup;
  QWidget *baseParaGroup;
  QWidget *advanceParaGroup;
  QWidget *readParaGroup;
@@ -126,12 +145,13 @@ public slots:
 
  //通信参数
 
- QComboBox *ipModeCombo; //IP获取方式
- QLineEdit *ipEdit; //IP地址
+ //QComboBox *ipModeCombo; //IP获取方式
+ //QLineEdit *ipEdit; //IP地址
+ CipInput *ipEdit;
  //QLineEdit *newIpEdit; //新IP地址
- QLineEdit *maskEdit; //子网掩码
- QLineEdit *gateEdit; //网关掩码
- QLineEdit *macEdit; //mac地址
+ CipInput *maskEdit; //子网掩码
+ CipInput *gateEdit; //网关掩码
+ CipInput *macEdit; //mac地址
  //基本参数
  QSpinBox *screenIDEdit; // 屏幕ID
  QComboBox *baudCombo; //波特率
@@ -165,8 +185,8 @@ public slots:
  //QPushButton *defButton;
 
  void setEditEnable(bool flag);
-    //void getSettingsFromWidget(QString str);
-    //void setSettingsToWidget(QString str);
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
     CfacScreenProperty(QWidget *parent=0);
     ~CfacScreenProperty();
 };
