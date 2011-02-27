@@ -9,11 +9,6 @@
 extern MainWindow *w;
 //节目配置文件
 QSettings settings(PROG_INI_FILE,QSettings::IniFormat,0);
-//屏幕配置文件
-QSettings screenSettings(SCREEN_INI_FILE,QSettings::IniFormat,0);
-//控制卡配置文件
-QSettings cardSettings(CARD_INI_FILE,QSettings::IniFormat,0);
-
 
 
 #define QT_MOVE_STEP_TIMER MOVE_STEP_TIMER/2 //仿真时定时间隔
@@ -28,6 +23,8 @@ QString getItemStr(QTreeWidgetItem *item)
 {
     return item->data(0,Qt::UserRole).toString();
 }
+
+
 
 void MainWindow::setupFileActions()
 {
