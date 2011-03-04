@@ -74,7 +74,7 @@ public:
 };
 
 //定时开关机调节
-class CopenCloseProperty:public QWidget
+class CopenCloseProperty:public QGroupBox
 {
     Q_OBJECT
     //QRadioButton *manualButton;
@@ -98,7 +98,7 @@ public:
 };
 
 //亮度调节
-class ClightnessProperty:public QWidget
+class ClightnessProperty:public QGroupBox
 {
     Q_OBJECT
     QRadioButton *manualButton;
@@ -128,12 +128,15 @@ public:
 };
 
 //screen属性窗
-class CfacScreenProperty:public QWidget
+class CfacScreenProperty:public QGroupBox
 {
     Q_OBJECT
 public slots:
- void lockParaProc();
+ void saveParaProc(); //保存参数
+ void loadParaProc(); //加载参数
  public:
+ QTabWidget *tabWidget;
+
  QWidget *cardGroup;
  QWidget *netParaGroup;
  QWidget *baseParaGroup;
@@ -168,7 +171,7 @@ public slots:
  //高级设置
  QCheckBox *defParaCheck; //使用默认参数
  QComboBox *freqCombo; //扫描频率
- QSpinBox *lineHideBox; //行消隐藏
+ QComboBox *lineHideCombo; //行消隐藏
  QComboBox *dataMirrorCombo; //数据镜像
  QComboBox *lineOrderCombo; //行顺序
  //------------------
@@ -179,8 +182,8 @@ public slots:
  QPushButton *readParaButton;
  QPushButton *importParaButton;
 
- QPushButton *lockParaButton;
- QPushButton *sendButton;
+ QPushButton *endButton;
+ QPushButton *loadButton;
  QPushButton *exportButton;
  //QPushButton *defButton;
 
@@ -211,6 +214,8 @@ class CscreenProperty:public QWidget
     CfacScreenProperty *facProperty;
     ClightnessProperty *lightnessProperty;
     CopenCloseProperty *openCloseProperty;
+signals:
+    void editSignal();
 public:
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);

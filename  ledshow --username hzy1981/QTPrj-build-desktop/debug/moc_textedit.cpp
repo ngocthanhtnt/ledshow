@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'textedit.h'
 **
-** Created: Sat Feb 26 11:56:52 2011
+** Created: Fri Mar 4 13:42:31 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
