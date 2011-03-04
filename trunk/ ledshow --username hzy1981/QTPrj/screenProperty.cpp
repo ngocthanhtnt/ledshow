@@ -104,34 +104,56 @@ CscreenProperty::CscreenProperty(QWidget *parent):QWidget(parent)
 {
 
     QTabWidget *tab;
-    QHBoxLayout *hLayout;
+    QHBoxLayout *hLayout,*mainLayout;
     QVBoxLayout *vLayout;
+    //QGroupBox *lightnessGroup;
+    //QGroupBox *openCloseTimeGroup;
+    //QGroupBox *facParaGroup;
 
-    hLayout = new QHBoxLayout(this);
+    //lightnessGroup = new QGroupBox(tr("亮度设置"),this);
+    //openCloseTimeGroup = new QGroupBox(tr("开关机设置"),this);
+    //facParaGroup = new QGroupBox(tr("安装参数"),this);
+
+    mainLayout = new QHBoxLayout(this);
 
     vLayout = new QVBoxLayout(this);
     nameEdit = new CnameEdit(this);
     vLayout->addWidget(nameEdit);
     vLayout->addStretch(10);
-    hLayout->addLayout(vLayout);
+    mainLayout->addLayout(vLayout);
 
-    tab = new QTabWidget(this);
+    //tab = new QTabWidget(this);
+     //hLayout = new QHBoxLayout(this);
     facProperty = new CfacScreenProperty(this);
 
-    //QGroupBox *lightnessGroup = new QGroupBox(tr("亮度调节"),this);
-    //vLayout = new QVBoxLayout(this);
+    facProperty->comTest->setVisible(false);
+    facProperty->endButton->setVisible(false);
+    facProperty->loadButton->setVisible(false);
+    facProperty->tabWidget->removeTab(facProperty->tabWidget->indexOf(facProperty->readParaGroup));
+    //hLayout->addWidget(facProperty);
+    //facParaGroup->setLayout(hLayout);
+
+    //hLayout = new QHBoxLayout(this);
     lightnessProperty = new ClightnessProperty(this);
+    //hLayout->addWidget(lightnessProperty);
+    //lightnessGroup->setLayout(hLayout);
+
+    //hLayout = new QHBoxLayout(this);
     openCloseProperty = new CopenCloseProperty(this);
-    //vLayout->addWidget(lightnessProperty);
+    //hLayout->addWidget(openCloseProperty,0,Qt::AlignTop);
+    //openCloseTimeGroup->setLayout(hLayout);
     //lightnessGroup->setLayout(vLayout);
     //facProperty->setEnabled(false);
-    //facProperty->lockParaButton->setEnabled(true);
-    tab->addTab(lightnessProperty, tr("亮度调节"));
-    tab->addTab(openCloseProperty, tr("定时开关机"));
+    //facProperty->endButton->setEnabled(true);
+    //tab->addTab(lightnessProperty, tr("亮度调节"));
+    //tab->addTab(openCloseProperty, tr("定时开关机"));
 
-    tab->addTab(facProperty, tr("工厂参数"));
-    hLayout->addWidget(tab);
-    hLayout->addStretch(10);
+   // tab->addTab(facProperty, tr("工厂参数"));
+    //hLayout->addWidget(tab);
+    mainLayout->addWidget(lightnessProperty);
+    mainLayout->addWidget(openCloseProperty);
+    mainLayout->addWidget(facProperty);
+    mainLayout->addStretch(10);
 
     //setLayout(hLayout);
      //hLayout->addLayout(vLayout);
@@ -151,6 +173,7 @@ void CscreenProperty::getSettingsFromWidget(QString str)
     nameEdit->getSettingsFromWidget(str);
     lightnessProperty->getSettingsFromWidget(str);
     openCloseProperty->getSettingsFromWidget(str);
+
 }
 
 void CscreenProperty::setSettingsToWidget(QString str)
@@ -158,6 +181,7 @@ void CscreenProperty::setSettingsToWidget(QString str)
     nameEdit->setSettingsToWidget(str);
     lightnessProperty->setSettingsToWidget(str);
     openCloseProperty->setSettingsToWidget(str);
+    facProperty->setSettingsToWidget(str);
 }
 /*
 class ClightnessProperty:public QWidget
@@ -178,7 +202,7 @@ public:
     ~ClightnessProperty();
 };
 */
-ClightnessProperty::ClightnessProperty(QWidget *parent):QWidget(parent)
+ClightnessProperty::ClightnessProperty(QWidget *parent):QGroupBox(parent)
 {
     INT8U i;
 
@@ -212,7 +236,7 @@ ClightnessProperty::ClightnessProperty(QWidget *parent):QWidget(parent)
    //manualSlider->setFocusPolicy(Qt::StrongFocus);
    //manualSlider->setTickPosition(QSlider::TicksAbove);
    manualLabel = new QLabel(this);
-
+   manualLabel->setFixedWidth(15);
    hLayout->addWidget(manualSlider);
    hLayout->addWidget(manualLabel);
    gHLayout->addLayout(hLayout);
@@ -237,6 +261,7 @@ ClightnessProperty::ClightnessProperty(QWidget *parent):QWidget(parent)
      //timerSlider[i]->setTickPosition(QSlider::TicksAbove);
 
      timerLabel[i] = new QLabel(this);
+     timerLabel[i]->setFixedWidth(15);
 
      hLayout->addWidget(timerCheck[i]);
      hLayout->addWidget(timerEdit[i]);
@@ -425,6 +450,8 @@ void ClightnessProperty::setSettingsToWidget(QString str)
     adjModeEditSlot();
     sliderEditProc();
 
+    setTitle(tr("亮度参数"));
+
     connect(this,SIGNAL(adjModeEditSignal()),this,SLOT(adjModeEditSlot()));
     connect(this,SIGNAL(allEditSignal()),this,SLOT(allEditSlot()));
 }
@@ -434,7 +461,7 @@ ClightnessProperty::~ClightnessProperty()
 
 }
 
-CopenCloseProperty::CopenCloseProperty(QWidget *parent):QWidget(parent)
+CopenCloseProperty::CopenCloseProperty(QWidget *parent):QGroupBox(parent)
 {
     INT8U i;
 
@@ -473,6 +500,7 @@ CopenCloseProperty::CopenCloseProperty(QWidget *parent):QWidget(parent)
 
    connect(this, SIGNAL(TimeEditSignal()), this, SLOT(allEditSlot()));
 
+   setTitle(tr("开关机参数"));
    timeCheckProc();
 }
 
@@ -512,7 +540,7 @@ void CopenCloseProperty::getSettingsFromWidget(QString str)
     settings.endGroup();
     settings.endGroup();
 }
-
+//开关机时段属性
 void CopenCloseProperty::setSettingsToWidget(QString str)
 {
     disconnect(this, SIGNAL(TimeEditSignal()), this, SLOT(allEditSlot()));
@@ -573,10 +601,10 @@ class CfacScreenProperty:public QWidget
  //高级设置
  QCheckBox *defParaCheck; //使用默认参数
  QComboBox *freqCombo; //扫描频率
- QSpinBox *lineHideBox; //行消隐藏
+ QSpinBox *lineHideCombo; //行消隐藏
  //------------------
 
- QPushButton *lockParaButton;
+ QPushButton *endButton;
  QPushButton *readParaButton;
  QPushButton *cancelButton;
  QPushButton *okButton;
@@ -718,15 +746,17 @@ CcomTest::~CcomTest()
 }
 
 //工厂参数编辑
-CfacScreenProperty::CfacScreenProperty(QWidget *parent):QWidget(parent)
+CfacScreenProperty::CfacScreenProperty(QWidget *parent):QGroupBox(parent)
 {
-    QTabWidget *tabWidget;
+
     QHBoxLayout *hLayout;
     QVBoxLayout *vLayout;
     QGridLayout *gridLayout;
 
     QHBoxLayout *mainLayout;
+    QVBoxLayout *mainVLayout;
 
+    mainVLayout = new QVBoxLayout(this);
     mainLayout = new QHBoxLayout(this);
     hLayout = new QHBoxLayout(this);
 
@@ -891,7 +921,7 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QWidget(parent)
    advanceParaGroup = new QWidget(this);//QGroupBox(tr("高级配置"),this);
    defParaCheck = new QCheckBox(tr("使用默认设置"),this);
    freqCombo = new QComboBox(this);
-   lineHideBox = new QSpinBox(this);
+   lineHideCombo = new QComboBox(this);
    dataMirrorCombo = new QComboBox(this);
    lineOrderCombo = new QComboBox(this);
 
@@ -909,7 +939,7 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QWidget(parent)
    gridLayout->addWidget(freqCombo, 1, 1);
 
    gridLayout->addWidget(lineHideLabel, 1, 2);
-   gridLayout->addWidget(lineHideBox,1,3);
+   gridLayout->addWidget(lineHideCombo,1,3);
 
    gridLayout->addWidget(dataMirrorLabel, 2, 0);
    gridLayout->addWidget(dataMirrorCombo, 2, 1);
@@ -937,15 +967,19 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QWidget(parent)
    readParaGroup->setLayout(vLayout);
    tabWidget->addTab(readParaGroup, tr("回读参数"));
 
-   vLayout = new QVBoxLayout(this);
-   lockParaButton = new QPushButton(tr("编辑解锁"), this);
-   sendButton = new QPushButton(tr("加载参数"), this);
-   exportButton = new QPushButton(tr("导出配置文件"), this);
+   hLayout = new QHBoxLayout(this);
+   endButton = new QPushButton(tr("完成设置"), this);
+   loadButton = new QPushButton(tr("发送参数"), this);
+   //exportButton = new QPushButton(tr("导出配置文件"), this);
   // saveButton = new QPushButton(tr("保存参数"), this);
    //defButton = new QPushButton(tr("恢复默认"), this);
-   vLayout->addWidget(lockParaButton);
-   vLayout->addWidget(sendButton);
-   vLayout->addWidget(exportButton);
+
+   hLayout->addStretch();
+   hLayout->addWidget(loadButton);
+   hLayout->addStretch();
+   hLayout->addWidget(endButton);
+   hLayout->addStretch();
+   //vLayout->addWidget(exportButton);
    //vLayout->addStretch(10);
    //vLayout->addWidget(cancelButton);
    //hLayout->addStretch(10);
@@ -956,31 +990,120 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QWidget(parent)
    //comTestGroup->setLayout(hLayout);
 
    mainLayout->addWidget(tabWidget);
-   //mainLayout->addWidget(lockParaButton);
+   //mainLayout->addWidget(endButton);
    mainLayout->addWidget(comTest);
-   mainLayout->addLayout(vLayout);
+   //mainLayout->addLayout(vLayout);
+   mainVLayout->addLayout(mainLayout);
+   mainVLayout->addLayout(hLayout);
+
+   //endButton->setVisible(false);
+   //loadButton->setVisible(false);
+
    //mainLayout->addStretch(10);
-   setLayout(mainLayout);
+   setLayout(mainVLayout);
 
   setEditEnable(false);
    //this->setEnabled(false);
    //this->setc
 
-   connect(lockParaButton, SIGNAL(clicked()), this, SLOT(lockParaProc()));
+  setTitle(tr("安装参数"));
+   connect(loadButton, SIGNAL(clicked()), this, SLOT(loadParaProc));
+   connect(endButton, SIGNAL(clicked()), this, SLOT(saveParaProc()));
 
   //----暂时将网络参数删除！
    tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
 }
 
+/*
+ //QComboBox *ipModeCombo; //IP获取方式
+ //QLineEdit *ipEdit; //IP地址
+ CipInput *ipEdit;
+ //QLineEdit *newIpEdit; //新IP地址
+ CipInput *maskEdit; //子网掩码
+ CipInput *gateEdit; //网关掩码
+ CipInput *macEdit; //mac地址
+ //基本参数
+ QSpinBox *screenIDEdit; // 屏幕ID
+ QComboBox *baudCombo; //波特率
+ QCheckBox *redGreenRevCheck; //红绿
+ QComboBox *dataPolarityCombo; //数据极性
+ QComboBox *oePolarityCombo; //OE极性
+
+ QComboBox *colorCombo; //颜色
+ QSpinBox *widthEdit; //屏宽
+ QSpinBox *heightEdit; //屏高
+ QCheckBox *_138Check;     //是否有138译码器
+ QComboBox *scanModeCombo; //扫描方式
+
+ //高级设置
+ QCheckBox *defParaCheck; //使用默认参数
+ QComboBox *freqCombo; //扫描频率
+ QSpinBox *lineHideCombo; //行消隐藏
+ QComboBox *dataMirrorCombo; //数据镜像
+ QComboBox *lineOrderCombo; //行顺序
+ //------------------
+
+ CcomTest *comTest;
+ */
+
 void CfacScreenProperty::getSettingsFromWidget(QString str)
 {
+  settings.beginGroup("facPara");
+
+  ipEdit->getSettingsFromWidget(str);
+  maskEdit->getSettingsFromWidget(str);
+  gateEdit->getSettingsFromWidget(str);
+  macEdit->getSettingsFromWidget(str);
+
+  settings.setValue("screenID", screenIDEdit->value()); //硬件地址
+  settings.setValue("baud", baudCombo->currentIndex());
+  settings.setValue("redGreenRev", redGreenRevCheck->isChecked());
+  settings.setValue("dataPolarity", dataPolarityCombo->currentIndex());
+  settings.setValue("oePolarity", oePolarityCombo->currentIndex());
+  settings.setValue("color", colorCombo->currentIndex());
+  settings.setValue("width", widthEdit->value());
+  settings.setValue("height", heightEdit->value());
+  settings.setValue("_138Check", _138Check->isChecked());
+  settings.setValue("scanMode", scanModeCombo->currentIndex());
+
+  settings.setValue("advDefPara", defParaCheck->isChecked());
+  settings.setValue("freq", freqCombo->currentIndex());
+  settings.setValue("lineHide", lineHideCombo->currentIndex());
+  settings.setValue("dataMirror", dataMirrorCombo->currentIndex());
+  settings.setValue("lineOrder", lineOrderCombo->currentIndex());
+
+  settings.endGroup();
 
 
 }
 
 void CfacScreenProperty::setSettingsToWidget(QString str)
 {
+    settings.beginGroup("facPara");
 
+    ipEdit->setSettingsToWidget(str);
+    maskEdit->setSettingsToWidget(str);
+    gateEdit->setSettingsToWidget(str);
+    macEdit->setSettingsToWidget(str);
+
+    screenIDEdit->setValue(settings.value("screenID").toInt());
+    baudCombo->setCurrentIndex(settings.value("baud").toInt());
+    redGreenRevCheck->setChecked(settings.value("redGreenRev").toBool());
+    dataPolarityCombo->setCurrentIndex(settings.value("dataPolarity").toInt());
+    oePolarityCombo->setCurrentIndex(settings.value("oePolarity").toInt());
+    colorCombo->setCurrentIndex(settings.value("color").toInt());
+    widthEdit->setValue(settings.value("width").toInt());
+    heightEdit->setValue(settings.value("height").toInt());
+    _138Check->setChecked(settings.value("_138Check").toBool());
+    scanModeCombo->setCurrentIndex(settings.value("scanMode").toInt());
+
+    defParaCheck->setChecked(settings.value("advDefPara").toBool());
+    freqCombo->setCurrentIndex(settings.value("freq").toInt());
+    lineHideCombo->setCurrentIndex(settings.value("lineHide").toInt());
+    dataMirrorCombo->setCurrentIndex(settings.value("dataMirror").toInt());
+    lineOrderCombo->setCurrentIndex(settings.value("lineOrder").toInt());
+
+    settings.endGroup();
 
 }
 
@@ -998,9 +1121,9 @@ void CfacScreenProperty::setEditEnable(bool flag)
         baseParaGroup->setEnabled(false);
         advanceParaGroup->setEnabled(false);
         readParaGroup->setEnabled(false);
-        sendButton->setEnabled(false);
-        exportButton->setEnabled(false);
-        comTest->setEnabled(false);
+        //loadButton->setEnabled(false);
+        //exportButton->setEnabled(false);
+        //comTest->setEnabled(false);
     }
     else
     {
@@ -1009,41 +1132,27 @@ void CfacScreenProperty::setEditEnable(bool flag)
         baseParaGroup->setEnabled(true);
         advanceParaGroup->setEnabled(true);
         readParaGroup->setEnabled(true);
-        sendButton->setEnabled(true);
-        exportButton->setEnabled(true);
-        comTest->setEnabled(true);
+        //loadButton->setEnabled(true);
+        //exportButton->setEnabled(true);
+        //comTest->setEnabled(true);
     }
 }
 
-void CfacScreenProperty::lockParaProc()
+//加载参数
+void CfacScreenProperty::loadParaProc()
 {
-    if(lockParaButton->text() EQ tr("编辑解锁"))
-    {
-        bool ok;
-        QString text = QInputDialog::getText(this, tr("请输入密码"),
-                                             tr("密码"), QLineEdit::Password,
-                                             tr(""), &ok);
-        if (ok && text EQ "168")
-        {
-            lockParaButton->setText(tr("编辑锁定"));
-            setEditEnable(true);
-            //w->property->setWindowModality(Qt::WindowModal);
-            //w->property->show();
-            //this->show();
-       }
-       else if(ok)
-        {
-           QMessageBox::information(0, tr(APP_NAME),
-                                    tr("密码错误!"),tr("确定"));
+    QString str;
 
-       }
-    }
-    else
-    {
-        lockParaButton->setText(tr("编辑解锁"));
-        setEditEnable(false);
-    }
+    str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
+    getSettingsFromWidget(str);
+}
 
+void CfacScreenProperty::saveParaProc()
+{
+    QString str;
+
+    str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
+    getSettingsFromWidget(str);
 }
 
 CsetFacPara::CsetFacPara(QWidget *parent):QMainWindow(parent)

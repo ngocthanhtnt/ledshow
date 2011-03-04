@@ -8,13 +8,8 @@
 
 //----根据不同的屏幕和硬件配置下列项目
 #define MAX_POINTS (1024*75L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
-#define MAX_PROG_NUM 10 //最大节目数
-#define MAX_AREA_NUM 8 //每个节目下最大分区数
-#define MAX_FILE_NUM 8 //每个分区下最大文件数
-#define MAX_BLOCK_NUM  4000 //显示数据块的大小
-#define BLOCK_DATA_LEN 249 //一个显示数据块的大小
-#define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
-#define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
+#define MAX_BLOCK_NUM  4000 //最大存储块数
+#define MAX_SCAN_BLOCK_NUM 8 //最大扫描块
 
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define CLOCK_SHOW_EN  1 //表盘显示使能
