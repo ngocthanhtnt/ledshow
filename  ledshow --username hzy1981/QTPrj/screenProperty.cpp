@@ -838,9 +838,18 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QGroupBox(parent)
 
     widthEdit = new QSpinBox(this);
     widthEdit->setFixedWidth(WIDTH_0);
+    widthEdit->setSingleStep(8);
+    widthEdit->setMinimum(8);
+    widthEdit->setMaximum(4096);
+    widthEdit->setFocusPolicy(Qt::NoFocus); //禁止键盘输入
 
     heightEdit = new QSpinBox(this);
     heightEdit->setFixedWidth(WIDTH_0);
+    heightEdit->setSingleStep(8);
+    heightEdit->setMinimum(8);
+    heightEdit->setMaximum(4096);
+    heightEdit->setFocusPolicy(Qt::NoFocus); //禁止键盘输入
+
 
     _138Check = new QCheckBox(tr("使用138译码器"),this);
     scanModeCombo = new QComboBox(this);
@@ -1052,8 +1061,8 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QGroupBox(parent)
    //this->setc
 
   setTitle(tr("安装参数"));
-   connect(loadButton, SIGNAL(clicked()), this, SLOT(loadParaProc));
-   connect(endButton, SIGNAL(clicked()), this, SLOT(saveParaProc()));
+   connect(loadButton, SIGNAL(clicked()), this, SLOT(loadParaProc()));
+   connect(endButton, SIGNAL(clicked()), this, SLOT(endProc()));
 
   //----暂时将网络参数删除！
    tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
@@ -1093,6 +1102,7 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QGroupBox(parent)
 
 void CfacScreenProperty::getSettingsFromWidget(QString str)
 {
+  settings.beginGroup(str);
   settings.beginGroup("facPara");
 
   ipEdit->getSettingsFromWidget(str);
@@ -1118,12 +1128,14 @@ void CfacScreenProperty::getSettingsFromWidget(QString str)
   settings.setValue("lineOrder", lineOrderCombo->currentIndex());
 
   settings.endGroup();
+  settings.endGroup();
 
 
 }
 
 void CfacScreenProperty::setSettingsToWidget(QString str)
 {
+    settings.beginGroup(str);
     settings.beginGroup("facPara");
 
     ipEdit->setSettingsToWidget(str);
@@ -1148,6 +1160,7 @@ void CfacScreenProperty::setSettingsToWidget(QString str)
     dataMirrorCombo->setCurrentIndex(settings.value("dataMirror").toInt());
     lineOrderCombo->setCurrentIndex(settings.value("lineOrder").toInt());
 
+    settings.endGroup();
     settings.endGroup();
 
 }
@@ -1189,15 +1202,13 @@ void CfacScreenProperty::loadParaProc()
     QString str;
 
     str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
+    qDebug("loadpara:%s",(const char *)str.toLocal8Bit());
     getSettingsFromWidget(str);
 }
 
-void CfacScreenProperty::saveParaProc()
+void CfacScreenProperty::endProc()
 {
-    QString str;
 
-    str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
-    getSettingsFromWidget(str);
 }
 
 CsetFacPara::CsetFacPara(QWidget *parent):QMainWindow(parent)
