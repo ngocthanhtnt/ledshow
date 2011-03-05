@@ -132,7 +132,7 @@ class CfacScreenProperty:public QGroupBox
 {
     Q_OBJECT
 public slots:
- void saveParaProc(); //保存参数
+ void endProc(); //保存参数
  void loadParaProc(); //加载参数
  public:
  QTabWidget *tabWidget;

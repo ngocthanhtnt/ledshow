@@ -107,7 +107,7 @@ typedef struct
   INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态--主要用于与中断显示同步
 
   INT8U Last_File_No; //上次读取的文件参数
-  INT8U Last_SCN_No; //前次读取的屏幕号
+  INT16U Last_SCN_No; //前次读取的屏幕号
 
   INT8U CS[CS_BYTES];//前面的数据都带校验和
 

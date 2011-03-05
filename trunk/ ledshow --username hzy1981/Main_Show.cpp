@@ -207,18 +207,18 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 
   if(Prog_Para.Area_File_Num[Area_No] EQ 0)
       return 0;
-
+/*
   if(Prog_Status.Area_Status[Area_No].New_File_Flag EQ 0 &&\
-     Prog_Status.Area_Status[Area_No].New_SCN_Flag EQ 0)
+     Prog_Status.Area_Status[Area_No].New_SCN_Flag > 0)
   {
       if(Prog_Status.Area_Status[Area_No].SCN_No >= Prog_Status.File_Para[Area_No].Pic_Para.SNum)
       {
-          Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
+          Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG; //到了最后一屏则切换到下一个文件
           Prog_Status.Area_Status[Area_No].File_No ++;
           SET_SUM(Prog_Status.Area_Status[Area_No]);
       }
   }
-
+*/
   //检查是否需要更新到下一文件
   if(Prog_Status.Area_Status[Area_No].New_File_Flag)//SNum > Prog_Status.File_Para[Area_No].Pic_Para.SNum)
   {
@@ -233,13 +233,13 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
        Prog_Status.Area_Status[Area_No].File_No >= MAX_FILE_NUM) //所有文件全部都播放了一遍
     {
       Prog_Status.Area_Status[Area_No].File_No = 0;
-      Prog_Status.Area_Status[Area_No].Counts++; //所有文件都播放了一次，则将播放次数+1
+      Prog_Status.Area_Status[Area_No].Counts++; //文件播放一次+1
       SET_SUM(Prog_Status.Area_Status[Area_No]);
 
       Check_Prog_Play_Counts();
       if(Check_Prog_End() > 0) //节目结束了！
       {
-         Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+         Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG; //新节目
          Prog_Status.Play_Status.Prog_No ++;
          SET_SUM(Prog_Status.Play_Status);
          return 0;
@@ -248,7 +248,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 
     debug("\r\nprog %d area %d play new file: %d", Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
     //先将文件参数读出 
-    Prog_Status.Area_Status[Area_No].Play_Flag = 0; //关闭本分区显示
+    //Prog_Status.Area_Status[Area_No].Play_Flag = 0; //关闭本分区显示
     SET_SUM(Prog_Status.Area_Status[Area_No]);
 
     if(Prog_Status.Area_Status[Area_No].Last_File_No EQ Prog_Status.Area_Status[Area_No].File_No &&\
@@ -262,7 +262,8 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
     else
     {
         Len = 0;
-        Prog_Status.Area_Status[Area_No].Last_File_No = 0xFF;
+        Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFFFF;
+        Prog_Status.Area_Status[Area_No].Last_File_No = 0xFF; //先预置一个不存在的文件号
         SET_SUM(Prog_Status.Area_Status[Area_No]);
 
     #if DATA_PREP_EN
@@ -287,17 +288,17 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
     #endif
     }
 
-    if(Len EQ 0)
+    if(Len EQ 0) //读不出来则继续读下一个文件参数
     {
       ASSERT_FAILED();
 
-      //memset(&Prog_Status.File_Para[Area_No], 0, sizeof());
       Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
       Prog_Status.Area_Status[Area_No].File_No ++;
 
     }
     else
     {
+        //读出文件参数了，保留为上次读出的文件参数
       Prog_Status.Area_Status[Area_No].Last_File_No = Prog_Status.Area_Status[Area_No].File_No;
       Prog_Status.Area_Status[Area_No].New_File_Flag = 0;
       Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
@@ -325,8 +326,8 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
       }
 
       //读出显示数据
-      Prog_Status.Area_Status[Area_No].Play_Flag = 0; //--读取显示数据过程中将播放标志置0，从而中断程序中不播放
-      SET_SUM(Prog_Status.Area_Status[Area_No]);
+      //Prog_Status.Area_Status[Area_No].Play_Flag = 0; //--读取显示数据过程中将播放标志置0，从而中断程序中不播放
+      //SET_SUM(Prog_Status.Area_Status[Area_No]);
 
       debug("\r\nread prog %d area %d, file %d %dth SCN show data", \
             Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,Prog_Status.Area_Status[Area_No].SCN_No);
@@ -388,7 +389,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
       if(Len0 >= 0)
       {
         Prog_Status.Area_Status[Area_No].Last_SCN_No = Prog_Status.Area_Status[Area_No].SCN_No;
-        Prog_Status.Area_Status[Area_No].Play_Flag = 1; //打开本分区显示
+        //Prog_Status.Area_Status[Area_No].Play_Flag = 1; //打开本分区显示
         Prog_Status.Area_Status[Area_No].New_SCN_Flag = 0;
         SET_SUM(Prog_Status.Area_Status[Area_No]);
       }
@@ -717,6 +718,10 @@ void Check_Update_Program_Para()
           {
             Prog_Status.Area_Status[i].New_File_Flag = NEW_FLAG;
             Prog_Status.Area_Status[i].File_No = 0;
+            Prog_Status.Area_Status[i].SCN_No = 0;
+
+            Prog_Status.Area_Status[i].Last_File_No = 0xFF;
+            Prog_Status.Area_Status[i].Last_SCN_No = 0xFFFF;
             SET_SUM(Prog_Status.Area_Status[i]);
           }
         }

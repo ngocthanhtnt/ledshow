@@ -285,6 +285,8 @@ void Update_Pic_Data(INT8U Area_No)
   S_Point P0;
   static S_Int8U Sec ={CHK_BYTE, 0xFF, {0}, CHK_BYTE};
   
+  qDebug("update area %d, step = %d, max step = %d", Area_No, Prog_Status.Area_Status[Area_No].Step, Prog_Status.Area_Status[Area_No].Max_Step);
+
   if(Prog_Status.Play_Status.New_Prog_Flag ||\
      Prog_Status.Area_Status[Area_No].New_File_Flag ||\
      Prog_Status.Area_Status[Area_No].New_SCN_Flag) //该节目或该分区还没有进入播放状态?
@@ -301,8 +303,6 @@ void Update_Pic_Data(INT8U Area_No)
  if(Prog_Status.Area_Status[Area_No].In_Step EQ 0 &&\
     Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
   {
-    Prog_Status.Area_Status[Area_No].In_Max_Step = Get_In_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
-
     In_Mode = Prog_Status.File_Para[Area_No].Pic_Para.In_Mode;
     if(In_Mode EQ 0) //随机
         In_Mode = Cur_Time.Time[T_SEC] % S_NUM(In_Mode_Func);
@@ -310,14 +310,13 @@ void Update_Pic_Data(INT8U Area_No)
         In_Mode = In_Mode - 1;
 
     Prog_Status.Area_Status[Area_No].In_Mode = In_Mode;
-}
+    Prog_Status.Area_Status[Area_No].In_Max_Step = Get_In_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
+  }
 
 
  if(Prog_Status.Area_Status[Area_No].Out_Step EQ 0 &&\
     Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
  {
-    Prog_Status.Area_Status[Area_No].Out_Max_Step = Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
-
     Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
     if(Out_Mode EQ 0) //随机
      Out_Mode = Cur_Time.Time[T_SEC] % S_NUM(Out_Mode_Func);
@@ -325,7 +324,8 @@ void Update_Pic_Data(INT8U Area_No)
      Out_Mode = Out_Mode - 2;
 
     Prog_Status.Area_Status[Area_No].Out_Mode = Out_Mode;
- }
+    Prog_Status.Area_Status[Area_No].Out_Max_Step = Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
+}
 
   //还在移动状态
   if(Prog_Status.Area_Status[Area_No].In_Step < Prog_Status.Area_Status[Area_No].In_Max_Step)
@@ -387,7 +387,7 @@ void Update_Pic_Data(INT8U Area_No)
                 //Prog_Status.Area_Status[Area_No].Step_Timer = 0;
                 //Prog_Status.Area_Status[Area_No].Stay_Time = 0;
                 Prog_Status.Area_Status[Area_No].Out_Time = 0;
-                Prog_Status.Area_Status[Area_No].Play_Flag = 0;
+                //Prog_Status.Area_Status[Area_No].Play_Flag = 0;
                 SET_SUM(Prog_Status.Area_Status[Area_No]);
             }
           }
@@ -404,7 +404,7 @@ void Update_Pic_Data(INT8U Area_No)
           Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
           Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
           Prog_Status.Area_Status[Area_No].SCN_No = 0; //重新更新背景
-          Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFF;
+          Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFFFF;
           SET_SUM(Prog_Status.Area_Status[Area_No]);
           return;
         }

@@ -229,6 +229,7 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
 
     if(type == SCREEN_PROPERTY)
     {
+        qDebug("set screen para to widget:%s",(const char *)str.toLocal8Bit());
         screenProperty->setSettingsToWidget(str);; //фад╩
     }
     else if(type == PROG_PROPERTY)

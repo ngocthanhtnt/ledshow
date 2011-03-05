@@ -652,6 +652,14 @@ void MainWindow::previewProc()
 {
   stepTimer += QT_MOVE_STEP_TIMER;
   Show_Main_Proc();
+  Show_Main_Proc();
+  Show_Main_Proc();
+  Show_Main_Proc();
+  Show_Main_Proc();
+  Show_Main_Proc();
+  Show_Main_Proc();
+  Show_Main_Proc();
+  Show_Main_Proc();
 
   if(stepTimer >= MOVE_STEP_TIMER)
   {
