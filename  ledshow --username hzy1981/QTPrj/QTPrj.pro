@@ -8,7 +8,7 @@ QT       += core gui
 
 TARGET = QTPrj
 TEMPLATE = app
-
+LIBS += libqextserialport
 
 SOURCES += main.cpp\
         mainwindow.cpp \

@@ -29,7 +29,7 @@ typedef unsigned short int INT16U;
 typedef short int INT16S;
 typedef unsigned char INT8U;
 typedef char INT8S;
-typedef unsigned char BOOL;
+//typedef unsigned char BOOL;
 
 #define FILE_R  0
 #define FILE_W  1

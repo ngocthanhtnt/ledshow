@@ -3,6 +3,10 @@
 #include <QMovie>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QextSerialPort>
+#include <QextSerialEnumerator>
+#include <QList>
+#include <QObject>
 #include "mainwindow.h"
 #include "screenProperty.h"
 
@@ -126,6 +130,7 @@ CscreenProperty::CscreenProperty(QWidget *parent):QWidget(parent)
      //hLayout = new QHBoxLayout(this);
     facProperty = new CfacScreenProperty(this);
 
+    facProperty->setEditEnable(false);
     facProperty->comTest->setVisible(false);
     facProperty->endButton->setVisible(false);
     facProperty->loadButton->setVisible(false);
@@ -698,10 +703,24 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
 
   QLabel *comModeLabel = new QLabel(tr("通信方式"),this);
   comModeCombo = new QComboBox(this);
+  comModeCombo->addItem(tr("串口"));
   QLabel *screenIDLabel = new QLabel(tr("硬件地址"),this);
   screenIDEdit = new QSpinBox(this);
   QLabel *comPortLabel = new QLabel(tr("串口号"),this);
   comPortEdit = new QComboBox(this);
+
+  //QextSerialPort *comm = new QextSerialPort();
+  //comm->setQueryMode(QextSerialPort::EventDriven);
+
+  QextSerialEnumerator enumer;
+  QList<QextPortInfo> ports = enumer.getPorts();
+  QStringList strlist;
+
+  strlist.clear();
+  for( int i = 0; i < ports.count(); ++i)
+      strlist << QObject::tr(ports.at(i).portName.toLocal8Bit());
+  comPortEdit->addItems(strlist);
+
   QLabel *comBaudLabel = new QLabel(tr("波特率"),this);
   comBaudCombo = new QComboBox(this);
   comBaudCombo->addItem("9600");
@@ -921,9 +940,35 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QGroupBox(parent)
    advanceParaGroup = new QWidget(this);//QGroupBox(tr("高级配置"),this);
    defParaCheck = new QCheckBox(tr("使用默认设置"),this);
    freqCombo = new QComboBox(this);
+
+   freqCombo ->addItem(tr("1最快"));
+   freqCombo ->addItem(tr("2"));
+   freqCombo ->addItem(tr("3"));
+   freqCombo ->addItem(tr("4"));
+   freqCombo ->addItem(tr("5最慢"));
+
    lineHideCombo = new QComboBox(this);
+
+   lineHideCombo->addItem(tr("1最短"));
+   lineHideCombo->addItem(tr("2"));
+   lineHideCombo->addItem(tr("3"));
+   lineHideCombo->addItem(tr("4"));
+   lineHideCombo->addItem(tr("5"));
+   lineHideCombo->addItem(tr("6"));
+   lineHideCombo->addItem(tr("7"));
+   lineHideCombo->addItem(tr("8"));
+   lineHideCombo->addItem(tr("9"));
+   lineHideCombo->addItem(tr("10最长"));
+
    dataMirrorCombo = new QComboBox(this);
+   dataMirrorCombo->addItem(tr("正常"));
+   dataMirrorCombo->addItem(tr("镜像"));
+
    lineOrderCombo = new QComboBox(this);
+
+   lineOrderCombo->addItem(tr("正常"));
+   lineOrderCombo->addItem(("+1"));
+   lineOrderCombo->addItem(("-1"));
 
    vLayout = new QVBoxLayout(this);
 
@@ -968,8 +1013,8 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QGroupBox(parent)
    tabWidget->addTab(readParaGroup, tr("回读参数"));
 
    hLayout = new QHBoxLayout(this);
-   endButton = new QPushButton(tr("完成设置"), this);
-   loadButton = new QPushButton(tr("发送参数"), this);
+   endButton = new QPushButton(tr("关闭"), this);
+   loadButton = new QPushButton(tr("加载参数"), this);
    //exportButton = new QPushButton(tr("导出配置文件"), this);
   // saveButton = new QPushButton(tr("保存参数"), this);
    //defButton = new QPushButton(tr("恢复默认"), this);
@@ -1002,7 +1047,7 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QGroupBox(parent)
    //mainLayout->addStretch(10);
    setLayout(mainVLayout);
 
-  setEditEnable(false);
+
    //this->setEnabled(false);
    //this->setc
 
@@ -1121,7 +1166,7 @@ void CfacScreenProperty::setEditEnable(bool flag)
         baseParaGroup->setEnabled(false);
         advanceParaGroup->setEnabled(false);
         readParaGroup->setEnabled(false);
-        //loadButton->setEnabled(false);
+        loadButton->setEnabled(false);
         //exportButton->setEnabled(false);
         //comTest->setEnabled(false);
     }
@@ -1132,7 +1177,7 @@ void CfacScreenProperty::setEditEnable(bool flag)
         baseParaGroup->setEnabled(true);
         advanceParaGroup->setEnabled(true);
         readParaGroup->setEnabled(true);
-        //loadButton->setEnabled(true);
+        loadButton->setEnabled(true);
         //exportButton->setEnabled(true);
         //comTest->setEnabled(true);
     }
