@@ -285,7 +285,7 @@ void Update_Pic_Data(INT8U Area_No)
   S_Point P0;
   static S_Int8U Sec ={CHK_BYTE, 0xFF, {0}, CHK_BYTE};
   
-  qDebug("update area %d, step = %d, max step = %d", Area_No, Prog_Status.Area_Status[Area_No].Step, Prog_Status.Area_Status[Area_No].Max_Step);
+  //qDebug("update area %d, step = %d, max step = %d", Area_No, Prog_Status.Area_Status[Area_No].Step, Prog_Status.Area_Status[Area_No].Max_Step);
 
   if(Prog_Status.Play_Status.New_Prog_Flag ||\
      Prog_Status.Area_Status[Area_No].New_File_Flag ||\
