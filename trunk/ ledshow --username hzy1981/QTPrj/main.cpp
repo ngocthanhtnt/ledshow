@@ -42,8 +42,8 @@ int main(int argc, char *argv[])
 
     resetCardtoCardParaFile();
     //--------------
-    Screen_Para.Base_Para.Width = 256;
-    Screen_Para.Base_Para.Height = 256;
+    Screen_Para.Base_Para.Width = DEF_SCN_WIDTH;
+    Screen_Para.Base_Para.Height = DEF_SCN_HEIGHT;
     Screen_Para.Base_Para.Color = 0x03;
 
     Card_Para.Max_Points = MAX_POINTS;
@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
     QRect desktopRect = QApplication::desktop()->availableGeometry();
     int iTitleBarHeight = w->style()->pixelMetric(QStyle::PM_TitleBarHeight);  // 获取标题栏高度
 
-    w->setGeometry(0, iTitleBarHeight, desktopRect.width(), desktopRect.height() - iTitleBarHeight);  // 设置窗体充满桌面客户区
-    w->setFixedSize(desktopRect.width(), desktopRect.height() - iTitleBarHeight);      // 固定窗体大小
+    //w->setGeometry(0, iTitleBarHeight, desktopRect.width(), desktopRect.height() - iTitleBarHeight);  // 设置窗体充满桌面客户区
+    //w->setFixedSize(desktopRect.width(), desktopRect.height() - iTitleBarHeight);      // 固定窗体大小
 
     w->progManage->settingsInit();
     /*
@@ -86,7 +86,8 @@ int main(int argc, char *argv[])
     QObject::connect(w->progManage->treeWidget,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),w->progManage,SLOT(currentItemChangedProc(QTreeWidgetItem*,QTreeWidgetItem*)));
 
     //traversalControl(w->children());
-    w->show();
+    //w->show();
+    w->showMaximized();
 
     return a.exec();
 

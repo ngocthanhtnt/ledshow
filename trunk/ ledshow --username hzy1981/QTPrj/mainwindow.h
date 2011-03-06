@@ -57,6 +57,7 @@ private:
 
     QAction *actionSave;
 public slots:
+    void modifyScreenPara();
     void preview();
     void previewProc();
 public:

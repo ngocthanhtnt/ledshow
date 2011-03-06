@@ -75,7 +75,7 @@ const S_Mode_Func In_Mode_Func[]=
   ,{&Move_Down_Snow, H_MODE, 3} //下飘雪
 #endif
 #if IN_SPEC_EFFECT_NUM > 23   
-  ,{&Move_Flash, FIX_MODE, 20} //闪烁
+  ,{&Move_Flash, FIX_MODE, 100} //闪烁
 #endif
 #if IN_SPEC_EFFECT_NUM > 24   
   ,{&Move_Left_Laser, H_MODE, 1} //左镭射
@@ -90,11 +90,11 @@ const S_Mode_Func In_Mode_Func[]=
   ,{&Move_Down_Laser, V_MODE, 1} //下镭射
 #endif
 #if IN_SPEC_EFFECT_NUM > 28   
-  ,{&Move_Left_Tensile, H_MODE, 1}//左拉伸
+  ,{&Move_Left_Tensile, FIX_MODE, 100}//左拉伸
 #endif
 #if IN_SPEC_EFFECT_NUM > 29   
   //{&Move_Right_Tensile}//右拉伸
-  ,{&Move_Up_Tensile, V_MODE, 1}//上拉伸
+  ,{&Move_Up_Tensile, FIX_MODE, 100}//上拉伸
 #endif
 #if IN_SPEC_EFFECT_NUM > 30   
   //{&Move_Down_Tensile}//下拉伸
@@ -110,10 +110,10 @@ const S_Mode_Func In_Mode_Func[]=
   ,{&Move_Up_Stretch, V_MODE, 1}
 #endif
 #if IN_SPEC_EFFECT_NUM > 34   
-  ,{&Move_Horizontal_Window, FIX_MODE, WIN_LEAF_WIDTH} //水平百叶窗
+  ,{&Move_Horizontal_Window, FIX_MODE, 100}//WIN_LEAF_WIDTH} //水平百叶窗
 #endif
 #if IN_SPEC_EFFECT_NUM > 35   
-  ,{&Move_Vertical_Window, FIX_MODE, WIN_LEAF_WIDTH} //垂直百叶窗
+  ,{&Move_Vertical_Window, FIX_MODE, 100}//WIN_LEAF_WIDTH} //垂直百叶窗
 #endif
 #if IN_SPEC_EFFECT_NUM > 36   
   ,{&Move_Left_Compress, FIX_MODE, 100} //向左压缩
@@ -212,7 +212,7 @@ INT16U Get_In_Max_Step(INT16U Width, INT16U Height, INT8U In_Mode)
         Re = sqrt(Width*Width + Height*Height)*In_Mode_Func[In_Mode].Fac;
         break;
     case FIX_MODE:
-        Re = 100;
+        Re = In_Mode_Func[In_Mode].Fac;
         break;
     default:
         Re = 100;
@@ -248,7 +248,7 @@ INT16U Get_Out_Max_Step(INT16U Width, INT16U Height, INT8U Out_Mode)
         Re = sqrt(Width*Width + Height*Height)*Out_Mode_Func[Out_Mode].Fac;
         break;
     case FIX_MODE:
-        Re = 100;
+        Re = Out_Mode_Func[Out_Mode].Fac;
         break;
     default:
         Re = 100;
