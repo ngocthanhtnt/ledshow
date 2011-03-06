@@ -231,6 +231,13 @@ void MainWindow::setupCtrlActions()
 
     QAction *a;
 
+    a = new QAction(tr("修改屏参"), this);
+    a->setPriority(QAction::LowPriority);
+    a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(modifyScreenPara()));
+    tb->addAction(a);
+    menu->addAction(a);
+
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
     a = new QAction(tr("预览"), this);
     a->setPriority(QAction::LowPriority);
@@ -542,7 +549,7 @@ MainWindow::MainWindow(QWidget *parent)
    previewWin = new CpreviewWin(this);//new QMainWindow(w);
    previewArea =  new CscreenArea(previewWin);
    previewWin->setCentralWidget(previewArea);
-   //previewArea->setWindowModality(Qt::WindowModal);
+
 
    timer = new QTimer(this);
    connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
@@ -592,6 +599,28 @@ int getIndexBySubWin(QMdiArea *parentArea, QMdiSubWindow *subWin)
 
 }
 
+//修改当前屏幕参数
+void MainWindow::modifyScreenPara()
+{
+  QString str;
+
+  str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
+
+  QDialog *facParaWin = new QDialog(this);
+  QHBoxLayout *hLayout = new QHBoxLayout(facParaWin);
+
+  facParaWin->setWindowTitle(tr("修改安装参数"));
+  CfacScreenProperty *facScreenProperty = new CfacScreenProperty(MODI_SCN, facParaWin);
+  facScreenProperty->setSettingsToWidget(str);
+
+  hLayout->addWidget(facScreenProperty);
+  facParaWin->setLayout(hLayout);
+  facParaWin->setAttribute(Qt::WA_DeleteOnClose);
+  connect(facScreenProperty->endButton, SIGNAL(clicked()), facParaWin, SLOT(close()));
+  facParaWin->exec();
+
+}
+
 void MainWindow::preview()
 {
   QString screenStr;//progStr;
@@ -631,9 +660,10 @@ void MainWindow::preview()
 
   //previewWin->setAttribute(Qt::WA_DeleteOnClose);
   previewWin->setWindowTitle(tr("预览-")+QString::number(Screen_No + 1) + tr("号屏幕-") + QString::number(Preview_Prog_No + 1) + tr("号节目"));
-  //previewWin->setFixedSize(previewWin->size());
+  previewWin->move((width() - previewArea->width())/2, (height() - previewArea->height())/2);
+
   previewWin->show();
-  //d.show();
+  previewWin->setFixedSize(previewWin->size());
 
   Show_Init();
   //新建定时器
@@ -651,12 +681,7 @@ void MainWindow::preview()
 void MainWindow::previewProc()
 {
   stepTimer += QT_MOVE_STEP_TIMER;
-  Show_Main_Proc();
-  Show_Main_Proc();
-  Show_Main_Proc();
-  Show_Main_Proc();
-  Show_Main_Proc();
-  Show_Main_Proc();
+
   Show_Main_Proc();
   Show_Main_Proc();
   Show_Main_Proc();

@@ -216,8 +216,12 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
             settings.endGroup();
 
             settings.endGroup();
-            Qstr = "(" + QString::number(subIndex) + ")";
 
+#if SUB_INDEX_EN > 0
+            Qstr = "(" + QString::number(subIndex) + ")";
+#else
+            Qstr = "";
+#endif
             if(type == SCREEN_PROPERTY)//---不会进入此判断
             {
                 parentIndex = treeWidget->indexOfTopLevelItem(parent);//parent->parent()->indexOfChild(parent);
@@ -261,11 +265,12 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
           name = QString("-") + name;
         settings.endGroup();
         settings.endGroup();
-
-        if(type == AREA_PROPERTY || type == PROG_PROPERTY) //分区
+#if SUB_INDEX_EN
+        if(type == SCREEN_PROPERTY || type == AREA_PROPERTY || type == PROG_PROPERTY) //分区
         {
             Qstr = Qstr + "(" + QString::number(subIndex) + ")";
         }
+#endif
         /*
         else
         {
@@ -285,7 +290,7 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
     }
 }
 
-void _newScreen(QString name, int x, int y, int width, int height)
+CMdiSubWindow * _newScreen(QString name, int x, int y, int width, int height)
 {
 
     //--------------
@@ -299,6 +304,8 @@ void _newScreen(QString name, int x, int y, int width, int height)
     subWin->setGeometry(x,y,width,height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
     subWin->setFixedSize(subWin->size());
     subWin->show();
+
+    return subWin;
 }
 
 void CprogManage::newScreen()
@@ -309,8 +316,13 @@ void CprogManage::newScreen()
     int i,size,type,index;
     int max = 0,tmp;
 
-    CsetFacPara *setFacPara = new CsetFacPara(this);
-    setFacPara->show();
+    //CsetFacPara *setFacPara = new CsetFacPara(this);
+    //setFacPara->show();
+    //QString str;
+
+    //str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
+
+
 
     QStr = "screen";//QStr + "/" + QString(tr("area"));
 
@@ -334,34 +346,54 @@ void CprogManage::newScreen()
     settings.endGroup();
     settings.endGroup();
 
-    //读取屏幕参数
-    getScreenParaFromSettings(QStr + "/" + QString::number(max), Screen_Para);
+
     //
     QTreeWidgetItem* item = new QTreeWidgetItem(treeWidget,QStringList(QString::number(size + 1)+tr("屏幕")));
     item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
 
     treeWidget->addTopLevelItem(item);
-/*
-    //w->setCentralWidget(w->mdiArea);
-    CMdiSubWindow *subWin = new CMdiSubWindow;
-    w->screenArea =  new CscreenArea(subWin);
-    //w->screenArea->setGeometry(10,10,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34);
-    subWin->setWidget(w->screenArea);
-    subWin->setAttribute(Qt::WA_DeleteOnClose);
-    w->mdiArea->addSubWindow(subWin);
-    subWin->setWindowTitle(QString::number(size + 1) + tr("屏幕"));
-    subWin->setGeometry(size*50,size*50,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-    //w->screenArea->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-    //subWin->setc
-    //Qt::WindowFlags flags = Qt::Window|Qt::WindowMinimizeButtonHint;
-*/
-    _newScreen(QString::number(size + 1) + tr("屏幕"), 0, 0, Screen_Para.Base_Para.Width+8,Screen_Para.Base_Para.Height+34);
+
+    CMdiSubWindow * subWin =_newScreen(QString::number(size + 1) + tr("屏幕"), 0, 0, DEF_SCN_WIDTH+8, DEF_SCN_HEIGHT+34);
     w->screenArea->screenItem = item;
-    //subWin->setWindowFlags(flags); // 设置禁止最大化
 
-
-    //w->progManage->clickItem(item, 0);
     w->progManage->treeWidget->setCurrentItem(item);
+
+    //---------------
+    QString str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
+    QDialog *facParaWin = new QDialog(this);
+    QHBoxLayout *hLayout = new QHBoxLayout(facParaWin);
+
+    facParaWin->setWindowTitle(tr("新建屏幕"));
+    CfacScreenProperty *facScreenProperty = new CfacScreenProperty(NEW_SCN, facParaWin);
+    facScreenProperty->setSettingsToWidget(str);
+
+    hLayout->addWidget(facScreenProperty);
+    facParaWin->setLayout(hLayout);
+    facParaWin->setAttribute(Qt::WA_DeleteOnClose);
+    connect(facScreenProperty->endButton, SIGNAL(clicked()), facParaWin, SLOT(close()));
+    facParaWin->exec();
+    //--------------------
+
+    //判断参数是否被加载，没有被加载则删除已经生成的窗口
+    settings.beginGroup(str);
+    settings.beginGroup("facPara");
+    int setFlag = settings.value("setFlag").toInt(); //是否加载设置了屏幕参数?
+    settings.endGroup();
+    settings.endGroup();
+
+    if(setFlag EQ 0) //没有加载参数则删除上面建的屏幕
+    {
+       w->progManage->deleteItem(); //删除上面创建的屏幕
+    }
+
+    //读取屏幕参数
+    //getScreenParaFromSettings(QStr + "/" + QString::number(max), Screen_Para);
+    /*
+    else
+    {
+       //subWin->resize(width + 8, height + 34);//setGeometry(0,0, width +8, height + 34);
+       subWin->setFixedSize(width + 8, height + 34);
+    }*/
 
 }
 
@@ -791,6 +823,10 @@ void CprogManage::deleteItem()
         QMdiSubWindow *subWin = subWinList.at(index);
         w->mdiArea->removeSubWindow(subWin);
 
+        for(int i = 0; i < subWinList.count(); i ++)
+        {
+            subWinList.at(i)->setWindowTitle(QString::number(i)+tr("屏幕"));
+        }
         //删除所有配置项
         settings.beginGroup(str);
         //qDebug("remove str:%s",(const char *)str.toLocal8Bit());
@@ -817,7 +853,7 @@ void CprogManage::deleteItem()
             parent = curItem->parent();
             curItem->parent()->removeChild(curItem);
             //updateItemSubIndex(curItem);
-            //updateTextHead(parent);
+            updateTextHead(parent);
 
         }
         else
@@ -886,7 +922,7 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
 
     if(lastItem != (QTreeWidgetItem *)0)
     {
-       w->property->getSettingsFromWidget(lastItem);
+       //w->property->getSettingsFromWidget(lastItem);
     }
 
     saveCurItem(item);
@@ -1071,21 +1107,12 @@ void CprogManage::settingsInit()
 {
     int screenSize, progSize, fileSize;
     QStringList screenGroups, progGroups, areaGroups, fileGroups;
+    S_Screen_Para screenPara;
 
     treeWidget->clear();
     //settings.clear();
     settings.beginGroup("screen");
-/*
-    settings.beginGroup("1");
-    settings.setValue("name", "screen1");
-    settings.setValue("type",SCREEN_PROPERTY);
-    settings.endGroup();
 
-    settings.beginGroup("2");
-    settings.setValue("name", "screen2");
-    settings.setValue("type",SCREEN_PROPERTY);
-    settings.endGroup();
-*/
     screenGroups = settings.childGroups(); //屏幕列表
     screenSize = screenGroups.size();
 
@@ -1096,8 +1123,15 @@ void CprogManage::settingsInit()
         treeWidget->addTopLevelItem(screenItem);
         QString screenStr = "screen/" + screenGroups.at(m);
 
+        settings.beginGroup(screenGroups.at(m));
+        settings.beginGroup("facPara");
+        screenPara.Base_Para.Width = settings.value("width").toInt();
+        screenPara.Base_Para.Height = settings.value("height").toInt();
+        settings.endGroup();
+        settings.endGroup();
         //获取当前屏幕参数
-        getScreenParaFromSettings(screenStr, Screen_Para);
+        //getScreenParaFromSettings(screenStr, Screen_Para);
+
         //---
 
         //w->screenArea->screenItem = screenItem;//在updateShowArea中更新screenItem等
@@ -1131,7 +1165,7 @@ void CprogManage::settingsInit()
 
         subWin->setFixedSize(subWin->size());
 */
-        _newScreen(QString::number(m + 1) + tr("屏幕"), 0, 0, Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34);
+        _newScreen(QString::number(m + 1) + tr("屏幕"), 0, 0, screenPara.Base_Para.Width+8, screenPara.Base_Para.Height+34);
         w->screenArea->screenItem = screenItem;
         screenItem->setData(0, Qt::UserRole, screenStr);
         screenItem->setText(0, QString::number(m + 1) + tr("显示屏"));

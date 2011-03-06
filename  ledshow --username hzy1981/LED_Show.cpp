@@ -2288,7 +2288,7 @@ void Move_Flash(INT8U Area_No)
    P0.X = 0;
    P0.Y = 0;
 
-   if((Prog_Status.Area_Status[Area_No].Step / 20) % 2 EQ 0)
+   if((Prog_Status.Area_Status[Area_No].Step / (Prog_Status.Area_Status[Area_No].Max_Step/10)) % 2 EQ 0)
     {
       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
                        &Show_Data, &P0);

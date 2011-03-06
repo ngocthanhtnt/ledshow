@@ -54,7 +54,7 @@ typedef struct
   INT8U Flag;
   INT8U Value; //亮度值
   INT8U Start_Hour; //起始小时
-
+  INT8U Start_Min;
   //INT8U Tail;
 }S_Lightness;
 
@@ -64,10 +64,10 @@ typedef struct
   INT8U Rows; //扫描1，2，4，8，16扫
   INT8U Rows_Fold; //每驱行折数
   INT8U Cols_Fold; //每驱列折数
-  INT8U Row_Seq; //行序号
+  INT8U Line_Order; //行序号
   
-  INT8U Row_Shade; //行消隐时间
-  INT8U Shift_Freq; //移位时钟频率
+  INT8U Line_Hide; //行消隐时间
+  INT8U Clk_Freq; //移位时钟频率
   INT8U Screen_Freq; //屏幕刷新频率
   
   INT8U Data_Polarity; //数据极性
@@ -139,13 +139,21 @@ typedef struct
 
 typedef struct
 {
+
     INT16U Width; //宽度
     INT16U Height; //高度
-    INT8U Color; //颜色 0单色，1双色，2三色，3-255级灰度
+    INT8U Color; //第0位红色，第一位绿色，第二位蓝色
+
 
     INT16U Addr; //地址
-    INT32U IP; //IP地址
     INT8U Baud;  //波特率
+
+    INT32U IP; //IP地址
+    INT32U Mac; //Mac地址
+    INT32U Mask; //子网掩码
+
+    INT32U Bak; //备用
+
 }S_Screen_Base_Para;
 //屏幕参数
 //数据级性--正、反

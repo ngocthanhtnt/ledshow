@@ -79,26 +79,68 @@ public:
 //返回>0表示读取到参数，==0表示没有读取到参数
 INT8U getScreenParaFromSettings(QString screenStr, S_Screen_Para &screenPara)
 {
-    //在
-  settings.beginGroup(screenStr);
-  QString indexStr = settings.value("screenIndex").toString(); //获得屏幕
-  settings.endGroup();
+    qDebug("getScreenParaFromSettings:%s", (const char *)screenStr.toLocal8Bit());
+    settings.beginGroup(screenStr);
+    settings.beginGroup("facPara");
 
-  //在屏幕参数配置文件中读取屏幕参数
-  screenSettings.beginGroup(QString("screen/") + indexStr);
-  if(settings.childKeys().size() EQ 0) //不存在这个屏幕??
-  {
-      screenSettings.endGroup();
-      return 0;
-  }
+    screenPara.Base_Para.Width = settings.value("width").toInt();
+    screenPara.Base_Para.Height = settings.value("height").toInt();
 
-  screenPara.Base_Para.Addr = screenSettings.value("addr").toString().toInt();
-  screenPara.Base_Para.Baud = screenSettings.value("Baud").toString().toInt();
-  screenPara.Base_Para.Color = screenSettings.value("color").toString().toInt();
-  screenPara.Base_Para.Width = 256;//screenSettings.value("width").toString().toInt();
-  screenPara.Base_Para.Height = 256;//screenSettings.value("height").toString().toInt();
-  screenPara.Base_Para.IP = screenSettings.value("ip").toString().toInt();
-  screenSettings.endGroup();
+    INT8U color = settings.value("color").toInt();
+    if(color EQ 0) //单色屏
+        screenPara.Base_Para.Color = 0x01;
+    else if(color EQ 1) //双色屏
+        screenPara.Base_Para.Color = 0x03;
+
+    screenPara.Base_Para.Addr = (INT16U)settings.value("screenID").toInt();
+    screenPara.Base_Para.Baud = settings.value("comBaud").toInt();
+    screenPara.Base_Para.IP = settings.value("ip").toInt();
+    screenPara.Base_Para.Mac = settings.value("mac").toInt();
+    screenPara.Base_Para.Mask = settings.value("mask").toInt();
+
+    screenPara.Scan_Mode.Data_Polarity = settings.value("dataPolarity").toInt(); //数据级性
+    screenPara.Scan_Mode.OE_Polarity = settings.value("oePolarity").toInt();
+    screenPara.Scan_Mode.RG_Reverse = settings.value("redGreenRev").toInt();
+    screenPara.Scan_Mode.Line_Order = settings.value("lineOrder").toInt();
+    screenPara.Scan_Mode.Line_Hide = settings.value("lineHide").toInt();
+    screenPara.Scan_Mode.Clk_Freq = settings.value("freq").toInt(); //移位频率
+
+    screenPara.Scan_Mode.Direct = 0;
+    screenPara.Scan_Mode.Cols_Fold = 0;
+    screenPara.Scan_Mode.Rows_Fold = 0;
+    screenPara.Scan_Mode.Rows = 0;
+    screenPara.Scan_Mode.Screen_Freq = 0; //屏频
+
+    //亮度调节
+    settings.beginGroup("lightness");
+    screenPara.Lightness.Mode = settings.value("adjMode").toInt();
+    screenPara.Lightness.Fixed_Lightness = settings.value("manualLightness").toInt(); //手动调亮度
+
+    for(int i=0; i < MAX_LIGHTNESS_TIME; i++)
+    {
+      screenPara.Lightness.Time_Lightness[i].Flag = settings.value("timeCheck" + QString::number(i)).toBool();
+      screenPara.Lightness.Time_Lightness[i].Start_Hour = settings.value("startHour" + QString::number(i)).toInt();
+      screenPara.Lightness.Time_Lightness[i].Start_Min = settings.value("startMin" + QString::number(i)).toInt();
+    }
+    settings.endGroup();
+
+    //定时开关机
+    settings.beginGroup("openCloseTime");
+
+    for(int i =0; i < MAX_OPEN_CLOSE_TIME;i ++)
+    {
+        screenPara.OC_Time.Time[i].Flag = settings.value("timeCheck"+QString::number(i)).toBool();
+        screenPara.OC_Time.Time[i].Open_Hour = settings.value("openHour" + QString::number(i)).toInt();
+        screenPara.OC_Time.Time[i].Open_Min = settings.value("openMin" + QString::number(i)).toInt();
+        screenPara.OC_Time.Time[i].Close_Hour = settings.value("closeHour" + QString::number(i)).toInt();
+        screenPara.OC_Time.Time[i].Close_Min = settings.value("closeSec" + QString::number(i)).toInt();
+    }
+
+    settings.endGroup();
+
+    settings.endGroup();
+    settings.endGroup();
+
 
   return 1;
 }
@@ -128,14 +170,9 @@ CscreenProperty::CscreenProperty(QWidget *parent):QWidget(parent)
 
     //tab = new QTabWidget(this);
      //hLayout = new QHBoxLayout(this);
-    facProperty = new CfacScreenProperty(this);
+    facProperty = new CfacScreenProperty(SHOW_SCN,this);
 
-    facProperty->setEditEnable(false);
-    facProperty->comTest->setVisible(false);
-    facProperty->endButton->setVisible(false);
-    facProperty->loadButton->setVisible(false);
-    facProperty->tabWidget->removeTab(facProperty->tabWidget->indexOf(facProperty->readParaGroup));
-    //hLayout->addWidget(facProperty);
+     //hLayout->addWidget(facProperty);
     //facParaGroup->setLayout(hLayout);
 
     //hLayout = new QHBoxLayout(this);
@@ -748,15 +785,42 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   ipEditLabel->setVisible(false);
   ipEdit->setVisible(false);
 }
-
+/*
+    QComboBox *comModeCombo; //通信方式
+    QSpinBox *screenIDEdit; //屏幕ID，硬件地址
+    QComboBox *comPortEdit; //串口号
+    QComboBox *comBaudCombo; //波特率
+    CipInput *ipEdit; //IP地址
+    QPushButton *connectButton; //链接按钮
+ */
 void CcomTest::getSettingsFromWidget(QString str)
 {
+    settings.beginGroup(str);
+    settings.beginGroup("comTest");
 
+    settings.setValue("comMode", comModeCombo->currentIndex());
+    settings.setValue("screenID", screenIDEdit->value());
+    settings.setValue("comPort", comPortEdit->currentIndex());
+    settings.setValue("comBaud", comBaudCombo->currentIndex());
+    settings.setValue("ip", ipEdit->getIP());
+
+    settings.endGroup();
+    settings.endGroup();
 }
 
 void CcomTest::setSettingsToWidget(QString str)
 {
+    settings.beginGroup(str);
+    settings.beginGroup("comTest");
 
+    comModeCombo->setCurrentIndex(settings.value("comMode").toInt());
+    screenIDEdit->setValue(settings.value("screenID").toInt());
+    comPortEdit->setCurrentIndex(settings.value("comPort").toInt());
+    comBaudCombo->setCurrentIndex(settings.value("comBaud").toInt());
+    ipEdit->setIP(settings.value("ip").toInt());
+
+    settings.endGroup();
+    settings.endGroup();
 }
 
 CcomTest::~CcomTest()
@@ -765,7 +829,8 @@ CcomTest::~CcomTest()
 }
 
 //工厂参数编辑
-CfacScreenProperty::CfacScreenProperty(QWidget *parent):QGroupBox(parent)
+//flag NEW_SCN表示新建屏幕参数,MODI_SCN表示修改现有屏幕参数,SHOW_SCN表示显示参数
+CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(parent)
 {
 
     QHBoxLayout *hLayout;
@@ -774,6 +839,8 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QGroupBox(parent)
 
     QHBoxLayout *mainLayout;
     QVBoxLayout *mainVLayout;
+
+    paraFlag = flag;
 
     mainVLayout = new QVBoxLayout(this);
     mainLayout = new QHBoxLayout(this);
@@ -1057,8 +1124,15 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QGroupBox(parent)
    setLayout(mainVLayout);
 
 
-   //this->setEnabled(false);
-   //this->setc
+   if(paraFlag EQ SHOW_SCN) //显示参数
+   {
+       setEditEnable(false);
+       comTest->setVisible(false);
+       endButton->setVisible(false);
+       loadButton->setVisible(false);
+       tabWidget->removeTab(tabWidget->indexOf(readParaGroup));
+   }
+     //this->setc
 
   setTitle(tr("安装参数"));
    connect(loadButton, SIGNAL(clicked()), this, SLOT(loadParaProc()));
@@ -1102,13 +1176,14 @@ CfacScreenProperty::CfacScreenProperty(QWidget *parent):QGroupBox(parent)
 
 void CfacScreenProperty::getSettingsFromWidget(QString str)
 {
+    ipEdit->getSettingsFromWidget(str+"/facPara");
+    maskEdit->getSettingsFromWidget(str+"/facPara");
+    gateEdit->getSettingsFromWidget(str+"/facPara");
+    macEdit->getSettingsFromWidget(str+"/facPara");
+    comTest->getSettingsFromWidget(str+"/facPara");
+
   settings.beginGroup(str);
   settings.beginGroup("facPara");
-
-  ipEdit->getSettingsFromWidget(str);
-  maskEdit->getSettingsFromWidget(str);
-  gateEdit->getSettingsFromWidget(str);
-  macEdit->getSettingsFromWidget(str);
 
   settings.setValue("screenID", screenIDEdit->value()); //硬件地址
   settings.setValue("baud", baudCombo->currentIndex());
@@ -1127,6 +1202,7 @@ void CfacScreenProperty::getSettingsFromWidget(QString str)
   settings.setValue("dataMirror", dataMirrorCombo->currentIndex());
   settings.setValue("lineOrder", lineOrderCombo->currentIndex());
 
+  settings.setValue("setFlag", 1);
   settings.endGroup();
   settings.endGroup();
 
@@ -1135,13 +1211,15 @@ void CfacScreenProperty::getSettingsFromWidget(QString str)
 
 void CfacScreenProperty::setSettingsToWidget(QString str)
 {
+
+    ipEdit->setSettingsToWidget(str+"/facPara");
+    maskEdit->setSettingsToWidget(str+"/facPara");
+    gateEdit->setSettingsToWidget(str+"/facPara");
+    macEdit->setSettingsToWidget(str+"/facPara");
+    comTest->setSettingsToWidget(str+"/facPara");
+
     settings.beginGroup(str);
     settings.beginGroup("facPara");
-
-    ipEdit->setSettingsToWidget(str);
-    maskEdit->setSettingsToWidget(str);
-    gateEdit->setSettingsToWidget(str);
-    macEdit->setSettingsToWidget(str);
 
     screenIDEdit->setValue(settings.value("screenID").toInt());
     baudCombo->setCurrentIndex(settings.value("baud").toInt());
@@ -1149,8 +1227,18 @@ void CfacScreenProperty::setSettingsToWidget(QString str)
     dataPolarityCombo->setCurrentIndex(settings.value("dataPolarity").toInt());
     oePolarityCombo->setCurrentIndex(settings.value("oePolarity").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
-    widthEdit->setValue(settings.value("width").toInt());
-    heightEdit->setValue(settings.value("height").toInt());
+
+
+    if(settings.value("setFlag").toInt() > 0)
+    {
+      widthEdit->setValue(settings.value("width").toInt());
+      heightEdit->setValue(settings.value("height").toInt());
+    }
+    else
+    {
+        widthEdit->setValue(DEF_SCN_WIDTH);
+        heightEdit->setValue(DEF_SCN_HEIGHT);
+    }
     _138Check->setChecked(settings.value("_138Check").toBool());
     scanModeCombo->setCurrentIndex(settings.value("scanMode").toInt());
 
@@ -1203,7 +1291,53 @@ void CfacScreenProperty::loadParaProc()
 
     str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
     qDebug("loadpara:%s",(const char *)str.toLocal8Bit());
+
+    settings.beginGroup(str);
+    settings.beginGroup("facPara");
+
+    int width = settings.value("width").toInt();
+    int height = settings.value("height").toInt();
+    int color = settings.value("color").toInt();
+    settings.endGroup();
+    settings.endGroup();
+
+
+    //if(paraFlag EQ MODI_SCN)
+    {
+        //宽度、高度、颜色发生了修改则需要清掉所有的节目
+        if(width != widthEdit->value() ||\
+           height != heightEdit->value() ||\
+           color != colorCombo->currentIndex())
+        {
+            if(paraFlag EQ MODI_SCN)
+              QMessageBox::information(0, tr("提示"),
+                                     tr("您此次修改了屏幕的宽度、高度、颜色之中的一项，这将导致该屏幕下的所有节目被重置！"),tr("确定"));
+
+
+            //重新修改显示窗口大小
+            QMdiSubWindow * subWin =w->mdiArea->currentSubWindow();
+            subWin->setFixedSize(widthEdit->value() + 8, heightEdit->value() + 34); //当前屏幕调整大小
+            w->screenArea->setFixedSize(widthEdit->value(), heightEdit->value());
+
+            //清除所有子项
+            QTreeWidgetItem *screenItem = w->screenArea->screenItem;
+            int count = screenItem->childCount();
+            for(int i = 0; i < count; i ++)
+            {
+                w->progManage->clickItem(screenItem->child(0),0);
+                w->progManage->treeWidget->setCurrentItem(screenItem->child(0));
+                w->progManage->deleteItem();
+            }
+            //w->screenArea->screenItem->removeChild(w->screenArea->screenItem->child(i));
+            //w->progManage->settingsInit();
+        }
+    }
+
     getSettingsFromWidget(str);
+
+
+
+
 }
 
 void CfacScreenProperty::endProc()
@@ -1213,7 +1347,7 @@ void CfacScreenProperty::endProc()
 
 CsetFacPara::CsetFacPara(QWidget *parent):QMainWindow(parent)
 {
-    facScreenProperty = new CfacScreenProperty(this);
+    facScreenProperty = new CfacScreenProperty(MODI_SCN,this);
     this->setCentralWidget(facScreenProperty);
     this->setWindowTitle(tr("设置屏幕参数"));
 

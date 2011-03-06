@@ -19,6 +19,9 @@
 #include "showArea.h"
 #include "areaProperty.h"
 
+#define NEW_SCN 0x00  //新建屏幕
+#define MODI_SCN 0x01 //修改屏幕
+#define SHOW_SCN 0x02 //显示屏幕木
 //#define LIGHT
 
 /*
@@ -186,11 +189,11 @@ public slots:
  QPushButton *loadButton;
  QPushButton *exportButton;
  //QPushButton *defButton;
-
+ int paraFlag; //表示新建屏幕、1表示修改屏幕，2表示显示屏幕
  void setEditEnable(bool flag);
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
-    CfacScreenProperty(QWidget *parent=0);
+    CfacScreenProperty(int flag, QWidget *parent=0);
     ~CfacScreenProperty();
 };
 
