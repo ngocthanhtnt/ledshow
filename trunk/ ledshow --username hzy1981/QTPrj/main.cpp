@@ -23,14 +23,18 @@ void resetCardtoCardParaFile()
   cardIniFile.beginGroup("AS-A0");
   cardIniFile.setValue("maxPoints", 1024);
   cardIniFile.setValue("maxHeight", 128);
-  cardIniFile.setValue("areas", 8);
+  cardIniFile.setValue("FontNum", 1);
+  cardIniFile.setValue("romSize", 1024);
+  cardIniFile.setValue("fileEnWord", 0xFFFF);
   cardIniFile.setValue("comMode", 0x01); //第0位串口、第1位u盘、第2位以太网、第3位GPRS
   cardIniFile.endGroup();
 
   cardIniFile.beginGroup("AS-B0");
   cardIniFile.setValue("maxPoints", 512);
   cardIniFile.setValue("maxHeight", 128);
-  cardIniFile.setValue("areas", 8);
+  cardIniFile.setValue("FontNum", 1);
+  cardIniFile.setValue("romSize", 2048);
+  cardIniFile.setValue("fileEnWord", 0xFF);
   cardIniFile.setValue("comMode", 0x03); //第0位串口、第1位u盘、第2位以太网、第3位GPRS
   cardIniFile.endGroup();
 
@@ -41,7 +45,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     resetCardtoCardParaFile();
-    //--------------
+    /*
     Screen_Para.Base_Para.Width = DEF_SCN_WIDTH;
     Screen_Para.Base_Para.Height = DEF_SCN_HEIGHT;
     Screen_Para.Base_Para.Color = 0x03;
@@ -52,7 +56,7 @@ int main(int argc, char *argv[])
     Card_Para.File_Num = 8;
     Card_Para.Font_Num = 1;
     Card_Para.File_En_Word = 0xFF;
-
+*/
     memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
     memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
     //-------------

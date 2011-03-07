@@ -532,7 +532,7 @@ INT8U makeProtoData(QString screenStr, int mode)
 
     frameInfo.seq = 0xFF;
     //没有读取到正确的屏幕参数则返回0
-    if(getScreenParaFromSettings(screenStr, Screen_Para) EQ 0)
+    if(getScreenCardParaFromSettings(screenStr, Screen_Para, Card_Para) EQ 0)
     {
         Screen_Para.Base_Para.Width = 256;
         Screen_Para.Base_Para.Height = 256;

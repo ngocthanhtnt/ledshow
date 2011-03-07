@@ -135,6 +135,7 @@ class CfacScreenProperty:public QGroupBox
 {
     Q_OBJECT
 public slots:
+ void cardChangeProc();
  void endProc(); //保存参数
  void loadParaProc(); //加载参数
  public:
@@ -225,6 +226,6 @@ public:
     CscreenProperty(QWidget *parent=0);
     ~CscreenProperty();
 };
-
-INT8U getScreenParaFromSettings(QString screenStr, S_Screen_Para &screenPara);
+INT8U getCardParaFromSettings(QString cardName, S_Card_Para &cardPara);
+INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara, S_Card_Para &cardPara);
 #endif // SCREENPROPERTY_H
