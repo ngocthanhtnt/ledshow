@@ -55,7 +55,20 @@ private:
     void setupHelpActions();
     //void settingsInit();
 
-    QAction *actionSave;
+    //QAction *actionSave;
+    QAction *actionScreen;
+    QAction *actionProg;
+    QAction *actionArea;
+    QAction *actionSText;
+    QAction *actionMText;
+    QAction *actionTemp;
+    QAction *actionHumidi;
+    QAction *actionFlash;
+    QAction *actionClock;
+    QAction *actionTime;
+    QAction *actionNoise;
+    QAction *actionNongli;
+    QAction *actionTimer;
 public slots:
     void modifyScreenPara();
     void preview();
@@ -75,6 +88,7 @@ public:
     int timerFlag;
     INT8U previewProgNo;
 
+    void actionEnProc(int type);
     void screenCardParaChangeProc();
     void setCurSettingsStr(QString str);  //获取当前的settings的str
     QString getCurSettingsStr();   //设置当前settings的str

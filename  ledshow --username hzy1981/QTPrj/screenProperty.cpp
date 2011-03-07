@@ -75,13 +75,30 @@ public:
     ~CscreenProperty();
 };
 */
+INT8U getCardParaFromSettings(QString cardName, S_Card_Para &cardPara)
+{
+    cardSettings.beginGroup(cardName);
+    cardPara.Font_Num = cardSettings.value("FontNum").toInt();
+    cardPara.File_En_Word = cardSettings.value("fileEnWord").toInt();
+    cardPara.Max_Points = cardSettings.value("maxPoints").toInt();
+    cardPara.ROM_Size = cardSettings.value("romSize").toInt();
+    cardSettings.endGroup();
+
+    return 1;
+}
+
 //读取屏幕参数
 //返回>0表示读取到参数，==0表示没有读取到参数
-INT8U getScreenParaFromSettings(QString screenStr, S_Screen_Para &screenPara)
+INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara, S_Card_Para &cardPara)
 {
-    qDebug("getScreenParaFromSettings:%s", (const char *)screenStr.toLocal8Bit());
+    QString cardName;
+
+    qDebug("getScreenCardParaFromSettings:%s", (const char *)screenStr.toLocal8Bit());
+
     settings.beginGroup(screenStr);
     settings.beginGroup("facPara");
+
+    int index = settings.value("cardType").toInt();
 
     screenPara.Base_Para.Width = settings.value("width").toInt();
     screenPara.Base_Para.Height = settings.value("height").toInt();
@@ -141,7 +158,11 @@ INT8U getScreenParaFromSettings(QString screenStr, S_Screen_Para &screenPara)
     settings.endGroup();
     settings.endGroup();
 
+   cardSettings.beginGroup("");
+   cardName = cardSettings.childGroups().at(index);
+   cardSettings.endGroup();
 
+   getCardParaFromSettings(cardName, cardPara);
   return 1;
 }
 
@@ -1135,9 +1156,11 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
      //this->setc
 
   setTitle(tr("安装参数"));
+  connect(cardCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(cardChangeProc()));
    connect(loadButton, SIGNAL(clicked()), this, SLOT(loadParaProc()));
    connect(endButton, SIGNAL(clicked()), this, SLOT(endProc()));
 
+   cardChangeProc();
   //----暂时将网络参数删除！
    tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
 }
@@ -1185,6 +1208,7 @@ void CfacScreenProperty::getSettingsFromWidget(QString str)
   settings.beginGroup(str);
   settings.beginGroup("facPara");
 
+  settings.setValue("cardType", cardCombo->currentIndex());
   settings.setValue("screenID", screenIDEdit->value()); //硬件地址
   settings.setValue("baud", baudCombo->currentIndex());
   settings.setValue("redGreenRev", redGreenRevCheck->isChecked());
@@ -1221,6 +1245,7 @@ void CfacScreenProperty::setSettingsToWidget(QString str)
     settings.beginGroup(str);
     settings.beginGroup("facPara");
 
+    cardCombo->setCurrentIndex(settings.value("cardType").toInt());
     screenIDEdit->setValue(settings.value("screenID").toInt());
     baudCombo->setCurrentIndex(settings.value("baud").toInt());
     redGreenRevCheck->setChecked(settings.value("redGreenRev").toBool());
@@ -1338,6 +1363,32 @@ void CfacScreenProperty::loadParaProc()
 
 
 
+}
+
+void CfacScreenProperty::cardChangeProc()
+{
+    S_Card_Para cardPara;
+    S_Card_Para cardPara_Bak;
+
+    memcpy(&cardPara_Bak, &Card_Para, sizeof(Card_Para));
+
+    getCardParaFromSettings(cardCombo->currentText(), Card_Para);
+    cardParaEdit->setText(tr("支持最大点数:单色") + QString::number(cardPara.Max_Points));
+
+    QString fileStr = tr("本卡支持：") +\
+    ((Get_Border_Show_En()>0)?tr("边框"):tr("")) +\
+    ((Get_Clock_Show_En()>0)?tr("、表盘"):tr("")) +\
+    ((Get_Pic_Show_En()>0)?tr("、文本"):tr("")) +\
+    ((Get_Lun_Show_En()>0)?tr("、农历"):tr(""))+\
+    ((Get_Temp_Show_En()>0)?tr("、温度"):tr(""))+\
+    ((Get_Time_Show_En()>0)?tr("、时间"):tr(""))+\
+    ((Get_Timer_Show_En()>0)?tr("、计时"):tr(""))+\
+    ((Get_Humidity_Show_En()>0)?tr("、湿度"):tr(""))+\
+    ((Get_Noise_Show_En()>0)?tr("、噪音"):tr(""));
+
+    cardParaEdit->append(fileStr);
+
+    memcpy(&Card_Para, &cardPara_Bak, sizeof(Card_Para));
 }
 
 void CfacScreenProperty::endProc()

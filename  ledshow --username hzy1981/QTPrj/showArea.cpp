@@ -12,47 +12,47 @@ extern QSettings settings;
 extern int linePosi[MAX_LINE_NUM];
 extern int pagePosi[MAX_LINE_NUM];
 
-INT8U Get_Border_Show_En()
+bool Get_Border_Show_En()
 {
   return (Card_Para.File_En_Word >> BORDER_SHOW_BIT) & 0x01;
 }
 
-INT8U Get_Clock_Show_En()
+bool Get_Clock_Show_En()
 {
     return (Card_Para.File_En_Word >> CLOCK_SHOW_BIT) & 0x01;
 }
 
-INT8U Get_Pic_Show_En()
+bool Get_Pic_Show_En()
 {
     return (Card_Para.File_En_Word >> PIC_SHOW_BIT) & 0x01;
 }
 
-INT8U Get_Lun_Show_En()
+bool Get_Lun_Show_En()
 {
     return (Card_Para.File_En_Word >> LUN_SHOW_BIT) & 0x01;
 }
 
-INT8U Get_Temp_Show_En()
+bool Get_Temp_Show_En()
 {
     return (Card_Para.File_En_Word >> TEMP_SHOW_BIT) & 0x01;
 }
 
-INT8U Get_Time_Show_En()
+bool Get_Time_Show_En()
 {
     return (Card_Para.File_En_Word >> TIME_SHOW_BIT) & 0x01;
 }
 
-INT8U Get_Timer_Show_En()
+bool Get_Timer_Show_En()
 {
     return (Card_Para.File_En_Word >> TIMER_SHOW_BIT) & 0x01;
 }
 
-INT8U Get_Humidity_Show_En()
+bool Get_Humidity_Show_En()
 {
   return (Card_Para.File_En_Word >> HUMIDITY_SHOW_BIT) & 0x01;
 }
 
-INT8U Get_Noise_Show_En()
+bool Get_Noise_Show_En()
 {
   return (Card_Para.File_En_Word >> NOISE_SHOW_BIT) & 0x01;
 }

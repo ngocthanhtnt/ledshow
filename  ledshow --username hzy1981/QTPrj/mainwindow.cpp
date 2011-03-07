@@ -58,7 +58,7 @@ void MainWindow::setupFileActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("另存为"), this);
+    a = new QAction(tr("另存为"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     tb->addAction(a);
@@ -98,7 +98,7 @@ void MainWindow::setupViewActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("属性窗口"), this);
+    a = new QAction(tr("属性窗口"), this);
     a->setShortcut(QKeySequence::Save);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
     tb->addAction(a);
@@ -115,8 +115,22 @@ void MainWindow::setupEditActions()
     menuBar()->addMenu(menu);
 
     QAction *a;
-
-    a = new QAction(tr("屏幕"), this);
+/*
+    QAction *actionScreen;
+    QAction *actionProg;
+    QAction *actionArea;
+    QAction *actionSText;
+    QAction *actionMText;
+    QAction *actionTemp;
+    QAction *actionHumidi;
+    QAction *actionFlash;
+    QAction *actionClock;
+    QAction *actionTime;
+    QAction *actionNoise;
+    QAction *actionNongli;
+    QAction *actionTimer;
+ */
+    actionScreen = a = new QAction(tr("屏幕"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), progManage, SLOT(newScreen())); //新建节目
@@ -126,7 +140,7 @@ void MainWindow::setupEditActions()
     menu->addSeparator();
 
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
-    a = new QAction(tr("节目"), this);
+    actionProg = a = new QAction(tr("节目"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), progManage, SLOT(newProg())); //新建节目
@@ -135,77 +149,77 @@ void MainWindow::setupEditActions()
     menu->addAction(a);
     menu->addSeparator();
 
-    a = new QAction(tr("分区"), this);
+    actionArea = a = new QAction(tr("分区"), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), progManage, SLOT(newArea())); //新建节目
     tb->addAction(a);
     menu->addAction(a);
     menu->addSeparator();
 
-    actionSave = a = new QAction(tr("字幕"), this);
+    actionSText = a = new QAction(tr("字幕"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled(true);//(bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newSText())); //新建节目
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("文本"), this);
+    actionMText = a = new QAction(tr("文本"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newPic())); //新建节目
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("动画"), this);
+    actionFlash = a = new QAction(tr("动画"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newFlash()));
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("表盘"), this);
+    actionClock = a = new QAction(tr("表盘"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Clock_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newClock()));
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("时间"), this);
+    actionTime = a = new QAction(tr("时间"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Time_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTime()));
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("计时"), this);
+    actionTimer = a = new QAction(tr("计时"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Timer_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTimer()));
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("温度"), this);
+    actionTemp = a = new QAction(tr("温度"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Temp_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTemp()));
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("湿度"), this);
+    actionHumidi = a = new QAction(tr("湿度"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Humidity_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newHumidity()));
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("噪音"), this);
+    actionNoise = a = new QAction(tr("噪音"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Humidity_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newNoise()));
     tb->addAction(a);
     menu->addAction(a);
 
-    actionSave = a = new QAction(tr("农历"), this);
+    actionNongli = a = new QAction(tr("农历"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Lun_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newLun()));
@@ -213,11 +227,79 @@ void MainWindow::setupEditActions()
     menu->addAction(a);
     menu->addSeparator();
 
-    actionSave = a = new QAction(tr("删除"), this);
+    a = new QAction(tr("删除"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), progManage, SLOT(deleteItem())); //删除节目
     tb->addAction(a);
     menu->addAction(a);
+}
+
+void MainWindow::actionEnProc(int Type)
+{
+  if(Type EQ SCREEN_PROPERTY)
+  {
+      actionScreen->setEnabled(true);
+      actionProg->setEnabled(true);
+      actionArea->setEnabled(false);
+      actionSText->setEnabled(false);
+      actionMText->setEnabled(false);
+      actionTemp->setEnabled(false);
+      actionHumidi->setEnabled(false);
+      actionFlash->setEnabled(false);
+      actionClock->setEnabled(false);
+      actionTime->setEnabled(false);
+      actionNoise->setEnabled(false);
+      actionNongli->setEnabled(false);
+      actionTimer->setEnabled(false);
+  }
+  else if(Type EQ PROG_PROPERTY)
+  {
+      actionScreen->setEnabled(true);
+      actionProg->setEnabled(true);
+      actionArea->setEnabled(true);
+      actionSText->setEnabled(false);
+      actionMText->setEnabled(false);
+      actionTemp->setEnabled(false);
+      actionHumidi->setEnabled(false);
+      actionFlash->setEnabled(false);
+      actionClock->setEnabled(false);
+      actionTime->setEnabled(false);
+      actionNoise->setEnabled(false);
+      actionNongli->setEnabled(false);
+      actionTimer->setEnabled(false);
+  }
+  else if(Type EQ AREA_PROPERTY)
+  {
+      actionScreen->setEnabled(true);
+      actionProg->setEnabled(true);
+      actionArea->setEnabled(true);
+      actionSText->setEnabled(true);
+      actionMText->setEnabled(true);
+      actionTemp->setEnabled(true);
+      actionHumidi->setEnabled(true);
+      actionFlash->setEnabled(true);
+      actionClock->setEnabled(true);
+      actionTime->setEnabled(true);
+      actionNoise->setEnabled(true);
+      actionNongli->setEnabled(true);
+      actionTimer->setEnabled(true);
+  }
+  else
+  {
+      actionScreen->setEnabled(true);
+      actionProg->setEnabled(true);
+      actionArea->setEnabled(true);
+      actionSText->setEnabled(true);
+      actionMText->setEnabled(true);
+      actionTemp->setEnabled(true);
+      actionHumidi->setEnabled(true);
+      actionFlash->setEnabled(true);
+      actionClock->setEnabled(true);
+      actionTime->setEnabled(true);
+      actionNoise->setEnabled(true);
+      actionNongli->setEnabled(true);
+      actionTimer->setEnabled(true);
+  }
 }
 
 void MainWindow::setupCtrlActions()

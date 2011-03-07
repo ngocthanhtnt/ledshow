@@ -442,7 +442,7 @@ void CprogManage::newProg()
     QStringList groups = settings.childGroups(); //所有节目的列表
 
     size = groups.size();
-    if(size >= Card_Para.Prog_Num)
+    if(size >= MAX_PROG_NUM)
     {
         settings.endGroup();
         QMessageBox::information(0, tr(APP_NAME),
@@ -580,7 +580,7 @@ void CprogManage::newArea()
     QStringList groups = settings.childGroups(); //area列表
 
     size = groups.size();
-    if(size >= Card_Para.Area_Num)
+    if(size >= MAX_AREA_NUM)
     {
         settings.endGroup();
         QMessageBox::information(0, tr(APP_NAME),
@@ -748,7 +748,7 @@ void CprogManage::newFile(int fileType, int subType)
     QStringList groups = settings.childGroups(); //area列表
 
     size = groups.size();
-    if(size >= Card_Para.File_Num)
+    if(size >= MAX_FILE_NUM)
     {
         settings.endGroup();
         QMessageBox::information(0, tr(APP_NAME),
@@ -928,6 +928,8 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     saveCurItem(item);
 
     type = checkItemType(item);
+
+    w->actionEnProc(type);
     //更新当前屏幕
     if(type EQ SCREEN_PROPERTY)
     {
@@ -971,7 +973,7 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
         w->MDISubWinClickFlag = 0;
         //更新当前显示屏参数
         QString screenStr = screenItem->data(0, Qt::UserRole).toString();
-        getScreenParaFromSettings(screenStr, Screen_Para);
+        getScreenCardParaFromSettings(screenStr, Screen_Para, Card_Para);
 /*
         if(oldScreenItem != w->screenArea->screenItem)
         {
