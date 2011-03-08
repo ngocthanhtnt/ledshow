@@ -44,6 +44,12 @@
 #define PROG_COUNTS_MODE 0x00
 #define PROG_TIME_MODE  0x01
 
+#define COM_RS232 0x01
+#define COM_RS485 0x02
+#define COM_UDISK 0x04
+#define COM_ETH   0x08
+#define COM_GPRS  0x10
+
 #define GET_TEXT_LEN(W,H) ((W%8) EQ 0)?(W*H/8):((W/8+1)*H)//((H%8) EQ 0)?(W*H/8):(W*(H/8+1))
 #define GET_POINT_INDEX(W,X,Y) (((W%8)?(W/8 + 1)*8:W)*Y + X)//(((Y>>3) * Width) + X)*8 + (Y & 0x07);
 
@@ -127,11 +133,11 @@ typedef struct
 typedef struct
 {
   INT8U Head;
-  INT32U Max_Points; //最大支持
-  //INT8U Prog_Num; //最大节目数
-  //INT8U Area_Num; //最大分区数
-  //INT8U File_Num; //最大文件数
+  INT32U Max_Points; //最大支持点数字
+  INT16U Max_Height; //最大高度
+  INT16U Flag; //第0表示表示是否支持全彩，1支持，2不支持，其他位备用
   INT8U Font_Num; //板上字体个数
+  INT8U Com_Mode; //支持的通信方式,第0位RS232、第1位RS485、第2位以太网、第3位GPRS/GSM
   INT16U ROM_Size; //存储空间大小,单位KB
   INT16U File_En_Word; //支持的节目类型
   INT8U Tail;

@@ -988,6 +988,7 @@ void Ram_Init()
   Prog_Status_Init();
 
   Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+  Prog_Status.Play_Status.Last_Prog_No = 0xFF;
   SET_HT(Prog_Status.Play_Status);
   SET_SUM(Prog_Status.Play_Status);
 

@@ -81,7 +81,10 @@ INT8U getCardParaFromSettings(QString cardName, S_Card_Para &cardPara)
     cardPara.Font_Num = cardSettings.value("FontNum").toInt();
     cardPara.File_En_Word = cardSettings.value("fileEnWord").toInt();
     cardPara.Max_Points = cardSettings.value("maxPoints").toInt();
+    Card_Para.Max_Height = cardSettings.value("maxHeight").toInt();
+    cardPara.Flag = cardSettings.value("flag").toInt();
     cardPara.ROM_Size = cardSettings.value("romSize").toInt();
+    cardPara.Com_Mode = cardSettings.value("comMode").toInt();
     cardSettings.endGroup();
 
     return 1;
@@ -639,6 +642,87 @@ CopenCloseProperty::~CopenCloseProperty()
 {
 
 }
+
+ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
+{
+    QHBoxLayout *mainLayout = new QHBoxLayout(this);
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
+   QHBoxLayout *hLayout = new QHBoxLayout(this);
+
+   lightnessProperty = new ClightnessProperty(this);
+
+
+
+  sendButton = new QPushButton(tr("发送参数"), this);
+  udiskButton = new QPushButton(tr("导出U盘文件"),this);
+  cancelButton = new QPushButton(tr("取消"),this);
+
+
+  hLayout ->addWidget(sendButton);
+  hLayout ->addWidget(udiskButton);
+  hLayout ->addWidget(cancelButton);
+
+  vLayout->addWidget(lightnessProperty);
+  vLayout->addLayout(hLayout);
+
+  mainLayout  ->addLayout(vLayout);
+  mainLayout ->addStretch(10);
+  setLayout(mainLayout);
+}
+
+void ClightnessDialog::getSettingsFromWidget(QString str)
+{
+
+}
+
+void ClightnessDialog::setSettingsToWidget(QString str)
+{
+
+}
+
+ClightnessDialog::~ClightnessDialog()
+{
+
+}
+
+CopenCloseDialog::CopenCloseDialog(QWidget *parent):QDialog(parent)
+{
+        QVBoxLayout *vLayout = new QVBoxLayout(this);
+    QHBoxLayout *hLayout = new QHBoxLayout(this);
+
+
+  openCloseProperty = new CopenCloseProperty(this);
+  sendButton = new QPushButton(tr("发送参数"), this);
+  udiskButton = new QPushButton(tr("导出U盘文件"),this);
+  cancelButton = new QPushButton(tr("取消"),this);
+
+  hLayout ->addWidget(sendButton);
+  hLayout ->addWidget(udiskButton);
+  hLayout ->addWidget(cancelButton);
+
+  vLayout->addWidget(openCloseProperty);
+  vLayout->addLayout(hLayout);
+
+  setLayout(vLayout);
+}
+
+void CopenCloseDialog::getSettingsFromWidget(QString str)
+{
+
+}
+
+void CopenCloseDialog::setSettingsToWidget(QString str)
+{
+
+}
+
+CopenCloseDialog::~CopenCloseDialog()
+{
+
+}
+
+
+
 /*
 //screen属性窗
 class CfacScreenProperty:public QWidget
@@ -884,8 +968,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     cardCombo->addItems(cardList);
 
     cardParaEdit = new QTextEdit(this);
-    //cardParaEdit->setFixedWidth(150);
-    cardParaEdit->setFixedHeight(60);
+    cardParaEdit->setFocusPolicy(Qt::NoFocus); //禁止键盘输入(false);
+    cardParaEdit->setFixedHeight(80);
 
 
     vLayout->addWidget(cardCombo);
@@ -1097,7 +1181,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    hLayout = new QHBoxLayout(this);
    readParaGroup = new QWidget(this);//QGroupBox(tr("参数回传"),this);
    readParaEdit = new QTextEdit(tr("--显示读回参数--"),this);
-   //readParaEdit->setFixedWidth(150);
+   readParaEdit->setFocusPolicy(Qt::NoFocus); //禁止键盘输入(false);
    readParaEdit->setFixedHeight(60);
    readParaButton = new QPushButton(tr("回读参数"),this);
    importParaButton = new QPushButton(tr("导入参数"),this);
@@ -1156,6 +1240,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
      //this->setc
 
   setTitle(tr("安装参数"));
+
+  connect(defParaCheck, SIGNAL(stateChanged(int)), this, SLOT(defParaCheckProc()));
   connect(cardCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(cardChangeProc()));
    connect(loadButton, SIGNAL(clicked()), this, SLOT(loadParaProc()));
    connect(endButton, SIGNAL(clicked()), this, SLOT(endProc()));
@@ -1365,6 +1451,29 @@ void CfacScreenProperty::loadParaProc()
 
 }
 
+void CfacScreenProperty::defParaCheckProc()
+{
+  if(defParaCheck->checkState()) //选中
+  {
+    freqCombo->setCurrentIndex(0);
+    lineHideCombo->setCurrentIndex(0);
+    dataMirrorCombo->setCurrentIndex(0);
+    lineOrderCombo->setCurrentIndex(0);
+
+    freqCombo->setEnabled(false);
+    lineHideCombo->setEnabled(false);
+    dataMirrorCombo->setEnabled(false);
+    lineOrderCombo->setEnabled(false);
+  }
+  else
+  {
+      freqCombo->setEnabled(true);
+      lineHideCombo->setEnabled(true);
+      dataMirrorCombo->setEnabled(true);
+      lineOrderCombo->setEnabled(true);
+  }
+}
+
 void CfacScreenProperty::cardChangeProc()
 {
     S_Card_Para cardPara;
@@ -1373,12 +1482,19 @@ void CfacScreenProperty::cardChangeProc()
     memcpy(&cardPara_Bak, &Card_Para, sizeof(Card_Para));
 
     getCardParaFromSettings(cardCombo->currentText(), Card_Para);
-    cardParaEdit->setText(tr("支持最大点数:单色") + QString::number(cardPara.Max_Points));
+    QString pointsStr = tr("最大点数：单色") + QString::number(Card_Para.Max_Points) +\
+                          tr("，双色") + QString::number(Card_Para.Max_Points/2);
 
-    QString fileStr = tr("本卡支持：") +\
+    if(Card_Para.Flag & 0x01) //支持全彩
+      pointsStr += tr("，全彩") + QString::number(Card_Para.Max_Points/3);
+
+    pointsStr += tr("，最大高度：") + QString::number(Card_Para.Max_Height);
+    cardParaEdit->setText(pointsStr);
+
+    QString fileStr = tr("支持：") +\
     ((Get_Border_Show_En()>0)?tr("边框"):tr("")) +\
     ((Get_Clock_Show_En()>0)?tr("、表盘"):tr("")) +\
-    ((Get_Pic_Show_En()>0)?tr("、文本"):tr("")) +\
+    ((Get_Pic_Show_En()>0)?tr("、字幕、文本、表格、图片、动画"):tr("")) +\
     ((Get_Lun_Show_En()>0)?tr("、农历"):tr(""))+\
     ((Get_Temp_Show_En()>0)?tr("、温度"):tr(""))+\
     ((Get_Time_Show_En()>0)?tr("、时间"):tr(""))+\
@@ -1388,6 +1504,14 @@ void CfacScreenProperty::cardChangeProc()
 
     cardParaEdit->append(fileStr);
 
+    QString comStr = tr("通信方式：") +\
+                     (((Card_Para.Com_Mode & COM_RS232)>0)?tr("RS232"):tr("")) +\
+                     (((Card_Para.Com_Mode & COM_RS485)>0)?tr("、R485"):tr("")) +\
+                     (((Card_Para.Com_Mode & COM_UDISK)>0)?tr("、U盘"):tr("")) +\
+                     (((Card_Para.Com_Mode & COM_ETH)>0)?tr("、以太网"):tr("")) +\
+                     (((Card_Para.Com_Mode & COM_GPRS)>0)?tr("、GSM/GPRS"):tr(""));
+
+    cardParaEdit->append(comStr);
     memcpy(&Card_Para, &cardPara_Bak, sizeof(Card_Para));
 }
 

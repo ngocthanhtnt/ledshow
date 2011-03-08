@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QDateEdit>
@@ -130,11 +131,42 @@ public:
     ~ClightnessProperty();
 };
 
+class ClightnessDialog:public QDialog
+{
+    Q_OBJECT
+public:
+    ClightnessProperty *lightnessProperty;
+    QPushButton *sendButton;
+    QPushButton *udiskButton;
+    QPushButton *cancelButton;
+
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    ClightnessDialog(QWidget *parent=0);
+    ~ClightnessDialog();
+};
+
+class CopenCloseDialog:public QDialog
+{
+    Q_OBJECT
+public:
+    CopenCloseProperty *openCloseProperty;
+    QPushButton *sendButton;
+    QPushButton *udiskButton;
+    QPushButton *cancelButton;
+
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CopenCloseDialog(QWidget *parent=0);
+    ~CopenCloseDialog();
+};
+
 //screen属性窗
 class CfacScreenProperty:public QGroupBox
 {
     Q_OBJECT
 public slots:
+ void defParaCheckProc();
  void cardChangeProc();
  void endProc(); //保存参数
  void loadParaProc(); //加载参数

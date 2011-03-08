@@ -110,7 +110,7 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
     hLayout->addLayout(vLayout);
 
     textGroup = new QGroupBox(tr("ÎÄ±¾ÄÚÈÝ"), this);
-    editButton = new QPushButton(tr("±à¼­"), this);
+    editButton = new QPushButton(tr("±à¼­Æ÷"), this);
 
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(editButton);
