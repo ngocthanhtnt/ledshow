@@ -304,7 +304,6 @@ CMdiSubWindow * _newScreen(QString name, int x, int y, int width, int height)
     subWin->setGeometry(x,y,width,height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
     subWin->setFixedSize(subWin->size());
     subWin->show();
-
     return subWin;
 }
 
@@ -925,6 +924,9 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
        //w->property->getSettingsFromWidget(lastItem);
     }
 
+    if(item EQ (QTreeWidgetItem *)0)
+        return;
+
     saveCurItem(item);
 
     type = checkItemType(item);
@@ -1167,7 +1169,8 @@ void CprogManage::settingsInit()
 
         subWin->setFixedSize(subWin->size());
 */
-        _newScreen(QString::number(m + 1) + tr("фад╩"), 0, 0, screenPara.Base_Para.Width+8, screenPara.Base_Para.Height+34);
+        CMdiSubWindow * subWin = _newScreen(QString::number(m + 1) + tr("фад╩"), m*50, m*50, screenPara.Base_Para.Width+8, screenPara.Base_Para.Height+34);
+
         w->screenArea->screenItem = screenItem;
         screenItem->setData(0, Qt::UserRole, screenStr);
         screenItem->setText(0, QString::number(m + 1) + tr("отй╬фа"));
@@ -1255,7 +1258,7 @@ void CprogManage::settingsInit()
         }
 
         saveCurItem(0);
-        //clickItem(treeWidget->topLevelItem(0), 0);
+        clickItem(treeWidget->topLevelItem(0), 0);
    }
 }
 

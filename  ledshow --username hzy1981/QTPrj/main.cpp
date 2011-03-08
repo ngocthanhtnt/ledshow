@@ -16,26 +16,35 @@ MainWindow *w;
 #define TIMER_SHOW_EN  0 //定时显示使能
  */
 
+/*
+#define COM_RS232 0x01
+#define COM_RS485 0x02
+#define COM_UDISK 0x04
+#define COM_ETH   0x08
+#define COM_GPRS  0x10
+ */
 void resetCardtoCardParaFile()
 {
   QSettings cardIniFile(CARD_INI_FILE,QSettings::IniFormat,0);
 
   cardIniFile.beginGroup("AS-A0");
   cardIniFile.setValue("maxPoints", 1024);
+  cardIniFile.setValue("flag", 1); //第0位表示是否支持全彩
   cardIniFile.setValue("maxHeight", 128);
   cardIniFile.setValue("FontNum", 1);
   cardIniFile.setValue("romSize", 1024);
   cardIniFile.setValue("fileEnWord", 0xFFFF);
-  cardIniFile.setValue("comMode", 0x01); //第0位串口、第1位u盘、第2位以太网、第3位GPRS
+  cardIniFile.setValue("comMode", COM_RS232 | COM_RS485);
   cardIniFile.endGroup();
 
   cardIniFile.beginGroup("AS-B0");
   cardIniFile.setValue("maxPoints", 512);
+  cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 128);
   cardIniFile.setValue("FontNum", 1);
   cardIniFile.setValue("romSize", 2048);
   cardIniFile.setValue("fileEnWord", 0xFF);
-  cardIniFile.setValue("comMode", 0x03); //第0位串口、第1位u盘、第2位以太网、第3位GPRS
+  cardIniFile.setValue("comMode", COM_RS232 | COM_RS485 | COM_UDISK);
   cardIniFile.endGroup();
 
 }

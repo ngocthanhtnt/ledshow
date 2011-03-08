@@ -19,7 +19,7 @@
 #define C_SCREEN_ADDR 0x02 //屏幕地址
 #define C_SCREEN_IP   0x03 //IP地址
 #define C_SCREEN_BAUD 0x04 //通信速率
-#define C_SCREEN_BASE_PARA 0x05
+#define C_SCREEN_BASE_PARA 0x05 //基本参数
 #define C_SCREEN_OC_TIME 0x06 //定时开关机时间
 #define C_SCREEN_LIGNTNESS 0x07 //亮度
 #define C_SCREEN_TIME 0x08 //时间

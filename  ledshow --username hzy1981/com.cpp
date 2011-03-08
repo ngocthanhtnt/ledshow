@@ -85,6 +85,8 @@ INT8U Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
     ;//mem_cpy((INT8U *)&Screen_Para.Open_Close_Time, Frame, Frame_Data_Size[Cmd], (INT8U *)&Screen_Para, sizeof(Screen_Para)); //定时开关机时间
   else if(Cmd EQ C_SCREEN_BASE_PARA && Len >= sizeof(Screen_Para.Base_Para))
     mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));
+  else if(Cmd EQ C_PROG_NUM && Len>=sizeof(Screen_Para.Prog_Num))
+    mem_cpy((INT8U *)&Screen_Para.Prog_Num, Data, sizeof(Screen_Para.Prog_Num), (INT8U *)&Screen_Para, sizeof(Screen_Para));
   else
   {
     ASSERT_FAILED();
@@ -114,7 +116,8 @@ void Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen)
       Cmd_Code EQ C_SCREEN_BAUD ||\
       Cmd_Code EQ C_SCREEN_OC_TIME ||\
       Cmd_Code EQ C_SCREEN_LIGNTNESS ||\
-      Cmd_Code EQ C_SCREEN_BASE_PARA)
+      Cmd_Code EQ C_SCREEN_BASE_PARA ||\
+      Cmd_Code EQ C_PROG_NUM)
   {
     Re &= Screen_Para_Frame_Proc(Cmd_Code, Frame + FDATA, FrameLen - F_NDATA_LEN); //更新内存中的参数
     Re &= Write_Screen_Para();//Save_Screen_Para_Frame_Proc(Frame, FrameLen); //保存参数

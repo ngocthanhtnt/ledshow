@@ -71,6 +71,8 @@ private:
     QAction *actionTimer;
 public slots:
     void modifyScreenPara();
+    void setLightness();
+    void setOpenCloseTime();
     void preview();
     void previewProc();
 public:

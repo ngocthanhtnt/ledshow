@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Tue Mar 8 00:05:55 2011
+** Created: Tue Mar 8 23:39:52 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_MainWindow[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       9,   14, // methods
+      11,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -39,7 +39,9 @@ static const uint qt_meta_data_MainWindow[] = {
       72,   11,   11,   11, 0x08,
      105,   11,   11,   11, 0x0a,
      124,   11,   11,   11, 0x0a,
-     134,   11,   11,   11, 0x0a,
+     139,   11,   11,   11, 0x0a,
+     158,   11,   11,   11, 0x0a,
+     168,   11,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -48,7 +50,8 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "MainWindow\0\0fileSaveAs()\0fileSave()\0"
     "fileNew()\0fileOpen()\0settingsInit()\0"
     "updateTreeWidget(QMdiSubWindow*)\0"
-    "modifyScreenPara()\0preview()\0previewProc()\0"
+    "modifyScreenPara()\0setLightness()\0"
+    "setOpenCloseTime()\0preview()\0previewProc()\0"
 };
 
 const QMetaObject MainWindow::staticMetaObject = {
@@ -87,11 +90,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 4: settingsInit(); break;
         case 5: updateTreeWidget((*reinterpret_cast< QMdiSubWindow*(*)>(_a[1]))); break;
         case 6: modifyScreenPara(); break;
-        case 7: preview(); break;
-        case 8: previewProc(); break;
+        case 7: setLightness(); break;
+        case 8: setOpenCloseTime(); break;
+        case 9: preview(); break;
+        case 10: previewProc(); break;
         default: ;
         }
-        _id -= 9;
+        _id -= 11;
     }
     return _id;
 }

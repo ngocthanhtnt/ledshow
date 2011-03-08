@@ -320,6 +320,20 @@ void MainWindow::setupCtrlActions()
     tb->addAction(a);
     menu->addAction(a);
 
+    a = new QAction(tr("设置开关机时段"), this);
+    a->setPriority(QAction::LowPriority);
+    a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(setOpenCloseTime()));
+    tb->addAction(a);
+    menu->addAction(a);
+
+    a = new QAction(tr("设置亮度"), this);
+    a->setPriority(QAction::LowPriority);
+    a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(setLightness()));
+    tb->addAction(a);
+    menu->addAction(a);
+
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
     a = new QAction(tr("预览"), this);
     a->setPriority(QAction::LowPriority);
@@ -703,6 +717,20 @@ void MainWindow::modifyScreenPara()
 
 }
 
+//设置亮度
+void MainWindow::setLightness()
+{
+  ClightnessDialog *lightnessDialog = new ClightnessDialog(this);
+  lightnessDialog->exec();
+}
+
+//设置开关机时段
+void MainWindow::setOpenCloseTime()
+{
+    CopenCloseDialog *openCloseDialog = new CopenCloseDialog(this);
+    openCloseDialog->exec();
+}
+
 void MainWindow::preview()
 {
   QString screenStr;//progStr;
@@ -735,6 +763,7 @@ void MainWindow::preview()
   previewArea->setWindowModality(Qt::WindowModal);
   */
   previewArea->previewFlag = 1;
+  previewArea->updateFlag = true;
 
   previewArea->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
   previewArea->setFixedSize(previewArea->size());
@@ -744,10 +773,13 @@ void MainWindow::preview()
   previewWin->setWindowTitle(tr("预览-")+QString::number(Screen_No + 1) + tr("号屏幕-") + QString::number(Preview_Prog_No + 1) + tr("号节目"));
   previewWin->move((width() - previewArea->width())/2, (height() - previewArea->height())/2);
 
+  Show_Init(); //显示初始化。
+
+
   previewWin->show();
   previewWin->setFixedSize(previewWin->size());
 
-  Show_Init();
+
   //新建定时器
 
 
