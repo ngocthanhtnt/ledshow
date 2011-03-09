@@ -72,6 +72,8 @@ private:
 public slots:
     void modifyScreenPara();
     void setLightness();
+    void adjTime();
+    void sendDataProc();
     void setOpenCloseTime();
     void preview();
     void previewProc();

@@ -161,6 +161,81 @@ public:
     ~CopenCloseDialog();
 };
 
+class CadjTimeProperty:public QGroupBox
+{
+    Q_OBJECT
+public slots:
+    void adjTimeModeCheck();
+public:
+    //QDateTimeEdit *dateTimeEdit;
+    //QPushButton *sysTimeButton;
+    QRadioButton *sysTimeButton; //系统时间
+    QRadioButton *selfTimeButton; //自定义事件
+    QDateTimeEdit *dateTimeEdit;
+
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CadjTimeProperty(QWidget *parent=0);
+    ~CadjTimeProperty();
+};
+
+class CadjTimeDialog:public QDialog
+{
+    Q_OBJECT
+public:
+    CadjTimeProperty *adjTimeProperty;
+
+    QPushButton *sendButton;
+    QPushButton *udiskButton;
+    QPushButton *cancelButton;
+
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CadjTimeDialog(QWidget *parent=0);
+    ~CadjTimeDialog();
+};
+
+/*
+class CsendProgDialog:public QDialog
+{
+    Q_OBJECT
+public:
+    QCheckBox *openCloseCheck;
+    QCheckBox *lightnessCheck;
+    QCheckBox *adjTimeCheck;
+
+    CopenCloseProperty *openCloseProperty;
+    ClightnessProperty *lightnessProperty;
+
+
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CopenCloseDialog(QWidget *parent=0);
+    ~CopenCloseDialog();
+};
+*/
+class CsendDataDialog:public QDialog
+{
+    Q_OBJECT
+public:
+    QCheckBox *lightnessCheck; //亮度控制
+    QCheckBox *openCloseCheck; //开关机时段控制
+    QCheckBox *adjTimeCheck;  //校时控制
+
+    QPushButton *sendButton; //发送
+    QPushButton *udiskButton; //u盘
+    QPushButton *cancelButton; //取消
+
+    ClightnessProperty *lightnessProperty;
+    CopenCloseProperty *openCloseProperty;
+    CadjTimeProperty *adjTimeProperty;
+
+    CsendDataDialog(QWidget *parent=0);
+    ~CsendDataDialog();
+
+
+};
+
 //screen属性窗
 class CfacScreenProperty:public QGroupBox
 {

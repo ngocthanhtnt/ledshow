@@ -344,6 +344,8 @@ ClightnessProperty::ClightnessProperty(QWidget *parent):QGroupBox(parent)
 
    this->setLayout(mainLayout);
 
+   setTitle(tr("亮度参数"));
+
    connect(manualButton, SIGNAL(clicked()),this,SIGNAL(adjModeEditSignal()));
    connect(timerButton, SIGNAL(clicked()),this,SIGNAL(adjModeEditSignal()));
    connect(autoButton, SIGNAL(clicked()),this,SIGNAL(adjModeEditSignal()));
@@ -516,8 +518,6 @@ void ClightnessProperty::setSettingsToWidget(QString str)
     adjModeEditSlot();
     sliderEditProc();
 
-    setTitle(tr("亮度参数"));
-
     connect(this,SIGNAL(adjModeEditSignal()),this,SLOT(adjModeEditSlot()));
     connect(this,SIGNAL(allEditSignal()),this,SLOT(allEditSlot()));
 }
@@ -650,8 +650,9 @@ ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
    QHBoxLayout *hLayout = new QHBoxLayout(this);
 
    lightnessProperty = new ClightnessProperty(this);
-
-
+   lightnessProperty->setFixedWidth(370);
+   lightnessProperty->setFixedHeight(160);
+   //lightnessProperty->setFixedWidth(lightnessProperty->sizeHint().width());
 
   sendButton = new QPushButton(tr("发送参数"), this);
   udiskButton = new QPushButton(tr("导出U盘文件"),this);
@@ -672,12 +673,12 @@ ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
 
 void ClightnessDialog::getSettingsFromWidget(QString str)
 {
-
+  lightnessProperty->getSettingsFromWidget(str);
 }
 
 void ClightnessDialog::setSettingsToWidget(QString str)
 {
-
+  lightnessProperty->setSettingsToWidget(str);
 }
 
 ClightnessDialog::~ClightnessDialog()
@@ -708,12 +709,12 @@ CopenCloseDialog::CopenCloseDialog(QWidget *parent):QDialog(parent)
 
 void CopenCloseDialog::getSettingsFromWidget(QString str)
 {
-
+  openCloseProperty->getSettingsFromWidget(str);
 }
 
 void CopenCloseDialog::setSettingsToWidget(QString str)
 {
-
+  openCloseProperty->setSettingsToWidget(str);
 }
 
 CopenCloseDialog::~CopenCloseDialog()
@@ -721,7 +722,144 @@ CopenCloseDialog::~CopenCloseDialog()
 
 }
 
+//校准时间
+CadjTimeProperty::CadjTimeProperty(QWidget *parent):QGroupBox(parent)
+{
+    QGridLayout *mainLayout = new QGridLayout(this);
 
+    sysTimeButton = new QRadioButton(tr("系统时间"),parent); //系统时间
+    selfTimeButton = new QRadioButton(tr("自定义时间"),parent); //自定义事件
+    dateTimeEdit = new QDateTimeEdit(parent);
+
+    mainLayout->addWidget(sysTimeButton, 0, 0);
+    mainLayout->addWidget(selfTimeButton, 1, 0);
+    mainLayout->addWidget(dateTimeEdit, 1, 2);
+    sysTimeButton->setChecked(true);
+
+    QDateTime temp;
+    temp =  QDateTime::currentDateTime();
+    dateTimeEdit->setDateTime(temp);
+    dateTimeEdit->setEnabled(false);
+
+    setLayout(mainLayout);
+    setTitle(tr("校准时间"));
+
+    connect(sysTimeButton, SIGNAL(clicked()), this, SLOT(adjTimeModeCheck()));
+    connect(selfTimeButton, SIGNAL(clicked()), this, SLOT(adjTimeModeCheck()));
+}
+
+void CadjTimeProperty::adjTimeModeCheck()
+{
+    if(sysTimeButton->isChecked())
+    {
+        dateTimeEdit->setEnabled(false);
+    }
+    else
+    {
+        QDateTime temp;
+        temp =  QDateTime::currentDateTime();
+        dateTimeEdit->setDateTime(temp);
+        dateTimeEdit->setEnabled(true);
+    }
+}
+
+CadjTimeProperty::~CadjTimeProperty()
+{
+
+}
+
+void CadjTimeProperty::getSettingsFromWidget(QString str)
+{
+
+}
+
+void CadjTimeProperty::setSettingsToWidget(QString str)
+{
+
+}
+
+//校准时间对话框
+CadjTimeDialog::CadjTimeDialog(QWidget *parent):QDialog(parent)
+{
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
+    QHBoxLayout *hLayout = new QHBoxLayout(this);
+
+  adjTimeProperty = new CadjTimeProperty(this);
+
+  sendButton = new QPushButton(tr("发送"),this);
+  udiskButton = new QPushButton(tr("导出U盘文件"),this);
+  cancelButton = new QPushButton(tr("取消"), this);
+
+  hLayout->addWidget(sendButton);
+  hLayout->addWidget(udiskButton);
+  hLayout->addWidget(cancelButton);
+  vLayout->addWidget(adjTimeProperty);
+  vLayout->addLayout(hLayout);
+
+  setLayout(vLayout);
+}
+
+CadjTimeDialog::~CadjTimeDialog()
+{
+
+}
+
+void CadjTimeDialog::getSettingsFromWidget(QString str)
+{
+
+}
+
+void CadjTimeDialog::setSettingsToWidget(QString str)
+{
+
+}
+
+CsendDataDialog::CsendDataDialog(QWidget *parent):QDialog(parent)
+{
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
+    QHBoxLayout *hLayout = new QHBoxLayout(this);
+
+
+  lightnessCheck = new QCheckBox(tr("设置亮度"),this);
+  openCloseCheck = new QCheckBox(tr("开关机设置"),this);
+  adjTimeCheck = new QCheckBox(tr("校时"),this);
+
+  QString str = w->screenArea->getCurrentScreenStr();
+
+  lightnessProperty = new ClightnessProperty(this);
+  openCloseProperty = new CopenCloseProperty(this);
+  adjTimeProperty = new CadjTimeProperty(this);
+
+  lightnessProperty->setFixedWidth(370);
+  lightnessProperty->setFixedHeight(160);
+
+  lightnessProperty->setSettingsToWidget(str);
+  openCloseProperty->setSettingsToWidget(str);
+  adjTimeProperty->setSettingsToWidget(str);
+
+  sendButton = new QPushButton(tr("发送"),this);
+  udiskButton = new QPushButton(tr("导出U盘文件"),this);
+  cancelButton = new QPushButton(tr("取消"),this);
+
+  hLayout->addWidget(sendButton);
+  hLayout->addWidget(udiskButton);
+  hLayout->addWidget(cancelButton);
+
+  vLayout->addWidget(lightnessCheck);
+  vLayout->addWidget(lightnessProperty);
+  vLayout->addWidget(openCloseCheck);
+  vLayout->addWidget(openCloseProperty);
+  vLayout->addWidget(adjTimeCheck);
+  vLayout->addWidget(adjTimeProperty);
+  vLayout->addLayout(hLayout);
+
+  setLayout(vLayout);
+}
+
+CsendDataDialog::~CsendDataDialog()
+{
+
+}
 
 /*
 //screen属性窗

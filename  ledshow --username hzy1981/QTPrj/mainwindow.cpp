@@ -344,13 +344,13 @@ void MainWindow::setupCtrlActions()
 
     a = new QAction(tr("校时"), this);
     a->setShortcut(QKeySequence::Open);
-    //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
+    connect(a, SIGNAL(triggered()), this, SLOT(adjTime()));
     tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("数据发送"), this);
     a->setShortcut(QKeySequence::Open);
-    //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
+    connect(a, SIGNAL(triggered()), this, SLOT(sendDataProc()));
     tb->addAction(a);
     menu->addAction(a);
 
@@ -721,14 +721,32 @@ void MainWindow::modifyScreenPara()
 void MainWindow::setLightness()
 {
   ClightnessDialog *lightnessDialog = new ClightnessDialog(this);
+  QString str = w->screenArea->getCurrentScreenStr();
+  lightnessDialog->setSettingsToWidget(str);
+
   lightnessDialog->exec();
+}
+
+void MainWindow::adjTime()
+{
+  CadjTimeDialog *adjTimeDialog = new CadjTimeDialog(this);
+  adjTimeDialog->exec();
 }
 
 //设置开关机时段
 void MainWindow::setOpenCloseTime()
 {
     CopenCloseDialog *openCloseDialog = new CopenCloseDialog(this);
+    QString str = w->screenArea->getCurrentScreenStr();
+    openCloseDialog->setSettingsToWidget(str);
+
     openCloseDialog->exec();
+}
+
+void MainWindow::sendDataProc()
+{
+   CsendDataDialog *sendDataDialog = new CsendDataDialog(this);
+   sendDataDialog->exec();
 }
 
 void MainWindow::preview()
