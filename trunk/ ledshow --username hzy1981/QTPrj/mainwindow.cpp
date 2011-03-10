@@ -28,9 +28,9 @@ QString getItemStr(QTreeWidgetItem *item)
 
 void MainWindow::setupFileActions()
 {
-    QToolBar *tb = new QToolBar(this);
-    tb->setWindowTitle(tr("File Actions"));
-    addToolBar(tb);
+    //QToolBar *tb = new QToolBar(this);
+    //tb->setWindowTitle(tr("File Actions"));
+    //addToolBar(tb);
 
     QMenu *menu = new QMenu(tr("文件"), this);
     menuBar()->addMenu(menu);
@@ -41,7 +41,7 @@ void MainWindow::setupFileActions()
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
@@ -49,19 +49,19 @@ void MainWindow::setupFileActions()
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("保存"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("另存为"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 
     menu->addSeparator();
@@ -75,9 +75,9 @@ void MainWindow::setupFileActions()
 
 void MainWindow::setupViewActions()
 {
-    QToolBar *tb = new QToolBar(this);
-    tb->setWindowTitle(tr("File Actions"));
-    addToolBar(tb);
+    //QToolBar *tb = new QToolBar(this);
+    //tb->setWindowTitle(tr("File Actions"));
+    //addToolBar(tb);
 
     QMenu *menu = new QMenu(tr("视图"), this);
     menuBar()->addMenu(menu);
@@ -89,19 +89,19 @@ void MainWindow::setupViewActions()
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("控制窗口"), this);
     a->setShortcut(QKeySequence::Open);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("属性窗口"), this);
     a->setShortcut(QKeySequence::Save);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 }
 
@@ -134,7 +134,7 @@ void MainWindow::setupEditActions()
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), progManage, SLOT(newScreen())); //新建节目
-    tb->addAction(a);
+    //tb->addAction(a);
 
     menu->addAction(a);
     menu->addSeparator();
@@ -148,6 +148,7 @@ void MainWindow::setupEditActions()
 
     menu->addAction(a);
     menu->addSeparator();
+    tb->addSeparator();
 
     actionArea = a = new QAction(tr("分区"), this);
     a->setShortcut(QKeySequence::Open);
@@ -155,6 +156,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
     menu->addSeparator();
+    tb->addSeparator();
 
     actionSText = a = new QAction(tr("字幕"), this);
     a->setShortcut(QKeySequence::Save);
@@ -191,6 +193,13 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
+    actionNongli = a = new QAction(tr("农历"), this);
+    a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Lun_Show_En());
+    connect(a, SIGNAL(triggered()), progManage, SLOT(newLun()));
+    tb->addAction(a);
+    menu->addAction(a);
+
     actionTimer = a = new QAction(tr("计时"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Timer_Show_En());
@@ -218,16 +227,10 @@ void MainWindow::setupEditActions()
     connect(a, SIGNAL(triggered()), progManage, SLOT(newNoise()));
     tb->addAction(a);
     menu->addAction(a);
-
-    actionNongli = a = new QAction(tr("农历"), this);
-    a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Lun_Show_En());
-    connect(a, SIGNAL(triggered()), progManage, SLOT(newLun()));
-    tb->addAction(a);
-    menu->addAction(a);
     menu->addSeparator();
+    tb->addSeparator();
 
-    a = new QAction(tr("删除"), this);
+    actionDel = a = new QAction(tr("删除"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), progManage, SLOT(deleteItem())); //删除节目
     tb->addAction(a);
@@ -236,8 +239,33 @@ void MainWindow::setupEditActions()
 
 void MainWindow::actionEnProc(int Type)
 {
-  if(Type EQ SCREEN_PROPERTY)
+  if(Type EQ NULL_PROPERTY)
   {
+    property->setEnabled(false);
+    ctrlMenu->setEnabled(false);
+    actionPreview->setEnabled(false);
+
+    actionScreen->setEnabled(true);
+    actionProg->setEnabled(false);
+    actionArea->setEnabled(false);
+    actionSText->setEnabled(false);
+    actionMText->setEnabled(false);
+    actionTemp->setEnabled(false);
+    actionHumidi->setEnabled(false);
+    actionFlash->setEnabled(false);
+    actionClock->setEnabled(false);
+    actionTime->setEnabled(false);
+    actionNoise->setEnabled(false);
+    actionNongli->setEnabled(false);
+    actionTimer->setEnabled(false);
+    actionDel->setEnabled(false);
+  }
+  else if(Type EQ SCREEN_PROPERTY)
+  {
+      property->setEnabled(true);
+      ctrlMenu->setEnabled(true);
+      actionPreview->setEnabled(false);
+
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
       actionArea->setEnabled(false);
@@ -251,9 +279,14 @@ void MainWindow::actionEnProc(int Type)
       actionNoise->setEnabled(false);
       actionNongli->setEnabled(false);
       actionTimer->setEnabled(false);
+      actionDel->setEnabled(true);
   }
   else if(Type EQ PROG_PROPERTY)
   {
+      property->setEnabled(true);
+      ctrlMenu->setEnabled(true);
+      actionPreview->setEnabled(true);
+
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
       actionArea->setEnabled(true);
@@ -267,9 +300,14 @@ void MainWindow::actionEnProc(int Type)
       actionNoise->setEnabled(false);
       actionNongli->setEnabled(false);
       actionTimer->setEnabled(false);
+      actionDel->setEnabled(true);
   }
   else if(Type EQ AREA_PROPERTY)
   {
+      property->setEnabled(true);
+      ctrlMenu->setEnabled(true);
+      actionPreview->setEnabled(true);
+
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
       actionArea->setEnabled(true);
@@ -283,9 +321,14 @@ void MainWindow::actionEnProc(int Type)
       actionNoise->setEnabled(true);
       actionNongli->setEnabled(true);
       actionTimer->setEnabled(true);
+      actionDel->setEnabled(true);
   }
   else
   {
+      property->setEnabled(true);
+      ctrlMenu->setEnabled(true);
+      actionPreview->setEnabled(true);
+
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
       actionArea->setEnabled(true);
@@ -299,6 +342,7 @@ void MainWindow::actionEnProc(int Type)
       actionNoise->setEnabled(true);
       actionNongli->setEnabled(true);
       actionTimer->setEnabled(true);
+      actionDel->setEnabled(true);
   }
 }
 
@@ -309,63 +353,71 @@ void MainWindow::setupCtrlActions()
     addToolBar(tb);
 
     QMenu *menu = new QMenu(tr("控制"), this);
+    ctrlMenu = menu;//控制菜单
     menuBar()->addMenu(menu);
+    menu->setEnabled(false);
 
     QAction *a;
 
-    a = new QAction(tr("修改屏参"), this);
+    a = new QAction(tr("修改屏幕参数"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(modifyScreenPara()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
+    menu->addSeparator();
 
-    a = new QAction(tr("设置开关机时段"), this);
+    a = new QAction(tr("定时开关机"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(setOpenCloseTime()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 
-    a = new QAction(tr("设置亮度"), this);
+    a = new QAction(tr("调节亮度"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(setLightness()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 
-    //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
-    a = new QAction(tr("预览"), this);
-    a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
-    connect(a, SIGNAL(triggered()), this, SLOT(preview()));
-    tb->addAction(a);
-    menu->addAction(a);
 
     a = new QAction(tr("校时"), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(adjTime()));
     tb->addAction(a);
     menu->addAction(a);
+    menu->addSeparator();
+    tb->addSeparator();
 
-    a = new QAction(tr("数据发送"), this);
+    a = new QAction(tr("发送数据"), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(sendDataProc()));
     tb->addAction(a);
     menu->addAction(a);
 
-    a = new QAction(tr("生成U盘文件"), this);
+    a = new QAction(tr("导出U盘文件"), this);
     a->setShortcut(QKeySequence::Open);
-    //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
+    connect(a, SIGNAL(triggered()), this, SLOT(exportUdsikProc()));
+    tb->addAction(a);
+    menu->addAction(a);
+    menu->addSeparator();
+    tb->addSeparator();
+
+    //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
+    actionPreview = a = new QAction(tr("预览"), this);
+    a->setPriority(QAction::LowPriority);
+    a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(preview()));
     tb->addAction(a);
     menu->addAction(a);
 }
 
 void MainWindow::setupToolActions()
 {
-    QToolBar *tb = new QToolBar(this);
-    tb->setWindowTitle(tr("File Actions"));
-    addToolBar(tb);
+    //QToolBar *tb = new QToolBar(this);
+    //tb->setWindowTitle(tr("File Actions"));
+    //addToolBar(tb);
 
     QMenu *menu = new QMenu(tr("工具"), this);
     menuBar()->addMenu(menu);
@@ -377,27 +429,27 @@ void MainWindow::setupToolActions()
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("计算器"), this);
     a->setShortcut(QKeySequence::Open);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("记事本"), this);
     a->setShortcut(QKeySequence::Open);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 }
 
 void MainWindow::setupHelpActions()
 {
-    QToolBar *tb = new QToolBar(this);
-    tb->setWindowTitle(tr("File Actions"));
-    addToolBar(tb);
+    //QToolBar *tb = new QToolBar(this);
+    //tb->setWindowTitle(tr("File Actions"));
+    //addToolBar(tb);
 
     QMenu *menu = new QMenu(tr("帮助"), this);
     menuBar()->addMenu(menu);
@@ -409,13 +461,13 @@ void MainWindow::setupHelpActions()
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("帮助"), this);
     a->setShortcut(QKeySequence::Open);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
-    tb->addAction(a);
+    //tb->addAction(a);
     menu->addAction(a);
 }
 /*
@@ -619,7 +671,7 @@ MainWindow::MainWindow(QWidget *parent)
     addDockWidget(Qt::BottomDockWidgetArea, property);
 
     setupFileActions();
-    setupViewActions();
+    //setupViewActions();
     setupEditActions();
     setupCtrlActions();
     setupToolActions();
@@ -700,6 +752,9 @@ void MainWindow::modifyScreenPara()
 {
   QString str;
 
+  if(verifyPSW() EQ false)
+      return;
+
   str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
 
   QDialog *facParaWin = new QDialog(this);
@@ -745,8 +800,14 @@ void MainWindow::setOpenCloseTime()
 
 void MainWindow::sendDataProc()
 {
-   CsendDataDialog *sendDataDialog = new CsendDataDialog(this);
+   CsendDataDialog *sendDataDialog = new CsendDataDialog(0, this);
    sendDataDialog->exec();
+}
+
+void MainWindow::exportUdsikProc()
+{
+    CsendDataDialog *sendDataDialog = new CsendDataDialog(1, this);
+    sendDataDialog->exec();
 }
 
 void MainWindow::preview()
@@ -824,6 +885,7 @@ void MainWindow::previewProc()
       Show_Timer_Proc();
 
       previewArea->previewFlag = 1;//预览窗口
+      //previewArea->updateFlag = 1;
       memcpy(previewArea->showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
       previewArea->update(); //刷新显示区域
   }
@@ -848,4 +910,89 @@ void traversalControl(const QObjectList& q)
             }
         }
     }
+}
+
+CinputPSWDialog::CinputPSWDialog(bool *re, QWidget *parent):QDialog(parent)
+{
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
+    QHBoxLayout *hLayout = new QHBoxLayout(this);
+
+    verifyRe = re;
+    *verifyRe = false;
+
+    QLabel *pswLabel = new QLabel(tr("请输入密码"), this);
+    lineEdit = new QLineEdit(this);
+    lineEdit->setEchoMode(QLineEdit::Password);
+    hLayout->addWidget(pswLabel);
+    hLayout->addWidget(lineEdit);
+    vLayout->addLayout(hLayout);
+
+    reLabel = new QLabel(" ", this);
+    vLayout->addWidget(reLabel);
+
+    hLayout = new QHBoxLayout(this);
+    okButton = new QPushButton(tr("确定"), this);
+    cancelButton = new QPushButton(tr("取消"), this);
+    hLayout->addStretch(1);
+    hLayout->addWidget(okButton);
+    hLayout->addWidget(cancelButton);
+
+    vLayout->addLayout(hLayout);
+    setLayout(vLayout);
+
+    this->setWindowTitle(tr("密码验证"));
+
+    connect(okButton, SIGNAL(clicked()), this, SLOT(okClickProc()));
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+}
+
+void CinputPSWDialog::okClickProc()
+{
+   if(lineEdit->text() == "168")
+    {
+       *verifyRe = true;
+      close();
+   }
+   else
+   {
+       reLabel->setText(tr("密码错误!"));
+       *verifyRe = false;
+   }
+}
+
+CinputPSWDialog::~CinputPSWDialog()
+{
+
+}
+
+
+bool verifyPSW()
+{/*
+
+    bool ok;
+    QString text = CinputPSWDialog::getText(0, QObject::tr("密码验证"),
+                                            QObject::tr("请输入密码:"), QLineEdit::Password,
+                                            QObject::tr("haha"), &ok);
+
+    if(ok)
+    {
+       if(text != "168")
+       {
+          QMessageBox::information(0, QObject::tr("提示"),
+                                 QObject::tr("输入密码错误"),QObject::tr("确定"));
+          return false;
+       }
+       else
+          return true;
+     }
+     else
+        return false;
+  */
+
+    bool re;
+
+    CinputPSWDialog *pswDialog= new CinputPSWDialog(&re, w);
+    pswDialog->exec();
+
+    return re;
 }

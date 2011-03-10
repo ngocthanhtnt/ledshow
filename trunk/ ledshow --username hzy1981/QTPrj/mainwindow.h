@@ -55,7 +55,7 @@ private:
     void setupHelpActions();
     //void settingsInit();
 
-    //QAction *actionSave;
+    QMenu *ctrlMenu;
     QAction *actionScreen;
     QAction *actionProg;
     QAction *actionArea;
@@ -69,11 +69,14 @@ private:
     QAction *actionNoise;
     QAction *actionNongli;
     QAction *actionTimer;
+    QAction *actionDel;
+    QAction *actionPreview;
 public slots:
     void modifyScreenPara();
     void setLightness();
     void adjTime();
     void sendDataProc();
+    void exportUdsikProc();
     void setOpenCloseTime();
     void preview();
     void previewProc();
@@ -104,7 +107,25 @@ public:
     ~MainWindow();
 };
 
+class CinputPSWDialog:public QDialog
+{
+    Q_OBJECT
+public slots:
+    void okClickProc();
+public:
+    bool *verifyRe;
+    QLineEdit *lineEdit;
+
+    QPushButton *okButton;
+    QPushButton *cancelButton;
+
+    QLabel *reLabel;
+   CinputPSWDialog(bool *re, QWidget *parent);
+   ~CinputPSWDialog();
+};
+
 QMdiSubWindow *getSubWinByIndex(QMdiArea *parentArea, int index);
 int getIndexBySubWin(QMdiArea *parentArea, QMdiSubWindow *subWin);
 void traversalControl(const QObjectList& q);
+bool verifyPSW();
 #endif // MAINWINDOW_H

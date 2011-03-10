@@ -19,6 +19,7 @@
 #define AREA_STR "area"
 #define FILE_STR "file"
 
+#define NULL_PROPERTY   0xFF
 #define SCREEN_PROPERTY 0x00
 #define PROG_PROPERTY   0x01
 #define AREA_PROPERTY   0x02

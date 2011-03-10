@@ -331,9 +331,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 
       debug("\r\nread prog %d area %d, file %d %dth SCN show data", \
             Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,Prog_Status.Area_Status[Area_No].SCN_No);
-
-      Clear_Area_Data(&Show_Data_Bak, Area_No);
-
+#if 0
       if(Prog_Status.Area_Status[Area_No].Last_SCN_No EQ Prog_Status.Area_Status[Area_No].SCN_No &&\
          CHK_HT(Prog_Status.Area_Status[Area_No]) &&\
          CHK_SUM(Prog_Status.Area_Status[Area_No]) &&\
@@ -343,7 +341,10 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
          Len0 = 1;
       }
       else
+#endif
       {
+          Clear_Area_Data(&Show_Data_Bak, Area_No);
+
           Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFFFF;
           SET_SUM(Prog_Status.Area_Status[Area_No]);
 

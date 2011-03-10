@@ -13,8 +13,8 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
     QGridLayout *gridLayout;
     int screenWidth, screenHeight;
 
-    screenWidth = Screen_Para.Base_Para.Width;
-    screenHeight = Screen_Para.Base_Para.Height;
+    //screenWidth = Screen_Para.Base_Para.Width;
+    //screenHeight = Screen_Para.Base_Para.Height;
     /*
     settings.beginGroup("screen");
     screenWidth = settings.value("width").toInt();//w->screenArea->width();
@@ -50,10 +50,10 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
     widthEdit->setMinimum(MIN_AREA);
     heightEdit->setMinimum(MIN_AREA);
 
-    xEdit->setMaximum(screenWidth);
-    yEdit->setMaximum(screenHeight);
-    widthEdit->setMaximum(screenWidth);
-    heightEdit->setMaximum(screenHeight);
+    //xEdit->setMaximum(screenWidth);
+    //yEdit->setMaximum(screenHeight);
+    //widthEdit->setMaximum(screenWidth);
+    //heightEdit->setMaximum(screenHeight);
 
     connect(xEdit, SIGNAL(valueChanged(int)), this, SLOT(xEdited()));
     connect(yEdit, SIGNAL(valueChanged(int)), this, SLOT(yEdited()));
@@ -99,6 +99,14 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
     setAttribute(Qt::WA_StaticContents);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     //resize(sizeHint().width(),sizeHint().height());
+}
+
+void Carea::setEditMax()
+{
+   xEdit->setMaximum(Screen_Para.Base_Para.Width);
+   yEdit->setMaximum(Screen_Para.Base_Para.Height);
+   widthEdit->setMaximum(Screen_Para.Base_Para.Width);
+   heightEdit->setMaximum(Screen_Para.Base_Para.Height);
 }
 
 void Carea::updateRect(QRect &rect)

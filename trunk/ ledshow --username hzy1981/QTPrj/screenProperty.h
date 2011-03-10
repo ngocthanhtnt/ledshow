@@ -16,6 +16,7 @@
 #include <QPushButton>
 #include <QSpinBox>
 #include <QSlider>
+#include <QInputDialog>
 #include <QRadioButton>
 #include "showArea.h"
 #include "areaProperty.h"
@@ -217,6 +218,8 @@ public:
 class CsendDataDialog:public QDialog
 {
     Q_OBJECT
+public slots:
+    void propertyCheckProc();
 public:
     QCheckBox *lightnessCheck; //亮度控制
     QCheckBox *openCloseCheck; //开关机时段控制
@@ -230,7 +233,7 @@ public:
     CopenCloseProperty *openCloseProperty;
     CadjTimeProperty *adjTimeProperty;
 
-    CsendDataDialog(QWidget *parent=0);
+    CsendDataDialog(int flag, QWidget *parent=0);
     ~CsendDataDialog();
 
 

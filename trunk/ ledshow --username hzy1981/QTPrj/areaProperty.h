@@ -32,7 +32,7 @@ public slots:
 
 public:
 
-
+    void setEditMax();
     void updateRect(QRect &rect);
     void setSettingsToWidget(QString str);
     void getSettingsFromWidget(QString str);
