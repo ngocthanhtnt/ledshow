@@ -566,7 +566,7 @@ CopenCloseProperty::CopenCloseProperty(QWidget *parent):QGroupBox(parent)
 
    connect(this, SIGNAL(TimeEditSignal()), this, SLOT(allEditSlot()));
 
-   setTitle(tr("开关机参数"));
+   setTitle(tr("定时开关机参数"));
    timeCheckProc();
 }
 
@@ -650,8 +650,8 @@ ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
    QHBoxLayout *hLayout = new QHBoxLayout(this);
 
    lightnessProperty = new ClightnessProperty(this);
-   lightnessProperty->setFixedWidth(370);
-   lightnessProperty->setFixedHeight(160);
+   //lightnessProperty->setFixedWidth(370);
+   //lightnessProperty->setFixedHeight(160);
    //lightnessProperty->setFixedWidth(lightnessProperty->sizeHint().width());
 
   sendButton = new QPushButton(tr("发送参数"), this);
@@ -668,7 +668,10 @@ ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
 
   mainLayout  ->addLayout(vLayout);
   mainLayout ->addStretch(10);
+  mainLayout->setSizeConstraint(QLayout::SetFixedSize);
   setLayout(mainLayout);
+
+  this->setWindowTitle(tr("设置亮度"));
 }
 
 void ClightnessDialog::getSettingsFromWidget(QString str)
@@ -705,6 +708,8 @@ CopenCloseDialog::CopenCloseDialog(QWidget *parent):QDialog(parent)
   vLayout->addLayout(hLayout);
 
   setLayout(vLayout);
+
+  this->setWindowTitle(tr("设置定时开关机"));
 }
 
 void CopenCloseDialog::getSettingsFromWidget(QString str)
@@ -797,6 +802,8 @@ CadjTimeDialog::CadjTimeDialog(QWidget *parent):QDialog(parent)
   vLayout->addLayout(hLayout);
 
   setLayout(vLayout);
+
+  this->setWindowTitle(tr("校时"));
 }
 
 CadjTimeDialog::~CadjTimeDialog()
@@ -814,24 +821,32 @@ void CadjTimeDialog::setSettingsToWidget(QString str)
 
 }
 
-CsendDataDialog::CsendDataDialog(QWidget *parent):QDialog(parent)
+CsendDataDialog::CsendDataDialog(int flag, QWidget *parent):QDialog(parent)
 {
     QVBoxLayout *vLayout = new QVBoxLayout(this);
-    QHBoxLayout *hLayout = new QHBoxLayout(this);
 
+
+  QString str;
 
   lightnessCheck = new QCheckBox(tr("设置亮度"),this);
-  openCloseCheck = new QCheckBox(tr("开关机设置"),this);
+  openCloseCheck = new QCheckBox(tr("设置定时开关机"),this);
   adjTimeCheck = new QCheckBox(tr("校时"),this);
+  QCheckBox *progCheck = new QCheckBox(tr("节目数据"),this);
+  progCheck->setChecked(true);
+  progCheck->setEnabled(false);
 
-  QString str = w->screenArea->getCurrentScreenStr();
+  str = w->screenArea->getCurrentScreenStr();
 
   lightnessProperty = new ClightnessProperty(this);
   openCloseProperty = new CopenCloseProperty(this);
   adjTimeProperty = new CadjTimeProperty(this);
 
-  lightnessProperty->setFixedWidth(370);
-  lightnessProperty->setFixedHeight(160);
+  lightnessProperty->setSettingsToWidget(str);
+  openCloseProperty->setSettingsToWidget(str);
+  adjTimeProperty->setSettingsToWidget(str);
+
+  //lightnessProperty->setFixedWidth(370);
+  //lightnessProperty->setFixedHeight(160);
 
   lightnessProperty->setSettingsToWidget(str);
   openCloseProperty->setSettingsToWidget(str);
@@ -841,19 +856,80 @@ CsendDataDialog::CsendDataDialog(QWidget *parent):QDialog(parent)
   udiskButton = new QPushButton(tr("导出U盘文件"),this);
   cancelButton = new QPushButton(tr("取消"),this);
 
+  vLayout->addWidget(lightnessCheck);
+
+  QHBoxLayout *hLayout = new QHBoxLayout(this);
+  hLayout->addWidget(lightnessProperty);
+  hLayout->addStretch(10);
+  vLayout->addLayout(hLayout);
+
+  vLayout->addWidget(openCloseCheck);
+
+  hLayout = new QHBoxLayout(this);
+  hLayout->addWidget(openCloseProperty);
+  hLayout->addStretch(10);
+  vLayout->addLayout(hLayout);
+
+  vLayout->addWidget(adjTimeCheck);
+
+  hLayout = new QHBoxLayout(this);
+  hLayout->addWidget(adjTimeProperty);
+  hLayout->addStretch(10);
+  vLayout->addLayout(hLayout);
+  vLayout->addWidget(progCheck);
+
+  hLayout = new QHBoxLayout(this);
   hLayout->addWidget(sendButton);
   hLayout->addWidget(udiskButton);
   hLayout->addWidget(cancelButton);
-
-  vLayout->addWidget(lightnessCheck);
-  vLayout->addWidget(lightnessProperty);
-  vLayout->addWidget(openCloseCheck);
-  vLayout->addWidget(openCloseProperty);
-  vLayout->addWidget(adjTimeCheck);
-  vLayout->addWidget(adjTimeProperty);
   vLayout->addLayout(hLayout);
+  vLayout->addStretch(10);
 
+  lightnessProperty->hide();
+  openCloseProperty->hide();
+  adjTimeProperty->hide();
+
+  vLayout->setSizeConstraint(QLayout::SetFixedSize);
   setLayout(vLayout);
+
+  if(flag EQ 0)
+  {
+    this->setWindowTitle(tr("发送数据"));
+    adjTimeProperty->sysTimeButton->setChecked(true);
+    udiskButton->hide();
+  }
+  else
+  {
+    this->setWindowTitle(tr("导出U盘文件"));
+    adjTimeProperty->selfTimeButton->setChecked(true);
+    sendButton->hide();
+  }
+
+  adjTimeProperty->adjTimeModeCheck();
+
+  connect(lightnessCheck, SIGNAL(clicked()), this, SLOT(propertyCheckProc()));
+  connect(openCloseCheck, SIGNAL(clicked()), this, SLOT(propertyCheckProc()));
+  connect(adjTimeCheck, SIGNAL(clicked()), this, SLOT(propertyCheckProc()));
+}
+
+void CsendDataDialog::propertyCheckProc()
+{
+  if(lightnessCheck->isChecked())
+      lightnessProperty->show();
+  else
+      lightnessProperty->hide();
+
+  if(openCloseCheck->isChecked())
+      openCloseProperty->show();
+  else
+      openCloseProperty->hide();
+
+  if(adjTimeCheck->isChecked())
+      adjTimeProperty->show();
+  else
+      adjTimeProperty->hide();
+
+  this->resize(this->sizeHint());;
 }
 
 CsendDataDialog::~CsendDataDialog()
@@ -1377,7 +1453,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    }
      //this->setc
 
-  setTitle(tr("安装参数"));
+  setTitle(tr("屏幕参数"));
 
   connect(defParaCheck, SIGNAL(stateChanged(int)), this, SLOT(defParaCheckProc()));
   connect(cardCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(cardChangeProc()));
@@ -1585,6 +1661,9 @@ void CfacScreenProperty::loadParaProc()
     getSettingsFromWidget(str);
 
 
+  QMessageBox::information(0, tr("提示"),
+                         tr("参数加载成功！"),tr("确定"));
+
 
 
 }
@@ -1670,3 +1749,5 @@ CsetFacPara::~CsetFacPara()
 {
 
 }
+
+

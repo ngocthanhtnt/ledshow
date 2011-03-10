@@ -2,6 +2,7 @@
 #include <QDockWidget>
 #include <QPainter>
 #include <QSettings>
+#include <QInputDialog>
 #include <QMdiSubWindow>
 #include <QMdiArea>
 #include "showArea.h"
@@ -315,14 +316,14 @@ void CprogManage::newScreen()
     int i,size,type,index;
     int max = 0,tmp;
 
-    //CsetFacPara *setFacPara = new CsetFacPara(this);
-    //setFacPara->show();
-    //QString str;
+    if(verifyPSW() EQ false)
+        return;
 
-    //str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
-
-
-
+    /*
+    CinputPSWDialog *pswInput = new CinputPSWDialog(this);
+    //pswInput->setOkButtonText(tr("确定"));
+    pswInput->exec();
+*/
     QStr = "screen";//QStr + "/" + QString(tr("area"));
 
     settings.beginGroup(QStr);
@@ -812,6 +813,9 @@ void CprogManage::deleteItem()
 
     if(type EQ SCREEN_PROPERTY)//---是屏幕的不能删除
     {
+        if(verifyPSW() EQ false)
+            return;
+
         index = treeWidget->indexOfTopLevelItem(curItem);
         treeWidget->takeTopLevelItem(index);
         updateTextHead(0);
@@ -824,7 +828,7 @@ void CprogManage::deleteItem()
 
         for(int i = 0; i < subWinList.count(); i ++)
         {
-            subWinList.at(i)->setWindowTitle(QString::number(i)+tr("屏幕"));
+            subWinList.at(i)->setWindowTitle(QString::number(i+1)+tr("屏幕"));
         }
         //删除所有配置项
         settings.beginGroup(str);
@@ -890,11 +894,11 @@ void CprogManage::deleteItem()
         {
             for(int i = 0; i < MAX_AREA_NUM; i ++)
                 w->screenArea->setAreaVisible(i, 0);
-            return;
+            //return;
         }
     }
 
-    saveCurItem(0); //删除后当前没有点中项
+    saveCurItem((QTreeWidgetItem *)0xFFFFFFFF); //删除后当前没有点中项
     //w->progManage->clickItem(curItem, 0);
     w->progManage->treeWidget->setCurrentItem(curItem);
 
@@ -906,6 +910,8 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     int type;
     QString QStr;
     QTreeWidgetItem *lastItem,*screenItem;
+    QMdiSubWindow *subWin;
+    int index;
 
     lastItem = getCurItem();
 /*
@@ -916,6 +922,13 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
 
     if(lastItem == item) //同一个项目点击
     {
+        if(item != (QTreeWidgetItem *)0)
+        {
+          index = treeWidget->indexOfTopLevelItem(w->screenArea->screenItem);
+          subWin= getSubWinByIndex(w->mdiArea, index);
+          if(subWin != (QMdiSubWindow *)0)
+            subWin->show();
+        }
         return;
     }
 
@@ -925,7 +938,11 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     }
 
     if(item EQ (QTreeWidgetItem *)0)
+    {
+        qDebug("no item left");
+        w->actionEnProc(NULL_PROPERTY);
         return;
+    }
 
     saveCurItem(item);
 
@@ -950,10 +967,10 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
        screenItem = item->parent()->parent()->parent();
     }
 
-    int index = treeWidget->indexOfTopLevelItem(screenItem);
+    index = treeWidget->indexOfTopLevelItem(screenItem);
     if(index >= 0)
     {
-        QMdiSubWindow *subWin= getSubWinByIndex(w->mdiArea, index);
+        subWin= getSubWinByIndex(w->mdiArea, index);
 
         QTreeWidgetItem *oldScreenItem = w->screenArea->screenItem;
         if((CscreenArea *)subWin->widget() != w->screenArea)
@@ -1256,10 +1273,10 @@ void CprogManage::settingsInit()
                 }
             }
         }
-
-        saveCurItem(0);
-        clickItem(treeWidget->topLevelItem(0), 0);
    }
+
+    saveCurItem((QTreeWidgetItem *)0xFFFFFFFF);
+    clickItem(treeWidget->topLevelItem(0), 0);
 }
 
 //获取当前settings的str

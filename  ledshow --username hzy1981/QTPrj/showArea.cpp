@@ -1584,12 +1584,12 @@ void CMdiSubWindow::closeEvent(QCloseEvent *closeEvent)
 {
    if(previewFlag == 0)
    {
-       this->hide();
-
+       //this->hide();
+       this->showMinimized();
        //将当前项目设置为0，因为在clickItem函数判定中，如果和前次项一致
        //则不做操作，这样导致screen不会显示，因此将当前项目设置为0！！！
        //下次点击同样项时，会显示当前显示屏
-       w->progManage->saveCurItem(0);
+       w->progManage->saveCurItem((QTreeWidgetItem *)0xFFFFFFFF);
        closeEvent->ignore();
    }
    else

@@ -878,8 +878,9 @@ void TextEdit::showInit()
 
         spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
 
-        //raise();
+
         show();
+        //move((w->width() - width())/2, (w->height() - height())/2);
     }
 }
 

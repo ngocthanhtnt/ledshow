@@ -36,7 +36,7 @@
 //#define AREA_POINTS 5000
 #define ANTIALIAS_VALUE 0x50
 
-#define MIN_AREA 10
+#define MIN_AREA 8
 
 class CshowArea:public QWidget
 {

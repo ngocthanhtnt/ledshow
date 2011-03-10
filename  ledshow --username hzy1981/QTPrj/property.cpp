@@ -184,6 +184,11 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
         ASSERT_FAILED();
     }
 
+    if(area != 0)
+    {
+      area->setEditMax();
+    }
+
 }
 
 Cproperty ::~Cproperty()

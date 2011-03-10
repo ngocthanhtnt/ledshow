@@ -82,8 +82,9 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
    stayTimeEdit->addItem(tr("9×îÂý"));
 */
 
-   flashSourceEdit->setEnabled(false);
-   totalFrameNumEdit->setEnabled(false);
+   //flashSourceEdit->setEnabled(false);
+   flashSourceEdit->setFocusPolicy(Qt::NoFocus);
+   totalFrameNumEdit->setFocusPolicy(Qt::NoFocus);
 
    totalFrameNumEdit->setFixedWidth(40);
    frameNumEdit->setFixedWidth(40);
