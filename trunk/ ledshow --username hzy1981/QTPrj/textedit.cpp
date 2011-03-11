@@ -181,6 +181,11 @@ void TextEdit::closeEvent(QCloseEvent *e)
         e->ignore();
 }
 
+void TextEdit::showEvent(QShowEvent *event)
+{
+  move((w->width() - width())/2, (w->height() - height())/2);
+}
+
 void TextEdit::setupFileActions()
 {
     QToolBar *tb = new QToolBar(this);
@@ -879,8 +884,9 @@ void TextEdit::showInit()
         spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
 
 
-        show();
+        //hide();
         //move((w->width() - width())/2, (w->height() - height())/2);
+        show();
     }
 }
 
@@ -1329,6 +1335,10 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
                   else
                     rgb = Qt::black;
                   reImage.setPixel(i, (h - height) / 2 + j, rgb);
+                  if(reImage.pixel(i, (h - height) / 2 + j) != rgb)
+                  {
+                      ASSERT_FAILED();
+                  }
                 }
 
           }

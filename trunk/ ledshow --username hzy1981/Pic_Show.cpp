@@ -353,6 +353,9 @@ void Update_Pic_Data(INT8U Area_No)
         Prog_Status.Area_Status[Area_No].Step_Timer = 0;
         Prog_Status.Area_Status[Area_No].In_Step += MOVE_STEP;
 
+        if(Prog_Status.Area_Status[Area_No].In_Step > Prog_Status.Area_Status[Area_No].In_Max_Step)
+          Prog_Status.Area_Status[Area_No].In_Step = Prog_Status.Area_Status[Area_No].In_Max_Step;
+
         In_Mode = Prog_Status.Area_Status[Area_No].In_Mode;
 
         if(In_Mode >= S_NUM(In_Mode_Func))
@@ -461,6 +464,9 @@ void Update_Pic_Data(INT8U Area_No)
             {
               Prog_Status.Area_Status[Area_No].Step_Timer = 0;
               Prog_Status.Area_Status[Area_No].Out_Step += MOVE_STEP;
+
+              if(Prog_Status.Area_Status[Area_No].Out_Step > Prog_Status.Area_Status[Area_No].Out_Max_Step)
+                Prog_Status.Area_Status[Area_No].Out_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
 
               //---------
               Out_Mode = Prog_Status.Area_Status[Area_No].Out_Mode;

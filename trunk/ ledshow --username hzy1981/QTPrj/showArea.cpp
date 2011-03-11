@@ -708,12 +708,13 @@ void CshowArea::mousePressEvent(QMouseEvent *event)
     w->screenArea = (CscreenArea *)this->parent();
 
     if(this->areaItem != 0)
-    {
+    {/*
         if(areaItem == w->progManage->treeWidget->currentItem())
         {
           //w->progManage->clickItem(treeItem, 0);
           return;
         }
+        */
 /*
         QString str;
         str = this ->areaItem->data(0, Qt::UserRole).toString();

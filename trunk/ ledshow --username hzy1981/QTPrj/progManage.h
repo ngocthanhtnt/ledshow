@@ -66,6 +66,7 @@ public slots:
     void newHumidity(); //ĞÂÊª¶È
     void newNoise(); //ĞÂÔëÒô
 
+    void _deleteItem(int flag);
     void deleteItem();
     void clickItem(QTreeWidgetItem * item, int column);
     void currentItemChangedProc(QTreeWidgetItem * current, QTreeWidgetItem * previous);

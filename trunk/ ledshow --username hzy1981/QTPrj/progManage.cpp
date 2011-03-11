@@ -302,7 +302,9 @@ CMdiSubWindow * _newScreen(QString name, int x, int y, int width, int height)
     subWin->setAttribute(Qt::WA_DeleteOnClose);
     w->mdiArea->addSubWindow(subWin);
     subWin->setWindowTitle(name);
-    subWin->setGeometry(x,y,width,height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+    //subWin->setGeometry(x,y,width,height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+    subWin->resize(width,height);
+    subWin->move(x,y);
     subWin->setFixedSize(subWin->size());
     subWin->show();
     return subWin;
@@ -365,7 +367,7 @@ void CprogManage::newScreen()
 
     facParaWin->setWindowTitle(tr("新建屏幕"));
     CfacScreenProperty *facScreenProperty = new CfacScreenProperty(NEW_SCN, facParaWin);
-    facScreenProperty->setSettingsToWidget(str);
+    //facScreenProperty->setSettingsToWidget(str);
 
     hLayout->addWidget(facScreenProperty);
     facParaWin->setLayout(hLayout);
@@ -383,7 +385,7 @@ void CprogManage::newScreen()
 
     if(setFlag EQ 0) //没有加载参数则删除上面建的屏幕
     {
-       w->progManage->deleteItem(); //删除上面创建的屏幕
+       w->progManage->_deleteItem(0); //删除上面创建的屏幕
     }
 
     //读取屏幕参数
@@ -407,7 +409,7 @@ void CprogManage::newProg()
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == (QTreeWidgetItem *)0)
     {
-        QMessageBox::information(0, tr(APP_NAME),
+        QMessageBox::information(w, tr(APP_NAME),
                                  tr("请在节目管理栏选定一个屏幕"),tr("确定"));
 
         return;
@@ -429,7 +431,7 @@ void CprogManage::newProg()
     if(parentItem EQ (QTreeWidgetItem *)0)
     {
         ASSERT_FAILED();
-        QMessageBox::information(0, tr(APP_NAME),
+        QMessageBox::information(w, tr(APP_NAME),
                                  tr("请在节目管理栏选定一个屏幕"),tr("确定"));
 
         return;
@@ -445,7 +447,7 @@ void CprogManage::newProg()
     if(size >= MAX_PROG_NUM)
     {
         settings.endGroup();
-        QMessageBox::information(0, tr(APP_NAME),
+        QMessageBox::information(w, tr(APP_NAME),
                                  tr("当前屏幕节目数达到上限！"),tr("确定"));
 
         return;
@@ -541,7 +543,7 @@ void CprogManage::newArea()
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == (QTreeWidgetItem *)0)
     {
-        QMessageBox::information(0, tr(APP_NAME),
+        QMessageBox::information(w, tr(APP_NAME),
                                  tr("请在节目管理栏选定一个节目"),tr("确定"));
 
         return;
@@ -558,7 +560,7 @@ void CprogManage::newArea()
     type = checkItemType(curItem); //该项目是哪种?
     if(type == SCREEN_PROPERTY)
     {
-        QMessageBox::information(0, tr(APP_NAME),
+        QMessageBox::information(w, tr(APP_NAME),
                                  tr("请在节目管理栏选定一个节目"),tr("确定"));
 
         return;
@@ -583,7 +585,7 @@ void CprogManage::newArea()
     if(size >= MAX_AREA_NUM)
     {
         settings.endGroup();
-        QMessageBox::information(0, tr(APP_NAME),
+        QMessageBox::information(w, tr(APP_NAME),
                                  tr("当前节目分区数达到上限！"),tr("确定"));
 
         return;
@@ -722,7 +724,7 @@ void CprogManage::newFile(int fileType, int subType)
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == (QTreeWidgetItem *)0)
     {
-        QMessageBox::information(0, tr(APP_NAME),
+        QMessageBox::information(w, tr(APP_NAME),
                                  tr("请先在节目管理栏选择一个分区"),tr("确定"));
         return;
     }
@@ -730,7 +732,7 @@ void CprogManage::newFile(int fileType, int subType)
 
     if(type == PROG_PROPERTY || type == SCREEN_PROPERTY)
     {
-        QMessageBox::information(0, tr(APP_NAME),
+        QMessageBox::information(w, tr(APP_NAME),
                                  tr("请先在节目管理栏选择一个分区"),tr("确定"));
           return;
     }
@@ -751,7 +753,7 @@ void CprogManage::newFile(int fileType, int subType)
     if(size >= MAX_FILE_NUM)
     {
         settings.endGroup();
-        QMessageBox::information(0, tr(APP_NAME),
+        QMessageBox::information(w, tr(APP_NAME),
                                  tr("当前分区文件数达到上限！"),tr("确定"));
 
         return;
@@ -795,8 +797,15 @@ void CprogManage::newFile(int fileType, int subType)
     */
 }
 
-//删除项目
 void CprogManage::deleteItem()
+{
+  _deleteItem(1);
+}
+
+//删除项目
+//flag == 0表示强制删除
+//flag == 1表示密码删除
+void CprogManage::_deleteItem(int flag)
 {
     QTreeWidgetItem *curItem;
     int type;
@@ -813,8 +822,11 @@ void CprogManage::deleteItem()
 
     if(type EQ SCREEN_PROPERTY)//---是屏幕的不能删除
     {
-        if(verifyPSW() EQ false)
-            return;
+        if(flag)
+        {
+            if(verifyPSW() EQ false)
+                return;
+        }
 
         index = treeWidget->indexOfTopLevelItem(curItem);
         treeWidget->takeTopLevelItem(index);
@@ -1186,7 +1198,7 @@ void CprogManage::settingsInit()
 
         subWin->setFixedSize(subWin->size());
 */
-        CMdiSubWindow * subWin = _newScreen(QString::number(m + 1) + tr("屏幕"), m*50, m*50, screenPara.Base_Para.Width+8, screenPara.Base_Para.Height+34);
+        CMdiSubWindow * subWin = _newScreen(QString::number(m + 1) + tr("屏幕"), m*50, m*50, screenPara.Base_Para.Width + 8, screenPara.Base_Para.Height+34);
 
         w->screenArea->screenItem = screenItem;
         screenItem->setData(0, Qt::UserRole, screenStr);
