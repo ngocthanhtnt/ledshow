@@ -15,6 +15,7 @@
 
 
 #define MOVE_LEFT_CONTINUOUS_INDEX 2
+#define MOVE_UP_CONTINUOUS_INDEX 3
 
 class CshowModeCombo:public QComboBox
 {

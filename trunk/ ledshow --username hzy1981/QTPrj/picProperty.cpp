@@ -38,13 +38,13 @@ void updatePicShowArea(CshowArea *area)
         settings.endGroup();
 /*
         settings.beginGroup("showMode"); //是否是连续左移模式?
-        area->moveLeftFlag = (settings.value("inMode").toInt() EQ MOVE_LEFT_CONTINUOUS_INDEX)?true:false;
+        area->moveFlag = (settings.value("inMode").toInt() EQ MOVE_LEFT_CONTINUOUS_INDEX)?true:false;
         settings.endGroup();
 */
         settings.endGroup();
 
         //是否连续左移
-        area->moveLeftFlag = checkSLineMoveLeftContinuous(str);
+        area->moveFlag = checkSLineMoveLeftContinuous(str);
         area->updateFlag = true;
         //area->imageBk = getTextEditImage(MLINE_MODE, area->width(), area->height(), str, 0);
 
@@ -79,10 +79,10 @@ void CpicProperty::showModeEdited()
             QString str = item->data(0,Qt::UserRole).toString();
             showModeEdit->getSettingsFromWidget(str);
 
-            bool flag = checkSLineMoveLeftContinuous(str);
-            if(flag != area->moveLeftFlag)
+            int flag = checkSLineMoveLeftContinuous(str);
+            if(flag != area->moveFlag)
             {
-              area->moveLeftFlag = flag;
+              area->moveFlag = flag;
               area->updateFlag = true;
               area->update();
             }
@@ -175,7 +175,7 @@ void CpicProperty::setSettingsToWidget(QString str)
     connectSignal();
 }
 
-bool checkSLineMoveLeftContinuous(QString str)//Check_SLine_Move_Left_Continuous(QString str)
+int checkSLineMoveLeftContinuous(QString str)//Check_SLine_Move_Left_Continuous(QString str)
 {
     int inMode;
     bool smLineFlag;
@@ -191,7 +191,9 @@ bool checkSLineMoveLeftContinuous(QString str)//Check_SLine_Move_Left_Continuous
     settings.endGroup();
 
     if(inMode EQ MOVE_LEFT_CONTINUOUS_INDEX && smLineFlag EQ 0)
-        return true;
+        return MOVE_LEFT_CONTINUOUS;
+    else if(inMode EQ MOVE_UP_CONTINUOUS_INDEX)
+        return MOVE_UP_CONTINUOUS;
     else
-        return false;
+        return MOVE_NORMAL;
 }

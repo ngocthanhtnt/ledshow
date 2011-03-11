@@ -17,6 +17,9 @@
 #include "textedit.h"
 #include <showArea.h>
 
+#define MOVE_LEFT_CONTINUOUS 0x02
+#define MOVE_UP_CONTINUOUS   0x01
+#define MOVE_NORMAL          0x00
 
 //½ÚÄ¿ÊôÐÔ´°
 class CpicProperty:public QWidget
@@ -58,6 +61,6 @@ public:
     ~CpicProperty();
 };
 void updatePicShowArea(CshowArea *area);
-bool checkSLineMoveLeftContinuous(QString str);
+int checkSLineMoveLeftContinuous(QString str);
 void getPicParaFromSettings(QString str, U_File_Para &para);
 #endif // picProperty_H

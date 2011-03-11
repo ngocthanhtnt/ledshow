@@ -40,7 +40,7 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
    for(i = 0; i < Area_Width; i ++)
      for(j = 0; j < Height; j ++)
      {
-       Re = Get_Border_Point_Data(Area_No, (i + Prog_Para.Border_Width *Step / MAX_STEP_NUM) % Prog_Para.Border_Width, j);
+       Re = Get_Border_Point_Data(Area_No, (i + Step/*Prog_Para.Border_Width *Step / MAX_STEP_NUM*/) % Prog_Para.Border_Width, j);
        Set_Area_Point_Data(pDst, Area_No, i, j, Re); //…œ±ﬂøÚ
        Set_Area_Point_Data(pDst, Area_No, Area_Width-1 - i, Area_Height-1 - j, Re); //œ¬±ﬂøÚ
      }
@@ -49,7 +49,7 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
    for(i = 0; i < Area_Height; i ++)
      for(j = 0; j < Height; j ++)
      {
-       Re = Get_Border_Point_Data(Area_No, (i + Prog_Para.Border_Width *Step / MAX_STEP_NUM) % Prog_Para.Border_Width, j);
+       Re = Get_Border_Point_Data(Area_No, (i + Step/*Prog_Para.Border_Width *Step / MAX_STEP_NUM*/) % Prog_Para.Border_Width, j);
        Set_Area_Point_Data(pDst, Area_No, j, Area_Height - 1 - i, Re); //◊Û±ﬂøÚ
        Set_Area_Point_Data(pDst, Area_No, Area_Width-1 -j, i, Re); //”“±ﬂøÚ
      }   
@@ -113,7 +113,7 @@ INT8U Get_Area_Border_Height(INT8U Area_No)
 //∏¸–¬±ﬂøÚ ˝æ›
 void Update_Border_Data(INT8U Area_No)
 {
-  //INT8U In_Mode;
+  INT16U Max_Step;
   //ªπ‘⁄“∆∂Ø◊¥Ã¨
     static S_Int16U Timer = {CHK_BYTE, 0, {0},CHK_BYTE};
     static S_Int8U Flag = {CHK_BYTE, 0, {0},CHK_BYTE};
@@ -135,11 +135,13 @@ void Update_Border_Data(INT8U Area_No)
   {
     Prog_Status.Border_Status.Timer = 0;
 
-    if(Prog_Status.Border_Status.Step >= MAX_STEP_NUM)
-      Prog_Status.Border_Status.Step = 0;
+    Max_Step = Screen_Para.Base_Para.Width + Screen_Para.Base_Para.Height;
 
-    if(Prog_Status.Border_Status.Step < MAX_STEP_NUM)
+    if(Prog_Status.Border_Status.Step < Max_Step)
       Prog_Status.Border_Status.Step += MOVE_STEP;
+
+    if(Prog_Status.Border_Status.Step >= Max_Step)
+      Prog_Status.Border_Status.Step = Prog_Status.Border_Status.Step % Max_Step;
         
     if(Prog_Para.Border_Mode EQ BORDER_STATIC) //æ≤Ã¨ 
     {
@@ -157,7 +159,7 @@ void Update_Border_Data(INT8U Area_No)
     else if(Prog_Para.Border_Mode EQ BORDER_CLKWS) //À≥ ±’Î
     {
       Draw_Border(&Show_Data, Area_No, Prog_Para.Border_Data, \
-                  Border_Width, Border_Height, MAX_STEP_NUM - Prog_Status.Border_Status.Step);
+                  Border_Width, Border_Height, Max_Step - Prog_Status.Border_Status.Step);
     }
     else if(Prog_Para.Border_Mode EQ BORDER_CCLKWS) //ƒÊ ±’Î
     {
@@ -168,7 +170,7 @@ void Update_Border_Data(INT8U Area_No)
     {
       if(Flag.Var EQ 0)
         Draw_Border(&Show_Data, Area_No, Prog_Para.Border_Data, \
-                    Border_Width, Border_Height, MAX_STEP_NUM - Prog_Status.Border_Status.Step);
+                    Border_Width, Border_Height, Max_Step - Prog_Status.Border_Status.Step);
       else
         Clr_Border(&Show_Data, Area_No, Border_Width, Border_Height);      
     }

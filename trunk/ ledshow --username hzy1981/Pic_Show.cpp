@@ -320,7 +320,7 @@ void Update_Pic_Data(INT8U Area_No)
     In_Mode = Prog_Status.File_Para[Area_No].Pic_Para.In_Mode;
     //In_Mode == 0随机,1立即显示,2连续左移
     if(In_Mode EQ 0) //随机
-        In_Mode = Cur_Time.Time[T_SEC] % S_NUM(In_Mode_Func);
+        In_Mode = rand()%S_NUM(In_Mode_Func);//Cur_Time.Time[T_SEC] % S_NUM(In_Mode_Func);
     else
         In_Mode = In_Mode - 1;
 
@@ -335,7 +335,7 @@ void Update_Pic_Data(INT8U Area_No)
     Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
 
     if(Out_Mode EQ 0) //0随机,1不清屏,2立即清屏,3左移
-       Out_Mode = 1 + Cur_Time.Time[T_SEC] % S_NUM(Out_Mode_Func);
+       Out_Mode = 1 + rand()%S_NUM(Out_Mode_Func);//Cur_Time.Time[T_SEC] % S_NUM(Out_Mode_Func);
     else if(Out_Mode EQ 1)
        Out_Mode = 0; //修正为0不清屏
     else if(Out_Mode >= 2) //正常清屏方式
