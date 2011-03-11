@@ -1252,10 +1252,10 @@ void CshowArea::paintEvent(QPaintEvent *)
             int pageNum = 0;
 
             QImage image;
-            if(moveLeftFlag EQ false)
+            if(moveFlag != MOVE_LEFT_CONTINUOUS)
             {
                 image = getTextImage(Width, picStr, &lineNum, linePosi);
-                pageNum = getTextPageNum(smLineFlag, Width, Height, lineNum, linePosi, pagePosi);
+                pageNum = getTextPageNum(smLineFlag, moveFlag, image.height(), Width, Height, lineNum, linePosi, pagePosi);
                 imageBk = getTextPageImage(smLineFlag, image, Width, Height, page, pagePosi);
             }
             else

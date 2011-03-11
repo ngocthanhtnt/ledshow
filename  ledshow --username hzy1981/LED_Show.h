@@ -15,7 +15,7 @@
 
 #define PI 3.1415926535
 
-#define MAX_STEP_NUM 1000
+#define MAX_STEP_NUM 100
 
 #define SLINE_MODE 0x00
 #define MLINE_MODE 0x01

@@ -147,7 +147,7 @@ private:
 };
 
 QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[]);
-int getTextPageNum(int mode ,int w, int h, int lineNum, int linePosi[], int pagePosi[]);
+int getTextPageNum(int mode ,int moveFlag, int imageHeight, int w, int h, int lineNum, int linePosi[], int pagePosi[]);
 QImage getTextPageImage(int mode, QImage &image, int w, int h, int page, int pagePosi[]);
 QImage getSLineTextImage(QString str, int w, int h, int page);
 int getSLineTextPageNum(QString str, int w);

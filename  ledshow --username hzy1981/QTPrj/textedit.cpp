@@ -876,8 +876,8 @@ void TextEdit::showInit()
             mode = MLINE_MODE;
 
         int lineNum;
-        getTextImage(area->width(), textEdit->toHtml(), &lineNum, linePosi);
-        int pageNum = getTextPageNum(mode, area->width(), area->height(), lineNum, linePosi, pagePosi);
+        QImage image = getTextImage(area->width(), textEdit->toHtml(), &lineNum, linePosi);
+        int pageNum = getTextPageNum(mode, MOVE_NORMAL, image.height(), area->width(), area->height(), lineNum, linePosi, pagePosi);
         //int pageNum = getTextImagePageNum(mode,area->width(),area->height(),textEdit->toHtml(), linePosi);
         spinPage->setMinimum(0);
 
@@ -906,18 +906,18 @@ void TextEdit::edit()
       area->smLineFlag = MLINE_MODE;
 
   area->picStr = textEdit->toHtml();
-  area->moveLeftFlag = checkSLineMoveLeftContinuous(str);
+  area->moveFlag = checkSLineMoveLeftContinuous(str);
 
   int lineNum,pageNum;
-  if(area->moveLeftFlag EQ false)
+  if(area->moveFlag != MOVE_LEFT_CONTINUOUS) //不是连续左移
   {
-      getTextImage(area->width(), area->picStr, &lineNum, linePosi);
-      pageNum = getTextPageNum(area->smLineFlag, area->width(), area->height(), lineNum, linePosi, pagePosi);
+      QImage image = getTextImage(area->width(), area->picStr, &lineNum, linePosi);
+      pageNum = getTextPageNum(area->smLineFlag, area->moveFlag, image.height(), area->width(), area->height(), lineNum, linePosi, pagePosi);
       //int pageNum = getTextImagePageNum(area->smLineFlag, area->width(),area->height(),area->picStr, linePosi);
 
 
   }
-  else
+  else //连续左移
   {
       pageNum = getSLineTextPageNum(area->picStr, area->width());
     //getSLineTextImage(area->picStr, area->width(),area->height());
@@ -1102,7 +1102,7 @@ QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[])
 //linePosi记录每行的起始位置,输入参数
 //pagePosi显示时每页的起始位置，输出参数,pagePosi[0]记录第0页的起始位置
 //返回整个文本的页数
-int getTextPageNum(int mode ,int w, int h, int lineNum, int linePosi[], int pagePosi[])
+int getTextPageNum(int mode ,int moveFlag, int imageHeight, int w, int h, int lineNum, int linePosi[], int pagePosi[])
 {
     int height = 0,height1 = 0;
     int tmp = 0;
@@ -1118,18 +1118,38 @@ int getTextPageNum(int mode ,int w, int h, int lineNum, int linePosi[], int page
     }
     else
     {
-        pagePosi[pageNum++] = linePosi[0];
-        startLine = 0;
-        for(int i =0; i < lineNum; i ++)
+        if(moveFlag EQ MOVE_NORMAL)
         {
-            if(linePosi[i + 1] - linePosi[startLine] > h)
+            pagePosi[pageNum++] = linePosi[0];
+            startLine = 0;
+            for(int i =0; i < lineNum; i ++)
             {
-              pagePosi[pageNum++] = linePosi[i];
-              startLine = i;
+                if(linePosi[i + 1] - linePosi[startLine] > h)
+                {
+                  pagePosi[pageNum++] = linePosi[i];
+                  startLine = i;
+                }
             }
-        }
 
-        pagePosi[pageNum] = linePosi[lineNum]; // 当前页的结束位置
+            pagePosi[pageNum] = linePosi[lineNum]; // 当前页的结束位置
+
+       }
+       else
+       {
+           if(h EQ 0)
+               return 0;
+
+           imageHeight = imageHeight - linePosi[0];
+           pageNum = (imageHeight % h) >0? (imageHeight / h + 1):(imageHeight / h);
+
+           pagePosi[0] = linePosi[0];
+           for(int i= 1; i < pageNum + 1; i ++)
+               pagePosi[i] = pagePosi[i - 1] + h;
+
+           //pagePosi[i] = pagePosi[i -1] + h;
+
+       }
+
 
         return pageNum;
     }
@@ -1156,7 +1176,10 @@ QImage getTextPageImage(int mode, QImage &image, int w, int h, int page, int pag
         for(int i = 0; i < w; i ++)
           for(int j = pagePosi[page] + (height - h) / 2; j < pagePosi[page] + (height - h) / 2 + h; j ++)
           {
-            rgb = image.pixel(i,j);
+            if(i < image.width() && j<image.height())
+              rgb = image.pixel(i,j);
+            else
+                rgb = Qt::black;
             reImage.setPixel(i, j - pagePosi[page] - (height - h) / 2, rgb);
 
           }
@@ -1166,7 +1189,10 @@ QImage getTextPageImage(int mode, QImage &image, int w, int h, int page, int pag
         for(int i = 0; i < w; i ++)
           for(int j = pagePosi[page]; j < pagePosi[page] + height; j ++)
           {
-            rgb = image.pixel(i, j);
+            if(i < image.width() && j<image.height())
+              rgb = image.pixel(i,j);
+            else
+                rgb = Qt::black;
             reImage.setPixel(i, j - pagePosi[page] + (h - height) / 2, rgb);
 
           }
@@ -1309,7 +1335,7 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
       {
           x = TEXT_LEFT_BORDER_WIDTH + layout->boundingRect().x();
           x += (page - num) * w;
-          y = LINE_POSI_ADJ + layout->boundingRect().y() + layout->position().y();
+          y = LINE_POSI_ADJ + /*layout->boundingRect().y() +*/ layout->position().y();
           //y值需要+4，才能匹配，经验值
 
           reImage.fill(Qt::black);

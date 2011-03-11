@@ -210,15 +210,15 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
           smLineFlag = false; //单行
       settings.endGroup();
 
-      bool moveLeftFlag = checkSLineMoveLeftContinuous(fileStr);
+      int moveFlag = checkSLineMoveLeftContinuous(fileStr);
       int lineNum,pageNum;
       QImage image;
       //整个文本的图形
-      if(moveLeftFlag EQ false)
+      if(moveFlag != MOVE_LEFT_CONTINUOUS)
       {
           image = getTextImage(width, picStr, &lineNum, linePosi);
           //整体的行数
-          pageNum = getTextPageNum(smLineFlag, width, height, lineNum, linePosi, pagePosi);
+          pageNum = getTextPageNum(smLineFlag, moveFlag, image.height(), width, height, lineNum, linePosi, pagePosi);
       }
       else
       {
@@ -233,7 +233,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
       for(int i = 0; i < pageNum; i ++)
       {
           //获取每页的图像
-          if(moveLeftFlag EQ false)
+          if(moveFlag != MOVE_LEFT_CONTINUOUS)
             imageBk = getTextPageImage(smLineFlag, image, width, height, i, pagePosi);
           else
             imageBk = getSLineTextImage(picStr, width,height,i);
