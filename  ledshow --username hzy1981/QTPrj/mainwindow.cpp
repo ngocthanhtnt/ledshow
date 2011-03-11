@@ -698,6 +698,11 @@ MainWindow::MainWindow(QWidget *parent)
    previewArea =  new CscreenArea(previewWin);
    previewWin->setCentralWidget(previewArea);
 
+   QHBoxLayout *hLayout = new QHBoxLayout(previewWin);
+   hLayout->addWidget(previewArea);
+   hLayout->setSizeConstraint(QLayout::SetFixedSize);
+   previewWin->setLayout(hLayout);
+
 
    timer = new QTimer(this);
    connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
@@ -823,7 +828,7 @@ void MainWindow::preview()
   Screen_No = progManage->treeWidget->indexOfTopLevelItem(screenArea->screenItem);
   if(screenArea->screenItem->childCount() EQ 0)
   {
-      QMessageBox::information(0, tr(APP_NAME),
+      QMessageBox::information(w, tr(APP_NAME),
                                tr("请先选择一个预览的节目"),tr("确定"));
 
       return;
@@ -841,22 +846,24 @@ void MainWindow::preview()
   previewArea =  new CscreenArea(previewWin);
   previewArea->setWindowModality(Qt::WindowModal);
   */
+
+  //previewArea->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  //previewArea->setFixedSize(previewArea->size());
+  previewArea->resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  previewWin->resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+
   previewArea->previewFlag = 1;
-  previewArea->updateFlag = true;
-
-  previewArea->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-  previewArea->setFixedSize(previewArea->size());
-
+  //previewArea->updateFlag = true;
 
   //previewWin->setAttribute(Qt::WA_DeleteOnClose);
-  previewWin->setWindowTitle(tr("预览-")+QString::number(Screen_No + 1) + tr("号屏幕-") + QString::number(Preview_Prog_No + 1) + tr("号节目"));
+  previewWin->setWindowTitle(tr("预览-")+QString::number(Screen_No + 1) + tr("屏幕-") + QString::number(Preview_Prog_No + 1) + tr("节目"));
   previewWin->move((width() - previewArea->width())/2, (height() - previewArea->height())/2);
 
   Show_Init(); //显示初始化。
 
 
   previewWin->show();
-  previewWin->setFixedSize(previewWin->size());
+  //previewWin->setFixedSize(previewWin->size());
 
 
   //新建定时器
@@ -941,6 +948,7 @@ CinputPSWDialog::CinputPSWDialog(bool *re, QWidget *parent):QDialog(parent)
     setLayout(vLayout);
 
     this->setWindowTitle(tr("密码验证"));
+    setAttribute(Qt::WA_DeleteOnClose);
 
     connect(okButton, SIGNAL(clicked()), this, SLOT(okClickProc()));
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
@@ -978,7 +986,7 @@ bool verifyPSW()
     {
        if(text != "168")
        {
-          QMessageBox::information(0, QObject::tr("提示"),
+          QMessageBox::information(w, QObject::tr("提示"),
                                  QObject::tr("输入密码错误"),QObject::tr("确定"));
           return false;
        }

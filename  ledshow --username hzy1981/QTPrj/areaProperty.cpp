@@ -50,10 +50,10 @@ Carea::Carea(QWidget *parent):QGroupBox(parent)
     widthEdit->setMinimum(MIN_AREA);
     heightEdit->setMinimum(MIN_AREA);
 
-    //xEdit->setMaximum(screenWidth);
-    //yEdit->setMaximum(screenHeight);
-    //widthEdit->setMaximum(screenWidth);
-    //heightEdit->setMaximum(screenHeight);
+    xEdit->setMaximum(9999);
+    yEdit->setMaximum(9999);
+    widthEdit->setMaximum(9999);
+    heightEdit->setMaximum(9999);
 
     connect(xEdit, SIGNAL(valueChanged(int)), this, SLOT(xEdited()));
     connect(yEdit, SIGNAL(valueChanged(int)), this, SLOT(yEdited()));

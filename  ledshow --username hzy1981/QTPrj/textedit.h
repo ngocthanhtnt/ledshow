@@ -73,7 +73,7 @@ public:
     QTextEdit *getEdit();
 protected:
     virtual void closeEvent(QCloseEvent *e);
-
+    virtual void showEvent(QShowEvent * event);
 private:
     //int linePosi[MAX_LINE_NUM];
 

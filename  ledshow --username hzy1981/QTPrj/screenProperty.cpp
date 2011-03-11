@@ -672,6 +672,7 @@ ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
   setLayout(mainLayout);
 
   this->setWindowTitle(tr("设置亮度"));
+  setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void ClightnessDialog::getSettingsFromWidget(QString str)
@@ -710,6 +711,7 @@ CopenCloseDialog::CopenCloseDialog(QWidget *parent):QDialog(parent)
   setLayout(vLayout);
 
   this->setWindowTitle(tr("设置定时开关机"));
+  setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void CopenCloseDialog::getSettingsFromWidget(QString str)
@@ -804,6 +806,7 @@ CadjTimeDialog::CadjTimeDialog(QWidget *parent):QDialog(parent)
   setLayout(vLayout);
 
   this->setWindowTitle(tr("校时"));
+  setAttribute(Qt::WA_DeleteOnClose);
 }
 
 CadjTimeDialog::~CadjTimeDialog()
@@ -910,6 +913,8 @@ CsendDataDialog::CsendDataDialog(int flag, QWidget *parent):QDialog(parent)
   connect(lightnessCheck, SIGNAL(clicked()), this, SLOT(propertyCheckProc()));
   connect(openCloseCheck, SIGNAL(clicked()), this, SLOT(propertyCheckProc()));
   connect(adjTimeCheck, SIGNAL(clicked()), this, SLOT(propertyCheckProc()));
+
+  setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void CsendDataDialog::propertyCheckProc()
@@ -1228,6 +1233,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     widthEdit->setMinimum(8);
     widthEdit->setMaximum(4096);
     widthEdit->setFocusPolicy(Qt::NoFocus); //禁止键盘输入
+    widthEdit->setValue(256); //初始默认值
 
     heightEdit = new QSpinBox(this);
     heightEdit->setFixedWidth(WIDTH_0);
@@ -1235,7 +1241,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     heightEdit->setMinimum(8);
     heightEdit->setMaximum(4096);
     heightEdit->setFocusPolicy(Qt::NoFocus); //禁止键盘输入
-
+    heightEdit->setValue(256); //初始默认值
 
     _138Check = new QCheckBox(tr("使用138译码器"),this);
     scanModeCombo = new QComboBox(this);
@@ -1334,6 +1340,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
 
    advanceParaGroup = new QWidget(this);//QGroupBox(tr("高级配置"),this);
    defParaCheck = new QCheckBox(tr("使用默认设置"),this);
+   defParaCheck->setChecked(true);
+
    freqCombo = new QComboBox(this);
 
    freqCombo ->addItem(tr("1最快"));
@@ -1460,6 +1468,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    connect(loadButton, SIGNAL(clicked()), this, SLOT(loadParaProc()));
    connect(endButton, SIGNAL(clicked()), this, SLOT(endProc()));
 
+   defParaCheckProc();
    cardChangeProc();
   //----暂时将网络参数删除！
    tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
@@ -1635,7 +1644,7 @@ void CfacScreenProperty::loadParaProc()
            color != colorCombo->currentIndex())
         {
             if(paraFlag EQ MODI_SCN)
-              QMessageBox::information(0, tr("提示"),
+              QMessageBox::information(w, tr("提示"),
                                      tr("您此次修改了屏幕的宽度、高度、颜色之中的一项，这将导致该屏幕下的所有节目被重置！"),tr("确定"));
 
 
@@ -1661,7 +1670,7 @@ void CfacScreenProperty::loadParaProc()
     getSettingsFromWidget(str);
 
 
-  QMessageBox::information(0, tr("提示"),
+  QMessageBox::information(w, tr("提示"),
                          tr("参数加载成功！"),tr("确定"));
 
 
