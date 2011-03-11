@@ -14,111 +14,125 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 2  
   ,{&Move_Up_Continuous, V_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 3 
+  //----------------
+#if IN_SPEC_EFFECT_NUM > 3
+  ,{&Move_Left_Continuous, H_MODE, 1}
+#endif
+#if IN_SPEC_EFFECT_NUM > 4
+  ,{&Move_Right_Continuous, H_MODE, 1}
+#endif
+#if IN_SPEC_EFFECT_NUM > 5
+  ,{&Move_Up_Continuous, V_MODE, 1}
+#endif
+#if IN_SPEC_EFFECT_NUM > 6
+  ,{&Move_Down_Continuous, V_MODE, 1}
+#endif
+  //---------------------
+#if IN_SPEC_EFFECT_NUM > 7
   ,{&Move_Left, H_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 4   
+#if IN_SPEC_EFFECT_NUM > 8
   ,{&Move_Right, H_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 5   
+#if IN_SPEC_EFFECT_NUM > 9
   ,{&Move_Up, V_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 6   
+#if IN_SPEC_EFFECT_NUM > 10
   ,{&Move_Down, V_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 7   
+#if IN_SPEC_EFFECT_NUM > 11
   ,{&Move_Left_Cover, H_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 8   
+#if IN_SPEC_EFFECT_NUM > 12
   ,{&Move_Right_Cover, H_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 9   
+#if IN_SPEC_EFFECT_NUM > 13
   ,{&Move_Up_Cover, V_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 10   
+#if IN_SPEC_EFFECT_NUM > 14
   ,{&Move_Down_Cover, V_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 11   
+#if IN_SPEC_EFFECT_NUM > 15
   ,{&Move_Left_Up_Cover, HV_ADD_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 12 
+#if IN_SPEC_EFFECT_NUM > 16
   ,{&Move_Right_Up_Cover, HV_ADD_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 13   
+#if IN_SPEC_EFFECT_NUM > 17
   ,{&Move_Left_Down_Cover, HV_ADD_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 14   
+#if IN_SPEC_EFFECT_NUM > 18
   ,{&Move_Right_Down_Cover, HV_ADD_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 15   
+#if IN_SPEC_EFFECT_NUM > 19
   ,{&Move_Left_Right_Open, H_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 16   
+#if IN_SPEC_EFFECT_NUM > 20
   ,{&Move_Up_Down_Open, V_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 17   
+#if IN_SPEC_EFFECT_NUM > 21
   ,{&Move_Left_Right_Close, H_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 18   
+#if IN_SPEC_EFFECT_NUM > 22
   ,{&Move_Up_Down_Close, H_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 19   
+#if IN_SPEC_EFFECT_NUM > 23
   ,{&Move_Spin_CW, HV_ADD_MODE, 2} //顺时针
 #endif
-#if IN_SPEC_EFFECT_NUM > 20   
+#if IN_SPEC_EFFECT_NUM > 24
   ,{&Move_Spin_CCW, HV_ADD_MODE, 2}//逆时针覆盖
 #endif
-#if IN_SPEC_EFFECT_NUM > 21 
+#if IN_SPEC_EFFECT_NUM > 25
   ,{&Move_Up_Snow, H_MODE, 3} //上飘雪
 #endif
-#if IN_SPEC_EFFECT_NUM > 22   
+#if IN_SPEC_EFFECT_NUM > 26
   ,{&Move_Down_Snow, H_MODE, 3} //下飘雪
 #endif
-#if IN_SPEC_EFFECT_NUM > 23   
+#if IN_SPEC_EFFECT_NUM > 27
   ,{&Move_Flash, FIX_MODE, 100} //闪烁
 #endif
-#if IN_SPEC_EFFECT_NUM > 24   
+#if IN_SPEC_EFFECT_NUM > 28
   ,{&Move_Left_Laser, H_MODE, 1} //左镭射
 #endif
-#if IN_SPEC_EFFECT_NUM > 25   
+#if IN_SPEC_EFFECT_NUM > 29
   ,{&Move_Right_Laser, H_MODE, 1} //右镭射
 #endif
-#if IN_SPEC_EFFECT_NUM > 26   
+#if IN_SPEC_EFFECT_NUM > 30
   ,{&Move_Up_Laser, V_MODE, 1} //上镭射
 #endif
-#if IN_SPEC_EFFECT_NUM > 27   
+#if IN_SPEC_EFFECT_NUM > 31
   ,{&Move_Down_Laser, V_MODE, 1} //下镭射
 #endif
-#if IN_SPEC_EFFECT_NUM > 28   
+#if IN_SPEC_EFFECT_NUM > 32
   ,{&Move_Left_Tensile, FIX_MODE, 100}//左拉伸
 #endif
-#if IN_SPEC_EFFECT_NUM > 29   
+#if IN_SPEC_EFFECT_NUM > 33
   //{&Move_Right_Tensile}//右拉伸
   ,{&Move_Up_Tensile, FIX_MODE, 100}//上拉伸
 #endif
-#if IN_SPEC_EFFECT_NUM > 30   
+#if IN_SPEC_EFFECT_NUM > 34
   //{&Move_Down_Tensile}//下拉伸
   ,{&Move_Vertical_Tensile, V_MODE, 1}//垂直拉伸
 #endif
-#if IN_SPEC_EFFECT_NUM > 31   
+#if IN_SPEC_EFFECT_NUM > 35
   ,{&Move_Horizontal_Tensile, H_MODE, 1}//水平拉伸
 #endif
-#if IN_SPEC_EFFECT_NUM > 32   
+#if IN_SPEC_EFFECT_NUM > 36
   ,{&Move_Left_Stretch, H_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 33   
+#if IN_SPEC_EFFECT_NUM > 37
   ,{&Move_Up_Stretch, V_MODE, 1}
 #endif
-#if IN_SPEC_EFFECT_NUM > 34   
+#if IN_SPEC_EFFECT_NUM > 38
   ,{&Move_Horizontal_Window, FIX_MODE, 100}//WIN_LEAF_WIDTH} //水平百叶窗
 #endif
-#if IN_SPEC_EFFECT_NUM > 35   
+#if IN_SPEC_EFFECT_NUM > 39
   ,{&Move_Vertical_Window, FIX_MODE, 100}//WIN_LEAF_WIDTH} //垂直百叶窗
 #endif
-#if IN_SPEC_EFFECT_NUM > 36   
+#if IN_SPEC_EFFECT_NUM > 40
   ,{&Move_Left_Compress, FIX_MODE, 100} //向左压缩
 #endif
-#if IN_SPEC_EFFECT_NUM > 37   
+#if IN_SPEC_EFFECT_NUM > 41
   ,{&Move_Up_Compress, FIX_MODE, 100}//向上压缩
 #endif
 };
@@ -304,6 +318,7 @@ void Update_Pic_Data(INT8U Area_No)
     Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
   {
     In_Mode = Prog_Status.File_Para[Area_No].Pic_Para.In_Mode;
+    //In_Mode == 0随机,1立即显示,2连续左移
     if(In_Mode EQ 0) //随机
         In_Mode = Cur_Time.Time[T_SEC] % S_NUM(In_Mode_Func);
     else
@@ -318,12 +333,15 @@ void Update_Pic_Data(INT8U Area_No)
     Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
  {
     Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
-    if(Out_Mode EQ 0) //随机
-     Out_Mode = Cur_Time.Time[T_SEC] % S_NUM(Out_Mode_Func);
-    else if(Out_Mode >= 2)
-     Out_Mode = Out_Mode - 2;
 
-    Prog_Status.Area_Status[Area_No].Out_Mode = Out_Mode;
+    if(Out_Mode EQ 0) //0随机,1不清屏,2立即清屏,3左移
+       Out_Mode = 1 + Cur_Time.Time[T_SEC] % S_NUM(Out_Mode_Func);
+    else if(Out_Mode EQ 1)
+       Out_Mode = 0; //修正为0不清屏
+    else if(Out_Mode >= 2) //正常清屏方式
+       Out_Mode = Out_Mode - 1;
+
+    Prog_Status.Area_Status[Area_No].Out_Mode = Out_Mode; //此时0表示不清屏,1-N表示清屏方式
     Prog_Status.Area_Status[Area_No].Out_Max_Step = Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
 }
 
@@ -380,8 +398,8 @@ void Update_Pic_Data(INT8U Area_No)
             Prog_Status.Area_Status[Area_No].Out_Step = 0;
             Prog_Status.Area_Status[Area_No].Step_Timer = 0;
 
-            if(Prog_Status.Area_Status[Area_No].In_Mode EQ 1 ||\
-               Prog_Status.Area_Status[Area_No].In_Mode EQ 2) //连续左移和上移直接进入新屏
+            if(Prog_Status.Area_Status[Area_No].In_Mode >= 1 &&\
+               Prog_Status.Area_Status[Area_No].In_Mode <= 6) //连续左移和上移直接进入新屏
             {
                 Prog_Status.Area_Status[Area_No].Stay_Time = Stay_Time;
                 Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
@@ -444,8 +462,8 @@ void Update_Pic_Data(INT8U Area_No)
            //Prog_Status.Area_Status[Area_No].Out_Mode = Out_Mode;
            //-------------------------
 
-           if(Prog_Status.Area_Status[Area_No].In_Mode != 1 &&\
-              Prog_Status.Area_Status[Area_No].In_Mode != 2) //不是连续左移、连续右移
+           if(!(Prog_Status.Area_Status[Area_No].In_Mode >=1 &&\
+              Prog_Status.Area_Status[Area_No].In_Mode <= 6)) //不是连续左移、连续右移
            {
                //memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
              Clear_Area_Data(&Show_Data_Bak, Area_No);
@@ -470,12 +488,13 @@ void Update_Pic_Data(INT8U Area_No)
 
               //---------
               Out_Mode = Prog_Status.Area_Status[Area_No].Out_Mode;
-              if(Out_Mode EQ 1) //不清屏
+              if(Out_Mode EQ 0) //不清屏
               {
                  Prog_Status.Area_Status[Area_No].Out_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
               }
               else
               {
+                Out_Mode --;//-1切换到对应Out_Mode_Func
                 if(Out_Mode >= S_NUM(Out_Mode_Func))
                 {
                   Out_Mode = 0;

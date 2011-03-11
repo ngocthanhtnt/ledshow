@@ -48,8 +48,10 @@ CshowModeCombo::CshowModeCombo(bool flag, QWidget *parent):QComboBox(parent)
         addItem(tr("立即显示"));
         addItem(tr("连续左移"));
         addItem(tr("连续上移"));
-        //addItem(tr("连续上移"));
-        //addItem(tr("连续下移"));
+        addItem(tr("左平移"));
+        addItem(tr("右平移"));
+        addItem(tr("上平移"));
+        addItem(tr("下平移"));
         addItem(tr("左移"));
         addItem(tr("右移"));
         addItem(tr("上移"));
