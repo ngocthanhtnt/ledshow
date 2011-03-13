@@ -2,7 +2,7 @@
 #define QT_SIM_H
 
 #if QT_EN > 0
-//#include "Includes.h"
+#include "LED_Cfg.h"
 #include "stdio.h"
 #include <QtGlobal>
 

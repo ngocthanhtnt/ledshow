@@ -124,6 +124,8 @@ void Update_Border_Data(INT8U Area_No)
   if(Prog_Para.Border_Check EQ 0)
       return;
 
+  TRACE();
+
   Step_Time = Prog_Para.Border_StayTime;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
   Prog_Status.Border_Status.Timer += MOVE_STEP_TIMER;
   Timer.Var += MOVE_STEP_TIMER;

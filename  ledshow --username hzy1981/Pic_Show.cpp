@@ -118,10 +118,10 @@ const S_Mode_Func In_Mode_Func[]=
   ,{&Move_Horizontal_Tensile, H_MODE, 1}//水平拉伸
 #endif
 #if IN_SPEC_EFFECT_NUM > 36
-  ,{&Move_Left_Stretch, H_MODE, 1}
+  ,{&Move_Left_Stretch, H_MODE, 3} //左移弹出
 #endif
 #if IN_SPEC_EFFECT_NUM > 37
-  ,{&Move_Up_Stretch, V_MODE, 1}
+  ,{&Move_Up_Stretch, V_MODE, 1} //上移弹出
 #endif
 #if IN_SPEC_EFFECT_NUM > 38
   ,{&Move_Horizontal_Window, FIX_MODE, 100}//WIN_LEAF_WIDTH} //水平百叶窗
@@ -299,6 +299,7 @@ void Update_Pic_Data(INT8U Area_No)
   S_Point P0;
   static S_Int8U Sec ={CHK_BYTE, 0xFF, {0}, CHK_BYTE};
   
+  TRACE();
   //qDebug("update area %d, step = %d, max step = %d", Area_No, Prog_Status.Area_Status[Area_No].Step, Prog_Status.Area_Status[Area_No].Max_Step);
 
   if(Prog_Status.Play_Status.New_Prog_Flag ||\
@@ -334,15 +335,20 @@ void Update_Pic_Data(INT8U Area_No)
  {
     Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
 
-    if(Out_Mode EQ 0) //0随机,1不清屏,2立即清屏,3左移
-       Out_Mode = 1 + rand()%S_NUM(Out_Mode_Func);//Cur_Time.Time[T_SEC] % S_NUM(Out_Mode_Func);
+    if(Out_Mode EQ 0) //0随机,1不清屏,2立即清屏,3左移...
+       Out_Mode = rand()%(S_NUM(Out_Mode_Func) + 1);//Cur_Time.Time[T_SEC] % S_NUM(Out_Mode_Func);
     else if(Out_Mode EQ 1)
        Out_Mode = 0; //修正为0不清屏
     else if(Out_Mode >= 2) //正常清屏方式
        Out_Mode = Out_Mode - 1;
 
+    //0不清，1-N正常清屏方式...
     Prog_Status.Area_Status[Area_No].Out_Mode = Out_Mode; //此时0表示不清屏,1-N表示清屏方式
-    Prog_Status.Area_Status[Area_No].Out_Max_Step = Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
+
+    if(Out_Mode >= 1)
+      Prog_Status.Area_Status[Area_No].Out_Max_Step = Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, Out_Mode - 1);
+    else //不清屏
+      Prog_Status.Area_Status[Area_No].Out_Max_Step = 100;//Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, Out_Mode - 1);
 }
 
   //还在移动状态
@@ -385,6 +391,8 @@ void Update_Pic_Data(INT8U Area_No)
         Prog_Status.Area_Status[Area_No].Step = Prog_Status.Area_Status[Area_No].In_Step;
         Prog_Status.Area_Status[Area_No].Max_Step = Prog_Status.Area_Status[Area_No].In_Max_Step;
         (*(In_Mode_Func[In_Mode].Func))(Area_No);//执行移动操作
+
+        TRACE();
 
         if(In_Mode EQ 0) //立即显示
           Prog_Status.Area_Status[Area_No].In_Step = Prog_Status.Area_Status[Area_No].In_Max_Step;
@@ -505,6 +513,8 @@ void Update_Pic_Data(INT8U Area_No)
                 Prog_Status.Area_Status[Area_No].Step = Prog_Status.Area_Status[Area_No].Out_Step;
                 Prog_Status.Area_Status[Area_No].Max_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
                 (*(Out_Mode_Func[Out_Mode].Func))(Area_No);//执行移动操作
+
+                TRACE();
 
                 if(Out_Mode EQ 0) //立即显示
                   Prog_Status.Area_Status[Area_No].Out_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
