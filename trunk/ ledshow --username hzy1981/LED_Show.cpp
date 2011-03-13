@@ -2604,7 +2604,7 @@ void Move_Left_Compress(INT8U Area_No)
   if(Step EQ 0)
       return;
 
-  Clear_Area_Data(&Show_Data, Area_No);
+  //Clear_Area_Data(&Show_Data, Area_No);
   for(i = 0; i < Prog_Para.Area[Area_No].X_Len / Step; i ++)
   {
       P0.X = i;
@@ -2621,6 +2621,42 @@ void Move_Left_Compress(INT8U Area_No)
 
       }
   }
+  /*
+    INT16U i,j;
+    S_Point P0,P1,P2;
+    INT16U Step;
+
+    Step = Prog_Status.Area_Status[Area_No].Step;
+    if(Step EQ 0)
+        Step = 1;
+
+    //Clear_Area_Data(&Show_Data, Area_No);
+    j = 0;
+    i = 0;
+    while(j < Prog_Para.Area[Area_No].X_Len)
+    {
+        P0.X = i;
+        P0.Y = 0;
+
+        P1.X = i;
+        P1.Y = Prog_Para.Area[Area_No].Y_Len - 1;
+
+        P2.X = j;
+        P2.Y = Prog_Para.Area[Area_No].Y_Len - 1;
+
+        Copy_Line(&Show_Data_Bak, Area_No, &P0, &P1, &Show_Data, &P2);
+
+        if(i % Step EQ 0)
+        {
+            P2.X = j + 1;
+            P2.Y = Prog_Para.Area[Area_No].Y_Len - 1;
+            Copy_Line(&Show_Data_Bak, Area_No, &P0, &P1, &Show_Data, &P2);
+            j++;
+        }
+
+        i++;
+        j++;
+    }*/
 }
 
 //右压缩
@@ -2641,7 +2677,7 @@ void Move_Up_Compress(INT8U Area_No)
     if(Step EQ 0)
         return;
 
-    Clear_Area_Data(&Show_Data, Area_No);
+    //Clear_Area_Data(&Show_Data, Area_No);
     for(i = 0; i < Prog_Para.Area[Area_No].Y_Len / Step; i ++)
     {
         P0.X = 0;
@@ -2666,6 +2702,28 @@ void Move_Down_Compress(INT8U Area_No)
 
 }
 
+//逐点淡入
+void Move_Fade_In(INT8U Area_No)
+{
+    INT8U Re;
+    INT16U i,j;
+    INT16U Step;
+
+    Step =  Prog_Status.Area_Status[Area_No].Step *20/ Prog_Status.Area_Status[Area_No].Max_Step;
+    Step = 20 - Step;
+    if(Step == 0)
+        Step = 1;
+
+    for(i = 0; i < Prog_Para.Area[Area_No].X_Len; i ++)
+        for(j = 0; j < Prog_Para.Area[Area_No].Y_Len; j++)
+        {
+          if(i % Step EQ 0 && j % Step EQ 0)
+        {
+             Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, i, j);
+             Set_Area_Point_Data(&Show_Data, Area_No, i, j, Re);
+          }
+    }
+}
 
 /*
     dateCombo->addItem(tr("2000年12月30日"));

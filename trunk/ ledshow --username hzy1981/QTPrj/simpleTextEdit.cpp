@@ -89,6 +89,7 @@ CshowModeCombo::CshowModeCombo(bool flag, QWidget *parent):QComboBox(parent)
         addItem(tr("垂直百叶窗"));
         addItem(tr("向左压缩"));
         addItem(tr("向上压缩"));
+        addItem(tr("淡入"));
     }
     else
     {
@@ -113,6 +114,7 @@ CshowModeCombo::CshowModeCombo(bool flag, QWidget *parent):QComboBox(parent)
         addItem(tr("上下合帘"));
         addItem(tr("顺时针覆盖"));
         addItem(tr("逆时针覆盖"));
+        addItem(tr("淡出"));
 
     }
  }

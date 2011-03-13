@@ -293,5 +293,6 @@ EXT void Move_Left_Compress(INT8U Area_No);
 EXT void Move_Right_Compress(INT8U Area_No);
 EXT void Move_Up_Compress(INT8U Area_No);
 EXT void Move_Down_Compress(INT8U Area_No);
+EXT void Move_Fade_In(INT8U Area_No);
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
 #endif
