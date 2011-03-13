@@ -135,6 +135,9 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 41
   ,{&Move_Up_Compress, FIX_MODE, 100}//向上压缩
 #endif
+#if IN_SPEC_EFFECT_NUM > 42
+  ,{&Move_Fade_In, FIX_MODE, 100}//淡入
+#endif
 };
 
 //数据移入方式
@@ -197,7 +200,9 @@ const S_Mode_Func Out_Mode_Func[]=
 #if OUT_SPEC_EFFECT_NUM > 18  
   ,{&Move_Spin_CCW, HV_ADD_MODE, 1}
 #endif
- 
+#if OUT_SPEC_EFFECT_NUM > 19
+  ,{&Move_Fade_In, FIX_MODE, 100}//淡入
+#endif
 
 };
 
