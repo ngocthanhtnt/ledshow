@@ -104,7 +104,8 @@ void newAreaSettings(QString &groupName, int type)
 CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
 {
   setAllowedAreas(Qt::LeftDockWidgetArea);
-  treeWidget = new QTreeWidget(this);
+  treeWidget = new QTreeWidget(this);//(this);
+
   treeWidget->setHeaderHidden(true);//header()->setVisible(false);
 
   //QObject::connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),\

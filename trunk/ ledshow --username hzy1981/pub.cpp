@@ -1,6 +1,12 @@
 #define PUB_C
 #include "Includes.h"
 
+extern void Check_Show_Data_Para();
+void TRACE()
+{
+
+}
+
 //此函数内切不可有引起输出的函数！
 INT8U OS_Debug_Print_En(void)
 {

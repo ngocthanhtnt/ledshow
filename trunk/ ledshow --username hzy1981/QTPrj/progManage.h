@@ -4,6 +4,7 @@
 #include <QtGui/QMainWindow>
 #include <QDockWidget>
 #include <QTreeWidget>
+#include <QTreeView>
 #include <QTreeWidgetItem>
 #include <QList>
 #include <QVariant>
@@ -40,6 +41,7 @@
 #define SUB_INDEX_EN 0
 #define DEF_SCN_WIDTH 256
 #define DEF_SCN_HEIGHT 256
+
 //节目管理窗
 class CprogManage:public QDockWidget
 {

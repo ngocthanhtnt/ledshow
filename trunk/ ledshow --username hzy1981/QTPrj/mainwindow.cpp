@@ -633,7 +633,8 @@ void MainWindow::updateTreeWidget(QMdiSubWindow *subWin)
           qDebug("update screen %d",i);
           MDISubWinClickFlag = 1;
           //progManage->clickItem(progManage->treeWidget->topLevelItem(i),0);
-          progManage->treeWidget->setCurrentItem(progManage->treeWidget->topLevelItem(i));
+          if(w->screenArea->screenItem != progManage->treeWidget->topLevelItem(i))
+            progManage->treeWidget->setCurrentItem(progManage->treeWidget->topLevelItem(i));
        }
     }
   }
@@ -894,7 +895,9 @@ void MainWindow::previewProc()
       previewArea->previewFlag = 1;//预览窗口
       //previewArea->updateFlag = 1;
       memcpy(previewArea->showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
+      TRACE();
       previewArea->update(); //刷新显示区域
+      TRACE();
   }
 }
 
