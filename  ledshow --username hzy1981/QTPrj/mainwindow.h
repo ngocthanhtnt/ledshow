@@ -31,6 +31,18 @@
 #define SCREEN_INI_FILE "d:\\screen.ini"
 #define PROG_INI_FILE "d:\\temp.ini"
 
+class MainObj:public QObject
+{
+  Q_OBJECT
+private:
+signals:
+    void screenChange();
+public:
+    void emitScreenChangeSignal();
+    MainObj(QObject *parent = 0);
+    ~MainObj();
+};
+
 //Ö÷´°¿Ú
 class MainWindow : public QMainWindow
 {
@@ -123,6 +135,9 @@ public:
    CinputPSWDialog(bool *re, QWidget *parent);
    ~CinputPSWDialog();
 };
+
+extern MainWindow *w;
+extern MainObj *mainObj;
 
 QMdiSubWindow *getSubWinByIndex(QMdiArea *parentArea, int index);
 int getIndexBySubWin(QMdiArea *parentArea, QMdiSubWindow *subWin);

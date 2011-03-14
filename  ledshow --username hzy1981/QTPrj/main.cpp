@@ -6,6 +6,8 @@
 #include "textedit.h"
 
 MainWindow *w;
+MainObj *mainObj;
+
 /*
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define CLOCK_SHOW_EN  0 //表盘显示使能
@@ -77,6 +79,7 @@ int main(int argc, char *argv[])
     a.setFont(font);
 
 
+    mainObj = new MainObj;
     w = new MainWindow;
     QRect desktopRect = QApplication::desktop()->availableGeometry();
     int iTitleBarHeight = w->style()->pixelMetric(QStyle::PM_TitleBarHeight);  // 获取标题栏高度

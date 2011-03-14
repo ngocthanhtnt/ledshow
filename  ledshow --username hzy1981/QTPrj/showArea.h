@@ -37,6 +37,9 @@
 #define ANTIALIAS_VALUE 0x50
 
 #define MIN_AREA 8
+#define DEF_SCN_WIDTH 256
+#define DEF_SCN_HEIGHT 256
+#define DEF_SCN_COLOR  0x01
 
 class CshowArea:public QWidget
 {
@@ -139,7 +142,7 @@ public:
     QString getCurrentFileStr();
     QString getCurrentScreenStr();
     CshowArea * newShowArea();
-    CscreenArea(QWidget *parent = 0);
+    CscreenArea(QWidget *parent = 0, INT16U width = DEF_SCN_WIDTH, INT16U height = DEF_SCN_HEIGHT, INT8U color = DEF_SCN_COLOR);
     ~CscreenArea();
 
 };

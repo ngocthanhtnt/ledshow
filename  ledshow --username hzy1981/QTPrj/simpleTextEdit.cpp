@@ -480,8 +480,8 @@ CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
 
     connect(dateCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
     connect(dateCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+    connect(sizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
 }
 
 void CdateEdit::screenCardParaChangeProc()
@@ -564,8 +564,8 @@ CweekEdit::CweekEdit(QWidget *parent):QWidget(parent)
 
     connect(weekCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
     connect(weekCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+    connect(sizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
 }
 
 void CweekEdit::screenCardParaChangeProc()
@@ -651,8 +651,8 @@ CtimeEdit::CtimeEdit(QWidget *parent):QWidget(parent)
 
     connect(timeCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
     connect(timeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+    connect(sizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
 }
 
 void CtimeEdit::screenCardParaChangeProc()
@@ -1114,8 +1114,8 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
 
   //所有的消息统一到一个消息
   connect(fontCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-  connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-  connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+  connect(fontSizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+  connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
   connect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
   connect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
   connect(uButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
@@ -1343,8 +1343,8 @@ void CsimpleTextEdit::getSettingsFromWidget(QString str)
 void CsimpleTextEdit::setSettingsToWidget(QString str)
 {
     disconnect(fontCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    disconnect(fontSizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    disconnect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    disconnect(fontSizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+    disconnect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     disconnect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     disconnect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     disconnect(uButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
@@ -1381,8 +1381,8 @@ void CsimpleTextEdit::setSettingsToWidget(QString str)
     settings.endGroup();
 
     connect(fontCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(fontSizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+    connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     connect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     connect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     connect(uButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));

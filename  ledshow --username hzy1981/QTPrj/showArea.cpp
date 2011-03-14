@@ -93,7 +93,7 @@ void restoreCardPara(S_Card_Para &Card_Para_Bak)
   memcpy(&Card_Para, &Card_Para_Bak, sizeof(Card_Para_Bak));
 }
 //背景区域构造函数
-CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
+CscreenArea::CscreenArea(QWidget *parent, INT16U width, INT16U height, INT8U color):CshowArea(parent,BLUE)
 {
     int i,xLen,yLen;
     QStringList str;
@@ -140,9 +140,9 @@ CscreenArea::CscreenArea(QWidget *parent):CshowArea(parent,BLUE)
         settings.setValue("color", 0x07);
     }
 */
-    xLen = Screen_Para.Base_Para.Width;
-    yLen = Screen_Para.Base_Para.Height;
-    color = Screen_Para.Base_Para.Color;
+    screenPara.Base_Para.Width = xLen = width;//Screen_Para.Base_Para.Width;
+    screenPara.Base_Para.Height = yLen = height;//Screen_Para.Base_Para.Height;
+    screenPara.Base_Para.Color = color = color;//Screen_Para.Base_Para.Color;
 
     resize(xLen, yLen);
 
@@ -1143,7 +1143,7 @@ void CshowArea::paintEvent(QPaintEvent *)
     saveScreenPara(Screen_Para_Bak);
     saveProgPara(Prog_Para_Bak);
 
-    resetShowPara(geometry().width(), geometry().height(), Screen_Para.Base_Para.Color);
+    resetShowPara(geometry().width(), geometry().height(), screenPara.Base_Para.Color);
     painter.begin(this);
 
     color =getColor();

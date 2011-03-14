@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'colorCombo.h'
 **
-** Created: Sun Mar 13 20:53:33 2011
+** Created: Mon Mar 14 21:35:35 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,18 +23,25 @@ static const uint qt_meta_data_CsizeCombo[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
+       2,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       0,       // signalCount
+       1,       // signalCount
+
+ // signals: signature, parameters, type, tag, flags
+      12,   11,   11,   11, 0x05,
+
+ // slots: signature, parameters, type, tag, flags
+      32,   11,   11,   11, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_CsizeCombo[] = {
-    "CsizeCombo\0"
+    "CsizeCombo\0\0indexChangeSignal()\0"
+    "setItems()\0"
 };
 
 const QMetaObject CsizeCombo::staticMetaObject = {
@@ -64,7 +71,21 @@ int CsizeCombo::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QComboBox::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: indexChangeSignal(); break;
+        case 1: setItems(); break;
+        default: ;
+        }
+        _id -= 2;
+    }
     return _id;
+}
+
+// SIGNAL 0
+void CsizeCombo::indexChangeSignal()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, 0);
 }
 static const uint qt_meta_data_CcolorCombo[] = {
 
@@ -72,18 +93,25 @@ static const uint qt_meta_data_CcolorCombo[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       0,    0, // methods
+       2,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       0,       // signalCount
+       1,       // signalCount
+
+ // signals: signature, parameters, type, tag, flags
+      13,   12,   12,   12, 0x05,
+
+ // slots: signature, parameters, type, tag, flags
+      33,   12,   12,   12, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_CcolorCombo[] = {
-    "CcolorCombo\0"
+    "CcolorCombo\0\0indexChangeSignal()\0"
+    "setItems()\0"
 };
 
 const QMetaObject CcolorCombo::staticMetaObject = {
@@ -113,6 +141,20 @@ int CcolorCombo::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     _id = QComboBox::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: indexChangeSignal(); break;
+        case 1: setItems(); break;
+        default: ;
+        }
+        _id -= 2;
+    }
     return _id;
+}
+
+// SIGNAL 0
+void CcolorCombo::indexChangeSignal()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, 0);
 }
 QT_END_MOC_NAMESPACE

@@ -213,9 +213,9 @@ void CtimerProperty::connectSignal()
     connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 
     connect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
-    connect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(colorCombo, SIGNAL(indexChangeSignal()), this, SLOT(edited()));
     connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(fontSizeCombo, SIGNAL(indexChangeSignal()), this, SLOT(edited()));
 
     connect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
 }
@@ -227,9 +227,9 @@ void CtimerProperty::disconnectSignal()
     disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 
     disconnect(dstDateTimeEdit, SIGNAL(dateTimeChanged(const QDateTime &)), this, SLOT(edited()));
-    disconnect(colorCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnect(colorCombo, SIGNAL(indexChangeSignal()), this, SLOT(edited()));
     disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    disconnect(fontSizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnect(fontSizeCombo, SIGNAL(indexChangeSignal()), this, SLOT(edited()));
 
     disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
 }

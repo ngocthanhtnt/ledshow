@@ -23,8 +23,31 @@ QString getItemStr(QTreeWidgetItem *item)
 {
     return item->data(0,Qt::UserRole).toString();
 }
+/*
+class MainObj:public QObject
+{
+  Q_OBJECT
+signals:
+    screenChange();
+public:
+    MainObj(QObject *parent = 0);
+    ~MainObj();
+};
+*/
+MainObj::MainObj(QObject *parent):QObject(parent)
+{
 
+}
 
+void MainObj::emitScreenChangeSignal()
+{
+    emit this->screenChange();
+}
+
+MainObj::~MainObj()
+{
+
+}
 
 void MainWindow::setupFileActions()
 {
@@ -862,7 +885,7 @@ void MainWindow::preview()
 
   Show_Init(); //ÏÔÊ¾³õÊ¼»¯¡£
 
-
+  memcpy(&previewArea->screenPara, &Screen_Para, sizeof(Screen_Para));
   previewWin->show();
   //previewWin->setFixedSize(previewWin->size());
 

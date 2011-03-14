@@ -292,19 +292,26 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
     }
 }
 
-CMdiSubWindow * _newScreen(QString name, int x, int y, int width, int height)
+CMdiSubWindow * _newScreen(QString name, int x, int y, INT16U width, INT16U height ,INT8U color)
 {
 
     //--------------
     CMdiSubWindow *subWin = new CMdiSubWindow;
-    w->screenArea =  new CscreenArea(subWin);
+    w->screenArea =  new CscreenArea(subWin, width, height, color);
+
+    w->screenArea->screenPara.Base_Para.Width = width;
+    w->screenArea->screenPara.Base_Para.Height = height;
+    w->screenArea->screenPara.Base_Para.Color = color;
+
+    for(int i =0; i<MAX_AREA_NUM;i++)
+        w->screenArea->pArea[i]->screenPara.Base_Para.Color = color;
     //w->screenArea->setGeometry(10,10,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34);
     subWin->setWidget(w->screenArea);
     subWin->setAttribute(Qt::WA_DeleteOnClose);
     w->mdiArea->addSubWindow(subWin);
     subWin->setWindowTitle(name);
     //subWin->setGeometry(x,y,width,height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-    subWin->resize(width,height);
+    subWin->resize(width + 8,height + 34);
     subWin->move(x,y);
     subWin->setFixedSize(subWin->size());
     subWin->show();
@@ -356,7 +363,7 @@ void CprogManage::newScreen()
 
     treeWidget->addTopLevelItem(item);
 
-    CMdiSubWindow * subWin =_newScreen(QString::number(size + 1) + tr("ÆÁÄ»"), 0, 0, DEF_SCN_WIDTH+8, DEF_SCN_HEIGHT+34);
+    CMdiSubWindow * subWin =_newScreen(QString::number(size + 1) + tr("ÆÁÄ»"), 0, 0, DEF_SCN_WIDTH, DEF_SCN_HEIGHT, DEF_SCN_COLOR);
     w->screenArea->screenItem = item;
 
     w->progManage->treeWidget->setCurrentItem(item);
@@ -1007,9 +1014,10 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
         QString screenStr = screenItem->data(0, Qt::UserRole).toString();
         getScreenCardParaFromSettings(screenStr, Screen_Para, Card_Para);
 
-        if(screenItem != w->screenArea->screenItem)
+        if(oldScreenItem != w->screenArea->screenItem)
         {
-          w->screenCardParaChangeProc();
+            mainObj->emitScreenChangeSignal();
+          //w->screenCardParaChangeProc();
         }
 
     }
@@ -1161,6 +1169,16 @@ void CprogManage::settingsInit()
         settings.beginGroup("facPara");
         screenPara.Base_Para.Width = settings.value("width").toInt();
         screenPara.Base_Para.Height = settings.value("height").toInt();
+        screenPara.Base_Para.Color = 0;
+
+        int color = settings.value("color").toInt();
+        if(color EQ 0)
+          screenPara.Base_Para.Color = 0x01;
+        else if(color EQ 1)
+          screenPara.Base_Para.Color = 0x03;
+        else
+          screenPara.Base_Para.Color = 0x07;
+
         settings.endGroup();
         settings.endGroup();
         //»ñÈ¡µ±Ç°ÆÁÄ»²ÎÊý
@@ -1199,7 +1217,7 @@ void CprogManage::settingsInit()
 
         subWin->setFixedSize(subWin->size());
 */
-        CMdiSubWindow * subWin = _newScreen(QString::number(m + 1) + tr("ÆÁÄ»"), m*50, m*50, screenPara.Base_Para.Width + 8, screenPara.Base_Para.Height+34);
+        CMdiSubWindow * subWin = _newScreen(QString::number(m + 1) + tr("ÆÁÄ»"), m*50, m*50, screenPara.Base_Para.Width, screenPara.Base_Para.Height, screenPara.Base_Para.Color);
 
         w->screenArea->screenItem = screenItem;
         screenItem->setData(0, Qt::UserRole, screenStr);
