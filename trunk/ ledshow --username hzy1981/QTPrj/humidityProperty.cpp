@@ -39,8 +39,8 @@ Chumidity::Chumidity(QWidget *parent):QGroupBox(parent)
     setTitle(tr(" ™∂» Ù–‘"));
 
     connect(humidityCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+    connect(sizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
 }
 
 void Chumidity::screenCardParaChangeProc()

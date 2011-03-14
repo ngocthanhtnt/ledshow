@@ -111,6 +111,8 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
         screenPara.Base_Para.Color = 0x01;
     else if(color EQ 1) //Ë«É«ÆÁ
         screenPara.Base_Para.Color = 0x03;
+    else
+        screenPara.Base_Para.Color = 0x07;
 
     screenPara.Base_Para.Addr = (INT16U)settings.value("screenID").toInt();
     screenPara.Base_Para.Baud = settings.value("comBaud").toInt();

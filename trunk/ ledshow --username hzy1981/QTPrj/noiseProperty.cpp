@@ -41,8 +41,8 @@ Cnoise::Cnoise(QWidget *parent):QGroupBox(parent)
     setTitle(tr("‘Î“Ù Ù–‘"));
 
     connect(noiseCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(colorCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(sizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+    connect(sizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
 }
 
 void Cnoise::screenCardParaChangeProc()

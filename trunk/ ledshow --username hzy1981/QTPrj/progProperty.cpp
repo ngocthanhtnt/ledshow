@@ -370,7 +370,7 @@ void CprogProperty::connectSignal()
     //-----------------
     connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    connect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    connect(colorCombo,SIGNAL(indexChangeSignal()), this, SLOT(edited()));
     connect(speedCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     connect(modeCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
 }
@@ -387,7 +387,7 @@ void CprogProperty::disconnectSignal()
     //-----------------
     disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-    disconnect(colorCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+    disconnect(colorCombo,SIGNAL(indexChangeSignal()), this, SLOT(edited()));
     disconnect(speedCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     disconnect(modeCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
 

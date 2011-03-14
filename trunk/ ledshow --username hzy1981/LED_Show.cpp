@@ -2708,17 +2708,19 @@ void Move_Fade_In(INT8U Area_No)
     INT8U Re;
     INT16U i,j;
     INT16U Step;
+    //const INT8U data[20] = {1,17,3,9,19,0,15,10,7, 6,18, 2,12,4,8,14,11,13,16,5};
 
     Step =  Prog_Status.Area_Status[Area_No].Step *20/ Prog_Status.Area_Status[Area_No].Max_Step;
     Step = 20 - Step;
     if(Step == 0)
-        Step = 1;
+       Step = 1;
 
     for(i = 0; i < Prog_Para.Area[Area_No].X_Len; i ++)
         for(j = 0; j < Prog_Para.Area[Area_No].Y_Len; j++)
         {
-          if(i % Step EQ 0 && j % Step EQ 0)
-        {
+          if(i % Step < 2 && j % Step < 2)
+          //if(i % 20 EQ data[Step] && j %20 EQ 19 - data[Step])
+          {
              Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, i, j);
              Set_Area_Point_Data(&Show_Data, Area_No, i, j, Re);
           }

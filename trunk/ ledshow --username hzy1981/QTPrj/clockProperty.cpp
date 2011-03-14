@@ -213,13 +213,13 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     connect(minWidthEdit, SIGNAL(valueChanged(int)), this, SIGNAL(edited()));
     connect(secWidthEdit, SIGNAL(valueChanged(int)), this, SIGNAL(edited()));
 
-    connect(pointColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
-    connect(point369ColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
-    connect(pointMinColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
+    connect(pointColorCombo, SIGNAL(indexChangeSignal()), this, SIGNAL(edited()));
+    connect(point369ColorCombo, SIGNAL(indexChangeSignal()), this, SIGNAL(edited()));
+    connect(pointMinColorCombo, SIGNAL(indexChangeSignal()), this, SIGNAL(edited()));
 
-    connect(hourColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
-    connect(minColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
-    connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
+    connect(hourColorCombo, SIGNAL(indexChangeSignal()), this, SIGNAL(edited()));
+    connect(minColorCombo, SIGNAL(indexChangeSignal()), this, SIGNAL(edited()));
+    connect(secColorCombo, SIGNAL(indexChangeSignal()), this, SIGNAL(edited()));
 
     //connect(secColorCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
 
