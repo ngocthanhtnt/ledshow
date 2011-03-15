@@ -28,7 +28,9 @@
 #define HUMIDITY_SHOW_BIT 0x07
 #define NOISE_SHOW_BIT  0x08
 
-#define QT_EN 1 //使用QT仿真
+#define QT_EN 1 //在QT环境下编译使用QT
+#define QT_SIM_EN 1//使用QT仿真STM32情况。不同于预览
+//QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
 
 #if QT_EN == 0 //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 1
@@ -96,7 +98,7 @@
 #define TEMP_SHOW_EN   1 //温度显示使能
 #define TIME_SHOW_EN   1 //时间显示使能
 #define TIMER_SHOW_EN  1 //定时显示使能 
-#define HUMIDITY_SHOW_EN 1
+#define HUMIDITY_SHOW_EN 1 //湿度湿度
 #define NOISE_SHOW_EN  1
 
 #endif

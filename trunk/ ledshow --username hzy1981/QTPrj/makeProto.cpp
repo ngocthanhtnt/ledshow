@@ -1,4 +1,5 @@
 #define MAKE_PROTO_C
+#include "..\includes.h"
 #include "makeProto.h"
 #include <QSettings>
 #include <QImage>
@@ -79,7 +80,7 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
 
   pDst[0] = FRAME_HEAD;//帧头
 
-  memcpy(pDst + FADDR, &Screen_Para.Base_Para.Addr, 2); //地址
+  memcpy(pDst + FADDR, &Screen_Para.Com_Para.Addr, 2); //地址
 
   if(seq != frameInfo.seq) //一条新的帧！
   {
@@ -149,13 +150,29 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
 //mode表示发送的模式，0表示串口，1表示u盘，2表示以太网
 INT8U sendProtoData(char *pFrame, int len, int mode)
 {
-    if(mode EQ PREVIEW_MODE)//仿真模式
+    int i = 0;
+
+    if(mode EQ PREVIEW_MODE)//预览模式
     {
       Rcv_Frame_Proc((INT8U *)pFrame, (INT16U)len); //接收函数处理。在仿真情况下，将参数写入了硬盘文件。模拟写入EEROM
     }
-    else if(mode EQ COM_MODE)
+    else if(mode EQ COM_MODE)//串口或者IP/GRPS通信模式
     {
 
+    }
+    else if(mode EQ SIM_MODE) //仿真模式
+    {
+      for(i = 0; i < len; i ++)
+          Rcv_One_Byte(*(pFrame + i));
+/*
+      QTimer t;
+      t.start();
+      while(t.elapsed() < 250)
+      {
+          QCoreApplication::processEvents();
+          usleep(10000);//sleep和usleep都已经obsolete，建议使用nanosleep代替 }
+
+      }*/
     }
     else if(mode EQ UDISK_MODE)
     {
@@ -519,7 +536,7 @@ INT8U makeProtoData(QString screenStr, int mode)
     int len;
     INT16U areaWidth, areaHeight;
     INT8U seq = 0, progNum, areaNum, fileNum;
-    char frameBuf[500], *dataBuf;
+    char frameBuf[BLOCK_DATA_LEN + 20], *dataBuf;
     S_Screen_Para screenParaBak;
     S_Prog_Para progParaBak;
     S_Card_Para cardParaBak;

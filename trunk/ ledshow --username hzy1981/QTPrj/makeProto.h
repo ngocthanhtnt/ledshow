@@ -13,7 +13,8 @@
 
 #define COM_MODE   0x00 //串口
 #define UDISK_MODE 0x01 //u盘
-#define PREVIEW_MODE   0x02 //软件仿真
+#define PREVIEW_MODE   0x02 //预览模式
+#define SIM_MODE  0x03 //仿真模式
 
 typedef struct
 {
@@ -24,5 +25,7 @@ typedef struct
 }S_Frame_Info;
 
 EXT S_Frame_Info frameInfo;
+INT8U sendProtoData(char *pFrame, int len, int mode);
+int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst);
 INT8U makeProtoData(QString screenStr, int mode);
 #endif // MAKEPROTO_H

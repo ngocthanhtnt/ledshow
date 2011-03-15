@@ -67,6 +67,8 @@ void Update_Show_Data()
   
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
+      if(Screen_Status.Rcv_Flag EQ FRAME_FLAG) //收到一帧，先处理此帧
+          return;
 //#if PIC_SHOW_EN    
     //if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_PIC)
       Update_Pic_Data(i);
@@ -431,18 +433,10 @@ INT8U Check_Update_Show_Data_Bak()
 
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
-      /*
-    Stay_Time = Get_File_Stay_Time(i);
-    //目前显示的步进已经到100%并且目前停留时间已经达到文件的停留时间，则认为该屏已经显示完毕，切换到下屏
-    if(Stay_Time < MIN_STAY_TIME)
-      Set_File_Stay_Time(i, MIN_STAY_TIME);
-*/
-    //Step>=100表示整个移动过程完成，Stay_Time>=表示停留时间到，则需更新为下一屏数据
-    /*
-      if(Prog_Status.Area_Status[i].Play_Flag EQ 0 &&\
-       Prog_Status.Area_Status[i].Step EQ 0 &&\
-       Prog_Status.Area_Status[i].Stay_Time EQ 0)
-    */
+
+     if(Screen_Status.Rcv_Flag EQ FRAME_FLAG) //收到一帧，先处理此帧
+         return 1;
+
      if(Prog_Status.Area_Status[i].New_File_Flag ||\
         Prog_Status.Area_Status[i].New_SCN_Flag)
      {
@@ -554,6 +548,14 @@ INT8U Check_Prog_Play_Time()
 
   return 1;
 }
+
+void Pub_Timer_Proc()
+{
+    Pub_Timer.Ms += MOVE_STEP_TIMER;
+    if(Pub_Timer.Ms >= 1000)
+        Pub_Timer.Sec ++;
+}
+
 /*
 INT8U Check_Prog_Play_Time()
 {
@@ -563,6 +565,7 @@ INT8U Check_Prog_Play_Time()
 //每隔MOVE_STEP_TIMER ms 调用该函数，实现移动效果
 void Show_Timer_Proc()
 {
+  Pub_Timer_Proc(); //定时器
   Update_Show_Data(); //更新显示数据
 
 }
@@ -637,8 +640,11 @@ void Check_Update_Program_Para()
       TRACE();
 
 #if QT_EN
+    if(QT_SIM_EN EQ 0)//0表示预览模式
+    {
       Prog_Status.Play_Status.Prog_No = Preview_Prog_No;
       SET_SUM(Prog_Status.Play_Status);
+    }
 #endif
 
       if(Prog_Status.Play_Status.Prog_No >= Screen_Para.Prog_Num ||\
@@ -786,6 +792,9 @@ void Check_Update_Data_Prep()
   //准备每个分区的参数和数据
   for(i =0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
+      if(Screen_Status.Rcv_Flag EQ FRAME_FLAG) //收到一帧，先处理此帧
+          return;
+
     if(Prog_Status.Area_Status[i].New_File_Flag ||\
        Prog_Status.Area_Status[i].New_SCN_Flag)
       return;
@@ -829,7 +838,7 @@ void Check_Update_Data_Prep()
 
               debug("\r\nprepaid prog %d, area %d, file %d, scn %d data",Prog_No, i, File_No, SNum);
 
-              if(GET_VAR(Prep_Data.Data_Ok_Flag[i])= DATA_OK ||\
+              if(GET_VAR(Prep_Data.Data_Ok_Flag[i]) != DATA_OK ||\
                  GET_VAR(Prep_Data.Data_Prog_No[i]) != Prog_No ||\
                  GET_VAR(Prep_Data.Data_SCN_No[i]) != SNum)
               {

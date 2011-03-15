@@ -84,7 +84,7 @@ typedef struct
 typedef struct
 {
     INT8U Mode; //手动调节还是定时调节?
-    INT8U Fixed_Lightness;
+    INT8U Manual_Lightness;
     S_Lightness Time_Lightness[MAX_LIGHTNESS_TIME];
 
 }S_Screen_Lightness;
@@ -150,6 +150,10 @@ typedef struct
     INT16U Height; //高度
     INT8U Color; //第0位红色，第一位绿色，第二位蓝色
 
+}S_Screen_Base_Para;
+
+typedef struct
+{
 
     INT16U Addr; //地址
     INT8U Baud;  //波特率
@@ -159,8 +163,7 @@ typedef struct
     INT32U Mask; //子网掩码
 
     INT32U Bak; //备用
-
-}S_Screen_Base_Para;
+}S_Screen_Com_Para;
 //屏幕参数
 //数据级性--正、反
 //OE级性--低有效、高有效
@@ -184,8 +187,10 @@ typedef struct
   INT32U IP; //IP地址
   INT8U Baud;  //波特率
 */
-  S_Screen_Base_Para Base_Para;
-  
+  S_Screen_Base_Para Base_Para; //基本参数
+
+  S_Screen_Com_Para Com_Para; //通信参数
+
   S_Scan_Mode Scan_Mode; //扫描参数  
   //命令1
   S_Screen_OC_Time OC_Time;//Open_Close_Time[MAX_OPEN_CLOSE_TIME]; //开关机时间

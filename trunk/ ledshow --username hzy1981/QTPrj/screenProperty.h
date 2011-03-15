@@ -135,6 +135,9 @@ public:
 class ClightnessDialog:public QDialog
 {
     Q_OBJECT
+public slots:
+    void sendPara(); //发送参数
+    void udiskPara(); //生成u盘文件
 public:
     ClightnessProperty *lightnessProperty;
     QPushButton *sendButton;
@@ -150,6 +153,9 @@ public:
 class CopenCloseDialog:public QDialog
 {
     Q_OBJECT
+public slots:
+    void sendPara(); //发送参数
+    void udiskPara(); //生成u盘文件
 public:
     CopenCloseProperty *openCloseProperty;
     QPushButton *sendButton;
