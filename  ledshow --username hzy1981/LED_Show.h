@@ -31,6 +31,7 @@
 #define PROG_OK  1 //节目ok
 
 #define WIN_LEAF_WIDTH 8
+
 //#define PUB_BUF Show_Data_Bak.Pub_Buf.Buf //公共数据区，与显示数据公用
 /*
 //时间
@@ -175,11 +176,30 @@ typedef struct
 typedef struct
 {
   INT8U Head;
+
+  //INT8U Com_Time; //通信倒计时
+
+  INT8U Replay_Flag;
   INT8U Lightness;
+
+  INT16U Temp;    //当前温度
+  INT16U Humidity; //湿度
+  INT16U Noise; //噪音
+
   INT8U Open_Flag;
-  INT16U Scan_Row; 
-  INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3];
+
   INT8U CS[CS_BYTES];
+
+  //扫描数据
+  INT16U Scan_Row;
+  INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3];
+
+  //接收帧数据
+  INT8U Rcv_Flag;
+  INT8U Com_Time;
+  INT8U Rcv_Posi;
+  INT8U Rcv_Data[BLOCK_DATA_LEN];
+
   INT8U Tail;  
 }S_Screen_Status;
 

@@ -19,4 +19,6 @@
 #define LUN_SHOW_EN    1 //农历显示使能
 #define TEMP_SHOW_EN   1 //温度显示使能
 #define TIME_SHOW_EN   1 //时间显示使能
-#define TIMER_SHOW_EN  1 //定时显示使能
+#define TIMER_SHOW_EN  1 //定时显示使能 
+#define HUMIDITY_SHOW_EN 1 //湿度显示使能
+#define NOISE_SHOW_EN  1 //噪音显示使能

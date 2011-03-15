@@ -17,6 +17,7 @@ typedef struct
 {
   INT8U Head;
 
+  INT32U Ms; //ms
   INT32U Ms10;  //10ms
   INT32U Sec;
 
@@ -97,6 +98,10 @@ EXT S_Pub_Buf _Pub_Buf;
 #define Pub_Buf _Pub_Buf.Buf
 
 EXT S_Pub_Timer Pub_Timer;
+
+#define SEC_TIMER Pub_Timer.Sec
+#define MS10_TIMER  Pub_Timer.Ms10
+
 EXT INT16U Sum_2Bytes(INT8U Src[], INT16U SrcLen);
 EXT void Check(void);
 EXT void Info_Print(void);

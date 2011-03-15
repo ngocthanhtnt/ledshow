@@ -7,6 +7,7 @@
 #include <QextSerialEnumerator>
 #include <QList>
 #include <QObject>
+#include "makeProto.h"
 #include "mainwindow.h"
 #include "screenProperty.h"
 
@@ -114,11 +115,11 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     else
         screenPara.Base_Para.Color = 0x07;
 
-    screenPara.Base_Para.Addr = (INT16U)settings.value("screenID").toInt();
-    screenPara.Base_Para.Baud = settings.value("comBaud").toInt();
-    screenPara.Base_Para.IP = settings.value("ip").toInt();
-    screenPara.Base_Para.Mac = settings.value("mac").toInt();
-    screenPara.Base_Para.Mask = settings.value("mask").toInt();
+    screenPara.Com_Para.Addr = (INT16U)settings.value("screenID").toInt();
+    screenPara.Com_Para.Baud = settings.value("comBaud").toInt();
+    screenPara.Com_Para.IP = settings.value("ip").toInt();
+    screenPara.Com_Para.Mac = settings.value("mac").toInt();
+    screenPara.Com_Para.Mask = settings.value("mask").toInt();
 
     screenPara.Scan_Mode.Data_Polarity = settings.value("dataPolarity").toInt(); //数据级性
     screenPara.Scan_Mode.OE_Polarity = settings.value("oePolarity").toInt();
@@ -136,7 +137,7 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     //亮度调节
     settings.beginGroup("lightness");
     screenPara.Lightness.Mode = settings.value("adjMode").toInt();
-    screenPara.Lightness.Fixed_Lightness = settings.value("manualLightness").toInt(); //手动调亮度
+    screenPara.Lightness.Manual_Lightness = settings.value("manualLightness").toInt(); //手动调亮度
 
     for(int i=0; i < MAX_LIGHTNESS_TIME; i++)
     {
@@ -455,11 +456,11 @@ void ClightnessProperty::getSettingsFromWidget(QString str)
   settings.beginGroup("lightness");
   //亮度调节方式
   if(timerButton->isChecked())
-      settings.setValue("adjMode", 1);
+      settings.setValue("adjMode", TIME_ADJ);
   else if(autoButton->isChecked())
-      settings.setValue("adjMode", 2);
+      settings.setValue("adjMode", AUTO_ADJ);
   else
-      settings.setValue("adjMode", 0);
+      settings.setValue("adjMode", MANUAL_ADJ);
 
   for(int i=0; i < MAX_LIGHTNESS_TIME; i++)
   {
@@ -467,10 +468,10 @@ void ClightnessProperty::getSettingsFromWidget(QString str)
      settings.setValue("startHour" + QString::number(i),timerEdit[i]->time().hour());
      settings.setValue("startMin" + QString::number(i), timerEdit[i]->time().minute());
      settings.setValue("startSec" + QString::number(i),timerEdit[i]->time().second());
-     settings.setValue("timerLightness" + QString::number(i), timerSlider[i]->value()/10);
+     settings.setValue("timerLightness" + QString::number(i), timerSlider[i]->value()/10 - 1);
   }
 
-  settings.setValue("manualLightness", manualSlider->value()/10);
+  settings.setValue("manualLightness", manualSlider->value()/10 - 1);
   settings.endGroup();
   settings.endGroup();
 }
@@ -484,17 +485,17 @@ void ClightnessProperty::setSettingsToWidget(QString str)
     settings.beginGroup("lightness");
     //亮度调节方式
     int adjMode = settings.value("adjMode").toInt();
-    if(adjMode EQ 0)
+    if(adjMode EQ MANUAL_ADJ)
        manualButton->setChecked(1);
     else
        manualButton->setChecked(0);
 
-    if(adjMode EQ 1)
+    if(adjMode EQ TIME_ADJ)
        timerButton->setChecked(1);
     else
        timerButton->setChecked(0);
 
-    if(adjMode EQ 2)
+    if(adjMode EQ AUTO_ADJ)
        autoButton->setChecked(1);
     else
        autoButton->setChecked(0);
@@ -507,11 +508,11 @@ void ClightnessProperty::setSettingsToWidget(QString str)
                   settings.value("startMin" + QString::number(i)).toInt(),\
                   settings.value("startSec" + QString::number(i)).toInt());
       timerEdit[i]->setTime(time);
-      timerSlider[i]->setValue(settings.value("timerLightness" + QString::number(i)).toInt()*10);
+      timerSlider[i]->setValue((settings.value("timerLightness" + QString::number(i)).toInt() + 1)*10);
       timerLabel[i]->setText(QString::number(timerSlider[i]->value()/10));
     }
 
-    manualSlider->setValue(settings.value("manualLightness").toInt()*10);
+    manualSlider->setValue((settings.value("manualLightness").toInt() + 1)*10);
     manualLabel->setText(QString::number(manualSlider->value()/10));
 
     settings.endGroup();
@@ -675,6 +676,36 @@ ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
 
   this->setWindowTitle(tr("设置亮度"));
   setAttribute(Qt::WA_DeleteOnClose);
+
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+  connect(sendButton, SIGNAL(clicked()), this, SLOT(sendPara()));
+  connect(udiskButton, SIGNAL(clicked()), this, SLOT(udiskPara()));
+}
+
+//发送参数
+void ClightnessDialog::sendPara()
+{
+    char frameBuf[BLOCK_DATA_LEN + 20];
+    S_Screen_Para screenPara;
+    S_Card_Para cardPara;
+    int len;
+
+    QString str = w->screenArea->getCurrentScreenStr();
+
+    getScreenCardParaFromSettings(str, screenPara, cardPara); //
+    //亮度
+    len = Make_Frame((INT8U *)&screenPara.Lightness, sizeof(screenPara.Lightness),\
+               (INT8U *)&screenPara.Com_Para.Addr, C_SCREEN_LIGNTNESS, 0, 0, 0, frameBuf);
+    if(QT_SIM_EN)
+      sendProtoData(frameBuf, len, SIM_MODE); //仿真模式
+    else
+      sendProtoData(frameBuf, len, COM_MODE);
+}
+
+//
+void ClightnessDialog::udiskPara()
+{
+
 }
 
 void ClightnessDialog::getSettingsFromWidget(QString str)
@@ -714,6 +745,41 @@ CopenCloseDialog::CopenCloseDialog(QWidget *parent):QDialog(parent)
 
   this->setWindowTitle(tr("设置定时开关机"));
   setAttribute(Qt::WA_DeleteOnClose);
+
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+  connect(sendButton, SIGNAL(clicked()), this, SLOT(sendPara()));
+  connect(udiskButton, SIGNAL(clicked()), this, SLOT(udiskPara()));
+}
+
+//发送参数
+void CopenCloseDialog::sendPara()
+{
+    char frameBuf[BLOCK_DATA_LEN + 20];
+   S_Screen_Para screenPara;
+   S_Card_Para cardPara;
+   int len;
+
+   QString str = w->screenArea->getCurrentScreenStr();
+
+   getScreenCardParaFromSettings(str, screenPara, cardPara); //
+
+   //定时开关机时间
+   /*
+   len = makeFrame((char *)&screenPara.OC_Time, sizeof(screenPara.OC_Time),\
+              C_SCREEN_OC_TIME, 0, frameBuf);*/
+
+   len = Make_Frame((INT8U *)&screenPara.OC_Time, sizeof(screenPara.OC_Time),\
+              (INT8U *)&screenPara.Com_Para.Addr, C_SCREEN_OC_TIME, 0, 0, 0, frameBuf);
+   if(QT_SIM_EN)
+     sendProtoData(frameBuf, len, SIM_MODE); //仿真模式
+   else
+     sendProtoData(frameBuf, len, COM_MODE);
+}
+
+//
+void CopenCloseDialog::udiskPara()
+{
+
 }
 
 void CopenCloseDialog::getSettingsFromWidget(QString str)

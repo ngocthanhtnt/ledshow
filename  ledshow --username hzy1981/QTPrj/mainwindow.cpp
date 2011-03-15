@@ -865,7 +865,9 @@ void MainWindow::preview()
   stepTimer = 0;
 
   //previewWin = new CpreviewWin(w);//new QMainWindow(w);
-  previewWin->setWindowModality(Qt::WindowModal);
+ if(QT_SIM_EN EQ 0)
+   previewWin->setWindowModality(Qt::WindowModal);
+
 /*
   previewArea =  new CscreenArea(previewWin);
   previewArea->setWindowModality(Qt::WindowModal);

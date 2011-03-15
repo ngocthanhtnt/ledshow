@@ -208,7 +208,7 @@ void LED_Scan_One_Row()
     
     //行消隐时间
     Set_Block_OE(0); //关闭使能
-    Delay_us(Screen_Para.Scan_Mode.Row_Shade); //行消隐时间
+    Delay_us(Screen_Para.Scan_Mode.Line_Hide); //行消隐时间
     
     Set_Block_Latch(0); //锁存信号输出
     Set_Block_Latch(1); //锁存信号输出

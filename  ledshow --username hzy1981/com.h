@@ -1,8 +1,8 @@
 #ifndef COM_H
 #define COM_H
 
-//extern "c"
-//{
+#include "Pub.h"
+
 #undef EXT
 #ifdef COM_C
 #define EXT
@@ -15,11 +15,13 @@
 #define FRAME_TAIL  0xAA
 
 //控制码定义
-#define C_SCREEN_WH   0x01 //屏幕宽高
-#define C_SCREEN_ADDR 0x02 //屏幕地址
-#define C_SCREEN_IP   0x03 //IP地址
-#define C_SCREEN_BAUD 0x04 //通信速率
-#define C_SCREEN_BASE_PARA 0x05 //基本参数
+//#define C_SCREEN_WH   0x01 //屏幕宽高
+//#define C_SCREEN_ADDR 0x02 //屏幕地址
+//#define C_SCREEN_IP   0x03 //IP地址
+//#define C_SCREEN_BAUD 0x04 //通信速率
+#define C_SCREEN_BASE_PARA 0x03 //基本参数
+#define C_SCREEN_COM_PARA 0x04 //通信参数
+#define C_SCAN_MODE      0x05 //扫描参数
 #define C_SCREEN_OC_TIME 0x06 //定时开关机时间
 #define C_SCREEN_LIGNTNESS 0x07 //亮度
 #define C_SCREEN_TIME 0x08 //时间
@@ -57,7 +59,24 @@ A	…	帧数据域内容
 
 #define F_NDATA_LEN 13 //一条帧内非数据域的长度
 
+#define FRAME_FLAG  0xAF
+/*
+//通信接收数据的缓冲区
+typedef struct
+{
+  INT8U Head;
+  INT8U Flag; //是否收到一帧标志
+  INT16U Posi; //当前存储位置
+  INT8U Data[BLOCK_DATA_LEN];
+  INT8U Tail;
+}S_Rcv_Buf;
+
+EXT S_Rcv_Buf Rcv_Buf;
+*/
+EXT void Rcv_One_Byte(INT8U Byte);
 EXT INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len);
 EXT INT8U Screen_Para_Frame_Proc(INT16U Ctrl_Code, INT8U Data[], INT16U Len);
-EXT void Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen);
+EXT INT8U Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen);
+EXT INT16U Make_Frame(INT8U *pData, INT16U Len, INT8U Addr[], INT8U Cmd, INT8U Cmd0, INT8U Seq, INT16U Seq0, char *pDst);
+EXT void Screen_Com_Proc();
 #endif
