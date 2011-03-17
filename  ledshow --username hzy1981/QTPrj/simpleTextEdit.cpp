@@ -11,7 +11,7 @@
 #include <QSettings>
 #include "showArea.h"
 //#include "includes.h"
-#include "..\led_show.h"
+#include "..\Stm32\usr\app\led_show.h"
 #include "mainwindow.h"
 
 extern MainWindow *w;

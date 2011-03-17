@@ -847,7 +847,7 @@ void MainWindow::preview()
   Mem_Open();
 
   screenStr = getItemStr(screenArea->screenItem);
-  makeProtoData(screenStr, PREVIEW_MODE);
+  makeProtoData(screenStr, PREVIEW_MODE, 0xFFFFFFFF);
 
   Screen_No = progManage->treeWidget->indexOfTopLevelItem(screenArea->screenItem);
   if(screenArea->screenItem->childCount() EQ 0)

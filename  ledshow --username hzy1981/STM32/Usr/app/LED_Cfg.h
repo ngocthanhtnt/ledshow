@@ -28,7 +28,9 @@
 #define HUMIDITY_SHOW_BIT 0x07
 #define NOISE_SHOW_BIT  0x08
 
-#define QT_EN 0 //使用QT仿真
+#define QT_EN 1 //在QT环境下编译使用QT
+#define QT_SIM_EN 1//使用QT仿真STM32情况。不同于预览
+//QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
 
 #if QT_EN == 0 //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 1
@@ -78,25 +80,25 @@
 //#define MIN_STAY_TIME  10//每屏最小停留时间,单位为ms
 #define MOVE_STEP 2 //每个调度单位移动的数据百分比 单位%
 
-#define IN_SPEC_EFFECT_NUM 38 //进入特效个数
-#define OUT_SPEC_EFFECT_NUM 19 //退出特效个数
+#define IN_SPEC_EFFECT_NUM 43 //进入特效个数
+#define OUT_SPEC_EFFECT_NUM 20 //退出特效个数
 #define FONT_NUM 2 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
 #define MAX_POINTS (1024*256L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
 
-#define DATA_PREP_EN 1
+#define DATA_PREP_EN 0
 #define MAX_BLOCK_NUM  4000
 #define MAX_SCAN_BLOCK_NUM 10
 
 #define BORDER_SHOW_EN 1 //边框显示使能
-#define CLOCK_SHOW_EN  1 //表盘显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
+#define CLOCK_SHOW_EN  1 //表盘显示使能
 #define LUN_SHOW_EN    1 //农历显示使能
 #define TEMP_SHOW_EN   1 //温度显示使能
 #define TIME_SHOW_EN   1 //时间显示使能
-#define TIMER_SHOW_EN  1 //定时显示使能 
-#define HUMIDITY_SHOW_EN 1
+#define TIMER_SHOW_EN  1 //定时显示使能
+#define HUMIDITY_SHOW_EN 1 //湿度湿度
 #define NOISE_SHOW_EN  1
 
 #endif

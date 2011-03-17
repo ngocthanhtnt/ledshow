@@ -73,6 +73,7 @@ public:
 
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
+    void setSettingsToScreePara(QString str, S_Screen_Para &screenPara);
 
     CcomTest(QWidget *parent=0);
     ~CcomTest();
@@ -307,6 +308,7 @@ public slots:
  QPushButton *exportButton;
  //QPushButton *defButton;
  int paraFlag; //表示新建屏幕、1表示修改屏幕，2表示显示屏幕
+ int SendPara();
  void setEditEnable(bool flag);
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
@@ -342,6 +344,8 @@ public:
     CscreenProperty(QWidget *parent=0);
     ~CscreenProperty();
 };
+
+void getScreenParaFromComTestPara(QString str, S_Screen_Para &screenPara);
 INT8U getCardParaFromSettings(QString cardName, S_Card_Para &cardPara);
 INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara, S_Card_Para &cardPara);
 #endif // SCREENPROPERTY_H

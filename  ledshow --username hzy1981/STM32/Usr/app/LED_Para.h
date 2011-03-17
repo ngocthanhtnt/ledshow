@@ -44,6 +44,12 @@
 #define PROG_COUNTS_MODE 0x00
 #define PROG_TIME_MODE  0x01
 
+#define COM_RS232 0x01
+#define COM_RS485 0x02
+#define COM_UDISK 0x04
+#define COM_ETH   0x08
+#define COM_GPRS  0x10
+
 #define GET_TEXT_LEN(W,H) ((W%8) EQ 0)?(W*H/8):((W/8+1)*H)//((H%8) EQ 0)?(W*H/8):(W*(H/8+1))
 #define GET_POINT_INDEX(W,X,Y) (((W%8)?(W/8 + 1)*8:W)*Y + X)//(((Y>>3) * Width) + X)*8 + (Y & 0x07);
 
@@ -54,7 +60,7 @@ typedef struct
   INT8U Flag;
   INT8U Value; //亮度值
   INT8U Start_Hour; //起始小时
-
+  INT8U Start_Min;
   //INT8U Tail;
 }S_Lightness;
 
@@ -64,21 +70,21 @@ typedef struct
   INT8U Rows; //扫描1，2，4，8，16扫
   INT8U Rows_Fold; //每驱行折数
   INT8U Cols_Fold; //每驱列折数
-  INT8U Row_Seq; //行序号
+  INT8U Line_Order; //行序号
   
-  INT8U Row_Shade; //行消隐时间
-  INT8U Shift_Freq; //移位时钟频率
+  INT8U Line_Hide; //行消隐时间
+  INT8U Clk_Freq; //移位时钟频率
   INT8U Screen_Freq; //屏幕刷新频率
   
   INT8U Data_Polarity; //数据极性
   INT8U OE_Polarity; //OE极性
   INT8U RG_Reverse; //红绿反转
-}S_Scan_Mode;
+}S_Scan_Para;
 
 typedef struct
 {
     INT8U Mode; //手动调节还是定时调节?
-    INT8U Fixed_Lightness;
+    INT8U Manual_Lightness;
     S_Lightness Time_Lightness[MAX_LIGHTNESS_TIME];
 
 }S_Screen_Lightness;
@@ -127,26 +133,56 @@ typedef struct
 typedef struct
 {
   INT8U Head;
-  INT32U Max_Points; //最大支持
-  INT8U Prog_Num; //最大节目数
-  INT8U Area_Num; //最大分区数
-  INT8U File_Num; //最大文件数
+  INT32U Max_Points; //最大支持点数字
+  INT16U Max_Height; //最大高度
+  INT16U Flag; //第0表示表示是否支持全彩，1支持，2不支持，其他位备用
   INT8U Font_Num; //板上字体个数
-  INT8U ROM_Size; //存储空间大小
+  INT8U Com_Mode; //支持的通信方式,第0位RS232、第1位RS485、第2位以太网、第3位GPRS/GSM
+  INT16U ROM_Size; //存储空间大小,单位KB
   INT16U File_En_Word; //支持的节目类型
   INT8U Tail;
 }S_Card_Para;
 
 typedef struct
 {
+
     INT16U Width; //宽度
     INT16U Height; //高度
-    INT8U Color; //颜色 0单色，1双色，2三色，3-255级灰度
+    INT8U Color; //第0位红色，第一位绿色，第二位蓝色
+
+}S_Screen_Base_Para;
+
+//基本通信参数
+typedef struct
+{
 
     INT16U Addr; //地址
-    INT32U IP; //IP地址
+    //串口
     INT8U Baud;  //波特率
-}S_Screen_Base_Para;
+
+    INT8U Bak; //备用
+}S_COM_Para;
+
+//以太网参数
+typedef struct
+{
+    //以太网
+    INT32U IP; //IP地址
+    INT16U Port; //端口
+    INT32U Mac; //Mac地址
+    INT32U Mask; //子网掩码
+    INT8U Mode; //0固定ip方式，1自动获取方式
+}S_ETH_Para;
+
+typedef struct
+{
+    //以太网
+    //GPRS服务器地址
+    INT32U Srv_IP; //服务器IP
+    INT16U Srv_Port; //服务器端口
+    INT8U APN[40];
+    INT8U Mode; //0唤醒方式，1在线方式
+}S_GPRS_Para;
 //屏幕参数
 //数据级性--正、反
 //OE级性--低有效、高有效
@@ -170,9 +206,19 @@ typedef struct
   INT32U IP; //IP地址
   INT8U Baud;  //波特率
 */
-  S_Screen_Base_Para Base_Para;
-  
-  S_Scan_Mode Scan_Mode; //扫描参数  
+  S_Screen_Base_Para Base_Para; //基本参数
+//#if QT_EN > 0
+  INT8U Com_Port; //串口的端口号-主台用
+  INT8U Com_Mode; //选用通信模式-主台用
+//#endif
+
+  S_COM_Para COM_Para; //通信参数-基本通信参数
+
+  S_ETH_Para ETH_Para; //以太网参数
+
+  S_GPRS_Para GPRS_Para; //GPRS参数
+
+  S_Scan_Para Scan_Para; //扫描参数
   //命令1
   S_Screen_OC_Time OC_Time;//Open_Close_Time[MAX_OPEN_CLOSE_TIME]; //开关机时间
   //命令2

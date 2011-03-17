@@ -26,48 +26,47 @@ SOURCES += main.cpp\
     timeProperty.cpp \
     tempProperty.cpp \
     colorCombo.cpp \
-    ../QT_SIM.cpp \
-    ../pub.cpp \
-    ../LED_Show.cpp \
-    ../LED_Para.cpp \
-    ../File_Op.cpp \
-    ../com.cpp \
-    ../STM32.cpp \
-    ../ZK.cpp \
-    ../Pic_Show.cpp \
-    ../Clock_Show.cpp \
-    ../Time_Show.cpp \
-    ../Flash_Show.cpp \
-    ../Timer_Show.cpp \
-    ../Lun_Show.cpp \
-    ../Main_Show.cpp \
-    ../Temp_Show.cpp \
     lunProperty.cpp \
-    ../nongli.cpp \
-    ../Storage.cpp \
-     ../OS_Time.cpp \
-    ../OS_Shell.cpp \
-    ../OS_Sem.cpp \
-    ../OS_Pub.cpp \
-    ../OS_Port.cpp \
-    ../OS_Mutex.cpp \
-    ../OS_Msg_Q.cpp \
-    ../OS_Msg.cpp \
-    ../OS_Mem.cpp \
-    ../OS_Ext.cpp \
-    ../OS_Event.cpp \
-    ../OS_Core.cpp \
-    ../Border_Show.cpp \
     screenProperty.cpp \
     makeProto.cpp \
-    ../Screen_Status.cpp \
     humidityProperty.cpp \
-    ../Noise_Show.cpp \
-    ../Humidity_Show.cpp \
-    noiseProperty.cpp
+    noiseProperty.cpp \
+    QT_SIM.cpp \
+    ../STM32/Usr/app/Timer_Show.cpp \
+    ../STM32/Usr/app/Time_Show.cpp \
+    ../STM32/Usr/app/Temp_Show.cpp \
+    ../STM32/Usr/app/Storage.cpp \
+    ../STM32/Usr/app/STM32.cpp \
+    ../STM32/Usr/app/Screen_Status.cpp \
+    ../STM32/Usr/app/pub.cpp \
+    ../STM32/Usr/app/Pic_Show.cpp \
+    ../STM32/Usr/app/OS_Time.cpp \
+    ../STM32/Usr/app/OS_Shell.cpp \
+    ../STM32/Usr/app/OS_Sem.cpp \
+    ../STM32/Usr/app/OS_Pub.cpp \
+    ../STM32/Usr/app/OS_Port.cpp \
+    ../STM32/Usr/app/OS_Mutex.cpp \
+    ../STM32/Usr/app/OS_Msg_Q.cpp \
+    ../STM32/Usr/app/OS_Msg.cpp \
+    ../STM32/Usr/app/OS_Mem.cpp \
+    ../STM32/Usr/app/OS_Ext.cpp \
+    ../STM32/Usr/app/OS_Event.cpp \
+    ../STM32/Usr/app/OS_Core.cpp \
+    ../STM32/Usr/app/nongli.cpp \
+    ../STM32/Usr/app/Noise_Show.cpp \
+    ../STM32/Usr/app/Main_Show.cpp \
+    ../STM32/Usr/app/Lun_Show.cpp \
+    ../STM32/Usr/app/LED_Show.cpp \
+    ../STM32/Usr/app/LED_Para.cpp \
+    ../STM32/Usr/app/Humidity_Show.cpp \
+    ../STM32/Usr/app/Flash_Show.cpp \
+    ../STM32/Usr/app/File_Op.cpp \
+    ../STM32/Usr/app/com.cpp \
+    ../STM32/Usr/app/Clock_Show.cpp \
+    ../STM32/Usr/app/Border_Show.cpp \
+    ../STM32/Usr/app/ZK.cpp
 
 HEADERS  += mainwindow.h \
-    ../LED_Cfg.h \
     showArea.h \
     progManage.h \
     areaProperty.h \
@@ -78,30 +77,27 @@ HEADERS  += mainwindow.h \
     textedit.h \
     simpleTextEdit.h \
     clockProperty.h \
-    ../LED_Para.h \
     flashProperty.h \
     timeProperty.h \
     tempProperty.h \
     colorCombo.h \
-    ../pub.h \
-    ../Includes.h \
-    ../File_Op.h \
-    ../STM32.h \
-    ../com.h \
-    ../QT_SIM.h\
-    ../LED_Show.h \
-    ../ZK.h \
-    ../Flash_Show.h \
-    ../Lun_Show.h \
+    lunProperty.h \
+    screenProperty.h \
+    makeProto.h \
+    humidityProperty.h \
+    noiseProperty.h \
+    QT_SIM.h \
     ../Timer_Show.h \
     ../Time_Show.h \
-    ../Pic_Show.h \
-    ../Clock_Show.h \
-    ../Main_Show.h \
     ../Temp_Show.h \
-    lunProperty.h \
-    ../nongli.h \
     ../Storage.h \
+    ../STM32.h \
+    ../Shell.h \
+    ../Screen_Status.h \
+    ../QT_SIM.h \
+    ../pub.h \
+    ../Pic_Show.h \
+    ../OS_Time.h \
     ../OS_Shell.h \
     ../OS_Sem.h \
     ../OS_Pub.h \
@@ -115,15 +111,60 @@ HEADERS  += mainwindow.h \
     ../OS_Event.h \
     ../OS_Core.h \
     ../OS_Cfg.h \
-    ../OS_Time.h \
-    ../Border_Show.h \
-    screenProperty.h \
-    makeProto.h \
-    ../Screen_Status.h \
-    humidityProperty.h \
-    ../Humidity_Show.h \
+    ../nongli.h \
     ../Noise_Show.h \
-    noiseProperty.h
+    ../Main_Show.h \
+    ../Lun_Show.h \
+    ../LED_Show_Proc.h \
+    ../LED_Show.h \
+    ../LED_Para.h \
+    ../LED_Cfg.h \
+    ../Includes.h \
+    ../Humidity_Show.h \
+    ../Flash_Show.h \
+    ../File_Op.h \
+    ../com.h \
+    ../Clock_Show.h \
+    ../Border_Show.h \
+    ../ZK.h \
+    ../STM32/Usr/app/Timer_Show.h \
+    ../STM32/Usr/app/Time_Show.h \
+    ../STM32/Usr/app/Temp_Show.h \
+    ../STM32/Usr/app/Storage.h \
+    ../STM32/Usr/app/STM32.h \
+    ../STM32/Usr/app/Screen_Status.h \
+    ../STM32/Usr/app/pub.h \
+    ../STM32/Usr/app/Pic_Show.h \
+    ../STM32/Usr/app/OS_Time.h \
+    ../STM32/Usr/app/OS_Shell.h \
+    ../STM32/Usr/app/OS_Sem.h \
+    ../STM32/Usr/app/OS_Pub.h \
+    ../STM32/Usr/app/OS_Port.h \
+    ../STM32/Usr/app/OS_Mutex.h \
+    ../STM32/Usr/app/OS_Msg_Q.h \
+    ../STM32/Usr/app/OS_Msg.h \
+    ../STM32/Usr/app/OS_Mem.h \
+    ../STM32/Usr/app/OS_Includes.h \
+    ../STM32/Usr/app/OS_Ext.h \
+    ../STM32/Usr/app/OS_Event.h \
+    ../STM32/Usr/app/OS_Core.h \
+    ../STM32/Usr/app/OS_Cfg.h \
+    ../STM32/Usr/app/nongli.h \
+    ../STM32/Usr/app/Noise_Show.h \
+    ../STM32/Usr/app/Main_Show.h \
+    ../STM32/Usr/app/Lun_Show.h \
+    ../STM32/Usr/app/LED_Show_Proc.h \
+    ../STM32/Usr/app/LED_Show.h \
+    ../STM32/Usr/app/LED_Para.h \
+    ../STM32/Usr/app/LED_Cfg.h \
+    ../STM32/Usr/app/Includes.h \
+    ../STM32/Usr/app/Humidity_Show.h \
+    ../STM32/Usr/app/Flash_Show.h \
+    ../STM32/Usr/app/File_Op.h \
+    ../STM32/Usr/app/com.h \
+    ../STM32/Usr/app/Clock_Show.h \
+    ../STM32/Usr/app/Border_Show.h \
+    ../STM32/Usr/app/ZK.h
 
 RESOURCES += \
     textedit.qrc

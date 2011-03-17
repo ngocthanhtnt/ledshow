@@ -1,5 +1,5 @@
 #define MAKE_PROTO_C
-#include "..\includes.h"
+#include "..\Stm32\usr\app\includes.h"
 #include "makeProto.h"
 #include <QSettings>
 #include <QImage>
@@ -80,7 +80,7 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
 
   pDst[0] = FRAME_HEAD;//帧头
 
-  memcpy(pDst + FADDR, &Screen_Para.Com_Para.Addr, 2); //地址
+  memcpy(pDst + FADDR, &Screen_Para.COM_Para.Addr, 2); //地址
 
   if(seq != frameInfo.seq) //一条新的帧！
   {
@@ -145,20 +145,37 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
   return len;
 }
 
+//初始化通信状态
+//screenPara表示屏幕的参数
+INT8U initComPara(S_Screen_Para &screenPara)
+{
+  comStatus.Com_Mode = screenPara.Com_Mode;
+}
+
+//根据screenPara中的通信参数建立连接
+INT8U connectScreen()
+{
+
+}
+
+//断开与卡的连接
+INT8U disconnectScreen()
+{
+
+}
+
 //发送协议数据
 //pFrame和len表示帧起始和帧长
 //mode表示发送的模式，0表示串口，1表示u盘，2表示以太网
-INT8U sendProtoData(char *pFrame, int len, int mode)
+INT8U sendProtoData(char *pFrame, int len)
 {
     int i = 0;
+
+    INT8U mode = comStatus.Com_Mode;
 
     if(mode EQ PREVIEW_MODE)//预览模式
     {
       Rcv_Frame_Proc((INT8U *)pFrame, (INT16U)len); //接收函数处理。在仿真情况下，将参数写入了硬盘文件。模拟写入EEROM
-    }
-    else if(mode EQ COM_MODE)//串口或者IP/GRPS通信模式
-    {
-
     }
     else if(mode EQ SIM_MODE) //仿真模式
     {
@@ -173,6 +190,18 @@ INT8U sendProtoData(char *pFrame, int len, int mode)
           usleep(10000);//sleep和usleep都已经obsolete，建议使用nanosleep代替 }
 
       }*/
+    }
+    else if(mode EQ COM_MODE)//串口通信模式
+    {
+
+    }
+    else if(mode EQ ETH_MODE)//以太网模式
+    {
+
+    }
+    else if(mode EQ GPRS_MODE)
+    {
+
     }
     else if(mode EQ UDISK_MODE)
     {
@@ -528,8 +557,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
 //生成协议数据
 //screenStr屏幕参数的str,例如"screen/1/"表示第一个屏幕
-//mode表示生成数据的方式：0表示串口传输，1表示生成u盘文件
-INT8U makeProtoData(QString screenStr, int mode)
+//mode表示生成数据的方式：0表示表示
+INT8U makeProtoData(QString screenStr, int mode, int flag)
 {
     //S_Screen_Para Screen_Para;
     S_Prog_Para progPara;
@@ -537,6 +566,7 @@ INT8U makeProtoData(QString screenStr, int mode)
     INT16U areaWidth, areaHeight;
     INT8U seq = 0, progNum, areaNum, fileNum;
     char frameBuf[BLOCK_DATA_LEN + 20], *dataBuf;
+    S_Screen_Para comScreenPara;
     S_Screen_Para screenParaBak;
     S_Prog_Para progParaBak;
     S_Card_Para cardParaBak;
@@ -548,99 +578,149 @@ INT8U makeProtoData(QString screenStr, int mode)
     //Mem_Open();
 
     frameInfo.seq = 0xFF;
-    //没有读取到正确的屏幕参数则返回0
+
     if(getScreenCardParaFromSettings(screenStr, Screen_Para, Card_Para) EQ 0)
     {
-        Screen_Para.Base_Para.Width = 256;
-        Screen_Para.Base_Para.Height = 256;
-        Screen_Para.Base_Para.Color = 0x03; //双色屏
-        Screen_Para.Prog_Num = 1;
-        //return 0;
+        ASSERT_FAILED();
+        return 0;
     }
+
+    //没有读取到正确的屏幕参数则返回0
+    if(GET_BIT(flag, C_SCREEN_BASE_PARA) ||\
+       GET_BIT(flag, C_SCAN_PARA) ||\
+       GET_BIT(flag, C_SCREEN_COM_PARA) || \
+       GET_BIT(flag, C_SCREEN_ETH_PARA) ||\
+       GET_BIT(flag, C_SCREEN_GPRS_PARA))
+    {
+      getScreenParaFromComTestPara(screenStr, comScreenPara);
+    }
+    else
+    {
+      memcpy(&comScreenPara, &Screen_Para, sizeof(Screen_Para));
+    }
+
+    //仿真、预览、U盘模式需要修改参数中的通信模式
+    if(mode EQ PREVIEW_MODE || mode EQ SIM_MODE || mode EQ UDISK_MODE)
+    {
+      comScreenPara.Com_Mode = mode;
+      SET_SUM(comScreenPara);
+    }
+
+    initComPara(comScreenPara); //初始化通信的参数和状态
+
+    connectScreen();//连接屏幕
 
     dataBuf = (char *)malloc(PROTO_DATA_BUF_LEN);
 
     //读取屏幕参数
+    //预览模式或者仿真模式需要写屏幕参数到本地文件
+    //if(mode EQ PREVIEW_MODE || mode EQ SIM_MODE)
+    {
+        //设置屏幕基本参数
+        if(GET_BIT(flag, C_SCREEN_BASE_PARA))
+        {
+            len = makeFrame((char *)&Screen_Para.Base_Para, sizeof(Screen_Para.Base_Para),\
+                       C_SCREEN_BASE_PARA, seq++, frameBuf);
+            sendProtoData(frameBuf, len);
+        }
+        //扫描参数
+        if(GET_BIT(flag, C_SCAN_PARA))
+        {
+            len = makeFrame((char *)&Screen_Para.Scan_Para, sizeof(Screen_Para.Scan_Para),\
+                       C_SCAN_PARA, seq++, frameBuf);
+            sendProtoData(frameBuf, len);
+       }
+    }
 
-    //设置屏幕基本参数
-    len = makeFrame((char *)&Screen_Para.Base_Para, sizeof(Screen_Para.Base_Para),\
-               C_SCREEN_BASE_PARA, seq++, frameBuf);
-    sendProtoData(frameBuf, len, mode);
 
     //定时开关机时间
-    len = makeFrame((char *)&Screen_Para.OC_Time, sizeof(Screen_Para.OC_Time),\
-               C_SCREEN_OC_TIME, seq++, frameBuf);
-    sendProtoData(frameBuf, len, mode);
+    if(GET_BIT(flag, C_SCREEN_OC_TIME))
+    {
+        len = makeFrame((char *)&Screen_Para.OC_Time, sizeof(Screen_Para.OC_Time),\
+                   C_SCREEN_OC_TIME, seq++, frameBuf);
+        sendProtoData(frameBuf, len);
+    }
 
     //亮度
-    len = makeFrame((char *)&Screen_Para.Lightness, sizeof(Screen_Para.Lightness),\
-               C_SCREEN_LIGNTNESS, seq++, frameBuf);
-    sendProtoData(frameBuf, len, mode);
+    if(GET_BIT(flag, C_SCREEN_LIGNTNESS))
+    {
+        len = makeFrame((char *)&Screen_Para.Lightness, sizeof(Screen_Para.Lightness),\
+                   C_SCREEN_LIGNTNESS, seq++, frameBuf);
+        sendProtoData(frameBuf, len);
+    }
 
     //节目数
+
     settings.beginGroup(screenStr + "/program/");
     QStringList progList = settings.childGroups();
     settings.endGroup();
     progNum = progList.size();
 
-    len = makeFrame((char *)&progNum, sizeof(progNum),\
-               C_PROG_NUM, seq++, frameBuf);
-    sendProtoData(frameBuf, len, mode);
-
-    QString progStr,areaStr, fileStr;
-
-    for(int i = 0; i < progNum; i ++)
+    if(GET_BIT(flag, C_SCREEN_LIGNTNESS))
     {
-        //节目字符串
-        progStr = screenStr + "/program/" + progList.at(i);
-        //获取节目参数
-        getProgParaFromSettings(progStr, progPara);
-        progPara.Prog_No = i;
-        //节目参数帧
-        len = makeFrame((char *)&progPara.Head + 1, sizeof(progPara) - CHK_BYTE_LEN,C_PROG_PARA, seq++, frameBuf);
-        sendProtoData(frameBuf, len, mode);
+      len = makeFrame((char *)&progNum, sizeof(progNum),\
+               C_PROG_NUM, seq++, frameBuf);
+      sendProtoData(frameBuf, len);
+    }
 
-        settings.beginGroup(progStr + "/area/");
-        QStringList areaList = settings.childGroups();
-        settings.endGroup();
+    //节目数据
+    if(GET_BIT(flag, C_PROG_DATA))
+    {
+        QString progStr,areaStr, fileStr;
 
-        areaNum = areaList.size();
-        for(int j = 0; j < areaNum; j ++)
+        for(int i = 0; i < progNum; i ++)
         {
-            areaStr = progStr + "/area/" + areaList.at(j);
+            //节目字符串
+            progStr = screenStr + "/program/" + progList.at(i);
+            //获取节目参数
+            getProgParaFromSettings(progStr, progPara);
+            progPara.Prog_No = i;
+            //节目参数帧
+            len = makeFrame((char *)&progPara.Head + 1, sizeof(progPara) - CHK_BYTE_LEN,C_PROG_PARA, seq++, frameBuf);
+            sendProtoData(frameBuf, len);
 
-            //分区宽度和高度
-            settings.beginGroup(areaStr);
-            areaWidth = settings.value("width").toInt();
-            areaHeight = settings.value("height").toInt();
+            settings.beginGroup(progStr + "/area/");
+            QStringList areaList = settings.childGroups();
             settings.endGroup();
 
-            //文件列表
-            settings.beginGroup(areaStr + "/file/");
-            QStringList fileList = settings.childGroups();
-            settings.endGroup();
-
-            fileNum = fileList.size();
-            for(int k = 0; k < fileNum; k ++)
+            areaNum = areaList.size();
+            for(int j = 0; j < areaNum; j ++)
             {
-                fileStr = areaStr + "/file/" + fileList.at(k);
-                len = getFileParaFromSettings(i,j,k,areaWidth, areaHeight, fileStr, dataBuf, PROTO_DATA_BUF_LEN);
+                areaStr = progStr + "/area/" + areaList.at(j);
 
-                while(1)
+                //分区宽度和高度
+                settings.beginGroup(areaStr);
+                areaWidth = settings.value("width").toInt();
+                areaHeight = settings.value("height").toInt();
+                settings.endGroup();
+
+                //文件列表
+                settings.beginGroup(areaStr + "/file/");
+                QStringList fileList = settings.childGroups();
+                settings.endGroup();
+
+                fileNum = fileList.size();
+                for(int k = 0; k < fileNum; k ++)
                 {
-                  //节目显示数据帧
-                  int tmpLen = makeFrame(dataBuf, len, C_PROG_DATA, seq, frameBuf);
-                  if(tmpLen > 0)
-                  {
-                      sendProtoData(frameBuf, tmpLen, mode);
-                  }
-                  else
-                  {
-                      seq ++;
-                      break;
-                  }
+                    fileStr = areaStr + "/file/" + fileList.at(k);
+                    len = getFileParaFromSettings(i,j,k,areaWidth, areaHeight, fileStr, dataBuf, PROTO_DATA_BUF_LEN);
+
+                    while(1)
+                    {
+                      //节目显示数据帧
+                      int tmpLen = makeFrame(dataBuf, len, C_PROG_DATA, seq, frameBuf);
+                      if(tmpLen > 0)
+                      {
+                          sendProtoData(frameBuf, tmpLen);
+                      }
+                      else
+                      {
+                          seq ++;
+                          break;
+                      }
+                    }
                 }
-            }
+              }
         }
     }
 
@@ -652,6 +732,6 @@ INT8U makeProtoData(QString screenStr, int mode)
     restoreProgPara(progParaBak);
     restoreCardPara(cardParaBak);
 
-
+    disconnectScreen();// 断开连接
 }
 

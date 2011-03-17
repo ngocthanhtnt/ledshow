@@ -11,7 +11,7 @@
 #include <QSpinBox>
 #include "colorCombo.h"
 #include "progManage.h"
-#include "..\Includes.h"
+#include "..\Stm32\usr\app\Includes.h"
 
 
 #define MOVE_LEFT_CONTINUOUS_INDEX 2

@@ -1,10 +1,10 @@
 #ifndef SHOWAREA_H
 #define SHOWAREA_H
 
-//#include "..\LED_Cfg.h"
-//#include "..\LED_Para.h"
-//#include "..\LED_Show.h"
-#include "..\Includes.h"
+//#include "..\Stm32\usr\app\LED_Cfg.h"
+//#include "..\Stm32\usr\app\LED_Para.h"
+//#include "..\Stm32\usr\app\LED_Show.h"
+#include "..\Stm32\usr\app\Includes.h"
 #include <QtGui/QMainWindow>
 #include <QFrame>
 #include <QLabel>

@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "..\LED_Cfg.h"
+#include "..\Stm32\usr\app\LED_Cfg.h"
 #include <QtGui/QMainWindow>
 #include <QLineEdit.h>
 #include <QListView>
