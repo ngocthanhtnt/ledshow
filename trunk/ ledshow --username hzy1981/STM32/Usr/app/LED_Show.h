@@ -15,7 +15,7 @@
 
 #define PI 3.1415926535
 
-#define MAX_STEP_NUM 1000
+#define MAX_STEP_NUM 100
 
 #define SLINE_MODE 0x00
 #define MLINE_MODE 0x01
@@ -31,6 +31,7 @@
 #define PROG_OK  1 //节目ok
 
 #define WIN_LEAF_WIDTH 8
+
 //#define PUB_BUF Show_Data_Bak.Pub_Buf.Buf //公共数据区，与显示数据公用
 /*
 //时间
@@ -107,7 +108,7 @@ typedef struct
   INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态--主要用于与中断显示同步
 
   INT8U Last_File_No; //上次读取的文件参数
-  INT8U Last_SCN_No; //前次读取的屏幕号
+  INT16U Last_SCN_No; //前次读取的屏幕号
 
   INT8U CS[CS_BYTES];//前面的数据都带校验和
 
@@ -175,11 +176,30 @@ typedef struct
 typedef struct
 {
   INT8U Head;
+
+  //INT8U Com_Time; //通信倒计时
+
+  INT8U Replay_Flag;
   INT8U Lightness;
+
+  INT16U Temp;    //当前温度
+  INT16U Humidity; //湿度
+  INT16U Noise; //噪音
+
   INT8U Open_Flag;
-  INT16U Scan_Row; 
-  INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3];
+
   INT8U CS[CS_BYTES];
+
+  //扫描数据
+  INT16U Scan_Row;
+  INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3];
+
+  //接收帧数据
+  INT8U Rcv_Flag;
+  INT8U Com_Time;
+  INT8U Rcv_Posi;
+  INT8U Rcv_Data[BLOCK_DATA_LEN];
+
   INT8U Tail;  
 }S_Screen_Status;
 
@@ -293,5 +313,6 @@ EXT void Move_Left_Compress(INT8U Area_No);
 EXT void Move_Right_Compress(INT8U Area_No);
 EXT void Move_Up_Compress(INT8U Area_No);
 EXT void Move_Down_Compress(INT8U Area_No);
+EXT void Move_Fade_In(INT8U Area_No);
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
 #endif

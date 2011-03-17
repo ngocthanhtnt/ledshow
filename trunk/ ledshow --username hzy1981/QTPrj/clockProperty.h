@@ -1,7 +1,7 @@
 #ifndef CLOCKPROPERTY_H
 #define CLOCKPROPERTY_H
 
-#include "..\Includes.h"
+#include "..\Stm32\usr\app\Includes.h"
 #include <QtGui/QMainWindow>
 #include <QWidget>
 #include <QLabel>

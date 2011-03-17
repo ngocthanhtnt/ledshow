@@ -137,8 +137,13 @@ INT8U Get_Next_Byte_Posi(INT16U X, INT16U Y, INT16U *pX, INT16U *pY,\
     }     
   }
   else
+  {
     ASSERT_FAILED();
+    *pX = 0;
+    *pY = 0;
+  }
   
+  return 1;
 }
                          
 //调用该函数每次扫描一行
@@ -150,30 +155,30 @@ void LED_Scan_One_Row()
   INT32U Row_Freq;
   
   //Block数可以理解为单元板纵向的个数
-  Blocks = Screen_Para.Base_Para.Height / (Screen_Para.Scan_Mode.Rows * Screen_Para.Scan_Mode.Rows_Fold); //1.2.4.8.16扫？
+  Blocks = Screen_Para.Base_Para.Height / (Screen_Para.Scan_Para.Rows * Screen_Para.Scan_Para.Rows_Fold); //1.2.4.8.16扫？
  
   //对每个Blocks进行扫描
-  //每一条扫描线需要Screen_Para.Base_Para.Width / 8 * Screen_Para.Scan_Mode.Rows_Fold个字节
-  for(i = 0; i < Screen_Para.Base_Para.Width / 8 * Screen_Para.Scan_Mode.Rows_Fold; i ++)
+  //每一条扫描线需要Screen_Para.Base_Para.Width / 8 * Screen_Para.Scan_Para.Rows_Fold个字节
+  for(i = 0; i < Screen_Para.Base_Para.Width / 8 * Screen_Para.Scan_Para.Rows_Fold; i ++)
   {
     //对每个Block的每条扫描线同时输出一个字节
     for(j = 0; j < Blocks && j < MAX_SCAN_BLOCK_NUM; j++)
     {
     //获取该扫描线上的所有字节并输出
       Get_Shift_Data(j, \
-              Screen_Para.Scan_Mode.Rows, \
+              Screen_Para.Scan_Para.Rows, \
               Screen_Status.Scan_Row,\
               Screen_Para.Base_Para.Width, \
               i, \
-              Screen_Para.Scan_Mode.Direct, \
-              Screen_Para.Scan_Mode.Rows_Fold, \
-              Screen_Para.Scan_Mode.Cols_Fold,\
+              Screen_Para.Scan_Para.Direct, \
+              Screen_Para.Scan_Para.Rows_Fold, \
+              Screen_Para.Scan_Para.Cols_Fold,\
               Screen_Status.Scan_Data[j]);
     }
     
     //对所有的block输出一个字节
     //如果是从左向右，应该先输出高位再输出低位
-    if(Screen_Para.Scan_Mode.Direct EQ 0x00 || Screen_Para.Scan_Mode.Direct EQ 0x02)
+    if(Screen_Para.Scan_Para.Direct EQ 0x00 || Screen_Para.Scan_Para.Direct EQ 0x02)
     {
       for(j = 0; j < 8 ; j++)
       {
@@ -208,27 +213,27 @@ void LED_Scan_One_Row()
     
     //行消隐时间
     Set_Block_OE(0); //关闭使能
-    Delay_us(Screen_Para.Scan_Mode.Row_Shade); //行消隐时间
+    Delay_us(Screen_Para.Scan_Para.Line_Hide); //行消隐时间
     
     Set_Block_Latch(0); //锁存信号输出
     Set_Block_Latch(1); //锁存信号输出
     
     Set_Block_Row(Screen_Status.Scan_Row);
     Screen_Status.Scan_Row++;
-    if(Screen_Status.Scan_Row >= Screen_Para.Scan_Mode.Rows)
+    if(Screen_Status.Scan_Row >= Screen_Para.Scan_Para.Rows)
       Screen_Status.Scan_Row = 0;
   
     Set_Block_OE(1); //重新打开使能
     
     //行扫描的频率等于屏扫描频率*扫描行数
-    Row_Freq = (INT32U)Screen_Para.Scan_Mode.Screen_Freq*Screen_Para.Scan_Mode.Rows; //行扫描的频率
+    Row_Freq = (INT32U)Screen_Para.Scan_Para.Screen_Freq*Screen_Para.Scan_Para.Rows; //行扫描的频率
     Reset_Scan_Timer(Row_Freq);
   }
   
 
 /*  
-  Shift_Bytes = (INT16U)Screen_Para.Scan_Mode.Rows_Fold*Screen_Para.Base_Para.Width/8;
-  Block_Num = (INT16U)Scan_Para.Base_Para.Height/Screen_Para.Scan_Mode.Rows_Fold;
+  Shift_Bytes = (INT16U)Screen_Para.Scan_Para.Rows_Fold*Screen_Para.Base_Para.Width/8;
+  Block_Num = (INT16U)Scan_Para.Base_Para.Height/Screen_Para.Scan_Para.Rows_Fold;
   
   for(i = 0; i < Shift_Bytes; i ++)
   {

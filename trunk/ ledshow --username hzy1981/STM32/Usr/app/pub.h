@@ -17,6 +17,7 @@ typedef struct
 {
   INT8U Head;
 
+  INT32U Ms; //ms
   INT32U Ms10;  //10ms
   INT32U Sec;
 
@@ -30,7 +31,7 @@ typedef struct
 
 #define mem_cpy OS_memcpy
 #define mem_set OS_memset
-#define TRACE() //OS_Trace
+//#define TRACE() App_Trace//OS_Trace
 #define Check_Sum OS_Check_Sum
 #define Set_Sum OS_Set_Sum
 /*
@@ -97,9 +98,14 @@ EXT S_Pub_Buf _Pub_Buf;
 #define Pub_Buf _Pub_Buf.Buf
 
 EXT S_Pub_Timer Pub_Timer;
+
+#define SEC_TIMER Pub_Timer.Sec
+#define MS10_TIMER  Pub_Timer.Ms10
+
 EXT INT16U Sum_2Bytes(INT8U Src[], INT16U SrcLen);
 EXT void Check(void);
 EXT void Info_Print(void);
+EXT void TRACE();
 EXT void S_Time_2_tm(S_Time *pTime, struct tm *ptm);
 EXT void tm_2_S_Time(struct tm *ptm, S_Time *pTime);
 //外部完成调试信息输出函数

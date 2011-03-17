@@ -1,4 +1,4 @@
-#include "..\Includes.h"
+#include "..\Stm32\usr\app\Includes.h"
 #include "showArea.h"
 #include "mainwindow.h"
 #include <QPainter>

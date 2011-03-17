@@ -5,7 +5,7 @@
 #include <QWidget>
 #include <QComboBox>
 #include <QColor>
-#include "..\Includes.h"
+#include "..\Stm32\usr\app\Includes.h"
 
 #define RED_INDEX 0
 #define YEL_INDEX 1

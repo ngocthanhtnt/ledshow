@@ -1,5 +1,5 @@
 #include "progProperty.h"
-#include "..\Includes.h"
+#include "..\Stm32\usr\app\Includes.h"
 #include <QSettings>
 #include <QDate>
 #include "mainwindow.h"

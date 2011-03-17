@@ -56,6 +56,140 @@ INT8U Get_Show_Para_Len(INT8U Type)
 }
 
 
+void Set_File_Para_HT_Sum(U_File_Para *pPara)
+{
+    switch(pPara->Pic_Para.Flag)
+    {
+#if PIC_SHOW_EN      
+    case SHOW_PIC:
+     SET_HT((*pPara).Pic_Para);
+     SET_SUM((*pPara).Pic_Para);
+     break;
+#endif
+#if CLOCK_SHOW_EN     
+    case SHOW_CLOCK:
+     SET_HT((*pPara).Clock_Para);
+     SET_SUM((*pPara).Clock_Para);
+     break;
+#endif
+#if TIME_SHOW_EN     
+    case SHOW_TIME:
+     SET_HT((*pPara).Time_Para);
+     SET_SUM((*pPara).Time_Para);
+     break;
+#endif
+#if TIMER_SHOW_EN     
+    case SHOW_TIMER:
+     SET_HT((*pPara).Timer_Para);
+     SET_SUM((*pPara).Timer_Para);
+     break;
+#endif
+#if TEMP_SHOW_EN     
+    case SHOW_TEMP:
+     SET_HT((*pPara).Temp_Para);
+     SET_SUM((*pPara).Temp_Para);
+     break;
+#endif
+#if LUN_SHOW_EN     
+    case SHOW_LUN:
+     SET_HT((*pPara).Lun_Para);
+     SET_SUM((*pPara).Lun_Para);
+     break;
+#endif
+#if HUMIDITY_SHOW_EN     
+    case SHOW_HUMIDITY:
+     SET_HT((*pPara).Humidity_Para);
+     SET_SUM((*pPara).Humidity_Para);
+     break;
+#endif
+#if NOISE_SHOW_EN     
+    case SHOW_NOISE:
+     SET_HT((*pPara).Noise_Para);
+     SET_SUM((*pPara).Noise_Para);
+     break;
+#endif
+#if PIC_SHOW_EN     
+    case SHOW_NULL:
+     SET_HT((*pPara).Pic_Para);
+     SET_SUM((*pPara).Pic_Para);
+     break;
+#endif     
+    default:
+     ASSERT_FAILED();
+     break;
+    }
+
+}
+
+INT8U Chk_File_Para_HT_Sum(U_File_Para *pPara)
+{
+    INT8U Re = 1;
+
+    switch(pPara->Pic_Para.Flag)
+    {
+#if PIC_SHOW_EN
+    case SHOW_PIC:
+     Re &= CHK_HT((*pPara).Pic_Para);
+     Re &= CHK_SUM((*pPara).Pic_Para);
+     break;
+#endif
+#if CLOCK_SHOW_EN
+    case SHOW_CLOCK:
+     Re &= CHK_HT((*pPara).Clock_Para);
+     Re &= CHK_SUM((*pPara).Clock_Para);
+     break;
+#endif
+#if TIME_SHOW_EN
+    case SHOW_TIME:
+     Re &= CHK_HT((*pPara).Time_Para);
+     Re &= CHK_SUM((*pPara).Time_Para);
+     break;
+#endif
+#if TIMER_SHOW_EN
+    case SHOW_TIMER:
+     Re &= CHK_HT((*pPara).Timer_Para);
+     Re &= CHK_SUM((*pPara).Timer_Para);
+     break;
+#endif
+#if TEMP_SHOW_EN
+    case SHOW_TEMP:
+     Re &= CHK_HT((*pPara).Temp_Para);
+     Re &= CHK_SUM((*pPara).Temp_Para);
+     break;
+#endif
+#if LUN_SHOW_EN
+    case SHOW_LUN:
+     Re &= CHK_HT((*pPara).Lun_Para);
+     Re &= CHK_SUM((*pPara).Lun_Para);
+     break;
+#endif
+#if HUMIDITY_SHOW_EN
+    case SHOW_HUMIDITY:
+     Re &= CHK_HT((*pPara).Humidity_Para);
+     Re &= CHK_SUM((*pPara).Humidity_Para);
+     break;
+#endif
+#if NOISE_SHOW_EN
+    case SHOW_NOISE:
+     Re &= CHK_HT((*pPara).Noise_Para);
+     Re &= CHK_SUM((*pPara).Noise_Para);
+     break;
+#endif
+#if PIC_SHOW_EN
+    case SHOW_NULL:
+     Re &= CHK_HT((*pPara).Pic_Para);
+     Re &= CHK_SUM((*pPara).Pic_Para);
+     break;
+#endif
+    default:
+     ASSERT_FAILED();
+     Re = 0;
+     break;
+    }
+
+    return Re;
+}
+
 
 //保存参数帧处理
 INT8U _Write_Screen_Para(INT8U *pSrc, INT16U SrcLen)
@@ -273,16 +407,6 @@ INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, v
 #endif 
   
   return Len;
-
-}
-
-INT8U Chk_File_Para_HT_Sum(U_File_Para *pPara)
-{
-    return 1;
-}
-
-void Set_File_Para_HT_Sum(U_File_Para *pPara)
-{
 
 }
 
@@ -668,7 +792,7 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
     Y = pFile_Para->Timer_Para.Text_Y;     
   }
 #endif
-#if TIME_SHOW_EN  
+#if TIME_SHOW_EN
   else if(Flag EQ SHOW_TIME) //日期时间
   {
     Width = pFile_Para->Time_Para.Text_Width;

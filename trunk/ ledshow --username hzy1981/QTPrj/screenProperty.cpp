@@ -115,24 +115,25 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     else
         screenPara.Base_Para.Color = 0x07;
 
-    screenPara.Com_Para.Addr = (INT16U)settings.value("screenID").toInt();
-    screenPara.Com_Para.Baud = settings.value("comBaud").toInt();
-    screenPara.Com_Para.IP = settings.value("ip").toInt();
-    screenPara.Com_Para.Mac = settings.value("mac").toInt();
-    screenPara.Com_Para.Mask = settings.value("mask").toInt();
+    screenPara.COM_Para.Addr = (INT16U)settings.value("screenID").toInt();
+    screenPara.COM_Para.Baud = settings.value("comBaud").toInt();
 
-    screenPara.Scan_Mode.Data_Polarity = settings.value("dataPolarity").toInt(); //数据级性
-    screenPara.Scan_Mode.OE_Polarity = settings.value("oePolarity").toInt();
-    screenPara.Scan_Mode.RG_Reverse = settings.value("redGreenRev").toInt();
-    screenPara.Scan_Mode.Line_Order = settings.value("lineOrder").toInt();
-    screenPara.Scan_Mode.Line_Hide = settings.value("lineHide").toInt();
-    screenPara.Scan_Mode.Clk_Freq = settings.value("freq").toInt(); //移位频率
+    screenPara.ETH_Para.IP = settings.value("ip").toInt();
+    screenPara.ETH_Para.Mac = settings.value("mac").toInt();
+    screenPara.ETH_Para.Mask = settings.value("mask").toInt();
 
-    screenPara.Scan_Mode.Direct = 0;
-    screenPara.Scan_Mode.Cols_Fold = 0;
-    screenPara.Scan_Mode.Rows_Fold = 0;
-    screenPara.Scan_Mode.Rows = 0;
-    screenPara.Scan_Mode.Screen_Freq = 0; //屏频
+    screenPara.Scan_Para.Data_Polarity = settings.value("dataPolarity").toInt(); //数据级性
+    screenPara.Scan_Para.OE_Polarity = settings.value("oePolarity").toInt();
+    screenPara.Scan_Para.RG_Reverse = settings.value("redGreenRev").toInt();
+    screenPara.Scan_Para.Line_Order = settings.value("lineOrder").toInt();
+    screenPara.Scan_Para.Line_Hide = settings.value("lineHide").toInt();
+    screenPara.Scan_Para.Clk_Freq = settings.value("freq").toInt(); //移位频率
+
+    screenPara.Scan_Para.Direct = 0;
+    screenPara.Scan_Para.Cols_Fold = 0;
+    screenPara.Scan_Para.Rows_Fold = 0;
+    screenPara.Scan_Para.Rows = 0;
+    screenPara.Scan_Para.Screen_Freq = 0; //屏频
 
     //亮度调节
     settings.beginGroup("lightness");
@@ -682,8 +683,9 @@ ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
   connect(udiskButton, SIGNAL(clicked()), this, SLOT(udiskPara()));
 }
 
+
 //发送参数
-void ClightnessDialog::sendPara()
+void sendLightnessPara()//S_COM_Status &COM_Status)
 {
     char frameBuf[BLOCK_DATA_LEN + 20];
     S_Screen_Para screenPara;
@@ -695,11 +697,27 @@ void ClightnessDialog::sendPara()
     getScreenCardParaFromSettings(str, screenPara, cardPara); //
     //亮度
     len = Make_Frame((INT8U *)&screenPara.Lightness, sizeof(screenPara.Lightness),\
-               (INT8U *)&screenPara.Com_Para.Addr, C_SCREEN_LIGNTNESS, 0, 0, 0, frameBuf);
+               (INT8U *)&screenPara.COM_Para.Addr, C_SCREEN_LIGNTNESS, 0, 0, 0, frameBuf);
     if(QT_SIM_EN)
-      sendProtoData(frameBuf, len, SIM_MODE); //仿真模式
+      sendProtoData(frameBuf, len); //仿真模式
     else
-      sendProtoData(frameBuf, len, COM_MODE);
+      sendProtoData(frameBuf, len);
+}
+
+
+void ClightnessDialog::sendPara()
+{
+    S_Screen_Para screenPara;
+    S_Card_Para cardPara;
+    QString str = w->screenArea->getCurrentScreenStr();
+
+    getScreenCardParaFromSettings(str, screenPara, cardPara); //
+
+    initComPara(screenPara);
+    connectScreen();
+    sendLightnessPara();
+    disconnectScreen();
+
 }
 
 //
@@ -752,7 +770,7 @@ CopenCloseDialog::CopenCloseDialog(QWidget *parent):QDialog(parent)
 }
 
 //发送参数
-void CopenCloseDialog::sendPara()
+void sendOpenClosePara()
 {
     char frameBuf[BLOCK_DATA_LEN + 20];
    S_Screen_Para screenPara;
@@ -769,11 +787,25 @@ void CopenCloseDialog::sendPara()
               C_SCREEN_OC_TIME, 0, frameBuf);*/
 
    len = Make_Frame((INT8U *)&screenPara.OC_Time, sizeof(screenPara.OC_Time),\
-              (INT8U *)&screenPara.Com_Para.Addr, C_SCREEN_OC_TIME, 0, 0, 0, frameBuf);
+              (INT8U *)&screenPara.COM_Para.Addr, C_SCREEN_OC_TIME, 0, 0, 0, frameBuf);
    if(QT_SIM_EN)
-     sendProtoData(frameBuf, len, SIM_MODE); //仿真模式
+     sendProtoData(frameBuf, len); //仿真模式
    else
-     sendProtoData(frameBuf, len, COM_MODE);
+     sendProtoData(frameBuf, len);
+}
+
+void CopenCloseDialog::sendPara()
+{
+    S_Screen_Para screenPara;
+    S_Card_Para cardPara;
+    QString str = w->screenArea->getCurrentScreenStr();
+
+    getScreenCardParaFromSettings(str, screenPara, cardPara); //
+
+    initComPara(screenPara);
+    connectScreen();
+    sendOpenClosePara();
+    disconnectScreen();
 }
 
 //
@@ -1198,6 +1230,25 @@ void CcomTest::getSettingsFromWidget(QString str)
 
     settings.endGroup();
     settings.endGroup();
+}
+
+void getScreenParaFromComTestPara(QString str, S_Screen_Para &screenPara)
+{
+    settings.beginGroup(str);
+    settings.beginGroup("comTest");
+
+    screenPara.Com_Mode = settings.value("comMode").toInt();
+    screenPara.Com_Port = settings.value("comPort").toInt();
+
+    screenPara.COM_Para.Addr = settings.value("screenID").toInt();
+    screenPara.COM_Para.Baud = settings.value("comBaud").toInt();
+
+    screenPara.ETH_Para.IP = settings.value("ip").toInt();
+
+    settings.endGroup();
+    settings.endGroup();
+
+    SET_SUM(screenPara);
 }
 
 void CcomTest::setSettingsToWidget(QString str)
@@ -1737,14 +1788,52 @@ void CfacScreenProperty::loadParaProc()
 
     getSettingsFromWidget(str);
 
+  S_Screen_Para comScreenPara;
 
+  //发送参数到屏幕
+  getScreenParaFromComTestPara(str, comScreenPara);
+  //comTest->setSettingsToScreePara(str, comScreenPara);
+  initComPara(comScreenPara);
+  connectScreen();
+
+  disconnectScreen();
   QMessageBox::information(w, tr("提示"),
                          tr("参数加载成功！"),tr("确定"));
 
 
 
 }
+/*
+//发送参数
+int CfacScreenProperty::sendPara()
+{
+    char frameBuf[BLOCK_DATA_LEN + 20];
+    S_Screen_Para screenPara;
+    S_Card_Para cardPara;
+    int len;
 
+    QString str = w->screenArea->getCurrentScreenStr();
+
+    getScreenCardParaFromSettings(str, screenPara, cardPara); //
+    //基本参数
+    len = Make_Frame((INT8U *)&screenPara.Base_Para, sizeof(screenPara.Base_Para),\
+               (INT8U *)&screenPara.COM_Para.Addr, C_SCREEN_BASE_PARA, 0, 0, 0, frameBuf);
+
+    if(QT_SIM_EN)
+      sendProtoData(frameBuf, len, SIM_MODE); //仿真模式
+    else
+      sendProtoData(frameBuf, len, COM_MODE);
+
+    //扫描参数
+    len = Make_Frame((INT8U *)&screenPara.Scan_Para, sizeof(screenPara.Scan_Para),\
+               (INT8U *)&screenPara.COM_Para.Addr, C_SCAN_PARA, 0, 0, 0, frameBuf);
+
+    if(QT_SIM_EN)
+      sendProtoData(frameBuf, len, SIM_MODE); //仿真模式
+    else
+      sendProtoData(frameBuf, len, COM_MODE);
+}
+*/
 void CfacScreenProperty::defParaCheckProc()
 {
   if(defParaCheck->checkState()) //选中
