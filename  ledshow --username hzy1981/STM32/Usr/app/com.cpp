@@ -136,7 +136,7 @@ INT8U Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen)
       Cmd_Code EQ C_PROG_NUM)
   {
     Re &= Screen_Para_Frame_Proc(Cmd_Code, Frame + FDATA, FrameLen - F_NDATA_LEN); //更新内存中的参数
-    Re &= Write_Screen_Para();//Save_Screen_Para_Frame_Proc(Frame, FrameLen); //保存参数
+    //Re &= Write_Screen_Para();//Save_Screen_Para_Frame_Proc(Frame, FrameLen); //保存参数
   }
   else if(Cmd_Code EQ C_PROG_PARA)//保存节目属性帧
   {
