@@ -5570,6 +5570,21 @@
     <group>
       <name>Drv</name>
       <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\CH376.C</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\CH376.H</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\CH376INC.H</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\FILE_SYS.C</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\FILE_SYS.H</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\..\Usr\drv\Led_A0_Drv.cpp</name>
       </file>
       <file>
@@ -5598,6 +5613,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_E0_Drv.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\USART.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\USART.h</name>
       </file>
     </group>
   </group>

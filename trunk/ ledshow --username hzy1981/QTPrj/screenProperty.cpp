@@ -687,21 +687,31 @@ ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
 //发送参数
 void sendLightnessPara()//S_COM_Status &COM_Status)
 {
-    char frameBuf[BLOCK_DATA_LEN + 20];
+    //char frameBuf[BLOCK_DATA_LEN + 20];
     S_Screen_Para screenPara;
     S_Card_Para cardPara;
-    int len;
+    //int len;
 
     QString str = w->screenArea->getCurrentScreenStr();
 
-    getScreenCardParaFromSettings(str, screenPara, cardPara); //
+    //getScreenCardParaFromSettings(str, screenPara, cardPara); //
     //亮度
+    /*
     len = Make_Frame((INT8U *)&screenPara.Lightness, sizeof(screenPara.Lightness),\
                (INT8U *)&screenPara.COM_Para.Addr, C_SCREEN_LIGNTNESS, 0, 0, 0, frameBuf);
     if(QT_SIM_EN)
       sendProtoData(frameBuf, len); //仿真模式
     else
       sendProtoData(frameBuf, len);
+*/
+
+    int flag = 0;
+    SET_BIT(flag, C_SCREEN_LIGNTNESS);
+    if(QT_SIM_EN)
+      makeProtoData(str, SIM_MODE, flag);
+    else
+      makeProtoData(str, COM_MODE, flag);
+
 }
 
 
@@ -786,12 +796,12 @@ void sendOpenClosePara()
    len = makeFrame((char *)&screenPara.OC_Time, sizeof(screenPara.OC_Time),\
               C_SCREEN_OC_TIME, 0, frameBuf);*/
 
-   len = Make_Frame((INT8U *)&screenPara.OC_Time, sizeof(screenPara.OC_Time),\
-              (INT8U *)&screenPara.COM_Para.Addr, C_SCREEN_OC_TIME, 0, 0, 0, frameBuf);
+   int flag = 0;
+   SET_BIT(flag, C_SCREEN_OC_TIME);
    if(QT_SIM_EN)
-     sendProtoData(frameBuf, len); //仿真模式
+     makeProtoData(str, SIM_MODE, flag);
    else
-     sendProtoData(frameBuf, len);
+     makeProtoData(str, COM_MODE, flag);
 }
 
 void CopenCloseDialog::sendPara()
@@ -1788,15 +1798,19 @@ void CfacScreenProperty::loadParaProc()
 
     getSettingsFromWidget(str);
 
-  S_Screen_Para comScreenPara;
+    int flag = 0;
+    SET_BIT(flag, C_SCREEN_BASE_PARA);
+    SET_BIT(flag, C_SCREEN_COM_PARA);
+    SET_BIT(flag, C_SCREEN_ETH_PARA);
+    SET_BIT(flag, C_SCREEN_GPRS_PARA);
+    SET_BIT(flag, C_SCAN_PARA);
+    //SET_BIT(flag, C_SCREEN_OC_TIME);
 
-  //发送参数到屏幕
-  getScreenParaFromComTestPara(str, comScreenPara);
-  //comTest->setSettingsToScreePara(str, comScreenPara);
-  initComPara(comScreenPara);
-  connectScreen();
+    if(QT_SIM_EN)
+      makeProtoData(str, SIM_MODE, flag);
+    else
+      makeProtoData(str, COM_MODE, flag);
 
-  disconnectScreen();
   QMessageBox::information(w, tr("提示"),
                          tr("参数加载成功！"),tr("确定"));
 
