@@ -95,6 +95,8 @@ INT8U Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
     }
     mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//基本参数
   }
+  else if(Cmd EQ C_SCAN_PARA && Len >= sizeof(Screen_Para.Scan_Para))
+    mem_cpy((INT8U *)&Screen_Para.Scan_Para, Data, sizeof(Screen_Para.Scan_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//扫描参数
   else if(Cmd EQ C_SCREEN_COM_PARA && Len >= sizeof(Screen_Para.COM_Para))
     mem_cpy((INT8U *)&Screen_Para.COM_Para, Data, sizeof(Screen_Para.COM_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//通信参数
   else if(Cmd EQ C_SCREEN_OC_TIME && Len >= sizeof(Screen_Para.OC_Time))
@@ -129,10 +131,14 @@ INT8U Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen)
 
   Re = 1;
   Cmd_Code = Frame[FCMD];// + (INT16U)Frame[FCMD + 1] * 256;
+
+  debug("Rcv Frame cmd = %d", Cmd_Code);
+
   if(Cmd_Code EQ  C_SCREEN_COM_PARA ||\
       Cmd_Code EQ C_SCREEN_OC_TIME ||\
       Cmd_Code EQ C_SCREEN_LIGNTNESS ||\
       Cmd_Code EQ C_SCREEN_BASE_PARA ||\
+      Cmd_Code EQ C_SCAN_PARA ||\
       Cmd_Code EQ C_PROG_NUM)
   {
     Re &= Screen_Para_Frame_Proc(Cmd_Code, Frame + FDATA, FrameLen - F_NDATA_LEN); //更新内存中的参数
@@ -152,6 +158,11 @@ INT8U Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen)
   {
     mem_cpy(TempTime.Time, Frame + FDATA, sizeof(TempTime.Time), TempTime.Time, sizeof(TempTime.Time));
     Re &= Set_Cur_Time(TempTime.Time);
+  }
+  else
+  {
+    ASSERT_FAILED();
+    Re = 0;
   }
 
   return Re;

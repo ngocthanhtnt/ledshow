@@ -137,6 +137,8 @@ typedef struct
   INT16U Max_Height; //最大高度
   INT16U Flag; //第0表示表示是否支持全彩，1支持，2不支持，其他位备用
   INT8U Font_Num; //板上字体个数
+  INT8U InMode_Num; //引入特效个数
+  INT8U OutMode_Num; //引出特效个数
   INT8U Com_Mode; //支持的通信方式,第0位RS232、第1位RS485、第2位以太网、第3位GPRS/GSM
   INT16U ROM_Size; //存储空间大小,单位KB
   INT16U File_En_Word; //支持的节目类型

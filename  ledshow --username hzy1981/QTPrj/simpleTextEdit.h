@@ -19,6 +19,10 @@
 
 class CshowModeCombo:public QComboBox
 {
+    Q_OBJECT
+    bool type;
+public slots:
+    void setItems();
 public:
     CshowModeCombo(bool flag, QWidget *parent = 0);
     ~CshowModeCombo();
@@ -26,6 +30,7 @@ public:
 
 class CshowSpeedCombo:public QComboBox
 {
+    Q_OBJECT
 public:
     CshowSpeedCombo(QWidget *parent = 0);
     ~CshowSpeedCombo();

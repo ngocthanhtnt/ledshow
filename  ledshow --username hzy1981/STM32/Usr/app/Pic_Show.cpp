@@ -1,142 +1,317 @@
 #define PIC_SHOW_C
 #include "Includes.h"
 
+//#undef QT_EN
+//#define QT_EN 1
+
 #if PIC_SHOW_EN
 //Êý¾ÝÒÆÈë·½Ê½
 const S_Mode_Func In_Mode_Func[]=
 {
 #if IN_SPEC_EFFECT_NUM > 0  
-  {&Move_Show_RightNow, H_MODE, 1}
+  {&Move_Show_RightNow, H_MODE, 1
+#if QT_EN
+   ,"Á¢¼´ÏÔÊ¾" 
+#endif    
+  } //Á¢¼´ÏÔÊ¾
 #endif
 #if IN_SPEC_EFFECT_NUM > 1 
-  ,{&Move_Left_Continuous, H_MODE, 1}
+  ,{&Move_Left_Continuous, H_MODE, 1
+#if QT_EN
+   ,"Á¢¼´ÏÔÊ¾" 
+#endif    
+  } //Á¬Ðø×óÒÆ
 #endif
 #if IN_SPEC_EFFECT_NUM > 2  
-  ,{&Move_Up_Continuous, V_MODE, 1}
+  ,{&Move_Up_Continuous, V_MODE, 1
+#if QT_EN
+   ,"Á¬ÐøÉÏÒÆ" 
+#endif    
+  }//Á¬ÐøÉÏÒÆ
 #endif
   //----------------
 #if IN_SPEC_EFFECT_NUM > 3
-  ,{&Move_Left_Continuous, H_MODE, 1}
+  ,{&Move_Left_Continuous, H_MODE, 1
+#if QT_EN
+   ,"×óÆ½ÒÆ" 
+#endif    
+  } //×óÆ½ÒÆ
 #endif
 #if IN_SPEC_EFFECT_NUM > 4
-  ,{&Move_Right_Continuous, H_MODE, 1}
+  ,{&Move_Right_Continuous, H_MODE, 1
+#if QT_EN
+   ,"ÓÒÆ½ÒÆ" 
+#endif    
+  } //ÓÒÆ½ÒÆ
 #endif
 #if IN_SPEC_EFFECT_NUM > 5
-  ,{&Move_Up_Continuous, V_MODE, 1}
+  ,{&Move_Up_Continuous, V_MODE, 1
+#if QT_EN
+   ,"ÉÏÆ½ÒÆ" 
+#endif    
+  } //ÉÏÆ½ÒÆ
 #endif
 #if IN_SPEC_EFFECT_NUM > 6
-  ,{&Move_Down_Continuous, V_MODE, 1}
+  ,{&Move_Down_Continuous, V_MODE, 1
+#if QT_EN
+   ,"ÏÂÆ½ÒÆ" 
+#endif    
+  } //ÏÂÆ½ÒÆ
 #endif
   //---------------------
 #if IN_SPEC_EFFECT_NUM > 7
-  ,{&Move_Left, H_MODE, 1}
+  ,{&Move_Left, H_MODE, 1
+#if QT_EN
+   ,"×óÒÆ" 
+#endif    
+  } //×óÒÆ
 #endif
 #if IN_SPEC_EFFECT_NUM > 8
-  ,{&Move_Right, H_MODE, 1}
+  ,{&Move_Right, H_MODE, 1
+#if QT_EN
+   ,"ÓÒÒÆ" 
+#endif    
+  } //ÓÒÒÆ
 #endif
 #if IN_SPEC_EFFECT_NUM > 9
-  ,{&Move_Up, V_MODE, 1}
+  ,{&Move_Up, V_MODE, 1
+#if QT_EN
+   ,"ÉÏÒÆ" 
+#endif    
+  } //ÉÏÒÆ
 #endif
 #if IN_SPEC_EFFECT_NUM > 10
-  ,{&Move_Down, V_MODE, 1}
+  ,{&Move_Down, V_MODE, 1
+#if QT_EN
+   ,"ÏÂÒÆ" 
+#endif    
+  } //ÏÂÒÆ
 #endif
 #if IN_SPEC_EFFECT_NUM > 11
-  ,{&Move_Left_Cover, H_MODE, 1}
+  ,{&Move_Left_Cover, H_MODE, 1
+#if QT_EN
+   ,"×ó¸²¸Ç" 
+#endif    
+  } //×ó¸²¸Ç
 #endif
 #if IN_SPEC_EFFECT_NUM > 12
-  ,{&Move_Right_Cover, H_MODE, 1}
+  ,{&Move_Right_Cover, H_MODE, 1
+#if QT_EN
+   ,"ÓÒ¸²¸Ç" 
+#endif    
+  }//ÓÒ¸²¸Ç
 #endif
 #if IN_SPEC_EFFECT_NUM > 13
-  ,{&Move_Up_Cover, V_MODE, 1}
+  ,{&Move_Up_Cover, V_MODE, 1
+#if QT_EN
+   ,"ÉÏ¸²¸Ç" 
+#endif    
+  } //ÉÏ¸²¸Ç
 #endif
 #if IN_SPEC_EFFECT_NUM > 14
-  ,{&Move_Down_Cover, V_MODE, 1}
+  ,{&Move_Down_Cover, V_MODE, 1
+#if QT_EN
+   ,"ÏÂ¸²¸Ç" 
+#endif    
+  } //ÏÂ¸²¸Ç
 #endif
 #if IN_SPEC_EFFECT_NUM > 15
-  ,{&Move_Left_Up_Cover, HV_ADD_MODE, 1}
+  ,{&Move_Left_Up_Cover, HV_ADD_MODE, 1
+#if QT_EN
+   ,"×óÉÏ¸²¸Ç" 
+#endif    
+  } //×óÉÏ¸²¸Ç
 #endif
 #if IN_SPEC_EFFECT_NUM > 16
-  ,{&Move_Right_Up_Cover, HV_ADD_MODE, 1}
+  ,{&Move_Right_Up_Cover, HV_ADD_MODE, 1
+#if QT_EN
+   ,"ÓÒÉÏ¸²¸Ç" 
+#endif    
+  } //ÓÒÉÏ¸²¸Ç
 #endif
 #if IN_SPEC_EFFECT_NUM > 17
-  ,{&Move_Left_Down_Cover, HV_ADD_MODE, 1}
+  ,{&Move_Left_Down_Cover, HV_ADD_MODE, 1
+#if QT_EN
+   ,"×óÏÂ¸²¸Ç" 
+#endif    
+  } //×óÏÂ¸²¸Ç
 #endif
 #if IN_SPEC_EFFECT_NUM > 18
-  ,{&Move_Right_Down_Cover, HV_ADD_MODE, 1}
+  ,{&Move_Right_Down_Cover, HV_ADD_MODE, 1
+#if QT_EN
+   ,"ÓÒÏÂ¸²¸Ç" 
+#endif    
+  }//ÓÒÏÂ¸²¸Ç
 #endif
 #if IN_SPEC_EFFECT_NUM > 19
-  ,{&Move_Left_Right_Open, H_MODE, 1}
+  ,{&Move_Left_Right_Open, H_MODE, 1
+#if QT_EN
+   ,"×óÓÒ¿ªÁ±" 
+#endif    
+  } //×óÓÒ¿ªÁ±
 #endif
 #if IN_SPEC_EFFECT_NUM > 20
-  ,{&Move_Up_Down_Open, V_MODE, 1}
+  ,{&Move_Up_Down_Open, V_MODE, 1
+#if QT_EN
+   ,"Á¢¼´ÏÔÊ¾" 
+#endif    
+  } //ÉÏÏÂ¿ªÁ±
 #endif
 #if IN_SPEC_EFFECT_NUM > 21
-  ,{&Move_Left_Right_Close, H_MODE, 1}
+  ,{&Move_Left_Right_Close, H_MODE, 1
+#if QT_EN
+   ,"×óÓÒºÏÁ±" 
+#endif    
+  } //×óÓÒºÏÁ±
 #endif
 #if IN_SPEC_EFFECT_NUM > 22
-  ,{&Move_Up_Down_Close, H_MODE, 1}
+  ,{&Move_Up_Down_Close, H_MODE, 1
+#if QT_EN
+   ,"ÉÏÏÂºÏÁ±" 
+#endif    
+  } //ÉÏÏÂºÏÁ±
 #endif
 #if IN_SPEC_EFFECT_NUM > 23
-  ,{&Move_Spin_CW, HV_ADD_MODE, 2} //Ë³Ê±Õë
+  ,{&Move_Spin_CW, HV_ADD_MODE, 2
+#if QT_EN
+   ,"Ë³Ê±Õë¸²¸Ç" 
+#endif    
+  }//Ë³Ê±Õë
 #endif
 #if IN_SPEC_EFFECT_NUM > 24
-  ,{&Move_Spin_CCW, HV_ADD_MODE, 2}//ÄæÊ±Õë¸²¸Ç
+  ,{&Move_Spin_CCW, HV_ADD_MODE, 2
+#if QT_EN
+   ,"ÄæÊ±Õë¸²¸Ç" 
+#endif    
+  }//ÄæÊ±Õë¸²¸Ç
 #endif
 #if IN_SPEC_EFFECT_NUM > 25
-  ,{&Move_Up_Snow, H_MODE, 3} //ÉÏÆ®Ñ©
+  ,{&Move_Up_Snow, H_MODE, 3
+#if QT_EN
+   ,"ÉÏÆ®Ñ©" 
+#endif    
+  } //ÉÏÆ®Ñ©
 #endif
 #if IN_SPEC_EFFECT_NUM > 26
-  ,{&Move_Down_Snow, H_MODE, 3} //ÏÂÆ®Ñ©
+  ,{&Move_Down_Snow, H_MODE, 3
+#if QT_EN
+   ,"ÏÂÆ®Ñ©" 
+#endif    
+  } //ÏÂÆ®Ñ©
 #endif
 #if IN_SPEC_EFFECT_NUM > 27
-  ,{&Move_Flash, FIX_MODE, 100} //ÉÁË¸
+  ,{&Move_Flash, FIX_MODE, 100
+#if QT_EN
+   ,"ÉÁË¸" 
+#endif    
+  } //ÉÁË¸
 #endif
 #if IN_SPEC_EFFECT_NUM > 28
-  ,{&Move_Left_Laser, H_MODE, 1} //×óÀØÉä
+  ,{&Move_Left_Laser, H_MODE, 1
+#if QT_EN
+   ,"×óÀØÉä" 
+#endif    
+  } //×óÀØÉä
 #endif
 #if IN_SPEC_EFFECT_NUM > 29
-  ,{&Move_Right_Laser, H_MODE, 1} //ÓÒÀØÉä
+  ,{&Move_Right_Laser, H_MODE, 1
+#if QT_EN
+   ,"ÓÒÀØÉä" 
+#endif    
+  } //ÓÒÀØÉä
 #endif
 #if IN_SPEC_EFFECT_NUM > 30
-  ,{&Move_Up_Laser, V_MODE, 1} //ÉÏÀØÉä
+  ,{&Move_Up_Laser, V_MODE, 1
+#if QT_EN
+   ,"ÉÏÀØÉä" 
+#endif    
+  } //ÉÏÀØÉä
 #endif
 #if IN_SPEC_EFFECT_NUM > 31
-  ,{&Move_Down_Laser, V_MODE, 1} //ÏÂÀØÉä
+  ,{&Move_Down_Laser, V_MODE, 1
+#if QT_EN
+   ,"ÏÂÀØÉä" 
+#endif    
+  } //ÏÂÀØÉä
 #endif
 #if IN_SPEC_EFFECT_NUM > 32
-  ,{&Move_Left_Tensile, FIX_MODE, 100}//×óÀ­Éì
+  ,{&Move_Left_Tensile, FIX_MODE, 100
+#if QT_EN
+   ,"×óÀ­Éì" 
+#endif    
+  }//×óÀ­Éì
 #endif
 #if IN_SPEC_EFFECT_NUM > 33
   //{&Move_Right_Tensile}//ÓÒÀ­Éì
-  ,{&Move_Up_Tensile, FIX_MODE, 100}//ÉÏÀ­Éì
+  ,{&Move_Up_Tensile, FIX_MODE, 100
+#if QT_EN
+   ,"ÉÏÀ­Éì" 
+#endif    
+  }//ÉÏÀ­Éì
 #endif
 #if IN_SPEC_EFFECT_NUM > 34
   //{&Move_Down_Tensile}//ÏÂÀ­Éì
-  ,{&Move_Vertical_Tensile, V_MODE, 1}//´¹Ö±À­Éì
+  ,{&Move_Vertical_Tensile, V_MODE, 1
+#if QT_EN
+   ,"´¹Ö±À­Éì" 
+#endif    
+  }//´¹Ö±À­Éì
 #endif
 #if IN_SPEC_EFFECT_NUM > 35
-  ,{&Move_Horizontal_Tensile, H_MODE, 1}//Ë®Æ½À­Éì
+  ,{&Move_Horizontal_Tensile, H_MODE, 1
+#if QT_EN
+   ,"Ë®Æ½À­Éì" 
+#endif    
+  }//Ë®Æ½À­Éì
 #endif
 #if IN_SPEC_EFFECT_NUM > 36
-  ,{&Move_Left_Stretch, H_MODE, 3} //×óÒÆµ¯³ö
+  ,{&Move_Left_Stretch, H_MODE, 3
+#if QT_EN
+   ,"×óÒÆµ¯³ö" 
+#endif    
+  } //×óÒÆµ¯³ö
 #endif
 #if IN_SPEC_EFFECT_NUM > 37
-  ,{&Move_Up_Stretch, V_MODE, 1} //ÉÏÒÆµ¯³ö
+  ,{&Move_Up_Stretch, V_MODE, 1
+#if QT_EN
+   ,"ÉÏÒÆµ¯³ö" 
+#endif    
+  } //ÉÏÒÆµ¯³ö
 #endif
 #if IN_SPEC_EFFECT_NUM > 38
-  ,{&Move_Horizontal_Window, FIX_MODE, 100}//WIN_LEAF_WIDTH} //Ë®Æ½°ÙÒ¶´°
+  ,{&Move_Horizontal_Window, FIX_MODE, 100
+#if QT_EN
+   ,"Ë®Æ½°ÙÒ¶´°" 
+#endif    
+  }//WIN_LEAF_WIDTH} //Ë®Æ½°ÙÒ¶´°
 #endif
 #if IN_SPEC_EFFECT_NUM > 39
-  ,{&Move_Vertical_Window, FIX_MODE, 100}//WIN_LEAF_WIDTH} //´¹Ö±°ÙÒ¶´°
+  ,{&Move_Vertical_Window, FIX_MODE, 100
+#if QT_EN
+   ,"´¹Ö±°ÙÒ¶´°" 
+#endif    
+  }//WIN_LEAF_WIDTH} //´¹Ö±°ÙÒ¶´°
 #endif
 #if IN_SPEC_EFFECT_NUM > 40
-  ,{&Move_Left_Compress, FIX_MODE, 100} //Ïò×óÑ¹Ëõ
+  ,{&Move_Left_Compress, FIX_MODE, 100
+#if QT_EN
+   ,"Ïò×óÑ¹Ëõ" 
+#endif    
+  } //Ïò×óÑ¹Ëõ
 #endif
 #if IN_SPEC_EFFECT_NUM > 41
-  ,{&Move_Up_Compress, FIX_MODE, 100}//ÏòÉÏÑ¹Ëõ
+  ,{&Move_Up_Compress, FIX_MODE, 100
+#if QT_EN
+   ,"ÏòÉÏÑ¹Ëõ" 
+#endif    
+  }//ÏòÉÏÑ¹Ëõ
 #endif
 #if IN_SPEC_EFFECT_NUM > 42
-  ,{&Move_Fade_In, FIX_MODE, 100}//µ­Èë
+  ,{&Move_Fade_In, FIX_MODE, 100
+#if QT_EN
+   ,"µ­Èë" 
+#endif    
+  }//µ­Èë
 #endif
 };
 
@@ -144,64 +319,141 @@ const S_Mode_Func In_Mode_Func[]=
 const S_Mode_Func Out_Mode_Func[]=
 {
 #if OUT_SPEC_EFFECT_NUM > 0   
-  {&Move_Show_RightNow, H_MODE, 1}
+  {&Move_Show_RightNow, H_MODE, 1
+#if QT_EN
+   ,"Á¢¼´Çå³ý" 
+#endif    
+  }
 #endif
 #if OUT_SPEC_EFFECT_NUM > 1
-  ,{&Move_Left, H_MODE, 1}//0
+  ,{&Move_Left, H_MODE, 1
+#if QT_EN
+   ,"×óÒÆ" 
+#endif    
+  }//0
 #endif
 #if OUT_SPEC_EFFECT_NUM > 2  
-  ,{&Move_Right, H_MODE, 1}//1
+  ,{&Move_Right, H_MODE, 1
+#if QT_EN
+   ,"ÓÒÒÆ" 
+#endif    
+  }//1
 #endif
 #if OUT_SPEC_EFFECT_NUM > 3  
-  ,{&Move_Up, V_MODE, 1}//2
+  ,{&Move_Up, V_MODE, 1
+#if QT_EN
+   ,"ÉÏÒÆ" 
+#endif    
+  }//2
 #endif
 #if OUT_SPEC_EFFECT_NUM >4  
-  ,{&Move_Down, V_MODE, 1}//3
+  ,{&Move_Down, V_MODE, 1
+#if QT_EN
+   ,"ÏÂÒÆ" 
+#endif    
+  }//3
 #endif
 #if OUT_SPEC_EFFECT_NUM > 5  
-  ,{&Move_Left_Cover, H_MODE, 1}//4
+  ,{&Move_Left_Cover, H_MODE, 1
+#if QT_EN
+   ,"×ó¸²¸Ç" 
+#endif    
+  }//4
 #endif
 #if OUT_SPEC_EFFECT_NUM > 6  
-  ,{&Move_Right_Cover, H_MODE, 1}//5
+  ,{&Move_Right_Cover, H_MODE, 1
+#if QT_EN
+   ,"ÓÒ¸²¸Ç" 
+#endif    
+  }//5
 #endif
 #if OUT_SPEC_EFFECT_NUM > 7  
-  ,{&Move_Up_Cover, V_MODE, 1}//6
+  ,{&Move_Up_Cover, V_MODE, 1
+#if QT_EN
+   ,"ÉÏ¸²¸Ç" 
+#endif    
+  }//6
 #endif
 #if OUT_SPEC_EFFECT_NUM > 8  
-  ,{&Move_Down_Cover, V_MODE, 1}//7
+  ,{&Move_Down_Cover, V_MODE, 1
+#if QT_EN
+   ,"ÏÂ¸²¸Ç" 
+#endif    
+  }//7
 #endif
 #if OUT_SPEC_EFFECT_NUM > 9  
-  ,{&Move_Left_Up_Cover, HV_ADD_MODE, 1}//8
+  ,{&Move_Left_Up_Cover, HV_ADD_MODE, 1
+#if QT_EN
+   ,"×óÉÏ¸²¸Ç" 
+#endif    
+  }//8
 #endif
 #if OUT_SPEC_EFFECT_NUM > 10  
-  ,{&Move_Right_Up_Cover, HV_ADD_MODE, 1}//9
+  ,{&Move_Right_Up_Cover, HV_ADD_MODE, 1
+#if QT_EN
+   ,"ÓÒÉÏ¸²¸Ç" 
+#endif    
+  }//9
 #endif
 #if OUT_SPEC_EFFECT_NUM > 11  
-  ,{&Move_Left_Down_Cover, HV_ADD_MODE, 1}//10
+  ,{&Move_Left_Down_Cover, HV_ADD_MODE, 1
+#if QT_EN
+   ,"×óÏÂ¸²¸Ç" 
+#endif    
+  }//10
 #endif
 #if OUT_SPEC_EFFECT_NUM > 12  
-  ,{&Move_Right_Down_Cover, HV_ADD_MODE, 1}//11
+  ,{&Move_Right_Down_Cover, HV_ADD_MODE, 1
+  }//11
 #endif
 #if OUT_SPEC_EFFECT_NUM > 13  
-  ,{&Move_Left_Right_Open, H_MODE, 0.5}//12
+  ,{&Move_Left_Right_Open, H_MODE, 0.5
+#if QT_EN
+   ,"×óÓÒ¿ªÁ±" 
+#endif    
+  }//12
 #endif
 #if OUT_SPEC_EFFECT_NUM > 14  
-  ,{&Move_Up_Down_Open, V_MODE, 0.5}//13
+  ,{&Move_Up_Down_Open, V_MODE, 0.5
+#if QT_EN
+   ,"ÉÏÏÂ¿ªÁ±" 
+#endif    
+  }//13
 #endif
 #if OUT_SPEC_EFFECT_NUM > 15
-  ,{&Move_Left_Right_Close, H_MODE, 0.5}//14
+  ,{&Move_Left_Right_Close, H_MODE, 0.5
+#if QT_EN
+   ,"×óÓÒºÏÁ±" 
+#endif    
+  }//14
 #endif
 #if OUT_SPEC_EFFECT_NUM > 16  
-  ,{&Move_Up_Down_Close, V_MODE, 0.5}//15
+  ,{&Move_Up_Down_Close, V_MODE, 0.5
+#if QT_EN
+   ,"ÉÏÏÂºÏÁ±" 
+#endif    
+  }//15
 #endif
 #if OUT_SPEC_EFFECT_NUM > 17  
-  ,{&Move_Spin_CW, HV_ADD_MODE, 1}
+  ,{&Move_Spin_CW, HV_ADD_MODE, 1
+#if QT_EN
+   ,"Ë³Ê±Õë¸²¸Ç" 
+#endif    
+  }
 #endif
 #if OUT_SPEC_EFFECT_NUM > 18  
-  ,{&Move_Spin_CCW, HV_ADD_MODE, 1}
+  ,{&Move_Spin_CCW, HV_ADD_MODE, 1
+#if QT_EN
+   ,"ÄæÊ±Õë¸²¸Ç" 
+#endif    
+  }
 #endif
 #if OUT_SPEC_EFFECT_NUM > 19
-  ,{&Move_Fade_In, FIX_MODE, 100}//µ­Èë
+  ,{&Move_Fade_In, FIX_MODE, 100
+#if QT_EN
+   ,"µ­³ö" 
+#endif    
+  }//µ­Èë
 #endif
 
 };
@@ -537,12 +789,15 @@ void Update_Pic_Data(INT8U Area_No)
 
           Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
           Prog_Status.Area_Status[Area_No].SCN_No ++;
+          Prog_Status.Area_Status[Area_No].Play_Flag = 0;
+          SET_SUM(Prog_Status.Area_Status[Area_No]);
+
           Prog_Status.Area_Status[Area_No].In_Step = 0;
           Prog_Status.Area_Status[Area_No].Out_Step = 0;
           Prog_Status.Area_Status[Area_No].Step_Timer = 0;
           Prog_Status.Area_Status[Area_No].Stay_Time = 0;
           Prog_Status.Area_Status[Area_No].Out_Time = 0;
-          Prog_Status.Area_Status[Area_No].Play_Flag = 0;
+
       }
   }
   else

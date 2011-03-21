@@ -80,6 +80,8 @@ INT8U getCardParaFromSettings(QString cardName, S_Card_Para &cardPara)
 {
     cardSettings.beginGroup(cardName);
     cardPara.Font_Num = cardSettings.value("FontNum").toInt();
+    cardPara.InMode_Num = cardSettings.value("inModeNum").toInt();
+    cardPara.OutMode_Num = cardSettings.value("outModeNum").toInt();
     cardPara.File_En_Word = cardSettings.value("fileEnWord").toInt();
     cardPara.Max_Points = cardSettings.value("maxPoints").toInt();
     Card_Para.Max_Height = cardSettings.value("maxHeight").toInt();
@@ -1024,7 +1026,55 @@ CsendDataDialog::CsendDataDialog(int flag, QWidget *parent):QDialog(parent)
   connect(openCloseCheck, SIGNAL(clicked()), this, SLOT(propertyCheckProc()));
   connect(adjTimeCheck, SIGNAL(clicked()), this, SLOT(propertyCheckProc()));
 
+  connect(sendButton, SIGNAL(clicked()), this, SLOT(sendData()));
+  connect(udiskButton, SIGNAL(clicked()), this, SLOT(uDiskData()));
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
   setAttribute(Qt::WA_DeleteOnClose);
+}
+
+void CsendDataDialog::sendData()
+{
+    int flag = 0;
+    QString str = w->screenArea->getCurrentScreenStr();
+
+    if(lightnessCheck->isChecked())
+        SET_BIT(flag, C_SCREEN_LIGNTNESS);
+    if(openCloseCheck->isChecked())
+        SET_BIT(flag, C_SCREEN_OC_TIME);
+    if(adjTimeCheck->isChecked())
+        SET_BIT(flag, C_SCREEN_TIME);
+
+    SET_BIT(flag, C_PROG_NUM);
+    SET_BIT(flag, C_PROG_PARA);
+    SET_BIT(flag, C_PROG_DATA);
+
+    if(QT_SIM_EN)
+      makeProtoData(str, SIM_MODE, flag);
+    else
+      makeProtoData(str, COM_MODE, flag);
+
+}
+
+void CsendDataDialog::uDiskData()
+{
+    int flag = 0;
+    QString str = w->screenArea->getCurrentScreenStr();
+
+    if(lightnessCheck->isChecked())
+        SET_BIT(flag, C_SCREEN_LIGNTNESS);
+    if(openCloseCheck->isChecked())
+        SET_BIT(flag, C_SCREEN_OC_TIME);
+    if(adjTimeCheck->isChecked())
+        SET_BIT(flag, C_SCREEN_TIME);
+
+    SET_BIT(flag, C_PROG_NUM);
+    SET_BIT(flag, C_PROG_PARA);
+    SET_BIT(flag, C_PROG_DATA);
+
+    if(QT_SIM_EN)
+      makeProtoData(str, SIM_MODE, flag);
+    else
+      makeProtoData(str, UDISK_MODE, flag);
 }
 
 void CsendDataDialog::propertyCheckProc()
@@ -1900,6 +1950,10 @@ void CfacScreenProperty::cardChangeProc()
     ((Get_Noise_Show_En()>0)?tr("、噪音"):tr(""));
 
     cardParaEdit->append(fileStr);
+
+    QString modeStr = tr("引入特效：") + QString::number(Card_Para.InMode_Num) +\
+                      tr("，引出特效：") + QString::number(Card_Para.OutMode_Num);
+    cardParaEdit->append(modeStr);
 
     QString comStr = tr("通信方式：") +\
                      (((Card_Para.Com_Mode & COM_RS232)>0)?tr("RS232"):tr("")) +\

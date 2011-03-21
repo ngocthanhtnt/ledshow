@@ -227,6 +227,8 @@ class CsendDataDialog:public QDialog
     Q_OBJECT
 public slots:
     void propertyCheckProc();
+    void sendData(); //发送数据
+    void uDiskData(); //生成U攀升数据
 public:
     QCheckBox *lightnessCheck; //亮度控制
     QCheckBox *openCloseCheck; //开关机时段控制

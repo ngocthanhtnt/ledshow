@@ -2,6 +2,7 @@
 #include "progProperty.h"
 #include "progManage.h"
 #include "makeProto.h"
+#include "..\Stm32\usr\app\Includes.h"
 #include <QFileDialog>
 #include <QMessageBox>
 

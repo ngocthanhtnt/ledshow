@@ -29,7 +29,7 @@
 #define NOISE_SHOW_BIT  0x08
 
 #define QT_EN 1 //在QT环境下编译使用QT
-#define QT_SIM_EN 1//使用QT仿真STM32情况。不同于预览
+#define QT_SIM_EN 0//使用QT仿真STM32情况。不同于预览
 //QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
 
 #if QT_EN == 0 //没有使能QT仿真 ---STM32的环境下

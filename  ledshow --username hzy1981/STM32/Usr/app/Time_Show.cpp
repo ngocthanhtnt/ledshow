@@ -2,7 +2,7 @@
 #include "Includes.h"
 
 #if TIME_SHOW_EN
-const char WeekStr[][7][15] =
+const char *WeekStr[][7] =
 {
 {"星期日","星期一","星期二","星期三","星期四","星期五","星期六"},
 
