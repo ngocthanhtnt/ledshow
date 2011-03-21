@@ -69,6 +69,7 @@ public:
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     TextEdit(QWidget *parent = 0);
+    QSpinBox *spinPage;
     QPalette *palette;
     QTextEdit *getEdit();
 protected:
@@ -138,7 +139,7 @@ private:
     QComboBox *comboSize;
     CcolorCombo *colorCombo;
     CsmLineCombo *smLineCombo; //单行字幕或多行文本
-    QSpinBox *spinPage;
+
     QSpinBox *spinLineDis; //行距
 
     QToolBar *tb;

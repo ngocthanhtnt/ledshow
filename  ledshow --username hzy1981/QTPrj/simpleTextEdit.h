@@ -23,6 +23,8 @@ class CshowModeCombo:public QComboBox
     bool type;
 public slots:
     void setItems();
+signals:
+    void indexChangeSignal();
 public:
     CshowModeCombo(bool flag, QWidget *parent = 0);
     ~CshowModeCombo();

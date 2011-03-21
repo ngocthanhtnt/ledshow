@@ -201,6 +201,7 @@ void ClunProperty::getSettingsFromWidget(QString str)
     int type = settings.value("type").toInt();
     settings.endGroup();
 
+    debug("get lun str:%s", (const char *)str.toLocal8Bit());
     if(type == LUN_PROPERTY)
     {
         nameEdit->getSettingsFromWidget(str);
@@ -210,7 +211,10 @@ void ClunProperty::getSettingsFromWidget(QString str)
         showModeEdit->getSettingsFromWidget(str);
     }
     else
+    {
+
         ASSERT_FAILED();
+    }
 
 
 }
@@ -223,6 +227,7 @@ void ClunProperty::setSettingsToWidget(QString str)
     int type = settings.value("type").toInt();
     settings.endGroup();
 
+    debug("set lun str:%s", (const char *)str.toLocal8Bit());
     if(type == LUN_PROPERTY)
     {
         nameEdit->setSettingsToWidget(str);
