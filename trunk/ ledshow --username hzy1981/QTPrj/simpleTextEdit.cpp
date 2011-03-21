@@ -12,6 +12,7 @@
 #include "showArea.h"
 //#include "includes.h"
 #include "..\Stm32\usr\app\led_show.h"
+#include "..\Stm32\usr\app\Pic_show.h"
 #include "mainwindow.h"
 
 extern MainWindow *w;
@@ -42,6 +43,11 @@ const S_Mode_Func Mode_Func[]=
 */
 CshowModeCombo::CshowModeCombo(bool flag, QWidget *parent):QComboBox(parent)
 {
+
+  type = flag;
+  setItems();
+  connect(mainObj, SIGNAL(screenChange()), this, SLOT(setItems()));
+      /*
     if(flag EQ 0)
     {
         addItem(tr("随机"));
@@ -117,7 +123,36 @@ CshowModeCombo::CshowModeCombo(bool flag, QWidget *parent):QComboBox(parent)
         addItem(tr("淡出"));
 
     }
+    */
  }
+
+void CshowModeCombo::setItems()
+{
+    int inModeNum,outModeNum;
+
+      disconnect(this, SIGNAL(currentIndexChanged(int)), this, SIGNAL(indexChangeSignal()));
+      inModeNum = Card_Para.InMode_Num;
+      outModeNum = Card_Para.OutMode_Num;
+
+      clear();
+      if(type EQ 0)
+      {
+          addItem(tr("随机"));
+          for(int i = 0; i <inModeNum; i++)
+              addItem(tr(In_Mode_Func[i].name));
+
+      }
+      else
+      {
+          addItem(tr("随机"));
+          addItem(tr("不清屏"));
+          for(int i = 0; i <outModeNum; i++)
+              addItem(tr(Out_Mode_Func[i].name));
+      }
+
+      connect(this, SIGNAL(currentIndexChanged(int)), this, SIGNAL(indexChangeSignal()));
+
+}
 
 CshowModeCombo::~CshowModeCombo()
 {

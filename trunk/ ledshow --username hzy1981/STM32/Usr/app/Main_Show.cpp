@@ -197,7 +197,11 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   //INT8U Counts;
 
   Re &= CHK_SUM(Prog_Status.Play_Status);
+  if(Re EQ 0)
+      ASSERT_FAILED();
   Re &= CHK_SUM(Prog_Status.Area_Status[Area_No]);
+  if(Re EQ 0)
+      ASSERT_FAILED();
   Re &= CHK_SUM(Prog_Para);
   if(Re EQ 0)
       ASSERT_FAILED();

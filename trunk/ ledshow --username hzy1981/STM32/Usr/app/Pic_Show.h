@@ -23,8 +23,13 @@ typedef struct
   void (*Func)(INT8U);
   INT8U Step_Mode; //步进模式,0-横向，1纵向，3纵横同步
   float Fac; //0,1表示1，其他表示
+#if QT_EN
+  const char *name;
+#endif  
 }S_Mode_Func;
 
+extern const S_Mode_Func In_Mode_Func[];
+extern const S_Mode_Func Out_Mode_Func[];
 EXT void Update_Pic_Data(INT8U Area_No);
 EXT INT8U Check_XXX_Data(INT8U Flag);
 #endif
