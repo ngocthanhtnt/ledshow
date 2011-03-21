@@ -924,7 +924,16 @@ void TextEdit::edit()
 
   }
 
-  spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
+  pageNum = (pageNum > 0)?(pageNum-1) : 0;
+  spinPage->setMaximum(pageNum);
+  w->property->picProperty->pageBox->setMaximum(pageNum);
+
+  if(spinPage->value() > pageNum)
+  {
+    spinPage->setValue(pageNum);
+    w->property->picProperty->pageBox->setValue(pageNum);
+  }
+
   area->page = spinPage->value(); //页号
   area->updateFlag = true;
   area->update(); //更新当前显示缓冲
@@ -1361,10 +1370,11 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
                   else
                     rgb = Qt::black;
                   reImage.setPixel(i, (h - height) / 2 + j, rgb);
+                  /*
                   if(reImage.pixel(i, (h - height) / 2 + j) != rgb)
                   {
                       ASSERT_FAILED();
-                  }
+                  }*/
                 }
 
           }

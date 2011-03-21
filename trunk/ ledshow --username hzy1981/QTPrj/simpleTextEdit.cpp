@@ -46,8 +46,9 @@ CshowModeCombo::CshowModeCombo(bool flag, QWidget *parent):QComboBox(parent)
 
   type = flag;
   setItems();
+  connect(this, SIGNAL(currentIndexChanged(int)), this, SIGNAL(indexChangeSignal()));
   connect(mainObj, SIGNAL(screenChange()), this, SLOT(setItems()));
-      /*
+  /*
     if(flag EQ 0)
     {
         addItem(tr("随机"));
@@ -274,8 +275,8 @@ void getShowModeParaFromSettings(QString str, U_File_Para &para)
 
 void CshowModeEdit::connectSignal()
 {
-    connect(inModeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(outModeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(inModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+    connect(outModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     connect(inTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
     connect(outTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
     connect(stayTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
@@ -284,8 +285,8 @@ void CshowModeEdit::connectSignal()
 
 void CshowModeEdit::disconnectSignal()
 {
-    disconnect(inModeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    disconnect(outModeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    disconnect(inModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+    disconnect(outModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     disconnect(inTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
     disconnect(outTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
     disconnect(stayTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
@@ -902,13 +903,13 @@ ClunEdit::ClunEdit(QWidget *parent):QGroupBox(parent)
     connect(nongliCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
     connect(jieqiCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
 
-    connect(tianganColor, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
-    connect(nongliColor, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
-    connect(jieqiColor, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
+    connect(tianganColor, SIGNAL(indexChangeSignal ()),this,SIGNAL(edited()));
+    connect(nongliColor, SIGNAL(indexChangeSignal ()),this,SIGNAL(edited()));
+    connect(jieqiColor, SIGNAL(indexChangeSignal ()),this,SIGNAL(edited()));
 
-    connect(tianganFont, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
-    connect(nongliFont, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
-    connect(jieqiFont, SIGNAL(currentIndexChanged (int)),this,SIGNAL(edited()));
+    connect(tianganFont, SIGNAL(indexChangeSignal ()),this,SIGNAL(edited()));
+    connect(nongliFont, SIGNAL(indexChangeSignal ()),this,SIGNAL(edited()));
+    connect(jieqiFont, SIGNAL(indexChangeSignal ()),this,SIGNAL(edited()));
 }
 
 //从Widget上获取设置
@@ -1378,7 +1379,7 @@ void CsimpleTextEdit::getSettingsFromWidget(QString str)
 void CsimpleTextEdit::setSettingsToWidget(QString str)
 {
     disconnect(fontCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    disconnect(fontSizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+    disconnect(fontSizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     disconnect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     disconnect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     disconnect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
@@ -1416,7 +1417,7 @@ void CsimpleTextEdit::setSettingsToWidget(QString str)
     settings.endGroup();
 
     connect(fontCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-    connect(fontSizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+    connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     connect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     connect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));

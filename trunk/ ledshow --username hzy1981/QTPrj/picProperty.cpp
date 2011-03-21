@@ -111,9 +111,16 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
 
     textGroup = new QGroupBox(tr("ÎÄ±¾ÄÚÈÝ"), this);
     editButton = new QPushButton(tr("±à¼­Æ÷"), this);
-
+    pageBox = new QSpinBox(this);
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(editButton);
+
+    QLabel *page = new QLabel(tr("Ò³ºÅ"),this);
+    QHBoxLayout *pageHLayout = new QHBoxLayout(this);
+    pageHLayout->addWidget(page);
+    pageHLayout->addWidget(pageBox);
+    vLayout->addLayout(pageHLayout);
+
     textGroup -> setLayout(vLayout);
 
     vLayout = new QVBoxLayout(this);
@@ -132,6 +139,9 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
     //edit->getEdit()->clear();
     connectSignal();
     //connect(editButton, SIGNAL(clicked()), this, SLOT(propertyEdited()));
+    //pageBox->setEnabled(false);
+    connect(edit->spinPage, SIGNAL(valueChanged(int)), pageBox, SLOT(setValue(int)));
+    connect(pageBox, SIGNAL(valueChanged(int)), edit->spinPage, SLOT(setValue(int)));
 }
 
 CpicProperty::~CpicProperty()
@@ -172,6 +182,7 @@ void CpicProperty::setSettingsToWidget(QString str)
     showModeEdit->setSettingsToWidget(str);
     edit->setSettingsToWidget(str);
 
+    //pageBox->setValue(edit->spinPage->value());
     connectSignal();
 }
 

@@ -57,6 +57,7 @@ public:
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     QPushButton *editButton; //±à¼­°´Å¥
+    QSpinBox *pageBox;
     CpicProperty(QWidget *parent=0);
     ~CpicProperty();
 };

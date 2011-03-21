@@ -1256,10 +1256,15 @@ void CshowArea::paintEvent(QPaintEvent *)
             {
                 image = getTextImage(Width, picStr, &lineNum, linePosi);
                 pageNum = getTextPageNum(smLineFlag, moveFlag, image.height(), Width, Height, lineNum, linePosi, pagePosi);
+                if(page >= pageNum)
+                  page = pageNum - 1;
                 imageBk = getTextPageImage(smLineFlag, image, Width, Height, page, pagePosi);
             }
             else
             {
+                pageNum = getSLineTextPageNum(picStr, Width);
+                if(page >= pageNum)
+                  page = pageNum - 1;
                 imageBk = getSLineTextImage(picStr, Width,Height,page);
             }
             //getTextPageNum(area->smLineFlag, area->width(), area->height(), lineNum, linePosi, pagePosi);

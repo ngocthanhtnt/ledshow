@@ -18,7 +18,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 1 
   ,{&Move_Left_Continuous, H_MODE, 1
 #if QT_EN
-   ,"立即显示" 
+   ,"连续左移"
 #endif    
   } //连续左移
 #endif
@@ -404,6 +404,9 @@ const S_Mode_Func Out_Mode_Func[]=
 #endif
 #if OUT_SPEC_EFFECT_NUM > 12  
   ,{&Move_Right_Down_Cover, HV_ADD_MODE, 1
+#if QT_EN
+   ,"右下覆盖"
+#endif
   }//11
 #endif
 #if OUT_SPEC_EFFECT_NUM > 13  

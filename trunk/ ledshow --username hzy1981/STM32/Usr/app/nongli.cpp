@@ -752,7 +752,10 @@ unsigned char GetJieQiStr(
 
 	if(day==JQdate)                                 //今天正是一个节气日
 	{
-		StrCopy(str,(unsigned char *)JieQiStr[JQ],5);
+                str[0] = ' ';
+                str[1] = ' ';
+                str[2] = ' ';
+                StrCopy(str + 3,(unsigned char *)JieQiStr[JQ],5);
 		return 1;
 	}
 	                                                //今天不是一个节气日
