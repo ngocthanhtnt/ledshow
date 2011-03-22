@@ -5513,12 +5513,6 @@
         <name>$PROJ_DIR$\..\..\..\Usr\app\Shell.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\STM32.cpp</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\STM32.h</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Storage.cpp</name>
       </file>
       <file>
@@ -5615,10 +5609,19 @@
         <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_E0_Drv.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\USART.c</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\STM32.cpp</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\USART.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\STM32.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\stm32f10x_conf.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\stm32f10x_it.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\stm32f10x_it.h</name>
       </file>
     </group>
   </group>

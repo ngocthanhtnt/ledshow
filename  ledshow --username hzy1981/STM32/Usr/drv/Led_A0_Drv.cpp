@@ -2,6 +2,31 @@
 #include "Includes.h"
 
 #if CARD_TYPE == CARD_A0
+/*
+//GPIO初始化
+void GPIO_Init()
+{
+  
+}
+
+//SPI初始化
+void SPI_Init()
+{
+  
+}
+
+//UART初始化
+void UART_Init()
+{
+  
+}
+*/
+
+//CPU
+void Hardware_Init()
+{
+
+}
 
 void OS_Put_Char(char Chr)
 {
@@ -25,32 +50,25 @@ INT8U Set_Cur_Time(INT8U Time[])
   return 1;
 }
 
+//存储器初始化
 void Mem_Init()
 {
 
 }
 
-INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen)
-{
-  return 1;
-}
-
-INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen)
-{
-  return 1;
-}
-
+//获取当前温度
 INT16S Get_Cur_Temp()
 {
   return -215; 
 }
 
-
+//获取当前湿度
 INT16U Get_Cur_Humidity()
 {
   return 60; 
 }
 
+//获取当前噪音
 INT16U Get_Cur_Noise()
 {
   return 60;
