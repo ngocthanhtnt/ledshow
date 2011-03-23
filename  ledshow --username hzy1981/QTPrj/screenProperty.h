@@ -45,7 +45,8 @@ public:
 class CipInput:public QWidget
 {
     Q_OBJECT
-
+signals:
+    void editSignal();
 public:
     QLineEdit *edit;
 
@@ -62,7 +63,10 @@ public:
 class CcomTest:public QGroupBox
 {
     Q_OBJECT
-
+signals:
+    void editSignal();
+public slots:
+    void editSlot();
 public:
     QComboBox *comModeCombo; //通信方式
     QSpinBox *screenIDEdit; //屏幕ID，硬件地址
@@ -70,6 +74,7 @@ public:
     QComboBox *comBaudCombo; //波特率
     CipInput *ipEdit; //IP地址
     QPushButton *connectButton; //链接按钮
+    QPushButton *autoTestButton; //测试按钮
 
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
@@ -299,7 +304,7 @@ public slots:
  QComboBox *lineOrderCombo; //行顺序
  //------------------
 
- CcomTest *comTest;
+ //CcomTest *comTest;
  //导入参数
  QTextEdit *readParaEdit;
  QPushButton *readParaButton;

@@ -138,9 +138,12 @@ public:
 
 extern MainWindow *w;
 extern MainObj *mainObj;
+extern QString rsrcPath1;//  ":/images/win1"
+extern QString rsrcPath;// ":/images/win"
 
 QMdiSubWindow *getSubWinByIndex(QMdiArea *parentArea, int index);
 int getIndexBySubWin(QMdiArea *parentArea, QMdiSubWindow *subWin);
+QIcon getTypeIcon(INT8U type);
 void traversalControl(const QObjectList& q);
 bool verifyPSW();
 #endif // MAINWINDOW_H

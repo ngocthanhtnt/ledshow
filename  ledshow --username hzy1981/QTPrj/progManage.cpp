@@ -1,4 +1,5 @@
 #include "progManage.h"
+#include <QMessageBox>
 #include <QDockWidget>
 #include <QPainter>
 #include <QSettings>
@@ -361,6 +362,9 @@ void CprogManage::newScreen()
     QTreeWidgetItem* item = new QTreeWidgetItem(treeWidget,QStringList(QString::number(size + 1)+tr("屏幕")));
     item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
 
+    QIcon icon = getTypeIcon(SCREEN_PROPERTY);
+    item->setIcon(0,icon);
+
     treeWidget->addTopLevelItem(item);
 
     CMdiSubWindow * subWin =_newScreen(QString::number(size + 1) + tr("屏幕"), 0, 0, DEF_SCN_WIDTH, DEF_SCN_HEIGHT, DEF_SCN_COLOR);
@@ -375,9 +379,12 @@ void CprogManage::newScreen()
 
     facParaWin->setWindowTitle(tr("新建屏幕"));
     CfacScreenProperty *facScreenProperty = new CfacScreenProperty(NEW_SCN, facParaWin);
+    CcomTest *comTest = new CcomTest(facParaWin);
     //facScreenProperty->setSettingsToWidget(str);
 
     hLayout->addWidget(facScreenProperty);
+    hLayout->addWidget(comTest);
+
     facParaWin->setLayout(hLayout);
     facParaWin->setAttribute(Qt::WA_DeleteOnClose);
     connect(facScreenProperty->endButton, SIGNAL(clicked()), facParaWin, SLOT(close()));
@@ -417,7 +424,7 @@ void CprogManage::newProg()
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == (QTreeWidgetItem *)0)
     {
-        QMessageBox::information(w, tr(APP_NAME),
+        QMessageBox::information(w, tr("提示"),
                                  tr("请在节目管理栏选定一个屏幕"),tr("确定"));
 
         return;
@@ -439,7 +446,7 @@ void CprogManage::newProg()
     if(parentItem EQ (QTreeWidgetItem *)0)
     {
         ASSERT_FAILED();
-        QMessageBox::information(w, tr(APP_NAME),
+        QMessageBox::information(w, tr("提示"),
                                  tr("请在节目管理栏选定一个屏幕"),tr("确定"));
 
         return;
@@ -455,7 +462,7 @@ void CprogManage::newProg()
     if(size >= MAX_PROG_NUM)
     {
         settings.endGroup();
-        QMessageBox::information(w, tr(APP_NAME),
+        QMessageBox::information(w, tr("提示"),
                                  tr("当前屏幕节目数达到上限！"),tr("确定"));
 
         return;
@@ -521,6 +528,8 @@ void CprogManage::newProg()
     QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(size + 1)+tr("节目")));
     item->setData(0, Qt::UserRole, QStr + "/" + QString::number(max));
 
+    QIcon icon = getTypeIcon(PROG_PROPERTY);
+    item->setIcon(0,icon);
     parentItem->addChild(item);
 
     //treeWidget->addTopLevelItem(item);
@@ -551,7 +560,7 @@ void CprogManage::newArea()
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == (QTreeWidgetItem *)0)
     {
-        QMessageBox::information(w, tr(APP_NAME),
+        QMessageBox::information(w, tr("提示"),
                                  tr("请在节目管理栏选定一个节目"),tr("确定"));
 
         return;
@@ -568,7 +577,7 @@ void CprogManage::newArea()
     type = checkItemType(curItem); //该项目是哪种?
     if(type == SCREEN_PROPERTY)
     {
-        QMessageBox::information(w, tr(APP_NAME),
+        QMessageBox::information(w, tr("提示"),
                                  tr("请在节目管理栏选定一个节目"),tr("确定"));
 
         return;
@@ -593,7 +602,7 @@ void CprogManage::newArea()
     if(size >= MAX_AREA_NUM)
     {
         settings.endGroup();
-        QMessageBox::information(w, tr(APP_NAME),
+        QMessageBox::information(w, tr("提示"),
                                  tr("当前节目分区数达到上限！"),tr("确定"));
 
         return;
@@ -631,7 +640,8 @@ void CprogManage::newArea()
 
     QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(size + 1)+tr("分区")));
     item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
-
+    QIcon icon = getTypeIcon(AREA_PROPERTY);
+    item->setIcon(0,icon);
     //w->setCurSettingsStr(QStr + "/" + QString::number(max));
 
 
@@ -732,7 +742,7 @@ void CprogManage::newFile(int fileType, int subType)
     curItem = treeWidget->currentItem(); //当前被选中的项
     if(curItem == (QTreeWidgetItem *)0)
     {
-        QMessageBox::information(w, tr(APP_NAME),
+        QMessageBox::information(w, tr("提示"),
                                  tr("请先在节目管理栏选择一个分区"),tr("确定"));
         return;
     }
@@ -740,7 +750,7 @@ void CprogManage::newFile(int fileType, int subType)
 
     if(type == PROG_PROPERTY || type == SCREEN_PROPERTY)
     {
-        QMessageBox::information(w, tr(APP_NAME),
+        QMessageBox::information(w, tr("提示"),
                                  tr("请先在节目管理栏选择一个分区"),tr("确定"));
           return;
     }
@@ -761,7 +771,7 @@ void CprogManage::newFile(int fileType, int subType)
     if(size >= MAX_FILE_NUM)
     {
         settings.endGroup();
-        QMessageBox::information(w, tr(APP_NAME),
+        QMessageBox::information(w, tr("提示"),
                                  tr("当前分区文件数达到上限！"),tr("确定"));
 
         return;
@@ -785,6 +795,10 @@ void CprogManage::newFile(int fileType, int subType)
 
     QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(max)));
     item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
+
+    QIcon icon = getTypeIcon((subType > 0)?subType:fileType);
+    item->setIcon(0,icon);
+
     parentItem->addChild(item);
 
     //w->progManage->clickItem(item, 0);
@@ -807,7 +821,10 @@ void CprogManage::newFile(int fileType, int subType)
 
 void CprogManage::deleteItem()
 {
-  _deleteItem(1);
+    int Re =  QMessageBox::warning(w, tr("警告"),
+                             tr("确定要删除该项?"),tr("取消"),tr("确定"));
+  if(Re > 0)
+    _deleteItem(1);
 }
 
 //删除项目
@@ -1143,6 +1160,25 @@ void CprogManage::currentItemChangedProc(QTreeWidgetItem * current, QTreeWidgetI
   clickItem(current, 0);
 
 }
+/*
+#define NULL_PROPERTY   0xFF
+#define SCREEN_PROPERTY 0x00
+#define PROG_PROPERTY   0x01
+#define AREA_PROPERTY   0x02
+#define PIC_PROPERTY    0x03 //图片
+#define CLOCK_PROPERTY  0x05 //表盘
+#define TIME_PROPERTY   0x06 //日期时间
+#define TIMER_PROPERTY  0x07 //定时
+#define TEMP_PROPERTY   0x08 //温度
+#define LUN_PROPERTY    0x09    //农历
+#define HUMIDITY_PROPERTY 0x0A //湿度
+#define NOISE_PROPERTY 0x0B //噪音
+
+#define PIC_TABLE_PROPERTY  0x30
+#define PIC_FLASH_PROPERTY  0x31 //动画
+#define PIC_MTEXT_PROPERTY  0x32
+#define PIC_STEXT_PROPERTY  0x33
+ */
 
 //progManage中的treeWidget的初始化,根据settings进行初始化
 void CprogManage::settingsInit()
@@ -1162,6 +1198,8 @@ void CprogManage::settingsInit()
     for(int m = 0; m < screenSize; m ++)
     {
         QTreeWidgetItem *screenItem = new QTreeWidgetItem(treeWidget);
+        QIcon icon = getTypeIcon(SCREEN_PROPERTY);
+        screenItem->setIcon(0, icon);
         treeWidget->addTopLevelItem(screenItem);
         QString screenStr = "screen/" + screenGroups.at(m);
 
@@ -1232,6 +1270,8 @@ void CprogManage::settingsInit()
         {
             QTreeWidgetItem *progItem = new QTreeWidgetItem(screenItem);
             QString progStr = screenStr + "/program/" + progGroups.at(i);
+            QIcon icon = getTypeIcon(PROG_PROPERTY);
+            progItem->setIcon(0, icon);
 
             progItem->setData(0, Qt::UserRole, progStr);
             progItem->setText(0, QString::number(i + 1) + tr("节目"));
@@ -1247,6 +1287,9 @@ void CprogManage::settingsInit()
             {
                 QTreeWidgetItem *areaItem = new QTreeWidgetItem(progItem);
                 QString areaStr = progStr + "/area/" + areaGroups.at(j);
+                QIcon icon = getTypeIcon(AREA_PROPERTY);
+                areaItem->setIcon(0, icon);
+
                 areaItem->setData(0, Qt::UserRole, areaStr);
                 areaItem->setText(0, QString::number(j + 1) + tr("分区"));
                 progItem->addChild(areaItem);
@@ -1264,11 +1307,18 @@ void CprogManage::settingsInit()
 
                     settings.beginGroup(fileGroups.at(k));
                     int type = settings.value("type").toInt();
+                    int subType = settings.value("subType").toInt();
+                    if(subType > 0)
+                        type =subType;
+                    settings.endGroup();
+
+                    //int type = checkItemType(fileItem);//checkStrType(fileStr);
+                    QIcon icon = getTypeIcon(type);
+                    fileItem->setIcon(0, icon);
+
                     QString name = getTypeString(type);
                     fileItem->setText(0, QString::number(k + 1) + name);
                     areaItem->addChild(fileItem);
-
-                    settings.endGroup();
                     //qDebug("set %d file %s", k, fileGroups.at(i));
                 }
                 settings.endGroup();

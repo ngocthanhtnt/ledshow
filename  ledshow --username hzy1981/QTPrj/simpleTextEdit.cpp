@@ -1090,9 +1090,17 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
 
 
   //---------------
-  bButton = new QPushButton(tr("粗体"),this);
-  iButton = new QPushButton(tr("斜体"),this);
-  uButton = new QPushButton(tr("下划"), this);
+  QIcon icon;
+  bButton = new QPushButton(this);
+  icon = QIcon::fromTheme(tr("粗体"), QIcon(rsrcPath + "/textbold.png"));
+  bButton->setIcon(icon);
+  iButton = new QPushButton(this);
+  icon = QIcon::fromTheme(tr("斜体"), QIcon(rsrcPath + "/textitalic.png"));
+  iButton->setIcon(icon);
+  uButton = new QPushButton(this);
+  icon = QIcon::fromTheme(tr("下划"), QIcon(rsrcPath + "/textunder.png"));
+  uButton->setIcon(icon);
+
   editCheck = new QCheckBox(tr("启用背景文字"), this);
 
   //oButton = new QPushButton(tr("打开"),this);
