@@ -20,15 +20,24 @@ CposiEdit::CposiEdit(QWidget *parent):QGroupBox(parent)
     hLayout = new QHBoxLayout(this);
 
     item = new QComboBox(this);
-    item->addItem(tr("固定文本"));
+    item->addItem(tr("背景文字"));
     item->addItem(tr("日期"));
     item->addItem(tr("星期"));
 
-    left = new QPushButton(tr("左"));
-    right = new QPushButton(tr("右"));
-    up = new QPushButton(tr("上"));
-    down = new QPushButton(tr("下"));
-    def = new QPushButton(tr("默认"));
+    QIcon icon;
+    left = new QPushButton(this);
+    icon = QIcon::fromTheme(tr("左"), QIcon(rsrcPath1 + "/back.png"));
+    left->setIcon(icon);
+    right = new QPushButton(this);
+    icon = QIcon::fromTheme(tr("右"), QIcon(rsrcPath1 + "/forward.png"));
+    right->setIcon(icon);
+    up = new QPushButton(this);
+    icon = QIcon::fromTheme(tr("上"), QIcon(rsrcPath1 + "/go-up.png"));
+    up->setIcon(icon);
+    down = new QPushButton(this);
+    icon = QIcon::fromTheme(tr("下"), QIcon(rsrcPath1 + "/go-down.png"));
+    down->setIcon(icon);
+    def = new QPushButton(tr("默认"),this);
 
     int width = 30;
     left->setFixedWidth(width);

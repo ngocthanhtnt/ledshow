@@ -1,3 +1,4 @@
+#include <QObject>
 #include "mainwindow.h"
 #include "progProperty.h"
 #include "progManage.h"
@@ -6,9 +7,11 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-const QString rsrcPath1 = ":/images/win1";
-
 extern MainWindow *w;
+
+QString rsrcPath1 =  ":/images/win1";
+QString rsrcPath = ":/images/win";
+
 //节目配置文件
 QSettings settings(PROG_INI_FILE,QSettings::IniFormat,0);
 
@@ -130,6 +133,40 @@ void MainWindow::setupViewActions()
     menu->addAction(a);
 }
 
+
+QIcon getTypeIcon(INT8U type)
+{
+  QIcon icon;
+  if(type EQ SCREEN_PROPERTY)
+      icon = QIcon::fromTheme(QObject::tr("屏幕"), QIcon(rsrcPath1 + QObject::tr("/屏幕.png")));
+  else if(type EQ PROG_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("节目"), QIcon(rsrcPath1 + QObject::tr("/节目22.png")));
+  else if(type EQ AREA_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("分区"), QIcon(rsrcPath1 + QObject::tr("/分区.png")));
+  else if(type EQ PIC_STEXT_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("字幕"), QIcon(rsrcPath1 + QObject::tr("/字幕.ico")));
+  else if(type EQ PIC_MTEXT_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("文本"), QIcon(rsrcPath1 + QObject::tr("/图文22.png")));
+  else if(type EQ PIC_FLASH_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("动画"), QIcon(rsrcPath1 + QObject::tr("/动画.ico")));
+  else if(type EQ CLOCK_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("表盘"), QIcon(rsrcPath1 + QObject::tr("/表盘.ico")));
+  else if(type EQ TIME_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("时间"), QIcon(rsrcPath1 + QObject::tr("/日历22.png")));
+  else if(type EQ TIMER_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("计时"), QIcon(rsrcPath1 + QObject::tr("/计时.ico")));
+  else if(type EQ LUN_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("农历"), QIcon(rsrcPath1 + QObject::tr("/农历.png")));
+  else if(type EQ TEMP_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("温度"), QIcon(rsrcPath1 + QObject::tr("/温度22.png")));
+  else if(type EQ HUMIDITY_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("湿度"), QIcon(rsrcPath1 + QObject::tr("/湿度.png")));
+  else if(type EQ NOISE_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("噪音"), QIcon(rsrcPath1 + QObject::tr("/噪音.ico")));
+
+  return icon;
+}
+
 void MainWindow::setupEditActions()
 {
     QToolBar *tb = new QToolBar(this);
@@ -156,7 +193,7 @@ void MainWindow::setupEditActions()
     QAction *actionNongli;
     QAction *actionTimer;
  */
-    QIcon screenIcon = QIcon::fromTheme(tr("屏幕"), QIcon(rsrcPath1 + tr("/屏幕.png")));
+    QIcon screenIcon = getTypeIcon(SCREEN_PROPERTY);//QIcon::fromTheme(tr("屏幕"), QIcon(rsrcPath1 + tr("/屏幕.png")));
     actionScreen = a = new QAction(screenIcon, tr("屏幕"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
@@ -166,7 +203,7 @@ void MainWindow::setupEditActions()
     menu->addAction(a);
     menu->addSeparator();
 
-    QIcon progIcon = QIcon::fromTheme("节目", QIcon(rsrcPath1 + tr("/节目22.png")));
+    QIcon progIcon = getTypeIcon(PROG_PROPERTY);//QIcon::fromTheme("节目", QIcon(rsrcPath1 + tr("/节目22.png")));
     actionProg = a = new QAction(progIcon, tr("节目"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
@@ -177,7 +214,7 @@ void MainWindow::setupEditActions()
     menu->addSeparator();
     tb->addSeparator();
 
-    QIcon areaIcon = QIcon::fromTheme(tr("分区"), QIcon(rsrcPath1 + tr("/分区.png")));
+    QIcon areaIcon = getTypeIcon(AREA_PROPERTY);//QIcon::fromTheme(tr("分区"), QIcon(rsrcPath1 + tr("/分区.png")));
     actionArea = a = new QAction(areaIcon, tr("分区"), this);
     a->setIconText(tr("分区"));
     a->setShortcut(QKeySequence::Open);
@@ -187,7 +224,7 @@ void MainWindow::setupEditActions()
     menu->addSeparator();
     tb->addSeparator();
 
-    QIcon stextIcon = QIcon::fromTheme(tr("字幕"), QIcon(rsrcPath1 + tr("/字幕.ico")));
+    QIcon stextIcon = getTypeIcon(PIC_STEXT_PROPERTY);//QIcon::fromTheme(tr("字幕"), QIcon(rsrcPath1 + tr("/字幕.ico")));
     actionSText = a = new QAction(stextIcon, tr("字幕"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled(true);//(bool)Get_Pic_Show_En());
@@ -195,7 +232,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    QIcon mtextIcon = QIcon::fromTheme(tr("文本"), QIcon(rsrcPath1 + tr("/图文22.png")));
+    QIcon mtextIcon = getTypeIcon(PIC_MTEXT_PROPERTY);//QIcon::fromTheme(tr("文本"), QIcon(rsrcPath1 + tr("/图文22.png")));
     actionMText = a = new QAction(mtextIcon, tr("文本"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Pic_Show_En());
@@ -203,7 +240,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    QIcon flashIcon = QIcon::fromTheme(tr("动画"), QIcon(rsrcPath1 + tr("/动画.ico")));
+    QIcon flashIcon = getTypeIcon(PIC_FLASH_PROPERTY);//QIcon::fromTheme(tr("动画"), QIcon(rsrcPath1 + tr("/动画.ico")));
     actionFlash = a = new QAction(flashIcon, tr("动画"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Pic_Show_En());
@@ -211,7 +248,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    QIcon clockIcon = QIcon::fromTheme(tr("表盘"), QIcon(rsrcPath1 + tr("/表盘.ico")));
+    QIcon clockIcon = getTypeIcon(CLOCK_PROPERTY);//QIcon::fromTheme(tr("表盘"), QIcon(rsrcPath1 + tr("/表盘.ico")));
     actionClock = a = new QAction(clockIcon, tr("表盘"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Clock_Show_En());
@@ -219,7 +256,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    QIcon timeIcon = QIcon::fromTheme(tr("时间"), QIcon(rsrcPath1 + tr("/日历22.png")));
+    QIcon timeIcon = getTypeIcon(TIME_PROPERTY);//QIcon::fromTheme(tr("时间"), QIcon(rsrcPath1 + tr("/日历22.png")));
     actionTime = a = new QAction(timeIcon, tr("时间"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Time_Show_En());
@@ -227,7 +264,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    QIcon lunIcon = QIcon::fromTheme(tr("农历"), QIcon(rsrcPath1 + tr("/农历22.png")));
+    QIcon lunIcon = getTypeIcon(LUN_PROPERTY);//QIcon::fromTheme(tr("农历"), QIcon(rsrcPath1 + tr("/农历22.png")));
     actionNongli = a = new QAction(lunIcon, tr("农历"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Lun_Show_En());
@@ -235,7 +272,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    QIcon timerIcon = QIcon::fromTheme(tr("计时"), QIcon(rsrcPath1 + tr("/计时.png")));
+    QIcon timerIcon = getTypeIcon(TIMER_PROPERTY);//QIcon::fromTheme(tr("计时"), QIcon(rsrcPath1 + tr("/计时.png")));
     actionTimer = a = new QAction(timerIcon, tr("计时"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Timer_Show_En());
@@ -243,7 +280,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    QIcon tempIcon = QIcon::fromTheme(tr("温度"), QIcon(rsrcPath1 + tr("/温度22.png")));
+    QIcon tempIcon = getTypeIcon(TEMP_PROPERTY);//QIcon::fromTheme(tr("温度"), QIcon(rsrcPath1 + tr("/温度22.png")));
     actionTemp = a = new QAction(tempIcon, tr("温度"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Temp_Show_En());
@@ -251,7 +288,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    QIcon humidityIcon = QIcon::fromTheme(tr("湿度"), QIcon(rsrcPath1 + tr("/湿度.png")));
+    QIcon humidityIcon = getTypeIcon(HUMIDITY_PROPERTY);//QIcon::fromTheme(tr("湿度"), QIcon(rsrcPath1 + tr("/湿度.png")));
     actionHumidi = a = new QAction(humidityIcon, tr("湿度"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Humidity_Show_En());
@@ -259,7 +296,7 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
-    QIcon noiseIcon = QIcon::fromTheme(tr("湿度"), QIcon(rsrcPath1 + tr("/噪音.ico")));
+    QIcon noiseIcon = getTypeIcon(NOISE_PROPERTY);//QIcon::fromTheme(tr("湿度"), QIcon(rsrcPath1 + tr("/噪音.ico")));
     actionNoise = a = new QAction(noiseIcon, tr("噪音"), this);
     a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Humidity_Show_En());
@@ -810,11 +847,16 @@ void MainWindow::modifyScreenPara()
   QDialog *facParaWin = new QDialog(this);
   QHBoxLayout *hLayout = new QHBoxLayout(facParaWin);
 
-  facParaWin->setWindowTitle(tr("修改安装参数"));
+  facParaWin->setWindowTitle(tr("修改屏幕参数"));
   CfacScreenProperty *facScreenProperty = new CfacScreenProperty(MODI_SCN, facParaWin);
+  CcomTest *comTest = new CcomTest(facParaWin);
+
   facScreenProperty->setSettingsToWidget(str);
+  comTest->setSettingsToWidget(str);
 
   hLayout->addWidget(facScreenProperty);
+  hLayout->addWidget(comTest);
+
   facParaWin->setLayout(hLayout);
   facParaWin->setAttribute(Qt::WA_DeleteOnClose);
   connect(facScreenProperty->endButton, SIGNAL(clicked()), facParaWin, SLOT(close()));
@@ -873,7 +915,7 @@ void MainWindow::preview()
   Screen_No = progManage->treeWidget->indexOfTopLevelItem(screenArea->screenItem);
   if(screenArea->screenItem->childCount() EQ 0)
   {
-      QMessageBox::information(w, tr(APP_NAME),
+      QMessageBox::information(w, tr("提示"),
                                tr("请先选择一个预览的节目"),tr("确定"));
 
       return;

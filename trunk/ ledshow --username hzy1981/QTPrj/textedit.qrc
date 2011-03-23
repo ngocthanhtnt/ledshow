@@ -98,5 +98,7 @@
         <file>images/win1/字幕.ico</file>
         <file>images/win1/表盘.ico</file>
         <file>images/win1/节目22.png</file>
+        <file>images/win1/计时.ico</file>
+        <file>images/win1/农历.png</file>
     </qresource>
 </RCC>

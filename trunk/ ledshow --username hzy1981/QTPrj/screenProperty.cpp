@@ -1249,7 +1249,8 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   QLabel *ipEditLabel = new QLabel(tr("IP地址"),this);
   ipEdit = new CipInput(this);
 
-  connectButton = new QPushButton(tr("建立连接"),this);
+  connectButton = new QPushButton(tr("手动连接"),this);
+  autoTestButton = new QPushButton(tr("自动测试"),this);
 
   gridLayout->addWidget(comModeLabel, 0, 0,1,1);
   gridLayout->addWidget(comModeCombo,  0, 1,1,2);
@@ -1262,12 +1263,24 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   gridLayout->addWidget(ipEditLabel, 4, 0,1,1);
   gridLayout->addWidget(ipEdit, 4,1,1,2);
   gridLayout->addWidget(connectButton, 5,0,1,3);
+  gridLayout->addWidget(autoTestButton, 6,0,1,3);
 
   setLayout(gridLayout);
+  setTitle(tr("通信参数"));
+
+  connect(comModeCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(editSignal()));
+  connect(comPortEdit, SIGNAL(currentIndexChanged(int)), this, SIGNAL(editSignal()));
+  connect(screenIDEdit, SIGNAL(valueChanged(int)), this, SIGNAL(editSignal()));
+  connect(comBaudCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(editSignal()));
+  connect(ipEdit, SIGNAL(editSignal()), this, SIGNAL(editSignal()));
+
+  connect(this, SIGNAL(editSignal()), this, SLOT(editSlot()));
 
   //------------暂时屏蔽----
   ipEditLabel->setVisible(false);
   ipEdit->setVisible(false);
+
+
 }
 /*
     QComboBox *comModeCombo; //通信方式
@@ -1277,6 +1290,16 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
     CipInput *ipEdit; //IP地址
     QPushButton *connectButton; //链接按钮
  */
+
+void CcomTest::editSlot()
+{
+  QString screenStr;
+
+  screenStr = w->screenArea->getCurrentScreenStr();
+
+  getSettingsFromWidget(screenStr);
+}
+
 void CcomTest::getSettingsFromWidget(QString str)
 {
     settings.beginGroup(str);
@@ -1313,6 +1336,8 @@ void getScreenParaFromComTestPara(QString str, S_Screen_Para &screenPara)
 
 void CcomTest::setSettingsToWidget(QString str)
 {
+    disconnect(this, SIGNAL(editSignal()), this, SLOT(editSlot()));
+
     settings.beginGroup(str);
     settings.beginGroup("comTest");
 
@@ -1324,6 +1349,8 @@ void CcomTest::setSettingsToWidget(QString str)
 
     settings.endGroup();
     settings.endGroup();
+
+    connect(this, SIGNAL(editSignal()), this, SLOT(editSlot()));
 }
 
 CcomTest::~CcomTest()
@@ -1612,13 +1639,13 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    //hLayout->addStretch(10);
    //hLayout = new QHBoxLayout(this);
    //QGroupBox *comTestGroup = new QGroupBox(this);
-   comTest = new CcomTest(this);
+   //comTest = new CcomTest(this);
    //hLayout->addWidget(comTest);
    //comTestGroup->setLayout(hLayout);
 
    mainLayout->addWidget(tabWidget);
    //mainLayout->addWidget(endButton);
-   mainLayout->addWidget(comTest);
+   //mainLayout->addWidget(comTest);
    //mainLayout->addLayout(vLayout);
    mainVLayout->addLayout(mainLayout);
    mainVLayout->addLayout(hLayout);
@@ -1633,7 +1660,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    if(paraFlag EQ SHOW_SCN) //显示参数
    {
        setEditEnable(false);
-       comTest->setVisible(false);
+       //comTest->setVisible(false);
        endButton->setVisible(false);
        loadButton->setVisible(false);
        tabWidget->removeTab(tabWidget->indexOf(readParaGroup));
@@ -1691,7 +1718,7 @@ void CfacScreenProperty::getSettingsFromWidget(QString str)
     maskEdit->getSettingsFromWidget(str+"/facPara");
     gateEdit->getSettingsFromWidget(str+"/facPara");
     macEdit->getSettingsFromWidget(str+"/facPara");
-    comTest->getSettingsFromWidget(str+"/facPara");
+    //comTest->getSettingsFromWidget(str+"/facPara");
 
   settings.beginGroup(str);
   settings.beginGroup("facPara");
@@ -1728,7 +1755,7 @@ void CfacScreenProperty::setSettingsToWidget(QString str)
     maskEdit->setSettingsToWidget(str+"/facPara");
     gateEdit->setSettingsToWidget(str+"/facPara");
     macEdit->setSettingsToWidget(str+"/facPara");
-    comTest->setSettingsToWidget(str+"/facPara");
+    //comTest->setSettingsToWidget(str+"/facPara");
 
     settings.beginGroup(str);
     settings.beginGroup("facPara");
