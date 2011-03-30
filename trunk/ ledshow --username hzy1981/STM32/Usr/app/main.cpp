@@ -1,6 +1,6 @@
 #include "Includes.h"
 
-void main()
+int main()
 {
   Show_Timer_Proc();
   while(1)

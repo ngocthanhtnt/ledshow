@@ -1,7 +1,7 @@
 #define MAIN_SHOW_C
 #include "includes.h"
 
-
+/*
 //每档速度的延时,单位为毫秒
 const INT16U Step_Delay[]=
 {
@@ -16,7 +16,7 @@ const INT16U Step_Delay[]=
   90,
   100
 };
-
+*/
 
 //获取某个窗口区域某个步进的停留时间
 INT32U Get_Area_In_Step_Delay(INT8U Area_No)
@@ -189,7 +189,7 @@ void Clr_Show_Data()
 //area分区号
 INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 {
-  INT16U Len,SNum;
+  INT16U Len;//,SNum;
   INT16S Len0;
   INT16U X,Y,Width,Height;
   INT8U Re = 1;
@@ -429,8 +429,8 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 INT8U Check_Update_Show_Data_Bak()
 {
   INT8U i;
-  INT32U Stay_Time;
-  S_Int8U Sec = {CHK_BYTE, 0xFF, {0},CHK_BYTE};
+  //INT32U Stay_Time;
+  //S_Int8U Sec = {CHK_BYTE, 0xFF, {0},CHK_BYTE};
   
   //if(Prog_Status.Play_Status.Play_Flag EQ 0)
       //return 0;
@@ -599,9 +599,9 @@ void Check_Prog_Play_Counts()
 void Check_Update_Program_Para()
 {
   INT8U Re;
-  INT8U i,Prog_No,Count = 0;
+  INT8U i,Prog_No;//,Count = 0;
   INT16U Len;
-  static S_Int8U Sec = {CHK_BYTE, 0xFF, {0}, CHK_BYTE};
+  //static S_Int8U Sec = {CHK_BYTE, 0xFF, {0}, CHK_BYTE};
   static S_Int8U Min = {CHK_BYTE, 0xFF, {0}, CHK_BYTE};
   
   //if(Sec.Var EQ Cur_Time.Time[T_SEC])
@@ -898,7 +898,7 @@ void Check_Update_Data_Prep()
 void Check_Show_Data_Para()
 {
   INT8U i, Re = 1;
-  INT8U Flag;
+  //INT8U Flag;
 
   Re &= CHK_HT(Screen_Para);
   Re &= CHK_HT(Card_Para);  
@@ -954,7 +954,7 @@ void Prog_Status_Init()
 //将内存中的变量初始化头尾
 void Ram_Init()
 {
-  INT8U i;
+  //INT8U i;
 
   memset(&Screen_Para, 0, sizeof(Screen_Para));
   //memset(&Card_Para, 0, sizeof(Card_Para));

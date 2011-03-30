@@ -551,7 +551,7 @@ INT8U Check_XXX_Data(INT8U Flag)
 
 void Update_Pic_Data(INT8U Area_No)
 {
-  INT8U SNum;
+  //INT8U SNum;
   INT8U In_Mode, Out_Mode;
   INT16U Area_Width, Area_Height;
   INT32U Stay_Time,In_Delay, Out_Delay;

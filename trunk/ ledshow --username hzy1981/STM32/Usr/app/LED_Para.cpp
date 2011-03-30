@@ -963,7 +963,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   INT16U Para_Len,Len;
   INT8U Re;
   INT16U Seq0;
-  INT16U Cmd1;
+  //INT16U Cmd1;
   //S_Prog_Show_Data *pShow_Data;
 
   memcpy(&Len, &Frame[FLEN], sizeof(Len)); //帧长
@@ -977,7 +977,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   }
   
   Seq0 = Frame[FSEQ0] + (INT16U)Frame[FSEQ0 + 1] * 256;
-  Cmd1 = Frame[FCMD + 1];
+  //Cmd1 = Frame[FCMD + 1];
 
   if(Seq0 EQ 0) //参数帧--多帧中的第一帧
   {
@@ -1087,7 +1087,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   }
     
     
-  return 0;
+  //return 0;
 
 }
 

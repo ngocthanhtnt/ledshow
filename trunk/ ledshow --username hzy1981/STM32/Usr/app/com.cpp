@@ -206,7 +206,7 @@ void Rcv_One_Byte(INT8U Byte)
 void Screen_Com_Proc()
 {
     static S_Int32U Sec = {CHK_BYTE, 0xFFFFFFFF, CHK_BYTE};
-   INT8U Re;
+    INT8U Re;
 
    if(Screen_Status.Rcv_Flag EQ FRAME_FLAG)
     {

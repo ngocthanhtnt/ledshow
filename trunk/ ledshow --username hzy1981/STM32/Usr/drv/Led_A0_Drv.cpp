@@ -182,7 +182,7 @@ void UART_Init()
 */
 
 //CPU
-void Hardware_Init()
+void Hardware_Init(void)
 {
 
 
@@ -201,7 +201,7 @@ void Put_Char(char c)
 }
 
 //获取当前时间
-INT8U Get_Cur_Time()//S_Time *pTime)
+INT8U Get_Cur_Time(void)//S_Time *pTime)
 {
   return 1;
 }
@@ -213,25 +213,25 @@ INT8U Set_Cur_Time(INT8U Time[])
 }
 
 //存储器初始化
-void Mem_Init()
+void Mem_Init(void)
 {
 
 }
 
 //获取当前温度
-INT16S Get_Cur_Temp()
+INT16S Get_Cur_Temp(void)
 {
   return -215; 
 }
 
 //获取当前湿度
-INT16U Get_Cur_Humidity()
+INT16U Get_Cur_Humidity(void)
 {
   return 60; 
 }
 
 //获取当前噪音
-INT16U Get_Cur_Noise()
+INT16U Get_Cur_Noise(void)
 {
   return 60;
 }
