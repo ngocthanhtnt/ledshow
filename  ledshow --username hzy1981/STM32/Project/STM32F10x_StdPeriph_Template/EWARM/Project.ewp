@@ -5339,12 +5339,6 @@
         <name>$PROJ_DIR$\..\..\..\Usr\app\com.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\File_Op.cpp</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\File_Op.h</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Flash_Show.cpp</name>
       </file>
       <file>
@@ -5375,7 +5369,7 @@
         <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Show.cpp</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Show.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\led_show.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Show_Proc.h</name>

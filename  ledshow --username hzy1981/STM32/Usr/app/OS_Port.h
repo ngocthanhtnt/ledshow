@@ -87,5 +87,5 @@ typedef unsigned int OS_ALIGN_TYPE;
 #endif
 
 
-OS_EXT OS_INT8U OS_Check_Tick();
+OS_EXT OS_INT8U OS_Check_Tick(void);
 #endif

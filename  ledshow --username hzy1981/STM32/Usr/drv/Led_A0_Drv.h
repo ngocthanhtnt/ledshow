@@ -25,13 +25,13 @@
 #define debug OS_Debug_Print
 
 EXT void Put_Char(char c);
-EXT INT8U Get_Cur_Time();//S_Time *pTime);
+EXT INT8U Get_Cur_Time(void);//S_Time *pTime);
 EXT INT8U Set_Cur_Time(INT8U Time[]);//S_Time *pTime);
-EXT INT16S Get_Cur_Temp();
-EXT INT16U Get_Cur_Humidity();
-EXT INT16U Get_Cur_Noise();
+EXT INT16S Get_Cur_Temp(void);
+EXT INT16U Get_Cur_Humidity(void);
+EXT INT16U Get_Cur_Noise(void);
 
-EXT void Mem_Init();
+EXT void Mem_Init(void);
 EXT void SPI1_Init(void);
 EXT unsigned char SPI1_ReadWrite(unsigned char writedat);
 EXT INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen);

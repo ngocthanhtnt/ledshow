@@ -3,7 +3,7 @@
 
 //检查操作系统的一个Tick时间是否到,该函数仅在不实用中断产生Tick时查询Tick时间是否到用
 //返回1表示一个Tick时间到，否则返回0
-OS_INT8U OS_Check_Tick()
+OS_INT8U OS_Check_Tick(void)
 {
   static OS_INT32U Counts=0;
 

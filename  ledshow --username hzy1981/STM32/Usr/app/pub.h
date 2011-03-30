@@ -4,6 +4,7 @@
 //extern "c"
 //{
 #include "OS_Includes.h"
+#include <time.h>
 #include "LED_Cfg.h"
 
 #undef EXT
@@ -106,7 +107,7 @@ EXT S_Pub_Timer Pub_Timer;
 EXT INT16U Sum_2Bytes(INT8U Src[], INT16U SrcLen);
 EXT void Check(void);
 EXT void Info_Print(void);
-EXT void TRACE();
+EXT void TRACE(void);
 EXT void S_Time_2_tm(S_Time *pTime, struct tm *ptm);
 EXT void tm_2_S_Time(struct tm *ptm, S_Time *pTime);
 EXT float Sqrt(float number);

@@ -197,7 +197,7 @@ typedef struct
   //接收帧数据
   INT8U Rcv_Flag;
   INT8U Com_Time;
-  INT8U Rcv_Posi;
+  INT16U Rcv_Posi;
   INT8U Rcv_Data[BLOCK_DATA_LEN];
 
   INT8U Tail;  
