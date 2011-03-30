@@ -11,10 +11,17 @@
 
 *******************************************************************************/
 #include "stm32f10x.h"
+#include "LED_Cfg.h"
 #include "CH376INC.h"
-#include "spi.h"
 #include "ch376.h"
+
 #include "USART.h"
+
+unsigned char CH376_ReadWrite(unsigned char writedat)
+{
+  return 1;
+
+}
 /*****************************************************
 
  * Name:     mInitCH376Host
@@ -40,7 +47,7 @@ u8 mInitCH376Host( void )
  xEndCH376Cmd( );								// 结束通信测试
  if ( res != 0x9A ) 
  {
- 	USART1_SendByte(0xe1);
+ 	//USART1_SendByte(0xe1);
  	return( ERR_USB_UNKNOWN );  				/* 通讯接口不正常,可能原因有:接口连接异常,其它设备影响(片选不唯一),串口波特率,一直在复位,晶振不工作 */
  }
  xWriteCH376Cmd( CMD11_SET_USB_MODE );  		/* 设备USB工作模式 */
@@ -59,7 +66,7 @@ u8 mInitCH376Host( void )
  	return( USB_INT_SUCCESS );
  else 
  {
- 	USART1_SendByte(0xe2);
+ 	//USART1_SendByte(0xe2);
  	return( ERR_USB_UNKNOWN );  				/* 设置模式错误 */
  }	
 }

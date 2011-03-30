@@ -23,7 +23,7 @@
 
 #define EQ  == 
 
-#define SET_BIT(x,y) ((x)|=(0x01UL<<(y)))
+//#define SET_BIT(x,y) ((x)|=(0x01UL<<(y)))
 #define CLR_BIT(x,y) ((x)&=~(0x01UL<<(y)))
 #define GET_BIT(x,y) (((x)>>(y))&0x01UL)
 

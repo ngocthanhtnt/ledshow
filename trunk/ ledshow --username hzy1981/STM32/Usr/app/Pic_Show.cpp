@@ -483,7 +483,7 @@ INT16U Get_In_Max_Step(INT16U Width, INT16U Height, INT8U In_Mode)
         Re = (Width + Height)*In_Mode_Func[In_Mode].Fac;
         break;
     case HV_SQRT_MODE:
-        Re = sqrt(Width*Width + Height*Height)*In_Mode_Func[In_Mode].Fac;
+        Re = Sqrt(Width*Width + Height*Height)*In_Mode_Func[In_Mode].Fac;
         break;
     case FIX_MODE:
         Re = In_Mode_Func[In_Mode].Fac;
@@ -519,7 +519,7 @@ INT16U Get_Out_Max_Step(INT16U Width, INT16U Height, INT8U Out_Mode)
         Re = (Width + Height)*Out_Mode_Func[Out_Mode].Fac;
         break;
     case HV_SQRT_MODE:
-        Re = sqrt(Width*Width + Height*Height)*Out_Mode_Func[Out_Mode].Fac;
+        Re = Sqrt(Width*Width + Height*Height)*Out_Mode_Func[Out_Mode].Fac;
         break;
     case FIX_MODE:
         Re = Out_Mode_Func[Out_Mode].Fac;
@@ -555,9 +555,9 @@ void Update_Pic_Data(INT8U Area_No)
   INT8U In_Mode, Out_Mode;
   INT16U Area_Width, Area_Height;
   INT32U Stay_Time,In_Delay, Out_Delay;
-  INT32U Out_Time;
+  //INT32U Out_Time;
   S_Point P0;
-  static S_Int8U Sec ={CHK_BYTE, 0xFF, {0}, CHK_BYTE};
+  //static S_Int8U Sec ={CHK_BYTE, 0xFF, {0}, CHK_BYTE};
   
   TRACE();
   //qDebug("update area %d, step = %d, max step = %d", Area_No, Prog_Status.Area_Status[Area_No].Step, Prog_Status.Area_Status[Area_No].Max_Step);
@@ -568,7 +568,7 @@ void Update_Pic_Data(INT8U Area_No)
     return;
   
   Stay_Time = Get_File_Stay_Time(Area_No);
-  Out_Time = Get_File_Out_Time(Area_No);
+  //Out_Time = Get_File_Out_Time(Area_No);
   
 //---------------------------------------------------------  
 

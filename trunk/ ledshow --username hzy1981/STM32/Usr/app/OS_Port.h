@@ -65,14 +65,14 @@ typedef unsigned int OS_ALIGN_TYPE;
 #define OS_Save_Env(x) setjmp(x)
 #define OS_Restore_Env(x) longjmp(x,1)
 
-OS_EXT OS_SP Save_Task_SP();
-OS_EXT void Restore_Task_SP(OS_SP Sp);
+//OS_EXT OS_SP Save_Task_SP();
+//OS_EXT void Restore_Task_SP(OS_SP Sp);
 
 //将SP保存到Old_SP
-#define SAVE_TASK_SP()  Old_SP=Save_Task_SP()
+#define SAVE_TASK_SP()  //Old_SP=Save_Task_SP()
 
 //将New_SP保存到SP
-#define RESTORE_TASK_SP()  Restore_Task_SP(New_SP)
+#define RESTORE_TASK_SP()  Old_SP//Restore_Task_SP(New_SP)
 
 
 /*
