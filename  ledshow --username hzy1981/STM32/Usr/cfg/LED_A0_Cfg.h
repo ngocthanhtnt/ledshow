@@ -22,3 +22,18 @@
 #define TIMER_SHOW_EN  0 //定时显示使能 
 #define HUMIDITY_SHOW_EN 0 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

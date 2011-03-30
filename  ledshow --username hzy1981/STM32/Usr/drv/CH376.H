@@ -1,6 +1,9 @@
 #ifndef __CH376_H
 #define __CH376_H
 
+//#define  CH376_ReadWrite  SPI1_ReadWrite
+//#define  CH376_Init   SPI1_Init
+
 /* 附加的USB操作状态定义 */
 #define	ERR_USB_UNKNOWN		0xFA				/* 未知错误,不应该发生的情况,需检查硬件或者程序错误 */
 #define xEndCH376Cmd() GPIO_SetBits(GPIOA,GPIO_Pin_1);

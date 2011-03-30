@@ -669,7 +669,7 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
       }
   }
   */
-    S_Point *p0, *p1, *p2;
+    S_Point *p0, *p1;//, *p2;
     INT32S i,j;
     INT16U Y,k;
     INT8U Value;
@@ -677,7 +677,7 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
 
     p0 = Get_Left_Point(pPoint0, pPoint1);
     p1 = Get_Right_Point(pPoint0, pPoint1);
-    p2 = pPoint2;
+    //p2 = pPoint2;
 
     Xdiff = (INT16S)pPoint2->X - (INT16S)pPoint0->X;
     Ydiff = (INT16S)pPoint2->Y - (INT16S)pPoint0->Y;
@@ -793,7 +793,7 @@ void Copy_Filled_Triangle(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0
     S_Point *pLeft;  //最左边的点
     S_Point *pRight; //最右边的点
     S_Point *pMid;  //中间的点
-    S_Point Temp0, Temp1,Temp0_Bk,Temp1_Bk, Temp2;
+    S_Point Temp0, Temp1, Temp2;//,Temp0_Bk,Temp1_Bk;
 
 
     pLeft = Get_Left_Point(pPoint0, pPoint1);
@@ -809,11 +809,11 @@ void Copy_Filled_Triangle(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0
     //Draw_Line(pDst_Buf, Area_No, pPoint2, pPoint0, Value);
 
     Temp0.X = pLeft -> X;  //中间的X
-    Temp0_Bk.X = pLeft->X;
-    Temp0_Bk.Y = pLeft->Y;
+    //Temp0_Bk.X = pLeft->X;
+    //Temp0_Bk.Y = pLeft->Y;
 
-    Temp1_Bk.X = pLeft->X;
-    Temp1_Bk.Y = pLeft->Y;
+    //Temp1_Bk.X = pLeft->X;
+    //Temp1_Bk.Y = pLeft->Y;
 
     Temp2.X = pLeft->X + pPoint3->X - pPoint0->X;
     Temp2.Y = pLeft->Y + pPoint3->Y - pPoint0->Y;
@@ -895,7 +895,7 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
   S_Point *pLeft;  //最左边的点
   S_Point *pRight; //最右边的点
   S_Point *pMid;  //中间的点
-  S_Point Temp0, Temp1,Temp0_Bk,Temp1_Bk;
+  S_Point Temp0, Temp1;//,Temp0_Bk,Temp1_Bk;
 
 
   pLeft = Get_Left_Point(pPoint0, pPoint1);
@@ -911,11 +911,11 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
   //Draw_Line(pDst_Buf, Area_No, pPoint2, pPoint0, Value);
 
   Temp0.X = pLeft -> X;  //中间的X
-  Temp0_Bk.X = pLeft->X;
-  Temp0_Bk.Y = pLeft->Y;
+  //Temp0_Bk.X = pLeft->X;
+  //Temp0_Bk.Y = pLeft->Y;
 
-  Temp1_Bk.X = pLeft->X;
-  Temp1_Bk.Y = pLeft->Y;
+  //Temp1_Bk.X = pLeft->X;
+  //Temp1_Bk.Y = pLeft->Y;
 
   Draw_Line(pDst_Buf, Area_No, pLeft, pRight, Value);
   //Draw_Line(pDst_Buf, Area_No, pLeft, pMid, Value);
@@ -1066,7 +1066,7 @@ void Fill_Round(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, INT16U R
   for(; X < pCenter -> X + Radius; X ++)
   {
     Temp0 = ((INT32S)Radius * Radius - ((INT32S)X - (INT32S)pCenter->X)*((INT32S)X - (INT32S)pCenter->X));
-    Temp = (INT16U)sqrt(Temp0);
+    Temp = (INT16U)Sqrt(Temp0);
     //下面一点
     Up.Y = pCenter->Y + Temp - 1;
     Up.X = X;
@@ -1096,7 +1096,7 @@ void Copy_Filled_Round(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pCenter0, 
   
   for(; X < pCenter0 -> X + Radius; X ++)
   {
-    Temp1 = (INT16U)sqrt((float)(Radius * Radius - (INT16U)((INT32S)X - (INT32S)pCenter0->X)*((INT32S)X - (INT32S)pCenter0->X)));
+    Temp1 = (INT16U)Sqrt((float)(Radius * Radius - (INT16U)((INT32S)X - (INT32S)pCenter0->X)*((INT32S)X - (INT32S)pCenter0->X)));
     //下面一点
     Up.Y = pCenter0->Y + Temp1 - 1;
     Up.X = X;
@@ -1455,7 +1455,7 @@ void Move_Left_Cover(INT8U Area_No)
 void Move_Right_Cover(INT8U Area_No)
 {
   S_Point Temp;
-  S_Point Temp1;
+  //S_Point Temp1;
   
   //if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step) //是否已经移动完成Prog_Status.Area_Status[Area_No].Max_Step%
   {
@@ -1788,10 +1788,10 @@ INT8U Check_Point_One_Line(S_Point *pPoint0, S_Point *pPoint1, S_Point *pPoint2)
 //顺时针旋转
 void Move_Spin_CW(INT8U Area_No)
 {
-   INT16U X,Y;
-   INT16U Arg;
+   //INT16U X,Y;
+   //INT16U Arg;
    INT16U Area_Width, Area_Height;
-   S_Point Point[8],CPoint;
+   S_Point Point[8];//,CPoint;
    INT8U i = 0;
    INT16U Len;
 
@@ -1862,10 +1862,10 @@ void Move_Spin_CW(INT8U Area_No)
 //逆时针旋转
 void Move_Spin_CCW(INT8U Area_No)
 {
-    INT16U X,Y;
-    INT16U Arg;
+    //INT16U X;//,Y;
+    //INT16U Arg;
     INT16U Area_Width, Area_Height;
-    S_Point Point[8],CPoint;
+    S_Point Point[8];//,CPoint;
     INT8U i = 0;
     INT16U Len;
 
@@ -2107,10 +2107,10 @@ void Copy_Compresssion_H_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0
                               S_Show_Data *pDst, S_Point *pPoint1, INT16U Ratio, INT8U Direct)
 {
 
-    INT16U i, j;
+    INT16U i;//, j;
     S_Point P0, P1,P2;
     INT16U TENSILE_STEP;
-    INT16U Temp;
+    //INT16U Temp;
 
     if(Ratio EQ 0)
         return;
@@ -2162,7 +2162,7 @@ void Copy_Compresssion_H_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0
 void Copy_Compresssion_V_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
                               S_Show_Data *pDst, S_Point *pPoint1, INT16U Ratio, INT8U Direct)
 {
-    INT16U i, j;
+    INT16U i;
     S_Point P0, P1,P2;
     INT16U TENSILE_STEP;
 

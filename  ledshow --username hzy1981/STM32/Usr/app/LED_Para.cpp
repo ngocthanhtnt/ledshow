@@ -492,7 +492,7 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
   //INT16U Width,Height;
   INT16U X0,Y0,Off0,Row_Points;
   INT32U i,Len;
-  INT8U Re;
+  INT8U Re = 0;
   INT8U Screen_Color_Num;
 /*
   Area_Width = Get_Area_Width(Area_No);

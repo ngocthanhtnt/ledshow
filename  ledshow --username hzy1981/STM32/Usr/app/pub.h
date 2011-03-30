@@ -34,6 +34,7 @@ typedef struct
 //#define TRACE() App_Trace//OS_Trace
 #define Check_Sum OS_Check_Sum
 #define Set_Sum OS_Set_Sum
+
 /*
 #if QT_EN == 0
 #define debug OS_Debug_Print
@@ -108,6 +109,7 @@ EXT void Info_Print(void);
 EXT void TRACE();
 EXT void S_Time_2_tm(S_Time *pTime, struct tm *ptm);
 EXT void tm_2_S_Time(struct tm *ptm, S_Time *pTime);
+EXT float Sqrt(float number);
 //外部完成调试信息输出函数
 extern void Put_Char(INT8S Chr);
 #endif

@@ -14,9 +14,9 @@ INT8S Shell_Cmd_Buf[SHELL_CMD_BUF_LEN];   //∂®“Âshell√¸¡Óª∫≥Â«¯
 
 CONST S_OS_Shell_Cmd Shell_Cmd[] =
 {
-  {.pName = "echo", .pCmdFunc = &Shell_Bg_Print_Switch},
-  {.pName = "ps", .pCmdFunc = &Shell_Print_Prog_Status},
-  {.pName = "ss", .pCmdFunc = &Shell_Print_Screen_Status},
+  {/*.pName = */"echo", /*.pCmdFunc = */&Shell_Bg_Print_Switch},
+  {/*.pName = */"ps", /*.pCmdFunc = */&Shell_Print_Prog_Status},
+  {/*.pName = */"ss", /*.pCmdFunc = */&Shell_Print_Screen_Status},
   //{.pName = "mem", .pCmdFunc = &Shell_Read_Mem},
   //{.pName = "osinfo", .pCmdFunc = &Shell_OS_Info}
 };
