@@ -139,6 +139,11 @@ typedef struct
   INT8U Font_Num; //板上字体个数
   INT8U InMode_Num; //引入特效个数
   INT8U OutMode_Num; //引出特效个数
+
+  INT8U Max_Prog_Num; //最大节目数
+  INT8U Max_Area_Num; //最大分区数
+  INT8U Max_File_Num; //每分区最大文件数
+
   INT8U Com_Mode; //支持的通信方式,第0位RS232、第1位RS485、第2位以太网、第3位GPRS/GSM
   INT16U ROM_Size; //存储空间大小,单位KB
   INT16U File_En_Word; //支持的节目类型

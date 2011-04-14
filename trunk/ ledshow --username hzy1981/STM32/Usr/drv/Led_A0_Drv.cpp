@@ -3,37 +3,45 @@
 
 #if CARD_TYPE == CARD_A0
 
-#if 0
+
 void RCC_Configuration()
 {
+  SystemInit();
   //------打开外设时钟1和2-----------
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_ALL, ENABLE);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ALL, ENABLE);  
+  //RCC_APB1PeriphClockCmd(RCC_APB1Periph_ALL, ENABLE);
+  //RCC_APB2PeriphClockCmd(RCC_APB2Periph_ALL, ENABLE);  
 }
 
 void NVIC_Configuration()
 {
- //----------中断优先级设置--------
-  NVIC_InitTypeDef NVIC_InitStructure;
+    //----------中断优先级设置--------
 
-  /* Configure the NVIC Preemption Priority Bits */  
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
-  
-  /* Enable the USARTy Interrupt */
-  NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQChannel;
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
+	NVIC_InitTypeDef NVIC_InitStructure;
+	
+	/* Configure the NVIC Preemption Priority Bits */  
+	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);	//设置优先级分组：先占优先级0位,从优先级4位
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);		//设置优先级分组：先占优先级2位,从优先级2位
+	
+	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);   //向量表位于FLASH
+	
+	
+	/* Enable the TIM3 global Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //TIM3中断
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级1级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级3级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
+	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器  
 
-  /* Enable the USARTz Interrupt */
-  NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQChannel;
-  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-  NVIC_Init(&NVIC_InitStructure);
-  
+    /* Enable the USARTy Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;		//USART1中断
+ 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
+ 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;		//
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
+	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
 }
 
+ //IO口初始化
 void GPIO_Configuration()
 {
   GPIO_InitTypeDef GPIO_InitStructure;  
@@ -63,43 +71,38 @@ void GPIO_Configuration()
   GPIO_Init(GPIOD, &GPIO_InitStructure);  
 }
 
-void Timer_Configuration()
-{
-  //uint16_t PrescalerValue = 0;
-  TIM_TimeBaseInitTypeDef timInitStruct;
+void TIM3_Configuration(void)
+	{
+	/* TIM3 clock enable */
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	
+	
+	/* ---------------------------------------------------------------
+	TIM3CLK 即PCLK1=36MHz
+	TIM3CLK = 36 MHz, Prescaler = 7200, TIM3 counter clock = 5K,即改变一次为5K,周期就为10K
+	--------------------------------------------------------------- */
+	/* Time base configuration */
+	TIM_TimeBaseStructure.TIM_Period = 5000; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	TIM_TimeBaseStructure.TIM_Prescaler =(7200-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
+	
+	/* Enables the Update event for TIM3 */
+	//TIM_UpdateDisableConfig(TIM3,ENABLE); 	//使能 TIM3 更新事件 
+	
+	/* TIM IT enable */
+	TIM_ITConfig(  //使能或者失能指定的TIM中断
+		TIM3, //TIM2
+		TIM_IT_Update  |  //TIM 中断源
+		TIM_IT_Trigger,   //TIM 触发中断源 
+		ENABLE  //使能
+		);
+	
+	/* TIM3 enable counter */
+	TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
+	}
 
-  //其余口默认为输入口或特定功能口
-  //----------IO 口初始化完毕---------------//
-
- 
-  /* ---------------------------------------------------------------
-    TIM2 Configuration: Output Compare Timing Mode:
-    TIM2 counter clock at 6 MHz
-    CC1 update rate = TIM2 counter clock / CCR1_Val = 146.48 Hz
-    CC2 update rate = TIM2 counter clock / CCR2_Val = 219.7 Hz
-    CC3 update rate = TIM2 counter clock / CCR3_Val = 439.4 Hz
-    CC4 update rate = TIM2 counter clock / CCR4_Val = 878.9 Hz
-  --------------------------------------------------------------- */
-
-  /* Compute the prescaler value */
-  //PrescalerValue = (uint16_t) (SystemCoreClock / 12000000) - 1;
-
-  /* Time base configuration */
-  timInitStruct.TIM_ClockDivision = TIM_CKD_DIV1;   // 定时器基准频率72MHz
-  timInitStruct.TIM_Prescaler = 32000;                    // 计数频率为1KHz
-  timInitStruct.TIM_CounterMode = TIM_CounterMode_Up; // 向上计数
-  timInitStruct.TIM_RepetitionCounter = 0;
-  timInitStruct.TIM_Period = 0; // 这个值实际上就是TIMX->ARR，延时开始时重新设定即可
-  
-  TIM_TimeBaseInit(TIM2, &timInitStruct);
-  TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE); // 计数溢出时触发中断
-  TIM_Cmd(TIM2, DISABLE);
-
-
-
-  TIM_TimeBaseInit(TIM2, &timInitStruct);  
-}
-#endif
 
 void SPI1_Init(void)
 {
@@ -281,5 +284,14 @@ void Delay_us(INT32U Value)
   
 }
 
+void Hardware_Init()
+{
+  RCC_Configuration();
 
+  NVIC_Configuration();
+
+  GPIO_Configuration();
+
+  TIM3_Configuration();
+}
 #endif
