@@ -582,6 +582,11 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
     if(getScreenCardParaFromSettings(screenStr, Screen_Para, Card_Para) EQ 0)
     {
         ASSERT_FAILED();
+
+        restoreScreenPara(screenParaBak);
+        restoreProgPara(progParaBak);
+        restoreCardPara(cardParaBak);
+
         return 0;
     }
 
