@@ -3,7 +3,10 @@
 
 //extern "c"
 //{
-#include "OS_Includes.h"
+//#include "OS_Includes.h"
+#include "OS_Cfg.h"
+#include "OS_Port.h"
+#include "OS_Pub.h"
 #include <time.h>
 #include "LED_Cfg.h"
 
