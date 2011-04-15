@@ -39,14 +39,14 @@ INT8U Shell_Bg_Print_Switch(INT8U argc, INT8S **argv)
   }
   return 1;
 }
-
+/*
 //打印操作系统信息
 INT8U Shell_OS_Info(INT8U argc, INT8S **argv)
 {
   OS_Info_Print();
   return 1;
 }
-
+*/
 //打印数据
 /*
 void Shell_Print_Data(INT32U Addr, INT8U *p, INT16U Len)

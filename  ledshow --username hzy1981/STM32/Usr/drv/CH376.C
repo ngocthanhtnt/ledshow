@@ -243,6 +243,12 @@ void	mDelay0_5uS( void )  /* 至少延时0.5uS,根据单片机主频调整 */
  i=20;
  while(i--);
 }
+/*
+void main(void)
+{
+   volatile int a ;
 
-
-
+   a = 10;
+   
+}
+*/

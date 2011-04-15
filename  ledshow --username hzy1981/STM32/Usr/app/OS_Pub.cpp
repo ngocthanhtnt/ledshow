@@ -215,6 +215,8 @@ void OS_Debug_Print(CONST OS_INT8S *format, ...)
 }
 #endif
 
+/*
+
 #if OS_TRACE_HOOK_EN>0
 extern void OS_Trace_Hook(void);
 void _OS_Trace_Hook(void)
@@ -349,7 +351,7 @@ void OS_Print_Trace_Info(void)
       Index--;
   }  
 }
-
+*/
 #if OS_ASSERT_HOOK_EN>0
 extern void OS_Assert_Hook(CONST OS_INT8S File[],CONST OS_INT8S Function[],OS_INT16U Line);
 #endif
@@ -369,14 +371,14 @@ void OS_Assert_Failed(CONST OS_INT8S File[],CONST OS_INT8S Function[],OS_INT16U 
     pFile=(OS_INT8S *)File+Len-OS_TRACE_BUF_LEN;//取文件名的起始位置
   else
     pFile=(OS_INT8S *)File;
-  
+/*  
   //打印任务名字或者ID
 #if OS_TASK_NAME_EN>0    
   OS_Debug_Print("\r\nASSERT Task Name:%s",Tcb[Task_Info.Cur_Task_ID].Name);
 #else
   OS_Debug_Print("\r\nASSERT Task ID:%u",Task_Info.Cur_Task_ID);
 #endif
-
+*/
   //打印出错文件
   OS_Debug_Print("\r\n  Err File:%s,Function:%s,Line:%u",pFile,Function,Line); 
   
@@ -600,7 +602,7 @@ void OS_Set_STRUCT_Sum(void *pSrc,OS_INT16U SrcLen,OS_INT8U *pCS,OS_INT8U CS_Byt
   OS_Set_Sum(pSrc,Len,pCS,CS_Bytes,pSrc,SrcLen);
 }
 
-
+/*
 //检查操作系统的运行状态
 //该调用应该放在主任务中定期调用
 void OS_Check(void)
@@ -619,6 +621,7 @@ void OS_Check(void)
   OS_Trace_Info_Check();//检查函数轨迹的内存信息
 #endif  
 }
+
 
 //打印操作系统运行状态
 //该调用应该放在主任务中定期调用
@@ -646,5 +649,5 @@ void OS_Info_Print(void)
   OS_Mem_Info_Print(); 
 #endif  
 }
-
+*/
 #undef OS_PUB_C

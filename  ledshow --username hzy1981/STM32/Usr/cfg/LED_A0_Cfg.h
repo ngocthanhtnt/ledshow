@@ -27,7 +27,7 @@
 #define NOISE_SHOW_EN  0 //‘Î“Ùœ‘ æ πƒ‹
 
 //#if !defined (STM32F10X_LD)
-#define STM32F10X_LD
+//#define STM32F10X_LD
 //#endif
 
 #endif

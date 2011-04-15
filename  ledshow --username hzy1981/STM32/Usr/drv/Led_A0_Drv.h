@@ -44,5 +44,5 @@ EXT void Delay_us(INT32U Value);
 EXT void Set_Block_Latch(INT8U Value);
 EXT void Set_Block_Row(INT16U Row);
 EXT void Reset_Scan_Timer(INT32U Freq);
-
+EXT void Hardware_Init(void);
 #endif
