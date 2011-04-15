@@ -23,7 +23,7 @@ OS_INT8U OS_Check_Bg_Status(void)
 {
   OS_INT8U Task_ID;
   
-  Task_ID = Task_Info.Cur_Task_ID;//OS_Get_Cur_Task_ID();
+  Task_ID = 0;//Task_Info.Cur_Task_ID;//OS_Get_Cur_Task_ID();
   
   if(OS_Shell_Status.Shell_Flag EQ SHELL_IN &&\
      OS_Shell_Status.Shell_Task_ID EQ Task_ID)
@@ -75,7 +75,7 @@ OS_INT8U OS_Cmd_Analys(CONST S_OS_Shell_Cmd Shell_Cmd[], OS_INT8U Num, OS_INT8S 
     return 0;
 
   OS_Shell_Status.Shell_Flag = SHELL_IN; //进入shell状态
-  OS_Shell_Status.Shell_Task_ID = OS_Get_Cur_Task_ID(); //当前运行shell任务的ID
+  OS_Shell_Status.Shell_Task_ID = 0;//OS_Get_Cur_Task_ID(); //当前运行shell任务的ID
   
   if(Cmd_Len EQ 0) //全部输入的是空格或者回车
   {
