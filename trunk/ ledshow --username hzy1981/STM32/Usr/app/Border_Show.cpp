@@ -127,8 +127,8 @@ void Update_Border_Data(INT8U Area_No)
   TRACE();
 
   Step_Time = Prog_Para.Border_StayTime;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
-  Prog_Status.Border_Status.Timer += MOVE_STEP_TIMER;
-  Timer.Var += MOVE_STEP_TIMER;
+  Prog_Status.Border_Status.Timer += MOVE_STEP_PERIOD;
+  Timer.Var += MOVE_STEP_PERIOD;
 
   Border_Width = Get_Area_Border_Width(Area_No);
   Border_Height = Get_Area_Border_Height(Area_No);

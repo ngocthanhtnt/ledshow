@@ -630,7 +630,7 @@ void Update_Pic_Data(INT8U Area_No)
 
 
       if(Prog_Status.Area_Status[Area_No].Step_Timer < In_Delay)
-        Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
+        Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_PERIOD;
 
       if(Prog_Status.Area_Status[Area_No].Step_Timer >= In_Delay)
       {
@@ -690,7 +690,7 @@ void Update_Pic_Data(INT8U Area_No)
     {
         if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)
         {
-          Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
+          Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_PERIOD;
           Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
           Prog_Status.Area_Status[Area_No].SCN_No = 0; //重新更新背景
           Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFFFF;
@@ -698,7 +698,7 @@ void Update_Pic_Data(INT8U Area_No)
           return;
         }
 
-        if(Prog_Status.Area_Status[Area_No].Stay_Time EQ MOVE_STEP_TIMER ||\
+        if(Prog_Status.Area_Status[Area_No].Stay_Time EQ MOVE_STEP_PERIOD ||\
            Prog_Status.Area_Status[Area_No].Stay_Time % 500 EQ 0)//Sec.Var != Cur_Time.Time[T_SEC])//
         {
           //Sec.Var = Cur_Time.Time[T_SEC];
@@ -710,7 +710,7 @@ void Update_Pic_Data(INT8U Area_No)
         }
     }
 
-    Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_TIMER;
+    Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_PERIOD;
     /*
     if(Prog_Status.Area_Status[Area_No].Stay_Time >= Stay_Time)//进入退出的移动状态
     {
@@ -744,7 +744,7 @@ void Update_Pic_Data(INT8U Area_No)
         if(Prog_Status.Area_Status[Area_No].Out_Step < Prog_Status.Area_Status[Area_No].Out_Max_Step)
         {
             if(Prog_Status.Area_Status[Area_No].Step_Timer < Out_Delay)
-              Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_TIMER;
+              Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_PERIOD;
 
             if(Prog_Status.Area_Status[Area_No].Step_Timer >= Out_Delay)
             {

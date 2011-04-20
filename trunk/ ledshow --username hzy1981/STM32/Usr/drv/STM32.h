@@ -35,4 +35,9 @@ EXT INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Star
 //Ð´ÎïÀí´æ´¢Æ÷
 EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
 #endif
+
+EXT void NVIC_Configuration(void);
+EXT void TIM2_Configuration(void);
+EXT void TIM4_Configuration(void);
+EXT void TIM3_Configuration(void);
 #endif

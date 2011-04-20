@@ -555,7 +555,7 @@ INT8U Check_Prog_Play_Time()
 
 void Pub_Timer_Proc()
 {
-    Pub_Timer.Ms += MOVE_STEP_TIMER;
+    Pub_Timer.Ms += MOVE_STEP_PERIOD;
     if(Pub_Timer.Ms >= 1000)
         Pub_Timer.Sec ++;
 }

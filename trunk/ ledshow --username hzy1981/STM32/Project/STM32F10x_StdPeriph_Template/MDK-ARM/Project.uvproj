@@ -954,84 +954,9 @@
               <FilePath>..\..\..\Usr\app\OS_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Core.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Core.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Includes.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Includes.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Port.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Port.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Pub.cpp</FileName>
@@ -1044,16 +969,6 @@
               <FilePath>..\..\..\Usr\app\OS_Pub.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Sem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Sem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Shell.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.cpp</FilePath>
@@ -1062,11 +977,6 @@
               <FileName>OS_Shell.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Time.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Time.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Time.h</FileName>
@@ -2255,84 +2165,9 @@
               <FilePath>..\..\..\Usr\app\OS_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Core.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Core.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Includes.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Includes.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Port.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Port.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Pub.cpp</FileName>
@@ -2345,16 +2180,6 @@
               <FilePath>..\..\..\Usr\app\OS_Pub.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Sem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Sem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Shell.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.cpp</FilePath>
@@ -2363,11 +2188,6 @@
               <FileName>OS_Shell.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Time.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Time.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Time.h</FileName>
@@ -3556,84 +3376,9 @@
               <FilePath>..\..\..\Usr\app\OS_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Core.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Core.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Includes.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Includes.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Port.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Port.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Pub.cpp</FileName>
@@ -3646,16 +3391,6 @@
               <FilePath>..\..\..\Usr\app\OS_Pub.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Sem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Sem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Shell.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.cpp</FilePath>
@@ -3664,11 +3399,6 @@
               <FileName>OS_Shell.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Time.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Time.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Time.h</FileName>
@@ -4857,84 +4587,9 @@
               <FilePath>..\..\..\Usr\app\OS_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Core.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Core.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Includes.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Includes.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Port.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Port.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Pub.cpp</FileName>
@@ -4947,16 +4602,6 @@
               <FilePath>..\..\..\Usr\app\OS_Pub.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Sem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Sem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Shell.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.cpp</FilePath>
@@ -4965,11 +4610,6 @@
               <FileName>OS_Shell.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Time.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Time.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Time.h</FileName>
@@ -6158,84 +5798,9 @@
               <FilePath>..\..\..\Usr\app\OS_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Core.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Core.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Includes.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Includes.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Port.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Port.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Pub.cpp</FileName>
@@ -6248,16 +5813,6 @@
               <FilePath>..\..\..\Usr\app\OS_Pub.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Sem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Sem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Shell.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.cpp</FilePath>
@@ -6266,11 +5821,6 @@
               <FileName>OS_Shell.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Time.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Time.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Time.h</FileName>
@@ -7459,84 +7009,9 @@
               <FilePath>..\..\..\Usr\app\OS_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Core.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Core.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Core.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Event.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Event.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Ext.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Ext.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Includes.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Includes.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mem.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Msg_Q.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Msg_Q.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Mutex.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Mutex.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Port.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Port.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Pub.cpp</FileName>
@@ -7549,16 +7024,6 @@
               <FilePath>..\..\..\Usr\app\OS_Pub.h</FilePath>
             </File>
             <File>
-              <FileName>OS_Sem.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Sem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Sem.h</FilePath>
-            </File>
-            <File>
               <FileName>OS_Shell.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.cpp</FilePath>
@@ -7567,11 +7032,6 @@
               <FileName>OS_Shell.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
-            </File>
-            <File>
-              <FileName>OS_Time.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Usr\app\OS_Time.cpp</FilePath>
             </File>
             <File>
               <FileName>OS_Time.h</FileName>

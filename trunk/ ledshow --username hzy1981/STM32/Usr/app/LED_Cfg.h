@@ -31,6 +31,9 @@
 #define CARD_TYPE CARD_A0 //A系列板卡针对小条屏，其他针对中大屏
 //QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
 
+#define SCAN_SCREEN_PERIOD 40//扫屏周期,单位ms
+#define OE_PWM_FREQ 80000 //80KPWM频率
+
 #if (CARD_TYPE & 0xF0) == (CARD_A0 & 0xF0)
 #define APP_NAME "条屏LED播放系统"
 #define MAX_PROG_NUM 10 //最大节目数
@@ -53,9 +56,10 @@
 #define ASSERT_EN 1
 
 //显示效果配置
-#define MOVE_STEP_TIMER 40 //移动步进时间,单位为ms
+#define MOVE_STEP_PERIOD 40 //移动步进时间,单位为ms
 //#define MIN_STAY_TIME  10//每屏最小停留时间,单位为ms
 #define MOVE_STEP 2 //每个调度单位移动的数据百分比 单位%
+ 
 
 #define IN_SPEC_EFFECT_NUM 43 //进入特效个数
 #define OUT_SPEC_EFFECT_NUM 20 //退出特效个数
