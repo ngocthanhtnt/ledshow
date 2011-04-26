@@ -10,18 +10,24 @@
 
 
 *******************************************************************************/
+/*
 #include "stm32f10x.h"
 #include "LED_Cfg.h"
 #include "CH376INC.h"
 #include "ch376.h"
+#include "stm32.h"
+*/
+#include "includes.h"
+//#include "USART.h"
 
-#include "USART.h"
-
+//extern INT8U SPI1_ReadWrite(INT8U writedat);
+//#include "Includes.h"
+/*
 unsigned char CH376_ReadWrite(unsigned char writedat)
 {
-  return 1;
+  return SPI1_ReadWrite(writedat);
 
-}
+}*/
 /*****************************************************
 
  * Name:     mInitCH376Host
@@ -196,7 +202,8 @@ u8	Query376Interrupt( void )
 *****************************************************/
 void mDelayuS(u8 us)
 {
- while(us--);
+  delay_us(us);
+ //while(us--);
 }
 
 /*****************************************************
@@ -216,10 +223,12 @@ void mDelayuS(u8 us)
 *****************************************************/
 
 void mDelaymS(u8 ms)
-{
+{/*
  unsigned int i;
  for(;ms>0;ms--)
      for(i=0;i<940;i++);
+  */
+  delay_ms(ms);
 }
 
 /*****************************************************
@@ -238,10 +247,12 @@ void mDelaymS(u8 ms)
 
 *****************************************************/
 void	mDelay0_5uS( void )  /* 至少延时0.5uS,根据单片机主频调整 */
-{
+{/*
  u8 i;
  i=20;
  while(i--);
+ */
+ delay_us(100);
 }
 /*
 void main(void)

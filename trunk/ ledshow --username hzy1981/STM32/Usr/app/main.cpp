@@ -3,7 +3,7 @@
 int main(void)
 { 
   Hardware_Init();
-  while(1);
+  //while(1);
   Show_Timer_Proc();
   while(1)
   {

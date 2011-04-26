@@ -150,19 +150,22 @@ INT8U Get_Next_Byte_Posi(INT16U X, INT16U Y, INT16U *pX, INT16U *pY,\
 //每中断一次调用一次该函数
 void LED_Scan_One_Row()
 {
-  INT16U i,j,k;
+  INT16U i,j,k,m;
   INT16U Blocks;
   INT32U Row_Freq;
   
   //Block数可以理解为单元板纵向的个数
   Blocks = Screen_Para.Base_Para.Height / (Screen_Para.Scan_Para.Rows * Screen_Para.Scan_Para.Rows_Fold); //1.2.4.8.16扫？
  
+  if(Blocks > MAX_SCAN_BLOCK_NUM)
+	 Blocks = MAX_SCAN_BLOCK_NUM;
+
   //对每个Blocks进行扫描
   //每一条扫描线需要Screen_Para.Base_Para.Width / 8 * Screen_Para.Scan_Para.Rows_Fold个字节
   for(i = 0; i < Screen_Para.Base_Para.Width / 8 * Screen_Para.Scan_Para.Rows_Fold; i ++)
   {
     //对每个Block的每条扫描线同时输出一个字节
-    for(j = 0; j < Blocks && j < MAX_SCAN_BLOCK_NUM; j++)
+    for(j = 0; j < Blocks; j++)
     {
     //获取该扫描线上的所有字节并输出
       Get_Shift_Data(j, \
@@ -182,14 +185,17 @@ void LED_Scan_One_Row()
     {
       for(j = 0; j < 8 ; j++)
       {
+	    m = 7 - j;
         Set_Shift_Bit_Clk(0); //移位数据时钟为0
         
-        for(k = 0; k < Blocks && k < MAX_SCAN_BLOCK_NUM; k++)
-        {
+        for(k = 0; k < Blocks; k++)
+        {/*
           Set_Shift_Bit(k, 0, GET_BIT(Screen_Status.Scan_Data[k][0], 7-j));//红色 Rk
           Set_Shift_Bit(k, 1, GET_BIT(Screen_Status.Scan_Data[k][1], 7-j));//绿色 Gk
           Set_Shift_Bit(k, 2, GET_BIT(Screen_Status.Scan_Data[k][2], 7-j));//蓝色 Bk
-        }
+		*/
+		 SET_SHIFT_BIT(k, Screen_Status.Scan_Data[k], m); 
+		}
         
         Set_Shift_Bit_Clk(1); //移位时钟置1
       } 
@@ -200,12 +206,14 @@ void LED_Scan_One_Row()
       {
         Set_Shift_Bit_Clk(0); //移位数据时钟为0
         
-        for(k = 0; k < Blocks && k < MAX_SCAN_BLOCK_NUM; k++)
-        {
+        for(k = 0; k < Blocks; k++)
+        {/*
           Set_Shift_Bit(k, 0, GET_BIT(Screen_Status.Scan_Data[k][0], j));//红色
           Set_Shift_Bit(k, 1, GET_BIT(Screen_Status.Scan_Data[k][1], j));//绿色
           Set_Shift_Bit(k, 2, GET_BIT(Screen_Status.Scan_Data[k][2], j));//蓝色
-        }
+          */
+		  SET_SHIFT_BIT(k, Screen_Status.Scan_Data[k], j);
+		}
         
         Set_Shift_Bit_Clk(1); //移位时钟置1
       }      
@@ -213,7 +221,7 @@ void LED_Scan_One_Row()
     
     //行消隐时间
     Set_Block_OE(0); //关闭使能
-    Delay_us(Screen_Para.Scan_Para.Line_Hide); //行消隐时间
+    delay_us(Screen_Para.Scan_Para.Line_Hide); //行消隐时间
     
     Set_Block_Latch(0); //锁存信号输出
     Set_Block_Latch(1); //锁存信号输出

@@ -10,33 +10,30 @@ void RCC_Configuration()
   //------打开外设时钟1和2-----------
   //RCC_APB1PeriphClockCmd(RCC_APB1Periph_ALL, ENABLE);
   //RCC_APB2PeriphClockCmd(RCC_APB2Periph_ALL, ENABLE);
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM3 | RCC_APB1Periph_TIM4, ENABLE);  
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB  | RCC_APB2Periph_AFIO, ENABLE);  //使能GPIO外设和AFIO复用功能模块时钟使能
+  //RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM3 | RCC_APB1Periph_TIM4, ENABLE);  
+  //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB  | RCC_APB2Periph_AFIO, ENABLE);  //使能GPIO外设和AFIO复用功能模块时钟使能
 
 }
 
- //IO口初始化
+ //IO口初始化 -只需初始化完全作为IO口用的引脚，其他复用的引脚在相应的功能模块中初始化
 void GPIO_Configuration()
 {
   GPIO_InitTypeDef GPIO_InitStructure = {0};  
   
-
-
   //-------------------IO口初始化-----------------------
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
   //PA的输出口
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 |GPIO_Pin_2 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_7 |\
-                                GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_11 | GPIO_Pin_12;   
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_4 | GPIO_Pin_8 | GPIO_Pin_12 | GPIO_Pin_15;   
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
  
   //PB的输出口
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 |GPIO_Pin_2 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 |\
-                                GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |GPIO_Pin_15;   
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 |GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7 |\
+                                GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |GPIO_Pin_15;   
   GPIO_Init(GPIOB, &GPIO_InitStructure);
-
+/*
   //PB0作为OE-PWM输出
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //TIM_CH3
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;  //复用推挽输出
@@ -51,68 +48,10 @@ void GPIO_Configuration()
    //PD的输出口
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
   GPIO_Init(GPIOD, &GPIO_InitStructure);
+  */
 }
 
-void SPI1_Init(void)
-{
-   SPI_InitTypeDef SPI_InitStructure;
-   GPIO_InitTypeDef GPIO_InitStructure;
 
-   /* Enable SPI1 and GPIOA clocks */
-   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
-   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOC|RCC_APB2Periph_GPIOD, ENABLE);
-
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11;
-   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-   GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-   /* Configure SPI1 pins: NSS, SCK, MISO and MOSI */
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
-   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-   GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-   GPIO_InitStructure.GPIO_Mode =  GPIO_Mode_IPU;   //上拉输入
-   GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
-   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-   GPIO_Init(GPIOA, &GPIO_InitStructure);           //CH376_CS
-
-   /* SPI1 configuration */ 
-   SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
-   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
-   SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
-   SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
-   SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
-   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
-   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
-   SPI_InitStructure.SPI_CRCPolynomial = 7;
-   SPI_Init(SPI1, &SPI_InitStructure);
-
-   /* Enable SPI1  */
-   SPI_Cmd(SPI1, ENABLE);
-}
-
-//SPI1读写一字节数据
-unsigned char SPI1_ReadWrite(unsigned char writedat)
-{
-   /* Loop while DR register in not emplty */
-   while (SPI_GetFlagStatus(SPI1, SPI_FLAG_TXE) == RESET);
-
-   /* Send byte through the SPI1 peripheral */
-   SPI_SendData(SPI1, writedat);
-
-   /* Wait to receive a byte */
-   while (SPI_GetFlagStatus(SPI1, SPI_FLAG_RXNE) == RESET);
-
-   /* Return the byte read from the SPI bus */
-   return SPI_ReceiveData(SPI1);
-}
 /*
 //GPIO初始化
 void GPIO_Init()
@@ -182,10 +121,12 @@ INT16U Get_Cur_Noise(void)
 //Block表示块号
 //RGB表示颜色0-R，1-G，2-B
 //Bit表示位
+/*
 void Set_Shift_Bit(INT16U Block, INT8U RGB, INT8U Bit)
 {
   
 }
+*/
 
 //设置移位时钟
 void Set_Shift_Bit_Clk(INT8U Value)
@@ -218,12 +159,6 @@ void Reset_Scan_Timer(INT32U Freq)
   
 }
 
-//延时us
-void Delay_us(INT32U Value)
-{
-  
-}
-
 void Set_OE_Duty(INT8U Duty)
 {
 
@@ -247,5 +182,12 @@ void Hardware_Init(void)
   TIM2_Configuration();
   TIM3_Configuration();
   TIM4_Configuration();
+
+  SPI1_FLASH_Init();
+
+  //SET_A(0);
+
+  delay_init((INT8U)(SystemCoreClock / 1000000));
+  //SPI1_ReadWrite(0x00);
 }
 #endif
