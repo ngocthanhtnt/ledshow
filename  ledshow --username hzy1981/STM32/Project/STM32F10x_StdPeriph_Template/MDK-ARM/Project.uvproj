@@ -1114,11 +1114,6 @@
           <GroupName>Drv</GroupName>
           <Files>
             <File>
-              <FileName>CH376.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\CH376.C</FilePath>
-            </File>
-            <File>
               <FileName>CH376.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376.H</FilePath>
@@ -1127,11 +1122,6 @@
               <FileName>CH376INC.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376INC.H</FilePath>
-            </File>
-            <File>
-              <FileName>FILE_SYS.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\FILE_SYS.C</FilePath>
             </File>
             <File>
               <FileName>FILE_SYS.H</FileName>
@@ -1212,6 +1202,26 @@
               <FileName>stm32f10x_it.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\stm32f10x_it.h</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
+            </File>
+            <File>
+              <FileName>FILE_SYS.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\FILE_SYS.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>CH376.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\CH376.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -2325,11 +2335,6 @@
           <GroupName>Drv</GroupName>
           <Files>
             <File>
-              <FileName>CH376.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\CH376.C</FilePath>
-            </File>
-            <File>
               <FileName>CH376.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376.H</FilePath>
@@ -2338,11 +2343,6 @@
               <FileName>CH376INC.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376INC.H</FilePath>
-            </File>
-            <File>
-              <FileName>FILE_SYS.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\FILE_SYS.C</FilePath>
             </File>
             <File>
               <FileName>FILE_SYS.H</FileName>
@@ -2423,6 +2423,26 @@
               <FileName>stm32f10x_it.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\stm32f10x_it.h</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
+            </File>
+            <File>
+              <FileName>FILE_SYS.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\FILE_SYS.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>CH376.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\CH376.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -3536,11 +3556,6 @@
           <GroupName>Drv</GroupName>
           <Files>
             <File>
-              <FileName>CH376.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\CH376.C</FilePath>
-            </File>
-            <File>
               <FileName>CH376.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376.H</FilePath>
@@ -3549,11 +3564,6 @@
               <FileName>CH376INC.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376INC.H</FilePath>
-            </File>
-            <File>
-              <FileName>FILE_SYS.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\FILE_SYS.C</FilePath>
             </File>
             <File>
               <FileName>FILE_SYS.H</FileName>
@@ -3634,6 +3644,26 @@
               <FileName>stm32f10x_it.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\stm32f10x_it.h</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
+            </File>
+            <File>
+              <FileName>FILE_SYS.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\FILE_SYS.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>CH376.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\CH376.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -4747,11 +4777,6 @@
           <GroupName>Drv</GroupName>
           <Files>
             <File>
-              <FileName>CH376.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\CH376.C</FilePath>
-            </File>
-            <File>
               <FileName>CH376.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376.H</FilePath>
@@ -4760,11 +4785,6 @@
               <FileName>CH376INC.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376INC.H</FilePath>
-            </File>
-            <File>
-              <FileName>FILE_SYS.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\FILE_SYS.C</FilePath>
             </File>
             <File>
               <FileName>FILE_SYS.H</FileName>
@@ -4845,6 +4865,26 @@
               <FileName>stm32f10x_it.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\stm32f10x_it.h</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
+            </File>
+            <File>
+              <FileName>FILE_SYS.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\FILE_SYS.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>CH376.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\CH376.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -5958,11 +5998,6 @@
           <GroupName>Drv</GroupName>
           <Files>
             <File>
-              <FileName>CH376.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\CH376.C</FilePath>
-            </File>
-            <File>
               <FileName>CH376.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376.H</FilePath>
@@ -5971,11 +6006,6 @@
               <FileName>CH376INC.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376INC.H</FilePath>
-            </File>
-            <File>
-              <FileName>FILE_SYS.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\FILE_SYS.C</FilePath>
             </File>
             <File>
               <FileName>FILE_SYS.H</FileName>
@@ -6056,6 +6086,26 @@
               <FileName>stm32f10x_it.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\stm32f10x_it.h</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
+            </File>
+            <File>
+              <FileName>FILE_SYS.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\FILE_SYS.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>CH376.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\CH376.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -7169,11 +7219,6 @@
           <GroupName>Drv</GroupName>
           <Files>
             <File>
-              <FileName>CH376.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\CH376.C</FilePath>
-            </File>
-            <File>
               <FileName>CH376.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376.H</FilePath>
@@ -7182,11 +7227,6 @@
               <FileName>CH376INC.H</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\CH376INC.H</FilePath>
-            </File>
-            <File>
-              <FileName>FILE_SYS.C</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\FILE_SYS.C</FilePath>
             </File>
             <File>
               <FileName>FILE_SYS.H</FileName>
@@ -7267,6 +7307,26 @@
               <FileName>stm32f10x_it.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\stm32f10x_it.h</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
+            </File>
+            <File>
+              <FileName>FILE_SYS.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\FILE_SYS.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>CH376.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\CH376.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>spi_flash.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Usr\drv\spi_flash.cpp</FilePath>
             </File>
           </Files>
         </Group>

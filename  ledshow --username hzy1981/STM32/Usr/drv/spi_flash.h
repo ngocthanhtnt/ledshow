@@ -41,9 +41,9 @@
 
 /* Exported macro ------------------------------------------------------------*/
 /* Select SPI FLASH: Chip Select pin low  */
-#define SPI_FLASH_CS_LOW()       GPIO_ResetBits(GPIO_CS, GPIO_Pin_CS)
+//#define SPI_FLASH_CS_LOW()       GPIO_ResetBits(GPIO_CS, GPIO_Pin_CS)
 /* Deselect SPI FLASH: Chip Select pin high */
-#define SPI_FLASH_CS_HIGH()      GPIO_SetBits(GPIO_CS, GPIO_Pin_CS)
+//#define SPI_FLASH_CS_HIGH()      GPIO_SetBits(GPIO_CS, GPIO_Pin_CS)
 
 /* Exported functions ------------------------------------------------------- */
 /*----- High layer function -----*/

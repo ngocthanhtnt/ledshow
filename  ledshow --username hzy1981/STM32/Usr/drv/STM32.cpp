@@ -1,6 +1,169 @@
 #define STM32_C
 #include "Includes.h"
 
+
+static INT8U  fac_us=0;//us延时倍乘数
+static INT16U fac_ms=0;//ms延时倍乘数
+//初始化延迟函数
+//SYSTICK的时钟固定为HCLK时钟的1/8
+//SYSCLK:系统时钟
+void delay_init(INT8U SYSCLK)
+{
+	SysTick->CTRL&=0xfffffffb;//bit2清空,选择外部时钟  HCLK/8
+	fac_us=SYSCLK/8;		    
+	fac_ms=(u16)fac_us*1000;
+}	
+//延时nms
+//注意nms的范围
+//SysTick->LOAD为24位寄存器,所以,最大延时为:
+//nms<=0xffffff*8*1000/SYSCLK
+//SYSCLK单位为Hz,nms单位为ms
+//对72M条件下,nms<=1864 
+void delay_ms(INT16U nms)
+{	 		  	  
+	INT32U temp;		   
+	SysTick->LOAD=(u32)nms*fac_ms;//时间加载(SysTick->LOAD为24bit)
+	SysTick->VAL =0x00;           //清空计数器
+	SysTick->CTRL=0x01 ;          //开始倒数  
+	do
+	{
+		temp=SysTick->CTRL;
+	}
+	while(temp&0x01&&!(temp&(1<<16)));//等待时间到达   
+	SysTick->CTRL=0x00;       //关闭计数器
+	SysTick->VAL =0X00;       //清空计数器	  	    
+}   
+//延时nus
+//nus为要延时的us数.		    								   
+void delay_us(INT32U nus)
+{		
+	INT32U temp;	    	 
+	SysTick->LOAD=nus*fac_us; //时间加载	  		 
+	SysTick->VAL=0x00;        //清空计数器
+	SysTick->CTRL=0x01 ;      //开始倒数 	 
+	do
+	{
+		temp=SysTick->CTRL;
+	}
+	while(temp&0x01&&!(temp&(1<<16)));//等待时间到达   
+	SysTick->CTRL=0x00;       //关闭计数器
+	SysTick->VAL =0X00;       //清空计数器	 
+}
+
+/*******************************************************************************
+* Function Name  : SPI_FLASH_Init
+* Description    : Initializes the peripherals used by the SPI FLASH driver.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void SPI1_FLASH_Init(void)
+{
+  SPI_InitTypeDef  SPI_InitStructure;
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+  /* Enable SPI1 and GPIO clocks */
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1 | RCC_APB2Periph_GPIOA, ENABLE);
+
+  /* Configure SPI1 pins: SCK, MISO and MOSI */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  /* Configure I/O for Flash Chip select */
+  //PA4用于Flash_CS
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  /* Deselect the FLASH: Chip Select high */
+  SPI_FLASH_CS_HIGH();
+
+  /* SPI1 configuration */
+  SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+  SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+  SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+  SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
+  SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
+  SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+  SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+  SPI_InitStructure.SPI_CRCPolynomial = 7;
+  SPI_Init(SPI1, &SPI_InitStructure);
+
+  /* Enable SPI1  */
+  SPI_Cmd(SPI1, ENABLE);
+}
+
+void SPI1_CH376_Init(void)
+{
+   SPI_InitTypeDef SPI_InitStructure;
+   GPIO_InitTypeDef GPIO_InitStructure;
+
+   /* Enable SPI1 and GPIOA clocks */
+   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1 | RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO , ENABLE);
+
+   /* Configure SPI1 pins: NSS, SCK, MISO and MOSI */
+   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+   GPIO_Init(GPIOA, &GPIO_InitStructure);
+/*
+   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+   GPIO_InitStructure.GPIO_Mode =  GPIO_Mode_IPU;   //上拉输入
+   GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+   GPIO_Init(GPIOA, &GPIO_InitStructure);           //CH376_CS
+*/
+   /* SPI1 configuration */ 
+   SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+   SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+   SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
+   SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
+   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+   SPI_InitStructure.SPI_CRCPolynomial = 7;
+   SPI_Init(SPI1, &SPI_InitStructure);
+
+   /* Enable SPI1  */
+   SPI_Cmd(SPI1, ENABLE);
+}
+
+//SPI1读写一字节数据
+INT8U SPI1_ReadWrite(INT8U writedat)
+{
+#if 0
+   /* Loop while DR register in not emplty */
+   while (SPI_GetFlagStatus(SPI1, SPI_FLAG_TXE) == RESET);
+
+   /* Send byte through the SPI1 peripheral */
+   SPI_SendData(SPI1, writedat);
+
+   /* Wait to receive a byte */
+   while (SPI_GetFlagStatus(SPI1, SPI_FLAG_RXNE) == RESET);
+
+   /* Return the byte read from the SPI bus */
+   return SPI_ReceiveData(SPI1);
+#endif
+   /* Loop while DR register in not emplty */
+  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
+
+  /* Send byte through the SPI1 peripheral */
+  SPI_I2S_SendData(SPI1, writedat);
+
+  /* Wait to receive a byte */
+  while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
+
+  /* Return the byte read from the SPI bus */
+  return SPI_I2S_ReceiveData(SPI1);
+}
+
 void NVIC_Configuration(void)
 {
     //----------中断优先级设置--------
@@ -45,7 +208,7 @@ void TIM2_Configuration(void)
 {
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	/* TIM2 clock enable */
-	//RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 	
 	
 	/* ---------------------------------------------------------------
@@ -80,7 +243,7 @@ void TIM4_Configuration(void)
 {
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	/* TIM4 clock enable */
-	//RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	
 	
 	/* ---------------------------------------------------------------
@@ -115,8 +278,23 @@ void TIM3_Configuration(void)
 {
  	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	TIM_OCInitTypeDef  TIM_OCInitStructure = {0};
+	GPIO_InitTypeDef GPIO_InitStructure = {0};
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB  | RCC_APB2Periph_AFIO, ENABLE);  //使能GPIO外设和AFIO复用功能模块时钟使能
+
+	//PB0的输出口
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; 
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	
+	//PB0作为OE-PWM输出
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //TIM_CH3
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;  //复用推挽输出
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+
 	/* TIM3 clock enable */
-	//RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 	
 	//不分频。PWM频率=72000000/900=80Khz
 	/* ---------------------------------------------------------------
