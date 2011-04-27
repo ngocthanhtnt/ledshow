@@ -70,7 +70,7 @@ typedef struct
   INT8U Rows; //扫描1，2，4，8，16扫
   INT8U Rows_Fold; //每驱行折数
   INT8U Cols_Fold; //每驱列折数
-  INT8U Line_Order; //行序号
+  INT8S Line_Order; //行序号,0,+1,-1
   
   INT8U Line_Hide; //行消隐时间
   INT8U Clk_Freq; //移位时钟频率

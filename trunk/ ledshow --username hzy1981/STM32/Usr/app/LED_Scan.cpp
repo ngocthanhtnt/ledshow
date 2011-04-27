@@ -186,8 +186,9 @@ void LED_Scan_One_Row()
       for(j = 0; j < 8 ; j++)
       {
 	    m = 7 - j;
-        Set_Shift_Bit_Clk(0); //移位数据时钟为0
-        
+        //Set_Shift_Bit_Clk(0); //移位数据时钟为0
+        SET_CLK(0);
+
         for(k = 0; k < Blocks; k++)
         {/*
           Set_Shift_Bit(k, 0, GET_BIT(Screen_Status.Scan_Data[k][0], 7-j));//红色 Rk
@@ -197,14 +198,16 @@ void LED_Scan_One_Row()
 		 SET_SHIFT_BIT(k, Screen_Status.Scan_Data[k], m); 
 		}
         
-        Set_Shift_Bit_Clk(1); //移位时钟置1
+        //Set_Shift_Bit_Clk(1); //移位时钟置1
+		SET_CLK(1);
       } 
     }
     else //如果从右往左输出应该先输出低位
     {
       for(j = 0; j < 8 ; j++)
       {
-        Set_Shift_Bit_Clk(0); //移位数据时钟为0
+        //Set_Shift_Bit_Clk(0); //移位数据时钟为0
+		SET_CLK(0);
         
         for(k = 0; k < Blocks; k++)
         {/*
@@ -215,27 +218,28 @@ void LED_Scan_One_Row()
 		  SET_SHIFT_BIT(k, Screen_Status.Scan_Data[k], j);
 		}
         
-        Set_Shift_Bit_Clk(1); //移位时钟置1
+        //Set_Shift_Bit_Clk(1); //移位时钟置1
+		SET_CLK(1);
       }      
     }
     
     //行消隐时间
-    Set_Block_OE(0); //关闭使能
-    delay_us(Screen_Para.Scan_Para.Line_Hide); //行消隐时间
+    Set_Block_OE_En(0); //关闭使能
+    Delay_us(Screen_Para.Scan_Para.Line_Hide); //行消隐时间
     
-    Set_Block_Latch(0); //锁存信号输出
-    Set_Block_Latch(1); //锁存信号输出
+    SET_LAT(0); //锁存信号输出
+    SET_LAT(1); //锁存信号输出
     
     Set_Block_Row(Screen_Status.Scan_Row);
     Screen_Status.Scan_Row++;
     if(Screen_Status.Scan_Row >= Screen_Para.Scan_Para.Rows)
       Screen_Status.Scan_Row = 0;
   
-    Set_Block_OE(1); //重新打开使能
+    Set_Block_OE_En(1); //重新打开使能
     
     //行扫描的频率等于屏扫描频率*扫描行数
-    Row_Freq = (INT32U)Screen_Para.Scan_Para.Screen_Freq*Screen_Para.Scan_Para.Rows; //行扫描的频率
-    Reset_Scan_Timer(Row_Freq);
+    //Row_Freq = (INT32U)Screen_Para.Scan_Para.Screen_Freq*Screen_Para.Scan_Para.Rows; //行扫描的频率
+    //Reset_Scan_Timer(Row_Freq);
   }
   
 

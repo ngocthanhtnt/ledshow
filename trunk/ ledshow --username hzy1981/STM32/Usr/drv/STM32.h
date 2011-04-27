@@ -22,6 +22,12 @@
 
 #define SPI_FLASH_CS_HIGH() SET_FLASH_CS(1)
 #define SPI_FLASH_CS_LOW() SET_FLASH_CS(0)
+
+#define STOP_SCAN_TIMER()  TIM_Cmd(TIM2, DISABLE);  //使能TIMx外设  
+#define START_SCAN_TIMER() TIM_Cmd(TIM2, ENABLE);  //使能TIMx外设
+
+#define STOP_SHOW_TIMER()  TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设  
+#define START_SHOW_TIMER() TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
  
 #define SET_SHIFT_BIT(Block, Data, i) do{\
      if(Block EQ 0)\
@@ -94,9 +100,9 @@ EXT INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Star
 EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
 #endif
 
-EXT void delay_init(INT8U SYSCLK);
-EXT void delay_ms(INT16U nms);
-EXT void delay_us(INT32U nus);
+EXT void Delay_Init(void);
+EXT void Delay_ms(INT16U nms);
+EXT void Delay_us(INT32U nus);
 EXT void SPI1_Init(void);
 EXT INT8U SPI1_ReadWrite(INT8U writedat);
 EXT void NVIC_Configuration(void);
@@ -105,4 +111,6 @@ EXT void TIM4_Configuration(void);
 EXT void TIM3_Configuration(void);
 EXT void SPI1_FLASH_Init(void);
 EXT void SPI1_CH376_Init(void);
+EXT void Set_Block_OE_En(INT8U Value);
+EXT void Set_Block_Row(INT8U Row);
 #endif

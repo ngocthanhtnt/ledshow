@@ -2,16 +2,16 @@
 #include "Includes.h"
 
 
-static INT8U  fac_us=0;//us延时倍乘数
-static INT16U fac_ms=0;//ms延时倍乘数
+//static INT8U  fac_us=0;//us延时倍乘数
+//static INT16U fac_ms=0;//ms延时倍乘数
 //初始化延迟函数
 //SYSTICK的时钟固定为HCLK时钟的1/8
 //SYSCLK:系统时钟
-void delay_init(INT8U SYSCLK)
+void Delay_Init(void)
 {
 	SysTick->CTRL&=0xfffffffb;//bit2清空,选择外部时钟  HCLK/8
-	fac_us=SYSCLK/8;		    
-	fac_ms=(u16)fac_us*1000;
+	//fac_us=SYSCLK/8;		    
+	//fac_ms=(u16)fac_us*1000;
 }	
 //延时nms
 //注意nms的范围
@@ -19,10 +19,11 @@ void delay_init(INT8U SYSCLK)
 //nms<=0xffffff*8*1000/SYSCLK
 //SYSCLK单位为Hz,nms单位为ms
 //对72M条件下,nms<=1864 
-void delay_ms(INT16U nms)
+void Delay_ms(INT16U nms)
 {	 		  	  
 	INT32U temp;		   
-	SysTick->LOAD=(u32)nms*fac_ms;//时间加载(SysTick->LOAD为24bit)
+	//SysTick->LOAD=(u32)nms*fac_ms;//时间加载(SysTick->LOAD为24bit)
+	SysTick->LOAD=(u32)nms*(SystemCoreClock / 8000000) * 1000;
 	SysTick->VAL =0x00;           //清空计数器
 	SysTick->CTRL=0x01 ;          //开始倒数  
 	do
@@ -35,10 +36,11 @@ void delay_ms(INT16U nms)
 }   
 //延时nus
 //nus为要延时的us数.		    								   
-void delay_us(INT32U nus)
+void Delay_us(INT32U nus)
 {		
 	INT32U temp;	    	 
-	SysTick->LOAD=nus*fac_us; //时间加载	  		 
+	//SysTick->LOAD=nus*fac_us; //时间加载	  		 
+	SysTick->LOAD=nus*(SystemCoreClock / 8000000);;
 	SysTick->VAL=0x00;        //清空计数器
 	SysTick->CTRL=0x01 ;      //开始倒数 	 
 	do
@@ -327,6 +329,26 @@ void TIM3_Configuration(void)
 	TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
 
 	TIM_SetCompare3(TIM3,150);	//通过改变TIM3->CCR2的值来改变占空比，从而控制LED0的亮度 
+}
+
+//设置块使能信号
+void Set_Block_OE_En(INT8U Value)
+{
+  if(Value > 0)
+    TIM_Cmd(TIM3, ENABLE);
+  else
+   	TIM_Cmd(TIM3, DISABLE);
+}
+
+//设置块行号
+void Set_Block_Row(INT8U Row)
+{
+  Row = (INT8U)(((INT8S)Row + Screen_Para.Scan_Para.Line_Order) % Screen_Para.Scan_Para.Rows);
+    
+  SET_A((Row & 0x01));
+  SET_B((Row & 0x02) >> 1);
+  SET_C((Row & 0x04) >> 2);
+  SET_D((Row & 0x08) >> 3);
 }
 
 //共有的驱动函数等在此文件中定义
