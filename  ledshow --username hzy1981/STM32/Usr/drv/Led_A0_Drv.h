@@ -32,6 +32,9 @@
 
 //CH376Ñ¡Í¨½Å-PA12
 #define SET_CH376_CS(x)	(x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_12):GPIO_SetBits(GPIOA,GPIO_Pin_12)
+
+//CH376 INTÒý½Å
+#define CHK_CH376_INT() GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_11)
 /*
 //ENC28J60_CS½Å
 #define SET_ENC28J60_CS(x) (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_15):GPIO_SetBits(GPIOB,GPIO_Pin_15)
@@ -40,13 +43,13 @@
 #define CHK_ENC28J60_INT() (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_15):GPIO_SetBits(GPIOB,GPIO_Pin_15)
 */
 //A-PB6
-#define SET_A(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_6):GPIO_SetBits(GPIOA,GPIO_Pin_6)
+#define SET_A(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_6):GPIO_SetBits(GPIOB,GPIO_Pin_6) //do{if(x==0) GPIO_ResetBits(GPIOB,GPIO_Pin_6); else GPIO_SetBits(GPIOB,GPIO_Pin_6);}while(0)//
 //B-PB7
-#define SET_B(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_7):GPIO_SetBits(GPIOA,GPIO_Pin_7)
+#define SET_B(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_7):GPIO_SetBits(GPIOB,GPIO_Pin_7)
 //C-PB8
-#define SET_C(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_8):GPIO_SetBits(GPIOA,GPIO_Pin_8)
+#define SET_C(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_8):GPIO_SetBits(GPIOB,GPIO_Pin_8)
 //D-PB9
-#define SET_D(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_9):GPIO_SetBits(GPIOA,GPIO_Pin_9)
+#define SET_D(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_9):GPIO_SetBits(GPIOB,GPIO_Pin_9)
 //LAT-STB-PA0
 #define SET_LAT(x) (x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_0):GPIO_SetBits(GPIOA,GPIO_Pin_0)
 //OE-PB0
@@ -120,11 +123,10 @@ EXT INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Star
 EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
 
 //EXT void Set_Shift_Bit(INT16U Block, INT8U RGB, INT8U Bit);
-EXT void Set_Shift_Bit_Clk(INT8U Value);
-EXT void Set_Block_OE(INT8U Value);
+//EXT void Set_Shift_Bit_Clk(INT8U Value);
+//EXT void Set_Block_OE(INT8U Value);
 //EXT void delay_us(INT32U Value);
-EXT void Set_Block_Latch(INT8U Value);
-EXT void Set_Block_Row(INT16U Row);
-EXT void Reset_Scan_Timer(INT32U Freq);
+//EXT void Set_Block_Latch(INT8U Value);
+//EXT void Reset_Scan_Timer(INT32U Freq);
 EXT void Hardware_Init(void);
 #endif

@@ -126,7 +126,7 @@ void Set_Shift_Bit(INT16U Block, INT8U RGB, INT8U Bit)
 {
   
 }
-*/
+
 
 //设置移位时钟
 void Set_Shift_Bit_Clk(INT8U Value)
@@ -134,11 +134,8 @@ void Set_Shift_Bit_Clk(INT8U Value)
   
 }
 
-//设置块使能信号
-void Set_Block_OE(INT8U Value)
-{
-  
-}
+
+
 
 
 //设置块锁存信号
@@ -146,18 +143,10 @@ void Set_Block_Latch(INT8U Value)
 {
   
 }
+*/
 
-//设置块行号
-void Set_Block_Row(INT16U Row)
-{
-  
-}
 
-//重置扫描定时器,Freq表示扫描频率
-void Reset_Scan_Timer(INT32U Freq)
-{
-  
-}
+
 
 void Set_OE_Duty(INT8U Duty)
 {
@@ -178,7 +167,7 @@ void Hardware_Init(void)
   NVIC_Configuration();
 
   GPIO_Configuration();
-  
+    
   TIM2_Configuration();
   TIM3_Configuration();
   TIM4_Configuration();
@@ -187,7 +176,16 @@ void Hardware_Init(void)
 
   //SET_A(0);
 
-  delay_init((INT8U)(SystemCoreClock / 1000000));
+  Delay_Init();
+
+  SET_A(0);
+  //GPIO_ResetBits(GPIOB,GPIO_Pin_6);
+  SET_A(1);
+  //GPIO_SetBits(GPIOB,GPIO_Pin_6);
+  Delay_us(50);
+  SET_A(0);
+  Delay_ms(50);
+  SET_A(1);
   //SPI1_ReadWrite(0x00);
 }
 #endif

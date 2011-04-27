@@ -191,7 +191,7 @@ typedef struct
   INT8U CS[CS_BYTES];
 
   //扫描数据
-  INT16U Scan_Row;
+  INT8U Scan_Row;
   INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3];
 
   //接收帧数据
