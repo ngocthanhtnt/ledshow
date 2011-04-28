@@ -174,18 +174,5 @@ void Hardware_Init(void)
 
   SPI1_FLASH_Init();
 
-  //SET_A(0);
-
-  Delay_Init();
-
-  SET_A(0);
-  //GPIO_ResetBits(GPIOB,GPIO_Pin_6);
-  SET_A(1);
-  //GPIO_SetBits(GPIOB,GPIO_Pin_6);
-  Delay_us(50);
-  SET_A(0);
-  Delay_ms(50);
-  SET_A(1);
-  //SPI1_ReadWrite(0x00);
 }
 #endif

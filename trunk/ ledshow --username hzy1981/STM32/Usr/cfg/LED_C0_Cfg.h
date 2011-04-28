@@ -20,3 +20,6 @@
 #define TIMER_SHOW_EN  1 //定时显示使能
 #define HUMIDITY_SHOW_EN 1 //湿度显示使能
 #define NOISE_SHOW_EN  1 //噪音显示使能
+
+#define UDIS_EN  1//u盘使能
+#define NET_EN	 1//网络使能

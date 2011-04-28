@@ -35,4 +35,9 @@
 #include "Main_Show.h"
 #include "com.h"
 #include "Shell.h"
+#include "UDisk_Proc.h"
+#include "Net_Proc.h"
+#include "FILE_SYS.h"
+
+
 
