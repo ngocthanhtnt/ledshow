@@ -17,6 +17,8 @@
 
 #define MAX_STEP_NUM 100
 
+#define RT_PLAY_FLAG 0x35
+
 #define SLINE_MODE 0x00
 #define MLINE_MODE 0x01
 
@@ -105,6 +107,7 @@ typedef struct
 
   INT8U File_No;    //当前文件号
 
+  //INT8U RT_Play_Flag; //实时播放标志
   INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态--主要用于与中断显示同步
 
   INT8U Last_File_No; //上次读取的文件参数
@@ -149,6 +152,7 @@ typedef struct
     INT32U Time; //已经播放时长
     INT16U Counts; //已经播放次数
 
+	INT8U RT_Play_Flag;
     INT8U Play_Flag:4; //是否播放标志--主要用于与中断显示同步
     INT8U New_Prog_Flag:4;
     INT8U CS[CS_BYTES];
@@ -177,7 +181,9 @@ typedef struct
 {
   INT8U Head;
 
+  //INT8U RT_Play_Flag;
   //INT8U Com_Time; //通信倒计时
+  INT8U JP_Status;	 //跳线状态
 
   INT8U Replay_Flag;
   INT8U Lightness;
@@ -216,7 +222,7 @@ EXT S_Show_Data Show_Data_Prep;
 //#define Pub_Buf Show_Data.Color_Data
 
 //获取当前颜色方案
-EXT INT8U Get_Color(); //获取当前的颜色方案
+EXT INT8U Get_Color(void); //获取当前的颜色方案
 EXT INT8U Get_Bit(INT8U *p,INT16U X_Size,INT16U X,INT16U Y);
 EXT INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index);
 EXT INT8U Get_Rect_Buf_Bit(INT8U Buf[], INT16U Buf_Size, INT16U Width, INT16U X, INT16U Y);

@@ -22,6 +22,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
+#include "includes.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -156,6 +157,7 @@ void SysTick_Handler(void)
   * @param  None
   * @retval None
   */
+extern void LED_Scan_One_Row(void);
 void TIM2_IRQHandler(void)   //TIM2中断
 {
     TIM_Cmd(TIM2, DISABLE);
@@ -163,7 +165,7 @@ void TIM2_IRQHandler(void)   //TIM2中断
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
 	{
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
-
+	LED_Scan_One_Row();
 	}
 
 	TIM_Cmd(TIM2, ENABLE);
@@ -192,14 +194,17 @@ void TIM3_IRQHandler(void)   //TIM3中断
   * @param  None
   * @retval None
   */
+extern void Show_Timer_Proc(void);
+
 void TIM4_IRQHandler(void)   //TIM4中断
 {
   TIM_Cmd(TIM4, DISABLE);
 
     if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
 	{
-	TIM_ClearITPendingBit(TIM4, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
+	 TIM_ClearITPendingBit(TIM4, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
 
+	 Show_Timer_Proc();
 	}
 
   TIM_Cmd(TIM4, ENABLE);

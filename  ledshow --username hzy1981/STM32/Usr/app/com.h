@@ -80,5 +80,5 @@ EXT INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len);
 EXT INT8U Screen_Para_Frame_Proc(INT16U Ctrl_Code, INT8U Data[], INT16U Len);
 EXT INT8U Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen);
 EXT INT16U Make_Frame(INT8U *pData, INT16U Len, INT8U Addr[], INT8U Cmd, INT8U Cmd0, INT8U Seq, INT16U Seq0, char *pDst);
-EXT void Screen_Com_Proc();
+EXT void Screen_Com_Proc(void);
 #endif

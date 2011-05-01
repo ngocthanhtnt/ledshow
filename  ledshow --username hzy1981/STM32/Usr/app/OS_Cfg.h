@@ -33,7 +33,7 @@
 #define OS_ASSERT_EN      1 //1表示断言功能开启，0表示关闭
 #define OS_ASSERT_HOOK_EN 0 //1表示断言钩子使能，0表示禁止
 
-#define OS_MUTEX_EN      1  //使用互斥信号量
+#define OS_MUTEX_EN      0  //使用互斥信号量
 #define OS_MUTEX_LOCK_CHK_EN      0 //1表示支持事件锁死检查，0表示不支持,只有互斥型信号量才有此功能
 #define OS_MUTEX_WAIT_WARN_TIME   0 //申请信号量超时时间，超过该时间仍然申请不到，则进行锁死检查,单位为s
 
