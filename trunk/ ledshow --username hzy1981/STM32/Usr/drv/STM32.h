@@ -20,6 +20,15 @@
 #define ASSERT_FAILED()
 #endif
 
+#define NORMAL_STATUS    0x00//正常运行状态
+#define SELF_TEST_STATUS 0x01//自检状态
+#define FAC_STATUS       0x02//工厂状态
+
+#define MAX_ROWS_FOLD 4	 //测试时最大行折
+#define MAX_COLS_FOLD 4	 //测试时最大列折
+
+#define debug OS_Debug_Print
+
 #define SPI_FLASH_CS_HIGH() SET_FLASH_CS(1)
 #define SPI_FLASH_CS_LOW() SET_FLASH_CS(0)
 
@@ -28,6 +37,9 @@
 
 #define STOP_SHOW_TIMER()  TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设  
 #define START_SHOW_TIMER() TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
+
+#define CHK_JP_STATUS0  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)
+#define CHK_JP_STATUS1  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_14)
  
 #define SET_SHIFT_BIT(Block, Data, i) do{\
      if(Block EQ 0)\
@@ -113,4 +125,6 @@ EXT void SPI1_FLASH_Init(void);
 EXT void SPI1_CH376_Init(void);
 EXT void Set_Block_OE_En(INT8U Value);
 EXT void Set_Block_Row(INT8U Row);
+EXT INT8U Chk_JP_Status(void);
+EXT void Self_Test(void);
 #endif

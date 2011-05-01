@@ -777,9 +777,9 @@ EXT S_Cur_Block_Index Cur_Block_Index;
 
 EXT S_Time Cur_Time; //当前时间 
 
-EXT INT8U Get_Screen_Color_Num();
-EXT INT16U Read_Screen_Para();
-EXT INT8U Write_Screen_Para();
+EXT INT8U Get_Screen_Color_Num(void);
+EXT INT16U Read_Screen_Para(void);
+EXT INT8U Write_Screen_Para(void);
 EXT INT8U Get_Show_Para_Len(INT8U Type);
 EXT STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No);
 EXT INT8U Save_Screen_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen);
@@ -788,7 +788,7 @@ EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen);
 EXT INT8U Chk_File_Para_HT_Sum(U_File_Para *pPara);
 EXT void Set_File_Para_HT_Sum(U_File_Para *pPara);
-EXT INT8U Write_Prog_Block_Index();
+EXT INT8U Write_Prog_Block_Index(void);
 EXT INT16U Read_Prog_Para(INT8U Prog_No, S_Prog_Para *pProg_Para);
 EXT INT16U Read_Prog_Block_Index(INT8U Prog_No);
 EXT INT16U _Read_Prog_Block_Index(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen);

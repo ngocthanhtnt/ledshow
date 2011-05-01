@@ -1,6 +1,8 @@
 #ifndef STORAGE_H
 #define STORAGE_H
 
+#define TEST_DATA_LEN 4 //测试数据长度
+
 #define STORA_DI INT16U
 
 #define NULL_1BYTE  0xFF
@@ -18,6 +20,8 @@
 #define SDI_CUR_BLOCK_INDEX_BK0 0x0011
 #define SDI_CUR_BLOCK_INDEX_BK1 0x0012
 
+#define SDI_TEST_DATA   0x0020 //测试数据
+
 #define SDI_PROG_PARA       0x100 //编程参数--后续有MAX_PROG_NUM个
 #define SDI_PROG_PARA_BK0   0x200 //备份0
 #define SDI_PROG_PARA_BK1   0x300 //备份1
@@ -30,6 +34,7 @@
 #define SDI_FILE_PARA_BK0 0x6000 //文件参数备份
 
 #define SDI_SHOW_DATA     0x7000 //显示数据
+
 
 
 

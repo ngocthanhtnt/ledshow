@@ -49,6 +49,16 @@ typedef struct
   INT8U Tail;
 }S_Prep_Data;
 
+typedef struct
+{
+  INT8U Head;
+  INT8U Area_Num;
+  INT16U X;
+  INT16U Y;
+  INT16U X_Len;
+  INT16U Y_Len;
+  INT8U Tail;
+}S_RT_Show_Para;
 /*
   if((Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x8000) > 0)
     return (INT32U)(Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x7FFF);
@@ -64,21 +74,25 @@ EXT INT8U Preview_Prog_No;
 EXT S_Prep_Data Prep_Data;
 #endif
 
+EXT S_RT_Show_Para RT_Show_Para;
+
 EXT INT32U Get_Area_In_Step_Delay(INT8U Area_No);
 EXT INT32U Get_Area_Out_Step_Delay(INT8U Area_No);
 EXT INT32U Get_File_Stay_Time(INT8U Area_No);
 EXT INT32U Get_File_Out_Time(INT8U Area_No);
 EXT void Set_File_Stay_Time(INT8U Area_No, INT16U ms);
-EXT void Update_Show_Data();
-EXT INT8U Check_Prog_Play_Time();
+EXT void Update_Show_Data(void);
+EXT INT8U Check_Prog_Play_Time(void);
 EXT INT8U Update_XXX_Data(S_Show_Data *pDst, INT8U Area_No);
 EXT INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No);
-EXT INT8U Check_Update_Show_Data_Bak();
-EXT INT8U Check_Prog_End();
-EXT void Check_Show_Data_Para();
-EXT void Check_Prog_Play_Counts();
-EXT void Show_Timer_Proc();
-EXT void Show_Main_Proc();
-EXT void Show_Init();
-EXT void Prog_Status_Init();
+EXT INT8U Check_Update_Show_Data_Bak(void);
+EXT INT8U Check_Prog_End(void);
+EXT void Check_Show_Data_Para(void);
+EXT void Check_Prog_Play_Counts(void);
+EXT void Show_Timer_Proc(void);
+EXT void Show_Main_Proc(void);
+EXT void Show_Init(void);
+EXT void Prog_Status_Init(void);
+EXT void Set_RT_Show_Area(INT16U Width, INT16U Height);
+EXT void Restore_Show_Area(void);
 #endif

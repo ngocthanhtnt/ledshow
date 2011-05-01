@@ -107,8 +107,6 @@
 
 
 
-#define debug OS_Debug_Print
-
 EXT void Put_Char(char c);
 EXT INT8U Get_Cur_Time(void);//S_Time *pTime);
 EXT INT8U Set_Cur_Time(INT8U Time[]);//S_Time *pTime);

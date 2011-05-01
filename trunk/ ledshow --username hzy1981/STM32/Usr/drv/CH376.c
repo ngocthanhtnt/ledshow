@@ -115,10 +115,12 @@ u8 mWaitInterrupt( void )
 *****************************************************/
 void	xWriteCH376Cmd( u8 mCmd )  /* 向CH376写命令 */
 {
-	GPIO_SetBits(GPIOA,GPIO_Pin_1);  /* 防止之前未通过xEndCH376Cmd禁止SPI片选 */
+    SET_CH376_CS(1);
+	//GPIO_SetBits(GPIOA,GPIO_Pin_1);  /* 防止之前未通过xEndCH376Cmd禁止SPI片选 */
 	mDelay0_5uS( );
 /* 对于双向I/O引脚模拟SPI接口,那么必须确保已经设置SPI_SCS,SPI_SCK,SPI_SDI为输出方向,SPI_SDO为输入方向 */
-	GPIO_ResetBits(GPIOA,GPIO_Pin_1);  /* SPI片选有效 */
+	//GPIO_ResetBits(GPIOA,GPIO_Pin_1);  /* SPI片选有效 */
+	SET_CH376_CS(0);
 	CH376_ReadWrite( mCmd );  /* 发出命令码 */
 
 //	DelayXms(1);;  /* 延时1.5uS确保读写周期大于1.5uS,或者用上面一行的状态查询代替 */
@@ -182,7 +184,8 @@ u8	xReadCH376Data( void )  /* 从CH376读数据 */
 *****************************************************/
 u8	Query376Interrupt( void )
 {
- return( GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_6)? FALSE : TRUE );  			/* 如果未连接CH376的中断引脚则查询兼做中断输出的SDO引脚状态 */
+  return (CHK_CH376_INT()?FALSE:TRUE);
+ //return( GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_6)? FALSE : TRUE );  			/* 如果未连接CH376的中断引脚则查询兼做中断输出的SDO引脚状态 */
 }
 
 /*****************************************************
@@ -202,7 +205,7 @@ u8	Query376Interrupt( void )
 *****************************************************/
 void mDelayuS(u8 us)
 {
-  delay_us(us);
+  Delay_us(us);
  //while(us--);
 }
 
@@ -228,7 +231,7 @@ void mDelaymS(u8 ms)
  for(;ms>0;ms--)
      for(i=0;i<940;i++);
   */
-  delay_ms(ms);
+  Delay_ms(ms);
 }
 
 /*****************************************************
@@ -252,7 +255,7 @@ void	mDelay0_5uS( void )  /* 至少延时0.5uS,根据单片机主频调整 */
  i=20;
  while(i--);
  */
- delay_us(100);
+ Delay_us(100);
 }
 /*
 void main(void)
