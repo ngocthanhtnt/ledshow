@@ -62,13 +62,23 @@ void Update_Show_Data(void)
 {
   INT8U i;
 
-  if(Screen_Status.Open_Flag EQ 0) //当前在关机状态
+  if(Screen_Status.Open_Flag EQ 0)
     return;
-  
+
+  if(Prog_Status.Play_Status.RT_Play_Flag EQ RT_PLAY_FLAG) //当前在关机状态或者实时显示状态
+	{/*
+	  if(Prog_Status.Play_Status.RT_Play_Flag EQ RT_PLAY_FLAG)
+	  {
+	    Prog_Status.Play_Status.RT_Play_Time -= MOVE_STEP_PERIOD;
+		if(Prog_Status.Play_Status.RT_Play_Time EQ 0)
+		  RT_Play_Status_Exit();  
+	  }    
+	  */
+	  return;
+	}
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
-      if(Screen_Status.Rcv_Flag EQ FRAME_FLAG ||\
-	     Prog_Status.Play_Status.RT_Play_Flag EQ RT_PLAY_FLAG) //收到一帧，先处理此帧
+      if(Screen_Status.Rcv_Flag EQ FRAME_FLAG) //收到一帧，先处理此帧
           return;
 //#if PIC_SHOW_EN    
     //if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_PIC)
@@ -554,13 +564,6 @@ INT8U Check_Prog_Play_Time(void)
   return 1;
 }
 
-void Pub_Timer_Proc(void)
-{
-    Pub_Timer.Ms += MOVE_STEP_PERIOD;
-    if(Pub_Timer.Ms >= 1000)
-        Pub_Timer.Sec ++;
-}
-
 /*
 INT8U Check_Prog_Play_Time()
 {
@@ -570,7 +573,7 @@ INT8U Check_Prog_Play_Time()
 //每隔MOVE_STEP_TIMER ms 调用该函数，实现移动效果
 void Show_Timer_Proc(void)
 {
-  Pub_Timer_Proc(); //定时器
+  //Pub_Timer_Proc(); //定时器
   Update_Show_Data(); //更新显示数据
 
 }
@@ -602,18 +605,28 @@ void Check_Update_Program_Para(void)
   INT8U Re;
   INT8U i,Prog_No;//,Count = 0;
   INT16U Len;
-  //static S_Int8U Sec = {CHK_BYTE, 0xFF, {0}, CHK_BYTE};
+  static S_Int8U Sec = {CHK_BYTE, 0xFF, {0}, CHK_BYTE};
   static S_Int8U Min = {CHK_BYTE, 0xFF, {0}, CHK_BYTE};
-  
-  //if(Sec.Var EQ Cur_Time.Time[T_SEC])
-    //return;
   
   //Sec.Var = Cur_Time.Time[T_SEC];
   
   Re = CHK_HT(Prog_Status);
   if(Re EQ 0)
     ASSERT_FAILED();
-  
+ 
+  if(Sec.Var != Pub_Timer.Sec) //每秒对实时显示区计时
+  {
+    TRACE();
+
+    Sec.Var = Pub_Timer.Sec;
+	if(Prog_Status.Play_Status.RT_Play_Time > 0) //当前是否处于实时播放状态，是计时，并到时后退出
+	{
+	  Prog_Status.Play_Status.RT_Play_Time--;
+	  if(Prog_Status.Play_Status.RT_Play_Time EQ 0)
+	    RT_Play_Status_Exit();
+	}
+  }
+    //return; 
   if(Prog_Status.Play_Status.New_Prog_Flag EQ 0)//--当前在节目播放状态
   {
     TRACE();
@@ -929,11 +942,12 @@ void Check_Show_Data_Para(void)
 }
 
 //进入实时显示状态
-void RT_Play_Status_Enter(void)
+void RT_Play_Status_Enter(INT16U Sec)
 {
   //if(Area_No EQ 0)
   {
     Prog_Status.Play_Status.RT_Play_Flag = RT_PLAY_FLAG;
+	Prog_Status.Play_Status.RT_Play_Time = Sec*1000; //ms为单位
     SET_SUM(Prog_Status.Play_Status);
   }/*
   else if(Area_No <= MAX_AREA_NUM)
@@ -950,6 +964,7 @@ void RT_Play_Status_Enter(void)
 void RT_Play_Status_Exit(void)
 {
     Prog_Status.Play_Status.RT_Play_Flag = 0;
+	Prog_Status.Play_Status.RT_Play_Time = 0;
     SET_SUM(Prog_Status.Play_Status);
 }
 
@@ -1035,11 +1050,16 @@ void Show_Main_Proc(void)
 //建立一个实时显示区域,并保存原来的显示参数
 void Set_RT_Show_Area(INT16U Width, INT16U Height)
 {
+//---备份当前参数
   RT_Show_Para.Area_Num = Prog_Para.Area_Num;
   RT_Show_Para.X = Prog_Para.Area[0].X;
   RT_Show_Para.Y = Prog_Para.Area[0].Y;
   RT_Show_Para.X_Len = Prog_Para.Area[0].X_Len;
-  RT_Show_Para.Y_Len = Prog_Para.Area[0].Y_Len;
+  RT_Show_Para.Y_Len = Prog_Para.Area[0].Y_Len;	 
+  RT_Show_Para.Open_Flag = Screen_Status.Open_Flag;
+  RT_Show_Para.Screen_Width = Screen_Para.Base_Para.Width;
+  RT_Show_Para.Screen_Height = Screen_Para.Base_Para.Height;
+  RT_Show_Para.Screen_Color = Screen_Para.Base_Para.Color;
   SET_HT(RT_Show_Para);
 
   Prog_Para.Area_Num = 1; //分区数1
@@ -1047,7 +1067,14 @@ void Set_RT_Show_Area(INT16U Width, INT16U Height)
   Prog_Para.Area[0].Y = 0;
   Prog_Para.Area[0].X_Len = Width;//Screen_Para.Base_Para.Width;
   Prog_Para.Area[0].Y_Len = Height;//Screen_Para.Base_Para.Height;
+  SET_SUM(Prog_Para);
 
+  Screen_Para.Base_Para.Width = Width;
+  Screen_Para.Base_Para.Height = Height;
+  Screen_Para.Base_Para.Color = 0x01;
+  SET_SUM(Screen_Para);
+ 
+  Screen_Status.Open_Flag = 1;
 }
 
 //恢复显示参数
@@ -1058,11 +1085,40 @@ void Restore_Show_Area(void)
   Prog_Para.Area[0].Y = RT_Show_Para.Y;
   Prog_Para.Area[0].X_Len = RT_Show_Para.X_Len;//Screen_Para.Base_Para.Width;
   Prog_Para.Area[0].Y_Len = RT_Show_Para.Y_Len;//Screen_Para.Base_Para.Height;
+  SET_SUM(Prog_Para);
+
+  Screen_Para.Base_Para.Width = RT_Show_Para.Screen_Width;
+  Screen_Para.Base_Para.Height = RT_Show_Para.Screen_Height;
+  Screen_Para.Base_Para.Color = RT_Show_Para.Screen_Color;
+  SET_SUM(Screen_Para);
+  Screen_Status.Open_Flag = RT_Show_Para.Open_Flag;
 }
 
+
+
+
+ //根据format和ap参数表输出调试信息
+ // INT16U LED_Print(INT8U Font, INT8U Color, S_Show_Data *pData, INT8U Area_No, INT16U X, INT16U Y, const INT8S *format,...)
+
 //显示初始化
-void Show_Init(void)
+void Para_Init(void)
 {
   Ram_Init();
   Read_Screen_Para();
+}
+
+void Para_Show(void)
+{
+  INT16U Len;
+  INT8U IP[4];
+  INT32U Baud; //串口波特率
+
+ //显示板卡地址和串口波特率
+  Len = RT_LED_Print(FONT0, 0x01, 0, 0, 3, "%d-%d", Screen_Para.COM_Para.Addr, Screen_Para.COM_Para.Baud);
+
+#if UDISK_EN  
+  memcpy(IP, &Screen_Para.ETH_Para.IP, 4);	//显示IP地址和端口号
+  Len = RT_LED_Print(FONT0, 0x01, Len, 0, 3, "%d.%d.%d.%d:%d", IP[3], IP[2], IP[1], IP[0], Screen_Para.ETH_Para.Port);
+#endif
+
 }

@@ -57,6 +57,17 @@ INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len)
   
 }
 
+//根据屏幕参数获取当前波特率
+INT32U Get_Com_Baud(void)
+{
+  if(Screen_Para.COM_Para.Baud EQ 0) //0-9600
+    return 9600;
+  else
+    return 57600;
+
+}
+
+
 INT16U Make_Frame(INT8U *pData, INT16U Len, INT8U Addr[], INT8U Cmd, INT8U Cmd0, INT8U Seq, INT16U Seq0, char *pDst)
 {
   INT16U sum;
@@ -123,15 +134,20 @@ INT8U Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 }
 
 //对收到的一帧的处理
-INT8U Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen)
+//Ch表示通道
+INT8U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen)
 {
   INT16U Cmd_Code;
   S_Time TempTime;
   INT8U Re;
+  INT16U Len = 0;  //应答帧数据长
+  INT8U *pData;
+
 
   Set_Screen_Com_Time(5); //到计时5s，5秒后重新播放节目
 
   Re = 1;
+  pData = Screen_Status.Rcv_Data + FDATA; 
   Cmd_Code = Frame[FCMD];// + (INT16U)Frame[FCMD + 1] * 256;
 
   debug("Rcv Frame cmd = %d", Cmd_Code);
@@ -167,11 +183,27 @@ INT8U Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen)
     Re = 0;
   }
 
+  if(Re)
+	 Cmd_Code = Cmd_Code | 0x80;
+  else
+     Cmd_Code = Cmd_Code | 0xC0;
+// INT16U Make_Frame(INT8U *pData, INT16U Len, INT8U Addr[], INT8U Cmd, INT8U Cmd0, INT8U Seq, INT16U Seq0, char *pDst)
+
+  //Make_Frame(pData, Len, );
   return Re;
 }
 
+//发送一条帧数据
+void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen)
+{
+  INT16U i;
+
+    for(i = 0; i < FrameLen; i ++)
+      Com_Send_Byte(Ch, Frame[i]);
+}
+
 //收到一个字节,中断中调用该函数
-void Rcv_One_Byte(INT8U Byte)
+void Com_Rcv_Byte(INT8U Ch, INT8U Byte)
 {
   INT16U i;
 
@@ -199,6 +231,7 @@ void Rcv_One_Byte(INT8U Byte)
              if(i != 0) //将数据复制到开始
                  memcpy(Screen_Status.Rcv_Data, Screen_Status.Rcv_Data + i, Screen_Status.Rcv_Posi - i);
              Screen_Status.Rcv_Flag = FRAME_FLAG;
+			 Screen_Status.Rcv_Ch = Ch;
              return;
           }
       }
@@ -210,46 +243,57 @@ void Screen_Com_Proc(void)
     static S_Int32U Sec = {CHK_BYTE, 0xFFFFFFFF, CHK_BYTE};
     INT8U Re;
 
-   if(Screen_Status.Rcv_Flag EQ FRAME_FLAG)
-    {
-     Re = Rcv_Frame_Proc(Screen_Status.Rcv_Data, Screen_Status.Rcv_Posi);
-
-     Screen_Status.Rcv_Posi = 0;
-     Screen_Status.Rcv_Flag = 0;
-
-   }
-
-   //收到最后一帧后的倒计时
-   if(Screen_Status.Com_Time > 0)
+  // for(ID =0; ID < RCV_BUF_NUM; ID ++)
    {
-      if(Sec.Var != SEC_TIMER)
-       {
-        Sec.Var = SEC_TIMER;
+	   if(Screen_Status.Rcv_Flag EQ FRAME_FLAG)
+	    {
+	     Re = Rcv_Frame_Proc(Screen_Status.Rcv_Ch, Screen_Status.Rcv_Data, Screen_Status.Rcv_Posi);
+	
+	     Screen_Status.Rcv_Posi = 0;
+	     Screen_Status.Rcv_Flag = 0;
+	
+	   }
+	}
 
-        Screen_Status.Com_Time--;
-        //SET_SUM(Screen_Status);
+   if(Sec.Var EQ SEC_TIMER)
+     return;
 
-        if(Screen_Status.Com_Time EQ 0)
-        {
-          if(Screen_Status.Replay_Flag EQ REPLAY_FLAG) //有重新播放标志
-          {
-            //Clear_Show_Data()
-            memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
-            memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
-#if DATA_PREP_EN
-            memset(&Prep_Data, 0, sizeof(Prep_Data));
-            SET_HT(Prep_Data);
-#endif
-            Screen_Status.Replay_Flag = 0; //清除重新播放标志
-            SET_SUM(Screen_Status);
+   Sec.Var = SEC_TIMER;
 
-            //重新开始从第0节目播放
-            Prog_Status.Play_Status.Last_Prog_No = 0xFF;
-            Prog_Status.Play_Status.Prog_No = 0;
-            Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
-            SET_SUM(Prog_Status);
-          }
-        }
-      }
+   //for(ID =0; ID < RCV_BUF_NUM; ID ++)
+   {
+	   //收到最后一帧后的倒计时
+	   if(Screen_Status.Com_Time > 0)
+	   {
+	     // if(Sec.Var != SEC_TIMER)
+	       //{
+	       // Sec.Var = SEC_TIMER;
+	
+	        Screen_Status.Com_Time--;
+	        //SET_SUM(Screen_Status);
+	
+	        if(Screen_Status.Com_Time EQ 0)
+	        {
+	          if(Screen_Status.Replay_Flag EQ REPLAY_FLAG) //有重新播放标志
+	          {
+	            //Clear_Show_Data()
+	            memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
+	            memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
+	#if DATA_PREP_EN
+	            memset(&Prep_Data, 0, sizeof(Prep_Data));
+	            SET_HT(Prep_Data);
+	#endif
+	            Screen_Status.Replay_Flag = 0; //清除重新播放标志
+	            SET_SUM(Screen_Status);
+	
+	            //重新开始从第0节目播放
+	            Prog_Status.Play_Status.Last_Prog_No = 0xFF;
+	            Prog_Status.Play_Status.Prog_No = 0;
+	            Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+	            SET_SUM(Prog_Status);
+	          }
+	        }
+	      //}
+		 }
    }
 }

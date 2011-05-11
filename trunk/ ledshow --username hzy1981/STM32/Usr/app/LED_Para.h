@@ -165,7 +165,7 @@ typedef struct
 
     INT16U Addr; //地址
     //串口
-    INT8U Baud;  //波特率
+    INT8U Baud;  //波特率,0表示9600,1表示57600
 
     INT8U Bak; //备用
 }S_COM_Para;

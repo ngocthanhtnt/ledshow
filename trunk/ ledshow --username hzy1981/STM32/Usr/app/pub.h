@@ -114,6 +114,9 @@ EXT void TRACE(void);
 EXT void S_Time_2_tm(S_Time *pTime, struct tm *ptm);
 EXT void tm_2_S_Time(struct tm *ptm, S_Time *pTime);
 EXT float Sqrt(float number);
+EXT INT8U Hex2Bcd_Byte(INT8U Byte);
+EXT INT8U Bcd2Hex_Byte(INT8U Byte);
+EXT void Pub_Timer_Proc(void);
 //外部完成调试信息输出函数
 extern void Put_Char(INT8S Chr);
 #endif

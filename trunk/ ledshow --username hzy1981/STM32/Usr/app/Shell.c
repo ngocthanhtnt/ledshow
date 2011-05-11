@@ -5,10 +5,7 @@
 //#define MAX_CMD_LEN  50
 
 //#define SHELL_DATA_BUF_LEN 100  
-#define SHELL_CMD_BUF_LEN 50   
 
-//extern INT8S Shell_Data_Buf[SHELL_DATA_BUF_LEN]; //定义shell数据缓冲区
-INT8S Shell_Cmd_Buf[SHELL_CMD_BUF_LEN];   //定义shell命令缓冲区
 //读取物理存储器函数
 //extern INT8U Read_PHY_Mem_Drv(INT8U MemNo,INT32U Offset,INT8U *pDst,INT16U RD_Len, INT8U *pDst_Start, INT16U DstLen);
 
@@ -189,6 +186,14 @@ INT8U Shell_Print_Prog_Status(INT8U argc, INT8S **argv)
   return 1;
 }
 
+void Shell_Rcv_Byte(INT8U Byte)
+{
+  if(_Shell_Cmd_Buf.Posi >= SHELL_CMD_BUF_LEN)
+    _Shell_Cmd_Buf.Posi = 0;
+
+  _Shell_Cmd_Buf.Buf[_Shell_Cmd_Buf.Posi] = Byte;
+}
+
 void Shell_Proc(void)
 {
   INT8U Re;
@@ -196,6 +201,7 @@ void Shell_Proc(void)
   Re = OS_Cmd_Analys(Shell_Cmd, S_NUM(Shell_Cmd), (INT8S *)Shell_Cmd_Buf, SHELL_CMD_BUF_LEN);
   if(Re EQ 1)
   {
+    _Shell_Cmd_Buf.Posi = 0;
     mem_set((INT8S *)Shell_Cmd_Buf, 0, SHELL_CMD_BUF_LEN, (INT8S *)Shell_Cmd_Buf, SHELL_CMD_BUF_LEN);
   }
 }

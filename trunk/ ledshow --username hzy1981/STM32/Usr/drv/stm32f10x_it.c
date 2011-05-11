@@ -165,6 +165,7 @@ void TIM2_IRQHandler(void)   //TIM2中断
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
 	{
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
+	Pub_Timer_Proc();
 	LED_Scan_One_Row();
 	}
 
@@ -215,7 +216,7 @@ void TIM4_IRQHandler(void)   //TIM4中断
   * @param  None
   * @retval None
   */
-	 
+extern void Com_Rcv_Byte(u8 Ch, u8 Byte);	 
 //注意,读取USARTx->SR能避免莫名其妙的错误 
 void USART1_IRQHandler(void)	//串口1中断服务程序
 {
@@ -224,8 +225,33 @@ void USART1_IRQHandler(void)	//串口1中断服务程序
    if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 	{
 	Res =USART_ReceiveData(USART1);//(USART1->DR);	//读取接收到的数据
-  		 
+  	Com_Rcv_Byte(CH_COM, Res);	 
 	}
 }
 
+extern void Shell_Rcv_Byte(u8 Byte);
+void USART2_IRQHandler(void)	//串口2中断服务程序
+{
+   u8 Res;
+   //STM_EVAL_LEDToggle(LED2);
+   if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
+	{
+	Res =USART_ReceiveData(USART2);//(USART1->DR);	//读取接收到的数据
+  	Shell_Rcv_Byte(Res);	 
+	}
+}
+
+//串口中断3用于GPRS数据的接收
+void USART3_IRQHandler(void)	//串口3中断服务程序
+{
+   u8 Res;
+   //STM_EVAL_LEDToggle(LED2);
+   if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
+	{
+	Res =USART_ReceiveData(USART3);//(USART1->DR);	//读取接收到的数据
+
+    Com_Rcv_Byte(CH_GPRS, Res);
+	 
+	}
+}
 /******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

@@ -26,8 +26,20 @@
 #define HUMIDITY_SHOW_EN 0 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
 
+#define USE_SPI_FLASH //串行SPIFlash
+//#define USE_NOR_FLASH //并行NORFlash
+
 #define UDIS_EN  1//u盘使能
-#define NET_EN	 1//网络使能
+#define NET_EN	 0//网络使能
+#define GPRS_EN  0//GPRS使能
+
+//#define COM_BUF_ID 0x00
+//#define NET_BUF_ID 0x01
+//#define GPRS_BUF_ID 0x02
+
+
+
+#define SHELL_EN 1//shell使能
 //#if !defined (STM32F10X_LD)
 //#define STM32F10X_LD
 //#endif

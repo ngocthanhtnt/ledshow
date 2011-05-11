@@ -110,6 +110,8 @@ typedef unsigned char BOOL;
 EXT INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen);
 //写物理存储器
 EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
+//重新初始化存储器端口
+EXT void ReInit_Mem_Port(void);
 #endif
 
 EXT void Delay_Init(void);
@@ -126,5 +128,8 @@ EXT void SPI1_CH376_Init(void);
 EXT void Set_Block_OE_En(INT8U Value);
 EXT void Set_Block_Row(INT8U Row);
 EXT INT8U Chk_JP_Status(void);
+EXT void UART2_Init(void); //串口2初始化
 EXT void Self_Test(void);
+EXT void Unselect_SPI_Device(void);
+
 #endif

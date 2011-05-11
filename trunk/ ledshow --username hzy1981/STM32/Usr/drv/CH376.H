@@ -18,4 +18,5 @@ u8 Query376Interrupt( void );
 void mDelayuS(u8 us);
 void mDelaymS(u8 ms);
 void mDelay0_5uS( void );
+EXT void SPI_CH376_Init(void);
 #endif
