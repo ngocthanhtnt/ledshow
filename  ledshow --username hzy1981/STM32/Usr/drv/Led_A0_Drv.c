@@ -20,12 +20,14 @@ void GPIO_Configuration()
 {
   GPIO_InitTypeDef GPIO_InitStructure = {0};  
   
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
+
   //-------------------IO口初始化-----------------------
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
   //PA的输出口
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_4 | GPIO_Pin_8 | GPIO_Pin_12 | GPIO_Pin_15;   
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_12 | GPIO_Pin_15;   
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
  
@@ -72,26 +74,11 @@ void UART_Init()
 }
 */
 
-void OS_Put_Char(char Chr)
-{
-  //qDebug("%c", Chr);
-}
+
 
 void Put_Char(char c)
 {
   
-}
-
-//获取当前时间
-INT8U Get_Cur_Time(void)//S_Time *pTime)
-{
-  return 1;
-}
-
-//设置当前时间
-INT8U Set_Cur_Time(INT8U Time[])
-{
-  return 1;
 }
 
 //存储器初始化
@@ -172,7 +159,13 @@ void Hardware_Init(void)
   TIM3_Configuration();
   TIM4_Configuration();
 
+  UART2_Init();
+
+  Unselect_SPI_Device(); //不选中任何一个SPI设备
+
   SPI1_FLASH_Init();
+
+
 
 }
 #endif

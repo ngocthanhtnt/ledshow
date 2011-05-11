@@ -154,6 +154,9 @@ void LED_Scan_One_Row(void)
   INT16U Blocks;
   INT32U Row_Freq;
   
+  if(Screen_Status.Open_Flag EQ 0) //关机状态，不显示
+    return;
+
   if(Screen_Para.Scan_Para.Rows EQ 0)
   {
 	Screen_Para.Scan_Para.Rows = 1;

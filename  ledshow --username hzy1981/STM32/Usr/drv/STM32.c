@@ -70,6 +70,35 @@ void Delay_sec(INT16U sec)
 
 }
 
+//发送调试信息一个字节
+void OS_Put_Char(char Data)
+{
+   while (!(USART2->SR & USART_FLAG_TXE));
+   USART2->DR = (Data & (uint16_t)0x01FF);
+}
+
+//发送一个字节通信数据
+void Com_Send_Byte(INT8U Ch, INT8U Data)
+{
+  if(Ch EQ CH_COM)
+  {
+     while (!(USART1->SR & USART_FLAG_TXE));
+     USART1->DR = (Data & (uint16_t)0x01FF);
+  }
+  else if(Ch EQ CH_GPRS)
+  {
+#if GPRS_EN
+     while (!(USART3->SR & USART_FLAG_TXE));
+     USART3->DR = (Data & (uint16_t)0x01FF);
+#else
+     ASSERT_FAILED();
+#endif
+  }
+  else if(Ch EQ CH_NET)
+  {
+
+  }
+}
 /*******************************************************************************
 * Function Name  : SPI_FLASH_Init
 * Description    : Initializes the peripherals used by the SPI FLASH driver.
@@ -351,6 +380,8 @@ void TIM3_Configuration(void)
 
 INT8U Chk_JP_Status(void)
 {
+  return SELF_TEST_STATUS;
+
   if(CHK_JP_STATUS0 && CHK_JP_STATUS1) //自检状态
   {
     return SELF_TEST_STATUS;
@@ -365,6 +396,42 @@ INT8U Chk_JP_Status(void)
   }
   else
     return NORMAL_STATUS;  //正常运行状态
+}
+
+void UART2_Init(void) //串口2初始化
+{
+    USART_InitTypeDef USART_InitStructure = {0};
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE );
+	//串口2用作调试信息输出
+	USART_InitStructure.USART_BaudRate            = 115200;//Get_Com_Baud();
+	USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits            = USART_StopBits_1;
+	USART_InitStructure.USART_Parity              = USART_Parity_Even ;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode                = USART_Mode_Rx | USART_Mode_Tx;
+	USART_Init(USART2, &USART_InitStructure);
+	//USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+	USART_Cmd(USART2, ENABLE);
+
+}
+//初始化串口
+void Com_Init(void) 
+{
+	USART_InitTypeDef USART_InitStructure = {0};
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE );
+	
+	//串口1用作与主机通信					    
+	USART_InitStructure.USART_BaudRate            = Get_Com_Baud();
+	USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits            = USART_StopBits_1;
+	USART_InitStructure.USART_Parity              = USART_Parity_Even ;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode                = USART_Mode_Rx | USART_Mode_Tx;
+	USART_Init(USART1, &USART_InitStructure);
+	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+	USART_Cmd(USART1, ENABLE); 
 }
 /*
 typedef struct
@@ -388,7 +455,8 @@ void Self_Test(void)
 {
   INT32U Data = 0x55AA5AA5;
   INT8U Re = 1,i,j,k, m;
-  INT8U Direct;//,Rows_Fold,Cols_Fold;
+  INT8U Direct,ErrFlag = 0;
+  S_Time TempTime,TempTime1;
 
   if(Chk_JP_Status() != SELF_TEST_STATUS)
     return;
@@ -413,12 +481,43 @@ void Self_Test(void)
   { 
     debug("SPI Flash 自检失败"); 
 	Re = 0;
+	ErrFlag	|= 0x01;
   }
   //-----------------------------------------
 
   //--------对时钟的测试---------------------
-
+  Re &= Get_Cur_Time(TempTime.Time);
+  Delay_sec(2);
+  Re &=Get_Cur_Time(TempTime1.Time);
+  if(TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
+  {
+    debug("时钟自检成功");
+    Re = Re & 1;
+  }
+  else
+  {
+    debug("时钟自检失败"); 
+	Re = 0;
+	ErrFlag	|= 0x02;
+  }
   //-----------------------------------------
+
+  //---------对485和232的测试---------------
+  Screen_Status.Rcv_Posi = 0;
+  Com_Send_Byte(CH_COM, 0xA5);
+  Delay_ms(5); 
+  if(Screen_Status.Rcv_Data[0] EQ 0xA5) //自检成功
+  {
+    debug("串口自检成功");
+    Re = Re & 1;
+  }
+  else
+  {
+    debug("串口自检失败"); 
+	Re = 0;
+	ErrFlag	|= 0x04;
+  }
+  //---------------------------------------
 
   if(Re EQ 0)
 	debug("外围器件自检失败！");
@@ -428,7 +527,7 @@ void Self_Test(void)
   debug("进入屏幕检测状态");
 
   //--------------扫描方式检测---------------
-  
+  Read_Screen_Para();
   Set_RT_Show_Area(64, 32);
 
   while(1)
@@ -470,6 +569,7 @@ void Self_Test(void)
 
 			SET_SUM(Screen_Para);
 
+			RT_Play_Status_Enter(2);
 		    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%2d%2d%2d%2d", m, Direct, j, k);
 		    Delay_sec(2);
 		  }
@@ -509,17 +609,42 @@ void Set_Block_Row(INT8U Row)
   SET_D((Row & 0x08) >> 3);
 }
 
+void Unselect_SPI_Device(void)
+{
+  SET_FLASH_CS(1); //不选中Flash
+  SET_CH376_CS(1);	//不选中CH376
+  SET_DS1302_CS(0);	//不选中DS1302
+
+}
+
 //共有的驱动函数等在此文件中定义
 //读物理存储器
 #ifndef DEF_WR_PHY_MEM
 INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen)
 {
+#ifdef USE_SPI_FLASH
+  SPI_FLASH_BufferRead(pDst, Offset, RD_Len);
+#else
+#endif
   return 1;
 }
 
 //写物理存储器
 INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen)
 {
+#ifdef USE_SPI_FLASH
+  SPI_FLASH_BufferWrite(pSrc, Offset, SrcLen);
+#else
+#endif
   return 1;
+}
+
+//重新初始化内存的端口，SPIFlash需要调用该函数
+void ReInit_Mem_Port(void)
+{
+#ifdef USE_SPI_FLASH
+  SPI_FLASH_Init();
+#else
+#endif
 }
 #endif

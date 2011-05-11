@@ -3,7 +3,7 @@
 
 void Net_Init(void)
 {
-
+  //Read_Screen_Para();
 }
 
 void Net_Proc(void)

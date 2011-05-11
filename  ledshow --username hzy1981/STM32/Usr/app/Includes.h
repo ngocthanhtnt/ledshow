@@ -16,6 +16,7 @@
 #include "LED_Cfg.h"
 #include "CH376INC.h"
 #include "ch376.h"
+#include "DS1302.h"
 
 #include "stm32f10x_conf.h"
 #include "Storage.h"
@@ -38,6 +39,8 @@
 #include "UDisk_Proc.h"
 #include "Net_Proc.h"
 #include "FILE_SYS.h"
+
+
 
 
 

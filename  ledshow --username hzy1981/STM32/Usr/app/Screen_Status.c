@@ -133,10 +133,27 @@ INT8U Get_Screen_Com_Time(void)
    return Screen_Status.Com_Time;
 }
 
+//每分钟读取一次实时时钟
+void Screen_Time_Proc()
+{
+  static S_Int32U Sec = {CHK_BYTE, 0, CHK_BYTE};
+  INT32U Diff;
+  
+  Diff = Pub_Timer.Sec - Sec.Var;
+
+  if(Sec.Var EQ 0 || Cur_Time.Time[T_SEC] + Diff >= 60)
+  {
+	 Get_Cur_Time(Cur_Time.Time); //获取当前时间
+   }
+
+   Sec.Var = Pub_Timer.Sec;
+}
+
 void Screen_Proc(void)
 {
+  Screen_Time_Proc();
   Screen_Lightness_Proc();
   Screen_Open_Close_Proc();
   Screen_Com_Proc(); //屏幕通信处理
-  Get_Cur_Time();
+  //Get_Cur_Time(Cur_Time.Time);
 }

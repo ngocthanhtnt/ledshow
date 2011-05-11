@@ -9,6 +9,9 @@
 #else
 #define EXT  extern
 #endif
+
+//USE_STDPERIPH_DRIVER, STM32F10X_MD
+
 /*
 #define SPI_FLAG_RXNE           SPI_I2S_FLAG_RXNE
 #define SPI_FLAG_TXE            SPI_I2S_FLAG_TXE
@@ -108,8 +111,8 @@
 
 
 EXT void Put_Char(char c);
-EXT INT8U Get_Cur_Time(void);//S_Time *pTime);
-EXT INT8U Set_Cur_Time(INT8U Time[]);//S_Time *pTime);
+//EXT INT8U Get_Cur_Time(void);//S_Time *pTime);
+//EXT INT8U Set_Cur_Time(INT8U Time[]);//S_Time *pTime);
 EXT INT16S Get_Cur_Temp(void);
 EXT INT16U Get_Cur_Humidity(void);
 EXT INT16U Get_Cur_Noise(void);

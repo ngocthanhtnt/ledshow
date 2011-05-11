@@ -78,4 +78,55 @@ float Sqrt(float number)
     y  = y * ( f - ( x * y * y ) ); 
     return number * y; 
 }
+
+//检查BCD数据缓冲区的数据是否都是BCD码,是BCD的缓冲区则返回1，否则返回0
+INT8U Check_BCD_Data(void* pBCD, INT16U Len)
+{
+  INT16U i;
+  INT8U* p;
+
+  p = (INT8U *) pBCD;
+
+  for(i = 0; i < Len; i++)
+  {
+    if(!((p[i] & 0x0F) < 0x0A && (p[i] & 0xF0) < 0xA0))
+    {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+//字节Hex2Bcd转换
+INT8U Hex2Bcd_Byte(INT8U Byte)
+{
+  if(Byte >= 100)
+    ASSERT_FAILED();
+  
+  return (Byte % 10) + ((Byte / 10) << 4);
+}
+
+//字节Hex2Bcd转换
+INT8U Bcd2Hex_Byte(INT8U Byte)
+{
+  INT8U Re;
+  Re = Check_BCD_Data(&Byte, 1);
+  if(Re EQ 0)
+    ASSERT_FAILED();
+  
+  return (Byte & 0x0F) + ((Byte & 0xF0) >> 4) * 10;
+}
+
+void Pub_Timer_Proc(void)
+{
+  //static ms = 0;
+
+  Pub_Timer.Ms += SCAN_SCREEN_PERIOD;
+  //ms += SCAN_SCREEN_PERIOD;
+  if(Pub_Timer.Ms >= 1000)
+  {
+    Pub_Timer.Ms = 0;
+	Pub_Timer.Sec ++;
+  }
+}
 #undef PUB_C

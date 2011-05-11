@@ -2,6 +2,7 @@
 #define COM_H
 
 #include "Pub.h"
+#include "LED_Cfg.h"
 
 #undef EXT
 #ifdef COM_C
@@ -62,6 +63,13 @@ A	…	帧数据域内容
 #define F_NDATA_LEN 13 //一条帧内非数据域的长度
 
 #define FRAME_FLAG  0xAF
+
+#define CH_COM  0x00
+#define CH_GPRS  0x01
+#define CH_NET 0x02
+#define CH_UDISK  0x03 //UDisk不需要单独的Buf，可以使用 COM_BUF，就是串口通信的Buf
+
+//#define RCV_BUF_NUM 1
 /*
 //通信接收数据的缓冲区
 typedef struct
@@ -75,10 +83,12 @@ typedef struct
 
 EXT S_Rcv_Buf Rcv_Buf;
 */
-EXT void Rcv_One_Byte(INT8U Byte);
+EXT void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen);
+EXT INT32U Get_Com_Baud(void);
+EXT void Com_Rcv_Byte(INT8U Ch, INT8U Byte);
 EXT INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len);
 EXT INT8U Screen_Para_Frame_Proc(INT16U Ctrl_Code, INT8U Data[], INT16U Len);
-EXT INT8U Rcv_Frame_Proc(INT8U Frame[], INT16U FrameLen);
+EXT INT8U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen);
 EXT INT16U Make_Frame(INT8U *pData, INT16U Len, INT8U Addr[], INT8U Cmd, INT8U Cmd0, INT8U Seq, INT16U Seq0, char *pDst);
 EXT void Screen_Com_Proc(void);
 #endif

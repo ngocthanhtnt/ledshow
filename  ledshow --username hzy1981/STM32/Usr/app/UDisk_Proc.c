@@ -13,6 +13,8 @@ void UDisk_Proc(void)
 
 	if(CH376DiskConnect()==USB_INT_SUCCESS)
 	{
+	    SPI_CH376_Init();  //重新初始化SPI口
+
 		if(CH376DiskMount()==USB_INT_SUCCESS)
 		{
 			strcpy((char *)buf, "\CH376.TXT" );

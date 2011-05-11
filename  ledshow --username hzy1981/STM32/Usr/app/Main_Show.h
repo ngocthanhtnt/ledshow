@@ -57,6 +57,12 @@ typedef struct
   INT16U Y;
   INT16U X_Len;
   INT16U Y_Len;
+
+  INT16U Screen_Width;
+  INT16U Screen_Height;
+  INT8U Screen_Color;
+
+  INT8U Open_Flag;
   INT8U Tail;
 }S_RT_Show_Para;
 /*
@@ -91,8 +97,10 @@ EXT void Check_Show_Data_Para(void);
 EXT void Check_Prog_Play_Counts(void);
 EXT void Show_Timer_Proc(void);
 EXT void Show_Main_Proc(void);
-EXT void Show_Init(void);
+EXT void Para_Init(void);
 EXT void Prog_Status_Init(void);
 EXT void Set_RT_Show_Area(INT16U Width, INT16U Height);
 EXT void Restore_Show_Area(void);
+EXT void RT_Play_Status_Enter(INT16U Sec);
+EXT void RT_Play_Status_Exit(void);
 #endif

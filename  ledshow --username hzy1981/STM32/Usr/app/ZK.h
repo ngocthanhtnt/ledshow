@@ -33,5 +33,5 @@ EXT INT8U Get_Font_Width(INT8U Font);
 EXT INT8U Get_Font_Height(INT8U Font);
 EXT INT16U Get_String_Width(INT8U Font, char Str[]);
 EXT INT16U Get_String_Height(INT8U Font, char Str[]);
-INT16U LED_Print(INT8U Font, INT8U Color, S_Show_Data *pData,  INT8U Area_No, INT16U X, INT16U Y,const INT8S *format, ...);
+EXT void Show_Char(INT16U Unicode, INT8U Font, INT8U Color, S_Show_Data *pData, INT8U Area_No, INT16U X,INT16U Y);
 #endif

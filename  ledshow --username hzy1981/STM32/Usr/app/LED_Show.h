@@ -34,6 +34,16 @@
 
 #define WIN_LEAF_WIDTH 8
 
+typedef struct
+{
+    INT8U Head;
+    INT8U Buf[50];
+    INT8U Tail;
+}S_Print_Buf;
+
+EXT S_Print_Buf _Print_Buf;
+
+#define Print_Buf _Print_Buf.Buf
 //#define PUB_BUF Show_Data_Bak.Pub_Buf.Buf //公共数据区，与显示数据公用
 /*
 //时间
@@ -149,10 +159,15 @@ typedef struct
     INT8U Head;
     INT8U Last_Prog_No; //上个节目
     INT8U Prog_No; //当前节目号
+
+	INT8U RT_Play_Flag; //实时播放标志
+	INT16U RT_Play_Time;	//实时播放时间
+
     INT32U Time; //已经播放时长
     INT16U Counts; //已经播放次数
 
-	INT8U RT_Play_Flag;
+
+
     INT8U Play_Flag:4; //是否播放标志--主要用于与中断显示同步
     INT8U New_Prog_Flag:4;
     INT8U CS[CS_BYTES];
@@ -201,8 +216,9 @@ typedef struct
   INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3];
 
   //接收帧数据
-  INT8U Rcv_Flag;
-  INT8U Com_Time;
+  INT8U Rcv_Ch; //接收通道
+  INT8U Rcv_Flag; //接收到的数据
+  INT8U Com_Time;  //通信维持时间
   INT16U Rcv_Posi;
   INT8U Rcv_Data[BLOCK_DATA_LEN];
 
@@ -321,4 +337,9 @@ EXT void Move_Up_Compress(INT8U Area_No);
 EXT void Move_Down_Compress(INT8U Area_No);
 EXT void Move_Fade_In(INT8U Area_No);
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
+
+EXT void vsPrintf(char Buf[], CONST INT8S *format, va_list ap);
+EXT void Show_String(INT8U Str[], INT8U Font, INT8U Color, S_Show_Data *pData, INT8U Area_No, INT16U X,INT16U Y);
+EXT INT16U LED_Print(INT8U Font, INT8U Color, S_Show_Data *pData,  INT8U Area_No, INT16U X, INT16U Y,const INT8S *format, ...);
+EXT INT16U RT_LED_Print(INT8U Font, INT8U Color, INT16U X, INT16U Y, INT16U Sec, const INT8S *format,...);
 #endif
