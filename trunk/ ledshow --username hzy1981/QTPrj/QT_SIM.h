@@ -59,7 +59,8 @@ typedef struct
 
 EXT S_PFILE pFile;
 EXT void Put_Char(char c);
-EXT INT8U Get_Cur_Time();//S_Time *pTime);
+EXT void Com_Send_Byte(INT8U Ch, INT8U Chr);
+EXT INT8U _Get_Cur_Time(INT8U Time[]);//S_Time *pTime);
 EXT INT8U Set_Cur_Time(INT8U Time[]);//S_Time *pTime);
 EXT INT16U Get_Cur_Humidity();
 EXT INT16U Get_Cur_Noise();

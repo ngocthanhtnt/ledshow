@@ -807,7 +807,7 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
 
   para.Border_Mode = settings.value("borderMode").toInt();
   //para.Border_Speed = settings.value("borderSpeed").toInt();
-  para.Border_StayTime = (INT16U)(settings.value("borderSpeed").toInt() + 1)*MOVE_STEP_TIMER;
+  para.Border_StayTime = (INT16U)(settings.value("borderSpeed").toInt() + 1)*MOVE_STEP_PERIOD;
 
   para.Border_Check = check;
   para.Border_Width = Border_Data[index].Width;

@@ -68,7 +68,7 @@ A	…	帧数据域内容
 #define CH_GPRS  0x01
 #define CH_NET 0x02
 #define CH_UDISK  0x03 //UDisk不需要单独的Buf，可以使用 COM_BUF，就是串口通信的Buf
-
+#define CH_SIM 0x04 //仿真
 //#define RCV_BUF_NUM 1
 /*
 //通信接收数据的缓冲区

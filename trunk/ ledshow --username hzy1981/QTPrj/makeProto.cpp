@@ -175,12 +175,12 @@ INT8U sendProtoData(char *pFrame, int len)
 
     if(mode EQ PREVIEW_MODE)//预览模式
     {
-      Rcv_Frame_Proc((INT8U *)pFrame, (INT16U)len); //接收函数处理。在仿真情况下，将参数写入了硬盘文件。模拟写入EEROM
+      Rcv_Frame_Proc(CH_SIM, (INT8U *)pFrame, (INT16U)len); //接收函数处理。在仿真情况下，将参数写入了硬盘文件。模拟写入EEROM
     }
     else if(mode EQ SIM_MODE) //仿真模式
     {
       for(i = 0; i < len; i ++)
-          Rcv_One_Byte(*(pFrame + i));
+          Com_Rcv_Byte(CH_SIM, *(pFrame + i));
 /*
       QTimer t;
       t.start();

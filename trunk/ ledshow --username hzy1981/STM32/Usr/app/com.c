@@ -247,7 +247,7 @@ void Screen_Com_Proc(void)
    {
 	   if(Screen_Status.Rcv_Flag EQ FRAME_FLAG)
 	    {
-	     Re = Rcv_Frame_Proc(Screen_Status.Rcv_Ch, Screen_Status.Rcv_Data, Screen_Status.Rcv_Posi);
+             Re = Rcv_Frame_Proc(Screen_Status.Rcv_Ch, Screen_Status.Rcv_Data, Screen_Status.Rcv_Posi);
 	
 	     Screen_Status.Rcv_Posi = 0;
 	     Screen_Status.Rcv_Flag = 0;
