@@ -25,7 +25,7 @@
 #define WrSingle    0x84 //写入单个字节的指令代码
 #define RdMulti     0xbf //读出多个字节的指令代码
 
-EXT INT8U Get_Cur_Time(INT8U Time[]);
+EXT INT8U _Get_Cur_Time(INT8U Time[]);
 EXT INT8U Set_Cur_Time(INT8U Time[]);
 EXT void SPI_DS1302_Init(void);
 #endif

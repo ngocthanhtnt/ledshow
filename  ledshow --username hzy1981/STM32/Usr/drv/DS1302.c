@@ -197,7 +197,7 @@ INT8U Set_Cur_Time(INT8U Time[])//S_Time *pTime)
 }
 
 //设置当前时间
-INT8U Get_Cur_Time(INT8U Time[])
+INT8U _Get_Cur_Time(INT8U Time[])
 {
   INT8U Temp[8];
 
