@@ -8,17 +8,22 @@
 #include "OS_Includes.h"
 //#include "QT_SIM.h"
 //#include "STM32.h"
-#include "spi_flash.h"
+//#include "spi_flash.h"
 #include "pub.h"
 #include "nongli.h"
 #include "zk.h"
 //#include "File_Op.h"
 #include "LED_Cfg.h"
+
+#if QT_EN == 0
+#include "STM32.h"
 #include "CH376INC.h"
 #include "ch376.h"
 #include "DS1302.h"
-
+#include "FILE_SYS.h"
 #include "stm32f10x_conf.h"
+#endif
+
 #include "Storage.h"
 #include "LED_Para.h"
 #include "LED_Show.h"
@@ -38,7 +43,7 @@
 #include "Shell.h"
 #include "UDisk_Proc.h"
 #include "Net_Proc.h"
-#include "FILE_SYS.h"
+
 
 
 

@@ -36,22 +36,11 @@ SOURCES += main.cpp\
     ../STM32/Usr/app/Time_Show.cpp \
     ../STM32/Usr/app/Temp_Show.cpp \
     ../STM32/Usr/app/Storage.cpp \
-    ../STM32/Usr/app/STM32.cpp \
     ../STM32/Usr/app/Screen_Status.cpp \
     ../STM32/Usr/app/pub.cpp \
     ../STM32/Usr/app/Pic_Show.cpp \
-    ../STM32/Usr/app/OS_Time.cpp \
     ../STM32/Usr/app/OS_Shell.cpp \
-    ../STM32/Usr/app/OS_Sem.cpp \
     ../STM32/Usr/app/OS_Pub.cpp \
-    ../STM32/Usr/app/OS_Port.cpp \
-    ../STM32/Usr/app/OS_Mutex.cpp \
-    ../STM32/Usr/app/OS_Msg_Q.cpp \
-    ../STM32/Usr/app/OS_Msg.cpp \
-    ../STM32/Usr/app/OS_Mem.cpp \
-    ../STM32/Usr/app/OS_Ext.cpp \
-    ../STM32/Usr/app/OS_Event.cpp \
-    ../STM32/Usr/app/OS_Core.cpp \
     ../STM32/Usr/app/nongli.cpp \
     ../STM32/Usr/app/Noise_Show.cpp \
     ../STM32/Usr/app/Main_Show.cpp \
@@ -60,7 +49,6 @@ SOURCES += main.cpp\
     ../STM32/Usr/app/LED_Para.cpp \
     ../STM32/Usr/app/Humidity_Show.cpp \
     ../STM32/Usr/app/Flash_Show.cpp \
-    ../STM32/Usr/app/File_Op.cpp \
     ../STM32/Usr/app/com.cpp \
     ../STM32/Usr/app/Clock_Show.cpp \
     ../STM32/Usr/app/Border_Show.cpp \
@@ -91,24 +79,14 @@ HEADERS  += mainwindow.h \
     ../Time_Show.h \
     ../Temp_Show.h \
     ../Storage.h \
-    ../STM32.h \
     ../Shell.h \
     ../Screen_Status.h \
     ../QT_SIM.h \
     ../pub.h \
     ../Pic_Show.h \
-    ../OS_Time.h \
     ../OS_Shell.h \
-    ../OS_Sem.h \
     ../OS_Pub.h \
-    ../OS_Port.h \
-    ../OS_Mutex.h \
-    ../OS_Msg_Q.h \
-    ../OS_Msg.h \
-    ../OS_Mem.h \
     ../OS_Includes.h \
-    ../OS_Ext.h \
-    ../OS_Event.h \
     ../OS_Core.h \
     ../OS_Cfg.h \
     ../nongli.h \
@@ -122,7 +100,6 @@ HEADERS  += mainwindow.h \
     ../Includes.h \
     ../Humidity_Show.h \
     ../Flash_Show.h \
-    ../File_Op.h \
     ../com.h \
     ../Clock_Show.h \
     ../Border_Show.h \
@@ -131,7 +108,6 @@ HEADERS  += mainwindow.h \
     ../STM32/Usr/app/Time_Show.h \
     ../STM32/Usr/app/Temp_Show.h \
     ../STM32/Usr/app/Storage.h \
-    ../STM32/Usr/app/STM32.h \
     ../STM32/Usr/app/Screen_Status.h \
     ../STM32/Usr/app/pub.h \
     ../STM32/Usr/app/Pic_Show.h \
@@ -139,7 +115,6 @@ HEADERS  += mainwindow.h \
     ../STM32/Usr/app/OS_Shell.h \
     ../STM32/Usr/app/OS_Sem.h \
     ../STM32/Usr/app/OS_Pub.h \
-    ../STM32/Usr/app/OS_Port.h \
     ../STM32/Usr/app/OS_Mutex.h \
     ../STM32/Usr/app/OS_Msg_Q.h \
     ../STM32/Usr/app/OS_Msg.h \
@@ -160,11 +135,11 @@ HEADERS  += mainwindow.h \
     ../STM32/Usr/app/Includes.h \
     ../STM32/Usr/app/Humidity_Show.h \
     ../STM32/Usr/app/Flash_Show.h \
-    ../STM32/Usr/app/File_Op.h \
     ../STM32/Usr/app/com.h \
     ../STM32/Usr/app/Clock_Show.h \
     ../STM32/Usr/app/Border_Show.h \
-    ../STM32/Usr/app/ZK.h
+    ../STM32/Usr/app/ZK.h \
+    ../STM32/Usr/app/OS_Port.h
 
 RESOURCES += \
     textedit.qrc

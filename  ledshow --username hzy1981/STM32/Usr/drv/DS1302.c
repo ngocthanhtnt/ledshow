@@ -26,14 +26,12 @@ GPIO_Init(GPIOB, &GPIO_InitStructure);
 void SPI_DS1302_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStructure = {0};
+
+  SPI_Cmd(SPI1, ENABLE);
 /* PA 4,6,为输出*/
-  GPIO_InitStructure.GPIO_Pin =  ds1302Clk | ds1302Rst ;
+  GPIO_InitStructure.GPIO_Pin =  ds1302Clk | ds1302Rst | ds1302Data;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-  GPIO_InitStructure.GPIO_Pin =  ds1302Data;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;//GPIO_Mode_Out_OD;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 }
 
@@ -44,6 +42,7 @@ void Set_DataIO_Input(void)
 
   GPIO_InitStructure.GPIO_Pin =  ds1302Data;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;	//上拉输入
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 }
@@ -55,6 +54,7 @@ void Set_DataIO_Output(void)
 
   GPIO_InitStructure.GPIO_Pin =  ds1302Data;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; //推挽输出
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 }
@@ -177,7 +177,7 @@ void DS1302_Init(void)
 #define T_WEEK  6
 */
 //获取当前时间
-INT8U Get_Cur_Time(INT8U Time[])//S_Time *pTime)
+INT8U Set_Cur_Time(INT8U Time[])//S_Time *pTime)
 {
   INT8U Temp[8];
 
@@ -197,7 +197,7 @@ INT8U Get_Cur_Time(INT8U Time[])//S_Time *pTime)
 }
 
 //设置当前时间
-INT8U Set_Cur_Time(INT8U Time[])
+INT8U Get_Cur_Time(INT8U Time[])
 {
   INT8U Temp[8];
 
@@ -205,13 +205,13 @@ INT8U Set_Cur_Time(INT8U Time[])
 
   RecByte_1302(RdMulti,8,Temp); // 读出来看看，
 
-  Time[T_SEC] = Bcd2Hex_Byte(Temp[T_SEC]);
-  Time[T_MIN] = Bcd2Hex_Byte(Temp[T_MIN]);
-  Time[T_HOUR] = Bcd2Hex_Byte(Temp[T_HOUR]);
-  Time[T_DATE] = Bcd2Hex_Byte(Temp[T_DATE]);
-  Time[T_MONTH] = Bcd2Hex_Byte(Temp[T_MONTH]);
-  Time[T_WEEK] = Bcd2Hex_Byte(Temp[T_WEEK]);
-  Time[T_YEAR] = Bcd2Hex_Byte(Temp[T_YEAR]);
+  Time[T_SEC] = Bcd2Hex_Byte(Temp[0]);
+  Time[T_MIN] = Bcd2Hex_Byte(Temp[1]);
+  Time[T_HOUR] = Bcd2Hex_Byte(Temp[2]);
+  Time[T_DATE] = Bcd2Hex_Byte(Temp[3]);
+  Time[T_MONTH] = Bcd2Hex_Byte(Temp[4]);
+  Time[T_WEEK] = Bcd2Hex_Byte(Temp[5]);
+  Time[T_YEAR] = Bcd2Hex_Byte(Temp[6]);
 
   return 1;
 }

@@ -133,6 +133,21 @@ INT8U Get_Screen_Com_Time(void)
    return Screen_Status.Com_Time;
 }
 
+//获取当前时间
+INT8U Get_Cur_Time()
+{
+  INT8U Re;
+  INT8U Time[10];
+
+  Re = _Get_Cur_Time(Time); //获取当前时间
+  if(Re)
+  {
+     memcpy(Cur_Time.Time, Time, sizeof(Cur_Time.Time));
+     SET_SUM(Cur_Time);
+  }
+  return Re;
+}
+
 //每分钟读取一次实时时钟
 void Screen_Time_Proc()
 {
@@ -143,7 +158,7 @@ void Screen_Time_Proc()
 
   if(Sec.Var EQ 0 || Cur_Time.Time[T_SEC] + Diff >= 60)
   {
-	 Get_Cur_Time(Cur_Time.Time); //获取当前时间
+         Get_Cur_Time();//_Get_Cur_Time(Cur_Time.Time); //获取当前时间
    }
 
    Sec.Var = Pub_Timer.Sec;

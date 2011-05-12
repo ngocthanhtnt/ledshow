@@ -17,6 +17,7 @@
 
 #define MAX_LIGHTNESS 16 //1-16
 
+EXT INT8U Get_Cur_Time();
 EXT void Set_Screen_Com_Time(INT8U Sec);
 EXT INT8U Get_Screen_Com_Time(void);
 EXT void Set_Screen_Replay_Flag(void);

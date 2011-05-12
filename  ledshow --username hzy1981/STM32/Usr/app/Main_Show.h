@@ -103,4 +103,5 @@ EXT void Set_RT_Show_Area(INT16U Width, INT16U Height);
 EXT void Restore_Show_Area(void);
 EXT void RT_Play_Status_Enter(INT16U Sec);
 EXT void RT_Play_Status_Exit(void);
+EXT void Print_Cur_Time(void);
 #endif

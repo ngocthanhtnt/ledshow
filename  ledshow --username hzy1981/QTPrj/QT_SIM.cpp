@@ -18,24 +18,28 @@ void Put_Char(char c)
 
 }
 
+void Com_Send_Byte(INT8U Ch, INT8U Chr)
+{
+}
+
 //获取当前时间
-INT8U Get_Cur_Time()//S_Time *pTime)
+INT8U _Get_Cur_Time(INT8U Time[])//S_Time *pTime)
 {
     QDateTime temp;
 
   temp =  QDateTime::currentDateTime();
 
-  Cur_Time.Time[T_SEC] = temp.time().second();
-  Cur_Time.Time[T_MIN] = temp.time().minute();
-  Cur_Time.Time[T_HOUR] = temp.time().hour();
-  Cur_Time.Time[T_DATE] = temp.date().day();
-  Cur_Time.Time[T_MONTH] = temp.date().month();
+  Time[T_SEC] = temp.time().second();
+  Time[T_MIN] = temp.time().minute();
+  Time[T_HOUR] = temp.time().hour();
+  Time[T_DATE] = temp.date().day();
+  Time[T_MONTH] = temp.date().month();
   if(temp.date().year() >= 2000)
-    Cur_Time.Time[T_YEAR] = temp.date().year() - 2000;
+    Time[T_YEAR] = temp.date().year() - 2000;
   else
-    Cur_Time.Time[T_YEAR] = 0;
+    Time[T_YEAR] = 0;
 
-  SET_SUM(Cur_Time);
+  //SET_SUM(Cur_Time);
   //qDebug("year = %d", Time[T_YEAR]);
   return 1;
 }

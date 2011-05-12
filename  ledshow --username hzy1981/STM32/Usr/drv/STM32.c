@@ -486,9 +486,14 @@ void Self_Test(void)
   //-----------------------------------------
 
   //--------对时钟的测试---------------------
+  while(1)
+  {
+ // DS1302_Init();
   Re &= Get_Cur_Time(TempTime.Time);
-  Delay_sec(2);
-  Re &=Get_Cur_Time(TempTime1.Time);
+  Print_Cur_Time();
+  Delay_sec(1);//Delay_sec(2);
+  //Re &=Get_Cur_Time(TempTime1.Time);
+  }
   if(TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
   {
     debug("时钟自检成功");

@@ -1122,3 +1122,9 @@ void Para_Show(void)
 #endif
 
 }
+
+void Print_Cur_Time(void)
+{
+  debug("cur time: %2d-%2d-%2d %2d:%2d:%2d", Cur_Time.Time[T_YEAR], Cur_Time.Time[T_MONTH], Cur_Time.Time[T_DATE],\
+                                             Cur_Time.Time[T_HOUR], Cur_Time.Time[T_MIN], Cur_Time.Time[T_SEC]);
+}

@@ -16,9 +16,9 @@ QString rsrcPath = ":/images/win";
 QSettings settings(PROG_INI_FILE,QSettings::IniFormat,0);
 
 
-#define QT_MOVE_STEP_TIMER MOVE_STEP_TIMER/2 //仿真时定时间隔
+#define QT_MOVE_STEP_TIMER MOVE_STEP_PERIOD/2 //仿真时定时间隔
 
-#if QT_MOVE_STEP_TIMER > MOVE_STEP_TIMER
+#if QT_MOVE_STEP_TIMER > MOVE_STEP_PERIOD
 #error "QT_MOVE_STEP_TIMER error"
 #endif
 
@@ -948,7 +948,7 @@ void MainWindow::preview()
   previewWin->setWindowTitle(tr("预览-")+QString::number(Screen_No + 1) + tr("屏幕-") + QString::number(Preview_Prog_No + 1) + tr("节目"));
   previewWin->move((width() - previewArea->width())/2, (height() - previewArea->height())/2);
 
-  Show_Init(); //显示初始化。
+  Para_Init(); //显示初始化。
 
   memcpy(&previewArea->screenPara, &Screen_Para, sizeof(Screen_Para));
   previewWin->show();
@@ -975,7 +975,7 @@ void MainWindow::previewProc()
   Show_Main_Proc();
   Show_Main_Proc();
 
-  if(stepTimer >= MOVE_STEP_TIMER)
+  if(stepTimer >= MOVE_STEP_PERIOD)
   {
       stepTimer = 0;
       Show_Timer_Proc();

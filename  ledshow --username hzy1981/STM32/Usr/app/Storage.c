@@ -224,9 +224,9 @@ INT16U Read_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, INT16U Len, void* 
   INT8U Re; 
 
   TRACE();
-
+#if QT_EN == 0
   ReInit_Mem_Port();//重新初始化端口
-
+#endif
   Off = Get_Storage_Data_Off(SDI); //获取数据偏移
   if(NULL_4BYTES EQ Off)//ASSERT(NULL_4BYTES != Off))
   {
@@ -272,9 +272,9 @@ INT8U Write_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, void* pSrc, INT16U
 
   TRACE();
 
-
+#if QT_EN == 0
   ReInit_Mem_Port();//重新初始化端口
-  //Imp_Flag = Get_Storage_Data_ImpFlag(SDI); //获取该数据的重要标志
+#endif
 
   Off = Get_Storage_Data_Off(SDI); //获取数据偏移
   if(NULL_4BYTES EQ Off)
