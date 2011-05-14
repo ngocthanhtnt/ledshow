@@ -785,10 +785,12 @@ MainWindow::MainWindow(QWidget *parent)
    hLayout->setSizeConstraint(QLayout::SetFixedSize);
    previewWin->setLayout(hLayout);
 
+   //initComStatus(); //通信状态初始化
 
    timer = new QTimer(this);
    connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
 
+   comStatus = new CcomStatus(this);
 }
 
 void MainWindow::screenCardParaChangeProc()

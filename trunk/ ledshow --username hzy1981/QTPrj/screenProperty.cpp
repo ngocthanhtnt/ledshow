@@ -723,12 +723,12 @@ void ClightnessDialog::sendPara()
     S_Card_Para cardPara;
     QString str = w->screenArea->getCurrentScreenStr();
 
-    getScreenCardParaFromSettings(str, screenPara, cardPara); //
+    //getScreenCardParaFromSettings(str, screenPara, cardPara); //
 
-    initComPara(screenPara);
-    connectScreen();
+    //initComStatus(screenPara);
+    //connectScreen();
     sendLightnessPara();
-    disconnectScreen();
+    //disconnectScreen();
 
 }
 
@@ -812,12 +812,12 @@ void CopenCloseDialog::sendPara()
     S_Card_Para cardPara;
     QString str = w->screenArea->getCurrentScreenStr();
 
-    getScreenCardParaFromSettings(str, screenPara, cardPara); //
+    //getScreenCardParaFromSettings(str, screenPara, cardPara); //
 
-    initComPara(screenPara);
-    connectScreen();
+    //initComStatus(screenPara);
+    //connectScreen();
     sendOpenClosePara();
-    disconnectScreen();
+    //disconnectScreen();
 }
 
 //
@@ -1232,7 +1232,7 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
 
   //QextSerialPort *comm = new QextSerialPort();
   //comm->setQueryMode(QextSerialPort::EventDriven);
-
+/*
   QextSerialEnumerator enumer;
   QList<QextPortInfo> ports = enumer.getPorts();
   QStringList strlist;
@@ -1240,6 +1240,8 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   strlist.clear();
   for( int i = 0; i < ports.count(); ++i)
       strlist << QObject::tr(ports.at(i).portName.toLocal8Bit());
+*/
+  QStringList strlist = getComPortList();
   comPortEdit->addItems(strlist);
 
   QLabel *comBaudLabel = new QLabel(tr("²¨ÌØÂÊ"),this);
@@ -1315,7 +1317,7 @@ void CcomTest::getSettingsFromWidget(QString str)
     settings.endGroup();
 }
 
-void getScreenParaFromComTestPara(QString str, S_Screen_Para &screenPara)
+void getComTestParaFromSettings(QString str, S_Screen_Para &screenPara)
 {
     settings.beginGroup(str);
     settings.beginGroup("comTest");
