@@ -2,6 +2,8 @@
 #define MAKEPROTO_H
 
 #include "..\Stm32\usr\app\Includes.h"
+#include <QextSerialPort>
+#include <QextSerialEnumerator>
 #include <QString>
 
 #undef EXT
@@ -26,6 +28,7 @@ typedef struct
    int off;
 }S_Frame_Info;
 
+/*
 typedef struct
 {
   S_COM_Para COM_Para;
@@ -35,14 +38,19 @@ typedef struct
   INT8U Com_Port; //串口的端口号-主台用
   INT8U Com_Mode; //选用通信模式-主台用
 
+  QextSerialPort * port;
+
+  INT8U Rcv_Buf[1000];
+  INT16U Rcv_Posi;
+
   int status;
 }S_COM_Status;
-
+*/
 EXT S_Frame_Info frameInfo;
-EXT S_COM_Status comStatus; //通信状态
-INT8U initComPara(S_Screen_Para &screenPara);
-INT8U connectScreen();
-INT8U disconnectScreen();
+//EXT S_COM_Status comStatus; //通信状态
+//INT8U initComStatus();
+//INT8U connectScreen();
+//INT8U disconnectScreen();
 INT8U sendProtoData(char *pFrame, int len);
 int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst);
 INT8U makeProtoData(QString screenStr, int mode, int flag);

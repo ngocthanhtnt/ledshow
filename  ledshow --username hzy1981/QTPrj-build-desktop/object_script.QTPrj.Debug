@@ -42,6 +42,7 @@ INPUT(
 ./debug\Clock_Show.o
 ./debug\Border_Show.o
 ./debug\ZK.o
+./debug\Communication.o
 ./debug\moc_mainwindow.o
 ./debug\moc_showArea.o
 ./debug\moc_progManage.o
@@ -61,5 +62,6 @@ INPUT(
 ./debug\moc_screenProperty.o
 ./debug\moc_humidityProperty.o
 ./debug\moc_noiseProperty.o
+./debug\moc_Communication.o
 ./debug\qrc_textedit.o
 );

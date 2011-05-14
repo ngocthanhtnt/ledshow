@@ -352,7 +352,7 @@ public:
     ~CscreenProperty();
 };
 
-void getScreenParaFromComTestPara(QString str, S_Screen_Para &screenPara);
+void getComTestParaFromSettings(QString str, S_Screen_Para &screenPara);
 INT8U getCardParaFromSettings(QString cardName, S_Card_Para &cardPara);
 INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara, S_Card_Para &cardPara);
 #endif // SCREENPROPERTY_H

@@ -25,11 +25,16 @@
 #include "progManage.h"
 #include "property.h"
 #include "timerProperty.h"
+#include "Communication.h"
 
 
-#define CARD_INI_FILE "d:\\card.ini"
-#define SCREEN_INI_FILE "d:\\screen.ini"
-#define PROG_INI_FILE "d:\\temp.ini"
+#define CARD_INI_FILE ".\\cfg\\card.ini"
+#define SCREEN_INI_FILE ".\\cfg\\screen.ini"
+#define PROG_INI_FILE ".\\cfg\\temp.ini"
+
+#define PROTO_DATA_FILE ".\\data\\protoData.dat"
+#define PREVIEW_PROTO_FILE ".\\data\\previewData.dat"
+#define COM_PROTO_FILE ".\\data\\comData.dat"
 
 class MainObj:public QObject
 {
@@ -106,6 +111,8 @@ public:
     QTimer *timer;
     int timerFlag;
     INT8U previewProgNo;
+
+    CcomStatus *comStatus; //Í¨ÐÅ×´Ì¬
 
     void actionEnProc(int type);
     void screenCardParaChangeProc();

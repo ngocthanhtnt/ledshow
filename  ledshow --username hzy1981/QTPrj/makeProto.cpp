@@ -13,6 +13,8 @@ extern int linePosi[MAX_LINE_NUM];
 extern int pagePosi[MAX_LINE_NUM];
 S_Show_Data protoShowData;
 
+S_Screen_Para comScreenPara; //通信参数
+
 #define PROTO_DATA_BUF_LEN (2000*1000)
 /*
     if(height % 8 EQ 0)
@@ -67,6 +69,7 @@ Bit0:0 表示无后续帧，1表示有后续帧
 Bit3->Bit7 备用
 
  */
+
 //生成一条帧
 //data为数据域,dataLen数据域长度
 //cmd控制码
@@ -145,25 +148,6 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
   return len;
 }
 
-//初始化通信状态
-//screenPara表示屏幕的参数
-INT8U initComPara(S_Screen_Para &screenPara)
-{
-  comStatus.Com_Mode = screenPara.Com_Mode;
-}
-
-//根据screenPara中的通信参数建立连接
-INT8U connectScreen()
-{
-
-}
-
-//断开与卡的连接
-INT8U disconnectScreen()
-{
-
-}
-
 //发送协议数据
 //pFrame和len表示帧起始和帧长
 //mode表示发送的模式，0表示串口，1表示u盘，2表示以太网
@@ -171,7 +155,7 @@ INT8U sendProtoData(char *pFrame, int len)
 {
     int i = 0;
 
-    INT8U mode = comStatus.Com_Mode;
+    INT8U mode = comScreenPara.Com_Mode;
 
     if(mode EQ PREVIEW_MODE)//预览模式
     {
@@ -555,18 +539,19 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
     return len;
 }
 
+#if 0
 //生成协议数据
 //screenStr屏幕参数的str,例如"screen/1/"表示第一个屏幕
 //mode表示生成数据的方式：0表示表示
-INT8U makeProtoData(QString screenStr, int mode, int flag)
+INT8U _makeProtoData(QString screenStr, int mode, int flag)
 {
-    //S_Screen_Para Screen_Para;
+    INT16U counts = 0;
     S_Prog_Para progPara;
     int len;
     INT16U areaWidth, areaHeight;
     INT8U seq = 0, progNum, areaNum, fileNum;
     char frameBuf[BLOCK_DATA_LEN + 20], *dataBuf;
-    S_Screen_Para comScreenPara;
+
     S_Screen_Para screenParaBak;
     S_Prog_Para progParaBak;
     S_Card_Para cardParaBak;
@@ -579,6 +564,8 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
 
     frameInfo.seq = 0xFF;
 
+    //读取屏幕参数和控制卡参数
+    //没有读取到正确的屏幕参数则返回0
     if(getScreenCardParaFromSettings(screenStr, Screen_Para, Card_Para) EQ 0)
     {
         ASSERT_FAILED();
@@ -590,30 +577,31 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
         return 0;
     }
 
-    //没有读取到正确的屏幕参数则返回0
+/*
     if(GET_BIT(flag, C_SCREEN_BASE_PARA) ||\
        GET_BIT(flag, C_SCAN_PARA) ||\
        GET_BIT(flag, C_SCREEN_COM_PARA) || \
        GET_BIT(flag, C_SCREEN_ETH_PARA) ||\
        GET_BIT(flag, C_SCREEN_GPRS_PARA))
     {
-      getScreenParaFromComTestPara(screenStr, comScreenPara);
+      //读取屏幕通信测试参数
+      getComTestParaFromSettings(screenStr, comScreenPara);
     }
     else
     {
       memcpy(&comScreenPara, &Screen_Para, sizeof(Screen_Para));
     }
+    */
+
+    //getComTestParaFromSettings(screenStr, comScreenPara);
 
     //仿真、预览、U盘模式需要修改参数中的通信模式
     if(mode EQ PREVIEW_MODE || mode EQ SIM_MODE || mode EQ UDISK_MODE)
     {
-      comScreenPara.Com_Mode = mode;
-      SET_SUM(comScreenPara);
+       w->comStatus->setComMode(mode);
     }
 
-    initComPara(comScreenPara); //初始化通信的参数和状态
-
-    connectScreen();//连接屏幕
+    w->comStatus->connect(screenStr); //连接屏幕
 
     dataBuf = (char *)malloc(PROTO_DATA_BUF_LEN);
 
@@ -626,14 +614,14 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
         {
             len = makeFrame((char *)&Screen_Para.Base_Para, sizeof(Screen_Para.Base_Para),\
                        C_SCREEN_BASE_PARA, seq++, frameBuf);
-            sendProtoData(frameBuf, len);
+            w->comStatus->sendData(frameBuf, len);
         }
         //扫描参数
         if(GET_BIT(flag, C_SCAN_PARA))
         {
             len = makeFrame((char *)&Screen_Para.Scan_Para, sizeof(Screen_Para.Scan_Para),\
                        C_SCAN_PARA, seq++, frameBuf);
-            sendProtoData(frameBuf, len);
+            w->comStatus->sendData(frameBuf, len);
        }
     }
 
@@ -643,7 +631,7 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
     {
         len = makeFrame((char *)&Screen_Para.OC_Time, sizeof(Screen_Para.OC_Time),\
                    C_SCREEN_OC_TIME, seq++, frameBuf);
-        sendProtoData(frameBuf, len);
+        w->comStatus->sendData(frameBuf, len);
     }
 
     //亮度
@@ -651,7 +639,7 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
     {
         len = makeFrame((char *)&Screen_Para.Lightness, sizeof(Screen_Para.Lightness),\
                    C_SCREEN_LIGNTNESS, seq++, frameBuf);
-        sendProtoData(frameBuf, len);
+        w->comStatus->sendData(frameBuf, len);
     }
 
     //节目数
@@ -665,7 +653,7 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
     {
       len = makeFrame((char *)&progNum, sizeof(progNum),\
                C_PROG_NUM, seq++, frameBuf);
-      sendProtoData(frameBuf, len);
+      w->comStatus->sendData(frameBuf, len);
     }
 
     //节目数据
@@ -682,7 +670,7 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
             progPara.Prog_No = i;
             //节目参数帧
             len = makeFrame((char *)&progPara.Head + 1, sizeof(progPara) - CHK_BYTE_LEN,C_PROG_PARA, seq++, frameBuf);
-            sendProtoData(frameBuf, len);
+            w->comStatus->sendData(frameBuf, len);
 
             settings.beginGroup(progStr + "/area/");
             QStringList areaList = settings.childGroups();
@@ -716,7 +704,7 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
                       int tmpLen = makeFrame(dataBuf, len, C_PROG_DATA, seq, frameBuf);
                       if(tmpLen > 0)
                       {
-                          sendProtoData(frameBuf, tmpLen);
+                          w->comStatus->sendData(frameBuf, tmpLen);
                       }
                       else
                       {
@@ -737,6 +725,231 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
     restoreProgPara(progParaBak);
     restoreCardPara(cardParaBak);
 
-    disconnectScreen();// 断开连接
+    w->comStatus->disConnect();
+    //disconnectScreen();// 断开连接
+}
+#endif
+
+//生成协议数据到fileName
+INT16U _makeProtoData(QString fileName, QString screenStr, int flag)
+{
+    FILE *file;
+    INT16U counts = 0;
+    S_Prog_Para progPara;
+    int len;
+    INT16U areaWidth, areaHeight;
+    INT8U seq = 0, progNum, areaNum, fileNum;
+    char frameBuf[BLOCK_DATA_LEN + 20], *dataBuf;
+
+    S_Screen_Para screenParaBak;
+    S_Prog_Para progParaBak;
+    S_Card_Para cardParaBak;
+
+    saveScreenPara(screenParaBak);
+    saveProgPara(progParaBak);
+    saveCardPara(cardParaBak);
+
+    frameInfo.seq = 0xFF;
+
+    //读取屏幕参数和控制卡参数
+    //没有读取到正确的屏幕参数则返回0
+    if(getScreenCardParaFromSettings(screenStr, Screen_Para, Card_Para) EQ 0)
+    {
+        ASSERT_FAILED();
+
+        restoreScreenPara(screenParaBak);
+        restoreProgPara(progParaBak);
+        restoreCardPara(cardParaBak);
+
+        return 0;
+    }
+
+    file = fopen(fileName.toLocal8Bit(), "wb+");
+    if(file EQ (FILE *)0)
+    {
+        ASSERT_FAILED();
+        return 0;
+    }
+
+    fseek(file, 0, SEEK_SET);
+/*
+    if(GET_BIT(flag, C_SCREEN_BASE_PARA) ||\
+       GET_BIT(flag, C_SCAN_PARA) ||\
+       GET_BIT(flag, C_SCREEN_COM_PARA) || \
+       GET_BIT(flag, C_SCREEN_ETH_PARA) ||\
+       GET_BIT(flag, C_SCREEN_GPRS_PARA))
+    {
+      //读取屏幕通信测试参数
+      getComTestParaFromSettings(screenStr, comScreenPara);
+    }
+    else
+    {
+      memcpy(&comScreenPara, &Screen_Para, sizeof(Screen_Para));
+    }
+    */
+
+    //getComTestParaFromSettings(screenStr, comScreenPara);
+
+    //仿真、预览、U盘模式需要修改参数中的通信模式
+    /*
+    if(mode EQ PREVIEW_MODE || mode EQ SIM_MODE || mode EQ UDISK_MODE)
+    {
+       w->comStatus->setComMode(mode);
+    }
+
+    w->comStatus->connect(screenStr); //连接屏幕
+   */
+    dataBuf = (char *)malloc(PROTO_DATA_BUF_LEN);
+
+    //读取屏幕参数
+    //预览模式或者仿真模式需要写屏幕参数到本地文件
+    //if(mode EQ PREVIEW_MODE || mode EQ SIM_MODE)
+    {
+        //设置屏幕基本参数
+        if(GET_BIT(flag, C_SCREEN_BASE_PARA))
+        {
+            len = makeFrame((char *)&Screen_Para.Base_Para, sizeof(Screen_Para.Base_Para),\
+                       C_SCREEN_BASE_PARA, seq++, frameBuf);
+            //w->comStatus->sendData(frameBuf, len);
+            fwrite(frameBuf, len, 1, file);
+        }
+        //扫描参数
+        if(GET_BIT(flag, C_SCAN_PARA))
+        {
+            len = makeFrame((char *)&Screen_Para.Scan_Para, sizeof(Screen_Para.Scan_Para),\
+                       C_SCAN_PARA, seq++, frameBuf);
+            //w->comStatus->sendData(frameBuf, len);
+            fwrite(frameBuf, len, 1, file);
+       }
+    }
+
+
+    //定时开关机时间
+    if(GET_BIT(flag, C_SCREEN_OC_TIME))
+    {
+        len = makeFrame((char *)&Screen_Para.OC_Time, sizeof(Screen_Para.OC_Time),\
+                   C_SCREEN_OC_TIME, seq++, frameBuf);
+        //w->comStatus->sendData(frameBuf, len);
+        fwrite(frameBuf, len, 1, file);
+    }
+
+    //亮度
+    if(GET_BIT(flag, C_SCREEN_LIGNTNESS))
+    {
+        len = makeFrame((char *)&Screen_Para.Lightness, sizeof(Screen_Para.Lightness),\
+                   C_SCREEN_LIGNTNESS, seq++, frameBuf);
+        //w->comStatus->sendData(frameBuf, len);
+        fwrite(frameBuf, len, 1, file);
+    }
+
+    //节目数
+
+    settings.beginGroup(screenStr + "/program/");
+    QStringList progList = settings.childGroups();
+    settings.endGroup();
+    progNum = progList.size();
+
+    if(GET_BIT(flag, C_SCREEN_LIGNTNESS))
+    {
+      len = makeFrame((char *)&progNum, sizeof(progNum),\
+               C_PROG_NUM, seq++, frameBuf);
+      //w->comStatus->sendData(frameBuf, len);
+      fwrite(frameBuf, len, 1, file);
+    }
+
+    //节目数据
+    if(GET_BIT(flag, C_PROG_DATA))
+    {
+        QString progStr,areaStr, fileStr;
+
+        for(int i = 0; i < progNum; i ++)
+        {
+            //节目字符串
+            progStr = screenStr + "/program/" + progList.at(i);
+            //获取节目参数
+            getProgParaFromSettings(progStr, progPara);
+            progPara.Prog_No = i;
+            //节目参数帧
+            len = makeFrame((char *)&progPara.Head + 1, sizeof(progPara) - CHK_BYTE_LEN,C_PROG_PARA, seq++, frameBuf);
+            //w->comStatus->sendData(frameBuf, len);
+            fwrite(frameBuf, len, 1, file);
+
+            settings.beginGroup(progStr + "/area/");
+            QStringList areaList = settings.childGroups();
+            settings.endGroup();
+
+            areaNum = areaList.size();
+            for(int j = 0; j < areaNum; j ++)
+            {
+                areaStr = progStr + "/area/" + areaList.at(j);
+
+                //分区宽度和高度
+                settings.beginGroup(areaStr);
+                areaWidth = settings.value("width").toInt();
+                areaHeight = settings.value("height").toInt();
+                settings.endGroup();
+
+                //文件列表
+                settings.beginGroup(areaStr + "/file/");
+                QStringList fileList = settings.childGroups();
+                settings.endGroup();
+
+                fileNum = fileList.size();
+                for(int k = 0; k < fileNum; k ++)
+                {
+                    fileStr = areaStr + "/file/" + fileList.at(k);
+                    len = getFileParaFromSettings(i,j,k,areaWidth, areaHeight, fileStr, dataBuf, PROTO_DATA_BUF_LEN);
+
+                    while(1)
+                    {
+                      //节目显示数据帧
+                      int tmpLen = makeFrame(dataBuf, len, C_PROG_DATA, seq, frameBuf);
+                      if(tmpLen > 0)
+                      {
+                          //w->comStatus->sendData(frameBuf, tmpLen);
+                          fwrite(frameBuf, tmpLen, 1, file);
+                      }
+                      else
+                      {
+                          seq ++;
+                          break;
+                      }
+                    }
+                }
+              }
+        }
+    }
+
+    free(dataBuf);
+
+    fflush(file);
+    fclose(file);
+
+    restoreScreenPara(screenParaBak);
+    restoreProgPara(progParaBak);
+    restoreCardPara(cardParaBak);
+
 }
 
+INT8U makeProtoData(QString screenStr, int mode, int flag)
+{
+    if(mode EQ PREVIEW_MODE || mode EQ SIM_MODE)
+    {
+       _makeProtoData(PREVIEW_PROTO_FILE, screenStr, flag); //生成协议数据到
+       w->comStatus->setComMode(mode);
+       w->comStatus->sendProtoFile(PREVIEW_PROTO_FILE);
+    }
+    else if(mode EQ UDISK_MODE)
+    {
+       //直接生成到U盘中文件名为 屏幕Addr.dat
+       // _makeProtoData(UDISK_PROTO_FILE, screenStr, flag); //生成协议数据到
+        //w->comStatus->setComMode(mode);
+        //w->comStatus->sendProtoFile(PREVIEW_PROTO_FILE);
+    }
+    else if(mode EQ COM_MODE) //串口方式
+    {
+        _makeProtoData(COM_PROTO_FILE, screenStr, flag); //生成协议数据到
+        w->comStatus->sendProtoFile(COM_PROTO_FILE);
+    }
+
+}
