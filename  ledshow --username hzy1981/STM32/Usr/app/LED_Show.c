@@ -1066,7 +1066,7 @@ void Fill_Round(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, INT16U R
   for(; X < pCenter -> X + Radius; X ++)
   {
     Temp0 = ((INT32S)Radius * Radius - ((INT32S)X - (INT32S)pCenter->X)*((INT32S)X - (INT32S)pCenter->X));
-    Temp = (INT16U)Sqrt(Temp0);
+    Temp = (INT16U)sqrt(Temp0);//Sqrt(Temp0);
     //下面一点
     Up.Y = pCenter->Y + Temp - 1;
     Up.X = X;
@@ -1096,7 +1096,7 @@ void Copy_Filled_Round(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pCenter0, 
   
   for(; X < pCenter0 -> X + Radius; X ++)
   {
-    Temp1 = (INT16U)Sqrt((float)(Radius * Radius - (INT16U)((INT32S)X - (INT32S)pCenter0->X)*((INT32S)X - (INT32S)pCenter0->X)));
+    Temp1 = (INT16U)sqrt((float)(Radius * Radius - (INT16U)((INT32S)X - (INT32S)pCenter0->X)*((INT32S)X - (INT32S)pCenter0->X)));
     //下面一点
     Up.Y = pCenter0->Y + Temp1 - 1;
     Up.X = X;
@@ -2990,7 +2990,7 @@ INT16U LED_Print(INT8U Font, INT8U Color, S_Show_Data *pData, INT8U Area_No, INT
 	
 	memset(Print_Buf, 0, sizeof(Print_Buf));
 	va_start(ap,format);
-	vsPrintf((char *)Pub_Buf, format, ap);
+        vsPrintf((char *)Print_Buf, format, ap);
 	
 	if(pData != (S_Show_Data *)0)
 	  Show_String(Print_Buf, Font, Color, pData,  Area_No, X, Y);
