@@ -36,7 +36,7 @@ signals:
     void comStatusChanged(QString str);
 
 public:
-        int connect(QString str); //连接屏幕
+        int connect(); //连接屏幕
         int disConnect(); //断开连接
 
         int sendFrame(char *data, int len);
