@@ -76,12 +76,12 @@ int CcomStatus::disConnect()
 }
 
 //打开通信端口，并进行连接
-int CcomStatus::connect(QString str)
+int CcomStatus::connect()
 {
     QStringList comPortList;
     comPortList = getComPortList();
 
-    getCOMParaFromSettings(str);//获取通信参数
+    //getCOMParaFromSettings(str);//获取通信参数
 
     if(COM_Mode EQ COM_MODE)
     {
@@ -175,6 +175,8 @@ int CcomStatus::sendProtoFile(QString fileName)
 
     fseek(file, 0, SEEK_SET);
 
+    this->connect();
+
     while((re = fread(frameBuf, FLEN + 2, 1, file)) > 0)
     {
       memcpy(&len, frameBuf + FLEN, 2);
@@ -206,6 +208,8 @@ int CcomStatus::sendProtoFile(QString fileName)
     }
 
     fclose(file);
+
+    this->disConnect();
 
     return Re;
 }

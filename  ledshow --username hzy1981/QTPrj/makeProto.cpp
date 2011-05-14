@@ -799,6 +799,8 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag)
 
     w->comStatus->connect(screenStr); //连接屏幕
    */
+
+
     dataBuf = (char *)malloc(PROTO_DATA_BUF_LEN);
 
     //读取屏幕参数
@@ -946,9 +948,10 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
         //w->comStatus->setComMode(mode);
         //w->comStatus->sendProtoFile(PREVIEW_PROTO_FILE);
     }
-    else if(mode EQ COM_MODE) //串口方式
+    else //if(mode EQ COM_MODE) //串口方式
     {
         _makeProtoData(COM_PROTO_FILE, screenStr, flag); //生成协议数据到
+        w->comStatus->getCOMParaFromSettings(screenStr); //获取通信参数
         w->comStatus->sendProtoFile(COM_PROTO_FILE);
     }
 

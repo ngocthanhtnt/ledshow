@@ -19,6 +19,7 @@
 #define UDISK_MODE 0x03 //u盘
 #define PREVIEW_MODE   0x04 //预览模式
 #define SIM_MODE  0x05 //仿真模式
+#define NULL_MODE 0xFF
 
 typedef struct
 {
