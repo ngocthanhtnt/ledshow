@@ -739,7 +739,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     property = new Cproperty(this);
     progManage = new CprogManage(this);
-/*
+    comStatus = new CcomStatus(this);
+
+    comStatus->hide(); //Æô¶¯ÊÇÒþ²Ø
+    /*
     widget = new QWidget(this);
     widget->setAutoFillBackground(true);
     QPalette *palette;
@@ -751,6 +754,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     addDockWidget(Qt::LeftDockWidgetArea, progManage);
     addDockWidget(Qt::BottomDockWidgetArea, property);
+    addDockWidget(Qt::RightDockWidgetArea, comStatus);
 
     setupFileActions();
     //setupViewActions();
@@ -790,7 +794,8 @@ MainWindow::MainWindow(QWidget *parent)
    timer = new QTimer(this);
    connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
 
-   comStatus = new CcomStatus(this);
+
+   //comStatus->show();
 }
 
 void MainWindow::screenCardParaChangeProc()

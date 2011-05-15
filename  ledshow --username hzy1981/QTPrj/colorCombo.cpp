@@ -223,7 +223,7 @@ CsizeCombo::CsizeCombo(QWidget *parent):QComboBox(parent)
   setItems();
 
   connect(this, SIGNAL(currentIndexChanged(int)), this, SIGNAL(indexChangeSignal()));
-  connect(mainObj, SIGNAL(screenChange), this, SLOT(setItems));
+  connect(mainObj, SIGNAL(screenChange()), this, SLOT(setItems()));
 }
 
 void CsizeCombo::setItems()

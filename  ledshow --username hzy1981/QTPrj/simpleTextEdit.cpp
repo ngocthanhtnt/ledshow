@@ -1158,7 +1158,7 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
 
   //所有的消息统一到一个消息
   connect(fontCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
-  connect(fontSizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
+  connect(fontSizeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
   connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
   connect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
   connect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));

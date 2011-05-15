@@ -1371,3 +1371,26 @@ void CprogManage::saveCurItem(QTreeWidgetItem *item)
 {
     curItem = item;
 }
+
+//获取屏幕编号，从1开始，0表示不存在该屏幕
+//screenStr表示屏幕的settings str
+int getScreenIndex(QString screenStr)
+{
+    QStringList screenGroups;
+    int screenSize;
+
+    settings.beginGroup("screen");
+    screenGroups = settings.childGroups(); //屏幕列表
+    screenSize = screenGroups.size();
+    settings.endGroup();
+
+    for(int i = 0; i < screenSize; i ++)
+    {
+        if(QString("screen/") + screenGroups.at(i) EQ screenStr)
+        {
+            return i + 1;
+        }
+    }
+
+    return 0;
+}
