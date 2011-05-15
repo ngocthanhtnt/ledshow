@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
     //traversalControl(w->children());
     //w->show();
     w->showMaximized();
-
+    //w->comStatus->showFullScreen();//showNormal();
     return a.exec();
 
 }

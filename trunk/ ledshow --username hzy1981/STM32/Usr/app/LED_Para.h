@@ -215,8 +215,8 @@ typedef struct
 */
   S_Screen_Base_Para Base_Para; //基本参数
 //#if QT_EN > 0
-  INT8U Com_Port; //串口的端口号-主台用
-  INT8U Com_Mode; //选用通信模式-主台用
+  //INT8U Com_Port; //串口的端口号-主台用
+  //INT8U Com_Mode; //选用通信模式-主台用
 //#endif
 
   S_COM_Para COM_Para; //通信参数-基本通信参数

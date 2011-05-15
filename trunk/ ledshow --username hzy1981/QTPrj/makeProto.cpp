@@ -148,6 +148,7 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
   return len;
 }
 
+#if 0
 //发送协议数据
 //pFrame和len表示帧起始和帧长
 //mode表示发送的模式，0表示串口，1表示u盘，2表示以太网
@@ -194,7 +195,7 @@ INT8U sendProtoData(char *pFrame, int len)
 
     return 1;
 }
-
+#endif
 
 //获取文件参数
 //width,height所在显示分区的宽度和高度
@@ -543,13 +544,13 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 //生成协议数据
 //screenStr屏幕参数的str,例如"screen/1/"表示第一个屏幕
 //mode表示生成数据的方式：0表示表示
-INT8U _makeProtoData(QString screenStr, int mode, int flag)
+INT16U _makeProtoData(QString screenStr, int mode, int flag)
 {
     INT16U counts = 0;
     S_Prog_Para progPara;
     int len;
     INT16U areaWidth, areaHeight;
-    INT8U seq = 0, progNum, areaNum, fileNum;
+    INT16U seq = 0, progNum, areaNum, fileNum;
     char frameBuf[BLOCK_DATA_LEN + 20], *dataBuf;
 
     S_Screen_Para screenParaBak;
@@ -812,7 +813,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag)
         {
             len = makeFrame((char *)&Screen_Para.Base_Para, sizeof(Screen_Para.Base_Para),\
                        C_SCREEN_BASE_PARA, seq++, frameBuf);
-            //w->comStatus->sendData(frameBuf, len);
+            counts++;
             fwrite(frameBuf, len, 1, file);
         }
         //扫描参数
@@ -820,7 +821,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag)
         {
             len = makeFrame((char *)&Screen_Para.Scan_Para, sizeof(Screen_Para.Scan_Para),\
                        C_SCAN_PARA, seq++, frameBuf);
-            //w->comStatus->sendData(frameBuf, len);
+            counts++;
             fwrite(frameBuf, len, 1, file);
        }
     }
@@ -831,7 +832,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag)
     {
         len = makeFrame((char *)&Screen_Para.OC_Time, sizeof(Screen_Para.OC_Time),\
                    C_SCREEN_OC_TIME, seq++, frameBuf);
-        //w->comStatus->sendData(frameBuf, len);
+        counts++;
         fwrite(frameBuf, len, 1, file);
     }
 
@@ -840,7 +841,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag)
     {
         len = makeFrame((char *)&Screen_Para.Lightness, sizeof(Screen_Para.Lightness),\
                    C_SCREEN_LIGNTNESS, seq++, frameBuf);
-        //w->comStatus->sendData(frameBuf, len);
+        counts++;
         fwrite(frameBuf, len, 1, file);
     }
 
@@ -855,7 +856,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag)
     {
       len = makeFrame((char *)&progNum, sizeof(progNum),\
                C_PROG_NUM, seq++, frameBuf);
-      //w->comStatus->sendData(frameBuf, len);
+      counts++;
       fwrite(frameBuf, len, 1, file);
     }
 
@@ -873,7 +874,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag)
             progPara.Prog_No = i;
             //节目参数帧
             len = makeFrame((char *)&progPara.Head + 1, sizeof(progPara) - CHK_BYTE_LEN,C_PROG_PARA, seq++, frameBuf);
-            //w->comStatus->sendData(frameBuf, len);
+            counts++;
             fwrite(frameBuf, len, 1, file);
 
             settings.beginGroup(progStr + "/area/");
@@ -908,7 +909,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag)
                       int tmpLen = makeFrame(dataBuf, len, C_PROG_DATA, seq, frameBuf);
                       if(tmpLen > 0)
                       {
-                          //w->comStatus->sendData(frameBuf, tmpLen);
+                          counts++;
                           fwrite(frameBuf, tmpLen, 1, file);
                       }
                       else
@@ -931,13 +932,19 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag)
     restoreProgPara(progParaBak);
     restoreCardPara(cardParaBak);
 
+    return counts;
+
 }
 
 INT8U makeProtoData(QString screenStr, int mode, int flag)
 {
+    INT16U counts = 0; //总的帧数
+
     if(mode EQ PREVIEW_MODE || mode EQ SIM_MODE)
     {
-       _makeProtoData(PREVIEW_PROTO_FILE, screenStr, flag); //生成协议数据到
+       counts = _makeProtoData(PREVIEW_PROTO_FILE, screenStr, flag); //生成协议数据到
+
+       w->comStatus->setTotalFrameCounts(counts);
        w->comStatus->setComMode(mode);
        w->comStatus->sendProtoFile(PREVIEW_PROTO_FILE);
     }
@@ -950,7 +957,8 @@ INT8U makeProtoData(QString screenStr, int mode, int flag)
     }
     else //if(mode EQ COM_MODE) //串口方式
     {
-        _makeProtoData(COM_PROTO_FILE, screenStr, flag); //生成协议数据到
+        counts = _makeProtoData(COM_PROTO_FILE, screenStr, flag); //生成协议数据到
+        w->comStatus->setTotalFrameCounts(counts);
         w->comStatus->getCOMParaFromSettings(screenStr); //获取通信参数
         w->comStatus->sendProtoFile(COM_PROTO_FILE);
     }

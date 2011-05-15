@@ -730,12 +730,13 @@ void ClightnessDialog::sendPara()
     sendLightnessPara();
     //disconnectScreen();
 
+    close();
 }
 
 //
 void ClightnessDialog::udiskPara()
 {
-
+  close();
 }
 
 void ClightnessDialog::getSettingsFromWidget(QString str)
@@ -818,12 +819,14 @@ void CopenCloseDialog::sendPara()
     //connectScreen();
     sendOpenClosePara();
     //disconnectScreen();
+    close();
 }
 
 //
 void CopenCloseDialog::udiskPara()
 {
 
+    close();
 }
 
 void CopenCloseDialog::getSettingsFromWidget(QString str)
@@ -1029,6 +1032,8 @@ CsendDataDialog::CsendDataDialog(int flag, QWidget *parent):QDialog(parent)
   connect(sendButton, SIGNAL(clicked()), this, SLOT(sendData()));
   connect(udiskButton, SIGNAL(clicked()), this, SLOT(uDiskData()));
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+
+  connect(this, SIGNAL(closeSignal()), this, SLOT(close()));
   setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -1053,6 +1058,10 @@ void CsendDataDialog::sendData()
     else
       makeProtoData(str, COM_MODE, flag);
 
+    close();
+    //emit this->cancelButton->clicked();
+    //emit this->closeSignal();
+    //emit this->close()
 }
 
 void CsendDataDialog::uDiskData()
@@ -1270,6 +1279,9 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   setLayout(gridLayout);
   setTitle(tr("通信参数"));
 
+  comPortEdit->setEditable(true);
+  comPortEdit->setFocusPolicy(Qt::NoFocus);
+
   connect(comModeCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(editSignal()));
   connect(comPortEdit, SIGNAL(currentIndexChanged(int)), this, SIGNAL(editSignal()));
   connect(screenIDEdit, SIGNAL(valueChanged(int)), this, SIGNAL(editSignal()));
@@ -1309,14 +1321,16 @@ void CcomTest::getSettingsFromWidget(QString str)
 
     settings.setValue("comMode", comModeCombo->currentIndex());
     settings.setValue("screenID", screenIDEdit->value());
-    settings.setValue("comPort", comPortEdit->currentIndex());
+    settings.setValue("comPort", comPortEdit->currentText());
+    //settings.setValue("comPort", comPortEdit->currentIndex());
+
     settings.setValue("comBaud", comBaudCombo->currentIndex());
     settings.setValue("ip", ipEdit->getIP());
 
     settings.endGroup();
     settings.endGroup();
 }
-
+/*
 void getComTestParaFromSettings(QString str, S_Screen_Para &screenPara)
 {
     settings.beginGroup(str);
@@ -1335,7 +1349,7 @@ void getComTestParaFromSettings(QString str, S_Screen_Para &screenPara)
 
     SET_SUM(screenPara);
 }
-
+*/
 void CcomTest::setSettingsToWidget(QString str)
 {
     disconnect(this, SIGNAL(editSignal()), this, SLOT(editSlot()));
@@ -1345,7 +1359,8 @@ void CcomTest::setSettingsToWidget(QString str)
 
     comModeCombo->setCurrentIndex(settings.value("comMode").toInt());
     screenIDEdit->setValue(settings.value("screenID").toInt());
-    comPortEdit->setCurrentIndex(settings.value("comPort").toInt());
+    //comPortEdit->setCurrentIndex(settings.value("comPort").toInt());
+    comPortEdit->setEditText(settings.value("comPort").toString());
     comBaudCombo->setCurrentIndex(settings.value("comBaud").toInt());
     ipEdit->setIP(settings.value("ip").toInt());
 

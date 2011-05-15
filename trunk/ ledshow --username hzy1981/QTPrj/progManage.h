@@ -93,4 +93,5 @@ public:
 };
 int checkItemType(QTreeWidgetItem *item);
 int checkStrType(QString str);
+int getScreenIndex(QString screenStr);
 #endif // PROGMANAGE_H
