@@ -26,7 +26,7 @@
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
 #define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
-#define QT_EN 1 //在QT环境下编译使用QT
+#define QT_EN 0 //在QT环境下编译使用QT
 #define QT_SIM_EN 0//使用QT仿真STM32情况。不同于预览
 #define CARD_TYPE CARD_A0 //A系列板卡针对小条屏，其他针对中大屏
 //QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
