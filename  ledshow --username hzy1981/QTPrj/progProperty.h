@@ -49,11 +49,11 @@ private:
     //------------定长播放----------
     QGroupBox *playTimeGroup; //播放时长
     QCheckBox *playCountCheck; //顺次播放
-    QLineEdit *playCountEdit; //次数
+    QSpinBox *playCountEdit; //次数
     QLabel *playCountLabel;//次数label
 
     QCheckBox *playTimeCheck; //定长播放
-    QLineEdit *playTimeEdit; //时长
+    QSpinBox *playTimeEdit; //时长
     QLabel *playTimeLabel;
 
     //-------------边框选择----------

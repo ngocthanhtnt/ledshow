@@ -166,17 +166,26 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     vLayout->addWidget(timerGroup);
     hLayout->addLayout(vLayout);
 
+    //QValidator *validator = new QIntValidator(1,99999,this);
     //mainLayout -> addWidget(timerGroup, 1, 0);
     //播放长度
     gridLayout = new QGridLayout(this);
     playTimeGroup = new QGroupBox(tr("播放长度"), this);
     playTimeCheck = new QCheckBox(tr("定长播放"), this);
-    playTimeEdit = new QLineEdit(this);
+    playTimeEdit = new QSpinBox(this);
+    playTimeEdit->setMinimum(1);
+    playTimeEdit->setMaximum(99999);//setValidator(validator);
     playTimeLabel = new QLabel(tr("秒"));
+    playTimeEdit->setFixedWidth(50);
 
+    //validator = new QIntValidator(1,99999,this);
     playCountCheck = new QCheckBox(tr("顺次播放"), this);
-    playCountEdit = new QLineEdit(this);
+    playCountEdit = new QSpinBox(this);
+    playCountEdit->setMinimum(1);
+    playCountEdit->setMaximum(99999);//setValidator(validator);//playCountEdit->setValidator(validator);
     playCountLabel = new QLabel(tr("次"));
+    playCountEdit->setFixedWidth(50);
+
 
     gridLayout -> addWidget(playCountCheck, 0, 0, 1, 2);
     gridLayout -> addWidget(playCountEdit, 1, 0);
@@ -354,8 +363,10 @@ CprogProperty::~CprogProperty()
 
     QLabel *stepLabel,*styleLabel,*modeLabel,*speedLabel;
     QLabel *pointsLabel,*usLabel;
-    QLineEdit *stepCombo, *speedCombo;
-    QComboBox *styleCombo, *modeCombo;
+    QComboBox *stepCombo,*speedCombo;
+    QComboBox *styleCombo;
+    QComboBox *modeCombo;
+    CcolorCombo *colorCombo;
  */
 
 void CprogProperty::connectSignal()
@@ -367,7 +378,29 @@ void CprogProperty::connectSignal()
     connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
     connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 
+    //---
+    connect(startDateEdit, SIGNAL(dateChanged(QDate)),this,SLOT(edited()));
+    connect(endDateEdit, SIGNAL(dateChanged(QDate)),this,SLOT(edited()));
+    connect(startTimeEdit, SIGNAL(timeChanged(QTime)),this,SLOT(edited()));
+    connect(endTimeEdit, SIGNAL(timeChanged(QTime)),this,SLOT(edited()));
+    connect(weekCheck[0], SIGNAL(clicked()),this,SLOT(edited()));
+    connect(weekCheck[1], SIGNAL(clicked()),this,SLOT(edited()));
+    connect(weekCheck[2], SIGNAL(clicked()),this,SLOT(edited()));
+    connect(weekCheck[3], SIGNAL(clicked()),this,SLOT(edited()));
+    connect(weekCheck[4], SIGNAL(clicked()),this,SLOT(edited()));
+    connect(weekCheck[5], SIGNAL(clicked()),this,SLOT(edited()));
+    connect(weekCheck[6], SIGNAL(clicked()),this,SLOT(edited()));
+    connect(weekCheck[7], SIGNAL(clicked()),this,SLOT(edited()));
     //-----------------
+    connect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    connect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    connect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    connect(playTimeEdit, SIGNAL(valueChanged(int)),this,SLOT(edited()));
+    connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    connect(playCountEdit, SIGNAL(valueChanged(int)),this,SLOT(edited()));
+    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+
     connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     connect(colorCombo,SIGNAL(indexChangeSignal()), this, SLOT(edited()));
@@ -384,7 +417,29 @@ void CprogProperty::disconnectSignal()
     disconnect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
     disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 
+    //---
+    disconnect(startDateEdit, SIGNAL(dateChanged(QDate)),this,SLOT(edited()));
+    disconnect(endDateEdit, SIGNAL(dateChanged(QDate)),this,SLOT(edited()));
+    disconnect(startTimeEdit, SIGNAL(timeChanged(QTime)),this,SLOT(edited()));
+    disconnect(endTimeEdit, SIGNAL(timeChanged(QTime)),this,SLOT(edited()));
+    disconnect(weekCheck[0], SIGNAL(clicked()),this,SLOT(edited()));
+    disconnect(weekCheck[1], SIGNAL(clicked()),this,SLOT(edited()));
+    disconnect(weekCheck[2], SIGNAL(clicked()),this,SLOT(edited()));
+    disconnect(weekCheck[3], SIGNAL(clicked()),this,SLOT(edited()));
+    disconnect(weekCheck[4], SIGNAL(clicked()),this,SLOT(edited()));
+    disconnect(weekCheck[5], SIGNAL(clicked()),this,SLOT(edited()));
+    disconnect(weekCheck[6], SIGNAL(clicked()),this,SLOT(edited()));
+    disconnect(weekCheck[7], SIGNAL(clicked()),this,SLOT(edited()));
     //-----------------
+    disconnect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    disconnect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    disconnect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    disconnect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    disconnect(playTimeEdit, SIGNAL(valueChanged(int)),this,SLOT(edited()));
+    disconnect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+    disconnect(playCountEdit, SIGNAL(valueChanged(int)),this,SLOT(edited()));
+    disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+
     disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     disconnect(colorCombo,SIGNAL(indexChangeSignal()), this, SLOT(edited()));
@@ -397,7 +452,7 @@ void CprogProperty::disconnectSignal()
 void CprogProperty::setSettingsToWidget(QString str)
 {
     QStringList keys;
-    int year,month,day,hour,min;
+    int year,month,day,hour,min,sec,tmp;
     QDate date;
     QTime time;
 
@@ -447,21 +502,35 @@ void CprogProperty::setSettingsToWidget(QString str)
     //endTimeEdit->setTime(QTime::fromString(settings.value("endTime").toString(),"m.s"));
     hour = settings.value("startHour").toInt();
     min = settings.value("startMin").toInt();
-    time.setHMS(hour, min, 0, 0);
+    sec = settings.value("startSec").toInt();
+    time.setHMS(hour, min, sec, 0);
     startTimeEdit->setTime(time);
 
     hour = settings.value("endHour").toInt();
     min = settings.value("endMin").toInt();
-    time.setHMS(hour, min, 0, 0);
+    sec = settings.value("endSec").toInt();
+    time.setHMS(hour, min, sec, 0);
     endTimeEdit->setTime(time);
 
-    //定长播放
-    playTimeCheck->setChecked(settings.value("playTimeCheck").toBool());
-    playTimeEdit->setText(QString::number(settings.value("playTime").toInt()));
-    playTimeEdit->setFixedWidth(50);
-    playCountCheck->setChecked(settings.value("playCountCheck").toBool());
-    playCountEdit->setText(QString::number(settings.value("playCount").toInt()));
-    playCountEdit->setFixedWidth(50);
+    //播放模式
+    if(settings.value("playMode").toInt() EQ 0)
+    {
+      playCountCheck->setChecked(true);
+      playTimeCheck->setChecked(false);
+    }
+    else
+    {
+        playCountCheck->setChecked(false);
+        playTimeCheck->setChecked(true);
+    }
+
+    //playTimeCheck->setChecked(settings.value("playTimeCheck").toBool());
+    tmp = settings.value("playTime").toInt();
+    playTimeEdit->setValue(tmp);//setText(QString::number(tmp));
+    //playTimeEdit->setFixedWidth(50);
+    tmp = settings.value("playCount").toInt();
+    playCountEdit->setValue(tmp);//setText(QString::number(tmp));
+    //playCountEdit->setFixedWidth(50);
     //边框选择
     borderCheck->setChecked(settings.value("borderCheck").toBool());
     //stepCombo->setText(QString::number(settings.value("width").toInt()));
@@ -535,24 +604,27 @@ void CprogProperty::getSettingsFromWidget(QString str)
     //settings.setValue("w7", QVariant(weekCheck[7]->checkState()));
 
       //按时间定时
-    //timeCheck->setChecked(settings.value("timeCheck").toBool());
     settings.setValue("timeCheck", QVariant(timeCheck->checkState()));
-    //startTimeEdit->setTime(QTime::fromString(settings.value("startTime").toString(),"m.s"));
-    //settings.setValue("startTime", QVariant(startTimeEdit->time().toString()));
-    //endTimeEdit->setTime(QTime::fromString(settings.value("endTime").toString(),"m.s"));
-    //settings.setValue("endTime", QVariant(endTimeEdit->time().toString()));
+
     settings.setValue("startHour", startTimeEdit->time().hour());
     settings.setValue("startMin", startTimeEdit->time().minute());
+    settings.setValue("startSec", startTimeEdit->time().second());
     settings.setValue("endHour", endTimeEdit->time().hour());
     settings.setValue("endMin", endTimeEdit->time().minute());
+    settings.setValue("endSec", endTimeEdit->time().second());
 
     //定长播放
-      //playTimeCheck->setChecked(settings.value("playTimeCheck").toBool());
-    settings.setValue("playTimeCheck", QVariant(playTimeCheck->checkState()));
+    if(playCountCheck->isChecked())
+      settings.setValue("playMode", 0);
+    else
+      settings.setValue("playMode", 1);
+
+    //playTimeCheck->setChecked(settings.value("playTimeCheck").toBool());
+    //settings.setValue("playTimeCheck", QVariant(playTimeCheck->checkState()));
     //playTimeEdit->setText(settings.value("playTime").toString());
-    settings.setValue("playTime", QVariant(playTimeEdit->text().toInt()));
-    settings.setValue("playCountCheck", QVariant(playCountCheck->checkState()));
-    settings.setValue("playCount", QVariant(playCountEdit->text().toInt()));
+    settings.setValue("playTime", QVariant(playTimeEdit->value()));
+    //settings.setValue("playCountCheck", QVariant(playCountCheck->checkState()));
+    settings.setValue("playCount", QVariant(playCountEdit->value()));
       //边框选择
       //borderCheck->setChecked(settings.value("boderCheck").toBool());
     settings.setValue("borderCheck", QVariant(borderCheck->checkState()));

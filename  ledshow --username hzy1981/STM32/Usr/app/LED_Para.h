@@ -776,7 +776,6 @@ EXT S_Cur_Block_Index Cur_Block_Index;
 //EXT S_Rcv_Show_Data Rcv_Show_Data;
 
 EXT S_Time Cur_Time; //当前时间 
-
 EXT INT8U Get_Screen_Color_Num(void);
 EXT INT16U Read_Screen_Para(void);
 EXT INT8U Write_Screen_Para(void);

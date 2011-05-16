@@ -433,6 +433,10 @@ void CcomStatus::setComMode(int mode)
 
 }
 
+void CcomStatus::comShow()
+{
+    this ->show();
+}
 
 void CcomStatus::setTotalFrameCounts(int counts)
 {
