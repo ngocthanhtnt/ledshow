@@ -34,7 +34,7 @@ typedef char INT8S;
 #define FILE_R  0
 #define FILE_W  1
 #define FILE_WR 2
-
+/*
 #define FILE_T char *
 
 #define FILE_FRAME_ERR -2 //文件帧出错
@@ -43,7 +43,7 @@ typedef char INT8S;
 #define FILE_ERR -1 //文件出错
 #define FILE_END 0  //文件结尾
 #define FILE_OK  1 //文件ok
-
+*/
 #define START_SHOW_TIMER_INT
 #define STOP_SHOW_TIMER_INT
 

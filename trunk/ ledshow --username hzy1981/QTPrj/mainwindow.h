@@ -88,6 +88,13 @@ private:
     QAction *actionTimer;
     QAction *actionDel;
     QAction *actionPreview;
+    QAction *actionModiScreenPara;
+    QAction *actionUDisk;
+    QAction *actionSendData;
+    QAction *actionAdjTime;
+    QAction *actionLightness;
+    QAction *actionOpenClose;
+    QAction *actionComStatus;
 public slots:
     void modifyScreenPara();
     void setLightness();
@@ -97,6 +104,7 @@ public slots:
     void setOpenCloseTime();
     void preview();
     void previewProc();
+    void comStatusShow();
 public:
     int MDISubWinClickFlag;
     QWidget *widget;

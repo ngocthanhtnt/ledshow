@@ -2,6 +2,7 @@
 #include <QDesktopWidget>
 #include <QPainter>
 #include <QTextCodec>
+#include <QDir>
 #include "mainwindow.h"
 #include "textedit.h"
 
@@ -60,6 +61,16 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     resetCardtoCardParaFile();
+
+    QDir dataDir;
+    if(dataDir.exists(".\\data") == false)
+        dataDir.mkdir(".\\data");
+
+    if(dataDir.exists(".\\cfg") == false)
+        dataDir.mkdir(".\\cfg");
+
+
+
     /*
     Screen_Para.Base_Para.Width = DEF_SCN_WIDTH;
     Screen_Para.Base_Para.Height = DEF_SCN_HEIGHT;

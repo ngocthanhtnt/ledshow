@@ -31,7 +31,7 @@
 
 /* Exported types ------------------------------------------------------------*/
 typedef  void (*pFunction)(void);
-
+typedef enum {FALSE = 0, TRUE = !FALSE} bool;
 /* Exported constants --------------------------------------------------------*/
 /* Constants used by Serial Command Line Mode */
 #define CMD_STRING_SIZE       128

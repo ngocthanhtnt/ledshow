@@ -131,6 +131,7 @@ public slots:
     void comEnd(bool flag);
 
     void comStart();
+    void comShow();
 public:
     //bool checkComMode();
     void setTotalFrameCounts(int counts);

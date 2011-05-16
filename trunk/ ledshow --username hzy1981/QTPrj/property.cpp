@@ -78,6 +78,8 @@ Cproperty::Cproperty(QWidget *parent):QDockWidget(parent)
     noiseProperty = new CnoiseProperty(stackedWidget);
     stackedWidget->addWidget(noiseProperty);
     setWidget(stackedWidget);
+
+    this->setFeatures(QDockWidget::NoDockWidgetFeatures);
 }
 
 INT8U getStackedWidgetIndex(INT8U type)

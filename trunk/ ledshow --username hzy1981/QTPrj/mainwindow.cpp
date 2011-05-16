@@ -321,6 +321,12 @@ void MainWindow::actionEnProc(int Type)
     property->setEnabled(false);
     ctrlMenu->setEnabled(false);
     actionPreview->setEnabled(false);
+    actionModiScreenPara->setEnabled(false);
+    actionUDisk->setEnabled(false);
+    actionSendData->setEnabled(false);
+    actionAdjTime->setEnabled(false);
+    actionLightness->setEnabled(false);
+    actionOpenClose->setEnabled(false);
 
     actionScreen->setEnabled(true);
     actionProg->setEnabled(false);
@@ -336,12 +342,20 @@ void MainWindow::actionEnProc(int Type)
     actionNongli->setEnabled(false);
     actionTimer->setEnabled(false);
     actionDel->setEnabled(false);
+
+
   }
   else if(Type EQ SCREEN_PROPERTY)
   {
       property->setEnabled(true);
       ctrlMenu->setEnabled(true);
       actionPreview->setEnabled(false);
+      actionModiScreenPara->setEnabled(true);
+      actionUDisk->setEnabled(true);
+      actionSendData->setEnabled(true);
+      actionAdjTime->setEnabled(true);
+      actionLightness->setEnabled(true);
+      actionOpenClose->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -363,6 +377,12 @@ void MainWindow::actionEnProc(int Type)
       property->setEnabled(true);
       ctrlMenu->setEnabled(true);
       actionPreview->setEnabled(true);
+      actionModiScreenPara->setEnabled(true);
+      actionUDisk->setEnabled(true);
+      actionSendData->setEnabled(true);
+      actionAdjTime->setEnabled(true);
+      actionLightness->setEnabled(true);
+      actionOpenClose->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -384,6 +404,12 @@ void MainWindow::actionEnProc(int Type)
       property->setEnabled(true);
       ctrlMenu->setEnabled(true);
       actionPreview->setEnabled(true);
+      actionModiScreenPara->setEnabled(true);
+      actionUDisk->setEnabled(true);
+      actionSendData->setEnabled(true);
+      actionAdjTime->setEnabled(true);
+      actionLightness->setEnabled(true);
+      actionOpenClose->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -405,6 +431,12 @@ void MainWindow::actionEnProc(int Type)
       property->setEnabled(true);
       ctrlMenu->setEnabled(true);
       actionPreview->setEnabled(true);
+      actionModiScreenPara->setEnabled(true);
+      actionUDisk->setEnabled(true);
+      actionSendData->setEnabled(true);
+      actionAdjTime->setEnabled(true);
+      actionLightness->setEnabled(true);
+      actionOpenClose->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -437,7 +469,7 @@ void MainWindow::setupCtrlActions()
 
     QAction *a;
 
-    a = new QAction(tr("修改屏幕参数"), this);
+    actionModiScreenPara = a = new QAction(tr("修改屏幕参数"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(modifyScreenPara()));
@@ -445,14 +477,14 @@ void MainWindow::setupCtrlActions()
     menu->addAction(a);
     menu->addSeparator();
 
-    a = new QAction(tr("定时开关机"), this);
+    actionOpenClose = a = new QAction(tr("定时开关机"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(setOpenCloseTime()));
     //tb->addAction(a);
     menu->addAction(a);
 
-    a = new QAction(tr("调节亮度"), this);
+    actionLightness = a = new QAction(tr("调节亮度"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(setLightness()));
@@ -461,7 +493,7 @@ void MainWindow::setupCtrlActions()
 
 
     QIcon adjTimeIcon = QIcon::fromTheme(tr("校时"), QIcon(rsrcPath1 + tr("/校时22.png")));
-    a = new QAction(adjTimeIcon, tr("校时"), this);
+    actionAdjTime = a = new QAction(adjTimeIcon, tr("校时"), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(adjTime()));
     tb->addAction(a);
@@ -470,20 +502,28 @@ void MainWindow::setupCtrlActions()
     tb->addSeparator();
 
     QIcon sendIcon = QIcon::fromTheme(tr("发送数据"), QIcon(rsrcPath1 + tr("/发送22.png")));
-    a = new QAction(sendIcon, tr("发送数据"), this);
+    actionSendData = a = new QAction(sendIcon, tr("发送数据"), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(sendDataProc()));
     tb->addAction(a);
     menu->addAction(a);
 
     QIcon udiskIcon = QIcon::fromTheme(tr("导出U盘"), QIcon(rsrcPath1 + tr("/导U盘22.png")));
-    a = new QAction(udiskIcon, tr("导出U盘文件"), this);
+    actionUDisk = a = new QAction(udiskIcon, tr("导出U盘文件"), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(exportUdsikProc()));
     tb->addAction(a);
     menu->addAction(a);
     menu->addSeparator();
     tb->addSeparator();
+
+    //QIcon udiskIcon = QIcon::fromTheme(tr("显示通信状态"), QIcon(rsrcPath1 + tr("/导U盘22.png")));
+    actionComStatus = a = new QAction(tr("显示通信状态"), this);
+    a->setCheckable(true);
+    connect(a, SIGNAL(triggered()), this, SLOT(comStatusShow()));
+    //tb->addAction(a);
+    menu->addAction(a);
+    menu->addSeparator();
 
     QIcon previewIcon = QIcon::fromTheme("预览", QIcon(rsrcPath1 + tr("/预览2222.png")));
     actionPreview = a = new QAction(previewIcon, tr("预览"), this);
@@ -972,6 +1012,14 @@ void MainWindow::preview()
   timer->start(QT_MOVE_STEP_TIMER);
   //previewProc();
 
+}
+
+void MainWindow::comStatusShow()
+{
+  if(actionComStatus->isChecked()==true)
+      comStatus->show();
+  else
+      comStatus->hide();
 }
 
 void MainWindow::previewProc()
