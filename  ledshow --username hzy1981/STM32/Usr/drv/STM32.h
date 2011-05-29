@@ -24,9 +24,6 @@
 #define SELF_TEST_STATUS 0x01//自检状态
 #define FAC_STATUS       0x02//工厂状态
 
-#define MAX_ROWS_FOLD 4	 //测试时最大行折
-#define MAX_COLS_FOLD 4	 //测试时最大列折
-
 #define debug OS_Debug_Print
 
 #define SPI_FLASH_CS_HIGH() SET_FLASH_CS(1)
@@ -118,7 +115,9 @@ EXT void Delay_Init(void);
 EXT void Delay_ms(INT16U nms);
 EXT void Delay_us(INT32U nus);
 EXT void SPI1_Init(void);
+EXT void Com_Init(void);
 EXT INT8U SPI1_ReadWrite(INT8U writedat);
+EXT void Soft_Rest(void);
 EXT void NVIC_Configuration(void);
 EXT void TIM2_Configuration(void);
 EXT void TIM4_Configuration(void);
@@ -129,7 +128,6 @@ EXT void Set_Block_OE_En(INT8U Value);
 EXT void Set_Block_Row(INT8U Row);
 EXT INT8U Chk_JP_Status(void);
 EXT void UART2_Init(void); //串口2初始化
-EXT void Self_Test(void);
 EXT void Com_Send_Byte(INT8U Ch, INT8U Data);
 EXT void Unselect_SPI_Device(void);
 

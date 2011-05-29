@@ -40,8 +40,8 @@
 
 //定义断言,多多使用，有益身心
 #if OS_ASSERT_EN>0
-#define OS_ASSERT(x) //OS_Assert((OS_BOOL)(x),__FILE__,__FUNCTION__,(OS_INT16U)__LINE__)
-#define OS_ASSERT_FAILED() //OS_Assert_Failed(__FILE__,__FUNCTION__,(OS_INT16U)__LINE__)
+#define OS_ASSERT(x) ASSERT(x)//OS_Assert((OS_BOOL)(x),__FILE__,__FUNCTION__,(OS_INT16U)__LINE__)
+#define OS_ASSERT_FAILED() ASSERT_FAILED()//OS_Assert_Failed(__FILE__,__FUNCTION__,(OS_INT16U)__LINE__)
 #else
 #define OS_ASSERT(x)
 #define OS_ASSERT_FAILED()

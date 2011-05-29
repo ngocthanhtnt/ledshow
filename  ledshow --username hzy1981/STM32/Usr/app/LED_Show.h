@@ -220,8 +220,9 @@ typedef struct
   INT8U Rcv_Flag; //接收到的数据
   INT8U Com_Time;  //通信维持时间
   INT16U Rcv_Posi;
-  INT8U Rcv_Data[BLOCK_DATA_LEN];
+  INT8U Rcv_Data[((BLOCK_DATA_LEN > SCREEN_PARA_LEN) ? BLOCK_DATA_LEN : SCREEN_PARA_LEN) + 20];
 
+  INT8U Self_Test_Flag;
   INT8U Tail;  
 }S_Screen_Status;
 

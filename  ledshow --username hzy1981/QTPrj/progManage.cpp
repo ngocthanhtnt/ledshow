@@ -314,9 +314,10 @@ CMdiSubWindow * _newScreen(QString name, int x, int y, INT16U width, INT16U heig
     w->mdiArea->addSubWindow(subWin);
     subWin->setWindowTitle(name);
     //subWin->setGeometry(x,y,width,height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-    subWin->resize(width + 8,height + 34);
+    //subWin->resize(width + 8,height + 34);
     subWin->move(x,y);
-    subWin->setFixedSize(subWin->size());
+    //subWin->setFixedSize(subWin->size());
+    subWin->setFixedSize(subWin->sizeHint());
     subWin->show();
     return subWin;
 }
@@ -824,8 +825,8 @@ void CprogManage::newFile(int fileType, int subType)
 void CprogManage::deleteItem()
 {
     int Re =  QMessageBox::warning(w, tr("警告"),
-                             tr("确定要删除该项?"),tr("取消"),tr("确定"));
-  if(Re > 0)
+                             tr("确定要删除该项?"),tr("确定"),tr("取消"));
+  if(0 == Re)
     _deleteItem(1);
 }
 

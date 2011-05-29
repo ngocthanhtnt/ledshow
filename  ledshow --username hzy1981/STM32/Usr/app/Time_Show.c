@@ -94,18 +94,34 @@ void Show_Date(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Time 
 //获取日期显示的像素宽度
 INT16U Get_DateStr_Pix_Width(INT8U Type, INT8U Font)
 {
+    if(Type >= S_NUM(DateStr))
+    {
+        ASSERT_FAILED();
+        Type = 0;
+    }
   return DateStr[Type].Len*Get_Font_Width(Font);
 }
 
 //获取星期显示的像素宽度
 INT16U Get_WeekStr_Pix_Width(INT8U Type, INT8U Font, INT8U Week)
 {
+    if(Type >= S_NUM(WeekStr))
+    {
+        ASSERT_FAILED();
+        Type = 0;
+    }
   return strlen(WeekStr[Type][Week])*Get_Font_Width(Font);
 }
 
 //获取时间显示的像素宽度
 INT16U Get_TimeStr_Pix_Width(INT8U Type, INT8U Font)
 {
+    if(Type >= S_NUM(TimeStr))
+    {
+        ASSERT_FAILED();
+        Type = 0;
+    }
+
   return TimeStr[Type].Len*Get_Font_Width(Font);
 
 }
@@ -114,6 +130,12 @@ INT16U Get_TimeStr_Pix_Width(INT8U Type, INT8U Font)
 INT16U Get_WeekStr_Type_Max_Pix_Width(INT8U Type, INT8U Font)
 {
     INT16U max = 0;
+
+    if(Type >= S_NUM(WeekStr))
+    {
+        ASSERT_FAILED();
+        Type = 0;
+    }
 
     for(int i=0; i < 7; i ++)
     {
@@ -175,7 +197,15 @@ void Show_Week(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, S_Time 
 {
     INT8U Week;
 
+    if(Language >= S_NUM(WeekStr))
+    {
+      Language = 0;
+      ASSERT_FAILED();
+    }
+
     Week = pTime->Time[T_WEEK];
+    if(Week >= 7)
+        Week = 0;
     LED_Print(Font, Color, pDst_Buf, Area_No, X, Y, "%s", WeekStr[Language][Week]);
 }
 

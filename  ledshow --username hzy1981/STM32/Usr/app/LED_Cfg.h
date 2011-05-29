@@ -1,11 +1,11 @@
 #ifndef LED_CFG_H
 #define LED_CFG_H
 
-#define CARD_A0 0x00
-#define CARD_B0 0x10
-#define CARD_C0 0x20
-#define CARD_D0 0x30
-#define CARD_E0 0x40
+#define CARD_AX 0x00
+#define CARD_BX 0x10
+#define CARD_CX 0x20
+#define CARD_DX 0x30
+#define CARD_EX 0x40
 
 
 //节目特征字
@@ -27,14 +27,14 @@
 #define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
 #define QT_EN 1 //在QT环境下编译使用QT
-#define QT_SIM_EN 0//使用QT仿真STM32情况。不同于预览
-#define CARD_TYPE CARD_A0 //A系列板卡针对小条屏，其他针对中大屏
+#define QT_SIM_EN 1//使用QT仿真STM32情况。不同于预览
+#define CARD_TYPE CARD_AX //A系列板卡针对小条屏，其他针对中大屏
 //QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
 
 #define SCAN_SCREEN_PERIOD 40//扫屏周期,单位ms
 #define OE_PWM_FREQ 80000 //80KPWM频率
 
-#if (CARD_TYPE & 0xF0) == (CARD_A0 & 0xF0)
+#if (CARD_TYPE & 0xF0) == (CARD_AX & 0xF0)
 #define APP_NAME "条屏LED播放系统"
 #define MAX_PROG_NUM 10 //最大节目数
 #define MAX_AREA_NUM 2 //每个节目下最大分区数
@@ -51,9 +51,9 @@
 #endif
 
 #if QT_EN
-
-#include "QT_SIM.h"
 #define ASSERT_EN 1
+#include "QT_SIM.h"
+
 
 //显示效果配置
 #define MOVE_STEP_PERIOD 40 //移动步进时间,单位为ms
@@ -83,25 +83,25 @@
 #define NOISE_SHOW_EN  1
 
 #else //没有使能QT仿真 ---STM32的环境下
-
-#include "STM32.h"
 #define ASSERT_EN 1
+#include "STM32.h"
 
-#if CARD_TYPE == CARD_A0
-#include "LED_A0_Cfg.h"
-#include "LED_A0_Drv.h"
-#elif CARD_TYPE == CARD_B0
-#include "LED_B0_Cfg.h"
-#include "LED_B0_Drv.h"
-#elif CARD_TYPE == CARD_C0
-#include "LED_C0_Cfg.h"
-#include "LED_C0_Drv.h"
-#elif CARD_TYPE == CARD_D0
-#include "LED_D0_Cfg.h"
-#include "LED_D0_Drv.h"
-#elif CARD_TYPE == CARD_E0
-#include "LED_E0_Cfg.h"
-#include "LED_E0_Drv.h"
+
+#if CARD_TYPE == CARD_AX
+#include "LED_AX_Cfg.h"
+#include "LED_AX_Drv.h"
+#elif CARD_TYPE == CARD_BX
+#include "LED_BX_Cfg.h"
+#include "LED_BX_Drv.h"
+#elif CARD_TYPE == CARD_CX
+#include "LED_CX_Cfg.h"
+#include "LED_CX_Drv.h"
+#elif CARD_TYPE == CARD_DX
+#include "LED_DX_Cfg.h"
+#include "LED_DX_Drv.h"
+#elif CARD_TYPE == CARD_EX
+#include "LED_EX_Cfg.h"
+#include "LED_EX_Drv.h"
 #else
 #error "Card type error"
 #endif
@@ -119,8 +119,19 @@
                        (HUMIDITY_SHOW_EN << HUMIDITY_SHOW_BIT) |\
                        (NOISE_SHOW_EN << NOISE_SHOW_BIT))L
 
+//-----------------以下为了兼容STM32程序--------------
+#define CARD_SUB_A0 0x00
+#define CARD_SUB_A1 0x01
+#define CARD_SUB_A2 0x02
 
- #endif
+#define CARD_SUB_TYPE CARD_SUB_A0 //AX系列子卡类型
+
+#define CARD_NAME "CARD_A0"  //卡名称
+
+#define UDIS_EN  1//u盘使能
+#define NET_EN	 1//网络使能
+#define GPRS_EN  1//GPRS使能
+#endif
 
 
 

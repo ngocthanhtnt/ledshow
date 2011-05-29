@@ -21,6 +21,9 @@
 #define SIM_MODE  0x05 //·ÂÕæÄ£Ê½
 #define NULL_MODE 0xFF
 
+#define PROTO_FILE_FLAG 0x00
+#define PROTO_BUF_FLAG 0x01
+
 typedef struct
 {
    char seq;
@@ -54,5 +57,6 @@ EXT S_Frame_Info frameInfo;
 //INT8U disconnectScreen();
 INT8U sendProtoData(char *pFrame, int len);
 int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst);
-INT8U makeProtoData(QString screenStr, int mode, int flag);
+INT8U makeProtoBufData(QString screenStr, int mode, INT8U cmd , char buf[], int bufLen);
+INT8U makeProtoFileData(QString screenStr, int mode, int flag);
 #endif // MAKEPROTO_H

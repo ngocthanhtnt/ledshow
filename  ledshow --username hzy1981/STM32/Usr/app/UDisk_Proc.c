@@ -12,8 +12,8 @@ void UDisk_Init(void)
 void UDisk_Proc(void)
 {
     static S_Int8U Flag = {CHK_BYTE, 0, CHK_BYTE};
-    INT8U Re,Re1;
-    INT16U RealCount,i,len;
+    INT8U Re1;
+    INT16U RealCount,len;
 	unsigned char buf[30];
 
 	if(CH376DiskConnect()==USB_INT_SUCCESS) //是否有U盘插入
@@ -28,7 +28,7 @@ void UDisk_Proc(void)
 		{
 			//strcpy((char *)buf, "\\led_data\\");
 			//itoa(Screen_Para.COM_Para.Addr, buf + 10, 10); //文件名是板地址,找不到文件则以广播地址读
-			sprintf(buf, "\\led_data\\%d.dat");
+			sprintf(buf, "\\led_data\\%d.dat", Screen_Para.COM_Para.Addr);
 			if(CH376FileOpen(buf)!=USB_INT_SUCCESS)
 			{
 			  sprintf(buf, "\\led_data\\65536.dat");
@@ -55,7 +55,7 @@ void UDisk_Proc(void)
 				  CH376ByteRead(Screen_Status.Rcv_Data + FLEN + 2, len - (FLEN + 2), &RealCount );
 		          if(RealCount EQ len - (FLEN + 2) && Check_Frame_Format((INT8U *)Screen_Status.Rcv_Data, len))
 		          {
-				    Re1 = Rcv_Frame_Proc(CH_UDISK, Screen_Status.Rcv_Data, len); 
+				    Re1 = Rcv_Frame_Proc(CH_UDISK, Screen_Status.Rcv_Data, len, sizeof(Screen_Status.Rcv_Data)); 
                     if(Re1 EQ 0)
 					{
 					  ASSERT_FAILED();

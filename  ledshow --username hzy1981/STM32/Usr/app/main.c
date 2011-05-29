@@ -18,7 +18,7 @@ int main(void)
 
   DS1302_Init();
 
-  Self_Test(); //自检操作
+  Fac_Status_Self_Test(); //自检操作
   
   Para_Show(); //上电参数显示
 

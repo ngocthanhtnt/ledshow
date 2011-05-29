@@ -759,29 +759,29 @@
           <GroupName>Cfg</GroupName>
           <Files>
             <File>
-              <FileName>LED_A0_Cfg.h</FileName>
+              <FileName>LED_AX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_A0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_AX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_B0_Cfg.h</FileName>
+              <FileName>LED_BX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_B0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_BX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_C0_Cfg.h</FileName>
+              <FileName>LED_CX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_C0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_CX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_D0_Cfg.h</FileName>
+              <FileName>LED_DX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_D0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_DX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_E0_Cfg.h</FileName>
+              <FileName>LED_EX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_E0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_EX_Cfg.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -1089,31 +1089,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.c</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.c</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.c</FilePath>
@@ -1144,31 +1119,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.H</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.h</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
@@ -1197,6 +1147,56 @@
               <FileName>DS1302.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\DS1302.h</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -1955,29 +1955,29 @@
           <GroupName>Cfg</GroupName>
           <Files>
             <File>
-              <FileName>LED_A0_Cfg.h</FileName>
+              <FileName>LED_AX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_A0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_AX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_B0_Cfg.h</FileName>
+              <FileName>LED_BX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_B0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_BX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_C0_Cfg.h</FileName>
+              <FileName>LED_CX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_C0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_CX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_D0_Cfg.h</FileName>
+              <FileName>LED_DX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_D0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_DX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_E0_Cfg.h</FileName>
+              <FileName>LED_EX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_E0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_EX_Cfg.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -2285,31 +2285,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.c</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.c</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.c</FilePath>
@@ -2340,31 +2315,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.H</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.h</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
@@ -2393,6 +2343,56 @@
               <FileName>DS1302.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\DS1302.h</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -3151,29 +3151,29 @@
           <GroupName>Cfg</GroupName>
           <Files>
             <File>
-              <FileName>LED_A0_Cfg.h</FileName>
+              <FileName>LED_AX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_A0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_AX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_B0_Cfg.h</FileName>
+              <FileName>LED_BX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_B0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_BX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_C0_Cfg.h</FileName>
+              <FileName>LED_CX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_C0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_CX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_D0_Cfg.h</FileName>
+              <FileName>LED_DX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_D0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_DX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_E0_Cfg.h</FileName>
+              <FileName>LED_EX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_E0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_EX_Cfg.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -3481,31 +3481,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.c</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.c</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.c</FilePath>
@@ -3536,31 +3511,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.H</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.h</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
@@ -3589,6 +3539,56 @@
               <FileName>DS1302.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\DS1302.h</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -4347,29 +4347,29 @@
           <GroupName>Cfg</GroupName>
           <Files>
             <File>
-              <FileName>LED_A0_Cfg.h</FileName>
+              <FileName>LED_AX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_A0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_AX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_B0_Cfg.h</FileName>
+              <FileName>LED_BX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_B0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_BX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_C0_Cfg.h</FileName>
+              <FileName>LED_CX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_C0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_CX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_D0_Cfg.h</FileName>
+              <FileName>LED_DX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_D0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_DX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_E0_Cfg.h</FileName>
+              <FileName>LED_EX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_E0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_EX_Cfg.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -4677,31 +4677,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.c</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.c</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.c</FilePath>
@@ -4732,31 +4707,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.H</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.h</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
@@ -4785,6 +4735,56 @@
               <FileName>DS1302.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\DS1302.h</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -5543,29 +5543,29 @@
           <GroupName>Cfg</GroupName>
           <Files>
             <File>
-              <FileName>LED_A0_Cfg.h</FileName>
+              <FileName>LED_AX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_A0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_AX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_B0_Cfg.h</FileName>
+              <FileName>LED_BX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_B0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_BX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_C0_Cfg.h</FileName>
+              <FileName>LED_CX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_C0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_CX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_D0_Cfg.h</FileName>
+              <FileName>LED_DX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_D0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_DX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_E0_Cfg.h</FileName>
+              <FileName>LED_EX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_E0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_EX_Cfg.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -5873,31 +5873,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.c</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.c</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.c</FilePath>
@@ -5928,31 +5903,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.H</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.h</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
@@ -5981,6 +5931,56 @@
               <FileName>DS1302.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\DS1302.h</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -6739,29 +6739,29 @@
           <GroupName>Cfg</GroupName>
           <Files>
             <File>
-              <FileName>LED_A0_Cfg.h</FileName>
+              <FileName>LED_AX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_A0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_AX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_B0_Cfg.h</FileName>
+              <FileName>LED_BX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_B0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_BX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_C0_Cfg.h</FileName>
+              <FileName>LED_CX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_C0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_CX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_D0_Cfg.h</FileName>
+              <FileName>LED_DX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_D0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_DX_Cfg.h</FilePath>
             </File>
             <File>
-              <FileName>LED_E0_Cfg.h</FileName>
+              <FileName>LED_EX_Cfg.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\cfg\LED_E0_Cfg.h</FilePath>
+              <FilePath>..\..\..\Usr\cfg\LED_EX_Cfg.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -7069,31 +7069,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.c</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.c</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.c</FilePath>
@@ -7124,31 +7099,6 @@
               <FilePath>..\..\..\Usr\drv\FILE_SYS.H</FilePath>
             </File>
             <File>
-              <FileName>Led_A0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\Led_A0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_B0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_B0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_C0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_C0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_D0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_D0_Drv.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED_E0_Drv.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Usr\drv\LED_E0_Drv.h</FilePath>
-            </File>
-            <File>
               <FileName>spi_flash.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\spi_flash.h</FilePath>
@@ -7177,6 +7127,56 @@
               <FileName>DS1302.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\DS1302.h</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>Led_AX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\Led_AX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_BX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_BX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_DX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_DX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_EX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
             </File>
           </Files>
         </Group>

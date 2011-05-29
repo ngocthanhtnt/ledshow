@@ -1,7 +1,7 @@
 #define LED_PARA_C
 #include "Includes.h"
 
-#if QT_SIM > 0
+#if QT_SIM_EN > 0
 extern S_Show_Data protoShowData;
 #endif
 
@@ -281,34 +281,6 @@ INT8U Write_Prog_Para(INT8U Prog_No, INT8U *pSrc,INT16U SrcLen)
   return 1;
 }
 
-INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen)
-{
-  INT8U Prog_No;
-  INT16U Len;
-
-  Len = FrameLen - F_NDATA_LEN;//Frame[FLEN] + (INT16U)Frame[FLEN + 1]*256;
-
-  if(Len != PROG_PARA_LEN)
-      ASSERT_FAILED();
-
-  Prog_No = *(Frame + FDATA); //节目号
-  if(Write_Prog_Para(Prog_No, Frame + FDATA, PROG_PARA_LEN))
-  {
-      //
-      Prog_Status.Play_Status.Prog_No = Prog_No;
-      SET_SUM(Prog_Status.Play_Status);
-      memset(&Prog_Status.Block_Index, 0, sizeof(Prog_Status.Block_Index));
-
-      SET_HT(Prog_Status.Block_Index);
-      SET_SUM(Prog_Status.Block_Index);
-      Write_Prog_Block_Index();
-  }
-  else
-      ASSERT_FAILED();
-  
-  return 1;
-}
-
 //获取节目prog_no分区Area_No的第File_No个文件的参数的存储索引
 STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No)
 {
@@ -518,7 +490,7 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
   Len = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1)); //每屏显示的数据长度
   Len = Len * Screen_Color_Num; //每一幕显示需要的字节数!
   
-#if QT_SIM > 0
+#if QT_SIM_EN > 0
   if(Off + SrcLen > Len)
   {
     if(memcmp(pSrc, protoShowData.Color_Data + Off, Len - Off) != 0)
@@ -970,141 +942,6 @@ typedef struct
   
 }S_Prog_Show_Data;
 */
-//保存节目数据帧
-INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
-{
-  static S_File_Para_Info File_Para_Info;
-  INT8U Prog_No, Area_No, File_No, Type;
-  INT16U Para_Len,Len;
-  INT8U Re;
-  INT16U Seq0;
-  //INT16U Cmd1;
-  //S_Prog_Show_Data *pShow_Data;
-
-  memcpy(&Len, &Frame[FLEN], sizeof(Len)); //帧长
-  //计算数据域长度
-  if(Len > F_NDATA_LEN)
-    Len = Len - F_NDATA_LEN;
-  else
-  {
-    ASSERT_FAILED();
-    return 0;
-  }
-  
-  Seq0 = Frame[FSEQ0] + (INT16U)Frame[FSEQ0 + 1] * 256;
-  //Cmd1 = Frame[FCMD + 1];
-
-  if(Seq0 EQ 0) //参数帧--多帧中的第一帧
-  {
-      Type = Frame[FDATA];//*(Frame + 8); //哪类数据?
-      Prog_No = Frame[FDATA + 1];//*(Frame + 9); //节目号
-      Area_No = Frame[FDATA + 2];//*(Frame + 10); //分区号
-      File_No = Frame[FDATA + 3];//*(Frame + 11); //文件号
-
-      if(Prog_No >= MAX_PROG_NUM &&\
-         Area_No >= MAX_AREA_NUM &&\
-         File_No >= MAX_FILE_NUM)
-      {
-        ASSERT_FAILED();
-        return 0;
-      }
-
-      Para_Len = Get_Show_Para_Len(Type); //参数长度
-      if(Para_Len EQ Len)// 参数长度
-      {     
-        Re =  Write_File_Para(Prog_No, Area_No, File_No, &Frame[FDATA], FILE_PARA_LEN);//写入文件参数
-        if(Re > 0)
-        {
-          File_Para_Info.Type = Type;
-          File_Para_Info.Prog_No = Prog_No;
-          File_Para_Info.Area_No = Area_No;
-          File_Para_Info.File_No = File_No;
-          //File_Para_Info.Block_Index = 
-          //File_Para_Info.Seq0 = Seq0;
-
-          if(Area_No EQ 0 && File_No EQ 0) //设置第0分区第0文件表示是一个新节目
-          {
-              Prog_Status.Play_Status.Prog_No = Prog_No;
-              SET_SUM(Prog_Status.Play_Status);
-              memset(&Prog_Status.Block_Index, 0, sizeof(Prog_Status.Block_Index));
-
-              SET_HT(Prog_Status.Block_Index);
-              SET_SUM(Prog_Status.Block_Index);
-              //Read_Prog_Block_Index(Prog_No);
-          }
-          
-        }
-        
-        return Re;
-      }
-      else
-      {
-        
-        ASSERT_FAILED();
-        return 0;
-      }
-  }
-  else //if(Seq0 EQ File_Para_Info.Seq0 + 1) //下一帧
-  {
-    if(Len + BLOCK_HEAD_DATA_LEN> BLOCK_DATA_LEN)
-    {
-      ASSERT_FAILED();
-      return 0;
-    }
-
-    if(Seq0 EQ 1) //第一条数据帧
-    {
-      //写当前节目的索引
-      if(File_Para_Info.Prog_No < MAX_PROG_NUM &&\
-         File_Para_Info.Area_No < MAX_AREA_NUM &&\
-         File_Para_Info.File_No < MAX_FILE_NUM)
-      {
-        Prog_Status.Play_Status.Prog_No = File_Para_Info.Prog_No;
-        Prog_Status.Block_Index.Index[File_Para_Info.Area_No][File_Para_Info.File_No] = Cur_Block_Index.Index;
-        SET_SUM(Prog_Status.Block_Index);
-        Write_Prog_Block_Index();//, Prog_Status.Block_Index.Index, sizeof(Prog_Status.Block_Index.Index));
-      }
-      else
-      {
-        ASSERT_FAILED();
-      }
-    }
-
-    memset(Pub_Buf, 0, sizeof(Pub_Buf));
-    
-    Pub_Buf[0] = File_Para_Info.Prog_No;
-    Pub_Buf[1] = (File_Para_Info.Area_No <<4) + File_Para_Info.File_No;
-    Pub_Buf[2] = File_Para_Info.Type;   
-    Pub_Buf[3] = (Seq0 - 1)%256; //Seq0不是数据是参数，数据从0计，因此-1
-    Pub_Buf[4] = (Seq0 - 1)/256;
-    Pub_Buf[5] = Len % 256;
-    Pub_Buf[6] = Len / 256;
-    Pub_Buf[7] = 0; //下一帧的存储索引--备用
-    Pub_Buf[8] = 0;
-
-#if BLOCK_HEAD_DATA_LEN != 9
-#error "BLOCK_HEAD_DATA_LEN error"
-#endif
-
-    mem_cpy(Pub_Buf + BLOCK_HEAD_DATA_LEN, &Frame[FDATA], Len, Pub_Buf, sizeof(Pub_Buf));
-    
-
-    //当前分块数据
-    Write_Storage_Data(SDI_SHOW_DATA + Cur_Block_Index.Index, Pub_Buf, BLOCK_DATA_LEN);
-    
-    //保存当前索引
-    Cur_Block_Index.Index ++;
-    SET_SUM(Cur_Block_Index);
-    Write_Cur_Block_Index(&Cur_Block_Index, sizeof(Cur_Block_Index));
-    
-
-    return 1;
-  }
-    
-    
-  //return 0;
-
-}
 
 //删除节目数据
 INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen)
@@ -1113,7 +950,24 @@ INT8U Del_Prog_Data(INT8U Frame[], INT16U FrameLen)
 }
 
 
+INT16U _Read_Prog_Para(INT8U Prog_No, INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
+{
+  INT16U Len;
+  
+  Len = Read_Storage_Data(SDI_PROG_PARA + Prog_No, pDst, pDst_Start, DstLen);
 
+#ifdef SDI_PROG_PARA_BK0
+  if(Len EQ 0)
+    Len = Read_Storage_Data(SDI_PROG_PARA_BK0 + Prog_No, pDst, pDst_Start, DstLen);
+#endif
+
+#ifdef SDI_PROG_PARA_BK1
+  if(Len EQ 0)
+    Len = Read_Storage_Data(SDI_PROG_PARA_BK1 + Prog_No, pDst, pDst_Start, DstLen);
+#endif 
+
+  return Len;
+}
 
 //读取节目参数
 //Prog节目号
@@ -1122,17 +976,7 @@ INT16U Read_Prog_Para(INT8U Prog_No, S_Prog_Para *pProg_Para)
 {
   INT16U Len;
   
-  Len = Read_Storage_Data(SDI_PROG_PARA + Prog_No, &pProg_Para->Prog_No, pProg_Para, sizeof(S_Prog_Para));
-
-#ifdef SDI_PROG_PARA_BK0
-  if(Len EQ 0)
-    Len = Read_Storage_Data(SDI_PROG_PARA_BK0 + Prog_No, &pProg_Para->Prog_No, pProg_Para, sizeof(S_Prog_Para));
-#endif
-
-#ifdef SDI_PROG_PARA_BK1
-  if(Len EQ 0)
-    Len = Read_Storage_Data(SDI_PROG_PARA_BK1 + Prog_No, &pProg_Para->Prog_No, pProg_Para, sizeof(S_Prog_Para));
-#endif 
+  Len = _Read_Prog_Para(SDI_PROG_PARA + Prog_No, (INT8U *)&(pProg_Para->Prog_No), (INT8U *)pProg_Para, sizeof(S_Prog_Para));
 
   if(Len EQ 0)
   {

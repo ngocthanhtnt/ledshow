@@ -767,6 +767,23 @@ typedef struct
 #define BLOCK_HEAD_DATA_LEN 9
 #define BLOCK_SHOW_DATA_LEN (BLOCK_DATA_LEN -BLOCK_HEAD_DATA_LEN)
 
+
+#define MAX(a,b,c,d) (((a)>(b)?(a):(b))>(c)?((a)>(b)?(a):(b)):(c))>(d)?(((a)>(b)?(a):(b))>(c)?((a)>(b)?(a):(b)):(c)):(d)
+#define MAX_COM_BUF_LEN (MAX(BLOCK_DATA_LEN , SCREEN_PARA_LEN, FILE_PARA_LEN, PROG_PARA_LEN) + 20)
+
+typedef struct
+{
+  INT8U Head;
+  INT8U Buf[MAX_COM_BUF_LEN + 50];
+  INT8U Tail;
+}S_Pub_Buf;
+
+#ifdef LED_PARA_C
+EXT S_Pub_Buf _Pub_Buf = {CHK_BYTE,{0}, CHK_BYTE};
+#else
+EXT S_Pub_Buf _Pub_Buf;
+#endif
+
 EXT S_Screen_Para Screen_Para; //显示屏相关参数
 EXT S_Card_Para Card_Para;   //板卡支持的参数
 EXT S_Prog_Para Prog_Para;  //当前节目属性[MAX_PROGRAM_NUM]; //节目个数
@@ -779,11 +796,13 @@ EXT S_Time Cur_Time; //当前时间
 EXT INT8U Get_Screen_Color_Num(void);
 EXT INT16U Read_Screen_Para(void);
 EXT INT8U Write_Screen_Para(void);
+EXT INT16U _Read_Prog_Para(INT8U Prog_No, INT8U *pDst, INT8U *pDst_Start, INT16U DstLen);
+EXT INT16U Read_Prog_Para(INT8U Prog_No, S_Prog_Para *pProg_Para);
+EXT INT8U Write_Prog_Para(INT8U Prog_No, INT8U *pSrc,INT16U SrcLen);
+EXT INT8U Write_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pSrc, INT16U SrcLen);
+EXT INT8U Write_Cur_Block_Index(void *pSrc, INT16U SrcLen);
 EXT INT8U Get_Show_Para_Len(INT8U Type);
 EXT STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No);
-EXT INT8U Save_Screen_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen);
-EXT INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen);
-EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen);
 EXT INT8U Chk_File_Para_HT_Sum(U_File_Para *pPara);
 EXT void Set_File_Para_HT_Sum(U_File_Para *pPara);

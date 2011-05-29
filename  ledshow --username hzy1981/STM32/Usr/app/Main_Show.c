@@ -1,6 +1,11 @@
 #define MAIN_SHOW_C
 #include "includes.h"
 
+#if QT_EN
+#include <mainwindow.h>
+extern MainWindow *w;
+#endif
+
 /*
 //每档速度的延时,单位为毫秒
 const INT16U Step_Delay[]=
@@ -17,7 +22,6 @@ const INT16U Step_Delay[]=
   100
 };
 */
-
 //获取某个窗口区域某个步进的停留时间
 INT32U Get_Area_In_Step_Delay(INT8U Area_No)
 {
@@ -255,7 +259,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
       Prog_Status.Area_Status[Area_No].Counts++; //文件播放一次+1
       SET_SUM(Prog_Status.Area_Status[Area_No]);
 
-      Check_Prog_Play_Counts();
+      Calc_Prog_Play_Counts();
       if(Check_Prog_End() > 0) //节目结束了！
       {
          Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG; //新节目
@@ -486,7 +490,7 @@ void Clr_Prog_Status(void)
 
 //检查节目是否播放结束
 //返回1表示结束了，0表示还没有结束
-INT8U Check_Prog_End(void)
+INT8U _Check_Prog_End(void)
 {
   if(Check_Prog_Play_Time() EQ 0)
   {
@@ -518,7 +522,21 @@ INT8U Check_Prog_End(void)
   {
     ASSERT_FAILED();
     return 1;
-  } 
+  }
+}
+
+//检查节目是否播放结束
+//返回1表示结束了，0表示还没有结束
+INT8U Check_Prog_End(void)
+{
+#if QT_EN
+  if(Preview_Mode EQ PREVIEW_SCREEN)
+      return _Check_Prog_End();
+  else
+      return 1;
+#else
+  return _Check_Prog_End();
+#endif
 }
 
 //定时信息中，星期的第0位表示星期1，第6位表示星期六
@@ -583,7 +601,7 @@ INT8U Inc_Prog_No(INT8U Prog_No)
   return 1;
 }
 
-void Check_Prog_Play_Counts(void)
+void Calc_Prog_Play_Counts(void)
 {
     INT16U Min_Counts = 0xFFFF;
     INT8U i;
@@ -658,11 +676,11 @@ void Check_Update_Program_Para(void)
       TRACE();
 
 #if QT_EN
-    if(QT_SIM_EN EQ 0)//0表示预览模式
-    {
-      Prog_Status.Play_Status.Prog_No = Preview_Prog_No;
-      SET_SUM(Prog_Status.Play_Status);
-    }
+      if(Preview_Mode EQ PREVIEW_PROG)
+      {
+        Prog_Status.Play_Status.Prog_No = Preview_Prog_No;
+        SET_SUM(Prog_Status.Play_Status);
+      }
 #endif
 
       if(Prog_Status.Play_Status.Prog_No >= Screen_Para.Prog_Num ||\
@@ -1128,3 +1146,164 @@ void Print_Cur_Time(void)
   debug("cur time: %2d-%2d-%2d %2d:%2d:%2d", Cur_Time.Time[T_YEAR], Cur_Time.Time[T_MONTH], Cur_Time.Time[T_DATE],\
                                              Cur_Time.Time[T_HOUR], Cur_Time.Time[T_MIN], Cur_Time.Time[T_SEC]);
 }
+
+void Self_Test(INT8U Mode)
+{
+  INT32U Data = 0x55AA5AA5;
+  INT8U Re = 1,i,j,k, m, n;
+  INT8U Direct,ErrFlag = 0;
+  S_Time TempTime,TempTime1;
+
+  if(Screen_Status.Self_Test_Flag) //防止重复进入
+    return;
+
+  Screen_Status.Self_Test_Flag = 1;
+  //--------对存储器的测试---------------
+  Write_Storage_Data(SDI_TEST_DATA, &Data, sizeof(Data));
+  Delay_ms(10);
+  Data = 0;
+  Read_Storage_Data(SDI_TEST_DATA, &Data, &Data, sizeof(Data));
+
+  if(0x55AA5AA5 EQ Data)
+  {
+    debug("SPI Flash 自检成功");
+    Re = Re & 1;
+  }
+  else
+  { 
+    debug("SPI Flash 自检失败"); 
+	Re = 0;
+	ErrFlag	|= 0x01;
+  }
+  //-----------------------------------------
+
+  //--------对时钟的测试---------------------
+
+  //while(1)
+  {
+ // DS1302_Init();
+  Re &= _Get_Cur_Time(TempTime.Time);
+  Print_Cur_Time();
+  Delay_sec(1);//Delay_sec(2);
+  Re &=_Get_Cur_Time(TempTime1.Time);
+  }
+
+  if(TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
+  {
+    debug("时钟自检成功");
+    Re = Re & 1;
+  }
+  else
+  {
+    debug("时钟自检失败"); 
+	Re = 0;
+	ErrFlag	|= 0x02;
+  }
+  //-----------------------------------------
+
+  //---------对485和232的测试---------------
+  Screen_Status.Rcv_Posi = 0;
+  Com_Send_Byte(CH_COM, 0xA5);
+  Delay_ms(5); 
+  if(Screen_Status.Rcv_Data[0] EQ 0xA5) //自检成功
+  {
+    debug("串口自检成功");
+    Re = Re & 1;
+  }
+  else
+  {
+    debug("串口自检失败"); 
+	Re = 0;
+	ErrFlag	|= 0x04;
+  }
+  //---------------------------------------
+
+  if(Re EQ 0)
+	debug("外围器件自检失败！");
+  else
+	debug("外围器件自检成功！");
+
+  debug("进入屏幕检测状态");
+
+  //--------------扫描方式检测---------------
+  Read_Screen_Para();
+  Set_RT_Show_Area(64, 32);
+
+  while(1)
+  {
+    if(Mode EQ FAC_TEST && Chk_JP_Status() != SELF_TEST_STATUS) //不是自检状态退出
+          break;
+
+    for(i = 0; i < 4; i ++)
+	{
+	  if(i EQ 0)
+	    Direct = 0x00;
+      else if(i EQ 1)
+	    Direct = 0x02;
+	  else if(i EQ 2)
+	    Direct = 0x01;
+	  else
+	    Direct = 0x03;
+
+      for(j = 1; j <= MAX_ROWS_FOLD; j ++)
+	  {
+	    Screen_Para.Scan_Para.Rows_Fold = j;
+		for(k = 1; k <= MAX_COLS_FOLD; k ++)
+	    {
+          Screen_Para.Scan_Para.Cols_Fold = k;
+		  
+		  //5种扫描方式逐步试验
+		  for(m = 0; m < 5; m ++)
+		  {
+		    if(m EQ 0)
+			  Screen_Para.Scan_Para.Rows = 16;  //1/16扫描
+			else if(m EQ 1)
+			  Screen_Para.Scan_Para.Rows = 8;	//1/8扫描
+			else if(m EQ 2)
+			  Screen_Para.Scan_Para.Rows = 4;	//1/4扫描
+			else if(m EQ 3)
+			  Screen_Para.Scan_Para.Rows = 2;	//1/2扫描
+			else
+			  Screen_Para.Scan_Para.Rows = 1;	//静态扫描
+
+			SET_SUM(Screen_Para);
+
+			RT_Play_Status_Enter(2);
+		    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%2d%2d%2d%2d", m, Direct, j, k);
+		    
+            for(n = 0; n < 20; n ++)
+			{
+			  Delay_ms(100);
+			  Screen_Com_Proc();
+#if QT_EN
+   memcpy(&(w->previewArea->screenPara), &Screen_Para, sizeof(Screen_Para));
+   w->previewArea->setFixedSize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+   w->previewTimerProc();
+#endif
+			}
+
+		  }
+	    }
+	   }
+	 }
+
+	 Restore_Show_Area();
+
+  }
+}
+
+ //工厂状态自检
+ void Fac_Status_Self_Test(void)
+ {
+
+  if(Chk_JP_Status() != SELF_TEST_STATUS)
+    return;
+
+  Delay_ms(10);
+
+  if(Chk_JP_Status() != SELF_TEST_STATUS)
+    return;
+
+  Self_Test(FAC_TEST);
+
+ }

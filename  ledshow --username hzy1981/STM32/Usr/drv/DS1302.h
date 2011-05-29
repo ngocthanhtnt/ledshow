@@ -28,4 +28,5 @@
 EXT INT8U _Get_Cur_Time(INT8U Time[]);
 EXT INT8U Set_Cur_Time(INT8U Time[]);
 EXT void SPI_DS1302_Init(void);
+EXT void DS1302_Init(void);
 #endif

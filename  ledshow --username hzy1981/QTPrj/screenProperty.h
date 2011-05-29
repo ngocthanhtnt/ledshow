@@ -186,6 +186,7 @@ public:
     QRadioButton *selfTimeButton; //自定义事件
     QDateTimeEdit *dateTimeEdit;
 
+    QDateTime getDateTime();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CadjTimeProperty(QWidget *parent=0);
@@ -195,6 +196,9 @@ public:
 class CadjTimeDialog:public QDialog
 {
     Q_OBJECT
+public slots:
+    void sendData();
+    void udiskData();
 public:
     CadjTimeProperty *adjTimeProperty;
 
@@ -259,11 +263,17 @@ public:
 class CfacScreenProperty:public QGroupBox
 {
     Q_OBJECT
+private:
+    S_Screen_Para readScreenPara;
+    bool readScreenParaFlag;
+
 public slots:
  void defParaCheckProc();
  void cardChangeProc();
  void endProc(); //保存参数
  void loadParaProc(); //加载参数
+ void readParaProc(); //回读参数
+ void setTestProc(); // 自检
  public:
  QTabWidget *tabWidget;
 
@@ -272,6 +282,9 @@ public slots:
  QWidget *baseParaGroup;
  QWidget *advanceParaGroup;
  QWidget *readParaGroup;
+ QWidget *scanParaGroup;
+
+ QWidget *scanPicWidget;
 
  QComboBox *cardCombo; //选择卡类型
  QTextEdit *cardParaEdit; //卡参数
@@ -315,6 +328,8 @@ public slots:
  QPushButton *endButton;
  QPushButton *loadButton;
  QPushButton *exportButton;
+ QPushButton *selfTestButton;
+
  //QPushButton *defButton;
  int paraFlag; //表示新建屏幕、1表示修改屏幕，2表示显示屏幕
  int SendPara();

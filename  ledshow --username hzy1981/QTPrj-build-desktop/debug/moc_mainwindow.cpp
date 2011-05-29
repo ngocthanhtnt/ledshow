@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created: Mon May 16 23:56:52 2011
+** Created: Mon May 30 00:59:06 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -88,7 +88,7 @@ static const uint qt_meta_data_MainWindow[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      15,   14, // methods
+      17,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -109,8 +109,10 @@ static const uint qt_meta_data_MainWindow[] = {
      164,   11,   11,   11, 0x0a,
      182,   11,   11,   11, 0x0a,
      201,   11,   11,   11, 0x0a,
-     211,   11,   11,   11, 0x0a,
-     225,   11,   11,   11, 0x0a,
+     217,   11,   11,   11, 0x0a,
+     231,   11,   11,   11, 0x0a,
+     245,   11,   11,   11, 0x0a,
+     264,   11,   11,   11, 0x0a,
 
        0        // eod
 };
@@ -121,8 +123,9 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "updateTreeWidget(QMdiSubWindow*)\0"
     "modifyScreenPara()\0setLightness()\0"
     "adjTime()\0sendDataProc()\0exportUdsikProc()\0"
-    "setOpenCloseTime()\0preview()\0previewProc()\0"
-    "comStatusShow()\0"
+    "setOpenCloseTime()\0previewScreen()\0"
+    "previewProg()\0previewProc()\0"
+    "previewTimerProc()\0comStatusShow()\0"
 };
 
 const QMetaObject MainWindow::staticMetaObject = {
@@ -166,12 +169,14 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 9: sendDataProc(); break;
         case 10: exportUdsikProc(); break;
         case 11: setOpenCloseTime(); break;
-        case 12: preview(); break;
-        case 13: previewProc(); break;
-        case 14: comStatusShow(); break;
+        case 12: previewScreen(); break;
+        case 13: previewProg(); break;
+        case 14: previewProc(); break;
+        case 15: previewTimerProc(); break;
+        case 16: comStatusShow(); break;
         default: ;
         }
-        _id -= 15;
+        _id -= 17;
     }
     return _id;
 }

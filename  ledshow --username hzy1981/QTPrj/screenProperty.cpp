@@ -20,6 +20,22 @@ QSettings screenSettings(SCREEN_INI_FILE,QSettings::IniFormat,0);
 QSettings cardSettings(CARD_INI_FILE,QSettings::IniFormat,0);
 
 #define WIDTH_0 80
+
+//扫描模式定义
+//第0字节表示扫描方式 00表示1/16扫,01表示1/8扫,02表示1/4扫, 03表示1/2扫,04表示静态
+//第1字节表示进入方式,00表示左上,01表示左下, 02表示右上,03表示右下
+//第2字节表示行折数
+//第3字节表示列折数
+const INT32U scanMode[] =
+{
+  0x16010203,
+  0x08020404,
+  0x04030203,
+  0x02000202,
+  0x01010304
+};
+
+
 /*
 CipInput::CipInput(QWidget *parent):QGroupBox(parent)
 {
@@ -172,6 +188,7 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
    cardSettings.endGroup();
 
    getCardParaFromSettings(cardName, cardPara);
+
   return 1;
 }
 
@@ -662,7 +679,7 @@ ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
 
   sendButton = new QPushButton(tr("发送参数"), this);
   udiskButton = new QPushButton(tr("导出U盘文件"),this);
-  cancelButton = new QPushButton(tr("取消"),this);
+  cancelButton = new QPushButton(tr("关闭"),this);
 
 
   hLayout ->addWidget(sendButton);
@@ -710,33 +727,64 @@ void sendLightnessPara()//S_COM_Status &COM_Status)
     int flag = 0;
     SET_BIT(flag, C_SCREEN_LIGNTNESS);
     if(QT_SIM_EN)
-      makeProtoData(str, SIM_MODE, flag);
+      makeProtoFileData(str, SIM_MODE, flag);
     else
-      makeProtoData(str, COM_MODE, flag);
+      makeProtoFileData(str, COM_MODE, flag);
 
 }
 
 
 void ClightnessDialog::sendPara()
 {
+    //char frameBuf[BLOCK_DATA_LEN + 20];
     S_Screen_Para screenPara;
     S_Card_Para cardPara;
+    INT8U temp[100];
+    int len;
+
     QString str = w->screenArea->getCurrentScreenStr();
 
-    //getScreenCardParaFromSettings(str, screenPara, cardPara); //
+    int flag = 0;
+    SET_BIT(flag, C_SCREEN_LIGNTNESS);
+    if(QT_SIM_EN)
+      makeProtoFileData(str, SIM_MODE, flag);
+    else
+      makeProtoFileData(str, COM_MODE, flag);
 
-    //initComStatus(screenPara);
-    //connectScreen();
-    sendLightnessPara();
-    //disconnectScreen();
-
-    close();
+    if(w->comStatus->waitComEnd(temp, sizeof(temp), &len))
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("参数发送成功！"),tr("确定"));
+        close(); //校时成功则关闭
+    }
+    else
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("参数发送失败！"),tr("确定"));
+    }
 }
 
 //
 void ClightnessDialog::udiskPara()
 {
-  close();
+    S_Screen_Para screenPara;
+    S_Card_Para cardPara;
+    INT8U temp[100];
+    int len;
+
+    QString str = w->screenArea->getCurrentScreenStr();
+
+    int flag = 0;
+    SET_BIT(flag, C_SCREEN_LIGNTNESS);
+
+    makeProtoFileData(str, UDISK_MODE, flag);
+
+    QMessageBox::information(w, QObject::tr("提示"),
+                            w->comStatus->getComReStr(),QObject::tr("确定"));
+
+    //U盘模式下不需要等待waitComEnd，因为没有通信返回数据需要等待
+    if(w->comStatus->getComStatus() == COM_OK) //通信成功的情况下关闭
+        close();
 }
 
 void ClightnessDialog::getSettingsFromWidget(QString str)
@@ -763,7 +811,7 @@ CopenCloseDialog::CopenCloseDialog(QWidget *parent):QDialog(parent)
   openCloseProperty = new CopenCloseProperty(this);
   sendButton = new QPushButton(tr("发送参数"), this);
   udiskButton = new QPushButton(tr("导出U盘文件"),this);
-  cancelButton = new QPushButton(tr("取消"),this);
+  cancelButton = new QPushButton(tr("关闭"),this);
 
   hLayout ->addWidget(sendButton);
   hLayout ->addWidget(udiskButton);
@@ -785,7 +833,7 @@ CopenCloseDialog::CopenCloseDialog(QWidget *parent):QDialog(parent)
 //发送参数
 void sendOpenClosePara()
 {
-    char frameBuf[BLOCK_DATA_LEN + 20];
+   //char frameBuf[BLOCK_DATA_LEN + 20];
    S_Screen_Para screenPara;
    S_Card_Para cardPara;
    int len;
@@ -802,31 +850,76 @@ void sendOpenClosePara()
    int flag = 0;
    SET_BIT(flag, C_SCREEN_OC_TIME);
    if(QT_SIM_EN)
-     makeProtoData(str, SIM_MODE, flag);
+     makeProtoFileData(str, SIM_MODE, flag);
    else
-     makeProtoData(str, COM_MODE, flag);
+     makeProtoFileData(str, COM_MODE, flag);
 }
 
 void CopenCloseDialog::sendPara()
 {
+    //char frameBuf[BLOCK_DATA_LEN + 20];
     S_Screen_Para screenPara;
     S_Card_Para cardPara;
+    int len;
+    INT8U temp[100];
+
     QString str = w->screenArea->getCurrentScreenStr();
 
-    //getScreenCardParaFromSettings(str, screenPara, cardPara); //
+    getScreenCardParaFromSettings(str, screenPara, cardPara); //
 
-    //initComStatus(screenPara);
-    //connectScreen();
-    sendOpenClosePara();
-    //disconnectScreen();
-    close();
+    //定时开关机时间
+    /*
+    len = makeFrame((char *)&screenPara.OC_Time, sizeof(screenPara.OC_Time),\
+               C_SCREEN_OC_TIME, 0, frameBuf);*/
+
+    int flag = 0;
+    SET_BIT(flag, C_SCREEN_OC_TIME);
+    if(QT_SIM_EN)
+      makeProtoFileData(str, SIM_MODE, flag);
+    else
+      makeProtoFileData(str, COM_MODE, flag);
+
+    if(w->comStatus->waitComEnd(temp, sizeof(temp), &len))
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("参数发送成功！"),tr("确定"));
+        close(); //校时成功则关闭
+    }
+    else
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("参数发送失败！"),tr("确定"));
+    }
 }
 
 //
 void CopenCloseDialog::udiskPara()
 {
+    S_Screen_Para screenPara;
+    S_Card_Para cardPara;
+    int len;
 
-    close();
+    QString str = w->screenArea->getCurrentScreenStr();
+
+    getScreenCardParaFromSettings(str, screenPara, cardPara); //
+
+    //定时开关机时间
+    /*
+    len = makeFrame((char *)&screenPara.OC_Time, sizeof(screenPara.OC_Time),\
+               C_SCREEN_OC_TIME, 0, frameBuf);*/
+
+    int flag = 0;
+    SET_BIT(flag, C_SCREEN_OC_TIME);
+
+    makeProtoFileData(str, UDISK_MODE, flag);
+
+    QMessageBox::information(w, QObject::tr("提示"),
+                            w->comStatus->getComReStr(),QObject::tr("确定"));
+
+    //U盘模式下不需要等待waitComEnd，因为没有通信返回数据需要等待
+    if(w->comStatus->getComStatus() == COM_OK) //通信成功的情况下关闭
+        close();
+
 }
 
 void CopenCloseDialog::getSettingsFromWidget(QString str)
@@ -900,6 +993,94 @@ void CadjTimeProperty::setSettingsToWidget(QString str)
 
 }
 
+//获取日期时间
+QDateTime CadjTimeProperty::getDateTime()
+{
+  if(this->selfTimeButton->isChecked())
+    {
+      return QDateTime::currentDateTime();
+  }
+  else
+  {
+      return this->dateTimeEdit->dateTime();
+  }
+}
+
+//发送校时数据
+void CadjTimeDialog::sendData()
+{
+    QDateTime dateTime = adjTimeProperty->getDateTime();
+    INT8U TimeBuf[10];
+    INT8U Temp[20];
+    int len;
+
+    TimeBuf[T_YEAR] = dateTime.date().year() - 2000;
+    TimeBuf[T_MONTH] = dateTime.date().month();
+    TimeBuf[T_DATE] = dateTime.date().day();
+    TimeBuf[T_WEEK] = dateTime.date().dayOfWeek();
+    if(TimeBuf[T_WEEK] EQ 7)
+        TimeBuf[T_WEEK] = 0;
+    TimeBuf[T_HOUR] = dateTime.time().hour();
+    TimeBuf[T_MIN] = dateTime.time().minute();
+    TimeBuf[T_SEC] = dateTime.time().second();
+
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+
+#if QT_SIM_EN
+    makeProtoBufData(screenStr, SIM_MODE, C_SCREEN_TIME | WR_CMD, (char *)TimeBuf, 7);
+#else
+    makeProtoBufData(screenStr, COM_MODE, C_SCREEN_TIME | WR_CMD, (char *)TimeBuf, 7);
+#endif
+
+
+    bool re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+    if(re EQ true)
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("校时成功！"),tr("确定"));
+        close(); //校时成功则关闭
+
+    }
+    else
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("校时失败,请检查通信参数或者通信连路是否正常!"),tr("确定"));
+    }
+
+
+}
+
+//导出校时数据到U盘
+void CadjTimeDialog::udiskData()
+{
+    QDateTime dateTime = adjTimeProperty->getDateTime();
+    INT8U TimeBuf[10];
+    INT8U Temp[20];
+    int len;
+
+    TimeBuf[T_YEAR] = dateTime.date().year() - 2000;
+    TimeBuf[T_MONTH] = dateTime.date().month();
+    TimeBuf[T_DATE] = dateTime.date().day();
+    TimeBuf[T_WEEK] = dateTime.date().dayOfWeek();
+    if(TimeBuf[T_WEEK] EQ 7)
+        TimeBuf[T_WEEK] = 0;
+    TimeBuf[T_HOUR] = dateTime.time().hour();
+    TimeBuf[T_MIN] = dateTime.time().minute();
+    TimeBuf[T_SEC] = dateTime.time().second();
+
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+
+    makeProtoBufData(screenStr, UDISK_MODE, C_SCREEN_TIME | WR_CMD, (char *)TimeBuf, 7);
+
+    QMessageBox::information(w, QObject::tr("提示"),
+                            w->comStatus->getComReStr(),QObject::tr("确定"));
+
+    //U盘模式下不需要等待waitComEnd，因为没有通信返回数据需要等待
+    if(w->comStatus->getComStatus() == COM_OK) //通信成功的情况下关闭
+        close();
+
+}
+
 //校准时间对话框
 CadjTimeDialog::CadjTimeDialog(QWidget *parent):QDialog(parent)
 {
@@ -910,7 +1091,7 @@ CadjTimeDialog::CadjTimeDialog(QWidget *parent):QDialog(parent)
 
   sendButton = new QPushButton(tr("发送"),this);
   udiskButton = new QPushButton(tr("导出U盘文件"),this);
-  cancelButton = new QPushButton(tr("取消"), this);
+  cancelButton = new QPushButton(tr("关闭"), this);
 
   hLayout->addWidget(sendButton);
   hLayout->addWidget(udiskButton);
@@ -922,6 +1103,10 @@ CadjTimeDialog::CadjTimeDialog(QWidget *parent):QDialog(parent)
 
   this->setWindowTitle(tr("校时"));
   setAttribute(Qt::WA_DeleteOnClose);
+
+  connect(sendButton, SIGNAL(clicked()), this, SLOT(sendData()));
+  connect(udiskButton, SIGNAL(clicked()), this, SLOT(udiskData()));
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 }
 
 CadjTimeDialog::~CadjTimeDialog()
@@ -972,7 +1157,7 @@ CsendDataDialog::CsendDataDialog(int flag, QWidget *parent):QDialog(parent)
 
   sendButton = new QPushButton(tr("发送"),this);
   udiskButton = new QPushButton(tr("导出U盘文件"),this);
-  cancelButton = new QPushButton(tr("取消"),this);
+  cancelButton = new QPushButton(tr("关闭"),this);
 
   vLayout->addWidget(lightnessCheck);
 
@@ -1039,7 +1224,10 @@ CsendDataDialog::CsendDataDialog(int flag, QWidget *parent):QDialog(parent)
 
 void CsendDataDialog::sendData()
 {
+    INT8U temp[100];
+    int len;
     int flag = 0;
+
     QString str = w->screenArea->getCurrentScreenStr();
 
     if(lightnessCheck->isChecked())
@@ -1054,18 +1242,29 @@ void CsendDataDialog::sendData()
     SET_BIT(flag, C_PROG_DATA);
 
     if(QT_SIM_EN)
-      makeProtoData(str, SIM_MODE, flag);
+      makeProtoFileData(str, SIM_MODE, flag);
     else
-      makeProtoData(str, COM_MODE, flag);
+      makeProtoFileData(str, COM_MODE, flag);
 
-    close();
-    //emit this->cancelButton->clicked();
-    //emit this->closeSignal();
-    //emit this->close()
+    bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
+    if(re EQ true)
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("发送数据成功！"),tr("确定"));
+        close(); //校时成功则关闭
+
+    }
+    else
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("发送数据失败,请检查通信参数或者通信连路是否正常!"),tr("确定"));
+    }
 }
 
 void CsendDataDialog::uDiskData()
 {
+    INT8U temp[100];
+    int len;
     int flag = 0;
     QString str = w->screenArea->getCurrentScreenStr();
 
@@ -1080,10 +1279,15 @@ void CsendDataDialog::uDiskData()
     SET_BIT(flag, C_PROG_PARA);
     SET_BIT(flag, C_PROG_DATA);
 
-    if(QT_SIM_EN)
-      makeProtoData(str, SIM_MODE, flag);
-    else
-      makeProtoData(str, UDISK_MODE, flag);
+    makeProtoFileData(str, UDISK_MODE, flag);
+
+    QMessageBox::information(w, QObject::tr("提示"),
+                            w->comStatus->getComReStr(),QObject::tr("确定"));
+
+    //U盘模式下不需要等待waitComEnd，因为没有通信返回数据需要等待
+    if(w->comStatus->getComStatus() == COM_OK) //通信成功的情况下关闭
+        close();
+
 }
 
 void CsendDataDialog::propertyCheckProc()
@@ -1444,9 +1648,9 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     oePolarityCombo->setFixedWidth(WIDTH_0);
 
     colorCombo = new QComboBox(this);
-    colorCombo->addItem(tr("单色"));
-    colorCombo->addItem(tr("双色"));
-    colorCombo->addItem(tr("全彩"));
+    colorCombo->addItem(tr("红色"));
+    colorCombo->addItem(tr("红+绿"));
+    //colorCombo->addItem(tr("全彩"));
 
     colorCombo->setFixedWidth(WIDTH_0);
 
@@ -1467,7 +1671,9 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     heightEdit->setValue(256); //初始默认值
 
     _138Check = new QCheckBox(tr("使用138译码器"),this);
-    scanModeCombo = new QComboBox(this);
+
+    //----------------------------------------------------------------
+
 
     QLabel *screenIDLabel  = new QLabel(tr("硬件地址"),this);
     //QLabel *screenIDInfoLabel = new QLabel(tr("(多屏幕组网时每个屏号应该唯一)"),this);
@@ -1477,7 +1683,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    QLabel *colorLabel = new QLabel(tr("颜色"),this);
    QLabel *widthLabel = new QLabel(tr("屏宽"),this);
    QLabel *heightLabel = new QLabel(tr("屏高"),this);
-   QLabel *scanModeLabel = new QLabel(tr("扫描方式"),this);
+
 
    gridLayout = new QGridLayout(this);
 
@@ -1501,11 +1707,99 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    gridLayout->addWidget(colorLabel, 2, 4);
    gridLayout->addWidget(colorCombo, 2, 5);
 
-   gridLayout->addWidget(scanModeLabel, 3, 0);
-   gridLayout->addWidget(scanModeCombo, 3, 1, 1, 5);
+
+
+   //--------------------------------
+
+
+
+   //---------------------------------
 
    baseParaGroup->setLayout(gridLayout);
    tabWidget->addTab(baseParaGroup, tr("基本参数"));
+
+   //---------------扫描参数---------------
+   //QLabel *scanModeLabel = new QLabel(tr("扫描方式"),this);
+   scanParaGroup = new QWidget(this);//QGroupBox(tr("基本参数"),this);
+   scanModeCombo = new QComboBox(this);
+   selfTestButton = new QPushButton(tr("自动检测"), this);
+   scanPicWidget = new QWidget(this);
+
+   gridLayout = new QGridLayout(this);
+
+   //---------------------------------------------------------------
+   QString modeString;
+   int direct, scanLine, rowsFold, colsFold, lines;
+
+   for(int i = 0; i < S_NUM(scanMode); i ++)
+   {
+       scanLine = (scanMode[i] & 0xFF000000) >> 24;
+       direct = (scanMode[i] & 0x00FF0000) >> 16;
+       rowsFold = (scanMode[i] & 0x0000FF00) >> 8;
+       colsFold = (scanMode[i] & 0x000000FF);
+
+       modeString.clear();
+
+       modeString = QString::number(scanMode[i], 16);
+       if(modeString.length() < 8)
+           modeString = tr("0") + modeString;
+
+       modeString += tr(",");
+       scanLine = (scanLine % 16) + (scanLine /16)*10;
+
+       if(scanLine EQ 16)
+       {
+          modeString += tr("1/16扫"); //lines = 16;
+       }
+       else if(scanLine EQ 8)
+       {
+          modeString += tr("1/8扫"); //lines = 8;
+       }
+       else if(scanLine EQ 4)
+       {
+           modeString += tr("1/4扫"); //lines = 4;
+       }
+       else if(scanLine EQ 2)
+       {
+           modeString += tr("1/2扫"); //lines = 2;
+       }
+       else if(scanLine EQ 1)
+       {
+           modeString += tr("静态扫"); //lines = 1;
+       }
+       else
+       {
+          modeString += tr("1/16扫"); //lines = 16;
+          scanLine = 16;
+       }
+
+       modeString += tr(",");
+
+       if(direct EQ 0)
+           modeString += tr("左上入");
+       else if(direct EQ 1)
+           modeString += tr("左下入");
+       else if(direct EQ 2)
+           modeString += tr("右上入");
+       else if(direct EQ 3)
+           modeString += tr("右下入");
+       else
+           modeString += tr("左上入");
+
+       modeString += tr(",");
+
+       modeString += tr("一组数据") + QString::number(rowsFold*scanLine) + tr("行,") +\
+                     QString::number(colsFold*8) + tr("列折");
+
+       scanModeCombo->addItem(modeString);
+   }
+   //gridLayout->addWidget(scanModeLabel, 0, 0, 1, 1);
+   gridLayout->addWidget(scanModeCombo, 0, 0, 1, 5);
+   gridLayout->addWidget(selfTestButton, 0, 5, 1, 1);
+   gridLayout->addWidget(scanPicWidget, 1, 0, 3, 6);
+
+   scanParaGroup->setLayout(gridLayout);
+   tabWidget->addTab(scanParaGroup, tr("扫描参数"));
 
    //---------------网络参数-------------
    netParaGroup = new QWidget(this);
@@ -1690,9 +1984,17 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
   connect(cardCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(cardChangeProc()));
    connect(loadButton, SIGNAL(clicked()), this, SLOT(loadParaProc()));
    connect(endButton, SIGNAL(clicked()), this, SLOT(endProc()));
+   connect(selfTestButton, SIGNAL(clicked()), this, SLOT(setTestProc()));
+   connect(readParaButton, SIGNAL(clicked()), this, SLOT(readParaProc()));
 
    defParaCheckProc();
    cardChangeProc();
+
+   //----------------------
+   readScreenParaFlag = false;
+   memset(&readScreenPara, 0, sizeof(readScreenPara));
+
+
   //----暂时将网络参数删除！
    tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
 }
@@ -1841,10 +2143,69 @@ void CfacScreenProperty::setEditEnable(bool flag)
     }
 }
 
+void CfacScreenProperty::readParaProc()
+{
+    INT8U rcvBuf[500]; //读取屏幕参数缓冲区
+    int len;
+    bool re;
+
+    QString screenParaStr;
+
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+
+    if(QT_SIM_EN)
+      makeProtoBufData(screenStr, SIM_MODE, C_SCREEN_PARA | RD_CMD, (char *)0 , 0);
+    else
+      makeProtoBufData(screenStr, COM_MODE, C_SCREEN_PARA | RD_CMD, (char *)0, 0);
+
+    re = w->comStatus->waitComEnd(rcvBuf, sizeof(rcvBuf), &len);
+    if(re EQ true)
+    {
+        if(len != sizeof(S_Screen_Para) - CHK_BYTE_LEN)
+        {
+            //读取参数长度错误
+           return;
+        }
+
+        memcpy(&readScreenPara.Base_Para, rcvBuf, len);
+        readScreenParaFlag = true;
+
+        screenParaStr += tr("屏幕宽度:%1,高度:%1,颜色:").arg(readScreenPara.Base_Para.Width).arg(readScreenPara.Base_Para.Height);
+        if(readScreenPara.Base_Para.Color & 0x01)
+            screenParaStr += tr("红色");
+        else if(readScreenPara.Base_Para.Color & 0x02)
+            screenParaStr += tr("+绿色");
+        else if(readScreenPara.Base_Para.Color & 0x04)
+            screenParaStr += tr("+蓝色");
+
+        readParaEdit->setText(screenParaStr);
+    }
+
+
+    //获取固件版本
+    if(QT_SIM_EN)
+      makeProtoBufData(screenStr, SIM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0 , 0);
+    else
+      makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0, 0);
+
+    re = w->comStatus->waitComEnd(rcvBuf, sizeof(rcvBuf), &len);
+    if(re EQ true)
+    {
+        if(len != SOFT_VERSION_LEN)
+        {
+            //读取参数长度错误
+           return;
+        }
+
+        screenParaStr += tr("固件版本 ") + QString((char *)rcvBuf) + tr(" ");
+    }
+}
+
 //加载参数
 void CfacScreenProperty::loadParaProc()
 {
     QString str;
+    INT8U temp[100];
 
     str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
     qDebug("loadpara:%s",(const char *)str.toLocal8Bit());
@@ -1855,42 +2216,65 @@ void CfacScreenProperty::loadParaProc()
     int width = settings.value("width").toInt();
     int height = settings.value("height").toInt();
     int color = settings.value("color").toInt();
+    int card = settings.value("cardType").toInt();
     settings.endGroup();
     settings.endGroup();
 
-
-    //if(paraFlag EQ MODI_SCN)
-    {
-        //宽度、高度、颜色发生了修改则需要清掉所有的节目
-        if(width != widthEdit->value() ||\
-           height != heightEdit->value() ||\
-           color != colorCombo->currentIndex())
-        {
-            if(paraFlag EQ MODI_SCN)
-              QMessageBox::information(w, tr("提示"),
-                                     tr("您此次修改了屏幕的宽度、高度、颜色之中的一项，这将导致该屏幕下的所有节目被重置！"),tr("确定"));
-
-
-            //重新修改显示窗口大小
-            QMdiSubWindow * subWin =w->mdiArea->currentSubWindow();
-            subWin->setFixedSize(widthEdit->value() + 8, heightEdit->value() + 34); //当前屏幕调整大小
-            w->screenArea->setFixedSize(widthEdit->value(), heightEdit->value());
-
-            //清除所有子项
-            QTreeWidgetItem *screenItem = w->screenArea->screenItem;
-            int count = screenItem->childCount();
-            for(int i = 0; i < count; i ++)
-            {
-                w->progManage->clickItem(screenItem->child(0),0);
-                w->progManage->treeWidget->setCurrentItem(screenItem->child(0));
-                w->progManage->deleteItem();
-            }
-            //w->screenArea->screenItem->removeChild(w->screenArea->screenItem->child(i));
-            //w->progManage->settingsInit();
-        }
-    }
 
     getSettingsFromWidget(str);
+
+    getScreenCardParaFromSettings(str, Screen_Para, Card_Para);//重新获取屏幕参数和板卡参数
+
+    if(card != cardCombo->currentIndex())
+    {
+       mainObj->emitScreenChangeSignal();
+    }
+
+    int index = getScreenIndex(str);
+    QString screenName = QString::number(index) + QObject::tr("号屏幕");
+
+    if(Card_Para.Max_Height < Screen_Para.Base_Para.Height)
+    {
+       QMessageBox::information(w, QObject::tr("提示"),
+                              screenName + QObject::tr("高度超出板卡支持上限，请重新设置！"),QObject::tr("确定"));
+       return;
+    }
+
+    if(Card_Para.Max_Points < Screen_Para.Base_Para.Height * Screen_Para.Base_Para.Width)
+    {
+       QMessageBox::information(w, QObject::tr("提示"),
+                              screenName + QObject::tr("点数超出板卡支持上限，请重新设置！"),QObject::tr("确定"));
+
+       return;
+    }
+
+    //宽度、高度、颜色发生了修改则需要清掉所有的节目
+    if(width != widthEdit->value() ||\
+       height != heightEdit->value() ||\
+       color != colorCombo->currentIndex())
+    {
+        if(paraFlag EQ MODI_SCN)
+          QMessageBox::information(w, tr("提示"),
+                                 tr("您此次修改了屏幕的宽度、高度、颜色之中的一项，这将导致该屏幕下的所有节目被重置！"),tr("确定"));
+
+
+        //重新修改显示窗口大小
+        QMdiSubWindow * subWin =w->mdiArea->currentSubWindow();
+        w->screenArea->setFixedSize(widthEdit->value(), heightEdit->value());
+        subWin->setFixedSize(subWin->sizeHint());
+        //清除所有子项
+        QTreeWidgetItem *screenItem = w->screenArea->screenItem;
+        int count = screenItem->childCount();
+        for(int i = 0; i < count; i ++)
+        {
+            w->progManage->clickItem(screenItem->child(0),0);
+            w->progManage->treeWidget->setCurrentItem(screenItem->child(0));
+            w->progManage->_deleteItem(1);
+        }
+        //w->screenArea->screenItem->removeChild(w->screenArea->screenItem->child(i));
+        //w->progManage->settingsInit();
+        mainObj->emitScreenChangeSignal();
+    }
 
     int flag = 0;
     SET_BIT(flag, C_SCREEN_BASE_PARA);
@@ -1901,16 +2285,55 @@ void CfacScreenProperty::loadParaProc()
     //SET_BIT(flag, C_SCREEN_OC_TIME);
 
     if(QT_SIM_EN)
-      makeProtoData(str, SIM_MODE, flag);
+      makeProtoFileData(str, SIM_MODE, flag);
     else
-      makeProtoData(str, COM_MODE, flag);
+      makeProtoFileData(str, COM_MODE, flag);
 
-  QMessageBox::information(w, tr("提示"),
-                         tr("参数加载成功！"),tr("确定"));
+    int len;
+    if(w->comStatus->waitComEnd(temp, sizeof(temp), &len))
+    {
+      QMessageBox::information(w, tr("提示"),
+                             tr("参数发送成功！"),tr("确定"));
+      this->parentWidget()->close(); //参数设置成功则关闭窗口
+    }
+    else
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("参数发送失败！"),tr("确定"));
+    }
+}
 
+//设置进入检测状态
+void CfacScreenProperty::setTestProc()
+{
+    char tmp;
+    int len;
+    QString screenStr;
+    //char frameBuf[BLOCK_DATA_LEN + 20];
 
+    if(this->selfTestButton->text() EQ tr("自动检测"))
+    {
+      tmp = 0x00; //进入
+      this->selfTestButton->setText(tr("退出检测"));
+    }
+    else
+    {
+        tmp = 0x01;
+        this ->selfTestButton->setText(tr("自动检测"));
+    }
+
+    //len = makeFrame((char *)&tmp, sizeof(tmp),\
+               //C_SELF_TEST | WR_CMD, frameInfo.seq++, frameBuf);
+
+    screenStr = w->screenArea->getCurrentScreenStr();
+
+    if(QT_SIM_EN)
+      makeProtoBufData(screenStr, SIM_MODE, C_SELF_TEST | WR_CMD, &tmp, sizeof(tmp));
+    else
+      makeProtoBufData(screenStr, COM_MODE, C_SELF_TEST | WR_CMD, &tmp, sizeof(tmp));
 
 }
+
 /*
 //发送参数
 int CfacScreenProperty::sendPara()

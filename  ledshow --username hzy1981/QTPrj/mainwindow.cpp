@@ -327,6 +327,8 @@ void MainWindow::actionEnProc(int Type)
     actionAdjTime->setEnabled(false);
     actionLightness->setEnabled(false);
     actionOpenClose->setEnabled(false);
+    actionPreview->setEnabled(false);
+    actionScreenPreiew->setEnabled(false);
 
     actionScreen->setEnabled(true);
     actionProg->setEnabled(false);
@@ -356,6 +358,8 @@ void MainWindow::actionEnProc(int Type)
       actionAdjTime->setEnabled(true);
       actionLightness->setEnabled(true);
       actionOpenClose->setEnabled(true);
+      actionPreview->setEnabled(false);
+      actionScreenPreiew->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -383,6 +387,8 @@ void MainWindow::actionEnProc(int Type)
       actionAdjTime->setEnabled(true);
       actionLightness->setEnabled(true);
       actionOpenClose->setEnabled(true);
+      actionPreview->setEnabled(true);
+      actionScreenPreiew->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -410,6 +416,8 @@ void MainWindow::actionEnProc(int Type)
       actionAdjTime->setEnabled(true);
       actionLightness->setEnabled(true);
       actionOpenClose->setEnabled(true);
+      actionPreview->setEnabled(true);
+      actionScreenPreiew->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -437,6 +445,8 @@ void MainWindow::actionEnProc(int Type)
       actionAdjTime->setEnabled(true);
       actionLightness->setEnabled(true);
       actionOpenClose->setEnabled(true);
+      actionPreview->setEnabled(true);
+      actionScreenPreiew->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -525,13 +535,21 @@ void MainWindow::setupCtrlActions()
     menu->addAction(a);
     menu->addSeparator();
 
-    QIcon previewIcon = QIcon::fromTheme("预览", QIcon(rsrcPath1 + tr("/预览2222.png")));
-    actionPreview = a = new QAction(previewIcon, tr("预览"), this);
+    QIcon previewIcon = QIcon::fromTheme("节目预览", QIcon(rsrcPath1 + tr("/预览2222.png")));
+    actionPreview = a = new QAction(previewIcon, tr("节目预览"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
-    connect(a, SIGNAL(triggered()), this, SLOT(preview()));
+    connect(a, SIGNAL(triggered()), this, SLOT(previewProg()));
     tb->addAction(a);
     menu->addAction(a);
+
+    //QIcon previewIcon = QIcon::fromTheme("预览", QIcon(rsrcPath1 + tr("/预览2222.png")));
+    actionScreenPreiew = a = new QAction(tr("整体预览"), this);
+    a->setPriority(QAction::LowPriority);
+    a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(previewScreen()));
+    menu->addAction(a);
+
 }
 
 void MainWindow::setupToolActions()
@@ -824,10 +842,10 @@ MainWindow::MainWindow(QWidget *parent)
    previewArea =  new CscreenArea(previewWin);
    previewWin->setCentralWidget(previewArea);
 
-   QHBoxLayout *hLayout = new QHBoxLayout(previewWin);
-   hLayout->addWidget(previewArea);
-   hLayout->setSizeConstraint(QLayout::SetFixedSize);
-   previewWin->setLayout(hLayout);
+   //QHBoxLayout *hLayout = new QHBoxLayout(previewWin);
+   //hLayout->addWidget(previewArea);
+   //hLayout->setSizeConstraint(QLayout::SetFixedSize);
+   //previewWin->setLayout(hLayout);
 
    //initComStatus(); //通信状态初始化
 
@@ -921,6 +939,7 @@ void MainWindow::setLightness()
   lightnessDialog->exec();
 }
 
+//校准时间
 void MainWindow::adjTime()
 {
   CadjTimeDialog *adjTimeDialog = new CadjTimeDialog(this);
@@ -949,7 +968,20 @@ void MainWindow::exportUdsikProc()
     sendDataDialog->exec();
 }
 
-void MainWindow::preview()
+//预览当前节目
+void MainWindow::previewProg()
+{
+  preview(PREVIEW_PROG);
+}
+
+//预览当前屏幕下的所有节目
+void MainWindow::previewScreen()
+{
+  preview(PREVIEW_SCREEN);
+}
+
+//预览统一处理
+void MainWindow::preview(INT8U previewMode)
 {
   QString screenStr;//progStr;
   INT8U Screen_No;
@@ -957,17 +989,27 @@ void MainWindow::preview()
   Mem_Open();
 
   screenStr = getItemStr(screenArea->screenItem);
-  makeProtoData(screenStr, PREVIEW_MODE, 0xFFFFFFFF);
 
   Screen_No = progManage->treeWidget->indexOfTopLevelItem(screenArea->screenItem);
   if(screenArea->screenItem->childCount() EQ 0)
   {
-      QMessageBox::information(w, tr("提示"),
+      if(previewMode EQ PREVIEW_PROG)
+          QMessageBox::information(w, tr("提示"),
                                tr("请先选择一个预览的节目"),tr("确定"));
-
+      else
+          QMessageBox::information(w, tr("提示"),
+                                   tr("该屏幕下没有节目!"),tr("确定"));
       return;
   }
+
+#if QT_SIM_EN
+  makeProtoFileData(screenStr, SIM_MODE, 0xFFFFFFFF);
+#else
+  makeProtoFileData(screenStr, PREVIEW_MODE, 0xFFFFFFFF);
+#endif
+
   Preview_Prog_No = screenArea->screenItem->indexOfChild(screenArea->progItem);
+  Preview_Mode = previewMode;
   //setCentralWidget(mdiArea);
   //CMdiSubWindow *subWin = new CMdiSubWindow;
   //subWin->previewFlag = 1; //用于仿真的子窗口
@@ -985,15 +1027,23 @@ void MainWindow::preview()
 
   //previewArea->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
   //previewArea->setFixedSize(previewArea->size());
-  previewArea->resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-  previewWin->resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  previewArea->setFixedSize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  //previewWin->resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  previewWin->setFixedSize(previewWin->sizeHint());
+  //previewArea->setFixedSize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  //previewWin->setFixedSize(previewWin->sizeHint());
 
   previewArea->previewFlag = 1;
   //previewArea->updateFlag = true;
 
   //previewWin->setAttribute(Qt::WA_DeleteOnClose);
-  previewWin->setWindowTitle(tr("预览-")+QString::number(Screen_No + 1) + tr("屏幕-") + QString::number(Preview_Prog_No + 1) + tr("节目"));
+
+  QString title = tr("预览-")+QString::number(Screen_No + 1) + tr("屏幕");
+  if(Preview_Mode EQ PREVIEW_PROG)
+      title = title + QString("-") + QString::number(Preview_Prog_No + 1) + tr("节目");
   previewWin->move((width() - previewArea->width())/2, (height() - previewArea->height())/2);
+
+  previewWin->setWindowTitle(title);
 
   Para_Init(); //显示初始化。
 
@@ -1022,9 +1072,24 @@ void MainWindow::comStatusShow()
       comStatus->hide();
 }
 
+void MainWindow::previewTimerProc()
+{
+    Show_Timer_Proc();
+
+    previewArea->previewFlag = 1;//预览窗口
+    //previewArea->updateFlag = 1;
+    memcpy(previewArea->showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
+    TRACE();
+    previewArea->update(); //刷新显示区域
+    TRACE();
+}
+
 void MainWindow::previewProc()
 {
   stepTimer += QT_MOVE_STEP_TIMER;
+
+  Get_Cur_Time();
+  Pub_Timer.Sec = Cur_Time.Time[T_SEC]; //定时器更新
 
   Show_Main_Proc();
   Show_Main_Proc();
@@ -1033,14 +1098,7 @@ void MainWindow::previewProc()
   if(stepTimer >= MOVE_STEP_PERIOD)
   {
       stepTimer = 0;
-      Show_Timer_Proc();
-
-      previewArea->previewFlag = 1;//预览窗口
-      //previewArea->updateFlag = 1;
-      memcpy(previewArea->showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
-      TRACE();
-      previewArea->update(); //刷新显示区域
-      TRACE();
+      previewTimerProc();
   }
 }
 

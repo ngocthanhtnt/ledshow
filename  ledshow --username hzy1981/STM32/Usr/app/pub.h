@@ -73,13 +73,6 @@ typedef struct
 typedef struct
 {
   INT8U Head;
-  INT8U Buf[BLOCK_DATA_LEN + 50];
-  INT8U Tail;
-}S_Pub_Buf;
-
-typedef struct
-{
-  INT8U Head;
   INT8U Time[7];
 
   INT8U CS[CS_BYTES];
@@ -94,11 +87,6 @@ typedef struct
 
 }S_Format_Str;
 //EXT NO_INIT S_Trace_Info Trace_Info;
-#ifdef PUB_C
-EXT S_Pub_Buf _Pub_Buf = {CHK_BYTE,{0}, CHK_BYTE};
-#else
-EXT S_Pub_Buf _Pub_Buf;
-#endif
 
 #define Pub_Buf _Pub_Buf.Buf
 
