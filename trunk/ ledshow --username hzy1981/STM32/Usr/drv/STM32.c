@@ -433,6 +433,12 @@ void Com_Init(void)
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 	USART_Cmd(USART1, ENABLE); 
 }
+
+void Soft_Rest(void) //软件复位
+{
+
+}
+
 /*
 typedef struct
 {
@@ -451,142 +457,6 @@ typedef struct
   INT8U RG_Reverse; //红绿反转
 }S_Scan_Para;
 */
-void Self_Test(void)
-{
-  INT32U Data = 0x55AA5AA5;
-  INT8U Re = 1,i,j,k, m;
-  INT8U Direct,ErrFlag = 0;
-  S_Time TempTime,TempTime1;
-
-  if(Chk_JP_Status() != SELF_TEST_STATUS)
-    return;
-
-  Delay_ms(10);
-
-  if(Chk_JP_Status() != SELF_TEST_STATUS)
-    return;
-
-  //--------对存储器的测试---------------
-  Write_Storage_Data(SDI_TEST_DATA, &Data, sizeof(Data));
-  Delay_ms(10);
-  Data = 0;
-  Read_Storage_Data(SDI_TEST_DATA, &Data, &Data, sizeof(Data));
-
-  if(0x55AA5AA5 EQ Data)
-  {
-    debug("SPI Flash 自检成功");
-    Re = Re & 1;
-  }
-  else
-  { 
-    debug("SPI Flash 自检失败"); 
-	Re = 0;
-	ErrFlag	|= 0x01;
-  }
-  //-----------------------------------------
-
-  //--------对时钟的测试---------------------
-  while(1)
-  {
- // DS1302_Init();
-  Re &= _Get_Cur_Time(TempTime.Time);
-  Print_Cur_Time();
-  Delay_sec(1);//Delay_sec(2);
-  //Re &=_Get_Cur_Time(TempTime1.Time);
-  }
-  if(TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
-  {
-    debug("时钟自检成功");
-    Re = Re & 1;
-  }
-  else
-  {
-    debug("时钟自检失败"); 
-	Re = 0;
-	ErrFlag	|= 0x02;
-  }
-  //-----------------------------------------
-
-  //---------对485和232的测试---------------
-  Screen_Status.Rcv_Posi = 0;
-  Com_Send_Byte(CH_COM, 0xA5);
-  Delay_ms(5); 
-  if(Screen_Status.Rcv_Data[0] EQ 0xA5) //自检成功
-  {
-    debug("串口自检成功");
-    Re = Re & 1;
-  }
-  else
-  {
-    debug("串口自检失败"); 
-	Re = 0;
-	ErrFlag	|= 0x04;
-  }
-  //---------------------------------------
-
-  if(Re EQ 0)
-	debug("外围器件自检失败！");
-  else
-	debug("外围器件自检成功！");
-
-  debug("进入屏幕检测状态");
-
-  //--------------扫描方式检测---------------
-  Read_Screen_Para();
-  Set_RT_Show_Area(64, 32);
-
-  while(1)
-  {
-    if(Chk_JP_Status() != SELF_TEST_STATUS) //不是自检状态退出
-	  break;
-
-    for(i = 0; i < 4; i ++)
-	{
-	  if(i EQ 0)
-	    Direct = 0x00;
-      else if(i EQ 1)
-	    Direct = 0x02;
-	  else if(i EQ 2)
-	    Direct = 0x01;
-	  else
-	    Direct = 0x03;
-
-      for(j = 1; j <= MAX_ROWS_FOLD; j ++)
-	  {
-	    Screen_Para.Scan_Para.Rows_Fold = j;
-		for(k = 1; k <= MAX_COLS_FOLD; k ++)
-	    {
-          Screen_Para.Scan_Para.Cols_Fold = k;
-		  
-		  //5种扫描方式逐步试验
-		  for(m = 0; m < 5; m ++)
-		  {
-		    if(m EQ 0)
-			  Screen_Para.Scan_Para.Rows = 16;  //1/16扫描
-			else if(m EQ 1)
-			  Screen_Para.Scan_Para.Rows = 8;	//1/8扫描
-			else if(m EQ 2)
-			  Screen_Para.Scan_Para.Rows = 4;	//1/4扫描
-			else if(m EQ 3)
-			  Screen_Para.Scan_Para.Rows = 2;	//1/2扫描
-			else
-			  Screen_Para.Scan_Para.Rows = 1;	//静态扫描
-
-			SET_SUM(Screen_Para);
-
-			RT_Play_Status_Enter(2);
-		    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%2d%2d%2d%2d", m, Direct, j, k);
-		    Delay_sec(2);
-		  }
-	    }
-	   }
-	 }
-
-	 Restore_Show_Area();
-
-  }
-
-}
 
 //设置块使能信号
 void Set_Block_OE_En(INT8U Value)
@@ -652,4 +522,5 @@ void ReInit_Mem_Port(void)
 #else
 #endif
 }
+
 #endif

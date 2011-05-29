@@ -28,13 +28,15 @@
 #include "Communication.h"
 
 
-#define CARD_INI_FILE ".\\cfg\\card.ini"
-#define SCREEN_INI_FILE ".\\cfg\\screen.ini"
-#define PROG_INI_FILE ".\\cfg\\temp.ini"
+#define CARD_INI_FILE ".\\cfg\\card.ini"     //板卡配置文件
+#define SCREEN_INI_FILE ".\\cfg\\screen.ini" //屏幕配置文件
+#define PROG_INI_FILE ".\\cfg\\temp.ini"     //节目配置文件
 
-#define PROTO_DATA_FILE ".\\data\\protoData.dat"
-#define PREVIEW_PROTO_FILE ".\\data\\previewData.dat"
+#define PROTO_DATA_FILE ".\\data\\protoData.dat"      //协议数据文件
+#define UDISK_PROTO_FILE ".\\data\\uDiskProtoData.dat"      //协议数据文件
+#define PREVIEW_PROTO_FILE ".\\data\\previewData.dat" //预览数据文件
 #define COM_PROTO_FILE ".\\data\\comData.dat"
+#define UDISK_DATA_DIR ".\\data\\"
 
 class MainObj:public QObject
 {
@@ -88,13 +90,14 @@ private:
     QAction *actionTimer;
     QAction *actionDel;
     QAction *actionPreview;
+    QAction *actionScreenPreiew;
     QAction *actionModiScreenPara;
     QAction *actionUDisk;
     QAction *actionSendData;
     QAction *actionAdjTime;
     QAction *actionLightness;
     QAction *actionOpenClose;
-    QAction *actionComStatus;
+
 public slots:
     void modifyScreenPara();
     void setLightness();
@@ -102,10 +105,14 @@ public slots:
     void sendDataProc();
     void exportUdsikProc();
     void setOpenCloseTime();
-    void preview();
+    void previewScreen();
+    void previewProg();
     void previewProc();
+    void previewTimerProc();
     void comStatusShow();
 public:
+    QAction *actionComStatus;
+
     int MDISubWinClickFlag;
     QWidget *widget;
     CprogManage *progManage; //节目管理
@@ -127,9 +134,9 @@ public:
     void setCurSettingsStr(QString str);  //获取当前的settings的str
     QString getCurSettingsStr();   //设置当前settings的str
 
-    //int getColor();
     void closeEvent(QCloseEvent *event);
-    //void createProgTreeArea();
+
+    void preview(INT8U previewMode);
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 };

@@ -6,6 +6,25 @@
 
 #include <QDateTime>
 #include <QFile>
+#include <QtCore>
+#include <QTime>
+#include <mainwindow.h>
+
+extern MainWindow *w;
+
+void Delay_ms(int ms)
+{
+    QTime dieTime = QTime::currentTime().addMSecs(ms);
+    while( QTime::currentTime() < dieTime )
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
+void Delay_sec(int sec)
+{
+    QTime dieTime = QTime::currentTime().addSecs(sec);
+    while( QTime::currentTime() < dieTime )
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
 
 void OS_Put_Char(char Chr)
 {
@@ -18,8 +37,19 @@ void Put_Char(char c)
 
 }
 
+//通信发送数据
 void Com_Send_Byte(INT8U Ch, INT8U Chr)
 {
+    if(Ch EQ CH_SIM)
+    {
+        if(w->comStatus->comThread->Rcv_Posi >= sizeof(w->comStatus->comThread->Rcv_Buf))
+        {
+            ASSERT_FAILED();
+            w->comStatus->comThread->Rcv_Posi = 0;
+        }
+
+        w->comStatus->comThread->Rcv_Buf[w->comStatus->comThread->Rcv_Posi++] = Chr;
+   }
 }
 
 //获取当前时间
@@ -34,6 +64,10 @@ INT8U _Get_Cur_Time(INT8U Time[])//S_Time *pTime)
   Time[T_HOUR] = temp.time().hour();
   Time[T_DATE] = temp.date().day();
   Time[T_MONTH] = temp.date().month();
+  Time[T_WEEK] = temp.date().dayOfWeek();
+  if(Time[T_WEEK] >= 7)
+      Time[T_WEEK] = 0;
+
   if(temp.date().year() >= 2000)
     Time[T_YEAR] = temp.date().year() - 2000;
   else

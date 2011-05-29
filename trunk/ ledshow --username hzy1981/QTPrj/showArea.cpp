@@ -146,6 +146,7 @@ CscreenArea::CscreenArea(QWidget *parent, INT16U width, INT16U height, INT8U col
 
     resize(xLen, yLen);
 
+    setFixedSize(xLen, yLen);
     //settings.endGroup();
     setAreaType(0);
 }

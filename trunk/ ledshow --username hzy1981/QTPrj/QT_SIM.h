@@ -16,7 +16,7 @@
 
 //定义断言,多多使用，有益身心
 #if ASSERT_EN>0
-#define ASSERT(x) //Assert((BOOL)(x),__FILE__,__FUNCTION__,(INT16U)__LINE__)
+#define ASSERT(x) do{if(x==false) qDebug("file:%s, line:%d",__FILE__, __LINE__);}while(0)//Assert((BOOL)(x),__FILE__,__FUNCTION__,(INT16U)__LINE__)
 #define ASSERT_FAILED() qDebug("file:%s, line:%d",__FILE__, __LINE__)//Assert_Failed(__FILE__,__FUNCTION__,(INT16U)__LINE__)
 #else
 #define ASSERT(x)
@@ -34,6 +34,11 @@ typedef char INT8S;
 #define FILE_R  0
 #define FILE_W  1
 #define FILE_WR 2
+
+#define SELF_TEST_STATUS 0x00
+#define Chk_JP_Status() 0x01
+
+#define Soft_Rest()
 /*
 #define FILE_T char *
 
@@ -58,6 +63,9 @@ typedef struct
 }S_PFILE;
 
 EXT S_PFILE pFile;
+
+EXT void Delay_ms(int sec);
+EXT void Delay_sec(int sec);
 EXT void Put_Char(char c);
 EXT void Com_Send_Byte(INT8U Ch, INT8U Chr);
 EXT INT8U _Get_Cur_Time(INT8U Time[]);//S_Time *pTime);

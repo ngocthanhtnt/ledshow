@@ -6,11 +6,49 @@
 #include <QCoreApplication>
 #include <QProgressDialog>
 #include <QVBoxLayout>
+#include <QMessageBox>
+#include <QDir>
+#include <QFile>
 #include "mainwindow.h"
 #include "makeProto.h"
+#include <windows.h>
+#include <dbt.h>
 
 extern QSettings settings;
 extern MainWindow *w;
+
+QString getUDiskPath()
+{
+    char temp[10];
+    UINT type;
+    //const wchar_t *path;
+
+    temp[0] = 'a';
+    temp[1] = ':';
+    temp[2] = '\\';
+    temp[3] = 0;
+
+    for(char c = 'A'; c < 'Z'; c++)
+    {
+      temp[0] = c;
+
+
+      sprintf(temp, "%c:\\", c);
+      QString path = QString(temp);
+
+      type = GetDriveType((wchar_t *)path.utf16());
+
+      if(type == DRIVE_REMOVABLE)
+      {
+          //memcpy(pDst, temp, 4);
+          return path;
+      }
+    }
+
+    return "d:\\";
+}
+
+
 /*
 ==============
 <CONSTRUCTORS>
@@ -29,18 +67,52 @@ QStringList getComPortList()
     return strlist;
 }
 
-void comSleep(int ms)
+//等待通信结果,返回正确应答帧返回true,否定返回false, 返回数据域保留在pDst中
+bool CcomStatus::waitComEnd(INT8U *pDst, int maxLen, int *pDstLen)
 {
-    QTime dieTime = QTime::currentTime().addMSecs(ms);
-    while( QTime::currentTime() < dieTime )
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    char status;
+
+    while(1)//for(int i = 0; i < 100; i ++)
+    {
+      Delay_ms(100);
+      status = comThread->status;
+
+      if(comThread->Rcv_Posi >= 500)
+      {
+          ASSERT_FAILED();
+          comThread->Rcv_Posi = 0;
+      }
+
+      if(status EQ COM_FAILED || status EQ COM_OK)
+      {
+         if(comThread->Rcv_Posi < maxLen)
+         {
+           memcpy(pDst, w->comStatus->comThread->Rcv_Buf + FDATA, w->comStatus->comThread->Rcv_Posi);
+           *pDstLen = comThread->Rcv_Posi - F_NDATA_LEN;
+         }
+         else
+         {
+             ASSERT_FAILED();
+         }
+      }
+
+      if(status EQ COM_FAILED)
+          return false;
+      else if(status EQ COM_OK)
+          return true;
+    }
+
 }
+
 
 int CcomThread::waitComRcv(int sec)
 {
     int rcvBytes,j = 0;
 
-    //return 1;
+    Rcv_Posi = 0;
+    Rcv_Flag = 0;
+    memset(Rcv_Buf, 0, sizeof(Rcv_Buf));
+
     for(int i = 0; i < sec*10; i ++)
     {
         this->msleep(100); //延时100ms
@@ -69,13 +141,67 @@ bool CcomThread::comRun()
     bool Re = true;
     INT16U len, len0 = 0;
     bool flag = false;
-    char frameBuf[BLOCK_DATA_LEN + 20];
+    char frameBuf[MAX_COM_BUF_LEN + 20];
+
+    if(status == COM_ING) //当前在通信过程中,退出
+        return false;
+
+    status = COM_ING; //进入通信状态
+
+    if(COM_Mode EQ UDISK_MODE) //U盘模式，直接复制文件就行，不需要通信过程
+    {
+        QDir dataDir;
+        QFile file;
+        QString uDiskName;
+
+        QString fileDir = getUDiskPath(); //获取U盘路径
+        uDiskName = fileDir;
+        if(fileDir == "") //没有插入U盘
+        {
+            comReStr = tr("没有找到移动存储设备,生成U盘数据失败！");
+            emit this->comStatusChanged(comReStr);
+            status = COM_FAILED; //进入通信状态
+            return false;
+        }
+
+        fileDir = fileDir + "ledData";
+        if(dataDir.exists(fileDir) == false)
+        {
+            if(dataDir.mkdir(fileDir) == false)
+            {
+                comReStr = uDiskName + tr(",该U盘中创建目录失败，请检查U盘是否写保护");
+                emit this->comStatusChanged(comReStr);
+                status = COM_FAILED; //进入通信状态
+                return false;
+            }
+        }
+
+        fileDir = fileDir + "\\" + QString::number(this->COM_Para.Addr) + ".dat";
+        if(file.exists(fileDir))
+           file.remove(fileDir);
+
+        if(file.copy(protoFileName, fileDir) == false)
+        {
+            comReStr = uDiskName + tr(",该U盘中复制文件失败，请检查U盘是否写保护");
+            emit this->comStatusChanged(comReStr);
+            status = COM_FAILED; //进入通信状态
+            return false;
+        }
+
+        comReStr = tr("数据成功保存到")+uDiskName;
+        status = COM_FAILED; //进入通信状态
+
+        return true;
+
+    }
 
     file = fopen(protoFileName.toLocal8Bit(), "rb");
     if(file EQ 0)
     {
         ASSERT_FAILED();
-        emit this->comStatusChanged(tr("找不到协议数据文件！"));
+        comReStr = tr("找不到协议数据文件！");
+        emit this->comStatusChanged(comReStr);
+        status = COM_FAILED;
         return false;
     }
 
@@ -84,7 +210,10 @@ bool CcomThread::comRun()
     //dialog->show();
 
     if(this->connect() EQ 0)
+    {
+        status = COM_FAILED;
         return false;
+    }
 
     while((re = fread(frameBuf, FLEN + 2, 1, file)) > 0)
     {
@@ -96,7 +225,7 @@ bool CcomThread::comRun()
           if(re > 0 && Check_Frame_Format((INT8U *)frameBuf, len))
           {
               flag = true;
-            if(sendFrame(frameBuf, len) EQ 0)
+            if(sendFrame(frameBuf, len, sizeof(frameBuf)) EQ false)
               {
                 Re = false;
                 break;
@@ -124,10 +253,19 @@ bool CcomThread::comRun()
     if(checkComMode(this->COM_Mode))
     {
         if(flag EQ false)
-          emit this->comStatusChanged(tr("无数据发送"));
+        {
+          comReStr = tr("无数据发送");
+          emit this->comStatusChanged(comReStr);
+        }
         else
           emit this->comEnd(Re);
      }
+
+    if(Re EQ true)
+        status = COM_OK;
+    else
+        status = COM_FAILED;
+
     return Re;
 }
 
@@ -151,8 +289,6 @@ CcomThread::CcomThread(QObject * parent):QThread(parent)
 //断开通信连接
 bool CcomThread::disConnect()
 {
-    memset(Rcv_Buf, 0, sizeof(Rcv_Buf));
-    Rcv_Posi = 0;
 
     if(COM_Mode EQ COM_MODE)
       port->close();
@@ -165,6 +301,9 @@ bool CcomThread::connect()
 {
     QStringList comPortList;
     comPortList = getComPortList();
+
+    memset(Rcv_Buf, 0, sizeof(Rcv_Buf));
+    Rcv_Posi = 0;
 
     if(COM_Mode EQ COM_MODE)
     {
@@ -203,37 +342,96 @@ bool CcomThread::connect()
     }
 }
 
-int CcomThread::sendFrame(char *data, int len)
+bool CcomThread::sendFrame(char *data, int len, int bufLen)
 {
     int i,re;
   INT8U mode = COM_Mode;
 
   if(mode EQ PREVIEW_MODE)//预览模式
   {
-    Rcv_Frame_Proc(CH_SIM, (INT8U *)data, (INT16U)len); //接收函数处理。在仿真情况下，将参数写入了硬盘文件。模拟写入EEROM
+    Rcv_Frame_Proc(CH_SIM, (INT8U *)data, (INT16U)len, bufLen); //接收函数处理。在仿真情况下，将参数写入了硬盘文件。模拟写入EEROM
+    return true;
   }
   else if(mode EQ SIM_MODE) //仿真模式
-  {
+  {/*
     for(i = 0; i < len; i ++)
-        Com_Rcv_Byte(CH_SIM, *(data + i));
+      Com_Rcv_Byte(CH_SIM, *(data + i));
+
+    while(1)
+    {
+      Delay_ms(100);
+      if(Screen_Status.Rcv_Flag EQ 0) //等待线程处理完该帧
+          break;
+    }
+*/
+     // Rcv_Frame_Proc(CH_SIM, (INT8U *)data, (INT16U)len, bufLen); //接收函数处理。在仿真情况下，将参数写入了硬盘文件。模拟写入EEROM
+    for(i = 0; i < len; i ++)
+      Com_Rcv_Byte(CH_SIM, *(data + i));
+
+    Screen_Com_Proc();
+
+    comReStr = tr("发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答...");
+    emit this->comStatusChanged(comReStr);
+    frameCounts++;
+
+    if((Rcv_Buf[FCMD] & 0xC0) EQ 0x40) //肯定应答
+    {
+        emit comProgressChanged(100*frameCounts/totalFrameCounts);
+
+        comReStr = tr("收到肯定应答");
+        emit this->comStatusChanged(comReStr);
+        return true;
+     }
+    else if((Rcv_Buf[FCMD] & 0xC0) EQ 0x80) //否定应答
+    {
+        comReStr = tr("收到否定应答");
+        emit this->comStatusChanged(comReStr);
+        return false;
+    }
+    else
+    {
+        comReStr = tr("收到无效应答");
+        emit this->comStatusChanged(comReStr);
+        return false;
+    }
   }
   else if(mode EQ COM_MODE)//串口通信模式
   {
     for(i = 0; i < 3; i ++)
     {
       port->write(data, len);
-      emit this->comStatusChanged(tr("发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答"));
+
+      comReStr = tr("发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答...");
+      emit this->comStatusChanged(comReStr);
       re = waitComRcv(2); //等待应答
       if(re > 0)
       {
           frameCounts++;
-          emit this->comStatusChanged(tr("收到应答"));
           emit comProgressChanged(100*frameCounts/totalFrameCounts);
-          return 1;
+          if((Rcv_Buf[FCMD] & 0xC0) EQ 0x40) //肯定应答
+          {
+              comReStr = tr("收到肯定应答");
+              emit this->comStatusChanged(comReStr);
+              return true;
+           }
+          else if((Rcv_Buf[FCMD] & 0xC0) EQ 0x80) //否定应答
+          {
+              comReStr = tr("收到否定应答");
+              emit this->comStatusChanged(comReStr);
+              return false;
+          }
+          else
+          {
+              comReStr = tr("收到无效应答");
+              emit this->comStatusChanged(comReStr);
+              return false;
+          }
       }
     }
-    emit this->comStatusChanged(tr("等待应答超时"));
-    return 0;
+
+    comReStr = tr("等待应答超时");
+    emit this->comStatusChanged(comReStr);
+    return false;
   }
   else if(mode EQ ETH_MODE)//以太网模式
   {
@@ -245,10 +443,11 @@ int CcomThread::sendFrame(char *data, int len)
   }
   else if(mode EQ UDISK_MODE)
   {
-
+      ASSERT_FAILED();
+      return false;
   }
 
-  return 1;
+  return true;
 }
 
 //串口接收数据
@@ -278,7 +477,10 @@ int CcomThread::comReceive()
         if(Check_Frame_Format(Rcv_Buf + i, Rcv_Posi - i))
         {
            if(i != 0) //将数据复制到开始
+            {
                memcpy(Rcv_Buf, Rcv_Buf + i, Rcv_Posi - i);
+             Rcv_Posi = Rcv_Posi - i;
+           }
            Rcv_Flag = FRAME_FLAG;
            Rcv_Ch = CH_COM;
            return bytesRead;
@@ -342,6 +544,15 @@ CcomStatus::CcomStatus(QWidget * parent):QDockWidget(tr("通信状态"), parent)
     vLayout->addLayout(hLayout);
     //vLayout->addWidget(statusEdit);
     //vLayout->addWidget(progressBar);
+
+    clrButton = new QPushButton(tr("清空"), widget);
+    hideButton = new QPushButton(tr("隐藏"), widget);
+    hLayout = new QHBoxLayout(widget);
+    //hLayout ->addStretch(10);
+    hLayout ->addWidget(clrButton);
+    hLayout ->addWidget(hideButton);
+    vLayout->addLayout(hLayout);
+
     vLayout->addStretch(10);
     widget->setLayout(vLayout);
 
@@ -350,6 +561,12 @@ CcomStatus::CcomStatus(QWidget * parent):QDockWidget(tr("通信状态"), parent)
     connect(this->comThread, SIGNAL(comProgressChanged(int)), this, SLOT(progressChange(int)));
     connect(this->comThread, SIGNAL(comStatusChanged(QString)), this, SLOT(statusChange(QString)));
     connect(this->comThread, SIGNAL(comEnd(bool)), this, SLOT(comEnd(bool)));
+    connect(this->clrButton, SIGNAL(clicked()), this->statusEdit, SLOT(clear()));
+    connect(this->clrButton, SIGNAL(clicked()), this->paraEdit, SLOT(clear()));
+    connect(this->clrButton, SIGNAL(clicked()), this->screenNameEdit, SLOT(clear()));
+    connect(this->clrButton, SIGNAL(clicked()), this->progressBar, SLOT(reset()));
+
+    connect(this->hideButton, SIGNAL(clicked()), this, SLOT(close()));
     //connect(this, SIGNAL(comStart()), this->comth)
     //connect(this, SIGNAL(Start()), this, SLOT(comStart()));
     //QObject::connect(port, SIGNAL(readyRead()), this, SLOT(receive()));
@@ -366,9 +583,28 @@ bool checkComMode(INT8U COM_Mode)
         return false;
 }
 
+void CcomStatus::closeEvent(QCloseEvent *e)
+{
+    w->actionComStatus->setChecked(false);
+    //e->ignore();
+}
+
+void CcomStatus::showEvent(QShowEvent *e)
+{
+    w->actionComStatus->setChecked(true);
+}
+
+void CcomStatus::hideEvent(QHideEvent * e)
+{
+  w->actionComStatus->setChecked(false);
+}
+
 //发送一个文件的协议数据到目标，可以以线程的形式发送
 void CcomStatus::sendProtoFile(QString fileName)
 {
+
+    //char temp[10];
+    //getUDiskPath();
 
    this->comThread->protoFileName = fileName;
 
@@ -378,10 +614,26 @@ void CcomStatus::sendProtoFile(QString fileName)
      this->show();
      this->comThread->start();
    }
-   else
+   else //预览或者仿真模式或者U盘模式
+   {
+      if(this->comThread->COM_Mode EQ SIM_MODE)
+          this->show();
      this->comThread->comRun();
+   }
    //emit this->start();
   // this->exec();
+}
+
+void CcomStatus::getUDiskParaFromSettings(QString str)
+{
+    settings.beginGroup(str);
+    settings.beginGroup("comTest");
+
+    comThread->COM_Para.Addr = settings.value("screenID").toInt(); //获取板卡地址
+
+
+    settings.endGroup();
+    settings.endGroup();
 }
 
 //获取通信参数,str为屏幕的settings str
@@ -427,6 +679,19 @@ void CcomStatus::getCOMParaFromSettings(QString str)
     }
 }
 
+//返回通信结果字符串
+QString CcomStatus::getComReStr()
+{
+    return comThread->comReStr;
+}
+
+//获取当前通信状态
+char CcomStatus::getComStatus()
+{
+  return comThread->status;
+}
+
+//设置通信模式
 void CcomStatus::setComMode(int mode)
 {
     comThread->COM_Mode = mode;

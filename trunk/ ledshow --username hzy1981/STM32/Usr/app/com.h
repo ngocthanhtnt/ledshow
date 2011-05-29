@@ -15,6 +15,14 @@
 //#define FRAME_HEAD1 0xA5
 #define FRAME_TAIL  0xAA
 
+#define RD_CMD  0x00
+#define WR_CMD  0x20
+
+
+//控制码高2位用来表达应答帧是肯定应答还是否定应答,0x40表示肯定应答,0x80表示否定应答
+//第5位表示读还是写,1表示写,0表示读
+//第0-5位表示控制码
+
 //控制码定义
 //#define C_SCREEN_WH   0x01 //屏幕宽高
 //#define C_SCREEN_ADDR 0x02 //屏幕地址
@@ -24,6 +32,7 @@
 #define C_SCREEN_COM_PARA 0x01 //串口通信参数
 #define C_SCREEN_ETH_PARA 0x02 //以太网参数
 #define C_SCREEN_GPRS_PARA 0x03 //GPRS参数
+#define C_SCREEN_PARA    0x04 //整体屏幕参数
 #define C_SCAN_PARA      0x05 //扫描参数
 #define C_SCREEN_OC_TIME 0x06 //定时开关机时间
 #define C_SCREEN_LIGNTNESS 0x07 //亮度
@@ -32,8 +41,9 @@
 #define C_DEL_PROG    0x0A //删除节目
 #define C_PROG_PARA  0x0B //节目属性
 #define C_PROG_DATA  0x0C //显示数据
-#define C_SCREEN_INFO 0x0D //屏幕信息
-#define C_UPDATE      0x0E //固件升级
+#define C_SOFT_VERSION 0x0D //屏幕信息
+#define C_SELF_TEST 0x0E //自动监测
+#define C_UPDATE      0x0F //固件升级
 /*
 0	0x5A	帧头
 1	Len0	帧长度低字节(从帧头到帧尾)
@@ -62,6 +72,8 @@ A	…	帧数据域内容
 
 #define F_NDATA_LEN 13 //一条帧内非数据域的长度
 
+#define SOFT_VERSION_LEN 30
+
 #define FRAME_FLAG  0xAF
 
 #define CH_COM  0x00
@@ -70,6 +82,9 @@ A	…	帧数据域内容
 #define CH_UDISK  0x03 //UDisk不需要单独的Buf，可以使用 COM_BUF，就是串口通信的Buf
 #define CH_SIM 0x04 //仿真
 //#define RCV_BUF_NUM 1
+
+#define READ_FLAG 0x00
+#define SET_FLAG  0x01
 /*
 //通信接收数据的缓冲区
 typedef struct
@@ -87,8 +102,11 @@ EXT void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen);
 EXT INT32U Get_Com_Baud(void);
 EXT void Com_Rcv_Byte(INT8U Ch, INT8U Byte);
 EXT INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len);
-EXT INT8U Screen_Para_Frame_Proc(INT16U Ctrl_Code, INT8U Data[], INT16U Len);
-EXT INT8U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen);
+EXT INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen);
+EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
+EXT INT8U Save_Screen_Para_Frame_Proc(INT16U Ctrl_Code, INT8U Data[], INT16U Len);
+EXT void Clr_Rcv_Flag(void);
+EXT INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf_Len);
 EXT INT16U Make_Frame(INT8U *pData, INT16U Len, INT8U Addr[], INT8U Cmd, INT8U Cmd0, INT8U Seq, INT16U Seq0, char *pDst);
 EXT void Screen_Com_Proc(void);
 #endif
