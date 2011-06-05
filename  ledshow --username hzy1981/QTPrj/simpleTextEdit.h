@@ -102,7 +102,7 @@ public:
 
 };
 
-class CdateEdit:public QWidget
+class CdateEdit:public QGroupBox
 {
     Q_OBJECT
 private:
@@ -121,7 +121,7 @@ public:
     ~CdateEdit();
 };
 
-class CweekEdit:public QWidget
+class CweekEdit:public QGroupBox
 {
     Q_OBJECT
 private:
@@ -141,7 +141,7 @@ public:
     ~CweekEdit();
 };
 
-class CtimeEdit:public QWidget
+class CtimeEdit:public QGroupBox
 {
     Q_OBJECT
 private:
@@ -274,6 +274,29 @@ public:
 
 };
 
+class CborderEdit:public QGroupBox
+{
+  Q_OBJECT
+private:
+    //QCheckBox *borderCheck;
+
+    QLabel *stepLabel,*styleLabel,*modeLabel,*speedLabel;
+    QLabel *pointsLabel,*usLabel;
+    QComboBox *stepCombo,*speedCombo;
+    QComboBox *styleCombo;
+    QComboBox *modeCombo;
+    CcolorCombo *colorCombo;
+signals:
+    void editSignal();
+public:
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CborderEdit(QWidget *parent =0);
+    ~CborderEdit();
+
+};
+
+void getBorderParaFromeSettings(QString str, U_File_Para &para);
 void getShowModeParaFromSettings(QString str, U_File_Para &para);
 QImage getLineTextImage(QString str);
 QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y);

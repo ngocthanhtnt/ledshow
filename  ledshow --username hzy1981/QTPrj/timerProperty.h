@@ -38,6 +38,7 @@ private:
     CcolorCombo *colorCombo;  //颜色
     QComboBox *styleCombo;  //样式
     CsizeCombo *fontSizeCombo; //字体大小
+    CborderEdit *borderEdit;
 public slots:
     void edited();
 public:

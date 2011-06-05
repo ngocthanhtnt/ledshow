@@ -256,9 +256,9 @@ typedef struct
   S_Area Area[MAX_AREA_NUM]; //区域定义
   
   INT8U Border_Check; //是否显示边框
-  INT16U Border_StayTime;
-  //INT8U Border_Speed; //边框运行速度
   INT8U Border_Mode;  //边框模式
+  INT16U Border_StayTime;
+
   INT8U Border_Width;   //边框宽度
   INT8U Border_Height;  //边框高度
   INT8U Temp;   //备用
@@ -304,6 +304,14 @@ typedef struct
   INT16U Out_Time; //引出时间
   INT16U SNum; //分屏个数
 
+  INT8U Border_Check; //是否边框
+  INT8U Border_Type; //边框类型
+  INT8U Border_Color; //边框颜色
+  INT8U Border_Mode; //边框模式
+  INT16U Border_StayTime; //停留时间
+
+//-------------------------------------------
+
   //INT8U Color; //颜色
 
   INT8U CS[CS_BYTES];
@@ -327,6 +335,12 @@ typedef struct
   INT16U Out_Time; //引出时间
   INT16U SNum; //分屏个数
 
+  INT8U Border_Check; //是否边框
+  INT8U Border_Type; //边框类型
+  INT8U Border_Color; //边框颜色
+  INT8U Border_Mode; //边框模式
+  INT16U Border_StayTime; //停留时间
+//-------------------------------------------
   INT8U Diff_Flag;  //时差标志,0加，1减  
   INT8U Hour_Diff;  //时差小时
   INT8U Min_Diff;   //时差分钟
@@ -392,6 +406,12 @@ typedef struct
   INT16U Out_Time; //引出时间
   INT16U SNum; //分屏个数
 
+  INT8U Border_Check; //是否边框
+  INT8U Border_Type; //边框类型
+  INT8U Border_Color; //边框颜色
+  INT8U Border_Mode; //边框模式
+  INT16U Border_StayTime; //停留时间
+//-------------------------------------------
   INT8U Dst_Year; //目标年
   INT8U Dst_Month; //目标月
   INT8U Dst_Date; //目标日
@@ -436,6 +456,12 @@ typedef struct
   INT16U Out_Time; //引出时间
   INT16U SNum; //分屏个数
 
+  INT8U Border_Check; //是否边框
+  INT8U Border_Type; //边框类型
+  INT8U Border_Color; //边框颜色
+  INT8U Border_Mode; //边框模式
+  INT16U Border_StayTime; //停留时间
+//-------------------------------------------
   INT8U Diff_Flag;  //时差标志,0加，1减
   INT8U Hour_Diff;  //时差小时
   INT8U Min_Diff;   //时差分钟
@@ -496,6 +522,12 @@ typedef struct
   INT16U Out_Time; //引出时间
   INT16U SNum; //分屏个数
 
+  INT8U Border_Check; //是否边框
+  INT8U Border_Type; //边框类型
+  INT8U Border_Color; //边框颜色
+  INT8U Border_Mode; //边框模式
+  INT16U Border_StayTime; //停留时间
+//-------------------------------------------
   INT8U Show_Mode;  //显示方式
   INT8U Show_Color; //显示颜色
   INT8U Show_Font; //显示字号
@@ -551,6 +583,12 @@ typedef struct
   INT16U Out_Time; //引出时间
   INT16U SNum; //分屏个数
 
+  INT8U Border_Check; //是否边框
+  INT8U Border_Type; //边框类型
+  INT8U Border_Color; //边框颜色
+  INT8U Border_Mode; //边框模式
+  INT16U Border_StayTime; //停留时间
+//-------------------------------------------
   INT8U Show_Mode;  //显示方式 
   INT8U Show_Color; //显示颜色
   INT8U Show_Font; //显示字号
@@ -591,6 +629,12 @@ typedef struct
   INT16U Out_Time; //引出时间
   INT16U SNum; //分屏个数
 
+  INT8U Border_Check; //是否边框
+  INT8U Border_Type; //边框类型
+  INT8U Border_Color; //边框颜色
+  INT8U Border_Mode; //边框模式
+  INT16U Border_StayTime; //停留时间
+//-------------------------------------------
   INT8U Show_Mode;  //显示方式 
   INT8U Show_Color; //显示颜色
   INT8U Show_Font; //显示字号
@@ -631,6 +675,12 @@ typedef struct
   INT16U Out_Time; //引出时间
   INT16U SNum; //分屏个数
 
+  INT8U Border_Check; //是否边框
+  INT8U Border_Type; //边框类型
+  INT8U Border_Color; //边框颜色
+  INT8U Border_Mode; //边框模式
+  INT16U Border_StayTime; //停留时间
+//-------------------------------------------
   INT8U Show_Mode;  //显示方式 
   INT8U Show_Color; //显示颜色
   INT8U Show_Font; //显示字号

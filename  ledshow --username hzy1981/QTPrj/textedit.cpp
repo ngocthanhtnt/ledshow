@@ -1113,8 +1113,8 @@ QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[])
 //返回整个文本的页数
 int getTextPageNum(int mode ,int moveFlag, int imageHeight, int w, int h, int lineNum, int linePosi[], int pagePosi[])
 {
-    int height = 0,height1 = 0;
-    int tmp = 0;
+    //int height = 0,height1 = 0;
+    //int tmp = 0;
     int pageNum = 0;
     int startLine = 0;
 
@@ -1261,7 +1261,7 @@ int getTextImagePageNum(int mode, int w, int h, QString str, int posi[])
 int getSLineTextPageNum(QString str, int w)
 {
     QTextEdit edit;
-    QTextLayout *layout;
+    //QTextLayout *layout;
 
     edit.setLineWrapMode(QTextEdit::NoWrap);
     //edit.setLineWrapColumnOrWidth(w + TEXT_LEFT_BORDER_WIDTH + TEXT_RIGHT_BORDER_WIDTH);
@@ -1318,7 +1318,7 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
 
     QImage image(edit.width(), edit.height(),QImage::Format_RGB32);
     edit.render(&image);
-    image.save("d:\\slinetext.png");
+    //image.save("d:\\slinetext.png");
 
     //edit.document()->findBlockByNumber(0).clearLayout();
 
@@ -1380,7 +1380,7 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
           }
 
           //image = image.copy(, 0, w, height);
-          reImage.save("d:\\slinepage.png");
+          //reImage.save("d:\\slinepage.png");
           return reImage;
       }
        else

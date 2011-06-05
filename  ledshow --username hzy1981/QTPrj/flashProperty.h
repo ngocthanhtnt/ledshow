@@ -37,6 +37,8 @@ private:
     //QComboBox *runSpeedCheck; //运行速度编辑
     QLineEdit *stayTimeEdit;
     QLabel *speedUnitLabel; //速度单位
+
+    CborderEdit *borderEdit;
 public slots:
     void openFlashFile();
     void edited();

@@ -67,6 +67,7 @@ private:
     QComboBox *modeCombo;
     CcolorCombo *colorCombo;
 
+    CborderEdit *borderEdit;
     QPixmap borderPixmap[MAX_BORDER_TYPE];
 
     //QSrting settingsStr; //µ±«∞…Ë÷√Str
@@ -98,6 +99,8 @@ typedef struct
 
 }S_Border_Data;
 
+QImage getBorderImage(int type, int index, QColor color);
+QStringList getSettingsCheckedSubList(QString settingsStr);
 void getProgParaFromSettings(QString str, S_Prog_Para &para);
 void updateProgShowArea(CscreenArea *area);
 #endif // PROGPROPERTY_H

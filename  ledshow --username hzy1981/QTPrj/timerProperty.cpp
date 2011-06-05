@@ -82,6 +82,8 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     vLayout ->addWidget(showModeEdit);
     hLayout->addLayout(vLayout);
 
+    borderEdit = new CborderEdit(this);
+    hLayout->addWidget(borderEdit);
     hLayout->addStretch(10);
     setLayout(hLayout);
 
@@ -168,9 +170,9 @@ void CtimerProperty::screenCardParaChangeProc()
 void getTimerParaFromSettings(QString str, U_File_Para &para)
 {
     int tmp;
-    bool checked;
+    //bool checked;
     // QString str;
-
+    getBorderParaFromeSettings(str, para);
     para.Timer_Para.Flag = SHOW_TIMER;
     settings.beginGroup(str);
 
@@ -218,6 +220,7 @@ void CtimerProperty::connectSignal()
     connect(fontSizeCombo, SIGNAL(indexChangeSignal()), this, SLOT(edited()));
 
     connect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void CtimerProperty::disconnectSignal()
@@ -232,6 +235,7 @@ void CtimerProperty::disconnectSignal()
     disconnect(fontSizeCombo, SIGNAL(indexChangeSignal()), this, SLOT(edited()));
 
     disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void CtimerProperty::getSettingsFromWidget(QString str)
@@ -261,6 +265,7 @@ void CtimerProperty::getSettingsFromWidget(QString str)
       simpleTextEdit->getSettingsFromWidget(str);
       smLineEdit->getSettingsFromWidget(str);
       showModeEdit->getSettingsFromWidget(str);
+      borderEdit->getSettingsFromWidget(str);
   }
 }
 
@@ -302,6 +307,7 @@ void CtimerProperty::setSettingsToWidget(QString str)
         simpleTextEdit->setSettingsToWidget(str);
         smLineEdit->setSettingsToWidget(str);
         showModeEdit->setSettingsToWidget(str);
+        borderEdit->setSettingsToWidget(str);
     }
     else
         ASSERT_FAILED();

@@ -119,6 +119,8 @@ typedef struct
 
   //INT8U RT_Play_Flag; //实时播放标志
   INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态--主要用于与中断显示同步
+  //INT8U Restore_Border_Flag:4;
+  //INT8U Update_BG_Flag:4;
 
   INT8U Last_File_No; //上次读取的文件参数
   INT16U Last_SCN_No; //前次读取的屏幕号
@@ -181,7 +183,7 @@ typedef struct
   
   S_Play_Status Play_Status;
 
-  S_Border_Status Border_Status;
+  S_Border_Status Border_Status[MAX_AREA_NUM + 1];
   U_File_Para File_Para[MAX_AREA_NUM]; //每个分区的当前文件参数
 
 

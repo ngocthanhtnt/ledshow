@@ -18,6 +18,7 @@
 #define TEMP_SHOW_BIT   0x06
 #define HUMIDITY_SHOW_BIT 0x07
 #define NOISE_SHOW_BIT  0x08
+#define TEXT_SHOW_BIT   0x09
 
 #define CS_BYTES 1
 #define ROM_CS_BYTES 2
@@ -40,7 +41,7 @@
 #define MAX_AREA_NUM 2 //每个节目下最大分区数
 #define MAX_FILE_NUM 8 //每个分区下最大文件数
 #define BLOCK_DATA_LEN 129 //每块数据的大小
-#define MAX_BORDER_POINTS (10*8) //边框数据大小
+#define MAX_BORDER_POINTS (16*8) //边框数据大小
 #else
 #define APP_NAME "大屏LED播放系统"
 #define MAX_PROG_NUM 10 //最大节目数
@@ -80,7 +81,8 @@
 #define TIME_SHOW_EN   1 //时间显示使能
 #define TIMER_SHOW_EN  1 //定时显示使能
 #define HUMIDITY_SHOW_EN 1 //湿度湿度
-#define NOISE_SHOW_EN  1
+#define NOISE_SHOW_EN  1 //噪音
+#define TEXT_SHOW_EN   1 //内码文字
 
 #else //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 1
@@ -117,7 +119,8 @@
                        (LUN_SHOW_EN << LUN_SHOW_BIT) |\
                        (TEMP_SHOW_EN << TEMP_SHOW_BIT) |\
                        (HUMIDITY_SHOW_EN << HUMIDITY_SHOW_BIT) |\
-                       (NOISE_SHOW_EN << NOISE_SHOW_BIT))L
+                       (NOISE_SHOW_EN << NOISE_SHOW_BIT) |\
+                       (TEXT_SHOW_EN << TEXT_SHOW_EN))L
 
 //-----------------以下为了兼容STM32程序--------------
 #define CARD_SUB_A0 0x00

@@ -222,7 +222,7 @@ void Update_Lun_Data(S_Show_Data *pDst, INT8U Area_No)
         else
           P0.Y = 0;
 
-        //Show_Tiangan(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+        //Show_Tiangan(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time,
                      //Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Font, Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Color);
 
         LED_Print(Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Font, Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Color,\
@@ -239,7 +239,7 @@ void Update_Lun_Data(S_Show_Data *pDst, INT8U Area_No)
         else
           P0.Y = 0;
 
-        //Show_Nongli(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+        //Show_Nongli(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time,
                     //Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Font, Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Color);
         LED_Print(Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Font, Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Color,\
                   pDst, Area_No, P0.X, P0.Y,\
@@ -256,7 +256,7 @@ void Update_Lun_Data(S_Show_Data *pDst, INT8U Area_No)
         else
           P0.Y = 0;
 
-        //Show_Jieqi(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+        //Show_Jieqi(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time,
                    //Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Font, Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Color);
         LED_Print(Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Font, Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Color,\
                   pDst, Area_No, P0.X, P0.Y,\
@@ -293,7 +293,7 @@ void Update_Lun_Data(S_Show_Data *pDst, INT8U Area_No)
           else
             P0.X = 0;
 
-          //Show_Tiangan(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+          //Show_Tiangan(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time,
                       //Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Font, Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Color);
           LED_Print(Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Font, Prog_Status.File_Para[Area_No].Lun_Para.Tiangan_Color,\
                     pDst, Area_No, P0.X, P0.Y,\
@@ -310,7 +310,7 @@ void Update_Lun_Data(S_Show_Data *pDst, INT8U Area_No)
           else
             P0.X = 0;
 
-          //Show_Nongli(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+          //Show_Nongli(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time,
                       //Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Font, Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Color);
           LED_Print(Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Font, Prog_Status.File_Para[Area_No].Lun_Para.Nongli_Color,\
                     pDst, Area_No, P0.X, P0.Y,\
@@ -327,7 +327,7 @@ void Update_Lun_Data(S_Show_Data *pDst, INT8U Area_No)
           else
             P0.X = 0;
 
-          //Show_Jieqi(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time, \
+          //Show_Jieqi(&Show_Data, Area_No, P0.X, P0.Y, &Cur_Time,
                      //Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Font, Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Color);
           LED_Print(Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Font, Prog_Status.File_Para[Area_No].Lun_Para.Jieqi_Color,\
                     pDst, Area_No, P0.X, P0.Y,\

@@ -87,6 +87,10 @@ void Update_Show_Data(void)
 //#if PIC_SHOW_EN    
     //if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_PIC)
       Update_Pic_Data(i);
+#if BORDER_SHOW_EN
+      Update_Border_Data(i); //更新边框数据
+#endif
+
 //#endif
 /*
 #if CLOCK_SHOW_EN
@@ -120,8 +124,8 @@ void Update_Show_Data(void)
       */
   }
 #if BORDER_SHOW_EN
-  Update_Border_Data(MAX_AREA_NUM); //更新边框数据
-#endif  
+      Update_Border_Data(MAX_AREA_NUM); //更新边框数据
+#endif
 }
 
 //更新显示备份区数据、显示非固定文本类信息
@@ -352,6 +356,13 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
           return 0;
       }
 
+      //在连续移动的情况下,在更新新一屏以前,必须将之前屏幕的边框数据恢复,否则边框会出现在移动的图像中
+      if(Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 2 &&\
+         Prog_Status.File_Para[Area_No].Pic_Para.In_Mode <= 7)
+      {
+          //Prog_Status.Area_Status[Area_No].Restore_Border_Flag = 1;
+          Restore_Border_Data(Area_No);
+      }
       //读出显示数据
       //Prog_Status.Area_Status[Area_No].Play_Flag = 0; //--读取显示数据过程中将播放标志置0，从而中断程序中不播放
       //SET_SUM(Prog_Status.Area_Status[Area_No]);
@@ -623,8 +634,8 @@ void Check_Update_Program_Para(void)
   INT8U Re;
   INT8U i,Prog_No;//,Count = 0;
   INT16U Len;
-  static S_Int8U Sec = {CHK_BYTE, 0xFF, {0}, CHK_BYTE};
-  static S_Int8U Min = {CHK_BYTE, 0xFF, {0}, CHK_BYTE};
+  static S_Int8U Sec = {CHK_BYTE, 0xFF, CHK_BYTE};
+  static S_Int8U Min = {CHK_BYTE, 0xFF, CHK_BYTE};
   
   //Sec.Var = Cur_Time.Time[T_SEC];
   
@@ -1128,8 +1139,8 @@ void Para_Init(void)
 void Para_Show(void)
 {
   INT16U Len;
-  INT8U IP[4];
-  INT32U Baud; //串口波特率
+  //INT8U IP[4];
+  //INT32U Baud; //串口波特率
 
  //显示板卡地址和串口波特率
   Len = RT_LED_Print(FONT0, 0x01, 0, 0, 3, "%d-%d", Screen_Para.COM_Para.Addr, Screen_Para.COM_Para.Baud);

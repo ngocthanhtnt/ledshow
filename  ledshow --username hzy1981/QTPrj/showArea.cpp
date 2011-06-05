@@ -557,7 +557,7 @@ CshowArea * CscreenArea::newShowArea()
 //此函数更新了screenArea中的screenItem和progItem还有fileItem
 void CscreenArea::updateShowArea(QTreeWidgetItem *item)
 {
-    int type, index;
+    int type;// index;
     QString str;
 
     type = checkItemType(item);
@@ -1031,8 +1031,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         move(x,framePosition.y());
         resize(width, oldSize.height());
 
-        //qDebug("old x = %d, width = %d, new x = %d, width = %d",\
-              // framePosition.x(), oldSize.width(), x, width);
+        //qDebug("old x = %d, width = %d, new x = %d, width = %d",framePosition.x(), oldSize.width(), x, width);
 
     }
     else if(dragFlag == DRAG_LD)//左下拉伸
@@ -1114,8 +1113,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
     event->accept();
 
     rect1 = geometry();
-    //qDebug("get x = %d, width = %d",\
-           //rect1.x(), rect1.width());
+    //qDebug("get x = %d, width = %d",rect1.x(), rect1.width());
 
     //更新当前显示的property的分区大小数据
     if(w->property->area != (Carea *)0) {
@@ -1134,8 +1132,8 @@ void CshowArea::paintEvent(QPaintEvent *)
     QString str;
     S_Point P0;
     INT8U Area_No = 0;
-    INT16U Width,Height,Min_Width, Min_Height;
-    INT16S tmp;
+    INT16U Width,Height;//,Min_Width, Min_Height;
+    //INT16S tmp;
     S_Screen_Para Screen_Para_Bak;
     S_Prog_Para Prog_Para_Bak;
 
@@ -1413,6 +1411,19 @@ void CshowArea::paintEvent(QPaintEvent *)
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
 
+        if(filePara.Pic_Para.Border_Check > 0)
+        {
+            //filePara.Pic_Para.Border_Mode = 0; //静态
+            //INT8U Border_Mode = 0;//filePara.Pic_Para.Border_Mode;
+            INT8U Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
+            INT16U Border_Width = Simple_Border_Data[Type].Width;//Get_Area_Border_Width(Area_No);
+            INT16U Border_Height = Simple_Border_Data[Type].Height;//Get_Area_Border_Height(Area_No);
+            INT8U *pBorder_Data = (INT8U *)Simple_Border_Data[Type].Data;
+
+            Draw_Border(&Show_Data, 0, pBorder_Data, \
+                        Border_Width, Border_Height, 0);
+        }
+
         memcpy(showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
     }
 
@@ -1457,17 +1468,27 @@ void CshowArea::paintEvent(QPaintEvent *)
            }
            */
        }
+       //if(filePara.Pic_Para.Border_Check EQ 0)
+        {
+            if(focusFlag == true) //当前分区是焦点
+            {
+                QPen pen;
+                pen.setColor(QColor(Qt::white));
+                pen.setStyle(Qt::DotLine);
+                painter.setPen(pen);
+              painter.drawRect(0, 0, geometry().width() - 1, geometry().height() - 1);
+            }
+            else
+            {
+                QPen pen;
+                pen.setColor(QColor(Qt::darkGray));
+                pen.setStyle(Qt::DotLine);
+                painter.setPen(pen);
+                //painter.setPen(QColor(Qt::darkGray));
+                painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
+            }
+        }
 
-        if(focusFlag == true) //当前分区是焦点
-        {
-          painter.setPen(QColor(Qt::white));
-          painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
-        }
-        else
-        {
-            painter.setPen(QColor(Qt::darkGray));
-            painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
-        }
       }
     }
     else //非0表示是背景

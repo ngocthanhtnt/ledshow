@@ -107,7 +107,11 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
 
    vLayout = new QVBoxLayout(this);
    vLayout->addWidget(groupBox);
+
    hLayout->addLayout(vLayout);
+
+   borderEdit = new CborderEdit(this);
+   hLayout->addWidget(borderEdit);
 
    hLayout->addStretch(10);
    setLayout(hLayout);
@@ -117,10 +121,27 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
 }
 
 void CflashProperty::edited()
-{
+{/*
   QString str;
   str = w->screenArea->getCurrentFileStr();//getCurrentFileStr();
   getSettingsFromWidget(str);
+  */
+    CshowArea *area;
+    QTreeWidgetItem *item;
+    area = w->screenArea->getFocusArea(); //当前焦点分区
+
+    if(area != (CshowArea *)0) //
+    {
+        //当前选中的item
+        item = area->fileItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
+        if(item != (QTreeWidgetItem *)0)
+        {
+            QString str = item->data(0,Qt::UserRole).toString();
+            getSettingsFromWidget(str);
+            //getFlashParaFromSettings(str, area->filePara);
+            updateFlashShowArea(area);
+        }
+    }
 }
 
 void CflashProperty::openFlashFile()
@@ -158,6 +179,8 @@ void CflashProperty::openFlashFile()
 
 void getFlashParaFromSettings(QString str, U_File_Para &para)
 {
+   getBorderParaFromeSettings(str, para);
+
    para.Pic_Para.Flag = SHOW_FLASH;
    para.Pic_Para.In_Mode = 1;//(INT8U)settings.value("inMode").toInt();
    para.Pic_Para.In_Time = 1;//(INT16U)settings.value("inTime").toInt();
@@ -225,6 +248,7 @@ void CflashProperty::connectSignal()
     connect(frameNumEdit, SIGNAL(valueChanged(int)), this, SLOT(edited()));
     connect(stayTimeEdit, SIGNAL(textEdited(const QString &)),this, SLOT(edited()));
     connect(openButton, SIGNAL(clicked()), this, SLOT(openFlashFile()));
+    connect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 
 }
 
@@ -234,7 +258,7 @@ void CflashProperty::disconnectSignal()
     disconnect(frameNumEdit, SIGNAL(valueChanged(int)), this, SLOT(edited()));
     disconnect(stayTimeEdit, SIGNAL(textEdited(const QString &)),this, SLOT(edited()));
     disconnect(openButton, SIGNAL(clicked()), this, SLOT(openFlashFile()));
-
+    disconnect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void CflashProperty::getSettingsFromWidget(QString str)
@@ -246,6 +270,7 @@ void CflashProperty::getSettingsFromWidget(QString str)
   settings.endGroup();
 
   nameEdit->getSettingsFromWidget(str);
+  borderEdit->getSettingsFromWidget(str);
 }
 
 void CflashProperty::setSettingsToWidget(QString str)
@@ -268,6 +293,7 @@ void CflashProperty::setSettingsToWidget(QString str)
     }
 
     nameEdit->setSettingsToWidget(str);
+    borderEdit->setSettingsToWidget(str);
 
     connectSignal();
 }
@@ -276,7 +302,7 @@ QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT8U Area_No, INT16U x,
 {
     INT8U colorData=0;
     QSize size;
-    QRgb rgb,r,g,b,ye;
+    QRgb rgb,r,g,b;//ye;
     int h,s,v,a;
     int i,j;
 

@@ -114,6 +114,9 @@ CtempProperty::CtempProperty(QWidget *parent):QWidget(parent)
     vLayout ->addWidget(showModeEdit);
 
     hLayout->addLayout(vLayout);
+
+    borderEdit = new CborderEdit(this);
+    hLayout->addWidget(borderEdit);
     hLayout->addStretch(10);
     setLayout(hLayout);
 
@@ -130,7 +133,7 @@ CtempProperty::~CtempProperty()
 void getTempParaFromSettings(QString str, U_File_Para &para)
 {
     int tmp;
-
+    getBorderParaFromeSettings(str, para);
     para.Temp_Para.Flag = SHOW_TEMP;
     settings.beginGroup(str);
     settings.beginGroup("tempStyle");
@@ -204,6 +207,7 @@ void CtempProperty::connectSignal()
     connect(tempStyle, SIGNAL(edited()), this, SLOT(edited()));
     connect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
     //connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void CtempProperty::disconnectSignal()
@@ -213,6 +217,7 @@ void CtempProperty::disconnectSignal()
     disconnect(tempStyle, SIGNAL(edited()), this, SLOT(edited()));
     disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
     //connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void CtempProperty::getSettingsFromWidget(QString str)
@@ -221,6 +226,7 @@ void CtempProperty::getSettingsFromWidget(QString str)
   tempStyle->getSettingsFromWidget(str);
   nameEdit->getSettingsFromWidget(str);
   showModeEdit->getSettingsFromWidget(str);
+  borderEdit->getSettingsFromWidget(str);
 
 }
 
@@ -231,12 +237,13 @@ void CtempProperty::setSettingsToWidget(QString str)
     tempStyle->setSettingsToWidget(str);
     nameEdit->setSettingsToWidget(str);
     showModeEdit->setSettingsToWidget(str);
+    borderEdit->setSettingsToWidget(str);
     connectSignal();
 }
 
 void Get_Temp_Text_Point(INT8U Area_No, INT16U Width, INT16U Height, S_Point &P0)
 {
-    INT16U Min_Width,Min_Height;
+    INT16U Min_Width;//,Min_Height;
 
     Min_Width = Get_Temp_Min_Width(Area_No);
     //Min_Height = Get_Temp_Min_Height(Area_No);

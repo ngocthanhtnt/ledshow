@@ -555,6 +555,7 @@ void Update_Pic_Data(INT8U Area_No)
   INT8U In_Mode, Out_Mode;
   INT16U Area_Width, Area_Height;
   INT32U Stay_Time,In_Delay, Out_Delay;
+  INT32U In_Step_Bak;
   //INT32U Out_Time;
   S_Point P0;
   //static S_Int8U Sec ={CHK_BYTE, 0xFF, {0}, CHK_BYTE};
@@ -572,7 +573,7 @@ void Update_Pic_Data(INT8U Area_No)
   
 //---------------------------------------------------------  
 
-  
+  In_Step_Bak = Prog_Status.Area_Status[Area_No].In_Step;
 
  //------------------------------------------------------- 
  if(Prog_Status.Area_Status[Area_No].In_Step EQ 0 &&\
@@ -650,6 +651,10 @@ void Update_Pic_Data(INT8U Area_No)
 
         Prog_Status.Area_Status[Area_No].Step = Prog_Status.Area_Status[Area_No].In_Step;
         Prog_Status.Area_Status[Area_No].Max_Step = Prog_Status.Area_Status[Area_No].In_Max_Step;
+
+        //----------------
+        //Prog_Status.Area_Status[Area_No].Restore_Border_Flag = 0;//可以更新
+        //-----------------
         (*(In_Mode_Func[In_Mode].Func))(Area_No);//执行移动操作
 
         TRACE();
@@ -733,11 +738,13 @@ void Update_Pic_Data(INT8U Area_No)
            if(!(Prog_Status.Area_Status[Area_No].In_Mode >=1 &&\
               Prog_Status.Area_Status[Area_No].In_Mode <= 6)) //不是连续左移、连续右移
            {
-               //memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
              Clear_Area_Data(&Show_Data_Bak, Area_No);
            }
            else
+           {
+
              Prog_Status.Area_Status[Area_No].Out_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
+           }
          }
 
         //在移动阶段

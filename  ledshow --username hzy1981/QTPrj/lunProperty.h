@@ -30,6 +30,8 @@ private:
     CsmLineEdit *smLineEdit;
     ClunEdit *lunEdit;
     CshowModeEdit *showModeEdit;
+
+    CborderEdit *borderEdit;
 public slots:
     void edited();
 public:

@@ -341,7 +341,7 @@ INT8U Get_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT16U Width,
   INT32U Index;
 
   //Index = (((Y>>3) * Width) + X)*8 + (Y & 0x07);
- Index = Index = GET_POINT_INDEX(Width,X,Y);
+ Index = GET_POINT_INDEX(Width,X,Y);
  
  if(Color < 3 || Color EQ 4)  //0,1,2,4单色屏
     return Get_Buf_Bit(Buf, Buf_Len,Index);
@@ -1118,12 +1118,16 @@ void Copy_Filled_Round(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pCenter0, 
 void Get_Angle_Point(S_Point *pPoint0, INT16S Angle, INT16U Len, S_Point *pPoint1)
 {
     INT16S Temp;
+    double Re;
 
     if(Len >=1)
     {
-      Temp = ((INT16S)pPoint0->X + (INT16S)(Len-1) * cos(2*PI*Angle/360) + 0.5);
+      Re = (Len-1) * cos(2*PI*Angle/360) + 0.5;
+      Temp = ((INT16S)pPoint0->X + Re);// + 0.5);
       pPoint1->X = Temp>0?(INT16U)Temp:0;
-      Temp = (INT16U)((INT16S)pPoint0->Y - (INT16S)(Len-1) * sin(2*PI*Angle/360) - 0.5);
+
+      Re = (Len-1) * sin(2*PI*Angle/360) - 0.5;
+      Temp = (INT16U)((INT16S)pPoint0->Y - Re);// - 0.5);
       pPoint1->Y = Temp>0?(INT16U)Temp:0;
     }
     else
@@ -1151,8 +1155,8 @@ void Fill_Clock_Point(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, \
      Fill_Round(pDst_Buf, Area_No, &Point[0], Radius, Value); //绘制一个圆
    else if(Style EQ 1) //方形
    {
-     Point[0].X = Point[0].X - Radius;
-     Point[0].Y = Point[0].Y - Radius;
+     Point[0].X = Point[0].X - Radius + 1;
+     Point[0].Y = Point[0].Y - Radius + 1;
      if(Radius > 0)
        Fill_Rect(pDst_Buf, Area_No, &Point[0], Radius*2-1, Radius*2-1, Value);
    }
@@ -2175,8 +2179,9 @@ void Copy_Compresssion_V_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0
     for(i = 0; i < Y_Len; i ++)
         //for(j = 0; j < Y_Len; j ++)
         {
-        if(Direct EQ 0 && (i % TENSILE_STEP) < Ratio ||\
-           Direct EQ 1 && (i % TENSILE_STEP) >= (TENSILE_STEP - Ratio))          {
+        if((Direct EQ 0 && (i % TENSILE_STEP) < Ratio) ||\
+           (Direct EQ 1 && (i % TENSILE_STEP) >= (TENSILE_STEP - Ratio)))
+        {
               P0.X = pPoint0->X;// + i;
               P0.Y = pPoint0->Y + i;
 

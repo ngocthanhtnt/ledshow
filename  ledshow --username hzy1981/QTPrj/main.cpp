@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     mainObj = new MainObj;
     w = new MainWindow;
     QRect desktopRect = QApplication::desktop()->availableGeometry();
-    int iTitleBarHeight = w->style()->pixelMetric(QStyle::PM_TitleBarHeight);  // 获取标题栏高度
+    w->style()->pixelMetric(QStyle::PM_TitleBarHeight);  // 获取标题栏高度
 
     //w->setGeometry(0, iTitleBarHeight, desktopRect.width(), desktopRect.height() - iTitleBarHeight);  // 设置窗体充满桌面客户区
     //w->setFixedSize(desktopRect.width(), desktopRect.height() - iTitleBarHeight);      // 固定窗体大小
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
     QObject::connect(w->mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)),
             w, SLOT(updateTreeWidget(QMdiSubWindow*)));
     QObject::connect(w->progManage->treeWidget,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),w->progManage,SLOT(currentItemChangedProc(QTreeWidgetItem*,QTreeWidgetItem*)));
-
+    QObject::connect(w->progManage->treeWidget,SIGNAL(itemClicked(QTreeWidgetItem*,int)), w->progManage, SLOT(itemCheckStateChangedProc(QTreeWidgetItem*,int)));
     //traversalControl(w->children());
     //w->show();
     w->showMaximized();

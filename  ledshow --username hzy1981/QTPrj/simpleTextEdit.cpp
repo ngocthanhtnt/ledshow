@@ -356,7 +356,7 @@ CshowModeEdit::~CshowModeEdit()
 
 CsmLineCombo::CsmLineCombo(QWidget *parent):QComboBox(parent)
 {
-    QHBoxLayout *hLayout;
+    //QHBoxLayout *hLayout;
 
     //editGroup = new QGroupBox(this);
     //smLineCombo = new QComboBox(this);
@@ -408,7 +408,7 @@ CsmLineEdit::CsmLineEdit(QWidget *parent):QGroupBox(parent)
 {
     //QHBoxLayout *hLayout;
     QGridLayout *gridLayout;
-    QVBoxLayout *vLayout;
+    //QVBoxLayout *vLayout;
     QLabel *label;
 
     //editGroup = new QGroupBox(this);
@@ -477,12 +477,12 @@ CsmLineEdit::~CsmLineEdit()
 
 }
 ///--------//
-CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
+CdateEdit::CdateEdit(QWidget *parent):QGroupBox(parent)
 {
     QHBoxLayout *hLayout;
-    QLabel *label;
+    //QLabel *label;
 
-    dateCheck = new QCheckBox(tr("日期"),this);
+    //dateCheck = new QCheckBox(tr("日期"),this);
     dateCombo = new QComboBox(this);
     dateCombo->addItem(tr("2000年12月30日"));
     dateCombo->addItem(tr("00年12月30日"));
@@ -501,20 +501,20 @@ CdateEdit::CdateEdit(QWidget *parent):QWidget(parent)
     sizeCombo = new CsizeCombo(this);
 
     hLayout = new QHBoxLayout(this);
-    hLayout->addWidget(dateCheck);
+    //hLayout->addWidget(dateCheck);
     hLayout->addWidget(dateCombo);
     //label = new QLabel(tr("颜色"), this);
     //hLayout->addWidget(label);
     hLayout->addWidget(sizeCombo);
     hLayout->addWidget(colorCombo);
-    hLayout->addStretch();
+    //hLayout->addStretch();
     //label = new QLabel(tr("大小"), this);
-    //hLayout->addWidget(label);
-
+    this->setCheckable(true);
+    this->setTitle(tr("显示日期"));
 
     setLayout(hLayout);
 
-    connect(dateCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+    connect(this, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     connect(dateCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     connect(sizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
@@ -531,7 +531,7 @@ void CdateEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
    settings.beginGroup("dateEdit");
-   settings.setValue("checked", dateCheck->isChecked());
+   settings.setValue("checked", this->isChecked());
    settings.setValue("type", dateCombo->currentIndex());
    settings.setValue("color", colorCombo->currentIndex());
    settings.setValue("size", sizeCombo->currentIndex());
@@ -553,7 +553,7 @@ void CdateEdit::setSettingsToWidget(QString str)
 
        settings.setValue("setFlag", 1);
     }
-    dateCheck->setChecked(settings.value("checked").toBool());
+    this->setChecked(settings.value("checked").toBool());
     dateCombo->setCurrentIndex(settings.value("type").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
     sizeCombo->setCurrentIndex(settings.value("size").toInt());
@@ -566,12 +566,12 @@ CdateEdit::~CdateEdit()
 
 }
 
-CweekEdit::CweekEdit(QWidget *parent):QWidget(parent)
+CweekEdit::CweekEdit(QWidget *parent):QGroupBox(parent)
 {
     QHBoxLayout *hLayout;
-    QLabel *label;
+    //QLabel *label;
 
-    weekCheck = new QCheckBox(tr("星期"),this);
+    //weekCheck = new QCheckBox(tr("星期"),this);
     weekCombo = new QComboBox(this);
     weekCombo->addItem(tr("星期一"));
     weekCombo->addItem(tr("Monday"));
@@ -585,20 +585,22 @@ CweekEdit::CweekEdit(QWidget *parent):QWidget(parent)
     sizeCombo = new CsizeCombo(this);
 
     hLayout = new QHBoxLayout(this);
-    hLayout->addWidget(weekCheck);
+    //hLayout->addWidget(weekCheck);
     hLayout->addWidget(weekCombo);
     //label = new QLabel(tr("颜色"), this);
     //hLayout->addWidget(label);
     hLayout->addWidget(sizeCombo);
     hLayout->addWidget(colorCombo);
     //label = new QLabel(tr("大小"), this);
-    //hLayout->addWidget(label);
-    hLayout->addStretch();
+    this->setCheckable(true);
+    this->setTitle(tr("显示星期"));
+    //this->setAlignment(Qt::AlignHCenter);
+    //hLayout->addStretch();
 
-    hLayout->addStretch();
+    //hLayout->addStretch();
     setLayout(hLayout);
 
-    connect(weekCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+    connect(this, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     connect(weekCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     connect(sizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
@@ -615,7 +617,7 @@ void CweekEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
    settings.beginGroup("weekEdit");
-   settings.setValue("checked", weekCheck->isChecked());
+   settings.setValue("checked", this->isChecked());
    settings.setValue("type", weekCombo->currentIndex());
    settings.setValue("color", colorCombo->currentIndex());
    settings.setValue("size", sizeCombo->currentIndex());
@@ -637,7 +639,7 @@ void CweekEdit::setSettingsToWidget(QString str)
 
        settings.setValue("setFlag", 1);
     }
-    weekCheck->setChecked(settings.value("checked").toBool());
+    this->setChecked(settings.value("checked").toBool());
     weekCombo->setCurrentIndex(settings.value("type").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
     sizeCombo->setCurrentIndex(settings.value("size").toInt());
@@ -650,12 +652,12 @@ CweekEdit::~CweekEdit()
 
 }
 
-CtimeEdit::CtimeEdit(QWidget *parent):QWidget(parent)
+CtimeEdit::CtimeEdit(QWidget *parent):QGroupBox(parent)
 {
     QHBoxLayout *hLayout;
-    QLabel *label;
+    //QLabel *label;
 
-    timeCheck = new QCheckBox(tr("时间"),this);
+    //timeCheck = new QCheckBox(tr("时间"),this);
     timeCombo = new QComboBox(this);
     timeCombo->addItem(tr("12时59分59秒"));
     timeCombo->addItem(tr("12:59:59"));
@@ -673,7 +675,7 @@ CtimeEdit::CtimeEdit(QWidget *parent):QWidget(parent)
     sizeCombo = new CsizeCombo(this);
 
     hLayout = new QHBoxLayout(this);
-    hLayout ->addWidget(timeCheck);
+    //hLayout ->addWidget(timeCheck);
     hLayout->addWidget(timeCombo);
     //label = new QLabel(tr("颜色"), this);
     //hLayout->addWidget(label);
@@ -681,11 +683,13 @@ CtimeEdit::CtimeEdit(QWidget *parent):QWidget(parent)
     hLayout->addWidget(colorCombo);
     //label = new QLabel(tr("大小"), this);
     //hLayout->addWidget(label);
-    hLayout->addStretch();
+    //hLayout->addStretch();
 
     setLayout(hLayout);
+    this->setCheckable(true);
+    this->setTitle(tr("显示时间"));
 
-    connect(timeCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+    connect(this, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     connect(timeCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(colorCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     connect(sizeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
@@ -702,7 +706,7 @@ void CtimeEdit::getSettingsFromWidget(QString str)
 {
    settings.beginGroup(str);
    settings.beginGroup("timeEdit");
-   settings.setValue("checked", timeCheck->isChecked());
+   settings.setValue("checked", this->isChecked());
    settings.setValue("type", timeCombo->currentIndex());
    settings.setValue("color", colorCombo->currentIndex());
    settings.setValue("size", sizeCombo->currentIndex());
@@ -725,7 +729,7 @@ void CtimeEdit::setSettingsToWidget(QString str)
        settings.setValue("setFlag", 1);
     }
 
-    timeCheck->setChecked(settings.value("checked").toBool());
+    this->setChecked(settings.value("checked").toBool());
     timeCombo->setCurrentIndex(settings.value("type").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
     sizeCombo->setCurrentIndex(settings.value("size").toInt());
@@ -766,9 +770,9 @@ CtimeDiffEdit::CtimeDiffEdit(QWidget *parent):QGroupBox(parent)
   minEdit->setMinimum(0);
   minEdit->setMaximum(59);
   hLayout->addWidget(minEdit);
-
+  //hLayout->addStretch();
   setLayout(hLayout);
-  setTitle(tr("时差调整"));
+  //setTitle(tr("时差调整"));
 
   connect(diffFlag, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
   connect(hourEdit, SIGNAL(valueChanged(int)),this,SIGNAL(edited()));
@@ -817,7 +821,7 @@ CtimeDiffEdit::~CtimeDiffEdit()
 CdateTimeEdit::CdateTimeEdit(QWidget *parent):QGroupBox(parent)
 {
     QVBoxLayout *vLayout;
-    QGridLayout *gridLayout;
+    //QGridLayout *gridLayout;
 
     vLayout = new QVBoxLayout(this);
 
@@ -991,7 +995,7 @@ CnameEdit::CnameEdit(QWidget *parent):QGroupBox(parent)
 
 void CnameEdit::edited()
 {
-    CshowArea *area;
+    //CshowArea *area;
     QTreeWidgetItem *item;
 
     //area = w->screenArea->getFocusArea(); //当前焦点分区
@@ -1101,7 +1105,7 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   icon = QIcon::fromTheme(tr("下划"), QIcon(rsrcPath + "/textunder.png"));
   uButton->setIcon(icon);
 
-  editCheck = new QCheckBox(tr("启用背景文字"), this);
+  //editCheck = new QCheckBox(tr("启用背景文字"), this);
 
   //oButton = new QPushButton(tr("打开"),this);
   int width = 30;
@@ -1116,6 +1120,7 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
 
   QLabel *textLabel = new QLabel(tr("文字"), this);
   lineEdit = new QLineEdit(this);
+  lineEdit->setFixedWidth(100);
 
   hLayout = new QHBoxLayout(this);
   hLayout -> addWidget(fontLabel);
@@ -1128,19 +1133,21 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   gridLayout->addLayout(hLayout, 0, 0);
 
   hLayout = new QHBoxLayout(this);
+  hLayout -> addWidget(textLabel);
+  hLayout -> addWidget(lineEdit);
   hLayout -> addWidget(bButton);
   hLayout -> addWidget(iButton);
   hLayout -> addWidget(uButton);
-  hLayout -> addWidget(editCheck);
-  hLayout->addStretch();
+  //hLayout -> addWidget(editCheck);
+  hLayout->addStretch(10);
   gridLayout->addLayout(hLayout, 1, 0);
 
-  hLayout = new QHBoxLayout(this);
-  hLayout -> addWidget(textLabel);
-  hLayout -> addWidget(lineEdit);
-  hLayout->addStretch();
+  //hLayout = new QHBoxLayout(this);
+  //hLayout -> addWidget(textLabel);
+  //hLayout -> addWidget(lineEdit);
+  //hLayout->addStretch();
   //hLayout -> addWidget(oButton);
-  gridLayout->addLayout(hLayout, 2, 0);
+  //gridLayout->addLayout(hLayout, 2, 0);
 
   //lineEdit->setSizePolicy();
   /*
@@ -1153,8 +1160,10 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   //textGroup = new QGroupBox(tr("固定文本"), this);
   //textGroup -> setLayout(gridLayout);
   //mainLayout->addWidget(textGroup, 0, 0);
-  setTitle(tr("背景文字"));
+  setTitle(tr("显示背景文字"));
   setLayout(gridLayout);
+
+  this->setCheckable(true);
 
   //所有的消息统一到一个消息
   connect(fontCombo, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
@@ -1163,7 +1172,7 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   connect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
   connect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
   connect(uButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
-  connect(editCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+  connect(this, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
   connect(lineEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
 }
 
@@ -1313,7 +1322,7 @@ QSize getTextShowData(QImage image, S_Show_Data *pDst, INT16U x, INT16U y)
   //QColor green(Qt::green);
   //QColor yellow(Qt::yellow);
   //QColor black(Qt::black);
-  QRgb rgb,r,g,b,ye;
+  QRgb rgb,r,g,b;//ye;
   int i,j;
   INT8U colorData;
 
@@ -1378,7 +1387,7 @@ void CsimpleTextEdit::getSettingsFromWidget(QString str)
    settings.setValue("bText", bButton->isChecked());
    settings.setValue("uText", uButton->isChecked());
    settings.setValue("iText", iButton->isChecked());
-   settings.setValue("editCheck", editCheck->isChecked());//->checkState());
+   settings.setValue("editCheck", this->isChecked());//->checkState());
    settings.setValue("text", lineEdit->text());
    settings.endGroup();
    settings.endGroup();
@@ -1392,7 +1401,7 @@ void CsimpleTextEdit::setSettingsToWidget(QString str)
     disconnect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     disconnect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     disconnect(uButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
-    disconnect(editCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+    disconnect(this, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     disconnect(lineEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
 
     settings.beginGroup(str);
@@ -1419,7 +1428,7 @@ void CsimpleTextEdit::setSettingsToWidget(QString str)
     bButton->setChecked(settings.value("bText").toBool());
     uButton->setChecked(settings.value("uText").toBool());
     iButton->setChecked(settings.value("iText").toBool());
-    editCheck->setChecked(settings.value("editCheck").toBool());
+    this->setChecked(settings.value("editCheck").toBool());
     lineEdit->setText(settings.value("text").toString());
     settings.endGroup();
     settings.endGroup();
@@ -1430,7 +1439,7 @@ void CsimpleTextEdit::setSettingsToWidget(QString str)
     connect(bButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     connect(iButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     connect(uButton, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
-    connect(editCheck, SIGNAL(stateChanged(int)),this,SIGNAL(edited()));
+    connect(this, SIGNAL(clicked(bool)),this,SIGNAL(edited()));
     connect(lineEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
 
 }
@@ -1445,4 +1454,141 @@ void CsimpleTextEdit::edited()
 CsimpleTextEdit::~CsimpleTextEdit()
 {
 
+}
+
+CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
+{
+    QGridLayout *gridLayout;
+
+    gridLayout = new QGridLayout(this);
+    setTitle(tr("边框选择"));
+    //borderCheck = new QCheckBox(tr("启用流水边框"), this);
+    //stepLabel = new QLabel(tr("步长"), this);
+    //pointsLabel = new QLabel(tr("点数"), this);
+    styleLabel = new QLabel(tr("样式"), this);
+    modeLabel = new QLabel(tr("特效"), this);
+    speedLabel = new QLabel(tr("速度"), this);
+    usLabel = new QLabel(tr("微秒"), this);
+    //stepCombo = new QComboBox(this);//new QLineEdit(this); //步长
+    speedCombo = new QComboBox(this);
+    colorCombo = new CcolorCombo(this);
+    styleCombo = new QComboBox(this);
+    modeCombo = new QComboBox(this);//CmodeCombo(this);
+
+
+    modeCombo->addItem(tr("静态"));
+    modeCombo->addItem(tr("闪烁"));
+    modeCombo->addItem(tr("顺时钟移动"));
+    modeCombo->addItem(tr("逆时钟移动"));
+    modeCombo->addItem(tr("顺时钟闪烁移动"));
+    modeCombo->addItem(tr("逆时钟闪烁移动"));
+
+    speedCombo->addItem(tr("1最快"));
+    speedCombo->addItem(tr("2"));
+    speedCombo->addItem(tr("3"));
+    speedCombo->addItem(tr("4"));
+    speedCombo->addItem(tr("5"));
+    speedCombo->addItem(tr("6"));
+    speedCombo->addItem(tr("7"));
+    speedCombo->addItem(tr("8"));
+    speedCombo->addItem(tr("9"));
+    speedCombo->addItem(tr("10最慢"));
+
+    styleCombo->setIconSize(QSize(48,8));
+
+    int num = Get_Simple_Border_Data_Num();
+    for(int i = 0; i < num; i ++)
+     {
+        QPixmap borderPixmap;
+        QImage borderImage;
+        borderImage = getBorderImage(1, i, QColor(Qt::red));
+        borderImage = borderImage.scaled(borderImage.width()*10, borderImage.height()*20);
+        borderPixmap.convertFromImage(borderImage);
+        styleCombo->addItem(QIcon(borderPixmap), QString("%1").arg(Simple_Border_Data[i].Height));
+
+    }
+
+    gridLayout -> addWidget(styleLabel, 0, 0);
+    gridLayout -> addWidget(styleCombo, 0, 1);
+     gridLayout -> addWidget(colorCombo, 0, 2);
+    gridLayout -> addWidget(modeLabel, 1, 0);
+    gridLayout -> addWidget(modeCombo, 1, 1);
+    gridLayout -> addWidget(speedLabel, 2, 0);
+    gridLayout -> addWidget(speedCombo, 2, 1);
+    gridLayout -> addWidget(usLabel, 2, 2);
+
+    this->setCheckable(true);
+    this -> setLayout(gridLayout);
+
+    connect(this, SIGNAL(clicked(bool)),this,SIGNAL(editSignal()));
+    connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(editSignal()));
+    connect(colorCombo,SIGNAL(indexChangeSignal()), this, SIGNAL(editSignal()));
+    connect(speedCombo,SIGNAL(currentIndexChanged(int)), this, SIGNAL(editSignal()));
+    connect(modeCombo,SIGNAL(currentIndexChanged(int)), this, SIGNAL(editSignal()));
+}
+
+CborderEdit::~CborderEdit()
+{
+
+}
+
+void CborderEdit::getSettingsFromWidget(QString str)
+{
+    settings.beginGroup(str);
+    settings.beginGroup("borderPara");
+    settings.setValue("borderCheck", QVariant(this->isChecked()));
+    //stepCombo->setText(settings.value("width").toString());
+    //settings.setValue("borderStep", QVariant(stepCombo->currentIndex()));
+    //speedCombo->setText(settings.value(bo).toString());
+    settings.setValue("borderSpeed", QVariant(speedCombo->currentIndex()));
+    //styleCombo->setCurrentIndex(settings.value( m,).toInt());
+    settings.setValue("borderStyle", QVariant(styleCombo->currentIndex()));
+    //modeCombo->setCurrentIndex(settings.value("borderColor").toInt());
+    settings.setValue("borderColor", QVariant(colorCombo->currentIndex()));
+    settings.setValue("borderMode", QVariant(modeCombo->currentIndex()));
+    settings.endGroup();
+    settings.endGroup();
+}
+
+void CborderEdit::setSettingsToWidget(QString str)
+{
+    settings.beginGroup(str);
+    settings.beginGroup("borderPara");
+    this->setChecked(settings.value("borderCheck").toBool());
+    //stepCombo->setText(QString::number(settings.value("width").toInt()));
+    //stepCombo->setCurrentIndex(settings.value("borderStep").toInt());
+
+    //stepCombo->addItem(tr("2"));
+
+    speedCombo->setCurrentIndex(settings.value("borderSpeed").toInt());
+
+
+    styleCombo->setCurrentIndex(settings.value("borderStyle").toInt());
+    colorCombo->setCurrentIndex(settings.value("borderColor").toInt());
+    modeCombo->setCurrentIndex(settings.value("borderMode").toInt());
+    settings.endGroup();
+    settings.endGroup();
+}
+
+void getBorderParaFromeSettings(QString str, U_File_Para &para)
+{
+    settings.beginGroup(str);
+    settings.beginGroup("borderPara");
+
+    int index = settings.value("borderStyle").toInt();
+    int color = settings.value("borderColor").toInt();
+    bool check = settings.value("borderCheck").toBool();
+
+    para.Pic_Para.Border_Mode = settings.value("borderMode").toInt();
+    //para.Border_Speed = settings.value("borderSpeed").toInt();
+    para.Pic_Para.Border_StayTime = (INT16U)(settings.value("borderSpeed").toInt() + 1)*MOVE_STEP_PERIOD;
+
+    para.Pic_Para.Border_Check = check;
+    para.Pic_Para.Border_Color = getColorDataFromIndex(color);
+    para.Pic_Para.Border_Type = index;
+    //para.Pic_Para.Border_Width = Simple_Border_Data[index].Width;
+    //para.Pic_Para.Border_Height = Simple_Border_Data[index].Height;
+
+    settings.endGroup();
+    settings.endGroup();
 }

@@ -82,7 +82,7 @@ typedef struct
 
 typedef struct
 {
-  char *str;
+  const char *str;
   INT8U Len;
 
 }S_Format_Str;
