@@ -20,21 +20,118 @@ QSettings screenSettings(SCREEN_INI_FILE,QSettings::IniFormat,0);
 QSettings cardSettings(CARD_INI_FILE,QSettings::IniFormat,0);
 
 #define WIDTH_0 80
-
+/*
+  INT8U Direct; //进入方向
+  INT8U Rows; //扫描1，2，4，8，16扫
+  INT8U Rows_Fold; //每驱行折数
+  INT8U Cols_Fold; //每驱列折数
+ */
+typedef struct
+{
+    INT16U code;
+    const char *info;
+}S_Scan_Mode;
 //扫描模式定义
 //第0字节表示扫描方式 00表示1/16扫,01表示1/8扫,02表示1/4扫, 03表示1/2扫,04表示静态
-//第1字节表示进入方式,00表示左上,01表示左下, 02表示右上,03表示右下
-//第2字节表示行折数
-//第3字节表示列折数
-const INT32U scanMode[] =
+//第1字节表示进入方式,00表示左上,01表示左下, 10表示右上,11表示右下
+//第2字节表示列折数,每X*8打折
+//第3字节表示行折数,打折X次
+
+const S_Scan_Mode scanMode[] =
 {
-  0x16010203,
-  0x08020404,
-  0x04030203,
-  0x02000202,
-  0x01010304
+    {0, "1/16扫,左入直行一路带16行数据(P10常用)"},
+//----------1/8扫-------
+    {1000, "1/8扫,左入直行一路带4行数据"},
+    {1011, "1/8扫,左入每8点向下打折,打折1次"},
+    {1012, "1/8扫,左入每8点向下打折,打折2次"},
+  //{1013, "1/8扫,左入每8点向下打折,打折3次"},
+    {1021, "1/8扫,左入每16点向下打折,打折1次"},
+    {1022, "1/8扫,左入每16点向下打折,打折2次"},
+  //{1023, "1/8扫,左入每16点向下打折,打折3次"},
+    {1111, "1/8扫,左入每8点向上打折,打折1次"},
+    {1112, "1/8扫,左入每8点向上打折,打折2次"},
+  //{1113, "1/8扫,左入每8点向上打折,打折3次"},
+    {1121, "1/8扫,左入每16点向上打折,打折1次"},
+    {1122, "1/8扫,左入每16点向上打折,打折2次"},
+  //{1123, "1/8扫,左入每16点向上打折,打折3次"},
+    //1-----
+    {1200, "1/8扫,右入直行一路带4行数据"},
+    {1211, "1/8扫,右入每8点向下打折,打折1次"},
+    {1212, "1/8扫,右入每8点向下打折,打折2次"},
+  //{1213, "1/8扫,右入每8点向下打折,打折3次"},
+    {1221, "1/8扫,右入每16点向下打折,打折1次"},
+    {1222, "1/8扫,右入每16点向下打折,打折2次"},
+  //{1223, "1/8扫,右入每16点向下打折,打折3次"},
+    {1311, "1/8扫,右入每8点向上打折,打折1次"},
+    {1312, "1/8扫,右入每8点向上打折,打折2次"},
+  //{1313, "1/8扫,右入每8点向上打折,打折3次"},
+    {1321, "1/8扫,右入每16点向上打折,打折1次"},
+    {1322, "1/8扫,右入每16点向上打折,打折2次"},
+  //{1323, "1/8扫,右入每16点向上打折,打折3次"},
+//---1/4扫描------------
+    {2000, "1/4扫,左入直行一路带4行数据"},
+    {2011, "1/4扫,左入每8点向下打折,打折1次"},
+    {2012, "1/4扫,左入每8点向下打折,打折2次"},
+    {2013, "1/4扫,左入每8点向下打折,打折3次"},
+    {2021, "1/4扫,左入每16点向下打折,打折1次"},
+    {2022, "1/4扫,左入每16点向下打折,打折2次"},
+    {2023, "1/4扫,左入每16点向下打折,打折3次"},
+    {2111, "1/4扫,左入每8点向上打折,打折1次"},
+    {2112, "1/4扫,左入每8点向上打折,打折2次"},
+    {2113, "1/4扫,左入每8点向上打折,打折3次"},
+    {2121, "1/4扫,左入每16点向上打折,打折1次"},
+    {2122, "1/4扫,左入每16点向上打折,打折2次"},
+    {2123, "1/4扫,左入每16点向上打折,打折3次"},
+    //1-----
+    {2200, "1/4扫,右入直行一路带4行数据"},
+    {2211, "1/4扫,右入每8点向下打折,打折1次"},
+    {2212, "1/4扫,右入每8点向下打折,打折2次"},
+    {2213, "1/4扫,右入每8点向下打折,打折3次"},
+    {2221, "1/4扫,右入每16点向下打折,打折1次"},
+    {2222, "1/4扫,右入每16点向下打折,打折2次"},
+    {2223, "1/4扫,右入每16点向下打折,打折3次"},
+    {2311, "1/4扫,右入每8点向上打折,打折1次"},
+    {2312, "1/4扫,右入每8点向上打折,打折2次"},
+    {2313, "1/4扫,右入每8点向上打折,打折3次"},
+    {2321, "1/4扫,右入每16点向上打折,打折1次"},
+    {2322, "1/4扫,右入每16点向上打折,打折2次"},
+    {2323, "1/4扫,右入每16点向上打折,打折3次"}
 };
 
+//获取某个扫描code在扫描方式数组中的Index
+int getScanModeIndex(INT16U code)
+{
+    for(unsigned int i = 0; i < S_NUM(scanMode); i ++)
+    {
+       if(scanMode[i].code EQ code)
+           return i;
+    }
+
+    return 0;
+ }
+
+//获取某个扫描方式对应的字符串
+QString getScanCodeString(INT16U code)
+{
+    int index = getScanModeIndex(code);
+
+    if(code EQ 0)
+      return "0000 " + QString(QObject::tr((const char *)scanMode[index].info));
+    else
+      return QString::number(code) + " " +  QString(QObject::tr((const char *)scanMode[index].info));
+}
+
+INT16U getScanCodeFromScreenPara(S_Screen_Para &screenPara)
+{
+  INT16U code = 0;
+
+  code += screenPara.Scan_Para.Rows * 1000;
+  code += screenPara.Scan_Para.Direct * 100;
+  code += screenPara.Scan_Para.Cols_Fold * 10;
+  code += screenPara.Scan_Para.Rows_Fold;
+
+  return code;
+}
 
 /*
 CipInput::CipInput(QWidget *parent):QGroupBox(parent)
@@ -109,13 +206,85 @@ INT8U getCardParaFromSettings(QString cardName, S_Card_Para &cardPara)
     return 1;
 }
 
+//设置屏幕参数到settings文件中
+INT8U setScreenParaToSettings(QString screenStr, S_Screen_Para &screenPara)
+{
+   settings.beginGroup(screenStr);
+   settings.beginGroup("facPara");
+
+   settings.setValue("width", screenPara.Base_Para.Width);
+   settings.setValue("height", screenPara.Base_Para.Height);
+
+   if(screenPara.Base_Para.Color EQ 0x01 || screenPara.Base_Para.Color EQ 0)
+       settings.setValue("color", 0);
+   else if(screenPara.Base_Para.Color EQ 0x03)
+       settings.setValue("color", 1);
+   else if(screenPara.Base_Para.Color EQ 0x07)
+       settings.setValue("color", 2);
+   else
+   {
+       ASSERT_FAILED();
+       settings.setValue("color", 0);
+   }
+
+   settings.setValue("screenID", screenPara.COM_Para.Addr);
+   settings.setValue("comBaud", screenPara.COM_Para.Baud);
+
+   settings.setValue("ip", screenPara.ETH_Para.IP);
+   settings.setValue("mac", screenPara.ETH_Para.Mac);
+   settings.setValue("mask", screenPara.ETH_Para.Mask);
+
+   settings.setValue("dataPolarity", screenPara.Scan_Para.Data_Polarity);
+   settings.setValue("oePolarity", screenPara.Scan_Para.OE_Polarity);
+   settings.setValue("redGreenRev", screenPara.Scan_Para.RG_Reverse);
+   settings.setValue("lineOrder", screenPara.Scan_Para.Line_Order);
+   settings.setValue("lineHide", screenPara.Scan_Para.Line_Hide);
+   settings.setValue("freq", screenPara.Scan_Para.Clk_Freq);
+   //settings.setValue("");
+   settings.setValue("scanMode", getScanCodeFromScreenPara(screenPara));
+
+   //亮度调节
+   settings.beginGroup("lightness");
+   settings.setValue("adjMode", screenPara.Lightness.Mode);
+   settings.setValue("manualLightness", screenPara.Lightness.Manual_Lightness);
+   //screenPara.Lightness.Mode = settings.value("adjMode").toInt();
+   //screenPara.Lightness.Manual_Lightness = settings.value("manualLightness").toInt(); //手动调亮度
+
+   for(int i=0; i < MAX_LIGHTNESS_TIME; i++)
+   {
+     settings.setValue("timeCheck" + QString::number(i), screenPara.Lightness.Time_Lightness[i].Flag);
+     settings.setValue("startHour" + QString::number(i), screenPara.Lightness.Time_Lightness[i].Start_Hour);
+     settings.setValue("startMin" + QString::number(i), screenPara.Lightness.Time_Lightness[i].Start_Min);
+   }
+   settings.endGroup();
+
+   //定时开关机
+   settings.beginGroup("openCloseTime");
+
+   for(int i =0; i < MAX_OPEN_CLOSE_TIME;i ++)
+   {
+       settings.setValue("timeCheck"+QString::number(i), screenPara.OC_Time.Time[i].Flag);
+       settings.setValue("openHour" + QString::number(i), screenPara.OC_Time.Time[i].Open_Hour);
+       settings.setValue("openMin" + QString::number(i), screenPara.OC_Time.Time[i].Open_Min);
+       settings.setValue("closeHour" + QString::number(i), screenPara.OC_Time.Time[i].Close_Hour);
+       settings.setValue("closeSec" + QString::number(i), screenPara.OC_Time.Time[i].Close_Min);
+   }
+
+   settings.endGroup();
+
+   settings.endGroup();
+   settings.endGroup();
+
+   return 1;
+}
+
 //读取屏幕参数
 //返回>0表示读取到参数，==0表示没有读取到参数
 INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara, S_Card_Para &cardPara)
 {
     QString cardName;
 
-    qDebug("getScreenCardParaFromSettings:%s", (const char *)screenStr.toLocal8Bit());
+    debug("getScreenCardParaFromSettings:%s", (const char *)screenStr.toLocal8Bit());
 
     settings.beginGroup(screenStr);
     settings.beginGroup("facPara");
@@ -147,11 +316,15 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     screenPara.Scan_Para.Line_Hide = settings.value("lineHide").toInt();
     screenPara.Scan_Para.Clk_Freq = settings.value("freq").toInt(); //移位频率
 
-    screenPara.Scan_Para.Direct = 0;
-    screenPara.Scan_Para.Cols_Fold = 0;
-    screenPara.Scan_Para.Rows_Fold = 0;
-    screenPara.Scan_Para.Rows = 0;
+    //扫描方式
+    int scanMode = settings.value("scanMode").toInt();
+    screenPara.Scan_Para.Direct = (scanMode%1000) / 100;
+    screenPara.Scan_Para.Cols_Fold = (scanMode %100) / 10;
+    screenPara.Scan_Para.Rows_Fold = (scanMode %10);
+    screenPara.Scan_Para.Rows = (scanMode % 10000) / 1000;
+    //----------------------
     screenPara.Scan_Para.Screen_Freq = 0; //屏频
+    //
 
     //亮度调节
     settings.beginGroup("lightness");
@@ -160,7 +333,7 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
 
     for(int i=0; i < MAX_LIGHTNESS_TIME; i++)
     {
-      screenPara.Lightness.Time_Lightness[i].Flag = settings.value("timeCheck" + QString::number(i)).toBool();
+      screenPara.Lightness.Time_Lightness[i].Flag = settings.value("timeCheck" + QString::number(i)).toInt();
       screenPara.Lightness.Time_Lightness[i].Start_Hour = settings.value("startHour" + QString::number(i)).toInt();
       screenPara.Lightness.Time_Lightness[i].Start_Min = settings.value("startMin" + QString::number(i)).toInt();
     }
@@ -171,7 +344,7 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
 
     for(int i =0; i < MAX_OPEN_CLOSE_TIME;i ++)
     {
-        screenPara.OC_Time.Time[i].Flag = settings.value("timeCheck"+QString::number(i)).toBool();
+        screenPara.OC_Time.Time[i].Flag = settings.value("timeCheck"+QString::number(i)).toInt();
         screenPara.OC_Time.Time[i].Open_Hour = settings.value("openHour" + QString::number(i)).toInt();
         screenPara.OC_Time.Time[i].Open_Min = settings.value("openMin" + QString::number(i)).toInt();
         screenPara.OC_Time.Time[i].Close_Hour = settings.value("closeHour" + QString::number(i)).toInt();
@@ -196,8 +369,8 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
 CscreenProperty::CscreenProperty(QWidget *parent):QWidget(parent)
 {
 
-    QTabWidget *tab;
-    QHBoxLayout *hLayout,*mainLayout;
+    //QTabWidget *tab;
+    QHBoxLayout /**hLayout,*/*mainLayout;
     QVBoxLayout *vLayout;
     //QGroupBox *lightnessGroup;
     //QGroupBox *openCloseTimeGroup;
@@ -555,7 +728,7 @@ CopenCloseProperty::CopenCloseProperty(QWidget *parent):QGroupBox(parent)
     INT8U i;
 
     QHBoxLayout *hLayout;
-   QVBoxLayout *vLayout;
+   //QVBoxLayout *vLayout;
    QLabel *openTimeLabel, *closeTimeLabel;
 
    hLayout = new QHBoxLayout(this);
@@ -707,8 +880,8 @@ ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
 void sendLightnessPara()//S_COM_Status &COM_Status)
 {
     //char frameBuf[BLOCK_DATA_LEN + 20];
-    S_Screen_Para screenPara;
-    S_Card_Para cardPara;
+    //S_Screen_Para screenPara;
+    //S_Card_Para cardPara;
     //int len;
 
     QString str = w->screenArea->getCurrentScreenStr();
@@ -737,8 +910,8 @@ void sendLightnessPara()//S_COM_Status &COM_Status)
 void ClightnessDialog::sendPara()
 {
     //char frameBuf[BLOCK_DATA_LEN + 20];
-    S_Screen_Para screenPara;
-    S_Card_Para cardPara;
+    //S_Screen_Para screenPara;
+    //S_Card_Para cardPara;
     INT8U temp[100];
     int len;
 
@@ -767,10 +940,10 @@ void ClightnessDialog::sendPara()
 //
 void ClightnessDialog::udiskPara()
 {
-    S_Screen_Para screenPara;
-    S_Card_Para cardPara;
-    INT8U temp[100];
-    int len;
+    //S_Screen_Para screenPara;
+    //S_Card_Para cardPara;
+    //INT8U temp[100];
+    //int len;
 
     QString str = w->screenArea->getCurrentScreenStr();
 
@@ -836,7 +1009,7 @@ void sendOpenClosePara()
    //char frameBuf[BLOCK_DATA_LEN + 20];
    S_Screen_Para screenPara;
    S_Card_Para cardPara;
-   int len;
+   //int len;
 
    QString str = w->screenArea->getCurrentScreenStr();
 
@@ -897,7 +1070,7 @@ void CopenCloseDialog::udiskPara()
 {
     S_Screen_Para screenPara;
     S_Card_Para cardPara;
-    int len;
+    //int len;
 
     QString str = w->screenArea->getCurrentScreenStr();
 
@@ -1055,8 +1228,8 @@ void CadjTimeDialog::udiskData()
 {
     QDateTime dateTime = adjTimeProperty->getDateTime();
     INT8U TimeBuf[10];
-    INT8U Temp[20];
-    int len;
+    //INT8U Temp[20];
+    //int len;
 
     TimeBuf[T_YEAR] = dateTime.date().year() - 2000;
     TimeBuf[T_MONTH] = dateTime.date().month();
@@ -1263,8 +1436,8 @@ void CsendDataDialog::sendData()
 
 void CsendDataDialog::uDiskData()
 {
-    INT8U temp[100];
-    int len;
+    //INT8U temp[100];
+    //int len;
     int flag = 0;
     QString str = w->screenArea->getCurrentScreenStr();
 
@@ -1464,8 +1637,8 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   QLabel *ipEditLabel = new QLabel(tr("IP地址"),this);
   ipEdit = new CipInput(this);
 
-  connectButton = new QPushButton(tr("手动连接"),this);
-  autoTestButton = new QPushButton(tr("自动测试"),this);
+  manualConnectButton = new QPushButton(tr("手动连接"),this);
+  autoConnectButton = new QPushButton(tr("自动测试"),this);
 
   gridLayout->addWidget(comModeLabel, 0, 0,1,1);
   gridLayout->addWidget(comModeCombo,  0, 1,1,2);
@@ -1477,8 +1650,8 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   gridLayout->addWidget(comBaudCombo, 3, 1,1,2);
   gridLayout->addWidget(ipEditLabel, 4, 0,1,1);
   gridLayout->addWidget(ipEdit, 4,1,1,2);
-  gridLayout->addWidget(connectButton, 5,0,1,3);
-  gridLayout->addWidget(autoTestButton, 6,0,1,3);
+  gridLayout->addWidget(manualConnectButton, 5,0,1,3);
+  gridLayout->addWidget(autoConnectButton, 6,0,1,3);
 
   setLayout(gridLayout);
   setTitle(tr("通信参数"));
@@ -1491,6 +1664,8 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   connect(screenIDEdit, SIGNAL(valueChanged(int)), this, SIGNAL(editSignal()));
   connect(comBaudCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(editSignal()));
   connect(ipEdit, SIGNAL(editSignal()), this, SIGNAL(editSignal()));
+  connect(this->manualConnectButton, SIGNAL(clicked()), this, SLOT(manualConnect()));
+  connect(this->autoConnectButton, SIGNAL(clicked()), this, SLOT(autoConnect()));
 
   connect(this, SIGNAL(editSignal()), this, SLOT(editSlot()));
 
@@ -1500,6 +1675,102 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
 
 
 }
+
+//手动连接
+void CcomTest::autoConnect()
+{
+    INT8U temp[100];
+    int len;
+    QString oldComPortStr;
+    int oldComMode;
+    int oldComBaud;
+
+    QStringList portList = getComPortList();
+
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+
+    settings.beginGroup(screenStr);
+    settings.beginGroup("comTest");
+
+    oldComMode = settings.value("comMode").toInt(); //老的通信模式
+    oldComBaud = settings.value("comBaud").toInt(); //老的波特率
+    oldComPortStr = settings.value("comPort").toString(); //保存老的端口
+
+    settings.setValue("comMode", 0); //串口通信方式
+    settings.endGroup();
+    settings.endGroup();
+
+    for(int i = 0; i < portList.size(); i ++)
+    {
+        for(int j = 0; j < 2; j ++)
+        {
+            settings.beginGroup(screenStr);
+            settings.beginGroup("comTest");
+
+            settings.setValue("comPort", portList.at(i)); //设置端口
+            settings.setValue("comBaud", j); //设置波特率
+
+            settings.endGroup();
+            settings.endGroup();
+
+            makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)temp, sizeof(temp));
+
+            bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
+            if(re EQ true)
+            {
+                QMessageBox::information(w, tr("提示"),
+                                       tr("测试成功！"),tr("确定"));
+
+                setSettingsToWidget(screenStr);
+
+                return;
+
+            }
+        }
+
+    }
+
+    //恢复之前的通信参数
+    settings.beginGroup(screenStr);
+    settings.beginGroup("comTest");
+
+    settings.setValue("comPort", oldComPortStr);
+    settings.setValue("comBaud", oldComBaud);
+    settings.setValue("comMode", oldComMode);
+
+    settings.endGroup();
+    settings.endGroup();
+
+    QMessageBox::information(w, tr("提示"),
+                               tr("测试失败!没有找到连接成功的串口"),tr("确定"));
+
+}
+
+//自动连接
+void CcomTest::manualConnect()
+{
+    INT8U temp[100];
+    int len;
+
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+
+    makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)temp, sizeof(temp));
+
+    bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
+    if(re EQ true)
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("测试成功！"),tr("确定"));
+        //close(); //校时成功则关闭
+
+    }
+    else
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("测试失败!"),tr("确定"));
+    }
+}
+
 /*
     QComboBox *comModeCombo; //通信方式
     QSpinBox *screenIDEdit; //屏幕ID，硬件地址
@@ -1729,22 +2000,26 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
 
    //---------------------------------------------------------------
    QString modeString;
-   int direct, scanLine, rowsFold, colsFold, lines;
+   //int direct, scanLine, rowsFold, colsFold, lines;
 
-   for(int i = 0; i < S_NUM(scanMode); i ++)
+   for(unsigned int i = 0; i < S_NUM(scanMode); i ++)
    {
-       scanLine = (scanMode[i] & 0xFF000000) >> 24;
-       direct = (scanMode[i] & 0x00FF0000) >> 16;
-       rowsFold = (scanMode[i] & 0x0000FF00) >> 8;
-       colsFold = (scanMode[i] & 0x000000FF);
+       //scanLine = (scanMode[i].code & 0xFF000000) >> 24;
+       //direct = (scanMode[i].code & 0x00FF0000) >> 16;
+       //rowsFold = (scanMode[i].code & 0x0000FF00) >> 8;
+       //colsFold = (scanMode[i].code & 0x000000FF);
 
        modeString.clear();
 
-       modeString = QString::number(scanMode[i], 16);
-       if(modeString.length() < 8)
-           modeString = tr("0") + modeString;
+       if(scanMode[i].code != 0)
+         modeString = QString::number(scanMode[i].code);
+       else
+         modeString = "0000";
+       //if(modeString.length() < 8)
+          // modeString = tr("0") + modeString;
 
        modeString += tr(",");
+       /*
        scanLine = (scanLine % 16) + (scanLine /16)*10;
 
        if(scanLine EQ 16)
@@ -1790,7 +2065,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
 
        modeString += tr("一组数据") + QString::number(rowsFold*scanLine) + tr("行,") +\
                      QString::number(colsFold*8) + tr("列折");
-
+      */
+       modeString += QString(tr(scanMode[i].info));
        scanModeCombo->addItem(modeString);
    }
    //gridLayout->addWidget(scanModeLabel, 0, 0, 1, 1);
@@ -1986,6 +2262,9 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    connect(endButton, SIGNAL(clicked()), this, SLOT(endProc()));
    connect(selfTestButton, SIGNAL(clicked()), this, SLOT(setTestProc()));
    connect(readParaButton, SIGNAL(clicked()), this, SLOT(readParaProc()));
+   connect(importParaButton, SIGNAL(clicked()), this, SLOT(importParaProc()));
+
+   importParaButton->setEnabled(false);
 
    defParaCheckProc();
    cardChangeProc();
@@ -2052,7 +2331,7 @@ void CfacScreenProperty::getSettingsFromWidget(QString str)
   settings.setValue("width", widthEdit->value());
   settings.setValue("height", heightEdit->value());
   settings.setValue("_138Check", _138Check->isChecked());
-  settings.setValue("scanMode", scanModeCombo->currentIndex());
+  settings.setValue("scanMode", scanModeCombo->currentText().mid(0, 4).toInt());
 
   settings.setValue("advDefPara", defParaCheck->isChecked());
   settings.setValue("freq", freqCombo->currentIndex());
@@ -2099,7 +2378,7 @@ void CfacScreenProperty::setSettingsToWidget(QString str)
         heightEdit->setValue(DEF_SCN_HEIGHT);
     }
     _138Check->setChecked(settings.value("_138Check").toBool());
-    scanModeCombo->setCurrentIndex(settings.value("scanMode").toInt());
+    scanModeCombo->setCurrentIndex(getScanModeIndex(settings.value("scanMode").toInt()));
 
     defParaCheck->setChecked(settings.value("advDefPara").toBool());
     freqCombo->setCurrentIndex(settings.value("freq").toInt());
@@ -2153,6 +2432,18 @@ void CfacScreenProperty::readParaProc()
 
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
+    //读取版本号
+    if(QT_SIM_EN)
+      makeProtoBufData(screenStr, SIM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0 , 0);
+    else
+      makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0, 0);
+
+    re = w->comStatus->waitComEnd(rcvBuf, sizeof(rcvBuf), &len);
+    if(re EQ true)
+    {
+      screenParaStr = tr("版本号:")+QString((char *)rcvBuf) + " ";
+    }
+
     if(QT_SIM_EN)
       makeProtoBufData(screenStr, SIM_MODE, C_SCREEN_PARA | RD_CMD, (char *)0 , 0);
     else
@@ -2163,20 +2454,31 @@ void CfacScreenProperty::readParaProc()
     {
         if(len != sizeof(S_Screen_Para) - CHK_BYTE_LEN)
         {
-            //读取参数长度错误
+            QMessageBox::information(w, QObject::tr("提示"),
+                                    QObject::tr("读取参数长度错误！"),QObject::tr("确定"));
            return;
         }
 
         memcpy(&readScreenPara.Base_Para, rcvBuf, len);
         readScreenParaFlag = true;
 
-        screenParaStr += tr("屏幕宽度:%1,高度:%1,颜色:").arg(readScreenPara.Base_Para.Width).arg(readScreenPara.Base_Para.Height);
+        screenParaStr += tr("屏幕宽度:%1,高度:%2,颜色:").arg(readScreenPara.Base_Para.Width).arg(readScreenPara.Base_Para.Height);
         if(readScreenPara.Base_Para.Color & 0x01)
             screenParaStr += tr("红色");
         else if(readScreenPara.Base_Para.Color & 0x02)
             screenParaStr += tr("+绿色");
         else if(readScreenPara.Base_Para.Color & 0x04)
             screenParaStr += tr("+蓝色");
+
+        screenParaStr += ". ";
+
+        //扫描方式
+        INT16U scanMode = getScanCodeFromScreenPara(readScreenPara);
+        QString scanString = getScanCodeString(scanMode);
+
+        screenParaStr += QObject::tr("扫描方式:") + scanString;
+        //---------------
+
 
         readParaEdit->setText(screenParaStr);
     }
@@ -2199,6 +2501,20 @@ void CfacScreenProperty::readParaProc()
 
         screenParaStr += tr("固件版本 ") + QString((char *)rcvBuf) + tr(" ");
     }
+
+    importParaButton->setEnabled(true);//可以导入参数了
+}
+
+//导入参数处理
+void CfacScreenProperty::importParaProc()
+{
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+
+    setScreenParaToSettings(screenStr, this->readScreenPara);
+    setSettingsToWidget(screenStr);
+
+    QMessageBox::information(w, QObject::tr("提示"),
+                            QObject::tr("参数导入成功!"),QObject::tr("确定"));
 }
 
 //加载参数
@@ -2208,7 +2524,7 @@ void CfacScreenProperty::loadParaProc()
     INT8U temp[100];
 
     str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
-    qDebug("loadpara:%s",(const char *)str.toLocal8Bit());
+    debug("loadpara:%s",(const char *)str.toLocal8Bit());
 
     settings.beginGroup(str);
     settings.beginGroup("facPara");
@@ -2220,9 +2536,6 @@ void CfacScreenProperty::loadParaProc()
     settings.endGroup();
     settings.endGroup();
 
-
-    getSettingsFromWidget(str);
-
     getScreenCardParaFromSettings(str, Screen_Para, Card_Para);//重新获取屏幕参数和板卡参数
 
     if(card != cardCombo->currentIndex())
@@ -2233,18 +2546,20 @@ void CfacScreenProperty::loadParaProc()
     int index = getScreenIndex(str);
     QString screenName = QString::number(index) + QObject::tr("号屏幕");
 
-    if(Card_Para.Max_Height < Screen_Para.Base_Para.Height)
+    if(Card_Para.Max_Height < heightEdit->value())
     {
        QMessageBox::information(w, QObject::tr("提示"),
                               screenName + QObject::tr("高度超出板卡支持上限，请重新设置！"),QObject::tr("确定"));
+       setSettingsToWidget(str);
        return;
     }
 
-    if(Card_Para.Max_Points < Screen_Para.Base_Para.Height * Screen_Para.Base_Para.Width)
+    if(Card_Para.Max_Points < (unsigned int)(widthEdit->value() * heightEdit->value()))
     {
        QMessageBox::information(w, QObject::tr("提示"),
                               screenName + QObject::tr("点数超出板卡支持上限，请重新设置！"),QObject::tr("确定"));
 
+       setSettingsToWidget(str);
        return;
     }
 
@@ -2275,6 +2590,9 @@ void CfacScreenProperty::loadParaProc()
         //w->progManage->settingsInit();
         mainObj->emitScreenChangeSignal();
     }
+
+    getSettingsFromWidget(str);
+    getScreenCardParaFromSettings(str, Screen_Para, Card_Para);//重新获取屏幕参数和板卡参数
 
     int flag = 0;
     SET_BIT(flag, C_SCREEN_BASE_PARA);
@@ -2307,7 +2625,7 @@ void CfacScreenProperty::loadParaProc()
 void CfacScreenProperty::setTestProc()
 {
     char tmp;
-    int len;
+    //int len;
     QString screenStr;
     //char frameBuf[BLOCK_DATA_LEN + 20];
 
@@ -2322,8 +2640,7 @@ void CfacScreenProperty::setTestProc()
         this ->selfTestButton->setText(tr("自动检测"));
     }
 
-    //len = makeFrame((char *)&tmp, sizeof(tmp),\
-               //C_SELF_TEST | WR_CMD, frameInfo.seq++, frameBuf);
+    //len = makeFrame((char *)&tmp, sizeof(tmp), C_SELF_TEST | WR_CMD, frameInfo.seq++, frameBuf);
 
     screenStr = w->screenArea->getCurrentScreenStr();
 
@@ -2390,7 +2707,7 @@ void CfacScreenProperty::defParaCheckProc()
 
 void CfacScreenProperty::cardChangeProc()
 {
-    S_Card_Para cardPara;
+    //S_Card_Para cardPara;
     S_Card_Para cardPara_Bak;
 
     memcpy(&cardPara_Bak, &Card_Para, sizeof(Card_Para));

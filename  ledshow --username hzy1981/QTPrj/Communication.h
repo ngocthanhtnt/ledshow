@@ -81,7 +81,7 @@ protected:
 public:
         //通信接收缓冲区
         INT8U Rcv_Buf[1000];
-        int Rcv_Posi;
+        unsigned int Rcv_Posi;
         INT8U Rcv_Flag;
         INT8U Rcv_Ch;
 
@@ -152,7 +152,7 @@ public:
     void getUDiskParaFromSettings(QString str);
     void setComMode(int mode);
     char getComStatus();
-    bool waitComEnd(INT8U *pDst, int maxLen, int *pDstLen);
+    bool waitComEnd(INT8U *pDst, unsigned int maxLen, int *pDstLen);
     QString getComReStr();
     CcomThread *comThread;
     CcomStatus(QWidget * parent = 0);

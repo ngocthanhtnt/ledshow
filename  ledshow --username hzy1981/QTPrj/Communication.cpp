@@ -45,7 +45,7 @@ QString getUDiskPath()
       }
     }
 
-    return "d:\\";
+    return "";//d:\\";
 }
 
 
@@ -68,7 +68,7 @@ QStringList getComPortList()
 }
 
 //等待通信结果,返回正确应答帧返回true,否定返回false, 返回数据域保留在pDst中
-bool CcomStatus::waitComEnd(INT8U *pDst, int maxLen, int *pDstLen)
+bool CcomStatus::waitComEnd(INT8U *pDst, unsigned int maxLen, int *pDstLen)
 {
     char status;
 
@@ -139,7 +139,8 @@ bool CcomThread::comRun()
     FILE *file;
     int re;
     bool Re = true;
-    INT16U len, len0 = 0;
+    INT16U len;
+    int len0 = 0;
     bool flag = false;
     char frameBuf[MAX_COM_BUF_LEN + 20];
 
@@ -215,7 +216,7 @@ bool CcomThread::comRun()
         return false;
     }
 
-    while((re = fread(frameBuf, FLEN + 2, 1, file)) > 0)
+    while((re = fread(frameBuf, FLEN + 2, 1, file)) > 0 && frameBuf[0] EQ FRAME_HEAD)
     {
       memcpy(&len, frameBuf + FLEN, 2);
       if(len <= sizeof(frameBuf) && len > FLEN + 2)
@@ -225,24 +226,27 @@ bool CcomThread::comRun()
           if(re > 0 && Check_Frame_Format((INT8U *)frameBuf, len))
           {
               flag = true;
-            if(sendFrame(frameBuf, len, sizeof(frameBuf)) EQ false)
+              Rcv_Posi = 0;
+              memset(Rcv_Buf, 0, sizeof(Rcv_Buf));
+              if(sendFrame(frameBuf, len, sizeof(frameBuf)) EQ false)
               {
                 Re = false;
                 break;
-            }
+              }
 
-            len0 += len;
-          }
-          else
-          {
-            Re = false;
-            break;
-          }
+              len0 += len;
+              fseek(file, len0, SEEK_SET);
+           }
+           else
+           {
+              Re = false;
+              break;
+           }
       }
       else
       {
-          Re = false;
-          break;
+           Re = false;
+           break;
       }
     }
 
@@ -276,7 +280,7 @@ void CcomThread::run()
 
 CcomThread::CcomThread(QObject * parent):QThread(parent)
 {
-    QVBoxLayout *vLayout;
+    //QVBoxLayout *vLayout;
 
     port = new QextSerialPort("COM1", QextSerialPort::EventDriven);
 
@@ -471,9 +475,9 @@ int CcomThread::comReceive()
         Rcv_Posi = 0;
     }
 
-    for(int i = 0; i < Rcv_Posi; i ++)
+    for(unsigned int i = 0; i < Rcv_Posi; i ++)
     {
-        //if(Screen_Status.Rcv_Data[i] EQ FRAME_HEAD && \
+        //if(Screen_Status.Rcv_Data[i] EQ FRAME_HEAD &&
         if(Check_Frame_Format(Rcv_Buf + i, Rcv_Posi - i))
         {
            if(i != 0) //将数据复制到开始
@@ -641,7 +645,7 @@ void CcomStatus::getCOMParaFromSettings(QString str)
 {
     QString str1;
     QStringList screenGroups;
-    int screenSize;
+    //int screenSize;
 
     settings.beginGroup(str);
     settings.beginGroup("comTest");

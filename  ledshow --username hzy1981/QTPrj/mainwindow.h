@@ -33,8 +33,9 @@
 #define PROG_INI_FILE ".\\cfg\\temp.ini"     //节目配置文件
 
 #define PROTO_DATA_FILE ".\\data\\protoData.dat"      //协议数据文件
-#define UDISK_PROTO_FILE ".\\data\\uDiskProtoData.dat"      //协议数据文件
+#define UDISK_PROTO_FILE ".\\data\\uDiskData.dat"      //协议数据文件
 #define PREVIEW_PROTO_FILE ".\\data\\previewData.dat" //预览数据文件
+#define SIM_PROTO_FILE ".\\data\\simData.dat" //预览数据文件
 #define COM_PROTO_FILE ".\\data\\comData.dat"
 #define UDISK_DATA_DIR ".\\data\\"
 
