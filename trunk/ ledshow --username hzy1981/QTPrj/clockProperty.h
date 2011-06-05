@@ -77,6 +77,7 @@ private:
     CdateEdit *dateEdit;
     CweekEdit *weekEdit;
 
+    CborderEdit *borderEdit;
     CshowModeEdit *showModeEdit;
 signals:
     void edited();

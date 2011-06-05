@@ -71,6 +71,7 @@ public slots:
     void deleteItem();
     void clickItem(QTreeWidgetItem * item, int column);
     void currentItemChangedProc(QTreeWidgetItem * current, QTreeWidgetItem * previous);
+    void itemCheckStateChangedProc(QTreeWidgetItem * item, int column);
 
 public:
     /*

@@ -60,6 +60,8 @@ INT8U getColorDataFromIndex(INT8U Index)
       return 0x02;
   else if(Index EQ 2)
       return 0x03;
+  else
+      return 0x01;
 }
 
 INT8U getColorData(const QColor &col)
@@ -184,7 +186,7 @@ CcolorCombo::~CcolorCombo()
 
 void CcolorCombo::setColor(const QColor &col)
 {
-    INT8U data = 0;
+    //INT8U data = 0;
     INT8U index = 0;
 
     if(col == QColor(Qt::red))

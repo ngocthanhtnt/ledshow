@@ -34,7 +34,7 @@
 #define BLACK  0x05  //AREA±³¾°
 
 //#define AREA_POINTS 5000
-#define ANTIALIAS_VALUE 0x50
+#define ANTIALIAS_VALUE 0x55
 
 #define MIN_AREA 8
 #define DEF_SCN_WIDTH 256

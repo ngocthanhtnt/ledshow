@@ -31,6 +31,7 @@ private:
     CsmLineEdit *smLineEdit;
     CdateTimeEdit *dateTimeEdit;
     CshowModeEdit *showModeEdit;
+    CborderEdit *borderEdit;
 public slots:
     void edited();
 public:

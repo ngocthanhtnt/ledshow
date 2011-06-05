@@ -44,9 +44,11 @@ private:
     QLineEdit *stayTimeEdit;
 */
     CshowModeEdit *showModeEdit;
+    CborderEdit *borderEdit;
     TextEdit *edit;
 public slots:
     void showModeEdited();
+    void editSlot();
     //void getSettings();
 public:
     Carea *area;

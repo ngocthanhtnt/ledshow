@@ -31,6 +31,10 @@ CtimeProperty::CtimeProperty(QWidget *parent):QWidget(parent)
     vLayout = new QVBoxLayout(this);
     vLayout->addWidget(smLineEdit);
     vLayout->addWidget(timeDiffEdit);
+
+    simpleTextEdit = new CsimpleTextEdit(this);
+    vLayout->addWidget(simpleTextEdit);
+    hLayout->addStretch();
     hLayout->addLayout(vLayout);
 
     //textGroup = new QGroupBox(tr("¹Ì¶¨ÎÄ±¾"), this);
@@ -40,15 +44,14 @@ CtimeProperty::CtimeProperty(QWidget *parent):QWidget(parent)
     vLayout->addWidget(dateTimeEdit);
     hLayout->addLayout(vLayout);
 
-    simpleTextEdit = new CsimpleTextEdit(this);
-    vLayout = new QVBoxLayout(this);
-    vLayout->addWidget(simpleTextEdit);
-    hLayout->addLayout(vLayout);
+
 
     showModeEdit = new CshowModeEdit(this);
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(showModeEdit);
 
+    borderEdit = new CborderEdit(this);
+    hLayout->addWidget(borderEdit);
     hLayout->addLayout(vLayout);
 /*
     vLayout = new QVBoxLayout(this);
@@ -133,7 +136,7 @@ void getTimeParaFromSettings(QString str, U_File_Para &para)
     int tmp;
     bool checked;
     // QString str;
-
+    getBorderParaFromeSettings(str, para);
     para.Time_Para.Flag = SHOW_TIME;
     settings.beginGroup(str);
 
@@ -210,6 +213,7 @@ void CtimeProperty::connectSignal()
     connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 
     connect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void CtimeProperty::disconnectSignal()
@@ -220,6 +224,7 @@ void CtimeProperty::disconnectSignal()
     disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
 
     disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void CtimeProperty::getSettingsFromWidget(QString str)
@@ -236,6 +241,7 @@ void CtimeProperty::getSettingsFromWidget(QString str)
         smLineEdit->getSettingsFromWidget(str);
         dateTimeEdit->getSettingsFromWidget(str);
         showModeEdit->getSettingsFromWidget(str);
+        borderEdit->getSettingsFromWidget(str);
     }
     else
         ASSERT_FAILED();
@@ -259,6 +265,7 @@ void CtimeProperty::setSettingsToWidget(QString str)
         smLineEdit->setSettingsToWidget(str);
         dateTimeEdit->setSettingsToWidget(str);
         showModeEdit->setSettingsToWidget(str);
+        borderEdit->setSettingsToWidget(str);
     }
     else
         ASSERT_FAILED();

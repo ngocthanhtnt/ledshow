@@ -59,8 +59,8 @@ int checkItemType(QTreeWidgetItem *item)
 void updateItemSubIndex(QTreeWidgetItem *item)
 {
     QString QStr;
-    QTreeWidgetItem *parent;
-    int index,parentIndex;
+    //QTreeWidgetItem *parent;
+    int index;//parentIndex;
 
     //parent = item ->parent();
     //parentIndex = parent->parent()->indexOfChild(parent);
@@ -109,7 +109,7 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
 
   treeWidget->setHeaderHidden(true);//header()->setVisible(false);
 
-  //QObject::connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),\
+  //QObject::connect(treeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
     //      this, SLOT(clickItem(QTreeWidgetItem *, int)));
   setWidget(treeWidget);
 
@@ -324,10 +324,10 @@ CMdiSubWindow * _newScreen(QString name, int x, int y, INT16U width, INT16U heig
 
 void CprogManage::newScreen()
 {
-    QTreeWidgetItem *curItem;
-    QTreeWidgetItem *parentItem;
+    //QTreeWidgetItem *curItem;
+    //QTreeWidgetItem *parentItem;
     QString QStr;
-    int i,size,type,index;
+    int i,size;//,type,index;
     int max = 0,tmp;
 
     if(verifyPSW() EQ false)
@@ -357,6 +357,7 @@ void CprogManage::newScreen()
     //初始化分区属性
     settings.beginGroup(QString::number(max));
     settings.setValue("screenIndex", 1);//value("screenIndex").toString()
+    settings.setValue("checkState", true);
     settings.endGroup();
     settings.endGroup();
 
@@ -364,13 +365,15 @@ void CprogManage::newScreen()
     //
     QTreeWidgetItem* item = new QTreeWidgetItem(treeWidget,QStringList(QString::number(size + 1)+tr("屏幕")));
     item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
+    item->setCheckState(0, Qt::Checked);
 
     QIcon icon = getTypeIcon(SCREEN_PROPERTY);
     item->setIcon(0,icon);
 
     treeWidget->addTopLevelItem(item);
 
-    CMdiSubWindow * subWin =_newScreen(QString::number(size + 1) + tr("屏幕"), 0, 0, DEF_SCN_WIDTH, DEF_SCN_HEIGHT, DEF_SCN_COLOR);
+    /*CMdiSubWindow * subWin =*/
+    _newScreen(QString::number(size + 1) + tr("屏幕"), 0, 0, DEF_SCN_WIDTH, DEF_SCN_HEIGHT, DEF_SCN_COLOR);
     w->screenArea->screenItem = item;
 
     w->progManage->treeWidget->setCurrentItem(item);
@@ -524,12 +527,15 @@ void CprogManage::newProg()
     settings.setValue("style", 1);
     settings.setValue("color", 1);
 
+    settings.setValue("checkState", true);
+
     //qDebug("progs size = %d", settings.childGroups().size());
     settings.endGroup();
     settings.endGroup();
 
     QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(size + 1)+tr("节目")));
     item->setData(0, Qt::UserRole, QStr + "/" + QString::number(max));
+    item->setCheckState(0, Qt::Checked);
 
     QIcon icon = getTypeIcon(PROG_PROPERTY);
     item->setIcon(0,icon);
@@ -638,11 +644,13 @@ void CprogManage::newArea()
     settings.setValue("y", size*(yLen / 20));  //该分区的起点y
     settings.setValue("width", xLen / 2);  //该分区的宽度
     settings.setValue("height", yLen / 2);  //该分区的长度
+    settings.setValue("checkState", true);
     settings.endGroup();
     settings.endGroup();
 
     QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(size + 1)+tr("分区")));
     item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
+    item->setCheckState(0, Qt::Checked);
     QIcon icon = getTypeIcon(AREA_PROPERTY);
     item->setIcon(0,icon);
     //w->setCurSettingsStr(QStr + "/" + QString::number(max));
@@ -791,6 +799,7 @@ void CprogManage::newFile(int fileType, int subType)
     settings.setValue("type", fileType);
     settings.setValue("subType", subType);
     settings.setValue("setFlag", 0); //没有设过参数
+    settings.setValue("checkState", true);
     settings.endGroup();
     settings.endGroup();
 
@@ -798,6 +807,7 @@ void CprogManage::newFile(int fileType, int subType)
 
     QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(max)));
     item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
+    item->setCheckState(0, Qt::Checked);
 
     QIcon icon = getTypeIcon((subType > 0)?subType:fileType);
     item->setIcon(0,icon);
@@ -1163,6 +1173,24 @@ void CprogManage::currentItemChangedProc(QTreeWidgetItem * current, QTreeWidgetI
   clickItem(current, 0);
 
 }
+
+void CprogManage::itemCheckStateChangedProc(QTreeWidgetItem *item, int column)
+{
+    bool checkState;
+    QString str = item->data(0, Qt::UserRole).toString();
+
+    debug("item str %s", (const char *)str.toLocal8Bit());
+
+    if(item->checkState(0) EQ Qt::Checked)
+        checkState = true;
+    else
+        checkState = false;
+
+    settings.beginGroup(str);
+    settings.setValue("checkState", checkState);
+    settings.endGroup();
+}
+
 /*
 #define NULL_PROPERTY   0xFF
 #define SCREEN_PROPERTY 0x00
@@ -1189,6 +1217,7 @@ void CprogManage::settingsInit()
     int screenSize, progSize, fileSize;
     QStringList screenGroups, progGroups, areaGroups, fileGroups;
     S_Screen_Para screenPara;
+    bool checkState;
 
     treeWidget->clear();
     //settings.clear();
@@ -1207,6 +1236,7 @@ void CprogManage::settingsInit()
         QString screenStr = "screen/" + screenGroups.at(m);
 
         settings.beginGroup(screenGroups.at(m));
+        checkState = settings.value("checkState").toBool();
         settings.beginGroup("facPara");
         screenPara.Base_Para.Width = settings.value("width").toInt();
         screenPara.Base_Para.Height = settings.value("height").toInt();
@@ -1258,10 +1288,12 @@ void CprogManage::settingsInit()
 
         subWin->setFixedSize(subWin->size());
 */
-        CMdiSubWindow * subWin = _newScreen(QString::number(m + 1) + tr("屏幕"), m*50, m*50, screenPara.Base_Para.Width, screenPara.Base_Para.Height, screenPara.Base_Para.Color);
+        /*CMdiSubWindow * subWin = */
+        _newScreen(QString::number(m + 1) + tr("屏幕"), m*50, m*50, screenPara.Base_Para.Width, screenPara.Base_Para.Height, screenPara.Base_Para.Color);
 
         w->screenArea->screenItem = screenItem;
         screenItem->setData(0, Qt::UserRole, screenStr);
+        screenItem->setCheckState(0, (checkState == true)?(Qt::Checked):(Qt::Unchecked));
         screenItem->setText(0, QString::number(m + 1) + tr("显示屏"));
 
 
@@ -1273,10 +1305,16 @@ void CprogManage::settingsInit()
         {
             QTreeWidgetItem *progItem = new QTreeWidgetItem(screenItem);
             QString progStr = screenStr + "/program/" + progGroups.at(i);
+
+            settings.beginGroup(progGroups.at(i));
+            checkState = settings.value("checkState").toBool();
+            settings.endGroup();
+
             QIcon icon = getTypeIcon(PROG_PROPERTY);
             progItem->setIcon(0, icon);
 
             progItem->setData(0, Qt::UserRole, progStr);
+            progItem->setCheckState(0, (checkState == true)?(Qt::Checked):(Qt::Unchecked));
             progItem->setText(0, QString::number(i + 1) + tr("节目"));
             //treeWidget->addTopLevelItem(progItem);
             screenItem->addChild(progItem);
@@ -1290,10 +1328,16 @@ void CprogManage::settingsInit()
             {
                 QTreeWidgetItem *areaItem = new QTreeWidgetItem(progItem);
                 QString areaStr = progStr + "/area/" + areaGroups.at(j);
+
+                settings.beginGroup(areaGroups.at(j));
+                checkState = settings.value("checkState").toBool();
+                settings.endGroup();
+
                 QIcon icon = getTypeIcon(AREA_PROPERTY);
                 areaItem->setIcon(0, icon);
 
                 areaItem->setData(0, Qt::UserRole, areaStr);
+                areaItem->setCheckState(0, (checkState == true)?(Qt::Checked):(Qt::Unchecked));
                 areaItem->setText(0, QString::number(j + 1) + tr("分区"));
                 progItem->addChild(areaItem);
 
@@ -1306,14 +1350,17 @@ void CprogManage::settingsInit()
                 {
                     QTreeWidgetItem *fileItem = new QTreeWidgetItem(areaItem);
                     QString fileStr = areaStr + "/file/" + fileGroups.at(k);
-                    fileItem->setData(0, Qt::UserRole, fileStr);
 
                     settings.beginGroup(fileGroups.at(k));
+                    checkState = settings.value("checkState").toBool();
                     int type = settings.value("type").toInt();
                     int subType = settings.value("subType").toInt();
                     if(subType > 0)
                         type =subType;
                     settings.endGroup();
+
+                    fileItem->setData(0, Qt::UserRole, fileStr);
+                    fileItem->setCheckState(0, (checkState == true)?(Qt::Checked):(Qt::Unchecked));
 
                     //int type = checkItemType(fileItem);//checkStrType(fileStr);
                     QIcon icon = getTypeIcon(type);

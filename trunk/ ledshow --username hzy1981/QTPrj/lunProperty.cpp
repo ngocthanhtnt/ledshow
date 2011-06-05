@@ -49,6 +49,9 @@ ClunProperty::ClunProperty(QWidget *parent):QWidget(parent)
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(showModeEdit);
     hLayout->addLayout(vLayout);
+
+    borderEdit = new CborderEdit(this);
+    hLayout->addWidget(borderEdit);
 /*
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(simpleTextEdit);
@@ -123,8 +126,9 @@ void updateLunShowArea(CshowArea *area)
 void getLunParaFromSettings(QString str, U_File_Para &para)
 {
     int tmp;
-    bool checked;
+    //bool checked;
     // QString str;
+    getBorderParaFromeSettings(str, para);
 
     para.Lun_Para.Flag = SHOW_LUN;
     settings.beginGroup(str);
@@ -184,6 +188,7 @@ void ClunProperty::connectSignal()
     connect(lunEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
     connect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void ClunProperty::disconnectSignal()
@@ -193,6 +198,7 @@ void ClunProperty::disconnectSignal()
     disconnect(lunEdit, SIGNAL(edited()), this, SLOT(edited()));
     disconnect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
     disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void ClunProperty::getSettingsFromWidget(QString str)
@@ -209,6 +215,7 @@ void ClunProperty::getSettingsFromWidget(QString str)
         smLineEdit->getSettingsFromWidget(str);
         lunEdit->getSettingsFromWidget(str);
         showModeEdit->getSettingsFromWidget(str);
+        borderEdit->getSettingsFromWidget(str);
     }
     else
     {
@@ -235,6 +242,7 @@ void ClunProperty::setSettingsToWidget(QString str)
         smLineEdit->setSettingsToWidget(str);
         lunEdit->setSettingsToWidget(str);
         showModeEdit->setSettingsToWidget(str);
+        borderEdit->setSettingsToWidget(str);
     }
     else
         ASSERT_FAILED();

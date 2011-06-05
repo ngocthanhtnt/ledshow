@@ -12,13 +12,13 @@ extern QSettings settings;
 
 CposiEdit::CposiEdit(QWidget *parent):QGroupBox(parent)
 {
-    setTitle(tr("文字位置调整"));
-    QVBoxLayout *vLayout;
+    //setTitle(tr("文字位置调整"));
+    //QVBoxLayout *vLayout;
     QHBoxLayout *hLayout;
 
     //vLayout = new QVBoxLayout(this);
     hLayout = new QHBoxLayout(this);
-
+    QLabel *posiLabel = new QLabel(tr("位置调整"), this);
     item = new QComboBox(this);
     item->addItem(tr("背景文字"));
     item->addItem(tr("日期"));
@@ -46,13 +46,14 @@ CposiEdit::CposiEdit(QWidget *parent):QGroupBox(parent)
     down->setFixedWidth(width);
     def->setFixedWidth(width);
 
+    hLayout->addWidget(posiLabel);
     hLayout->addWidget(item);
     hLayout->addWidget(left);
     hLayout->addWidget(right);
     hLayout->addWidget(up);
     hLayout->addWidget(down);
     hLayout->addWidget(def);
-    hLayout->addStretch();
+    //hLayout->addStretch();
     setLayout(hLayout);
 }
 
@@ -172,36 +173,54 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     gridLayout -> addWidget(secWidthLabel, 2, 4);
     gridLayout -> addWidget(secWidthEdit, 2, 5);
     gridLayout -> addWidget(secColorCombo, 2, 6);
-    editGroup -> setLayout(gridLayout);
 
+    /*
+    gridLayout -> addWidget(hourWidthLabel, 3, 0);
+    gridLayout -> addWidget(hourWidthEdit, 3, 1);
+    gridLayout -> addWidget(hourColorCombo, 3, 2);
+
+    gridLayout -> addWidget(minWidthLabel, 4, 0);
+    gridLayout -> addWidget(minWidthEdit, 4, 1);
+    gridLayout -> addWidget(minColorCombo, 4, 2);
+
+    gridLayout -> addWidget(secWidthLabel, 5, 0);
+    gridLayout -> addWidget(secWidthEdit, 5, 1);
+    gridLayout -> addWidget(secColorCombo, 5, 2);
+*/
+    editGroup -> setLayout(gridLayout);
+    timeDiffEdit = new CtimeDiffEdit(this);
+    posiEdit = new CposiEdit(this);
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(editGroup);
-    //vLayout ->addStretch(10);
+    vLayout->addWidget(timeDiffEdit);
+    vLayout ->addWidget(posiEdit);
     hLayout->addLayout(vLayout);
 
 
-    timeDiffEdit = new CtimeDiffEdit(this);
-    timeGroup = new QGroupBox(tr("日期星期"),this);
+
+    //timeGroup = new QGroupBox(tr("日期星期"),this);
     dateEdit = new CdateEdit(this);
     weekEdit = new CweekEdit(this);
     vLayout = new QVBoxLayout(this);
+    //vLayout->addWidget(timeDiffEdit);
     vLayout->addWidget(dateEdit);
     vLayout->addWidget(weekEdit);
-    vLayout->addStretch();
-    timeGroup->setLayout(vLayout);
+    //hLayout->addLayout(vLayout);
+    //vLayout->addStretch();
+    //timeGroup->setLayout(vLayout);
 
-    vLayout = new QVBoxLayout(this);
-    vLayout ->addWidget(timeDiffEdit);
-    vLayout ->addWidget(timeGroup);
+    //vLayout = new QVBoxLayout(this);
+    //vLayout ->addWidget(timeDiffEdit);
+    //vLayout ->addWidget(timeGroup);
     //vLayout ->addStretch(10);
-    hLayout->addLayout(vLayout);
+    //hLayout->addLayout(vLayout);
 
     simpleTextEdit = new CsimpleTextEdit(this);
-    posiEdit = new CposiEdit(this);
-    vLayout = new QVBoxLayout(this);
-    vLayout ->addWidget(simpleTextEdit,3);
-    vLayout ->addWidget(posiEdit,1);
-    //vLayout ->addStretch(10);
+
+    //vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(simpleTextEdit);
+
+    vLayout ->addStretch(10);
     hLayout->addLayout(vLayout);
 
     showModeEdit = new CshowModeEdit(this);
@@ -209,6 +228,11 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(showModeEdit);
     //vLayout->addStretch(10);
+    hLayout->addLayout(vLayout);
+
+    borderEdit = new CborderEdit(this);
+    vLayout = new QVBoxLayout(this);
+    vLayout ->addWidget(borderEdit);
     hLayout->addLayout(vLayout);
 
     hLayout ->addStretch(10);
@@ -243,6 +267,7 @@ CclockProperty::CclockProperty(QWidget *parent):QWidget(parent)
     connect(pointMinStyle, SIGNAL(currentIndexChanged(int)), this, SIGNAL(edited()));
 
     connect(showModeEdit, SIGNAL(edited()), this, SIGNAL(edited()));
+    connect(borderEdit,SIGNAL(editSignal()),  this, SIGNAL(edited()));
 
     connect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
 
@@ -304,6 +329,7 @@ void CclockProperty::getSettingsFromWidget(QString str)
       dateEdit->getSettingsFromWidget(str);
       weekEdit->getSettingsFromWidget(str);
       showModeEdit->getSettingsFromWidget(str);
+      borderEdit->getSettingsFromWidget(str);
     }
 }
 
@@ -361,6 +387,8 @@ void getClockParaFromSettings(QString str, U_File_Para &para)
 {
     int tmp;
    // QString str;
+
+    getBorderParaFromeSettings(str, para);
 
     para.Clock_Para.Flag = SHOW_CLOCK;
     settings.beginGroup(str);
@@ -584,6 +612,7 @@ void CclockProperty::setSettingsToWidget(QString str)
     dateEdit->setSettingsToWidget(str);
     weekEdit->setSettingsToWidget(str);
     showModeEdit->setSettingsToWidget(str);
+    borderEdit->setSettingsToWidget(str);
 
     connect(this, SIGNAL(edited()), this, SLOT(propertyEdited()));
 }

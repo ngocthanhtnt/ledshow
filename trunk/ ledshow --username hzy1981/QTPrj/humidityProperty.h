@@ -54,6 +54,7 @@ private:
     //QTextEdit *textEdit; //显示文本
     //QPushButton *editButton; //编辑按钮
 
+    CborderEdit *borderEdit;
 
 
 public:

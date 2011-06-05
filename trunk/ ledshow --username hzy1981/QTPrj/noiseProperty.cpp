@@ -113,8 +113,11 @@ CnoiseProperty::CnoiseProperty(QWidget *parent):QWidget(parent)
     showModeEdit = new CshowModeEdit(this);
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(showModeEdit);
-
     hLayout->addLayout(vLayout);
+
+    borderEdit = new CborderEdit(this);
+    hLayout->addWidget(borderEdit);
+
     hLayout->addStretch(10);
     setLayout(hLayout);
 
@@ -131,7 +134,7 @@ CnoiseProperty::~CnoiseProperty()
 void getNoiseParaFromSettings(QString str, U_File_Para &para)
 {
     int tmp;
-
+    getBorderParaFromeSettings(str, para);
     para.Noise_Para.Flag = SHOW_NOISE;
     settings.beginGroup(str);
     settings.beginGroup("noiseStyle");
@@ -205,6 +208,7 @@ void CnoiseProperty::connectSignal()
     connect(noiseStyle, SIGNAL(edited()), this, SLOT(edited()));
     connect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
     //connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    connect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void CnoiseProperty::disconnectSignal()
@@ -214,6 +218,7 @@ void CnoiseProperty::disconnectSignal()
     disconnect(noiseStyle, SIGNAL(edited()), this, SLOT(edited()));
     disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(edited()));
     //connect(smLineEdit, SIGNAL(edited()), this, SLOT(edited()));
+    disconnect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void CnoiseProperty::getSettingsFromWidget(QString str)
@@ -222,6 +227,7 @@ void CnoiseProperty::getSettingsFromWidget(QString str)
   noiseStyle->getSettingsFromWidget(str);
   nameEdit->getSettingsFromWidget(str);
   showModeEdit->getSettingsFromWidget(str);
+  borderEdit->getSettingsFromWidget(str);
 
 }
 
@@ -232,12 +238,13 @@ void CnoiseProperty::setSettingsToWidget(QString str)
     noiseStyle->setSettingsToWidget(str);
     nameEdit->setSettingsToWidget(str);
     showModeEdit->setSettingsToWidget(str);
+    borderEdit->setSettingsToWidget(str);
     connectSignal();
 }
 
 void Get_Noise_Text_Point(INT8U Area_No, INT16U Width, INT16U Height, S_Point &P0)
 {
-    INT16U Min_Width,Min_Height;
+    INT16U Min_Width;//,Min_Height;
 
     Min_Width = Get_Noise_Min_Width(Area_No);
     //Min_Height = Get_Noise_Min_Height(Area_No);

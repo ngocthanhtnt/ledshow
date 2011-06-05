@@ -10,6 +10,7 @@ void getPicParaFromSettings(QString str, U_File_Para &para)
 {
    para.Clock_Para.Flag = SHOW_PIC;
 
+   getBorderParaFromeSettings(str, para);
    getShowModeParaFromSettings(str, para);
 }
 
@@ -61,6 +62,28 @@ void updatePicShowArea(CshowArea *area)
 
 }
 
+void CpicProperty::editSlot()
+{
+    CshowArea *area;
+    QTreeWidgetItem *item;
+
+    //qDebug("propertyEdited");
+    area = w->screenArea->getFocusArea(); //当前焦点分区
+
+    if(area != (CshowArea *)0) //
+    {
+        //当前选中的item
+        item = area->fileItem;//w->progManage->treeWidget->currentItem();////// //w->progManage->treeWidget->currentItem();
+        if(item != (QTreeWidgetItem *)0)
+        {
+            QString str = item->data(0,Qt::UserRole).toString();
+            getSettingsFromWidget(str);
+            updatePicShowArea(area);
+
+        }
+    }
+}
+
 //属性编辑的SLOT
 void CpicProperty::showModeEdited()
 {
@@ -95,7 +118,7 @@ void CpicProperty::showModeEdited()
 //图文属性编辑
 CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
 {
-    QGridLayout *gridLayout;
+    //QGridLayout *gridLayout;
     QHBoxLayout *hLayout;
     QVBoxLayout *vLayout;
 
@@ -132,6 +155,8 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
     vLayout ->addWidget(showModeEdit);
     hLayout->addLayout(vLayout);
 
+    borderEdit = new CborderEdit(this);
+    hLayout->addWidget(borderEdit);
     hLayout->addStretch(10);
     setLayout(hLayout);
 
@@ -153,12 +178,14 @@ void CpicProperty::connectSignal()
 {
     connect(editButton, SIGNAL(clicked()), edit, SLOT(showInit()));
     connect(showModeEdit, SIGNAL(edited()), this, SLOT(showModeEdited()));
+    connect(borderEdit, SIGNAL(editSignal()), this, SLOT(editSlot()));
 }
 
 void CpicProperty::disconnectSignal()
 {
     disconnect(editButton, SIGNAL(clicked()), edit, SLOT(showInit()));
     disconnect(showModeEdit, SIGNAL(edited()), this, SLOT(showModeEdited()));
+    disconnect(borderEdit, SIGNAL(editSignal()), this, SLOT(editSlot()));
 }
 
 void CpicProperty::screenCardParaChangeProc()
@@ -171,6 +198,7 @@ void CpicProperty::getSettingsFromWidget(QString str)
 {
     nameEdit->getSettingsFromWidget(str);
     showModeEdit->getSettingsFromWidget(str);
+    borderEdit->getSettingsFromWidget(str);
     edit->getSettingsFromWidget(str);
 }
 
@@ -180,6 +208,7 @@ void CpicProperty::setSettingsToWidget(QString str)
 
     nameEdit->setSettingsToWidget(str);
     showModeEdit->setSettingsToWidget(str);
+    borderEdit->setSettingsToWidget(str);
     edit->setSettingsToWidget(str);
 
     //pageBox->setValue(edit->spinPage->value());

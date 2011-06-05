@@ -13,59 +13,86 @@ const S_Border_Data Border_Data[] =
 {
     /*--  每五个点一个单元  --*/
     /*--  宽度x高度=40x8  --*/
-    {40,1,{0x00,0x00,0x00,0x00,0x00,0x01,0x01,0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x01,
-    0x01,0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x01,0x01,0x01,0x01,0x01,0x00,0x00,
-    0x00,0x00,0x00,0x01,0x01,0x01,0x01,0x01}},
+    {40,1,{0xE0,0x83,0x0F,0x3E,0xF8}},
     /*--  每10个点一个单元  --*/
     /*--  宽度x高度=40x8  --*/
-    {40,1,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x01,0x01,0x01,0x01,0x01,
-    0x01,0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x01,
-    0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01}},
+    {40,1,{0x00,0xFC,0x0F,0xC0,0xFF}},
 
     /*--    --*/
     /*--  宽度x高度=40x8  --*/
-    {40,2,{0x00,0x00,0x00,0x00,0x00,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x00,
-    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x03,0x03,0x03,0x03,0x03,0x03,0x03,
-    0x03,0x03,0x03,0x00,0x00,0x00,0x00,0x00}},
+    {40,2,{0x00,0xFC,0x0F,0xC0,0xFF,
+           0x00,0xFC,0x0F,0xC0,0xFF}},
 
     /*--  调入了一幅图像：这是您新建的图像  --*/
     /*--  宽度x高度=40x8  --*/
-    {40,2,{0x01,0x01,0x01,0x01,0x01,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x01,
-    0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x03,0x03,0x03,0x03,0x03,0x03,0x03,
-    0x03,0x03,0x03,0x01,0x01,0x01,0x01,0x01}},
+    {40,2,{0xFF,0xFF,0xFF,0xFF,0xFF,
+           0x00,0xFC,0x0F,0xC0,0xFF}},
 
     /*--  调入了一幅图像：这是您新建的图像  --*/
     /*--  宽度x高度=40x8  --*/
-    {40,2,{0x02,0x02,0x02,0x02,0x02,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x03,0x02,
-    0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x02,0x03,0x03,0x03,0x03,0x03,0x03,0x03,
-    0x03,0x03,0x03,0x02,0x02,0x02,0x02,0x02}}
+    {40,2,{0x00,0xFC,0x0F,0xC0,0xFF,
+           0xFF,0xFF,0xFF,0xFF,0xFF}},
 
+    {40,3,{0x00,0xFC,0x0F,0xC0,0xFF,
+           0xFF,0xFF,0xFF,0xFF,0xFF,
+           0x00,0xFC,0x0F,0xC0,0xFF}},
 
+    {40,3,{0xE0,0x83,0x0F,0x3E,0xF8,
+           0xFF,0xFF,0xFF,0xFF,0xFF,
+           0xE0,0x83,0x0F,0x3E,0xF8}},
+    //箭头
+    {40,3,{0x00,0x00,0x02,0x00,0x20,
+           0xFF,0xFF,0xF7,0xFF,0x7F,
+           0x00,0x00,0x02,0x00,0x20}},
+
+    {40,3,{0x80,0x00,0x02,0x08,0x20,
+           0xFF,0xFD,0xF7,0xDF,0x7F,
+           0x80,0x00,0x02,0x08,0x20}},
 };
 
-QImage getBorderImage(int index, QColor color)
+QImage getBorderImage(int type, int index, QColor color)
 {
 
    int i,j;
-
+/*
    if(index >= sizeof(Border_Data)/sizeof(Border_Data[0]))
    {
        ASSERT_FAILED();
        return QImage(0,0);
    }
+*/
 
-   QImage border(Border_Data[index].Width, Border_Data[index].Height, QImage::Format_RGB32);
-   border.fill(Qt::black);
-   for(i = 0; i < border.width(); i ++)
-       for(j = 0; j <border.height(); j++)
-       {
-         if(Get_Rect_Buf_Bit((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data), Border_Data[index].Width, i, j) > 0)
-             border.setPixel(i, j, color.rgb());
+
+   if(type EQ 0)
+   {
+       QImage border(Border_Data[index].Width, Border_Data[index].Height, QImage::Format_RGB32);
+       border.fill(Qt::black);
+       for(i = 0; i < border.width(); i ++)
+           for(j = 0; j <border.height(); j++)
+           {
+             if(Get_Rect_Buf_Bit((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data), Border_Data[index].Width, i, j) > 0)
+                 border.setPixel(i, j, color.rgb());
+       }
+
+       return border;
+    }
+   else
+   {
+       QImage border(Simple_Border_Data[index].Width, Simple_Border_Data[index].Height, QImage::Format_RGB32);
+       border.fill(Qt::black);
+       for(i = 0; i < border.width(); i ++)
+           for(j = 0; j <border.height(); j++)
+           {
+             if(Get_Rect_Buf_Bit((INT8U *)Simple_Border_Data[index].Data, sizeof(Simple_Border_Data[index].Data), Simple_Border_Data[index].Width, i, j) > 0)
+                 border.setPixel(i, j, color.rgb());
+       }
+
+       return border;
    }
 
    //border = border.scaled(border.width(), border.height());
    //border.save("d:\\border.png");
-   return border;
+
 }
 
 //节目属性编辑
@@ -202,10 +229,10 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     //mainLayout -> addWidget(playTimeGroup, 1, 1);
 
 
-    //流水边框选择
+    //魔幻边框选择
     gridLayout = new QGridLayout(this);
-    borderGroup = new QGroupBox(tr("流水边框选择"), this);
-    borderCheck = new QCheckBox(tr("启用流水边框"), this);
+    borderGroup = new QGroupBox(tr("魔幻边框选择"), this);
+    borderCheck = new QCheckBox(tr("启用魔幻边框"), this);
     //stepLabel = new QLabel(tr("步长"), this);
     //pointsLabel = new QLabel(tr("点数"), this);
     styleLabel = new QLabel(tr("样式"), this);
@@ -262,11 +289,11 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
 
    styleCombo->setIconSize(QSize(40,8));
 
-   for(int i = 0; i < S_NUM(Border_Data); i ++)
+   for(unsigned int i = 0; i < S_NUM(Border_Data); i ++)
     {
        QPixmap borderPixmap;
        QImage borderImage;
-       borderImage = getBorderImage(i, QColor(Qt::red));
+       borderImage = getBorderImage(0, i, QColor(Qt::red));
        borderImage = borderImage.scaled(borderImage.width()*10, borderImage.height()*20);
        borderPixmap.convertFromImage(borderImage);
        styleCombo->addItem(QIcon(borderPixmap), QString("%1").arg(Border_Data[i].Height));
@@ -406,6 +433,8 @@ void CprogProperty::connectSignal()
     connect(colorCombo,SIGNAL(indexChangeSignal()), this, SLOT(edited()));
     connect(speedCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     connect(modeCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+
+    //connect(borderEdit,SIGNAL(editSignal()),  this, SLOT(edited()));
 }
 
 void CprogProperty::disconnectSignal()
@@ -445,6 +474,8 @@ void CprogProperty::disconnectSignal()
     disconnect(colorCombo,SIGNAL(indexChangeSignal()), this, SLOT(edited()));
     disconnect(speedCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     disconnect(modeCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
+
+    //disconnect(borderEdit,SIGNAL(editSignal()),  this, SLOT(edited()));
 
 }
 
@@ -562,6 +593,7 @@ void CprogProperty::setSettingsToWidget(QString str)
     borderCheckProc((int)borderCheck->checkState());
 
     nameEdit->setSettingsToWidget(str);
+    //borderEdit->setSettingsToWidget(str);
 }
 
 //从Widget获取配置到settings中,str为Settings的group
@@ -642,6 +674,7 @@ void CprogProperty::getSettingsFromWidget(QString str)
     settings.endGroup();
 
     nameEdit->getSettingsFromWidget(str);
+   // borderEdit->getSettingsFromWidget(str);
 
 }
 
@@ -753,7 +786,7 @@ void updateProgShowArea(CscreenArea *area)
 {
     //CshowArea *area;
     QString str;
-    QTreeWidgetItem *item;
+    //QTreeWidgetItem *item;
 
     if(area != (CscreenArea *)0) //
     {
@@ -773,6 +806,30 @@ void updateProgShowArea(CscreenArea *area)
         ASSERT_FAILED();
     }
 
+}
+//获取某个存储项目下所有选中的项目数
+QStringList getSettingsCheckedSubList(QString settingsStr)
+{
+    int i;
+    //int counts = 0;
+    QStringList subList, checkedList;
+
+
+    checkedList.clear();
+
+    settings.beginGroup(settingsStr);
+    subList = settings.childGroups();
+
+    for(i = 0; i < subList.size(); i ++)
+    {
+       settings.beginGroup(subList.at(i));
+       if(settings.value("checkState").toBool() EQ true)
+           checkedList.append(subList.at(i));
+       settings.endGroup();
+    }
+
+    settings.endGroup();
+    return checkedList;
 }
 /*
 typedef struct
@@ -904,10 +961,10 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
 
   settings.endGroup();
 
-  settings.beginGroup(str + "/area");
-  QStringList areaList = settings.childGroups();
+  //settings.beginGroup(str + "/area");
+  QStringList areaList =  getSettingsCheckedSubList(str + "/area");//settings.childGroups();
   int areaNum = areaList.size();
-  settings.endGroup();
+ // settings.endGroup();
 
   //分区数
   if(areaNum > MAX_AREA_NUM)
@@ -926,9 +983,9 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
       para.Area[i].X_Len = (INT16U)settings.value("width").toInt();
       para.Area[i].Y_Len = (INT16U)settings.value("height").toInt();
 
-      settings.beginGroup("file");
-      para.Area_File_Num[i] =settings.childGroups().size();//文件数
-      settings.endGroup();
+      //settings.beginGroup("file");
+      para.Area_File_Num[i] = getSettingsCheckedSubList("file").size();//settings.childGroups().size();//文件数
+      //settings.endGroup();
 
       settings.endGroup();
   }

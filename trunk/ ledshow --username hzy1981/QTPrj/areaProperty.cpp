@@ -9,9 +9,9 @@ extern QSettings settings;
 //////////////////////////////
 Carea::Carea(QWidget *parent):QGroupBox(parent)
 {
-    QHBoxLayout *hBoxLayout;
+    //QHBoxLayout *hBoxLayout;
     QGridLayout *gridLayout;
-    int screenWidth, screenHeight;
+    //int screenWidth, screenHeight;
 
     //screenWidth = Screen_Para.Base_Para.Width;
     //screenHeight = Screen_Para.Base_Para.Height;
@@ -131,7 +131,7 @@ void Carea::updateRect(QRect &rect)
 
 void Carea::xEdited()
 {
-    int x,xLen;
+    int x;//xLen;
     CshowArea *area;
     QTreeWidgetItem *item;
     QString str;
@@ -160,7 +160,7 @@ void Carea::xEdited()
 
 void Carea::yEdited()
 {
-    int y,yLen;
+    int y;//yLen;
     CshowArea *area;
     QTreeWidgetItem *item;
     QString str;
@@ -189,7 +189,7 @@ void Carea::yEdited()
 
 void Carea::xLenEdited()
 {
-    int x,width;
+    int width;
     CshowArea *area;
     QTreeWidgetItem *item;
     QString str;
@@ -220,7 +220,7 @@ void Carea::xLenEdited()
 
 void Carea::yLenEdited()
 {
-    int y,height;
+    int height;
     CshowArea *area;
     QTreeWidgetItem *item;
     QString str;
