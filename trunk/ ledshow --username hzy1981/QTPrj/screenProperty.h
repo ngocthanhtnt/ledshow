@@ -67,14 +67,16 @@ signals:
     void editSignal();
 public slots:
     void editSlot();
+    void autoConnect();
+    void manualConnect();
 public:
     QComboBox *comModeCombo; //通信方式
     QSpinBox *screenIDEdit; //屏幕ID，硬件地址
     QComboBox *comPortEdit; //串口号
     QComboBox *comBaudCombo; //波特率
     CipInput *ipEdit; //IP地址
-    QPushButton *connectButton; //链接按钮
-    QPushButton *autoTestButton; //测试按钮
+    QPushButton *manualConnectButton; //链接按钮
+    QPushButton *autoConnectButton; //测试按钮
 
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
@@ -272,6 +274,7 @@ public slots:
  void cardChangeProc();
  void endProc(); //保存参数
  void loadParaProc(); //加载参数
+ void importParaProc(); //导入参数
  void readParaProc(); //回读参数
  void setTestProc(); // 自检
  public:
@@ -334,6 +337,7 @@ public slots:
  int paraFlag; //表示新建屏幕、1表示修改屏幕，2表示显示屏幕
  int SendPara();
  void setEditEnable(bool flag);
+ void getScreenCardParaFromWidget(S_Screen_Para &screenPara, S_Card_Para &cardPara);
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
     CfacScreenProperty(int flag, QWidget *parent=0);

@@ -92,7 +92,7 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
       frameInfo.off = 0;
   }
 
-  if(frameInfo.off >= dataLen)//>
+  if(dataLen >  0 && frameInfo.off >= dataLen)//>
       return 0;
 
   seq0 = frameInfo.seq0;
@@ -214,12 +214,16 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
     saveScreenPara(screenParaBak);
     saveProgPara(progParaBak);
 
+    memset(&filePara, 0, sizeof(filePara));
+
     //重置参数--
     resetShowPara(width, height, Screen_Para.Base_Para.Color);
 
     filePara.Pic_Para.Prog_No = Prog_No;
     filePara.Pic_Para.Area_No = Area_No;
     filePara.Pic_Para.File_No = File_No;
+
+    //getBorderParaFromeSettings(fileStr, filePara);// 获取边框参数
 
     if(type EQ PIC_STEXT_PROPERTY || type EQ PIC_MTEXT_PROPERTY)
     {
@@ -269,7 +273,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
           else
             imageBk = getSLineTextImage(picStr, width,height,i);
 
-          imageBk.save("d:\\mkprotoimag.png");
+          //imageBk.save("d:\\mkprotoimag.png");
           //获取的图形的宽度和高度应该和分区的宽度和高度一致
           if(imageBk.width() != width || imageBk.height() != height)
           {
@@ -639,10 +643,14 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
 
     //节目数
 
-    settings.beginGroup(screenStr + "/program/");
-    QStringList progList = settings.childGroups();
-    settings.endGroup();
+    //settings.beginGroup(screenStr + "/program/");
+    //QStringList progList = getSettingsCheckedSubList();//settings.childGroups();
+    //settings.endGroup();
+
+    QStringList progList = getSettingsCheckedSubList(screenStr + "/program/");
+
     progNum = progList.size();
+    debug("prog num = %d", progNum);
 
     //if(GET_BIT(flag, C_SCREEN_LIGNTNESS))
     {
@@ -669,9 +677,9 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
             counts++;
             fwrite(frameBuf, len, 1, file);
 
-            settings.beginGroup(progStr + "/area/");
-            QStringList areaList = settings.childGroups();
-            settings.endGroup();
+            //settings.beginGroup(progStr + "/area/");
+            QStringList areaList = getSettingsCheckedSubList(progStr + "/area/");//settings.childGroups();
+            //settings.endGroup();
 
             areaNum = areaList.size();
             for(int j = 0; j < areaNum; j ++)
@@ -685,9 +693,9 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
                 settings.endGroup();
 
                 //文件列表
-                settings.beginGroup(areaStr + "/file/");
-                QStringList fileList = settings.childGroups();
-                settings.endGroup();
+                //settings.beginGroup(areaStr + "/file/");
+                QStringList fileList = getSettingsCheckedSubList(areaStr + "/file/");//settings.childGroups();
+                //settings.endGroup();
 
                 fileNum = fileList.size();
                 for(int k = 0; k < fileNum; k ++)
@@ -770,13 +778,21 @@ INT8U makeProtoFileData(QString screenStr, int mode, int flag)
 {
     INT16U counts = 0; //总的帧数
 
-    if(mode EQ PREVIEW_MODE || mode EQ SIM_MODE)
+    if(mode EQ PREVIEW_MODE)
     {
        counts = _makeProtoData(PREVIEW_PROTO_FILE, screenStr, flag, (char *)0, 0); //生成协议数据到
 
        w->comStatus->setTotalFrameCounts(counts);
        w->comStatus->setComMode(mode);
        w->comStatus->sendProtoFile(PREVIEW_PROTO_FILE);
+    }
+    else  if(mode EQ SIM_MODE)
+    {
+        counts = _makeProtoData(SIM_PROTO_FILE, screenStr, flag, (char *)0, 0); //生成协议数据到
+
+        w->comStatus->setTotalFrameCounts(counts);
+        w->comStatus->setComMode(mode);
+        w->comStatus->sendProtoFile(SIM_PROTO_FILE);
     }
     else if(mode EQ UDISK_MODE)
     {
@@ -793,5 +809,7 @@ INT8U makeProtoFileData(QString screenStr, int mode, int flag)
         w->comStatus->getCOMParaFromSettings(screenStr); //获取通信参数
         w->comStatus->sendProtoFile(COM_PROTO_FILE);
     }
+
+    return 1;
 
 }

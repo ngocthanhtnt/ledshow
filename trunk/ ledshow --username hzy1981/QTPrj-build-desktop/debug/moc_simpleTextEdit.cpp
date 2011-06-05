@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'simpleTextEdit.h'
 **
-** Created: Mon May 30 00:28:39 2011
+** Created: Sat Jun 4 18:02:56 2011
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -360,7 +360,7 @@ static const char qt_meta_stringdata_CdateEdit[] = {
 };
 
 const QMetaObject CdateEdit::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_CdateEdit,
+    { &QGroupBox::staticMetaObject, qt_meta_stringdata_CdateEdit,
       qt_meta_data_CdateEdit, 0 }
 };
 
@@ -378,12 +378,12 @@ void *CdateEdit::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_CdateEdit))
         return static_cast<void*>(const_cast< CdateEdit*>(this));
-    return QWidget::qt_metacast(_clname);
+    return QGroupBox::qt_metacast(_clname);
 }
 
 int CdateEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = QGroupBox::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
@@ -425,7 +425,7 @@ static const char qt_meta_stringdata_CweekEdit[] = {
 };
 
 const QMetaObject CweekEdit::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_CweekEdit,
+    { &QGroupBox::staticMetaObject, qt_meta_stringdata_CweekEdit,
       qt_meta_data_CweekEdit, 0 }
 };
 
@@ -443,12 +443,12 @@ void *CweekEdit::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_CweekEdit))
         return static_cast<void*>(const_cast< CweekEdit*>(this));
-    return QWidget::qt_metacast(_clname);
+    return QGroupBox::qt_metacast(_clname);
 }
 
 int CweekEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = QGroupBox::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
@@ -490,7 +490,7 @@ static const char qt_meta_stringdata_CtimeEdit[] = {
 };
 
 const QMetaObject CtimeEdit::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_CtimeEdit,
+    { &QGroupBox::staticMetaObject, qt_meta_stringdata_CtimeEdit,
       qt_meta_data_CtimeEdit, 0 }
 };
 
@@ -508,12 +508,12 @@ void *CtimeEdit::qt_metacast(const char *_clname)
     if (!_clname) return 0;
     if (!strcmp(_clname, qt_meta_stringdata_CtimeEdit))
         return static_cast<void*>(const_cast< CtimeEdit*>(this));
-    return QWidget::qt_metacast(_clname);
+    return QGroupBox::qt_metacast(_clname);
 }
 
 int CtimeEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
-    _id = QWidget::qt_metacall(_c, _id, _a);
+    _id = QGroupBox::qt_metacall(_c, _id, _a);
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
@@ -847,6 +847,71 @@ int CsimpleTextEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 
 // SIGNAL 0
 void CsimpleTextEdit::edited()
+{
+    QMetaObject::activate(this, &staticMetaObject, 0, 0);
+}
+static const uint qt_meta_data_CborderEdit[] = {
+
+ // content:
+       5,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       1,   14, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       1,       // signalCount
+
+ // signals: signature, parameters, type, tag, flags
+      13,   12,   12,   12, 0x05,
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_CborderEdit[] = {
+    "CborderEdit\0\0editSignal()\0"
+};
+
+const QMetaObject CborderEdit::staticMetaObject = {
+    { &QGroupBox::staticMetaObject, qt_meta_stringdata_CborderEdit,
+      qt_meta_data_CborderEdit, 0 }
+};
+
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject &CborderEdit::getStaticMetaObject() { return staticMetaObject; }
+#endif //Q_NO_DATA_RELOCATION
+
+const QMetaObject *CborderEdit::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+}
+
+void *CborderEdit::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_CborderEdit))
+        return static_cast<void*>(const_cast< CborderEdit*>(this));
+    return QGroupBox::qt_metacast(_clname);
+}
+
+int CborderEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QGroupBox::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: editSignal(); break;
+        default: ;
+        }
+        _id -= 1;
+    }
+    return _id;
+}
+
+// SIGNAL 0
+void CborderEdit::editSignal()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, 0);
 }
