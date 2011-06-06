@@ -29,6 +29,8 @@ extern const S_Simple_Border_Data Simple_Border_Data[];
 
 EXT INT8U Get_Simple_Border_Data_Num();
 EXT INT8U Get_Area_Border_Width(INT8U Area_No);
+EXT INT8U Get_Area_Border_Height(INT8U Area_No);
+EXT void Clr_Border(S_Show_Data *pDst, INT8U Area_No, INT8U Width, INT8U Height);
 EXT void Restore_Border_Data(INT8U Area_No);
 EXT INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y);
 EXT void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, INT8U Height,  INT32U Step);

@@ -252,7 +252,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     gridLayout -> addWidget(styleCombo, 1, 1);
      gridLayout -> addWidget(colorCombo, 1, 2);
     gridLayout -> addWidget(modeLabel, 2, 0);
-    gridLayout -> addWidget(modeCombo, 2, 1);
+    gridLayout -> addWidget(modeCombo, 2, 1, 1, 2);
     gridLayout -> addWidget(speedLabel, 3, 0);
     gridLayout -> addWidget(speedCombo, 3, 1);
     gridLayout -> addWidget(usLabel, 3, 2);
