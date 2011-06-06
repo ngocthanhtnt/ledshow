@@ -196,7 +196,7 @@ void LED_Scan_One_Row(void)
     
     //对所有的block输出一个字节
     //如果是从左向右，应该先输出高位再输出低位
-    if(Screen_Para.Scan_Para.Direct EQ 0x00 || Screen_Para.Scan_Para.Direct EQ 0x02)
+    if(Screen_Para.Scan_Para.Direct EQ 0x00 || Screen_Para.Scan_Para.Direct EQ 0x01)
     {
       for(j = 0; j < 8 ; j++)
       {
