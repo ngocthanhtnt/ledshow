@@ -197,7 +197,6 @@ void Update_Border_Data(INT8U Area_No)
   INT16U Step_Time = 0; //步进时间
   INT8U Border_Width,Border_Height;
   INT8U *pBorder_Data;
-  //INT8U Color;
   INT8U Border_Mode;
 
   //第一次进入该函数，初始化相关函数头尾
@@ -220,7 +219,8 @@ void Update_Border_Data(INT8U Area_No)
 
       Step_Time = Prog_Para.Border_StayTime;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
       Prog_Status.Border_Status[Area_No].Timer += MOVE_STEP_PERIOD;
-      Timer[Area_No].Var += MOVE_STEP_PERIOD;
+      Max_Step = Screen_Para.Base_Para.Width + Screen_Para.Base_Para.Height;
+      //Timer[Area_No].Var += MOVE_STEP_PERIOD;
       Border_Mode = Prog_Para.Border_Mode;
       Border_Width = Get_Area_Border_Width(Area_No);
       Border_Height = Get_Area_Border_Height(Area_No);
@@ -255,7 +255,8 @@ void Update_Border_Data(INT8U Area_No)
 //#if 0
       Step_Time = Prog_Status.File_Para[Area_No].Pic_Para.Border_StayTime;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
       Prog_Status.Border_Status[Area_No].Timer += MOVE_STEP_PERIOD;
-      Timer[Area_No].Var += MOVE_STEP_PERIOD;
+      Max_Step = Prog_Para.Area[Area_No].X_Len + Prog_Para.Area[Area_No].Y_Len;//Screen_Para.Base_Para.Width + Screen_Para.Base_Para.Height;
+      //Timer[Area_No].Var += MOVE_STEP_PERIOD;
       Border_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Border_Mode;
       Border_Width = Get_Area_Border_Width(Area_No);
       Border_Height = Get_Area_Border_Height(Area_No);
@@ -280,14 +281,21 @@ void Update_Border_Data(INT8U Area_No)
   {
     Prog_Status.Border_Status[Area_No].Timer = 0;
 
-    Max_Step = Screen_Para.Base_Para.Width + Screen_Para.Base_Para.Height;
-
     if(Prog_Status.Border_Status[Area_No].Step < Max_Step)
       Prog_Status.Border_Status[Area_No].Step += MOVE_STEP;
 
     if(Prog_Status.Border_Status[Area_No].Step >= Max_Step)
       Prog_Status.Border_Status[Area_No].Step = Prog_Status.Border_Status[Area_No].Step % Max_Step;
-        
+
+
+    Timer[Area_No].Var ++;
+    if(Timer[Area_No].Var >= 2)
+    {
+        Timer[Area_No].Var = 0;
+        Flag[Area_No].Var = 1 - Flag[Area_No].Var;
+    }
+  }
+
     if(Border_Mode EQ BORDER_STATIC) //静态
     {
       Draw_Border(&Show_Data, Area_No, pBorder_Data, \
@@ -326,10 +334,12 @@ void Update_Border_Data(INT8U Area_No)
                     Border_Width, Border_Height, Prog_Status.Border_Status[Area_No].Step);
       else
         Clr_Border(&Show_Data, Area_No, Border_Width, Border_Height);        
-    }    
+    }
+
       
-  }
-  
+  //}
+
+ /*
   if(Timer[Area_No].Var >= 500)
   {
       Timer[Area_No].Var = 0;
@@ -338,6 +348,7 @@ void Update_Border_Data(INT8U Area_No)
       else
         Flag[Area_No].Var = 1;
     }
+    */
 }
 #endif
 #undef BORDER_SHOW_C

@@ -1512,7 +1512,7 @@ CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
     gridLayout -> addWidget(styleCombo, 0, 1);
      gridLayout -> addWidget(colorCombo, 0, 2);
     gridLayout -> addWidget(modeLabel, 1, 0);
-    gridLayout -> addWidget(modeCombo, 1, 1);
+    gridLayout -> addWidget(modeCombo, 1, 1,1,2);
     gridLayout -> addWidget(speedLabel, 2, 0);
     gridLayout -> addWidget(speedCombo, 2, 1);
     gridLayout -> addWidget(usLabel, 2, 2);

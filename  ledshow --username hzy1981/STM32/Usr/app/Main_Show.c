@@ -294,6 +294,16 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
         Prog_Status.Area_Status[Area_No].Last_File_No = 0xFF; //先预置一个不存在的文件号
         SET_SUM(Prog_Status.Area_Status[Area_No]);
 
+        //如果当前节目有边框，且退出时不清屏，则应该清除边框
+        if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check > 0 &&\
+           ((Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 2 && Prog_Status.File_Para[Area_No].Pic_Para.In_Mode <= 7) ||\
+            Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode EQ 1))
+        {
+            //Prog_Status.Area_Status[Area_No].Restore_Border_Flag = 1;
+            //Restore_Border_Data(Area_No);
+            Clr_Border(&Show_Data, Area_No, Get_Area_Border_Width(Area_No), Get_Area_Border_Height(Area_No));
+        }
+
     #if DATA_PREP_EN
         if(GET_VAR(Prep_Data.Para_Prog_No[Area_No]) EQ Prog_Status.Play_Status.Prog_No &&\
            GET_VAR(Prep_Data.Para_File_No[Area_No]) EQ Prog_Status.Area_Status[Area_No].File_No &&\
@@ -1247,6 +1257,9 @@ void Self_Test(INT8U Mode)
 
     for(i = 0; i < 4; i ++)
 	{
+
+        Screen_Para.Scan_Para.Direct = i;
+        /*
 	  if(i EQ 0)
 	    Direct = 0x00;
       else if(i EQ 1)
@@ -1255,7 +1268,7 @@ void Self_Test(INT8U Mode)
 	    Direct = 0x01;
 	  else
 	    Direct = 0x03;
-
+*/
       for(j = 1; j <= MAX_ROWS_FOLD; j ++)
 	  {
 	    Screen_Para.Scan_Para.Rows_Fold = j;
@@ -1280,7 +1293,7 @@ void Self_Test(INT8U Mode)
 			SET_SUM(Screen_Para);
 
 			RT_Play_Status_Enter(2);
-		    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%2d%2d%2d%2d", m, Direct, j, k);
+                    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%d%d%d%d", m, i, j, k);
 		    
             for(n = 0; n < 20; n ++)
 			{
