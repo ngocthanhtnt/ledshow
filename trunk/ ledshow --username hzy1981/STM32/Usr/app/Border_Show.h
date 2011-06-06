@@ -27,7 +27,7 @@ typedef struct
 
 extern const S_Simple_Border_Data Simple_Border_Data[];
 
-EXT INT8U Get_Simple_Border_Data_Num();
+EXT INT8U Get_Simple_Border_Data_Num(void);
 EXT INT8U Get_Area_Border_Width(INT8U Area_No);
 EXT INT8U Get_Area_Border_Height(INT8U Area_No);
 EXT void Clr_Border(S_Show_Data *pDst, INT8U Area_No, INT8U Width, INT8U Height);

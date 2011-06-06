@@ -108,6 +108,7 @@ EXT void Calc_Prog_Play_Counts(void);
 EXT void Show_Timer_Proc(void);
 EXT void Show_Main_Proc(void);
 EXT void Para_Init(void);
+EXT void Para_Show(void);
 EXT void Prog_Status_Init(void);
 EXT void Set_RT_Show_Area(INT16U Width, INT16U Height);
 EXT void Restore_Show_Area(void);

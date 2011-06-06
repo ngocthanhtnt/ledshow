@@ -27,7 +27,7 @@
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
 #define MAX_LIGHTNESS_TIME 4 //最大亮度控制时段
 
-#define QT_EN 1 //在QT环境下编译使用QT
+#define QT_EN 0 //在QT环境下编译使用QT
 #define QT_SIM_EN 1//使用QT仿真STM32情况。不同于预览
 #define CARD_TYPE CARD_AX //A系列板卡针对小条屏，其他针对中大屏
 //QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
@@ -84,6 +84,18 @@
 #define NOISE_SHOW_EN  1 //噪音
 #define TEXT_SHOW_EN   1 //内码文字
 
+//-----------------以下为了兼容STM32程序--------------
+#define CARD_SUB_A0 0x00
+#define CARD_SUB_A1 0x01
+#define CARD_SUB_A2 0x02
+
+#define CARD_SUB_TYPE CARD_SUB_A0 //AX系列子卡类型
+
+#define CARD_NAME "CARD_A0"  //卡名称
+
+#define UDIS_EN  1//u盘使能
+#define NET_EN	 1//网络使能
+#define GPRS_EN  1//GPRS使能
 #else //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 1
 #include "STM32.h"
@@ -122,18 +134,6 @@
                        (NOISE_SHOW_EN << NOISE_SHOW_BIT) |\
                        (TEXT_SHOW_EN << TEXT_SHOW_EN))L
 
-//-----------------以下为了兼容STM32程序--------------
-#define CARD_SUB_A0 0x00
-#define CARD_SUB_A1 0x01
-#define CARD_SUB_A2 0x02
-
-#define CARD_SUB_TYPE CARD_SUB_A0 //AX系列子卡类型
-
-#define CARD_NAME "CARD_A0"  //卡名称
-
-#define UDIS_EN  1//u盘使能
-#define NET_EN	 1//网络使能
-#define GPRS_EN  1//GPRS使能
 #endif
 
 
