@@ -555,7 +555,7 @@ void Update_Pic_Data(INT8U Area_No)
   INT8U In_Mode, Out_Mode;
   INT16U Area_Width, Area_Height;
   INT32U Stay_Time,In_Delay, Out_Delay;
-  INT32U In_Step_Bak;
+  //INT32U In_Step_Bak;
   //INT32U Out_Time;
   S_Point P0;
   //static S_Int8U Sec ={CHK_BYTE, 0xFF, {0}, CHK_BYTE};
@@ -573,7 +573,7 @@ void Update_Pic_Data(INT8U Area_No)
   
 //---------------------------------------------------------  
 
-  In_Step_Bak = Prog_Status.Area_Status[Area_No].In_Step;
+  //In_Step_Bak = Prog_Status.Area_Status[Area_No].In_Step;
 
  //------------------------------------------------------- 
  if(Prog_Status.Area_Status[Area_No].In_Step EQ 0 &&\

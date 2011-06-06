@@ -1,7 +1,7 @@
 #define LED_PARA_C
 #include "Includes.h"
 
-#if QT_SIM_EN > 0
+#if QT_EN && QT_SIM_EN
 extern S_Show_Data protoShowData;
 #endif
 
@@ -490,7 +490,7 @@ INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
   Len = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1)); //每屏显示的数据长度
   Len = Len * Screen_Color_Num; //每一幕显示需要的字节数!
   
-#if QT_SIM_EN > 0
+#if QT_EN && QT_SIM_EN
   if(Off + SrcLen > Len)
   {
     if(memcmp(pSrc, protoShowData.Color_Data + Off, Len - Off) != 0)

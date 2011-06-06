@@ -161,7 +161,7 @@ INT8U Shell_Print_Prog_Status(INT8U argc, INT8S **argv)
          Prog_Status.Play_Status.Prog_No, Prog_Status.Play_Status.Time, Prog_Status.Play_Status.Counts);
   
   debug("prog border step = %d, timer = %d", \
-         Prog_Status.Border_Status.Step, Prog_Status.Border_Status.Timer);
+         Prog_Status.Border_Status[0].Step, Prog_Status.Border_Status[0].Timer);
   
   debug("area num = %d", Prog_Para.Area_Num);
 

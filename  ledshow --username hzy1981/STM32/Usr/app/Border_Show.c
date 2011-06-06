@@ -17,7 +17,7 @@ const S_Simple_Border_Data Simple_Border_Data[] =
 
 };
 
-INT8U Get_Simple_Border_Data_Num()
+INT8U Get_Simple_Border_Data_Num(void)
 {
     return S_NUM(Simple_Border_Data);
 }
@@ -190,6 +190,8 @@ void Update_Border_Data(INT8U Area_No)
 {
   INT16U Max_Step;
   S_Int8U InitFlag = {CHK_BYTE, 0, CHK_BYTE};
+  INT8U i;
+
   //还在移动状态
   static S_Int16U Timer[MAX_AREA_NUM + 1];// = {CHK_BYTE, 0, CHK_BYTE};
   static S_Int8U Flag[MAX_AREA_NUM + 1];// = {CHK_BYTE, 0, CHK_BYTE};
@@ -198,12 +200,13 @@ void Update_Border_Data(INT8U Area_No)
   INT8U Border_Width,Border_Height;
   INT8U *pBorder_Data;
   INT8U Border_Mode;
+  INT8U Type;
 
   //第一次进入该函数，初始化相关函数头尾
   if(InitFlag.Var EQ 0)
   {
       InitFlag.Var = 1;
-      for(int i = 0; i < MAX_AREA_NUM + 1; i ++)
+      for(i = 0; i < MAX_AREA_NUM + 1; i ++)
       {
           SET_HT(Timer[i]);
           SET_HT(Flag[i]);
@@ -260,7 +263,7 @@ void Update_Border_Data(INT8U Area_No)
       Border_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Border_Mode;
       Border_Width = Get_Area_Border_Width(Area_No);
       Border_Height = Get_Area_Border_Height(Area_No);
-      INT8U Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
+      Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
       pBorder_Data = (INT8U *)Simple_Border_Data[Type].Data;
 //#endif
 /*
