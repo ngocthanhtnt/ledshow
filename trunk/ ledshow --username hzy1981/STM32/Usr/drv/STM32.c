@@ -329,6 +329,15 @@ void TIM3_Configuration(void)
 	TIM_OCInitTypeDef  TIM_OCInitStructure = {0};
 	GPIO_InitTypeDef GPIO_InitStructure = {0};
 
+ 	//----------PB0作为OE-PWM输出
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //TIM_CH3
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;;  //复用推挽输出
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_ResetBits(GPIOB,GPIO_Pin_0);
+	return;
+	//---------------------------
+
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB  | RCC_APB2Periph_AFIO, ENABLE);  //使能GPIO外设和AFIO复用功能模块时钟使能
 
 	//PB0的输出口
@@ -375,7 +384,7 @@ void TIM3_Configuration(void)
 	/* TIM3 enable counter */
 	TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
 
-	TIM_SetCompare3(TIM3,150);	//通过改变TIM3->CCR2的值来改变占空比，从而控制LED0的亮度 
+	TIM_SetCompare3(TIM3,500);	//通过改变TIM3->CCR2的值来改变占空比，从而控制LED0的亮度 
 }
 
 INT8U Chk_JP_Status(void)
@@ -470,18 +479,26 @@ void Set_Block_OE_En(INT8U Value)
 //设置块行号
 void Set_Block_Row(INT8U Row)
 {
+  //Row = Screen_Status.Scan_Row;
   if(Screen_Para.Scan_Para.Rows EQ 0)
   {
-    Screen_Para.Scan_Para.Rows = 1;
+    Screen_Para.Scan_Para.Rows = 16;
 	SET_SUM(Screen_Para);
   }
 
-  Row = (INT8U)(((INT8S)Row + Screen_Para.Scan_Para.Line_Order) % Screen_Para.Scan_Para.Rows);
+  Row = (INT8U)(((INT8S)Screen_Status.Scan_Row + Screen_Para.Scan_Para.Line_Order) % Screen_Para.Scan_Para.Rows);
     
   SET_A((Row & 0x01));
-  SET_B((Row & 0x02) >> 1);
-  SET_C((Row & 0x04) >> 2);
-  SET_D((Row & 0x08) >> 3);
+  SET_B(((Row & 0x02) >> 1));
+  SET_C(((Row & 0x04) >> 2));
+  SET_D(((Row & 0x08) >> 3));
+
+/*
+  SET_A(((Row & 0x08) >> 3));
+  SET_B(((Row & 0x04) >> 2));
+  SET_C(((Row & 0x02) >> 1));
+  SET_D((Row & 0x01));
+  */
 }
 
 void Unselect_SPI_Device(void)

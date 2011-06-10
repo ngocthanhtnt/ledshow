@@ -233,28 +233,31 @@ INT16U _Read_Screen_Para(INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
     if(Len EQ 0)
       Len = Read_Storage_Data(SDI_SCREEN_PARA_BK1,  pDst, pDst_Start, DstLen);
   #endif
-
+ /*
     if(Len EQ 0)
     {
         Len = Get_Storage_Data_Len(SDI_SCREEN_PARA);
         mem_set(pDst, 0, Len, pDst_Start, DstLen);
     }
-
+ */
     return Len;
 }
 
 //读取屏幕参数
 INT16U Read_Screen_Para(void)
 {
-    INT8U Re;
+    INT16U Len;
 
-    Re = _Read_Screen_Para(&Screen_Para.Head + 1, &Screen_Para.Head, sizeof(Screen_Para));
-	if(Re > 0)
+    Len = _Read_Screen_Para(&Screen_Para.Head + 1, &Screen_Para.Head, sizeof(Screen_Para));
+	if(Len EQ 0)
 	{
-	  SET_HT(Screen_Para);
-	  SET_SUM(Screen_Para);
+	  memset(&Screen_Para, 0, sizeof(Screen_Para));
 	}
-	return Re;
+
+	SET_HT(Screen_Para);
+	SET_SUM(Screen_Para);
+
+	return Len;
 }
 
 //保存节目属性帧
@@ -309,13 +312,13 @@ INT16U _Read_Prog_Block_Index(INT8U Prog_No, void *pDst, void *pDst_Start, INT16
   if(Len EQ 0)
     Len = Read_Storage_Data(SDI_PROG_BLOCK_INDEX_BK1 + Prog_No,  pDst, pDst_Start, DstLen);
 #endif 
-
+/*
   if(Len EQ 0)
   {
       Len = Get_Storage_Data_Len(SDI_PROG_BLOCK_INDEX);
       mem_set(pDst, 0, Len, pDst_Start, DstLen);
   }
-
+ */
   return Len;
   
 }

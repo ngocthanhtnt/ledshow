@@ -68,8 +68,8 @@ typedef struct
 {
   INT8U Direct; //进入方向
   INT8U Rows; //扫描1，2，4，8，16扫
-  INT8U Rows_Fold; //每驱行折数
-  INT8U Cols_Fold; //每驱列折数
+  INT8U Rows_Fold; //每驱行折数,0表示不打折,1表示每1行打一次折，实际就有2行数据
+  INT8U Cols_Fold; //每驱列折数,0表示不打折,1表示每1列打一次折
   INT8S Line_Order; //行序号,0,+1,-1
   
   INT8U Line_Hide; //行消隐时间

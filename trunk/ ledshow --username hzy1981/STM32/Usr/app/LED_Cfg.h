@@ -32,7 +32,7 @@
 #define CARD_TYPE CARD_AX //A系列板卡针对小条屏，其他针对中大屏
 //QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
 
-#define SCAN_SCREEN_PERIOD 40//扫屏周期,单位ms
+#define SCAN_SCREEN_PERIOD 1//扫屏周期,单位ms
 #define OE_PWM_FREQ 80000 //80KPWM频率
 
 #if (CARD_TYPE & 0xF0) == (CARD_AX & 0xF0)
