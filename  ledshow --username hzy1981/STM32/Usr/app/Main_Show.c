@@ -1096,9 +1096,9 @@ void Set_RT_Show_Area(INT16U Width, INT16U Height)
   RT_Show_Para.X_Len = Prog_Para.Area[0].X_Len;
   RT_Show_Para.Y_Len = Prog_Para.Area[0].Y_Len;	 
   RT_Show_Para.Open_Flag = Screen_Status.Open_Flag;
-  RT_Show_Para.Screen_Width = Screen_Para.Base_Para.Width;
-  RT_Show_Para.Screen_Height = Screen_Para.Base_Para.Height;
-  RT_Show_Para.Screen_Color = Screen_Para.Base_Para.Color;
+  //RT_Show_Para.Screen_Width = Screen_Para.Base_Para.Width;
+  //RT_Show_Para.Screen_Height = Screen_Para.Base_Para.Height;
+  //RT_Show_Para.Screen_Color = Screen_Para.Base_Para.Color;
   SET_HT(RT_Show_Para);
 
   Prog_Para.Area_Num = 1; //分区数1
@@ -1108,10 +1108,10 @@ void Set_RT_Show_Area(INT16U Width, INT16U Height)
   Prog_Para.Area[0].Y_Len = Height;//Screen_Para.Base_Para.Height;
   SET_SUM(Prog_Para);
 
-  Screen_Para.Base_Para.Width = Width;
-  Screen_Para.Base_Para.Height = Height;
-  Screen_Para.Base_Para.Color = 0x01;
-  SET_SUM(Screen_Para);
+  //Screen_Para.Base_Para.Width = Width;
+  //Screen_Para.Base_Para.Height = Height;
+  //Screen_Para.Base_Para.Color = 0x01;
+  //SET_SUM(Screen_Para);
  
   Screen_Status.Open_Flag = 1;
 }
@@ -1126,10 +1126,10 @@ void Restore_Show_Area(void)
   Prog_Para.Area[0].Y_Len = RT_Show_Para.Y_Len;//Screen_Para.Base_Para.Height;
   SET_SUM(Prog_Para);
 
-  Screen_Para.Base_Para.Width = RT_Show_Para.Screen_Width;
-  Screen_Para.Base_Para.Height = RT_Show_Para.Screen_Height;
-  Screen_Para.Base_Para.Color = RT_Show_Para.Screen_Color;
-  SET_SUM(Screen_Para);
+  //Screen_Para.Base_Para.Width = RT_Show_Para.Screen_Width;
+  //Screen_Para.Base_Para.Height = RT_Show_Para.Screen_Height;
+  //Screen_Para.Base_Para.Color = RT_Show_Para.Screen_Color;
+  //SET_SUM(Screen_Para);
   Screen_Status.Open_Flag = RT_Show_Para.Open_Flag;
 }
 
@@ -1171,7 +1171,7 @@ void Print_Cur_Time(void)
 void Self_Test(INT8U Mode)
 {
   INT32U Data = 0x55AA5AA5;
-  INT8U Re = 1,i,j,k, m, n;
+  INT8U Re = 1,i,j,k, m, n, Max_Cols_Fold;
   INT8U Direct,ErrFlag = 0;
   S_Time TempTime,TempTime1;
 
@@ -1179,6 +1179,8 @@ void Self_Test(INT8U Mode)
     return;
 
   Screen_Status.Self_Test_Flag = 1;
+
+#if QT_EN EQ 0
   //--------对存储器的测试---------------
   Write_Storage_Data(SDI_TEST_DATA, &Data, sizeof(Data));
   Delay_ms(10);
@@ -1203,10 +1205,12 @@ void Self_Test(INT8U Mode)
   //while(1)
   {
  // DS1302_Init();
+ /*
   Re &= _Get_Cur_Time(TempTime.Time);
   Print_Cur_Time();
   Delay_sec(1);//Delay_sec(2);
   Re &=_Get_Cur_Time(TempTime1.Time);
+  */
   }
 
   if(TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
@@ -1245,10 +1249,44 @@ void Self_Test(INT8U Mode)
 	debug("外围器件自检成功！");
 
   debug("进入屏幕检测状态");
+#endif
 
   //--------------扫描方式检测---------------
   Read_Screen_Para();
-  Set_RT_Show_Area(64, 32);
+
+  //-----------
+  Screen_Para.Base_Para.Width = 64;
+  Screen_Para.Base_Para.Height = 32;
+  Screen_Para.Scan_Para.Cols_Fold = 0;
+  Screen_Para.Scan_Para.Rows_Fold = 0;
+  Screen_Para.Scan_Para.Rows = 16;
+  Screen_Para.Scan_Para.Direct = 0x00;
+  Screen_Para.Base_Para.Color = 0x01;
+  SET_SUM(Screen_Para);
+
+  return;
+  //---------------
+  Set_RT_Show_Area(32, 16);
+  memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
+
+  while(1)
+  {
+    RT_Play_Status_Enter(2);
+    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%d%d%d%d", 1, 2, 3, 4);
+    //memset(Show_Data.Color_Data, 0x01, sizeof(Show_Data.Color_Data));
+   
+    for(n = 0; n < 20; n ++)
+	{
+	  Delay_ms(100);
+	  Screen_Com_Proc();
+
+#if QT_EN
+   memcpy(&(w->previewArea->screenPara), &Screen_Para, sizeof(Screen_Para));
+   w->previewArea->setFixedSize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+   w->previewTimerProc();
+#endif
+	}
+  }
 
   while(1)
   {
@@ -1259,20 +1297,17 @@ void Self_Test(INT8U Mode)
 	{
 
         Screen_Para.Scan_Para.Direct = i;
-        /*
-	  if(i EQ 0)
-	    Direct = 0x00;
-      else if(i EQ 1)
-	    Direct = 0x02;
-	  else if(i EQ 2)
-	    Direct = 0x01;
-	  else
-	    Direct = 0x03;
-*/
-      for(j = 1; j <= MAX_ROWS_FOLD; j ++)
+
+      for(j = 0; j <= MAX_ROWS_FOLD; j ++)
 	  {
 	    Screen_Para.Scan_Para.Rows_Fold = j;
-		for(k = 1; k <= MAX_COLS_FOLD; k ++)
+
+		if(j EQ 0)
+		  Max_Cols_Fold = 1;
+	    else
+		  Max_Cols_Fold = MAX_COLS_FOLD;
+
+		for(k = 1; k <= Max_Cols_Fold; k ++)
 	    {
           Screen_Para.Scan_Para.Cols_Fold = k;
 		  
@@ -1293,9 +1328,10 @@ void Self_Test(INT8U Mode)
 			SET_SUM(Screen_Para);
 
 			RT_Play_Status_Enter(2);
-                    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%d%d%d%d", m, i, j, k);
-		    
-            for(n = 0; n < 20; n ++)
+            LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%d%d%d%d", m, i, j, k);
+		    //memset(Show_Data.Color_Data, 0x55, sizeof(Show_Data.Color_Data));
+           
+		    for(n = 0; n < 20; n ++)
 			{
 			  Delay_ms(100);
 			  Screen_Com_Proc();

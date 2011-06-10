@@ -13,8 +13,8 @@
 
 //定义断言,多多使用，有益身心
 #if ASSERT_EN>0
-#define ASSERT(x) //Assert((BOOL)(x),__FILE__,__FUNCTION__,(INT16U)__LINE__)
-#define ASSERT_FAILED() //Assert_Failed(__FILE__,__FUNCTION__,(INT16U)__LINE__)
+#define ASSERT(x) OS_Assert((BOOL)(x),__FILE__,__FUNCTION__,(INT16U)__LINE__)
+#define ASSERT_FAILED() OS_Assert_Failed(__FILE__,__FUNCTION__,(INT16U)__LINE__)
 #else
 #define ASSERT(x)
 #define ASSERT_FAILED()
