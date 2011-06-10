@@ -313,6 +313,21 @@ const S_Mode_Func In_Mode_Func[]=
 #endif    
   }//淡入
 #endif
+#if IN_SPEC_EFFECT_NUM > 43
+  ,{&Move_Left_Up_In, HV_SQRT_MODE, 1
+#if QT_EN
+   ,"左上移入"
+#endif
+  }//左上移入
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 44
+  ,{&Move_Right_Up_In, HV_SQRT_MODE, 1
+#if QT_EN
+   ,"右上移入"
+#endif
+  }//右上移入
+#endif
 };
 
 //数据移入方式
