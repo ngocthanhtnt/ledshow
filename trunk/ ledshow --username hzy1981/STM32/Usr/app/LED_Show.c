@@ -1017,7 +1017,65 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
       Set_Area_Point_Data(pDst_Buf, Area_No, pPoint1->X + i, pPoint1->Y + j, Data);
     }  
 }
+/*
+//复制一个拉伸的矩形框，Stretch_X_Len表示复制后在目标显示缓冲中宽度，Stretch_Y_Len表示目标缓冲中的高度,Stretch_Direct表示拉伸的方向,0表示横向，1表示纵向
+//pPoint1表示在目标中的
+void Copy_Filled_Stretch_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16S Stretch_X_Len, INT16Ss Stretch_Y_Len, INT8U Stretch_Direct, \
+                              S_Show_Data *pDst_Buf, S_Point *pPoint1)
+{
+    INT16U Stretch_Len, Y_Len, i;
+    S_Point Temp0,Temp1,Temp2;
 
+    Temp0.X = pPoint0->X;
+    Temp0.Y = pPoint0->Y;
+
+    Temp1.X = Temp0.X;
+    Temp1.Y = Temp0.Y;
+
+
+
+    Len = 0;
+   if(Stretch_Direct EQ 0) //横向
+    {
+       Temp1.X = Temp0.X;
+
+       if(Stretch_Y_Len > 0) //复制改点的下部分
+         Temp1.Y = Temp0.Y + Stretch_Y_Len;
+       else
+       {
+         if(Temp0.Y > Stretch_Y_Len)
+             Temp1.Y = Temp0.Y - Stretch_Y_Len;
+         else
+             Temp1.Y = 0;
+       }
+
+       if(Stretch_X_Len > 0)
+           Stretch_Len = Stretch_X_Len;
+       else
+           Stretch_Len = 0 - Stretch_X_Len;
+
+       while(Len <= Stretch_Len)
+       {
+           for(i = 0; i < 3; i ++)
+           {
+             Len ++;
+             Copy_Line(pSrc_Buf, Area_No, &Temp0, &Temp1, pDst_Buf, &Temp2);
+
+             if(Stretch_X_Len >0)
+                 Temp2.X ++;
+             else
+                 Temp2.X --;
+           \}
+
+
+           if(Stretch_X_Len >0)
+               Temp0.X ++;
+           else
+               Temp0.X --;
+       }
+   }
+}
+*/
 //反向复制一个矩形
 void Rev_Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
   S_Show_Data *pDst_Buf, S_Point *pPoint1)
@@ -2707,6 +2765,88 @@ void Move_Down_Compress(INT8U Area_No)
 
 }
 
+//左压缩
+void Move_Left_Compress_0(INT8U Area_No)
+{
+  INT16U i,j;
+  S_Point P0,P1,P2;
+  INT16U Step;
+
+  /*
+  //-------------------
+  S_Point Temp;
+
+
+    Temp.X = 0;//Prog_Para.Area[Area_No].X_Len - Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;// + Step +
+    Temp.Y = 0;
+
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step, Prog_Para.Area[Area_No].Y_Len,\
+      &Show_Data, &Temp);
+
+    for(i = 0; i < )
+//--------------------------------------
+*/
+  Step = 10 - Prog_Status.Area_Status[Area_No].Step / (Prog_Status.Area_Status[Area_No].Max_Step / 10);
+  Step++;
+  if(Step EQ 0)
+      return;
+
+
+  //Clear_Area_Data(&Show_Data, Area_No);
+  for(i = 0; i < Prog_Para.Area[Area_No].X_Len / Step; i ++)
+  {
+      P0.X = i;
+      P0.Y = 0;
+
+      P1.X = i;
+      P1.Y = Prog_Para.Area[Area_No].Y_Len - 1;
+
+      for(j = 0; j < Step; j++)
+      {
+          P2.X = i *Step + j;
+          P2.Y = 0;
+          Copy_Line(&Show_Data_Bak, Area_No, &P0, &P1, &Show_Data, &P2);
+
+      }
+  }
+  /*
+    INT16U i,j;
+    S_Point P0,P1,P2;
+    INT16U Step;
+
+    Step = Prog_Status.Area_Status[Area_No].Step;
+    if(Step EQ 0)
+        Step = 1;
+
+    //Clear_Area_Data(&Show_Data, Area_No);
+    j = 0;
+    i = 0;
+    while(j < Prog_Para.Area[Area_No].X_Len)
+    {
+        P0.X = i;
+        P0.Y = 0;
+
+        P1.X = i;
+        P1.Y = Prog_Para.Area[Area_No].Y_Len - 1;
+
+        P2.X = j;
+        P2.Y = Prog_Para.Area[Area_No].Y_Len - 1;
+
+        Copy_Line(&Show_Data_Bak, Area_No, &P0, &P1, &Show_Data, &P2);
+
+        if(i % Step EQ 0)
+        {
+            P2.X = j + 1;
+            P2.Y = Prog_Para.Area[Area_No].Y_Len - 1;
+            Copy_Line(&Show_Data_Bak, Area_No, &P0, &P1, &Show_Data, &P2);
+            j++;
+        }
+
+        i++;
+        j++;
+    }*/
+}
+
 //逐点淡入
 void Move_Fade_In(INT8U Area_No)
 {
@@ -2730,6 +2870,70 @@ void Move_Fade_In(INT8U Area_No)
              Set_Area_Point_Data(&Show_Data, Area_No, i, j, Re);
           }
     }
+}
+
+//左上引入
+void Move_Left_Up_In(INT8U Area_No)
+{
+  S_Point Temp,Temp0;
+  INT16U X_Off,Y_Off;
+  static INT16U OldX = 0xFFFF,OldY = 0xFFFF;
+
+
+  X_Off = (INT16U)((float)Prog_Para.Area[Area_No].X_Len * Prog_Status.Area_Status[Area_No].Step/ Prog_Status.Area_Status[Area_No].Max_Step + 0.5);
+  Y_Off = (INT16U)((float)Prog_Para.Area[Area_No].Y_Len * Prog_Status.Area_Status[Area_No].Step/ Prog_Status.Area_Status[Area_No].Max_Step + 0.5);
+
+  Temp.X = Prog_Para.Area[Area_No].X_Len - X_Off;
+  Temp.Y = Prog_Para.Area[Area_No].Y_Len - Y_Off;
+
+  Temp0.X = 0;
+  Temp0.Y = 0;
+
+  if(OldX != Temp.X && OldY != Temp.Y)
+  {
+    OldX = Temp.X;
+    OldY = Temp.Y;
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, X_Off, Y_Off, &Show_Data, &Temp0);
+  }
+
+}
+
+//右上引入
+void Move_Right_Up_In(INT8U Area_No)
+{
+    S_Point Temp,Temp0;
+    INT16U X_Off,Y_Off;
+    static INT16U OldX = 0xFFFF,OldY = 0xFFFF;
+
+
+    X_Off = (INT16U)((float)Prog_Para.Area[Area_No].X_Len * Prog_Status.Area_Status[Area_No].Step/ Prog_Status.Area_Status[Area_No].Max_Step + 0.5);
+    Y_Off = (INT16U)((float)Prog_Para.Area[Area_No].Y_Len * Prog_Status.Area_Status[Area_No].Step/ Prog_Status.Area_Status[Area_No].Max_Step + 0.5);
+
+    Temp.X = 0;//Prog_Para.Area[Area_No].X_Len - 1;// X_Off;
+    Temp.Y = Prog_Para.Area[Area_No].Y_Len - Y_Off;
+
+    Temp0.X = Prog_Para.Area[Area_No].X_Len - X_Off;
+    Temp0.Y = 0;//Prog_Para.Area[Area_No].Y_Len - Y_Off;
+
+    if(OldX != Temp0.X && OldY != Temp.Y)
+    {
+      OldX = Temp0.X;
+      OldY = Temp.Y;
+      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, X_Off, Y_Off, &Show_Data, &Temp0);
+    }
+
+}
+
+//左下引入
+void Move_Left_Down_In(INT8U Area_No)
+{
+
+}
+
+//右下引入
+void Mofe_Right_Down_In(INT8U Area_No)
+{
+
 }
 
 /*
