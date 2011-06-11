@@ -1754,7 +1754,7 @@ void CcomTest::manualConnect()
 
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
-    makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)temp, sizeof(temp));
+    makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)temp, 0);
 
     bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
     if(re EQ true)
