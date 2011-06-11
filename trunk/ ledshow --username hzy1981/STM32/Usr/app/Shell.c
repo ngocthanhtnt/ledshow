@@ -173,13 +173,13 @@ INT8U Shell_Print_Prog_Status(INT8U argc, INT8S **argv)
           Prog_Status.File_Para[i].Pic_Para.Prog_No,\
           Prog_Status.File_Para[i].Pic_Para.Area_No,\
           Prog_Status.File_Para[i].Pic_Para.File_No);
-    debug("in_mode = %d, in_Time = %d, add_mode = %d, stay_time = %d, out_mode = %d, out_time = %d, snum = %d",
+    debug("in_mode = %d, In_Speed = %d, add_mode = %d, stay_time = %d, out_mode = %d, Out_Speed = %d, snum = %d",
           Prog_Status.File_Para[i].Pic_Para.In_Mode,\
-          Prog_Status.File_Para[i].Pic_Para.In_Time,\
+          Prog_Status.File_Para[i].Pic_Para.In_Speed,\
           Prog_Status.File_Para[i].Pic_Para.Add_Mode,\
           Prog_Status.File_Para[i].Pic_Para.Stay_Time,\
           Prog_Status.File_Para[i].Pic_Para.Out_Mode,\
-          Prog_Status.File_Para[i].Pic_Para.Out_Time,\
+          Prog_Status.File_Para[i].Pic_Para.Out_Speed,\
           Prog_Status.File_Para[i].Pic_Para.SNum);  
   }
   
