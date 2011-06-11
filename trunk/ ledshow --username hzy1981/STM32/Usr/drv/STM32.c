@@ -428,19 +428,35 @@ void UART2_Init(void) //串口2初始化
 void Com_Init(void) 
 {
 	USART_InitTypeDef USART_InitStructure = {0};
+    GPIO_InitTypeDef GPIO_InitStructure;
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE );
+
+	//PA10串口1接收
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+ 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	
+	//PA9串口1发送
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+  	
 	//串口1用作与主机通信					    
 	USART_InitStructure.USART_BaudRate            = Get_Com_Baud();
 	USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits            = USART_StopBits_1;
-	USART_InitStructure.USART_Parity              = USART_Parity_Even ;
+	USART_InitStructure.USART_Parity              = USART_Parity_No ;
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode                = USART_Mode_Rx | USART_Mode_Tx;
 	USART_Init(USART1, &USART_InitStructure);
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 	USART_Cmd(USART1, ENABLE); 
+
+//	Com_Send_Byte(CH_COM, 0x77);
+//	Com_Send_Byte(CH_COM, 0x88);
 }
 
 void Soft_Rest(void) //软件复位
