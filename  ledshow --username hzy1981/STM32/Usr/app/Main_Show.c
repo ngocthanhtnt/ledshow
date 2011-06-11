@@ -25,35 +25,41 @@ const INT16U Step_Delay[]=
 //获取某个窗口区域某个步进的停留时间
 INT32U Get_Area_In_Step_Delay(INT8U Area_No)
 {
-  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Time);///(100/MOVE_STEP);
+    if(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed > 0)
+      return Prog_Status.File_Para[Area_No].Pic_Para.In_Speed * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+    else
+      return MOVE_STEP_PERIOD;
 }
 
 //获取某个窗口区域某个步进的停留时间
 INT32U Get_Area_Out_Step_Delay(INT8U Area_No)
 {
-  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.Out_Time);///(100/MOVE_STEP);
+    if(Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed > 0)
+      return Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+    else
+      return MOVE_STEP_PERIOD;
 }
-
+/*
 //获取文件引入时间
-INT32U Get_File_In_Time(INT8U Area_No)
+INT32U Get_File_In_Speed(INT8U Area_No)
 {
- return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Time);
+ return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);
   
 }
-
+*/
 //获取文件的停留时间,单位为ms
 //原参数最高为表示单位，0为s，1为ms
 INT32U Get_File_Stay_Time(INT8U Area_No)
 {
   return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time);
 }
-
+/*
 //获取文件引出时间
-INT32U Get_File_Out_Time(INT8U Area_No)
+INT32U Get_File_Out_Speed(INT8U Area_No)
 {
-  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.Out_Time);  
+  return CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed);
 }
-
+*/
 //设置文件的停留时间
 void Set_File_Stay_Time(INT8U Area_No, INT16U ms)
 {
@@ -293,11 +299,13 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
         Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFFFF;
         Prog_Status.Area_Status[Area_No].Last_File_No = 0xFF; //先预置一个不存在的文件号
         SET_SUM(Prog_Status.Area_Status[Area_No]);
-
+/*
         //如果当前节目有边框，且退出时不清屏，则应该清除边框
         if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check > 0 &&\
            ((Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 2 && Prog_Status.File_Para[Area_No].Pic_Para.In_Mode <= 7) ||\
             Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode EQ 1))
+*/
+        if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check > 0)
         {
             //Prog_Status.Area_Status[Area_No].Restore_Border_Flag = 1;
             //Restore_Border_Data(Area_No);
@@ -361,7 +369,13 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
       if(Prog_Status.Area_Status[Area_No].SCN_No >= Prog_Status.File_Para[Area_No].Pic_Para.SNum)
       {
           Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
-          Prog_Status.Area_Status[Area_No].File_No ++;
+
+          Prog_Status.Area_Status[Area_No].Play_Counts ++;
+          if(Prog_Status.Area_Status[Area_No].Play_Counts >= Prog_Status.File_Para[Area_No].Pic_Para.Play_Counts)
+          {
+            Prog_Status.Area_Status[Area_No].File_No ++;
+            Prog_Status.Area_Status[Area_No].Play_Counts = 0;
+          }
           SET_SUM(Prog_Status.Area_Status[Area_No]);
           return 0;
       }

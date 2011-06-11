@@ -117,6 +117,7 @@ typedef struct
 
   INT8U File_No;    //当前文件号
 
+  INT8U Play_Counts; //播放次数
   //INT8U RT_Play_Flag; //实时播放标志
   INT8U Play_Flag; //播放标志，0表示未进入播放状态，1表示进入播放状态--主要用于与中断显示同步
   //INT8U Restore_Border_Flag:4;

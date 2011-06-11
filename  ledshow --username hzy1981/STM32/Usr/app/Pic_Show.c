@@ -758,7 +758,10 @@ void Update_Pic_Data(INT8U Area_No)
            else
            {
 
-             Prog_Status.Area_Status[Area_No].Out_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
+             if(Prog_Status.Area_Status[Area_No].SCN_No + 1 >= Prog_Status.File_Para[Area_No].Pic_Para.SNum) //当前是最后一屏幕
+                 Clear_Area_Data(&Show_Data_Bak, Area_No);
+             else
+               Prog_Status.Area_Status[Area_No].Out_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
            }
          }
 

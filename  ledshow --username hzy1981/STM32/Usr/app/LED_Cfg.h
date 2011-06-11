@@ -62,7 +62,7 @@
 #define MOVE_STEP 2 //每个调度单位移动的数据百分比 单位%
  
 
-#define IN_SPEC_EFFECT_NUM 43 //进入特效个数
+#define IN_SPEC_EFFECT_NUM 45 //进入特效个数
 #define OUT_SPEC_EFFECT_NUM 20 //退出特效个数
 #define FONT_NUM 2 //内嵌字体个数
 

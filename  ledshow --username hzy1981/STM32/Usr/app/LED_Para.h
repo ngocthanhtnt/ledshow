@@ -279,11 +279,11 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT16U In_Time; //进入速度
+  INT16U In_Speed; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式  
-  INT16U Out_Time;
+  INT16U Out_Speed;
   INT8U Tail;
 }S__Para;
 
@@ -297,12 +297,14 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT16U In_Time; //进入速度
+  INT16U In_Speed; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式
-  INT16U Out_Time; //引出时间
+  INT16U Out_Speed; //引出时间
   INT16U SNum; //分屏个数
+
+  INT8U Play_Counts;
 
   INT8U Border_Check; //是否边框
   INT8U Border_Type; //边框类型
@@ -328,12 +330,14 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT16U In_Time; //进入速度
+  INT16U In_Speed; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
-  INT16U Out_Time; //引出时间
+  INT16U Out_Speed; //引出时间
   INT16U SNum; //分屏个数
+
+  INT8U Play_Counts;
 
   INT8U Border_Check; //是否边框
   INT8U Border_Type; //边框类型
@@ -399,12 +403,14 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT16U In_Time; //进入速度
+  INT16U In_Speed; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
-  INT16U Out_Time; //引出时间
+  INT16U Out_Speed; //引出时间
   INT16U SNum; //分屏个数
+
+  INT8U Play_Counts;
 
   INT8U Border_Check; //是否边框
   INT8U Border_Type; //边框类型
@@ -449,12 +455,14 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT16U In_Time; //进入速度
+  INT16U In_Speed; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
-  INT16U Out_Time; //引出时间
+  INT16U Out_Speed; //引出时间
   INT16U SNum; //分屏个数
+
+  INT8U Play_Counts;
 
   INT8U Border_Check; //是否边框
   INT8U Border_Type; //边框类型
@@ -515,12 +523,14 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT16U In_Time; //进入速度
+  INT16U In_Speed; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式
-  INT16U Out_Time; //引出时间
+  INT16U Out_Speed; //引出时间
   INT16U SNum; //分屏个数
+
+  INT8U Play_Counts;
 
   INT8U Border_Check; //是否边框
   INT8U Border_Type; //边框类型
@@ -576,12 +586,14 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT16U In_Time; //进入速度
+  INT16U In_Speed; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
-  INT16U Out_Time; //引出时间
+  INT16U Out_Speed; //引出时间
   INT16U SNum; //分屏个数
+
+  INT8U Play_Counts;
 
   INT8U Border_Check; //是否边框
   INT8U Border_Type; //边框类型
@@ -622,12 +634,14 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT16U In_Time; //进入速度
+  INT16U In_Speed; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
-  INT16U Out_Time; //引出时间
+  INT16U Out_Speed; //引出时间
   INT16U SNum; //分屏个数
+
+  INT8U Play_Counts;
 
   INT8U Border_Check; //是否边框
   INT8U Border_Type; //边框类型
@@ -668,12 +682,14 @@ typedef struct
   INT8U Area_No; //分区号
   INT8U File_No; //文件号
   INT8U In_Mode; //引入方式
-  INT16U In_Time; //进入速度
+  INT16U In_Speed; //进入速度
   INT8U Add_Mode; //追加方式
   INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
   INT8U Out_Mode; //引出方式	
-  INT16U Out_Time; //引出时间
+  INT16U Out_Speed; //引出时间
   INT16U SNum; //分屏个数
+
+  INT8U Play_Counts;
 
   INT8U Border_Check; //是否边框
   INT8U Border_Type; //边框类型
