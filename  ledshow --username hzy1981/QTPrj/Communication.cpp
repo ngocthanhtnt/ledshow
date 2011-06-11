@@ -311,19 +311,9 @@ bool CcomThread::connect()
 
     if(COM_Mode EQ COM_MODE)
     {
-        if(COM_Para.Baud EQ 0)
-          port->setBaudRate(BAUD9600);
-        else
-          port->setBaudRate(BAUD57600);
+        port->setPortName("\\\\.\\"+COM_Port);
 
-        //流控关、偶校验、数据位8位、停止位1位
-        port->setFlowControl(FLOW_OFF);
-        port->setParity(PAR_EVEN); //偶校验
-        port->setDataBits(DATA_8);
-        port->setStopBits(STOP_1);
-
-        port->setPortName(COM_Port);
-
+        port->close();
         if(port->open(QIODevice::ReadWrite) EQ false)
         {
 
@@ -333,6 +323,17 @@ bool CcomThread::connect()
         }
         else
         {
+            if(COM_Para.Baud EQ 0)
+              port->setBaudRate(BAUD9600);
+            else
+              port->setBaudRate(BAUD57600);
+
+            //流控关、偶校验、数据位8位、停止位1位
+            port->setFlowControl(FLOW_OFF);
+            port->setParity(PAR_NONE); //偶校验
+            port->setDataBits(DATA_8);
+            port->setStopBits(STOP_1);
+
           comReStr = tr("打开串口成功");
           emit comStatusChanged(comReStr);
           return true;
