@@ -18,7 +18,7 @@
 extern MainWindow *w;
 extern QSettings settings;
 
-#define TIME_EDIT_WIDTH 40
+#define TIME_EDIT_WIDTH 80
 /*
 const S_Mode_Func Mode_Func[]=
 {
@@ -184,45 +184,65 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     //QGridLayout *gridLayout;
     //QHBoxLayout *hLayout;
     //QVBoxLayout *vLayout;
-    QValidator *inOutTimeValidator = new QIntValidator(0,999,this);
+    QValidator *inoutSpeedValidator = new QIntValidator(0,999,this);
     QValidator *stayTimeValidator = new QIntValidator(0,9999,this);
-
+    QValidator *playCountsValidator = new QIntValidator(1,255,this);
     //gridLayout = new QGridLayout(this);
     //vLayout=new QVBoxLayout(this);
     QGridLayout *mainLayout = new QGridLayout(this);
 
     setTitle(tr("显示特效"));
-    inModeLabel = new QLabel(tr("引入"), this);
+    inModeLabel = new QLabel(tr("引入特效"), this);
     inModeCombo = new CshowModeCombo(0, this);
-    inTimeEdit = new QLineEdit(this);
-    inTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
-    inTimeLabel = new QLabel(tr("毫秒"), this);
-    inTimeEdit->setValidator(inOutTimeValidator);
+    inSpeedEdit = new QComboBox(this);
+    //inSpeedEdit->setFixedWidth(TIME_EDIT_WIDTH);
+    inSpeedLabel = new QLabel(tr("引入速度"), this);
+    //inSpeedEdit->setValidator(inoutSpeedValidator);
+    inSpeedEdit->addItem(tr("1级(最快)"));
+    inSpeedEdit->addItem(tr("2级"));
+    inSpeedEdit->addItem(tr("3级"));
+    inSpeedEdit->addItem(tr("4级"));
+    inSpeedEdit->addItem(tr("5级"));
+    inSpeedEdit->addItem(tr("6级"));
+    inSpeedEdit->addItem(tr("7级"));
+    inSpeedEdit->addItem(tr("8级"));
+    inSpeedEdit->addItem(tr("9级"));
+    inSpeedEdit->addItem(tr("10级(最慢)"));
 
     //inModeCombo->setFixedWidth(100);
     mainLayout->addWidget(inModeLabel, 0, 0);
-    mainLayout->addWidget(inModeCombo, 0, 1, 1, 6);
-    mainLayout->addWidget(inTimeEdit,  1, 1);
-    mainLayout->addWidget(inTimeLabel, 1, 2);
-    //mainLayout->addStretch();
+    mainLayout->addWidget(inModeCombo, 0, 1, 1, 2);
+    mainLayout->addWidget(inSpeedLabel, 1, 0);
+    mainLayout->addWidget(inSpeedEdit,  1, 1,1,2);
     //vLayout->addLayout(hLayout);
 
-    outModeLabel = new QLabel(tr("引出"), this);
+    outModeLabel = new QLabel(tr("引出特效"), this);
     outModeCombo = new CshowModeCombo(1, this);
-    outTimeEdit = new QLineEdit(this);
-    outTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
-    outTimeLabel = new QLabel(tr("毫秒"), this);
-    outTimeEdit->setValidator(inOutTimeValidator);
+    outSpeedEdit = new QComboBox(this);
+    //outSpeedEdit->setFixedWidth(TIME_EDIT_WIDTH);
+    outSpeedLabel = new QLabel(tr("引出速度"), this);
+
+    outSpeedEdit->addItem(tr("1级(最快)"));
+    outSpeedEdit->addItem(tr("2级"));
+    outSpeedEdit->addItem(tr("3级"));
+    outSpeedEdit->addItem(tr("4级"));
+    outSpeedEdit->addItem(tr("5级"));
+    outSpeedEdit->addItem(tr("6级"));
+    outSpeedEdit->addItem(tr("7级"));
+    outSpeedEdit->addItem(tr("8级"));
+    outSpeedEdit->addItem(tr("9级"));
+    outSpeedEdit->addItem(tr("10级(最慢)"));
 
     //outModeCombo->setFixedWidth(100);
     mainLayout->addWidget(outModeLabel, 2, 0);
-    mainLayout->addWidget(outModeCombo, 2, 1, 1, 6);
-    mainLayout->addWidget(outTimeEdit, 3, 1);
-    mainLayout->addWidget(outTimeLabel, 3, 2);
+    mainLayout->addWidget(outModeCombo, 2, 1, 1,2);
+    mainLayout->addWidget(outSpeedLabel, 3, 0);
+    mainLayout->addWidget(outSpeedEdit, 3, 1,1,2);
+
     //hLayout->addStretch();
     //vLayout->addLayout(hLayout);
 
-    stayTimeLabel = new QLabel(tr("停留"), this);
+    stayTimeLabel = new QLabel(tr("停留时间"), this);
     stayTimeEdit = new QLineEdit(this);
     stayTimeEdit->setFixedWidth(TIME_EDIT_WIDTH);
     stayTimeUnitLabel = new QLabel(tr("秒"), this);
@@ -235,7 +255,16 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     //mainLayout->addStretch();
     //mainLayout->addLayout(hLayout);
 
-    //vLayout->addStretch();
+    playCountsLabel = new QLabel(tr("播放次数"), this);
+    playCountsEdit = new QLineEdit(this);
+    playCountsEdit->setFixedWidth(TIME_EDIT_WIDTH);
+    playCountsUnitLabel = new QLabel(tr("次"));
+    playCountsEdit->setValidator(playCountsValidator);
+
+    mainLayout->addWidget(playCountsLabel, 5, 0);
+    mainLayout->addWidget(playCountsEdit, 5, 1);
+    mainLayout->addWidget(playCountsUnitLabel, 5, 2);
+
     setLayout(mainLayout);
 /*
     int width = 80;
@@ -262,12 +291,14 @@ void getShowModeParaFromSettings(QString str, U_File_Para &para)
   settings.beginGroup("showMode");
 
   para.Pic_Para.In_Mode = (INT8U)settings.value("inMode").toInt();
-  para.Pic_Para.In_Time = (INT16U)settings.value("inTime").toInt();
-  para.Pic_Para.In_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
+  para.Pic_Para.In_Speed = (INT16U)settings.value("inSpeed").toInt() + 1;
+  //para.Pic_Para.In_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
   para.Pic_Para.Out_Mode = (INT8U)settings.value("outMode").toInt();
-  para.Pic_Para.Out_Time = (INT16U)settings.value("outTime").toInt();
-  para.Pic_Para.Out_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
+  para.Pic_Para.Out_Speed = (INT16U)settings.value("outSpeed").toInt() + 1;
+  //para.Pic_Para.Out_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
   para.Pic_Para.Stay_Time = (INT16U)settings.value("stayTime").toInt();
+
+  para.Pic_Para.Play_Counts = (INT8U)settings.value("playCounts").toInt();
 
   settings.endGroup();
   settings.endGroup();
@@ -277,9 +308,10 @@ void CshowModeEdit::connectSignal()
 {
     connect(inModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     connect(outModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
-    connect(inTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
-    connect(outTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+    connect(inSpeedEdit, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    connect(outSpeedEdit, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     connect(stayTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+    connect(playCountsEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
 
 }
 
@@ -287,9 +319,10 @@ void CshowModeEdit::disconnectSignal()
 {
     disconnect(inModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     disconnect(outModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
-    disconnect(inTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
-    disconnect(outTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+    disconnect(inSpeedEdit, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
+    disconnect(outSpeedEdit, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
     disconnect(stayTimeEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
+    disconnect(playCountsEdit, SIGNAL(textEdited(const QString &)),this,SIGNAL(edited()));
 
 }
 
@@ -298,11 +331,11 @@ void CshowModeEdit::getSettingsFromWidget(QString str)
     settings.beginGroup(str);
     settings.beginGroup("showMode");
     settings.setValue("inMode", inModeCombo->currentIndex());
-    settings.setValue("inTime", inTimeEdit->text().toInt());
+    settings.setValue("inSpeed", inSpeedEdit->currentIndex());
     settings.setValue("outMode", outModeCombo->currentIndex());
-    settings.setValue("outTime", outTimeEdit->text().toInt());
+    settings.setValue("outSpeed", outSpeedEdit->currentIndex());
     settings.setValue("stayTime", stayTimeEdit->text().toInt());
-    //settings.setValue("text", edit->getEdit()->toPlainText());
+    settings.setValue("playCounts", playCountsEdit->text().toInt());
     settings.endGroup();
     settings.endGroup();
 
@@ -324,18 +357,21 @@ void CshowModeEdit::setSettingsToWidget(QString str)
       //名字
       settings.setValue("setFlag", 1);
       settings.setValue("inMode", 0);
-      settings.setValue("inTime", 50);
+      settings.setValue("inSpeed", 50);
       settings.setValue("outMode", 0);
-      settings.setValue("outTime", 50);
+      settings.setValue("outSpeed", 50);
       settings.setValue("stayTime", 5);
+      settings.setValue("playCounts", 1);
       settings.setValue("text", QString(tr("图文显示")));
     }
 
     inModeCombo->setCurrentIndex(settings.value("inMode").toInt());
-    inTimeEdit->setText(QString::number(settings.value("inTime").toInt()));
+    inSpeedEdit->setCurrentIndex(settings.value("inSpeed").toInt());
     outModeCombo->setCurrentIndex(settings.value("outMode").toInt());
-    outTimeEdit->setText(QString::number(settings.value("outTime").toInt()));
+    outSpeedEdit->setCurrentIndex(settings.value("outSpeed").toInt());
     stayTimeEdit->setText(QString::number(settings.value("stayTime").toInt()));
+    playCountsEdit->setText(QString::number(settings.value("playCounts").toInt()));
+
     /*
     text = settings.value("text").toString();
     if(text == "")
