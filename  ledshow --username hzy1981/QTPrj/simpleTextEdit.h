@@ -52,13 +52,16 @@ private:
     CshowModeCombo *outModeCombo;
     //CshowSpeedCombo *speedCombo;
 
-    QLineEdit *inTimeEdit; //引入时间
+    QComboBox *inSpeedEdit; //引入时间
     QLineEdit *stayTimeEdit; //停留时间
-    QLineEdit *outTimeEdit; //引出时间
+    QComboBox *outSpeedEdit; //引出时间
+    QLineEdit *playCountsEdit; //播放次数
 
-    QLabel *inTimeLabel;
+    QLabel *inSpeedLabel;
     QLabel *stayTimeUnitLabel;
-    QLabel *outTimeLabel;
+    QLabel *outSpeedLabel; //引出时间
+    QLabel *playCountsLabel; //播放次数
+    QLabel *playCountsUnitLabel;
 public:
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);

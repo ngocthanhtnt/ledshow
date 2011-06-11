@@ -35,8 +35,8 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("flag", 1); //第0位表示是否支持全彩
   cardIniFile.setValue("maxHeight", 128);
   cardIniFile.setValue("FontNum", 1);
-  cardIniFile.setValue("inModeNum", 10);
-  cardIniFile.setValue("outModeNum", 15);
+  cardIniFile.setValue("inModeNum", 45);
+  cardIniFile.setValue("outModeNum", 20);
   cardIniFile.setValue("romSize", 1024);
   cardIniFile.setValue("fileEnWord", 0xFFFF);
   cardIniFile.setValue("comMode", COM_RS232 | COM_RS485);

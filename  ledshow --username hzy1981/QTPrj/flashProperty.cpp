@@ -183,11 +183,11 @@ void getFlashParaFromSettings(QString str, U_File_Para &para)
 
    para.Pic_Para.Flag = SHOW_FLASH;
    para.Pic_Para.In_Mode = 1;//(INT8U)settings.value("inMode").toInt();
-   para.Pic_Para.In_Time = 1;//(INT16U)settings.value("inTime").toInt();
-   para.Pic_Para.In_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
+   para.Pic_Para.In_Speed = 1;//(INT16U)settings.value("inTime").toInt();
+   //para.Pic_Para.In_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
    para.Pic_Para.Out_Mode = 1;//(INT8U)settings.value("outMode").toInt();
-   para.Pic_Para.Out_Time = 1;//(INT16U)settings.value("outTime").toInt();
-   para.Pic_Para.Out_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
+   para.Pic_Para.Out_Speed = 1;//(INT16U)settings.value("outTime").toInt();
+   //para.Pic_Para.Out_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
 
    settings.beginGroup(str);
    para.Pic_Para.SNum = (INT16U)settings.value("frameCount").toInt();
