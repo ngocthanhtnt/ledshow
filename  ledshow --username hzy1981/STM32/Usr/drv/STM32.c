@@ -328,7 +328,7 @@ void TIM3_Configuration(void)
  	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	TIM_OCInitTypeDef  TIM_OCInitStructure = {0};
 	GPIO_InitTypeDef GPIO_InitStructure = {0};
-
+/*
  	//----------PB0作为OE-PWM输出
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //TIM_CH3
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;;  //复用推挽输出
@@ -337,7 +337,7 @@ void TIM3_Configuration(void)
 	GPIO_ResetBits(GPIOB,GPIO_Pin_0);
 	return;
 	//---------------------------
-
+  */
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB  | RCC_APB2Periph_AFIO, ENABLE);  //使能GPIO外设和AFIO复用功能模块时钟使能
 
 	//PB0的输出口

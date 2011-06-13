@@ -273,11 +273,10 @@ void LED_Scan_One_Row(void)
   //for(i = 0; i < Cols * (Screen_Para.Scan_Para.Rows_Fold + 1); i ++)
   {  
      //行消隐时间
-    //Set_Block_OE_En(0); //关闭使能
+    Set_Block_OE_En(0); //关闭使能
     //Delay_us(Screen_Para.Scan_Para.Line_Hide); //行消隐时间
     
-	GPIO_ResetBits(GPIOB,GPIO_Pin_0);
-
+	//GPIO_ResetBits(GPIOB,GPIO_Pin_0);
     SET_LAT(0); //锁存信号输出
     SET_LAT(1); //锁存信号输出
     
@@ -286,8 +285,8 @@ void LED_Scan_One_Row(void)
     if(Screen_Status.Scan_Row >= Screen_Para.Scan_Para.Rows)
       Screen_Status.Scan_Row = 0;
   
-	GPIO_ResetBits(GPIOB,GPIO_Pin_0);
-    //Set_Block_OE_En(1); //重新打开使能
+	//GPIO_ResetBits(GPIOB,GPIO_Pin_0);
+    Set_Block_OE_En(1); //重新打开使能
     
     //行扫描的频率等于屏扫描频率*扫描行数
     //Row_Freq = (INT32U)Screen_Para.Scan_Para.Screen_Freq*Screen_Para.Scan_Para.Rows; //行扫描的频率
