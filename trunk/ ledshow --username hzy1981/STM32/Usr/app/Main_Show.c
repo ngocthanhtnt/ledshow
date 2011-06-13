@@ -386,6 +386,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
       {
           //Prog_Status.Area_Status[Area_No].Restore_Border_Flag = 1;
           Restore_Border_Data(Area_No);
+		  //Clr_Border(&Show_Data, Area_No, Get_Area_Border_Width(Area_No), Get_Area_Border_Height(Area_No));
       }
       //读出显示数据
       //Prog_Status.Area_Status[Area_No].Play_Flag = 0; //--读取显示数据过程中将播放标志置0，从而中断程序中不播放
@@ -1167,13 +1168,14 @@ void Para_Show(void)
   //INT32U Baud; //串口波特率
 
  //显示板卡地址和串口波特率
+/*
   Len = RT_LED_Print(FONT0, 0x01, 0, 0, 3, "%d-%d", Screen_Para.COM_Para.Addr, Screen_Para.COM_Para.Baud);
 
 #if UDISK_EN  
   memcpy(IP, &Screen_Para.ETH_Para.IP, 4);	//显示IP地址和端口号
   Len = RT_LED_Print(FONT0, 0x01, Len, 0, 3, "%d.%d.%d.%d:%d", IP[3], IP[2], IP[1], IP[0], Screen_Para.ETH_Para.Port);
 #endif
-
+  */
 }
 
 void Print_Cur_Time(void)
@@ -1198,7 +1200,7 @@ void Self_Test(INT8U Mode)
   //--------对存储器的测试---------------
   Write_Storage_Data(SDI_TEST_DATA, &Data, sizeof(Data));
   Delay_ms(10);
-  Data = 0;
+  memset(&Data, 0x00, sizeof(Data));
   Read_Storage_Data(SDI_TEST_DATA, &Data, &Data, sizeof(Data));
 
   if(0x55AA5AA5 EQ Data)
@@ -1274,7 +1276,7 @@ void Self_Test(INT8U Mode)
   Screen_Para.Scan_Para.Cols_Fold = 0;
   Screen_Para.Scan_Para.Rows_Fold = 0;
   Screen_Para.Scan_Para.Rows = 16;
-  Screen_Para.Scan_Para.Direct = 0x00;
+  Screen_Para.Scan_Para.Direct = 0x02;
   Screen_Para.Base_Para.Color = 0x01;
   SET_SUM(Screen_Para);
 

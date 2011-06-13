@@ -124,6 +124,7 @@ void SPI1_FLASH_Init(void)
   //PA4ÓÃÓÚFlash_CS
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
   /* Deselect the FLASH: Chip Select high */
@@ -140,7 +141,6 @@ void SPI1_FLASH_Init(void)
   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
   SPI_InitStructure.SPI_CRCPolynomial = 7;
   SPI_Init(SPI1, &SPI_InitStructure);
-
   /* Enable SPI1  */
   SPI_Cmd(SPI1, ENABLE);
 }
@@ -151,7 +151,7 @@ void SPI1_CH376_Init(void)
    GPIO_InitTypeDef GPIO_InitStructure;
 
    /* Enable SPI1 and GPIOA clocks */
-   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1 | RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO , ENABLE);
+   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1 | RCC_APB2Periph_GPIOA, ENABLE);
 
    /* Configure SPI1 pins: NSS, SCK, MISO and MOSI */
    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
@@ -389,7 +389,7 @@ void TIM3_Configuration(void)
 
 INT8U Chk_JP_Status(void)
 {
-  return SELF_TEST_STATUS;
+  //return SELF_TEST_STATUS;
 
   if(CHK_JP_STATUS0 && CHK_JP_STATUS1) //×Ô¼ì×´Ì¬
   {
@@ -551,7 +551,7 @@ INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen)
 void ReInit_Mem_Port(void)
 {
 #ifdef USE_SPI_FLASH
-  SPI_FLASH_Init();
+  SPI1_FLASH_Init();
 #else
 #endif
 }

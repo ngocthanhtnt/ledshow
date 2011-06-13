@@ -18,14 +18,14 @@ void Get_Shift_Data(INT16U Block, INT16U Rows, INT16U BRow, INT16U Cols, INT16U 
   //INT16U Cols;
   
   X = Y = 0; 
-  
+
+  Rows_Fold ++;
+
+  if(Direct EQ 0x00 || Direct EQ 0x01) //从左边进入，则索引应该转换
+    Index = Cols - 1 - Index; //Index从0开始计数
+		  
   if(Rows_Fold EQ 0 || Cols_Fold EQ 0) //没有打折的现象
   {
-      Rows_Fold ++;
-
-	  if(Direct EQ 0x02 || Direct EQ 0x03) //从右边进入，则索引应该转换
-	    Index = Cols - 1 - Index; //Index从0开始计数  	  
-	  
       X = Index;
 	   //每个Block对应的屏幕上的行数是 Rows*Rows_Fold
 	   //BRow表示第几条扫描线,每条扫描线对应到屏幕上的有Rows_Fold行
@@ -33,12 +33,6 @@ void Get_Shift_Data(INT16U Block, INT16U Rows, INT16U BRow, INT16U Cols, INT16U 
   }
   else
   { 
-      Rows_Fold ++;
-	  //Cols_Fold ++;
-
-	  if(Direct EQ 0x02 || Direct EQ 0x03) //从右边进入，则索引应该转换
-	    Index = Cols * Rows_Fold - 1 - Index; //Index从0开始计数
-	  
 	  Fold_Size = Rows_Fold*Cols_Fold;  
 	  if(Direct EQ 0x00 || Direct EQ 0x02)//左上进入、右上进入
 	  {
@@ -224,7 +218,7 @@ void LED_Scan_One_Row(void)
     {
       for(j = 0; j < 8 ; j++)
       {
-	    
+	    m = 7 - j;	    
         //Set_Shift_Bit_Clk(0); //移位数据时钟为0
         SET_CLK(0);
 
@@ -234,7 +228,7 @@ void LED_Scan_One_Row(void)
           Set_Shift_Bit(k, 1, GET_BIT(Screen_Status.Scan_Data[k][1], 7-j));//绿色 Gk
           Set_Shift_Bit(k, 2, GET_BIT(Screen_Status.Scan_Data[k][2], 7-j));//蓝色 Bk
 		*/
-		 SET_SHIFT_BIT(k, Screen_Status.Scan_Data[k], j); 
+		 SET_SHIFT_BIT(k, Screen_Status.Scan_Data[k], m); 
 		}
         
         //Set_Shift_Bit_Clk(1); //移位时钟置1
@@ -245,7 +239,6 @@ void LED_Scan_One_Row(void)
     {
       for(j = 0; j < 8 ; j++)
       {
-	    m = 7 - j;
         //Set_Shift_Bit_Clk(0); //移位数据时钟为0
 		SET_CLK(0);
         
@@ -255,7 +248,7 @@ void LED_Scan_One_Row(void)
           Set_Shift_Bit(k, 1, GET_BIT(Screen_Status.Scan_Data[k][1], j));//绿色
           Set_Shift_Bit(k, 2, GET_BIT(Screen_Status.Scan_Data[k][2], j));//蓝色
           */
-		  SET_SHIFT_BIT(k, Screen_Status.Scan_Data[k], m);
+		  SET_SHIFT_BIT(k, Screen_Status.Scan_Data[k], j);
 		}
         
         //Set_Shift_Bit_Clk(1); //移位时钟置1

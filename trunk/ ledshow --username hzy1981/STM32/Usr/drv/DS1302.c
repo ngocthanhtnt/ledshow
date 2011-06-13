@@ -163,7 +163,9 @@ void test_main()
 
 void DS1302_Init(void)
 {
+ Unselect_SPI_Device();
  SPI_DS1302_Init();
+
  WrCmd(WrEnDisCmd,WrEnDat);  //写允许
  WrCmd(OscEnDisCmd,OscEnDat); //振荡器允许
 }
@@ -190,6 +192,7 @@ INT8U Set_Cur_Time(INT8U Time[])//S_Time *pTime)
   Temp[6] = Hex2Bcd_Byte(Time[T_YEAR]);
   Temp[7] = 0;
 
+  Unselect_SPI_Device();
   SPI_DS1302_Init(); //重新初始化SPI口
 
   WriteByte_1302(WrMulti,8,Temp);//将时间值送到DS1302中
@@ -201,6 +204,7 @@ INT8U _Get_Cur_Time(INT8U Time[])
 {
   INT8U Temp[8];
 
+  Unselect_SPI_Device();
   SPI_DS1302_Init();  //重新初始化SPI口
 
   RecByte_1302(RdMulti,8,Temp); // 读出来看看，

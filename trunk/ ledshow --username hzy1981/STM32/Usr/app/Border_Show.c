@@ -240,8 +240,9 @@ void Update_Border_Data(INT8U Area_No)
       if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check EQ 0)
           return;
 
-      //if(Prog_Status.Area_Status[Area_No].Restore_Border_Flag)
-         // return;
+      if(Prog_Status.Area_Status[Area_No].New_File_Flag > 0 ||\
+	     Prog_Status.Area_Status[Area_No].New_SCN_Flag > 0)
+          return;
 /*
       if(Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 2 &&
          Prog_Status.File_Para[Area_No].Pic_Para.In_Mode <= 7)
