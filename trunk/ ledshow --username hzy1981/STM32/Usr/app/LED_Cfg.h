@@ -22,7 +22,7 @@
 
 #define CS_BYTES 1
 #define ROM_CS_BYTES 2
-#define DATA_CHK_EN 0
+#define DATA_CHK_EN 1
 
 #define MAX_LIGHTNESS_LEVEL 16 //最大亮度等级
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段

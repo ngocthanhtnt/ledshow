@@ -145,6 +145,7 @@ INT8U Get_Cur_Time()
      memcpy(Cur_Time.Time, Time, sizeof(Cur_Time.Time));
      SET_SUM(Cur_Time);
   }
+
   return Re;
 }
 
@@ -156,12 +157,19 @@ void Screen_Time_Proc()
   
   Diff = Pub_Timer.Sec - Sec.Var;
 
-  if(Sec.Var EQ 0 || Cur_Time.Time[T_SEC] + Diff >= 60)
+  if(Diff != 0)
   {
-         Get_Cur_Time();//_Get_Cur_Time(Cur_Time.Time); //获取当前时间
+     Cur_Time.Time[T_SEC] += Diff;
+	 if(Cur_Time.Time[T_SEC] >= 60)
+	 {
+	   Cur_Time.Time[T_SEC] = 0;
+	   Get_Cur_Time();
+	 }
+         //Get_Cur_Time();//_Get_Cur_Time(Cur_Time.Time); //获取当前时间
    }
 
    Sec.Var = Pub_Timer.Sec;
+ 
 }
 
 void Screen_Proc(void)

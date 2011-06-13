@@ -160,6 +160,7 @@ void SysTick_Handler(void)
 extern void LED_Scan_One_Row(void);
 void TIM2_IRQHandler(void)   //TIM2中断
 {
+    GPIO_SetBits(GPIOB,GPIO_Pin_1); //测试输出
     TIM_Cmd(TIM2, DISABLE);
 
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
@@ -170,6 +171,7 @@ void TIM2_IRQHandler(void)   //TIM2中断
 	}
 
 	TIM_Cmd(TIM2, ENABLE);
+	GPIO_ResetBits(GPIOB,GPIO_Pin_1);//测试输出
 }
 /**
   * @brief  This function handles TIM3 global interrupt request.

@@ -709,7 +709,7 @@ void Update_Pic_Data(INT8U Area_No)
   {
     if(Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag))
     {
-        if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)
+        if((Prog_Status.Area_Status[Area_No].Stay_Time % 200) EQ 0)
         {
           Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_PERIOD;
           Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
@@ -718,9 +718,11 @@ void Update_Pic_Data(INT8U Area_No)
           SET_SUM(Prog_Status.Area_Status[Area_No]);
           return;
         }
-
+ /*
         if(Prog_Status.Area_Status[Area_No].Stay_Time EQ MOVE_STEP_PERIOD ||\
            Prog_Status.Area_Status[Area_No].Stay_Time % 800 EQ 0)//Sec.Var != Cur_Time.Time[T_SEC])//
+   */
+        if((Prog_Status.Area_Status[Area_No].Stay_Time % 200) EQ MOVE_STEP_PERIOD)
         {
           //Sec.Var = Cur_Time.Time[T_SEC];
 		  
