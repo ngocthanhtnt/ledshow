@@ -21,7 +21,7 @@
 #define SPI_FLASH_PageSize    0x100
 
 /* Private define ------------------------------------------------------------*/
-#define WRITE      0x02  /* Write to Memory instruction */
+#define WRITE      0x0A//0x02  /* Write to Memory instruction */
 #define WRSR       0x01  /* Write Status Register instruction */
 #define WREN       0x06  /* Write enable instruction */
 

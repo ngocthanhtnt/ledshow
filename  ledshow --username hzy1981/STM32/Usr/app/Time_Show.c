@@ -130,6 +130,7 @@ INT16U Get_TimeStr_Pix_Width(INT8U Type, INT8U Font)
 INT16U Get_WeekStr_Type_Max_Pix_Width(INT8U Type, INT8U Font)
 {
     INT16U max = 0;
+	INT8U i;
 
     if(Type >= S_NUM(WeekStr))
     {
@@ -137,7 +138,7 @@ INT16U Get_WeekStr_Type_Max_Pix_Width(INT8U Type, INT8U Font)
         Type = 0;
     }
 
-    for(int i=0; i < 7; i ++)
+    for(i=0; i < 7; i ++)
     {
       if(strlen(WeekStr[Type][i]) > max)
           max = strlen(WeekStr[Type][i]);

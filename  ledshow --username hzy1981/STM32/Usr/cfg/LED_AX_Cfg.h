@@ -10,7 +10,7 @@
 #define CARD_NAME "CARD_A0"  //卡名称
 
 #define MOVE_STEP_PERIOD 20 //移动步进时间,单位为ms
-#define MOVE_STEP 10 //每个调度单位移动的数据百分比 单位%
+#define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 
 #define IN_SPEC_EFFECT_NUM 5 //进入特效个数
 #define OUT_SPEC_EFFECT_NUM 5 //退出特效个数
@@ -25,13 +25,13 @@
 
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
-#define CLOCK_SHOW_EN  0 //表盘显示使能
-#define LUN_SHOW_EN    0 //农历显示使能
-#define TEMP_SHOW_EN   0 //温度显示使能
-#define TIME_SHOW_EN   0 //时间显示使能
-#define TIMER_SHOW_EN  0 //定时显示使能 
-#define HUMIDITY_SHOW_EN 0 //湿度显示使能
-#define NOISE_SHOW_EN  0 //噪音显示使能
+#define CLOCK_SHOW_EN  1 //表盘显示使能
+#define LUN_SHOW_EN    1 //农历显示使能
+#define TEMP_SHOW_EN   1 //温度显示使能
+#define TIME_SHOW_EN   1 //时间显示使能
+#define TIMER_SHOW_EN  1 //定时显示使能 
+#define HUMIDITY_SHOW_EN 1 //湿度显示使能
+#define NOISE_SHOW_EN  1 //噪音显示使能
 
 #define USE_SPI_FLASH //串行SPIFlash
 //#define USE_NOR_FLASH //并行NORFlash

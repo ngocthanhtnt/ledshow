@@ -19,24 +19,26 @@ INT8U Get_Color()
 //获取缓冲区中第Index位的值
 INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index)
 {
+#if DATA_CHK_EN
   if(Index >= (INT32U)Buf_Size * 8)
   {
     ASSERT_FAILED();
     return 0;
-  }
-  
+ }
+#endif
   return (Buf[Index >>3] & (0x01 << (Index & 0x07)))>0?1:0;
 }
 
 //设置缓冲区中第Index位的值
 void Set_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index, INT8U Value)
 {
+#if DATA_CHK_EN
   if(Index >= Buf_Size * 8)
   {
     ASSERT_FAILED();
     return;
   }
-  
+#endif  
   if(Value EQ 0)
     Buf[Index >>3] = (Buf[Index >>3] & (~(0x01 << (Index & 0x07))));
   else
@@ -248,36 +250,40 @@ INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y)
   
   if(Area_No < MAX_AREA_NUM)
   {
+#if DATA_CHK_EN
     if(X >= Prog_Para.Area[Area_No].X_Len ||\
        Y >= Prog_Para.Area[Area_No].Y_Len)
     {
       //ASSERT_FAILED();
       return 0;
     }
+#endif
   
     X += Prog_Para.Area[Area_No].X;
     Y += Prog_Para.Area[Area_No].Y;
-   
+
+#if DATA_CHK_EN   
     if(X >= Screen_Para.Base_Para.Width ||\
        Y >= Screen_Para.Base_Para.Height)
     {
       ASSERT_FAILED();
       return 0;
     }
-  
+#endif  
     //Index = (((Y>>3) * Screen_Para.Base_Para.Width) + X)*8 + (Y & 0x07);
     Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
     return Index; 
   }
   else if(Area_No EQ MAX_AREA_NUM) //表示整屏数据
   {
+#if DATA_CHK_EN
     if(X >= Screen_Para.Base_Para.Width ||\
        Y >= Screen_Para.Base_Para.Height)
     {
       ASSERT_FAILED();
       return 0;
     }
-  
+#endif  
     //Index = (((Y>>3) * Screen_Para.Base_Para.Width) + X)*8 + (Y & 0x07);
     Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
     return Index;  

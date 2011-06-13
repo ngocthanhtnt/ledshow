@@ -22,6 +22,7 @@
 
 #define CS_BYTES 1
 #define ROM_CS_BYTES 2
+#define DATA_CHK_EN 0
 
 #define MAX_LIGHTNESS_LEVEL 16 //最大亮度等级
 #define MAX_OPEN_CLOSE_TIME 4 //最大开关机时段
@@ -59,7 +60,7 @@
 //显示效果配置
 #define MOVE_STEP_PERIOD 40 //移动步进时间,单位为ms
 //#define MIN_STAY_TIME  10//每屏最小停留时间,单位为ms
-#define MOVE_STEP 2 //每个调度单位移动的数据百分比 单位%
+#define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
  
 
 #define IN_SPEC_EFFECT_NUM 45 //进入特效个数

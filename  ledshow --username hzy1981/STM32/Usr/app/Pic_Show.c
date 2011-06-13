@@ -3,6 +3,7 @@
 
 //#undef QT_EN
 //#define QT_EN 1
+extern void LED_Scan_One_Row(void);
 
 #if PIC_SHOW_EN
 //数据移入方式
@@ -566,7 +567,7 @@ INT8U Check_XXX_Data(INT8U Flag)
 
 void Update_Pic_Data(INT8U Area_No)
 {
-  //INT8U SNum;
+  INT8U i;
   INT8U In_Mode, Out_Mode;
   INT16U Area_Width, Area_Height;
   INT32U Stay_Time,In_Delay, Out_Delay;
@@ -719,14 +720,24 @@ void Update_Pic_Data(INT8U Area_No)
         }
 
         if(Prog_Status.Area_Status[Area_No].Stay_Time EQ MOVE_STEP_PERIOD ||\
-           Prog_Status.Area_Status[Area_No].Stay_Time % 500 EQ 0)//Sec.Var != Cur_Time.Time[T_SEC])//
+           Prog_Status.Area_Status[Area_No].Stay_Time % 800 EQ 0)//Sec.Var != Cur_Time.Time[T_SEC])//
         {
           //Sec.Var = Cur_Time.Time[T_SEC];
+		  
           P0.X = P0.Y = 0;
           Area_Width = Get_Area_Width(Area_No);
           Area_Height = Get_Area_Height(Area_No);
+
+		  //STOP_SCAN_TIMER();
+		  //for(i = 0; i < 16; i ++)
+		  //LED_Scan_One_Row();
+		  Update_XXX_Data(&Show_Data_Bak, Area_No);
           Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Area_Width, Area_Height, &Show_Data, &P0);
-          Update_XXX_Data(&Show_Data, Area_No);
+          //LED_Scan_One_Row();
+		  //Update_XXX_Data(&Show_Data, Area_No);
+		 // for(i = 0; i < 16; i ++)
+		  //LED_Scan_One_Row();
+		 // START_SCAN_TIMER();
         }
     }
 
