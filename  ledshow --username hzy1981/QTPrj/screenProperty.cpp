@@ -40,6 +40,7 @@ typedef struct
 const S_Scan_Mode scanMode[] =
 {
     {0, "1/16扫,左入直行一路带16行数据(P10常用)"},
+    {200, "1/16扫,右入直行一路带16行数据(P10常用)"},
 //----------1/8扫-------
     {1000, "1/8扫,左入直行一路带4行数据"},
     {1011, "1/8扫,左入每8点向下打折,打折1次"},
@@ -114,11 +115,16 @@ int getScanModeIndex(INT16U code)
 QString getScanCodeString(INT16U code)
 {
     int index = getScanModeIndex(code);
-
+/*
     if(code EQ 0)
       return "0000 " + QString(QObject::tr((const char *)scanMode[index].info));
     else
       return QString::number(code) + " " +  QString(QObject::tr((const char *)scanMode[index].info));
+*/
+
+    return  QString::number(code / 1000) + QString::number((code % 1000) /100) +\
+            QString::number((code % 100) / 10) + QString::number(code % 10) + QString(QObject::tr((const char *)scanMode[index].info));
+
 }
 
 INT16U getScanCodeFromScreenPara(S_Screen_Para &screenPara)
@@ -2004,69 +2010,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
 
    for(unsigned int i = 0; i < S_NUM(scanMode); i ++)
    {
-       //scanLine = (scanMode[i].code & 0xFF000000) >> 24;
-       //direct = (scanMode[i].code & 0x00FF0000) >> 16;
-       //rowsFold = (scanMode[i].code & 0x0000FF00) >> 8;
-       //colsFold = (scanMode[i].code & 0x000000FF);
-
        modeString.clear();
-
-       if(scanMode[i].code != 0)
-         modeString = QString::number(scanMode[i].code);
-       else
-         modeString = "0000";
-       //if(modeString.length() < 8)
-          // modeString = tr("0") + modeString;
-
-       modeString += tr(",");
-       /*
-       scanLine = (scanLine % 16) + (scanLine /16)*10;
-
-       if(scanLine EQ 16)
-       {
-          modeString += tr("1/16扫"); //lines = 16;
-       }
-       else if(scanLine EQ 8)
-       {
-          modeString += tr("1/8扫"); //lines = 8;
-       }
-       else if(scanLine EQ 4)
-       {
-           modeString += tr("1/4扫"); //lines = 4;
-       }
-       else if(scanLine EQ 2)
-       {
-           modeString += tr("1/2扫"); //lines = 2;
-       }
-       else if(scanLine EQ 1)
-       {
-           modeString += tr("静态扫"); //lines = 1;
-       }
-       else
-       {
-          modeString += tr("1/16扫"); //lines = 16;
-          scanLine = 16;
-       }
-
-       modeString += tr(",");
-
-       if(direct EQ 0)
-           modeString += tr("左上入");
-       else if(direct EQ 1)
-           modeString += tr("左下入");
-       else if(direct EQ 2)
-           modeString += tr("右上入");
-       else if(direct EQ 3)
-           modeString += tr("右下入");
-       else
-           modeString += tr("左上入");
-
-       modeString += tr(",");
-
-       modeString += tr("一组数据") + QString::number(rowsFold*scanLine) + tr("行,") +\
-                     QString::number(colsFold*8) + tr("列折");
-      */
-       modeString += QString(tr(scanMode[i].info));
+       modeString = getScanCodeString(scanMode[i].code);
        scanModeCombo->addItem(modeString);
    }
    //gridLayout->addWidget(scanModeLabel, 0, 0, 1, 1);
