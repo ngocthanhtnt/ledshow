@@ -1136,6 +1136,7 @@ void CshowArea::paintEvent(QPaintEvent *)
     //INT16S tmp;
     S_Screen_Para Screen_Para_Bak;
     S_Prog_Para Prog_Para_Bak;
+    int borderHeight = 0;
 
     //return;
 
@@ -1152,6 +1153,13 @@ void CshowArea::paintEvent(QPaintEvent *)
 
     if(areaType != 0)//0表示是分区
     {
+        if(filePara.Pic_Para.Border_Check > 0)
+        {
+            borderHeight = Get_Simple_Border_Height(filePara.Pic_Para.Border_Type);
+
+            Width = Width - borderHeight*2;
+            Height = Height - borderHeight*2;
+        }
 
 //测试画点
     /*
@@ -1240,8 +1248,11 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 
-            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X + borderHeight, P0.Y + borderHeight);
+
+            Set_Area_Border_Out(Area_No);
             Update_Clock_Data(&Show_Data_Bak, 0);
+            Set_Area_Border_In(Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_PIC) //显示图文
@@ -1268,7 +1279,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             }
             //getTextPageNum(area->smLineFlag, area->width(), area->height(), lineNum, linePosi, pagePosi);
 
-            getTextShowData(imageBk, &Show_Data, 0, 0);
+            getTextShowData(imageBk, &Show_Data, borderHeight, borderHeight);
         }
         else if(filePara.Temp_Para.Flag == SHOW_TIME)
         {
@@ -1286,8 +1297,10 @@ void CshowArea::paintEvent(QPaintEvent *)
             Get_Time_Text_Point(Area_No, Width, Height, P0);
             //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Time_Para.Text_Width, Prog_Status.File_Para[Area_No].Time_Para.Text_Height, &Show_Data, &P0);//&Point);
 
-            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X + borderHeight, P0.Y + borderHeight);
+            Set_Area_Border_Out(Area_No);
             Update_Time_Data(&Show_Data_Bak, Area_No);
+            Set_Area_Border_In(Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_TIMER) //计时器
@@ -1334,8 +1347,10 @@ void CshowArea::paintEvent(QPaintEvent *)
             Get_Timer_Text_Point(Area_No, Width, Height, P0);
 
             //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Timer_Para.Text_Width, Prog_Status.File_Para[Area_No].Timer_Para.Text_Height, &Show_Data, &P0);//&Point);
-            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X + borderHeight, P0.Y + borderHeight);
+            Set_Area_Border_Out(Area_No);
             Update_Timer_Data(&Show_Data_Bak, Area_No);
+            Set_Area_Border_In(Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_LUN) //显示农历
@@ -1354,15 +1369,17 @@ void CshowArea::paintEvent(QPaintEvent *)
             //Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Status.File_Para[Area_No].Lun_Para.Text_Width, Prog_Status.File_Para[Area_No].Lun_Para.Text_Height, &Show_Data, &P0);//&Point);
             Get_Lun_Text_Point(Area_No, Width, Height, P0);
 
-            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X + borderHeight, P0.Y + borderHeight);
+            Set_Area_Border_Out(Area_No);
             Update_Lun_Data(&Show_Data_Bak, Area_No);
+            Set_Area_Border_In(Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_FLASH) //显示动画
         {
             P0.X = P0.Y = 0;
             QImage image = imageBk.scaled(Width,Height);//size());
-            getFlashShowData(image, &Show_Data, Area_No, P0.X, P0.Y);
+            getFlashShowData(image, &Show_Data, Area_No, P0.X + borderHeight, P0.Y + borderHeight);
             //Update_Lun_Data(Area_No);
         }
         else if(filePara.Temp_Para.Flag == SHOW_TEMP) //显示温度
@@ -1376,8 +1393,10 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             Get_Temp_Text_Point(Area_No, Width, Height, P0);
 
-            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X + borderHeight, P0.Y + borderHeight);
+            Set_Area_Border_Out(Area_No);
             Update_Temp_Data(&Show_Data_Bak, Area_No);
+            Set_Area_Border_In(Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_HUMIDITY) //显示温度
@@ -1391,8 +1410,10 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             Get_Humidity_Text_Point(Area_No, Width, Height, P0);
 
-            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X + borderHeight, P0.Y + borderHeight);
+            Set_Area_Border_Out(Area_No);
             Update_Humidity_Data(&Show_Data_Bak, Area_No);
+            Set_Area_Border_In(Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
         else if(filePara.Temp_Para.Flag == SHOW_NOISE) //显示温度
@@ -1406,8 +1427,10 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             Get_Noise_Text_Point(Area_No, Width, Height, P0);
 
-            getTextShowData(imageBk, &Show_Data_Bak, P0.X, P0.Y);
+            getTextShowData(imageBk, &Show_Data_Bak, P0.X + borderHeight, P0.Y + borderHeight);
+            Set_Area_Border_Out(Area_No);
             Update_Noise_Data(&Show_Data_Bak, Area_No);
+            Set_Area_Border_In(Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
         }
 
@@ -1426,6 +1449,9 @@ void CshowArea::paintEvent(QPaintEvent *)
 
         memcpy(showData.Color_Data, Show_Data.Color_Data, sizeof(Show_Data.Color_Data));
     }
+
+   Width = Width + borderHeight*2;
+   Height = Height + borderHeight*2;
 
     for(j=0; j<Height; j++)
     {

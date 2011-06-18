@@ -47,7 +47,7 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 128);
   cardIniFile.setValue("FontNum", 1);
-  cardIniFile.setValue("inModeNum", 20);
+  cardIniFile.setValue("inModeNum", 45);
   cardIniFile.setValue("outModeNum", 20);
   cardIniFile.setValue("romSize", 2048);
   cardIniFile.setValue("fileEnWord", 0xFF);

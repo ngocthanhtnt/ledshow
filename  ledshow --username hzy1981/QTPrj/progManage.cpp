@@ -1408,6 +1408,7 @@ void CprogManage::settingsInit()
 
     saveCurItem((QTreeWidgetItem *)0xFFFFFFFF);
     clickItem(treeWidget->topLevelItem(0), 0);
+    mainObj->emitScreenChangeSignal();
 }
 
 //获取当前settings的str

@@ -53,6 +53,7 @@ typedef char INT8S;
 #define STOP_SHOW_TIMER_INT
 
 #define debug qDebug
+#define Unselect_SPI_Device()
 
 typedef struct
 {
