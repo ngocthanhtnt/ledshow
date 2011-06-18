@@ -1283,7 +1283,7 @@ int getSLineTextPageNum(QString str, int w)
     int num = 0, blockPageNum = 0;
     for(int i = 0; i < edit.document()->blockCount(); i ++)
     {
-      int width =edit.document()->findBlockByNumber(i).layout()->boundingRect().width() - TEXT_LEFT_BORDER_WIDTH  - TEXT_RIGHT_BORDER_WIDTH;
+      int width =edit.document()->findBlockByNumber(i).layout()->boundingRect().width();// - TEXT_LEFT_BORDER_WIDTH  - TEXT_RIGHT_BORDER_WIDTH;
 
       if((width % w) == 0)
           blockPageNum = width / w;
@@ -1318,7 +1318,7 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
 
     QImage image(edit.width(), edit.height(),QImage::Format_RGB32);
     edit.render(&image);
-    //image.save("d:\\slinetext.png");
+    image.save("d:\\slinetext.png");
 
     //edit.document()->findBlockByNumber(0).clearLayout();
 
@@ -1329,7 +1329,7 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
 
       layout = edit.document()->findBlockByNumber(i).layout();
 
-      int width = layout->boundingRect().width() - TEXT_LEFT_BORDER_WIDTH - TEXT_RIGHT_BORDER_WIDTH;
+      int width = layout->boundingRect().width();// - TEXT_LEFT_BORDER_WIDTH - TEXT_RIGHT_BORDER_WIDTH;
       int height = layout->boundingRect().height();// - LINE_POSI_ADJ;
 
       //int diff = edit.document()->findBlockByNumber(i + 1).layout()->position().y() - layout->position().y();

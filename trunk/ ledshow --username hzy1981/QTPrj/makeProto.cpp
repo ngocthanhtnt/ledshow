@@ -208,6 +208,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
     S_Screen_Para screenParaBak;
     S_Prog_Para progParaBak;
     int len = 0;
+    int borderHeight = 0;
 
     type = checkStrType(fileStr);
 
@@ -222,6 +223,18 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
     filePara.Pic_Para.Prog_No = Prog_No;
     filePara.Pic_Para.Area_No = Area_No;
     filePara.Pic_Para.File_No = File_No;
+
+
+    getBorderParaFromeSettings(fileStr, filePara);
+
+    if(filePara.Pic_Para.Border_Check > 0)
+    {
+        //INT8U Type = filePara.Pic_Para.Border_Type;
+        borderHeight = Get_Simple_Border_Height(filePara.Pic_Para.Border_Type);//Simple_Border_Data[Type].Height;//Get_Area_Border_Height(Area_No);
+
+        width = width - borderHeight*2;
+        height = height - borderHeight*2;
+    }
 
     //getBorderParaFromeSettings(fileStr, filePara);// 获取边框参数
 
@@ -282,7 +295,15 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
            //转换图形数据到protoShowData中
           memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
+          //Set_Area_Border_Out(0);
+
+          Screen_Para.Base_Para.Width -=  2*borderHeight; //getTextShowData函数需要使用到屏幕宽度，高度等，因此需要重置改参数
+          Screen_Para.Base_Para.Height -= 2*borderHeight;
+
           getTextShowData(imageBk, &protoShowData, 0, 0);
+
+          Screen_Para.Base_Para.Width +=  2*borderHeight;
+          Screen_Para.Base_Para.Height += 2*borderHeight;
 /*
           if(height % 8 EQ 0)
              tmpLen = width * height/ 8;
@@ -314,8 +335,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
         S_Point Point;
         Get_Clock_Text_Point(width, height, &filePara.Clock_Para, &Point);
-        filePara.Clock_Para.Text_X = Point.X;
-        filePara.Clock_Para.Text_Y = Point.Y;
+        filePara.Clock_Para.Text_X = Point.X + borderHeight;
+        filePara.Clock_Para.Text_Y = Point.Y + borderHeight;
 
         memcpy(buf, (char *)&filePara.Clock_Para.Head + 1, sizeof(S_Clock_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Clock_Para) - CHK_BYTE_LEN;
@@ -342,8 +363,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
         S_Point P0;
         Get_Lun_Text_Point(0, width, height, P0);
-        filePara.Lun_Para.Text_X = P0.X;
-        filePara.Lun_Para.Text_Y = P0.Y;
+        filePara.Lun_Para.Text_X = P0.X + borderHeight;
+        filePara.Lun_Para.Text_Y = P0.Y + borderHeight;
 
         memcpy(buf, (char *)&filePara.Lun_Para.Head + 1, sizeof(S_Lun_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Lun_Para) - CHK_BYTE_LEN;
@@ -371,8 +392,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
         S_Point P0;
         Get_Time_Text_Point(0, width, height, P0);
-        filePara.Time_Para.Text_X = P0.X;
-        filePara.Time_Para.Text_Y = P0.Y;
+        filePara.Time_Para.Text_X = P0.X + borderHeight;
+        filePara.Time_Para.Text_Y = P0.Y + borderHeight;
         memcpy(buf, (char *)&filePara.Time_Para.Head + 1, sizeof(S_Time_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Time_Para) - CHK_BYTE_LEN;
 
@@ -398,8 +419,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
         S_Point P0;
         Get_Temp_Text_Point(0, width, height, P0);
-        filePara.Temp_Para.Text_X = P0.X;
-        filePara.Temp_Para.Text_Y = P0.Y;
+        filePara.Temp_Para.Text_X = P0.X + borderHeight;
+        filePara.Temp_Para.Text_Y = P0.Y + borderHeight;
         memcpy(buf, (char *)&filePara.Temp_Para.Head + 1, sizeof(S_Temp_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Temp_Para) - CHK_BYTE_LEN;
 
@@ -426,8 +447,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
         S_Point P0;
         Get_Humidity_Text_Point(0, width, height, P0);
-        filePara.Humidity_Para.Text_X = P0.X;
-        filePara.Humidity_Para.Text_Y = P0.Y;
+        filePara.Humidity_Para.Text_X = P0.X + borderHeight;
+        filePara.Humidity_Para.Text_Y = P0.Y + borderHeight;
         memcpy(buf, (char *)&filePara.Humidity_Para.Head + 1, sizeof(S_Humidity_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Humidity_Para) - CHK_BYTE_LEN;
 
@@ -454,8 +475,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
         S_Point P0;
         Get_Noise_Text_Point(0, width, height, P0);
-        filePara.Noise_Para.Text_X = P0.X;
-        filePara.Noise_Para.Text_Y = P0.Y;
+        filePara.Noise_Para.Text_X = P0.X + borderHeight;
+        filePara.Noise_Para.Text_Y = P0.Y + borderHeight;
         memcpy(buf, (char *)&filePara.Noise_Para.Head + 1, sizeof(S_Noise_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Noise_Para) - CHK_BYTE_LEN;
 
@@ -482,8 +503,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
         S_Point P0;
         Get_Timer_Text_Point(0, width, height, P0);
-        filePara.Timer_Para.Text_X = P0.X;
-        filePara.Timer_Para.Text_Y = P0.Y;
+        filePara.Timer_Para.Text_X = P0.X + borderHeight;
+        filePara.Timer_Para.Text_Y = P0.Y + borderHeight;
         memcpy(buf, (char *)&filePara.Timer_Para.Head + 1, sizeof(S_Timer_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Timer_Para) - CHK_BYTE_LEN;
 
