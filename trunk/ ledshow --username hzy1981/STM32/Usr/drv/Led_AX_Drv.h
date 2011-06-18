@@ -46,19 +46,19 @@
 #define CHK_ENC28J60_INT() (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_15):GPIO_SetBits(GPIOB,GPIO_Pin_15)
 */
 //A-PB6
-#define SET_A(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_6):GPIO_SetBits(GPIOB,GPIO_Pin_6) //do{if(x==0) GPIO_ResetBits(GPIOB,GPIO_Pin_6); else GPIO_SetBits(GPIOB,GPIO_Pin_6);}while(0)//
+#define SET_A(x)  (x == 0)?(GPIOB->BRR = GPIO_Pin_6):(GPIOB->BSRR = GPIO_Pin_6)//GPIO_ResetBits(GPIOB,GPIO_Pin_6):GPIO_SetBits(GPIOB,GPIO_Pin_6) //do{if(x==0) GPIO_ResetBits(GPIOB,GPIO_Pin_6); else GPIO_SetBits(GPIOB,GPIO_Pin_6);}while(0)//
 //B-PB7
-#define SET_B(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_7):GPIO_SetBits(GPIOB,GPIO_Pin_7)
+#define SET_B(x)  (x == 0)?(GPIOB->BRR = GPIO_Pin_7):(GPIOB->BSRR = GPIO_Pin_7)//GPIO_ResetBits(GPIOB,GPIO_Pin_7):GPIO_SetBits(GPIOB,GPIO_Pin_7)
 //C-PB8
-#define SET_C(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_8):GPIO_SetBits(GPIOB,GPIO_Pin_8)
+#define SET_C(x)  (x == 0)?(GPIOB->BRR = GPIO_Pin_8):(GPIOB->BSRR = GPIO_Pin_8)//GPIO_ResetBits(GPIOB,GPIO_Pin_8):GPIO_SetBits(GPIOB,GPIO_Pin_8)
 //D-PB9
-#define SET_D(x)  (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_9):GPIO_SetBits(GPIOB,GPIO_Pin_9)
+#define SET_D(x)  (x == 0)?(GPIOB->BRR = GPIO_Pin_9):(GPIOB->BSRR = GPIO_Pin_9)//GPIO_ResetBits(GPIOB,GPIO_Pin_9):GPIO_SetBits(GPIOB,GPIO_Pin_9)
 //LAT-STB-PA0
-#define SET_LAT(x) (x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_0):GPIO_SetBits(GPIOA,GPIO_Pin_0)
+#define SET_LAT(x) (x == 0)?(GPIOA->BRR = GPIO_Pin_0):(GPIOA->BSRR = GPIO_Pin_0)//GPIO_ResetBits(GPIOA,GPIO_Pin_0):GPIO_SetBits(GPIOA,GPIO_Pin_0)
 //OE-PB0
-#define SET_OE(x) (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_0):GPIO_SetBits(GPIOB,GPIO_Pin_0)
+#define SET_OE(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_0):(GPIOB->BSRR = GPIO_Pin_0)//GPIO_ResetBits(GPIOB,GPIO_Pin_0):GPIO_SetBits(GPIOB,GPIO_Pin_0)
 //CLK-PA1
-#define SET_CLK(x) (x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_1):GPIO_SetBits(GPIOA,GPIO_Pin_1)
+#define SET_CLK(x) (x == 0)?(GPIOA->BRR = GPIO_Pin_1):(GPIOA->BSRR = GPIO_Pin_1)//GPIO_ResetBits(GPIOA,GPIO_Pin_1):GPIO_SetBits(GPIOA,GPIO_Pin_1)
 //R1-PB2
 #define SET_R1(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_2):(GPIOB->BSRR = GPIO_Pin_2)
 //R2-PB12					  

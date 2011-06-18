@@ -84,7 +84,10 @@ INT8U Get_Open_Close_Status(S_Time *pTime)
 //亮度控制
 void Screen_Lightness_Proc(void)
 {
-  Screen_Status.Lightness = Get_Cur_Time_Lightness(&Cur_Time);  
+   INT8U Lightness;
+
+   Lightness = Get_Cur_Time_Lightness(&Cur_Time); 
+   Screen_Status.Lightness = 100 * Lightness / (MAX_LIGHTNESS_LEVEL - 1); //转化为百分数
   
 }
 

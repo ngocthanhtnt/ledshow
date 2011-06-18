@@ -38,6 +38,67 @@
 #define CHK_JP_STATUS0  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)
 #define CHK_JP_STATUS1  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_14)
  
+// 把“位带地址＋位序号”转换别名地址宏 
+#define BITBAND(addr, bitnum) ((addr & 0xF0000000)+0x2000000+((addr &0xFFFFF)<<5)+(bitnum<<2)) 
+//把该地址转换成一个指针 
+#define MEM_ADDR(addr)  *((volatile unsigned long  *)(addr)) 
+// MEM_ADDR(BITBAND( (u32)&CRCValue,1)) = 0x1; 
+/*
+#define SET_SHIFT_BIT(Block, Data, i) do{\
+     if(Block EQ 0)\
+	 {\
+	   SET_R1(MEM_ADDR(BITBAND((INT32U)&Data[0], i)));\
+	   SET_G1(MEM_ADDR(BITBAND((INT32U)&Data[1], i)));\
+	   SET_B1(MEM_ADDR(BITBAND((INT32U)&Data[2], i)));\
+	 }\
+	 else if(Block EQ 1)\
+	 { \
+	   SET_R2(MEM_ADDR(BITBAND((INT32U)&Data[0], i)));\
+	   SET_G2(MEM_ADDR(BITBAND((INT32U)&Data[1], i)));\
+	   SET_B2(MEM_ADDR(BITBAND((INT32U)&Data[2], i)));\
+	 }\
+	 else if(Block EQ 2)\
+	 {\
+	   SET_R3(MEM_ADDR(BITBAND((INT32U)&Data[0], i)));\
+	   SET_G3(MEM_ADDR(BITBAND((INT32U)&Data[1], i)));\
+	   SET_B3(MEM_ADDR(BITBAND((INT32U)&Data[2], i)));\
+	 }\
+	 else if(Block EQ 3)\
+	 {\
+	   SET_R4(MEM_ADDR(BITBAND((INT32U)&Data[0], i)));\
+	   SET_G4(MEM_ADDR(BITBAND((INT32U)&Data[1], i)));\
+	   SET_B4(MEM_ADDR(BITBAND((INT32U)&Data[2], i)));\
+	 }\
+	 else if(Block EQ 4)\
+	 {\
+	   SET_R5(MEM_ADDR(BITBAND((INT32U)&Data[0], i)));\
+	   SET_G5(MEM_ADDR(BITBAND((INT32U)&Data[1], i)));\
+	   SET_B5(MEM_ADDR(BITBAND((INT32U)&Data[2], i)));\
+	 }\
+	 else if(Block EQ 5)\
+	 {\
+	   SET_R6(MEM_ADDR(BITBAND((INT32U)&Data[0], i)));\
+	   SET_G6(MEM_ADDR(BITBAND((INT32U)&Data[1], i)));\
+	   SET_B6(MEM_ADDR(BITBAND((INT32U)&Data[2], i)));\
+	 }\
+	 else if(Block EQ 6)\
+	 {\
+	   SET_R7(MEM_ADDR(BITBAND((INT32U)&Data[0], i)));\
+	   SET_G7(MEM_ADDR(BITBAND((INT32U)&Data[1], i)));\
+	   SET_B7(MEM_ADDR(BITBAND((INT32U)&Data[2], i)));\
+	 }\
+	 else if(Block EQ 7)\
+	 {\
+	   SET_R8(MEM_ADDR(BITBAND((INT32U)&Data[0], i)));\
+	   SET_G8(MEM_ADDR(BITBAND((INT32U)&Data[1], i)));\
+	   SET_B8(MEM_ADDR(BITBAND((INT32U)&Data[2], i)));\
+	 }\
+	 else\
+	 {\
+       ASSERT_FAILED();\
+	 }\
+}while(0);
+*/
 #define SET_SHIFT_BIT(Block, Data, i) do{\
      if(Block EQ 0)\
 	 {\
@@ -111,7 +172,8 @@ EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
 EXT void ReInit_Mem_Port(void);
 #endif
 
-EXT void Delay_Init(void);
+EXT void RCC_Configuration(void);
+EXT void SysTick_Configuration(void);
 EXT void Delay_ms(INT16U nms);
 EXT void Delay_us(INT32U nus);
 EXT void Delay_sec(INT16U sec);
@@ -126,7 +188,6 @@ EXT void TIM3_Configuration(void);
 EXT void SPI1_FLASH_Init(void);
 EXT void SPI1_CH376_Init(void);
 EXT void Set_Block_OE_En(INT8U Value);
-EXT void Set_Block_Row(INT8U Row);
 EXT INT8U Chk_JP_Status(void);
 EXT void UART2_Init(void); //串口2初始化
 EXT void Com_Send_Byte(INT8U Ch, INT8U Data);
