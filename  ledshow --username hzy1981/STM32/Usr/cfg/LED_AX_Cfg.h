@@ -1,11 +1,29 @@
 #ifndef LED_AX_CFG_H
 #define LED_AX_CFG_H
-
+						 
 #define CARD_SUB_A0 0x00
 #define CARD_SUB_A1 0x01
 #define CARD_SUB_A2 0x02
 
 #define CARD_SUB_TYPE CARD_SUB_A0 //AX系列子卡类型
+
+ //-------------------时钟相关配置---------------
+#define HSE_VALUE 16000000 //外部晶振频率
+#define HCLK_VALUE  HSE_VALUE*8
+#define H_HCLK_VALUE HSE_VALUE*16
+#define PCLK1_VALUE HCLK_VALUE/2
+#define PCLK2_VALUE	HCLK_VALUE/2
+
+#define HCLK_MUL  RCC_PLLMul_8	//正常运行时AHB速度
+#define PCLK1_DIV RCC_HCLK_Div2 //最高APB/2--这是正常运行时速度,这里不能为DIV1，因为定时器使用的分频系数默认PCLK1分频>1
+#define PCLK2_DIV RCC_HCLK_Div2 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/4不能超过24M
+
+#define H_HCLK_MUL  RCC_PLLMul_16  //高速运行时AHB速度
+#define H_PCLK1_DIV RCC_HCLK_Div4 //高速运行时APB1速度--确保和正常运行时保持一致，这样就不需要调整各外设的Clock 
+#define H_PCLK2_DIV RCC_HCLK_Div4 //高速运行时APB2速度--确保和正常运行时保持一致，这样就不需要调整各外设的Clock 
+
+
+//----------------------------------------
 
 #define CARD_NAME "CARD_A0"  //卡名称
 
@@ -17,7 +35,7 @@
 #define FONT_NUM 1 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
-#define MAX_POINTS (128*32L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
+#define MAX_POINTS (512*56L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
 #define MAX_BLOCK_NUM  4000 //最大存储块数
 #define MAX_SCAN_BLOCK_NUM 4 //最大扫描块
 

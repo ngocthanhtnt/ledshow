@@ -30,6 +30,8 @@ typedef struct
 
 extern const S_Mode_Func In_Mode_Func[];
 extern const S_Mode_Func Out_Mode_Func[];
+EXT void Set_Area_Border_In(INT8U Area_No);
+EXT void Set_Area_Border_Out(INT8U Area_No);
 EXT void Update_Pic_Data(INT8U Area_No);
 EXT INT8U Check_XXX_Data(INT8U Flag);
 #endif

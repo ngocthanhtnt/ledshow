@@ -3,18 +3,6 @@
 
 #if CARD_TYPE == CARD_AX
 
-
-void RCC_Configuration()
-{
-  //SystemInit();
-  //------打开外设时钟1和2-----------
-  //RCC_APB1PeriphClockCmd(RCC_APB1Periph_ALL, ENABLE);
-  //RCC_APB2PeriphClockCmd(RCC_APB2Periph_ALL, ENABLE);
-  //RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2 | RCC_APB1Periph_TIM3 | RCC_APB1Periph_TIM4, ENABLE);  
-  //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB  | RCC_APB2Periph_AFIO, ENABLE);  //使能GPIO外设和AFIO复用功能模块时钟使能
-
-}
-
  //IO口初始化 -只需初始化完全作为IO口用的引脚，其他复用的引脚在相应的功能模块中初始化
 void GPIO_Configuration()
 {
@@ -134,23 +122,11 @@ void Set_Block_Latch(INT8U Value)
 
 
 
-
-void Set_OE_Duty(INT8U Duty)
-{
-
-
-}
-
-void Set_OE_Polarity(INT8U flag)
-{
-
-
-}
-
 void Hardware_Init(void)
 {
   RCC_Configuration();
 
+  SysTick_Configuration();
   NVIC_Configuration();
 
   GPIO_Configuration();

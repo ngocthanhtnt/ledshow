@@ -565,6 +565,34 @@ INT8U Check_XXX_Data(INT8U Flag)
       return 0;
 }
 
+void Set_Area_Border_Out(INT8U Area_No)
+{
+    INT8U Border_Height;
+
+  if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check)
+    {
+      Border_Height = Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
+      Prog_Para.Area[Area_No].X +=Border_Height;
+      Prog_Para.Area[Area_No].Y +=Border_Height;
+      Prog_Para.Area[Area_No].X_Len -=2*Border_Height;
+      Prog_Para.Area[Area_No].Y_Len -=2*Border_Height;
+  }
+}
+
+void Set_Area_Border_In(INT8U Area_No)
+{
+     INT8U Border_Height;
+
+    if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check)
+      {
+        Border_Height = Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
+        Prog_Para.Area[Area_No].X -=Border_Height;
+        Prog_Para.Area[Area_No].Y -=Border_Height;
+        Prog_Para.Area[Area_No].X_Len +=2*Border_Height;
+        Prog_Para.Area[Area_No].Y_Len +=2*Border_Height;
+    }
+}
+
 void Update_Pic_Data(INT8U Area_No)
 {
   INT8U i;
@@ -642,7 +670,11 @@ void Update_Pic_Data(INT8U Area_No)
           //---------
 
           if(Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag))
+          {
+            Set_Area_Border_Out(Area_No);
             Update_XXX_Data(&Show_Data_Bak, Area_No);
+            Set_Area_Border_In(Area_No);
+          }
       }
 
 
@@ -671,7 +703,9 @@ void Update_Pic_Data(INT8U Area_No)
         //----------------
         //Prog_Status.Area_Status[Area_No].Restore_Border_Flag = 0;//可以更新
         //-----------------
+        Set_Area_Border_Out(Area_No);
         (*(In_Mode_Func[In_Mode].Func))(Area_No);//执行移动操作
+        Set_Area_Border_In(Area_No);
 
         TRACE();
 
@@ -733,7 +767,9 @@ void Update_Pic_Data(INT8U Area_No)
 		  //STOP_SCAN_TIMER();
 		  //for(i = 0; i < 16; i ++)
 		  //LED_Scan_One_Row();
-		  Update_XXX_Data(&Show_Data_Bak, Area_No);
+          Set_Area_Border_Out(Area_No);
+          Update_XXX_Data(&Show_Data_Bak, Area_No);
+          Set_Area_Border_In(Area_No);
           Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Area_Width, Area_Height, &Show_Data, &P0);
           //LED_Scan_One_Row();
 		  //Update_XXX_Data(&Show_Data, Area_No);
@@ -810,7 +846,10 @@ void Update_Pic_Data(INT8U Area_No)
                 //---------
                 Prog_Status.Area_Status[Area_No].Step = Prog_Status.Area_Status[Area_No].Out_Step;
                 Prog_Status.Area_Status[Area_No].Max_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
+
+                Set_Area_Border_Out(Area_No);
                 (*(Out_Mode_Func[Out_Mode].Func))(Area_No);//执行移动操作
+                Set_Area_Border_In(Area_No);
 
                 TRACE();
 

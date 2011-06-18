@@ -305,13 +305,14 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
            ((Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 2 && Prog_Status.File_Para[Area_No].Pic_Para.In_Mode <= 7) ||\
             Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode EQ 1))
 */
+
         if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check > 0)
         {
             //Prog_Status.Area_Status[Area_No].Restore_Border_Flag = 1;
             //Restore_Border_Data(Area_No);
             Clr_Border(&Show_Data, Area_No, Get_Area_Border_Width(Area_No), Get_Area_Border_Height(Area_No));
         }
-
+ 
     #if DATA_PREP_EN
         if(GET_VAR(Prep_Data.Para_Prog_No[Area_No]) EQ Prog_Status.Play_Status.Prog_No &&\
            GET_VAR(Prep_Data.Para_File_No[Area_No]) EQ Prog_Status.Area_Status[Area_No].File_No &&\
@@ -379,7 +380,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
           SET_SUM(Prog_Status.Area_Status[Area_No]);
           return 0;
       }
-
+/*
       //在连续移动的情况下,在更新新一屏以前,必须将之前屏幕的边框数据恢复,否则边框会出现在移动的图像中
       if(Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 2 &&\
          Prog_Status.File_Para[Area_No].Pic_Para.In_Mode <= 7)
@@ -388,6 +389,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
           Restore_Border_Data(Area_No);
 		  //Clr_Border(&Show_Data, Area_No, Get_Area_Border_Width(Area_No), Get_Area_Border_Height(Area_No));
       }
+*/
       //读出显示数据
       //Prog_Status.Area_Status[Area_No].Play_Flag = 0; //--读取显示数据过程中将播放标志置0，从而中断程序中不播放
       //SET_SUM(Prog_Status.Area_Status[Area_No]);
@@ -1270,25 +1272,28 @@ void Self_Test(INT8U Mode)
   //--------------扫描方式检测---------------
   Read_Screen_Para();
 
+  //return;
   //-----------
-  Screen_Para.Base_Para.Width = 64;
-  Screen_Para.Base_Para.Height = 32;
+  Screen_Para.Base_Para.Width = 1024;
+  Screen_Para.Base_Para.Height = 64;
   Screen_Para.Scan_Para.Cols_Fold = 0;
   Screen_Para.Scan_Para.Rows_Fold = 0;
   Screen_Para.Scan_Para.Rows = 16;
   Screen_Para.Scan_Para.Direct = 0x02;
-  Screen_Para.Base_Para.Color = 0x01;
+  Screen_Para.Base_Para.Color = 0x03;
   SET_SUM(Screen_Para);
 
-  return;
+  Screen_Status.Open_Flag = 1;
+
+  
   //---------------
-  Set_RT_Show_Area(32, 16);
-  memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
+  Set_RT_Show_Area(1024, 64);
+  memset(Show_Data.Color_Data, 0x55, sizeof(Show_Data.Color_Data));
 
   while(1)
   {
     RT_Play_Status_Enter(2);
-    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%d%d%d%d", 1, 2, 3, 4);
+    //LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%d%d%d%d", 1, 2, 3, 4);
     //memset(Show_Data.Color_Data, 0x01, sizeof(Show_Data.Color_Data));
    
     for(n = 0; n < 20; n ++)
@@ -1371,7 +1376,7 @@ void Self_Test(INT8U Mode)
  //工厂状态自检
  void Fac_Status_Self_Test(void)
  {
-
+   
   if(Chk_JP_Status() != SELF_TEST_STATUS)
     return;
 

@@ -1,9 +1,62 @@
 #define STM32_C
 #include "Includes.h"
 
+extern void Set_Clock_Normal_Speed(void);
+extern void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity);
+
 void Clr_Watch_Dog(void)
 {
 
+}
+
+/*******************************************************************************
+* Function Name : RCC_Configuration     复位时钟控制配置
+* Description    : Configures the different system clocks.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void RCC_Configuration(void)
+{
+    RCC_ClocksTypeDef RCC_Clocks;
+	/* system clocks configuration -----------------系统时钟配置-------------------*/
+	/* RCC system reset(for debug purpose) */
+	RCC_DeInit();                                    //将外设RCC寄存器重设为缺省值
+	/* Enable HSE */
+#if HSE_VALUE > 16000000
+	RCC_HSEConfig(RCC_HSE_Bypass);                    //开启外部高速晶振（HSE）
+#else
+    RCC_HSEConfig(RCC_HSE_ON);                    //开启外部高速晶振（HSE）
+#endif	
+	/* Wait till HSE is ready */ 
+	//HSEStartUpStatus = RCC_WaitForHSEStartUp();    //等待HSE起振
+	if(RCC_WaitForHSEStartUp() == SUCCESS)               //若成功起振，（下面为系统总线时钟设置）
+	{
+		/* Enable Prefetch Buffer */
+		FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable); //使能FLASH预取指缓存
+		/* Flash 2 wait state */
+		FLASH_SetLatency(FLASH_Latency_2);   //设置FLASH存储器延时时钟周期数(根据不同的系统时钟选取不同的值)
+		
+		RCC_HCLKConfig(RCC_SYSCLK_Div1);   //设置AHB分频系数为1
+	    Set_Clock_Normal_Speed();
+	}
+
+	RCC_GetClocksFreq(&RCC_Clocks);
+/*
+  uint32_t SYSCLK_Frequency; 
+  uint32_t HCLK_Frequency;   
+  uint32_t PCLK1_Frequency;   
+  uint32_t PCLK2_Frequency; 
+  uint32_t ADCCLK_Frequency;
+*/
+	if(RCC_Clocks.SYSCLK_Frequency != HCLK_VALUE ||\
+	   RCC_Clocks.HCLK_Frequency != HCLK_VALUE ||\
+	   RCC_Clocks.PCLK1_Frequency != PCLK1_VALUE ||\
+	   RCC_Clocks.PCLK2_Frequency != PCLK2_VALUE)
+	{
+	  ASSERT_FAILED();
+	  while(1);
+	}
 }
 
 //static INT8U  fac_us=0;//us延时倍乘数
@@ -11,7 +64,7 @@ void Clr_Watch_Dog(void)
 //初始化延迟函数
 //SYSTICK的时钟固定为HCLK时钟的1/8
 //SYSCLK:系统时钟
-void Delay_Init(void)
+void SysTick_Configuration(void)
 {
 	SysTick->CTRL&=0xfffffffb;//bit2清空,选择外部时钟  HCLK/8
 	//fac_us=SYSCLK/8;		    
@@ -25,9 +78,10 @@ void Delay_Init(void)
 //对72M条件下,nms<=1864 
 void Delay_ms(INT16U nms)
 {	 		  	  
-	INT32U temp;		   
+	INT32U temp;
+			   
 	//SysTick->LOAD=(u32)nms*fac_ms;//时间加载(SysTick->LOAD为24bit)
-	SysTick->LOAD=(u32)nms*(SystemCoreClock / 8000000) * 1000;
+	SysTick->LOAD=(u32)nms*(HCLK_VALUE / 8000000) * 1000;
 	SysTick->VAL =0x00;           //清空计数器
 	SysTick->CTRL=0x01 ;          //开始倒数  
 	do
@@ -44,7 +98,7 @@ void Delay_us(INT32U nus)
 {		
 	INT32U temp;	    	 
 	//SysTick->LOAD=nus*fac_us; //时间加载	  		 
-	SysTick->LOAD=nus*(SystemCoreClock / 8000000);;
+	SysTick->LOAD=nus*(HCLK_VALUE / 8000000);;
 	SysTick->VAL=0x00;        //清空计数器
 	SysTick->CTRL=0x01 ;      //开始倒数 	 
 	do
@@ -137,7 +191,7 @@ void SPI1_FLASH_Init(void)
   SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
   SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
   SPI_InitStructure.SPI_CRCPolynomial = 7;
   SPI_Init(SPI1, &SPI_InitStructure);
@@ -255,10 +309,13 @@ void NVIC_Configuration(void)
 //定时器中断，用于直接扫描屏
 void TIM2_Configuration(void)
 {
+    //RCC_ClocksTypeDef RCC_Clocks;
+//void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	/* TIM2 clock enable */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
-	
+
+    //RCC_GetClocksFreq(&RCC_Clocks);	
 	
 	/* ---------------------------------------------------------------
 	TIM2CLK 即PCLK1=36MHz
@@ -266,7 +323,7 @@ void TIM2_Configuration(void)
 	--------------------------------------------------------------- */
 	/* Time base configuration */
 	TIM_TimeBaseStructure.TIM_Period = SCAN_SCREEN_PERIOD * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
-	TIM_TimeBaseStructure.TIM_Prescaler =(SystemCoreClock/10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
@@ -290,18 +347,19 @@ void TIM2_Configuration(void)
 //定时器中断，用于实现特效，定时从备份显示数据区复制到数据区
 void TIM4_Configuration(void)
 {
+    //RCC_ClocksTypeDef RCC_Clocks;
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	/* TIM4 clock enable */
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	
-	
+	//RCC_GetClocksFreq(&RCC_Clocks);
 	/* ---------------------------------------------------------------
 	TIM4CLK 即PCLK1=36MHz
 	TIM4CLK = 36 MHz, Prescaler = 7200, TIM4 counter clock = 5K,即改变一次为5K,周期就为10K
 	--------------------------------------------------------------- */
 	/* Time base configuration */
 	TIM_TimeBaseStructure.TIM_Period = MOVE_STEP_PERIOD * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
-	TIM_TimeBaseStructure.TIM_Prescaler =(SystemCoreClock/10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
 	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
@@ -322,9 +380,12 @@ void TIM4_Configuration(void)
 
 }
 
+//设置OE占空比和极性
+
 //用于OE-PWM输出.
 void TIM3_Configuration(void)
 {
+    //RCC_ClocksTypeDef RCC_Clocks;
  	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	TIM_OCInitTypeDef  TIM_OCInitStructure = {0};
 	GPIO_InitTypeDef GPIO_InitStructure = {0};
@@ -341,8 +402,8 @@ void TIM3_Configuration(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB  | RCC_APB2Periph_AFIO, ENABLE);  //使能GPIO外设和AFIO复用功能模块时钟使能
 
 	//PB0的输出口
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; 
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	//GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; 
+	//GPIO_Init(GPIOB, &GPIO_InitStructure);
 	
 	//PB0作为OE-PWM输出
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //TIM_CH3
@@ -365,7 +426,7 @@ void TIM3_Configuration(void)
 	TIM3CLK = 36 MHz, Prescaler = 0, TIM3 counter clock = 36MHz
 	--------------------------------------------------------------- */
 	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = (SystemCoreClock / OE_PWM_FREQ); //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 80K
+	TIM_TimeBaseStructure.TIM_Period = (PCLK1_VALUE * 2 / OE_PWM_FREQ); //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 80K
 	TIM_TimeBaseStructure.TIM_Prescaler =0; //设置用来作为TIMx时钟频率除数的预分频值  不分频
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
@@ -384,12 +445,12 @@ void TIM3_Configuration(void)
 	/* TIM3 enable counter */
 	TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
 
-	TIM_SetCompare3(TIM3,500);	//通过改变TIM3->CCR2的值来改变占空比，从而控制LED0的亮度 
+    Set_OE_Duty_Polarity(50, 0);
 }
 
 INT8U Chk_JP_Status(void)
 {
-  //return SELF_TEST_STATUS;
+  return SELF_TEST_STATUS;
 
   if(CHK_JP_STATUS0 && CHK_JP_STATUS1) //自检状态
   {
@@ -490,31 +551,6 @@ void Set_Block_OE_En(INT8U Value)
     TIM_Cmd(TIM3, ENABLE);
   else
    	TIM_Cmd(TIM3, DISABLE);
-}
-
-//设置块行号
-void Set_Block_Row(INT8U Row)
-{
-  //Row = Screen_Status.Scan_Row;
-  if(Screen_Para.Scan_Para.Rows EQ 0)
-  {
-    Screen_Para.Scan_Para.Rows = 16;
-	SET_SUM(Screen_Para);
-  }
-
-  Row = (INT8U)(((INT8S)Screen_Status.Scan_Row + Screen_Para.Scan_Para.Line_Order) % Screen_Para.Scan_Para.Rows);
-    
-  SET_A((Row & 0x01));
-  SET_B(((Row & 0x02) >> 1));
-  SET_C(((Row & 0x04) >> 2));
-  SET_D(((Row & 0x08) >> 3));
-
-/*
-  SET_A(((Row & 0x08) >> 3));
-  SET_B(((Row & 0x04) >> 2));
-  SET_C(((Row & 0x02) >> 1));
-  SET_D((Row & 0x01));
-  */
 }
 
 void Unselect_SPI_Device(void)

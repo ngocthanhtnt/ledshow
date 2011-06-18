@@ -22,6 +22,17 @@ INT8U Get_Simple_Border_Data_Num(void)
     return S_NUM(Simple_Border_Data);
 }
 
+INT8U Get_Simple_Border_Height(INT8U Type)
+{
+  if(Type >= S_NUM(Simple_Border_Data))
+    {
+      Type = 0;
+      ASSERT_FAILED();
+  }
+
+  return Simple_Border_Data[Type].Height;
+}
+
 //获取边框数据
 //X\Y表示在边框数据块内的索引
 INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y) //获取一个区域内一个点的数据
@@ -52,7 +63,7 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
    INT8U Re;
    INT16U i,j;
    INT16U Area_Width, Area_Height, Border_Width;
-   
+   INT16U Temp;
   
    Area_Width = Get_Area_Width(Area_No); //分区的宽度和高度
    Area_Height = Get_Area_Height(Area_No);
@@ -75,7 +86,12 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
      }
   
    //左右边框
-   for(i = 0; i < Area_Height; i ++)
+   if(Area_Height > Height)
+       Temp = Area_Height - Height;
+   else
+       Temp = 0;
+
+   for(i = Height; i < Temp; i ++)
      for(j = 0; j < Height; j ++)
      {
        Re = Get_Border_Point_Data(Area_No, (i + Step/*Prog_Para.Border_Width *Step / MAX_STEP_NUM*/) % Border_Width, j);
@@ -239,10 +255,11 @@ void Update_Border_Data(INT8U Area_No)
 
       if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check EQ 0)
           return;
-
+/*
       if(Prog_Status.Area_Status[Area_No].New_File_Flag > 0 ||\
 	     Prog_Status.Area_Status[Area_No].New_SCN_Flag > 0)
           return;
+		  */
 /*
       if(Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 2 &&
          Prog_Status.File_Para[Area_No].Pic_Para.In_Mode <= 7)

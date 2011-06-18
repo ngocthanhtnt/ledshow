@@ -731,15 +731,24 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
   INT32U Offset;
   INT16U Len,DstLen,Index;
   INT8U Flag;
+  INT8U Border_Height = 0;
   
   Flag = pFile_Para->Pic_Para.Flag;
-   
+
+  if(pFile_Para->Pic_Para.Border_Check > 0)
+  {
+    Border_Height = Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
+  }
+
 #if PIC_SHOW_EN 
   if(Flag EQ SHOW_PIC) //图文
   {
      
     Width = Get_Area_Width(Area_No);
     Height = Get_Area_Height(Area_No);
+
+    Width = Width - 2*Border_Height;
+    Height = Height - 2*Border_Height;
    
     DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
     DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
@@ -748,8 +757,8 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
     Index += Prog_Status.Block_Index.Index[Area_No][File_No]; //起始块号
       
     Offset = (DstLen * SIndex) % BLOCK_SHOW_DATA_LEN; //在该块中的索引
-    X = 0;
-    Y = 0;   
+    X = Border_Height;
+    Y = Border_Height;
   }  
 #endif
 #if CLOCK_SHOW_EN  
@@ -862,7 +871,9 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
     ASSERT_FAILED();
     return 0;
   }
-  
+
+  //X = X + Border_Height;
+  //Y = Y + Border_Height;
   //OS_Mutex_Pend(PUB_BUF_MUTEX_ID);
   
   Len = 0;
