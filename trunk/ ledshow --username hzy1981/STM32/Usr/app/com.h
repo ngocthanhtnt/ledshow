@@ -12,12 +12,13 @@
 #endif
 
 #define FRAME_HEAD 0x5A
-//#define FRAME_HEAD1 0xA5
-#define FRAME_TAIL  0xAA
+#define FRAME_TAIL 0xAA
+#define COM_BYTE 0x68
 
 #define RD_CMD  0x00
 #define WR_CMD  0x20
 
+#define COM_STANDBY_SEC 3
 
 //控制码高2位用来表达应答帧是肯定应答还是否定应答,0x40表示肯定应答,0x80表示否定应答
 //第5位表示读还是写,1表示写,0表示读

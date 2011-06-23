@@ -94,7 +94,7 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
    for(i = Height; i < Temp; i ++)
      for(j = 0; j < Height; j ++)
      {
-       Re = Get_Border_Point_Data(Area_No, (i + Step/*Prog_Para.Border_Width *Step / MAX_STEP_NUM*/) % Border_Width, j);
+       Re = Get_Border_Point_Data(Area_No, (i + Area_Width + Step/*Prog_Para.Border_Width *Step / MAX_STEP_NUM*/) % Border_Width, j);
        Set_Area_Point_Data(pDst, Area_No, j, Area_Height - 1 - i, Re); //×ó±ß¿ò
        Set_Area_Point_Data(pDst, Area_No, Area_Width-1 -j, i, Re); //ÓÒ±ß¿ò
      }   

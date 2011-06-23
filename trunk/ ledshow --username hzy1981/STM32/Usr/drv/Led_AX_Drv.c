@@ -3,14 +3,19 @@
 
 #if CARD_TYPE == CARD_AX
 
+#define  AFIO_MAPR      (*(volatile unsigned long *)0x40010004)//复用重映射和调试I/O配置寄存器
+
  //IO口初始化 -只需初始化完全作为IO口用的引脚，其他复用的引脚在相应的功能模块中初始化
 void GPIO_Configuration()
 {
   GPIO_InitTypeDef GPIO_InitStructure = {0};  
-  
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
 
-  //-------------------IO口初始化-----------------------
+  //AFIO_MAPR = 0x02000000; //释放出三个JTAG的口,做普通IO口线  //释放出三个JTAG的口,做普通IO口线  //释放出三个JTAG的口,做普通IO口线
+  
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
+
+  GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
+    //-------------------IO口初始化-----------------------
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
@@ -38,6 +43,16 @@ void GPIO_Configuration()
    //PD的输出口
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
   GPIO_Init(GPIOD, &GPIO_InitStructure);
+  */
+  /*
+  GPIO_ResetBits(GPIOA,GPIO_Pin_15);
+  GPIO_SetBits(GPIOA,GPIO_Pin_15)	;
+  GPIO_ResetBits(GPIOA,GPIO_Pin_15)	;
+  GPIO_SetBits(GPIOA,GPIO_Pin_15)	;
+  SET_G1(0);
+  SET_G1(1);
+  SET_G1(0);
+  SET_G1(1);
   */
 }
 

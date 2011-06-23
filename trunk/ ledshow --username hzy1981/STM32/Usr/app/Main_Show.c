@@ -1272,7 +1272,7 @@ void Self_Test(INT8U Mode)
   //--------------…®√Ë∑Ω ΩºÏ≤‚---------------
   Read_Screen_Para();
 
-  //return;
+  return;
   //-----------
   Screen_Para.Base_Para.Width = 1024;
   Screen_Para.Base_Para.Height = 64;
