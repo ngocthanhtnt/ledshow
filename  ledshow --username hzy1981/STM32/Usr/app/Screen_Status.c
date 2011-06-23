@@ -110,13 +110,14 @@ INT8U Get_Screen_Open_Status(void)
   return Screen_Status.Open_Flag;
 }
 
-
+//设置重新播放标志
 void Set_Screen_Replay_Flag(void)
 {
     Screen_Status.Replay_Flag = REPLAY_FLAG;
     SET_SUM(Screen_Status);
 }
 
+//检查是否重新播放
 INT8U Chk_Screen_Replay_Flag(void)
 {
     if(Screen_Status.Replay_Flag EQ REPLAY_FLAG)
@@ -125,6 +126,7 @@ INT8U Chk_Screen_Replay_Flag(void)
       return 0;
 }
 
+//设置通信时间,在通信时间范围内，扫描中断不进行扫
 void Set_Screen_Com_Time(INT8U Sec)
 {
     Screen_Status.Com_Time = Sec;

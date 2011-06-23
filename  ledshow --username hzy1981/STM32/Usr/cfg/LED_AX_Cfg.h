@@ -8,7 +8,7 @@
 #define CARD_SUB_TYPE CARD_SUB_A0 //AX系列子卡类型
 
  //-------------------时钟相关配置---------------
-#define HSE_VALUE 16000000 //外部晶振频率
+#define HSE_VALUE 8000000 //外部晶振频率
 #define HCLK_VALUE  HSE_VALUE*8
 #define H_HCLK_VALUE HSE_VALUE*16
 #define PCLK1_VALUE HCLK_VALUE/2
@@ -30,8 +30,8 @@
 #define MOVE_STEP_PERIOD 20 //移动步进时间,单位为ms
 #define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 
-#define IN_SPEC_EFFECT_NUM 5 //进入特效个数
-#define OUT_SPEC_EFFECT_NUM 5 //退出特效个数
+#define IN_SPEC_EFFECT_NUM 51 //进入特效个数
+#define OUT_SPEC_EFFECT_NUM 20 //退出特效个数
 #define FONT_NUM 1 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目

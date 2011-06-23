@@ -22,8 +22,8 @@
 #define SLINE_MODE 0x00
 #define MLINE_MODE 0x01
 
-#define GET_LINE_Y(X0,Y0,X1,Y1,X) ((X1 != X0)?(((Y1)-(Y0))*((X)-(X0))/((X1)-(X0)) + (Y0)):Y0)
-#define GET_LINE_X(X0,Y0,X1,Y1,Y) ((Y1 != Y0)?(((X1)-(X0))*((Y)-(Y0))/((Y1)-(Y0)) + (X0)):X0)
+#define GET_LINE_Y(X0,Y0,X1,Y1,X) ((X1 != X0)?(((Y1)-(Y0))*((X)-(X0))/((X1)-(X0)) + (Y0) + 0.5):((Y0) + 0.5))
+#define GET_LINE_X(X0,Y0,X1,Y1,Y) ((Y1 != Y0)?(((X1)-(X0))*((Y)-(Y0))/((Y1)-(Y0)) + (X0) + 0.5):((X0) + 0.5))
 
 #define AREA_ERR 2 //更新显示文件出错
 #define AREA_END 0 //该分区结束
@@ -221,8 +221,11 @@ typedef struct
   //接收帧数据
   INT8U Rcv_Ch; //接收通道
   INT8U Rcv_Flag; //接收到的数据
+  INT8U Head_Flag; //收到头的标志
   INT8U Com_Time;  //通信维持时间
+  INT8U Byte_Time; //接受字节倒计时
   INT16U Rcv_Posi;
+
   INT8U Rcv_Data[((BLOCK_DATA_LEN > SCREEN_PARA_LEN) ? BLOCK_DATA_LEN : SCREEN_PARA_LEN) + 20];
 
   INT8U Self_Test_Flag;
@@ -342,6 +345,12 @@ EXT void Move_Down_Compress(INT8U Area_No);
 EXT void Move_Fade_In(INT8U Area_No);
 EXT void Move_Left_Up_In(INT8U Area_No);
 EXT void Move_Right_Up_In(INT8U Area_No);
+EXT void Move_Left_Down_In(INT8U Area_No);
+EXT void Mofe_Right_Down_In(INT8U Area_No);
+EXT void Move_Left_Compress_0(INT8U Area_No);
+EXT void Move_Right_Compress_0(INT8U Area_No);
+EXT void Move_Up_Compress_0(INT8U Area_No);
+EXT void Move_Down_Compress_0(INT8U Area_No);
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
 
 EXT void vsPrintf(char Buf[], CONST INT8S *format, va_list ap);

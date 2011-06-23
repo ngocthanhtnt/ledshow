@@ -329,6 +329,55 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
   }//右上移入
 #endif
+
+#if IN_SPEC_EFFECT_NUM > 45
+  ,{&Move_Left_Down_In, HV_SQRT_MODE, 1
+#if QT_EN
+   ,"左下引入"
+#endif
+  }//左下引入
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 46
+  ,{&Mofe_Right_Down_In, HV_SQRT_MODE, 1
+#if QT_EN
+   ,"右下引入"
+#endif
+  }//右下引入
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 47
+  ,{&Move_Left_Compress_0, H_MODE, 1
+#if QT_EN
+   ,"左压入0"
+#endif
+  }//右下引入
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 48
+  ,{&Move_Right_Compress_0, H_MODE, 1
+#if QT_EN
+   ,"右压入0"
+#endif
+  }//右下引入
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 49
+  ,{&Move_Up_Compress_0, V_MODE, 1
+#if QT_EN
+   ,"上压入0"
+#endif
+  }//右下引入
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 50
+  ,{&Move_Down_Compress_0, V_MODE, 1
+#if QT_EN
+   ,"下压入0"
+#endif
+  }//右下引入
+#endif
+
 };
 
 //数据移入方式

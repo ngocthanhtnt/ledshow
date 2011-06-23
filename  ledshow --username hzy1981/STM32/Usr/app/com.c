@@ -392,8 +392,6 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
   INT8U RW_Flag; //读写标志
 
 
-  Set_Screen_Com_Time(5); //到计时5s，5秒后重新播放节目
-
   Re = 1;
   //pData = Frame + FDATA; 
   Cmd_Code = (Frame[FCMD] & 0x1F);// + (INT16U)Frame[FCMD + 1] * 256;
@@ -492,6 +490,8 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 
   Len = Make_Frame(Frame + FDATA, Len, (INT8U *)&Screen_Para.COM_Para.Addr, Cmd_Code,  0, Seq, Seq0, (char *)Frame);
 // INT16U Make_Frame(INT8U *pData, INT16U Len, INT8U Addr[], INT8U Cmd, INT8U Cmd0, INT8U Seq, INT16U Seq0, char *pDst)
+
+  Clr_Rcv_Flag(); //发数据前清空接收标志
   Send_Frame_Proc(Ch, Frame, Len); //向来数据的通道发送应答数据
   //Make_Frame(pData, Len, );
   return Len;
@@ -510,33 +510,49 @@ void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen)
 void Com_Rcv_Byte(INT8U Ch, INT8U Byte)
 {
   INT16U i;
+  //static S_Int8U Head_Flag = {CHK_BYTE, 0x00, CHK_BYTE};//是否收到了帧头
 
   if(Screen_Status.Rcv_Flag EQ FRAME_FLAG) //当前已有一帧，停止继续接收，待该帧处理完
       return;
 
-  if(Screen_Status.Rcv_Posi < sizeof(Screen_Status.Rcv_Data))
+  if(Screen_Status.Rcv_Posi >= sizeof(Screen_Status.Rcv_Data))
     {
-      Screen_Status.Rcv_Data[Screen_Status.Rcv_Posi] = Byte;
-      Screen_Status.Rcv_Posi++;
-  }
-  else
-  {
-      Screen_Status.Rcv_Data[0] = Byte;
-      Screen_Status.Rcv_Posi = 0;
+     Clr_Rcv_Flag();
   }
 
-  if(Byte EQ FRAME_TAIL) //收到帧尾字符
+  if(Screen_Status.Head_Flag EQ 0) //--没有收到帧头，则收到的字节放到起始位置
+    Screen_Status.Rcv_Posi = 0;
+
+  Screen_Status.Rcv_Data[Screen_Status.Rcv_Posi] = Byte;
+  Screen_Status.Rcv_Posi++;
+
+  Screen_Status.Byte_Time = COM_STANDBY_SEC; //字节接收倒计时，倒计时结束还没有收到完整的一帧则清除接收到得数据
+
+  //连续收到3个COM_BYTE认为要进入通信状态了!
+  if(Byte == COM_BYTE)
+  {
+	Set_Screen_Com_Time(COM_STANDBY_SEC); //通信保持时间，在这段时间内，扫描中断不进行扫描.
+  }
+  else if(Byte EQ FRAME_HEAD)
+  {	
+	Screen_Status.Head_Flag = 1; //收到帧头
+  }
+  else if(Byte EQ FRAME_TAIL) //收到帧尾字符
   {
       for(i = 0; i < Screen_Status.Rcv_Posi; i ++)
       {
           if(Screen_Status.Rcv_Data[i] EQ FRAME_HEAD && \
              Check_Frame_Format(Screen_Status.Rcv_Data + i, Screen_Status.Rcv_Posi - i))
           {
-             if(i != 0) //将数据复制到开始
+		    
+			 Set_Screen_Com_Time(COM_STANDBY_SEC); //到计时5s，5秒后重新播放节目 
+             
+			 if(i != 0) //将数据复制到开始
               {
                  memcpy(Screen_Status.Rcv_Data, Screen_Status.Rcv_Data + i, Screen_Status.Rcv_Posi - i);
                  Screen_Status.Rcv_Posi = Screen_Status.Rcv_Posi - i;
              }
+
              Screen_Status.Rcv_Flag = FRAME_FLAG;
 			 Screen_Status.Rcv_Ch = Ch;
              return;
@@ -566,8 +582,9 @@ void Chk_Exit_Test_Scan_Mode()
 
 void Clr_Rcv_Flag(void)
 {
+   Screen_Status.Head_Flag = 0;
    Screen_Status.Rcv_Posi = 0;
-   Screen_Status.Rcv_Flag = 0;
+   Screen_Status.Rcv_Flag = 0;  
 }
 
 void Screen_Com_Proc(void)
@@ -577,13 +594,25 @@ void Screen_Com_Proc(void)
    if(Screen_Status.Rcv_Flag EQ FRAME_FLAG)
    {
      Rcv_Frame_Proc(Screen_Status.Rcv_Ch, Screen_Status.Rcv_Data, Screen_Status.Rcv_Posi, sizeof(Screen_Status.Rcv_Data));
-     Clr_Rcv_Flag();
+
    }
+
+   //return;
 
    if(Sec.Var EQ SEC_TIMER)
      return;
 
    Sec.Var = SEC_TIMER;
+
+   if(Screen_Status.Byte_Time > 0)
+   {
+	    Screen_Status.Byte_Time--;
+
+        if(Screen_Status.Byte_Time EQ 0)
+        {
+		  Clr_Rcv_Flag();
+		}
+   }
 
 
    //收到最后一帧后的倒计时
@@ -594,6 +623,7 @@ void Screen_Com_Proc(void)
 
         if(Screen_Status.Com_Time EQ 0)
         {
+		  //Clr_Rcv_Flag();
           if(Screen_Status.Replay_Flag EQ REPLAY_FLAG) //有重新播放标志
           {
             debug("replay prog");

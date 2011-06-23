@@ -151,6 +151,8 @@
 static __I uint8_t APBAHBPrescTable[16] = {0, 0, 0, 0, 1, 2, 3, 4, 1, 2, 3, 4, 6, 7, 8, 9};
 static __I uint8_t ADCPrescTable[4] = {2, 4, 6, 8};
 
+#define CR1_UE_Set                ((uint16_t)0x2000)  /*!< USART Enable Mask */
+#define CR1_UE_Reset              ((uint16_t)0xDFFF)  /*!< USART Disable Mask */
 
 /**
   * @brief  Enables or disables the PLL.
@@ -389,6 +391,24 @@ FlagStatus _RCC_GetFlagStatus(uint8_t RCC_FLAG)
 
   /* Return the flag status */
   return bitstatus;
+}
+
+void _USART_Cmd(USART_TypeDef* USARTx, FunctionalState NewState)
+{
+  /* Check the parameters */
+  assert_param(IS_USART_ALL_PERIPH(USARTx));
+  assert_param(IS_FUNCTIONAL_STATE(NewState));
+  
+  if (NewState != DISABLE)
+  {
+    /* Enable the selected USART by setting the UE bit in the CR1 register */
+    USARTx->CR1 |= CR1_UE_Set;
+  }
+  else
+  {
+    /* Disable the selected USART by clearing the UE bit in the CR1 register */
+    USARTx->CR1 &= CR1_UE_Reset;
+  }
 }
 
 //高速情况下的延时
@@ -655,11 +675,14 @@ void LED_Scan_One_Row(void)
   INT16U Blocks;
   //INT32U Row_Freq;
   
-  if(Screen_Status.Open_Flag EQ 0) //关机状态，不显示
+  if(Screen_Status.Open_Flag EQ 0 || Screen_Status.Com_Time > 0) //关机状态，不显示,或当前在通信状态也不显示
     return;
  
+  //return;
+  //_USART_Cmd(USART1, DISABLE); 
   Set_Clock_Hight_Speed(); //设置为高速运行模式
-
+  //_USART_Cmd(USART1, ENABLE);
+  //_USART_Cmd(USART1, DISABLE);
   if(Screen_Para.Scan_Para.Rows EQ 0)
   {
 	Screen_Para.Scan_Para.Rows = 16;
@@ -727,7 +750,7 @@ void LED_Scan_One_Row(void)
 	}
 	 
 	//关闭OE使能
-	Set_OE_Duty_Polarity(0, Screen_Para.Scan_Para.OE_Polarity);
+	//Set_OE_Duty_Polarity(0, Screen_Para.Scan_Para.OE_Polarity);
 
 	if(Screen_Para.Scan_Para.Line_Hide > 0)
 	  _Delay_us(Screen_Para.Scan_Para.Line_Hide*10); //行消隐时间
@@ -741,7 +764,10 @@ void LED_Scan_One_Row(void)
       Screen_Status.Scan_Row = 0;
 	
 	//重新打开OE
-	Set_OE_Duty_Polarity(Screen_Status.Lightness, Screen_Para.Scan_Para.OE_Polarity);
+	//Set_OE_Duty_Polarity(Screen_Status.Lightness, Screen_Para.Scan_Para.OE_Polarity);
+	//_USART_Cmd(USART1, DISABLE);
     Set_Clock_Normal_Speed();
+	//_USART_Cmd(USART1, ENABLE); 
+	//USART_Clar
    
 }
