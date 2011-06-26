@@ -666,29 +666,64 @@ void Set_Block_Row(INT8U Row)
   SET_C(((Row & 0x04) >> 2));
   SET_D(((Row & 0x08) >> 3));
 }
-                        
+
+#pragma pack(1)
+/*  
+typedef struct {
+    int b0: 1;
+    int b1: 1;
+    int b2: 1;
+	int b3: 1;
+	int b4: 1;
+	int b5: 1;
+	int b6: 1;
+	int b7: 1;
+}BB __attribute__((bitband));
+*/
+INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3] __attribute__((at(SCAN_DATA_ADDR)));
+#pragma pack()
+                       
 //调用该函数每次扫描一行
 //每中断一次调用一次该函数
 void LED_Scan_One_Row(void)
 {
   INT16U i,j,k,m,Cols;
   INT16U Blocks;
+  INT8U Color_Num;
   //INT32U Row_Freq;
   
   if(Screen_Status.Open_Flag EQ 0 || Screen_Status.Com_Time > 0) //关机状态，不显示,或当前在通信状态也不显示
     return;
  
-  //return;
-  //_USART_Cmd(USART1, DISABLE); 
+
   Set_Clock_Hight_Speed(); //设置为高速运行模式
-  //_USART_Cmd(USART1, ENABLE);
-  //_USART_Cmd(USART1, DISABLE);
+  /*
+	_RCC_SYSCLKConfig(RCC_SYSCLKSource_HSE); //设置外部时钟为HSE
+	//_RCC_HCLKConfig(RCC_SYSCLK_Div1);   //设置AHB时钟=AHB_FREQ MHz
+	_RCC_PCLK1Config(H_PCLK1_DIV);   //设置APB1时钟=36 MHz(APB1时钟最大值)
+	_RCC_PCLK2Config(H_PCLK2_DIV);   //设置APB2时钟=72 MHz
+	_RCC_PLLCmd(DISABLE); //关闭PLL
+	_RCC_PLLConfig(RCC_PLLSource_HSE_Div1, H_HCLK_MUL); //PLL必须在其激活前完成配置（设置PLL时钟源及倍频系数）
+	_RCC_PLLCmd(ENABLE);
+	
+	// Wait till PLL is ready 
+	while(_RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET)
+	{
+	}
+	// Select PLL as system clock source 
+	_RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+	// Wait till PLL is used as system clock source 
+	while(_RCC_GetSYSCLKSource() != 0x08)
+	{
+	}
+	 */
   if(Screen_Para.Scan_Para.Rows EQ 0)
   {
 	Screen_Para.Scan_Para.Rows = 16;
 	SET_SUM(Screen_Para);
   }
 
+  Color_Num = Get_Screen_Color_Num();
   //Block数可以理解为单元板纵向的个数
   Blocks = Screen_Para.Base_Para.Height / (Screen_Para.Scan_Para.Rows * (Screen_Para.Scan_Para.Rows_Fold + 1)); //1.2.4.8.16扫？
  
@@ -712,13 +747,13 @@ void LED_Scan_One_Row(void)
               Screen_Para.Scan_Para.Direct, \
               Screen_Para.Scan_Para.Rows_Fold, \
               Screen_Para.Scan_Para.Cols_Fold,\
-              Screen_Status.Scan_Data[j]);
+              /*Screen_Status.*/Scan_Data[j]);
     }
     
     //对所有的block输出一个字节
     //如果是从左向右，应该先输出高位再输出低位
     if(Screen_Para.Scan_Para.Direct EQ 0x00 || Screen_Para.Scan_Para.Direct EQ 0x01)
-    {
+    {/*
       for(j = 0; j < 8 ; j++)
       {
 	    m = 7 - j;	    
@@ -727,25 +762,94 @@ void LED_Scan_One_Row(void)
 
         for(k = 0; k < Blocks; k++)
         {
-		 SET_SHIFT_BIT(k, Screen_Status.Scan_Data[k], m); 
+		 SET_SHIFT_BIT(k, Scan_Data[k], m); 
 		}
 
 		SET_CLK(1);
-      } 
+      }*/
+	 if(Color_Num EQ 1)
+	 {  
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,7); 
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,6);
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,5);
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,4);
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,3);
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,2);
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,1); 
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,0);
+	  }
+	  else if(Color_Num EQ 2)
+	  {
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,7); 
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,6);
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,5);
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,4);
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,3);
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,2);
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,1); 
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,0);
+	  }	
+	  else
+	  {
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,7); 
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,6);
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,5);
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,4);
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,3);
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,2);
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,1); 
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,0);	  
+	  }   
      }
      else //如果从右往左输出应该先输出低位
-     {
+     {/*
        for(j = 0; j < 8 ; j++)
        {
 		 SET_CLK(0);
         
          for(k = 0; k < Blocks; k++)
          {
-	 	   SET_SHIFT_BIT(k, Screen_Status.Scan_Data[k], j);
+	 	   SET_SHIFT_BIT(k, Scan_Data[k], j);
 		 }
         
 		 SET_CLK(1);
-       }      
+       }
+	   	*/
+	 
+	 if(Color_Num EQ 1)
+	 {  
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,0); 
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,1);
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,2);
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,3);
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,4);
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,5);
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,6); 
+	   SET_SHIFT_BIT_1(Blocks, Scan_Data,7);
+	  }
+	  else if(Color_Num EQ 2)
+	  {
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,0); 
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,1);
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,2);
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,3);
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,4);
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,5);
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,6); 
+	   SET_SHIFT_BIT_2(Blocks, Scan_Data,7);
+	  }
+	  else
+	  {
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,0); 
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,1);
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,2);
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,3);
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,4);
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,5);
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,6); 
+	   SET_SHIFT_BIT_3(Blocks, Scan_Data,7);
+	  }
+	       
      }
 	}
 	 

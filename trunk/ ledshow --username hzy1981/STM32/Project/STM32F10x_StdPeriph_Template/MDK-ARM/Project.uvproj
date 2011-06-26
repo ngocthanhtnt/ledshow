@@ -116,7 +116,7 @@
           <Simulator>
             <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>1</RunToMain>
+            <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
             <RestoreWatchpoints>1</RestoreWatchpoints>
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
@@ -477,7 +477,7 @@
                   <RVCTOtherData>0</RVCTOtherData>
                   <ModuleSelection>0</ModuleSelection>
                   <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
+                  <AlwaysBuild>0</AlwaysBuild>
                   <GenerateAssemblyFile>2</GenerateAssemblyFile>
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
@@ -516,7 +516,7 @@
                   <RVCTOtherData>0</RVCTOtherData>
                   <ModuleSelection>0</ModuleSelection>
                   <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
+                  <AlwaysBuild>0</AlwaysBuild>
                   <GenerateAssemblyFile>2</GenerateAssemblyFile>
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
@@ -555,7 +555,7 @@
                   <RVCTOtherData>0</RVCTOtherData>
                   <ModuleSelection>0</ModuleSelection>
                   <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
+                  <AlwaysBuild>0</AlwaysBuild>
                   <GenerateAssemblyFile>2</GenerateAssemblyFile>
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
@@ -632,8 +632,8 @@
                   <RVCTZI>0</RVCTZI>
                   <RVCTOtherData>0</RVCTOtherData>
                   <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
+                  <IncludeInBuild>1</IncludeInBuild>
+                  <AlwaysBuild>1</AlwaysBuild>
                   <GenerateAssemblyFile>2</GenerateAssemblyFile>
                   <AssembleAssemblyFile>2</AssembleAssemblyFile>
                   <PublicsOnly>2</PublicsOnly>
@@ -742,6 +742,40 @@
               <FileName>startup_stm32f10x_hd_vl.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_hd_vl.s</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>0</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                </CommonProperty>
+                <FileArmAds>
+                  <Aads>
+                    <interw>2</interw>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <thumb>2</thumb>
+                    <SplitLS>2</SplitLS>
+                    <SwStkChk>2</SwStkChk>
+                    <NoWarn>2</NoWarn>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Aads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
         </Group>
@@ -827,45 +861,6 @@
               <FileName>LED_Scan.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\app\LED_Scan.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>9</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>2</IncludeInBuild>
-                  <AlwaysBuild>2</AlwaysBuild>
-                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
-                  <PublicsOnly>2</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
             </File>
             <File>
               <FileName>LED_Show.c</FileName>
@@ -1236,6 +1231,11 @@
               <FileName>LED_EX_Drv.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>BitBandIO.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\BitBandIO.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -2433,6 +2433,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
             </File>
+            <File>
+              <FileName>BitBandIO.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\BitBandIO.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -3628,6 +3633,11 @@
               <FileName>LED_EX_Drv.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>BitBandIO.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\BitBandIO.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -4825,6 +4835,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
             </File>
+            <File>
+              <FileName>BitBandIO.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\BitBandIO.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -6021,6 +6036,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
             </File>
+            <File>
+              <FileName>BitBandIO.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\BitBandIO.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -7216,6 +7236,11 @@
               <FileName>LED_EX_Drv.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\LED_EX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>BitBandIO.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\BitBandIO.h</FilePath>
             </File>
           </Files>
         </Group>

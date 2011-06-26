@@ -304,6 +304,13 @@ void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 
+ 	/* Enable the TIM4 global Interrupt */
+	//边框绘制中断
+	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;  //TIM1中断
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;  //先占优先级2级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
+	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 }
 
 //定时器中断，用于直接扫描屏
@@ -322,7 +329,7 @@ void TIM2_Configuration(void)
 	TIM2CLK = 36 MHz, Prescaler = 7200, TIM2 counter clock = 5K,即改变一次为5K,周期就为10K
 	--------------------------------------------------------------- */
 	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = SCAN_SCREEN_PERIOD * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	TIM_TimeBaseStructure.TIM_Period = SCAN_SCREEN_PERIOD / 100; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
     TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
@@ -380,6 +387,27 @@ void TIM4_Configuration(void)
 
 }
 
+//定时器中断，用于绘制边框
+void TIM1_Configuration(void)
+{
+    //RCC_ClocksTypeDef RCC_Clocks;
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); 
+
+	TIM_TimeBaseStructure.TIM_Period = MOVE_STEP_PERIOD * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE * 2/10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0; 
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
+	TIM_TimeBaseStructure.TIM_RepetitionCounter = 0; 
+	TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
+
+	TIM_ClearFlag(TIM1, TIM_FLAG_Update); 
+	TIM_ARRPreloadConfig(TIM1, DISABLE); 
+	
+	TIM_ITConfig(TIM1, TIM_IT_Update, ENABLE); 
+	TIM_Cmd(TIM1, ENABLE);
+}
 //设置OE占空比和极性
 
 //用于OE-PWM输出.
@@ -441,7 +469,7 @@ void TIM3_Configuration(void)
 	TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);  //使能TIMx在CCR2上的预装载寄存器
 	
 	TIM_ARRPreloadConfig(TIM3, ENABLE); //使能TIMx在ARR上的预装载寄存器
-	
+
 	/* TIM3 enable counter */
 	TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
 

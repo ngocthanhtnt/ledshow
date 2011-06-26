@@ -662,6 +662,8 @@ void Update_Pic_Data(INT8U Area_No)
     return;
   
   Stay_Time = Get_File_Stay_Time(Area_No);
+  if(Stay_Time == 0)
+    Stay_Time = Get_Area_In_Step_Delay(Area_No);
   //Out_Time = Get_File_Out_Time(Area_No);
   
 //---------------------------------------------------------  
@@ -680,7 +682,9 @@ void Update_Pic_Data(INT8U Area_No)
         In_Mode = In_Mode - 1;
 
     Prog_Status.Area_Status[Area_No].In_Mode = In_Mode;
+	Set_Area_Border_Out(Area_No);
     Prog_Status.Area_Status[Area_No].In_Max_Step = Get_In_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
+    Set_Area_Border_In(Area_No);
   }
 
 
@@ -699,10 +703,12 @@ void Update_Pic_Data(INT8U Area_No)
     //0不清，1-N正常清屏方式...
     Prog_Status.Area_Status[Area_No].Out_Mode = Out_Mode; //此时0表示不清屏,1-N表示清屏方式
 
+	Set_Area_Border_Out(Area_No);
     if(Out_Mode >= 1)
       Prog_Status.Area_Status[Area_No].Out_Max_Step = Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, Out_Mode - 1);
     else //不清屏
       Prog_Status.Area_Status[Area_No].Out_Max_Step = 100;//Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, Out_Mode - 1);
+    Set_Area_Border_In(Area_No);
 }
 
   //还在移动状态

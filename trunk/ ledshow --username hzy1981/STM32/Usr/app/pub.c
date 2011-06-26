@@ -121,11 +121,11 @@ void Pub_Timer_Proc(void)
 {
   //static ms = 0;
 
-  Pub_Timer.Ms += SCAN_SCREEN_PERIOD;
+  Pub_Timer.Ms += 1;//SCAN_SCREEN_PERIOD;
   //ms += SCAN_SCREEN_PERIOD;
-  if(Pub_Timer.Ms >= 1000)
+  //if(Pub_Timer.Ms >= 1000)
   {
-    Pub_Timer.Ms = 0;
+    //Pub_Timer.Ms = 0;
 	Pub_Timer.Sec ++;
   }
 }

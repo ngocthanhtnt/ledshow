@@ -3,6 +3,7 @@
 
 //#if QT_EN == 0
 //#include "LED_Cfg.h"
+//#include "BitBandIO.h"
 
 #undef EXT
 #ifdef STM32_C
@@ -99,6 +100,70 @@
 	 }\
 }while(0);
 */
+/*
+#define SET_SHIFT_BIT_0(Data, i) do{\
+       SET_CLK_LOW();\
+  	   SET_R1(GET_BIT(Data[0][0], i));\
+	   SET_G1(GET_BIT(Data[0][1], i));\
+	   SET_B1(GET_BIT(Data[0][2], i));\
+	   SET_R2(GET_BIT(Data[1][0], i));\
+	   SET_G2(GET_BIT(Data[1][1], i));\
+	   SET_B2(GET_BIT(Data[1][2], i));\
+	   SET_R3(GET_BIT(Data[2][0], i));\
+	   SET_G3(GET_BIT(Data[2][1], i));\
+	   SET_B3(GET_BIT(Data[2][2], i));\
+	   SET_R4(GET_BIT(Data[3][0], i));\
+	   SET_G4(GET_BIT(Data[3][1], i));\
+	   SET_B4(GET_BIT(Data[3][2], i));\
+	   SET_CLK_HIGH();}while(0);
+  */
+#define SCAN_DATA_ADDR 0x20001000
+
+#define SET_SHIFT_BIT_1(Block_Num, Data, i) do{\
+       SET_CLK_LOW();\
+  	   SET_R1(MEM_ADDR(BITBAND((INT32U)SCAN_DATA_ADDR, i)));\
+	   if(Block_Num <= 1) {SET_CLK_HIGH();break;}\
+	   SET_R2(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 3), i)));\
+	   if(Block_Num <= 2) {SET_CLK_HIGH();break;}\
+	   SET_R3(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 6), i)));\
+	   if(Block_Num <= 3) {SET_CLK_HIGH();break;}\
+	   SET_R4(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 9), i)));\
+	   SET_CLK_HIGH();}while(0);
+
+#define SET_SHIFT_BIT_2(Block_Num, Data, i) do{\
+       SET_CLK_LOW();\
+  	   SET_R1(MEM_ADDR(BITBAND((INT32U)SCAN_DATA_ADDR, i)));\
+	   SET_G1(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 1), i)));\
+	   if(Block_Num <= 1) {SET_CLK_HIGH();break;}\
+	   SET_R2(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 3), i)));\
+	   SET_G2(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 4), i)));\
+	   if(Block_Num <= 2) {SET_CLK_HIGH();break;}\
+	   SET_R3(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 6), i)));\
+	   SET_G3(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 7), i)));\
+	   if(Block_Num <= 3) {SET_CLK_HIGH();break;}\
+	   SET_R4(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 9), i)));\
+	   SET_G4(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 10), i)));\
+	   SET_CLK_HIGH();}while(0);
+
+#define SET_SHIFT_BIT_3(Block_Num, Data, i) do{\
+       SET_CLK_LOW();\
+  	   SET_R1(MEM_ADDR(BITBAND((INT32U)SCAN_DATA_ADDR, i)));\
+	   SET_G1(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 1), i)));\
+	   SET_B1(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 2), i)));\
+	   if(Block_Num <= 1) {SET_CLK_HIGH();break;}\
+	   SET_R2(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 3), i)));\
+	   SET_G2(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 4), i)));\
+	   SET_B2(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 5), i)));\
+	   if(Block_Num <= 2) {SET_CLK_HIGH();break;}\
+	   SET_R3(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 6), i)));\
+	   SET_G3(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 7), i)));\
+	   SET_B3(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 8), i)));\
+	   if(Block_Num <= 3) {SET_CLK_HIGH();break;}\
+	   SET_R4(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 9), i)));\
+	   SET_G4(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 10), i)));\
+	   SET_B4(MEM_ADDR(BITBAND((INT32U)(SCAN_DATA_ADDR + 11), i)));\
+	   SET_CLK_HIGH();}while(0);
+
 #define SET_SHIFT_BIT(Block, Data, i) do{\
      if(Block EQ 0)\
 	 {\
@@ -185,6 +250,7 @@ EXT void NVIC_Configuration(void);
 EXT void TIM2_Configuration(void);
 EXT void TIM4_Configuration(void);
 EXT void TIM3_Configuration(void);
+EXT void TIM1_Configuration(void);
 EXT void SPI1_FLASH_Init(void);
 EXT void SPI1_CH376_Init(void);
 EXT void Set_Block_OE_En(INT8U Value);

@@ -130,6 +130,11 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
       len = dataLen;
 
   memcpy(pDst + FDATA, data + frameInfo.off, len);
+
+  //Êý¾ÝÓò+33
+  for(int i = 0; i < len; i ++)
+      pDst[FDATA + i] += 0x33;
+
   frameInfo.off += len;
 
   pDst[FSEQ] = frameInfo.seq;

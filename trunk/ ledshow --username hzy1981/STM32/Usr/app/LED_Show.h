@@ -216,7 +216,7 @@ typedef struct
 
   //扫描数据
   INT8U Scan_Row;
-  INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3];
+  //INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3];
 
   //接收帧数据
   INT8U Rcv_Ch; //接收通道

@@ -93,9 +93,11 @@ void Update_Show_Data(void)
 //#if PIC_SHOW_EN    
     //if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_PIC)
       Update_Pic_Data(i);
+	  /*
 #if BORDER_SHOW_EN
       Update_Border_Data(i); //更新边框数据
 #endif
+*/
 
 //#endif
 /*
@@ -129,9 +131,11 @@ void Update_Show_Data(void)
 #endif
       */
   }
+  /*
 #if BORDER_SHOW_EN
       Update_Border_Data(MAX_AREA_NUM); //更新边框数据
 #endif
+*/
 }
 
 //更新显示备份区数据、显示非固定文本类信息
@@ -1275,19 +1279,19 @@ void Self_Test(INT8U Mode)
   return;
   //-----------
   Screen_Para.Base_Para.Width = 1024;
-  Screen_Para.Base_Para.Height = 64;
+  Screen_Para.Base_Para.Height = 32;
   Screen_Para.Scan_Para.Cols_Fold = 0;
   Screen_Para.Scan_Para.Rows_Fold = 0;
   Screen_Para.Scan_Para.Rows = 16;
   Screen_Para.Scan_Para.Direct = 0x02;
-  Screen_Para.Base_Para.Color = 0x03;
+  Screen_Para.Base_Para.Color = 0x01;
   SET_SUM(Screen_Para);
 
   Screen_Status.Open_Flag = 1;
 
   
   //---------------
-  Set_RT_Show_Area(1024, 64);
+  Set_RT_Show_Area(64, 64);
   memset(Show_Data.Color_Data, 0x55, sizeof(Show_Data.Color_Data));
 
   while(1)
