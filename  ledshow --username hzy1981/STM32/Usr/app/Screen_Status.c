@@ -130,7 +130,7 @@ INT8U Chk_Screen_Replay_Flag(void)
 void Set_Screen_Com_Time(INT8U Sec)
 {
     Screen_Status.Com_Time = Sec;
-    SET_SUM(Screen_Status);
+    //SET_SUM(Screen_Status);
 }
 
 INT8U Get_Screen_Com_Time(void)

@@ -28,6 +28,17 @@ void GPIO_Configuration()
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 |GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7 |\
                                 GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 |GPIO_Pin_15;   
   GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+  SET_R1(1);
+  SET_R2(1);
+  SET_R3(1);
+  SET_R4(1);
+  SET_G1(1);
+  SET_G2(1);
+  SET_G3(1);
+  SET_G4(1);
+
+
 /*
   //PB0×÷ÎªOE-PWMÊä³ö
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //TIM_CH3
@@ -149,6 +160,7 @@ void Hardware_Init(void)
   TIM2_Configuration();
   TIM3_Configuration();
   TIM4_Configuration();
+  TIM1_Configuration();
 
   UART2_Init();
 
@@ -156,7 +168,7 @@ void Hardware_Init(void)
 
   SPI1_FLASH_Init();
 
-
+  
 
 }
 #endif

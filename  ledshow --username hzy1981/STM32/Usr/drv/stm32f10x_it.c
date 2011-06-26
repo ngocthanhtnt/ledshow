@@ -160,7 +160,7 @@ void SysTick_Handler(void)
 extern void LED_Scan_One_Row(void);
 void TIM2_IRQHandler(void)   //TIM2中断
 {
-    GPIO_SetBits(GPIOB,GPIO_Pin_1); //测试输出
+    //GPIO_SetBits(GPIOB,GPIO_Pin_1); //测试输出
     TIM_Cmd(TIM2, DISABLE);
 
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
@@ -171,27 +171,9 @@ void TIM2_IRQHandler(void)   //TIM2中断
 	}
 
 	TIM_Cmd(TIM2, ENABLE);
-	GPIO_ResetBits(GPIOB,GPIO_Pin_1);//测试输出
+	//GPIO_ResetBits(GPIOB,GPIO_Pin_1);//测试输出
 }
-/**
-  * @brief  This function handles TIM3 global interrupt request.
-  * @param  None
-  * @retval None
-  */
-void TIM3_IRQHandler(void)   //TIM3中断
-{
-   TIM_Cmd(TIM3, DISABLE);
 
-	if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM捕获/比较1中断源
-		{
-		TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM捕获/比较1中断源
-		/* Pin PD.02 toggling with frequency = 10KHz */
-		//GPIO_WriteBit(GPIOD, GPIO_Pin_2, (BitAction)(1 - GPIO_ReadOutputDataBit(GPIOD, GPIO_Pin_2)));
-		//STM_EVAL_LEDToggle(LED2);
-		}
-
-   TIM_Cmd(TIM3, ENABLE);
-}
 /**
   * @brief  This function handles TIM4 global interrupt request.
   * @param  None
@@ -201,18 +183,37 @@ extern void Show_Timer_Proc(void);
 
 void TIM4_IRQHandler(void)   //TIM4中断
 {
-  TIM_Cmd(TIM4, DISABLE);
+    
+  //TIM_Cmd(TIM4, DISABLE);
 
     if (TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
 	{
 	 TIM_ClearITPendingBit(TIM4, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
-
+     //Delay_ms(5);
 	 Show_Timer_Proc();
 	}
 
-  TIM_Cmd(TIM4, ENABLE);
+  //TIM_Cmd(TIM4, ENABLE);
+  
 
 }
+
+extern void Border_Show_Proc(void);
+void TIM1_UP_IRQHandler(void)   //TIM1中断
+{
+  TIM_Cmd(TIM1, DISABLE);
+
+    if (TIM_GetITStatus(TIM1, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
+	{
+	 TIM_ClearITPendingBit(TIM1, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
+
+	 //Border_Show_Proc();
+	}
+
+  TIM_Cmd(TIM1, ENABLE);
+
+}
+
 /**
   * @brief  This function handles TIM3 global interrupt request.
   * @param  None

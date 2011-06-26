@@ -1381,7 +1381,7 @@ void Move_Left_Continuous(INT8U Area_No)
   S_Point Temp1;
   INT16U Step_Len;
 
-
+  GPIO_SetBits(GPIOB,GPIO_Pin_1); //≤‚ ‘ ‰≥ˆ
   Step_Len = Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step - (Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
 
   Temp.X = Step_Len;
@@ -1394,7 +1394,9 @@ void Move_Left_Continuous(INT8U Area_No)
     Copy_Filled_Rect(&Show_Data, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len - (Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step, Prog_Para.Area[Area_No].Y_Len,\
                      &Show_Data, &Temp1);  
   
-  Move_Left(Area_No);   
+  Move_Left(Area_No); 
+  GPIO_ResetBits(GPIOB,GPIO_Pin_1); //≤‚ ‘ ‰≥ˆ
+  Pub_Timer.Ms = 0;  
 }
 
 //”““∆

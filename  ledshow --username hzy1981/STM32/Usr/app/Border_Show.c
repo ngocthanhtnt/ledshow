@@ -315,7 +315,7 @@ void Update_Border_Data(INT8U Area_No)
         Timer[Area_No].Var = 0;
         Flag[Area_No].Var = 1 - Flag[Area_No].Var;
     }
-  }
+  
 
     if(Border_Mode EQ BORDER_STATIC) //静态
     {
@@ -356,7 +356,7 @@ void Update_Border_Data(INT8U Area_No)
       else
         Clr_Border(&Show_Data, Area_No, Border_Width, Border_Height);        
     }
-
+   }
       
   //}
 
@@ -370,6 +370,21 @@ void Update_Border_Data(INT8U Area_No)
         Flag[Area_No].Var = 1;
     }
     */
+}
+
+void Border_Show_Proc(void)
+{
+  INT8U i;
+
+  Update_Border_Data(MAX_AREA_NUM); //节目边框
+
+  for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
+  {
+      if(Screen_Status.Rcv_Flag EQ FRAME_FLAG) //收到一帧，先处理此帧
+          return;
+
+      Update_Border_Data(i); //更新边框数据
+  }
 }
 #endif
 #undef BORDER_SHOW_C

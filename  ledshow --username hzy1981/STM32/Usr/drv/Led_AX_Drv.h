@@ -2,6 +2,7 @@
 #define LED_AX_DRV_H
 
 #include "Pub.h"
+#include "BitBandIO.h"
 
 #undef EXT
 #ifdef LED_AX_DRV_C
@@ -59,14 +60,20 @@
 #define SET_OE(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_0):(GPIOB->BSRR = GPIO_Pin_0)//GPIO_ResetBits(GPIOB,GPIO_Pin_0):GPIO_SetBits(GPIOB,GPIO_Pin_0)
 //CLK-PA1
 #define SET_CLK(x) (x == 0)?(GPIOA->BRR = GPIO_Pin_1):(GPIOA->BSRR = GPIO_Pin_1)//GPIO_ResetBits(GPIOA,GPIO_Pin_1):GPIO_SetBits(GPIOA,GPIO_Pin_1)
+#define SET_CLK_LOW() GPIOA->BRR = GPIO_Pin_1
+#define SET_CLK_HIGH() GPIOA->BSRR = GPIO_Pin_1
 //R1-PB2
 #define SET_R1(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_2):(GPIOB->BSRR = GPIO_Pin_2)
+#define _SET_R1(x) GPIOB2 = x
 //R2-PB12					  
 #define SET_R2(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_12):(GPIOB->BSRR = GPIO_Pin_12)
+#define _SET_R2(x) GPIOB12 = x
 //R3-PB13
 #define SET_R3(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_13):(GPIOB->BSRR = GPIO_Pin_13)
+#define _SET_R3(x) GPIOB13 = x
 //R4-PB14
 #define SET_R4(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_14):(GPIOB->BSRR = GPIO_Pin_14)
+#define _SET_R4(x) GPIOB14 = x
 //R5
 #define SET_R5(x) 
 //R6
@@ -77,12 +84,16 @@
 #define SET_R8(x) 
 //G1-PA15
 #define SET_G1(x) (x == 0)?(GPIOA->BRR = GPIO_Pin_15):(GPIOA->BSRR = GPIO_Pin_15)
+#define _SET_G1(x) GPIOA15 = x
 //G2
-#define SET_G2(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_3):(GPIOB->BSRR = GPIO_Pin_3) 
+#define SET_G2(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_3):(GPIOB->BSRR = GPIO_Pin_3)
+#define _SET_G2(x) GPIOB3 = x 
 //G3
 #define SET_G3(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_4):(GPIOB->BSRR = GPIO_Pin_4) 
+#define _SET_G3(x) GPIOB4 = x
 //G4
-#define SET_G4(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_5):(GPIOB->BSRR = GPIO_Pin_5)  
+#define SET_G4(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_5):(GPIOB->BSRR = GPIO_Pin_5)
+#define _SET_G4(x) GPIOB5 = x  
 //G5
 #define SET_G5(x) 
 //G6
@@ -93,12 +104,16 @@
 #define SET_G8(x) 
 //B1
 #define SET_B1(x)
+#define _SET_B1(x)
 //B2
 #define SET_B2(x)
+#define _SET_B2(x)
 //B3
 #define SET_B3(x)
+#define _SET_B3(x)
 //B4
 #define SET_B4(x)
+#define _SET_B4(x)
 //B5
 #define SET_B5(x)
 //B6

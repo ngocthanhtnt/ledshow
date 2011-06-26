@@ -335,6 +335,12 @@ bool CcomThread::connect()
             port->setStopBits(STOP_1);
 
           comReStr = tr("打开串口成功");
+
+          char comByteBuf[50];
+          memset(comByteBuf, COM_BYTE, sizeof(comByteBuf));
+          port->write(comByteBuf, sizeof(comByteBuf));//(comByteBuf, len, sizeof(comByteBuf); //先发送20个字节的"唤醒符"
+          Delay_ms(100); //等待下位机进入通信状态
+
           emit comStatusChanged(comReStr);
           return true;
         }
@@ -406,7 +412,7 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
     {
       port->write(data, len);
 
-      comReStr = tr("发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答...");
+      comReStr = tr("发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答...") + QString::number(len);
       emit this->comStatusChanged(comReStr);
       re = waitComRcv(2); //等待应答
       if(re > 0)
