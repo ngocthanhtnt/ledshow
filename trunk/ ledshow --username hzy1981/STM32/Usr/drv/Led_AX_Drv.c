@@ -160,7 +160,7 @@ void Hardware_Init(void)
   TIM2_Configuration();
   TIM3_Configuration();
   TIM4_Configuration();
-  TIM1_Configuration();
+  //TIM1_Configuration();
 
   UART2_Init();
 

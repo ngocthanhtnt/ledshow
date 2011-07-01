@@ -35,7 +35,7 @@
 
 
 #define OE_PWM_FREQ 80000 //80KPWM频率
-
+/*
 #if (CARD_TYPE & 0xF0) == (CARD_AX & 0xF0)
 #define APP_NAME "条屏LED播放系统"
 #define MAX_PROG_NUM 10 //最大节目数
@@ -44,13 +44,14 @@
 #define BLOCK_DATA_LEN 129 //每块数据的大小
 #define MAX_BORDER_POINTS (16*8) //边框数据大小
 #else
+*/
 #define APP_NAME "大屏LED播放系统"
 #define MAX_PROG_NUM 10 //最大节目数
 #define MAX_AREA_NUM 8 //每个节目下最大分区数
 #define MAX_FILE_NUM 8 //每个分区下最大文件数
 #define BLOCK_DATA_LEN 489 //每块数据的大小
 #define MAX_BORDER_POINTS (40*8) //边框数据大小
-#endif
+//#endif
 
 #if QT_EN
 #define ASSERT_EN 1
@@ -98,7 +99,7 @@
 #define NET_EN	 1//网络使能
 #define GPRS_EN  1//GPRS使能
 #else //没有使能QT仿真 ---STM32的环境下
-#define ASSERT_EN 1
+#define ASSERT_EN 0
 #include "STM32.h"
 
 

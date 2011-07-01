@@ -206,8 +206,8 @@ void OS_Debug_Print(CONST OS_INT8S *format, ...)
 {
   va_list ap;
   
-  //if(Chk_JP_Status() != FAC_STATUS) //工厂状态才允许打印调试信息
-    //return;
+  if(Chk_JP_Status() != FAC_STATUS) //工厂状态才允许打印调试信息
+    return;
 
   if(OS_Debug_Print_En() EQ 0)
     return;

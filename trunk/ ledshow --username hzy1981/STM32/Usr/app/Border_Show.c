@@ -205,7 +205,7 @@ void Restore_Border_Data(INT8U Area_No)
 void Update_Border_Data(INT8U Area_No)
 {
   INT32U Max_Step;
-  S_Int8U InitFlag = {CHK_BYTE, 0, CHK_BYTE};
+  static S_Int8U InitFlag = {CHK_BYTE, 0, CHK_BYTE};
   INT8U i;
 
   //»¹ÔÚÒÆ¶¯×´Ì¬

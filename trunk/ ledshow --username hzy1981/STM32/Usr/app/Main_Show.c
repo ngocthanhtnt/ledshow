@@ -67,6 +67,19 @@ void Set_File_Stay_Time(INT8U Area_No, INT16U ms)
   Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time = Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time | 0x8000;
 }
 
+//检查Area_No分区当前显示数据是否连移数据
+INT8U Chk_Pic_Continuous_Move(INT8U Area_No)
+{
+    if(Prog_Status.Area_Status[Area_No].In_Mode >= 1 &&\
+       Prog_Status.Area_Status[Area_No].In_Mode <= 2 &&\
+       Get_File_Stay_Time(Area_No) EQ 0 &&\
+       Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_PIC)
+        return 1;
+    else
+        return 0;
+
+}
+
 //每隔MOVE_STEP_TIMER ms调用该函数,实现移动显示等效果
 void Update_Show_Data(void)
 {
@@ -88,16 +101,16 @@ void Update_Show_Data(void)
 	}
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
-      if(Screen_Status.Rcv_Flag EQ FRAME_FLAG) //收到一帧，先处理此帧
+      if(Screen_Status.Com_Time > 0) //收到一帧，先处理此帧
           return;
 //#if PIC_SHOW_EN    
     //if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_PIC)
       Update_Pic_Data(i);
-	  /*
+	  
 #if BORDER_SHOW_EN
       Update_Border_Data(i); //更新边框数据
 #endif
-*/
+
 
 //#endif
 /*
@@ -131,11 +144,11 @@ void Update_Show_Data(void)
 #endif
       */
   }
-  /*
+
 #if BORDER_SHOW_EN
       Update_Border_Data(MAX_AREA_NUM); //更新边框数据
 #endif
-*/
+
 }
 
 //更新显示备份区数据、显示非固定文本类信息
@@ -181,7 +194,7 @@ INT8U Update_XXX_Data(S_Show_Data *pDst, INT8U Area_No)
   
   return 1;
 }
-/*
+
 //清楚某个分区的状态
 void Clr_Area_Status(INT8U Area_No)
 {
@@ -194,7 +207,7 @@ void Clr_Area_Status(INT8U Area_No)
   memset(&Prog_Status.Area_Status[Area_No], 0, sizeof(Prog_Status.Area_Status[Area_No])); 
   SET_HT(Prog_Status.Area_Status[Area_No]);
 }
-
+/*
 void Clr_All_Area_Status()
 {
     INT8U i;
@@ -211,6 +224,107 @@ void Clr_Show_Data(void)
   memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
   SET_HT(Show_Data);
   SET_HT(Show_Data_Bak);
+}
+
+//读取连移数据
+void Read_Continous_Move_Show_Data(S_Show_Data *pDst, INT8U Area_No)
+{
+    INT16U Area_Width, Area_Height, Border_Height,i,j;
+
+    Area_Width = Get_Area_Width(Area_No);
+    Area_Height = Get_Area_Height(Area_No);
+    Border_Height = Get_Area_Border_Height(Area_No);
+
+    if(Area_Height > 2*Border_Height)
+        Area_Height = Area_Height - 2*Border_Height;
+    else
+        return;
+
+    if(Area_Width > 2*Border_Height)
+        Area_Width = Area_Width - 2*Border_Height;
+    else
+        return;
+
+    //左平移或者连续左移
+    if(Prog_Status.Area_Status[Area_No].In_Mode EQ 1 ||\
+       Prog_Status.Area_Status[Area_No].In_Mode EQ 3)
+    {
+        for(j = 0; j < Area_Height; j ++)
+        {
+           i = Prog_Status.Area_Status[Area_No].In_Step;
+             Read_Show_Data_Point(Area_No, \
+                                  Prog_Status.Area_Status[Area_No].File_No, \
+                                  &Prog_Status.File_Para[Area_No], \
+                                  Prog_Status.Area_Status[Area_No].SCN_No,\
+                                  pDst, \
+                                  i, \
+                                  j);
+        }
+    }
+    else if(Prog_Status.Area_Status[Area_No].In_Mode EQ 2 ||\
+            Prog_Status.Area_Status[Area_No].In_Mode EQ 5)//连续上移或者上移
+    {
+        for(i = 0; i < Area_Width; i = i+8)
+        {
+             j = Prog_Status.Area_Status[Area_No].In_Step;
+             Read_Show_Data_Point(Area_No, \
+                                  Prog_Status.Area_Status[Area_No].File_No, \
+                                  &Prog_Status.File_Para[Area_No], \
+                                  Prog_Status.Area_Status[Area_No].SCN_No,\
+                                  pDst, \
+                                  i, \
+                                  j);
+        }
+    }
+    else if(Prog_Status.Area_Status[Area_No].In_Mode EQ 4) //右平移
+    {
+        for(j = 0; j < Area_Height; j ++)
+        {
+           i = Prog_Status.Area_Status[Area_No].In_Max_Step - Prog_Status.Area_Status[Area_No].In_Step;
+             Read_Show_Data_Point(Area_No, \
+                                  Prog_Status.Area_Status[Area_No].File_No, \
+                                  &Prog_Status.File_Para[Area_No], \
+                                  Prog_Status.Area_Status[Area_No].SCN_No,\
+                                  pDst, \
+                                  i, \
+                                  j);
+        }
+    }
+    else//下平移
+    {
+        for(i = 0; i < Area_Width; i = i+8)
+        {
+             j = Prog_Status.Area_Status[Area_No].In_Max_Step - Prog_Status.Area_Status[Area_No].In_Step;
+             Read_Show_Data_Point(Area_No, \
+                                  Prog_Status.Area_Status[Area_No].File_No, \
+                                  &Prog_Status.File_Para[Area_No], \
+                                  Prog_Status.Area_Status[Area_No].SCN_No,\
+                                  pDst, \
+                                  i, \
+                                  j);
+        }
+    }
+}
+
+//检查Area_No当前播放文件是否播放当此完毕?
+INT8U Chk_File_Play_End(INT8U Area_No)
+{
+    if(Prog_Status.Area_Status[Area_No].SCN_No >= Prog_Status.File_Para[Area_No].Pic_Para.SNum)
+    {
+        Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
+
+        Prog_Status.Area_Status[Area_No].Play_Counts ++;
+        if(Prog_Status.Area_Status[Area_No].Play_Counts >= Prog_Status.File_Para[Area_No].Pic_Para.Play_Counts)
+        {
+          Prog_Status.Area_Status[Area_No].File_No ++;
+          Prog_Status.Area_Status[Area_No].Play_Counts = 0;
+        }
+        SET_SUM(Prog_Status.Area_Status[Area_No]);
+        return 1;
+    }
+    else
+        return 0;
+
 }
 
 //读取一屏显示数据
@@ -353,8 +467,25 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
         //读出文件参数了，保留为上次读出的文件参数
         Prog_Status.Area_Status[Area_No].Last_File_No = Prog_Status.Area_Status[Area_No].File_No;
         Prog_Status.Area_Status[Area_No].New_File_Flag = 0;
-        Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
         Prog_Status.Area_Status[Area_No].SCN_No = 0;
+
+        Prog_Status.Area_Status[Area_No].In_Step = 0;
+        Prog_Status.Area_Status[Area_No].Out_Step = 0;
+        Prog_Status.Area_Status[Area_No].Stay_Time = 0;
+        Prog_Status.Area_Status[Area_No].Step_Timer = 0;
+
+        Calc_Show_Mode_Step(Area_No); //计算新文件的进入退出模式和最大步进数
+
+        if(Chk_Pic_Continuous_Move(Area_No))
+        {
+           Prog_Status.Area_Status[Area_No].New_CStep_Flag = NEW_FLAG;
+           Prog_Status.Area_Status[Area_No].New_SCN_Flag = 0;
+        }
+        else
+        {
+           Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
+           Prog_Status.Area_Status[Area_No].New_CStep_Flag = 0;
+        }
     }
 
     SET_SUM(Prog_Status.Area_Status[Area_No]);
@@ -371,19 +502,8 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   {
       TRACE();
       //已经到了最大的一幕则切换到下个文件
-      if(Prog_Status.Area_Status[Area_No].SCN_No >= Prog_Status.File_Para[Area_No].Pic_Para.SNum)
-      {
-          Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
-
-          Prog_Status.Area_Status[Area_No].Play_Counts ++;
-          if(Prog_Status.Area_Status[Area_No].Play_Counts >= Prog_Status.File_Para[Area_No].Pic_Para.Play_Counts)
-          {
-            Prog_Status.Area_Status[Area_No].File_No ++;
-            Prog_Status.Area_Status[Area_No].Play_Counts = 0;
-          }
-          SET_SUM(Prog_Status.Area_Status[Area_No]);
+      if(Chk_File_Play_End(Area_No))
           return 0;
-      }
 /*
       //在连续移动的情况下,在更新新一屏以前,必须将之前屏幕的边框数据恢复,否则边框会出现在移动的图像中
       if(Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 2 &&\
@@ -476,7 +596,25 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
       }
   }
 
+  if(Prog_Status.Area_Status[Area_No].New_CStep_Flag)
+  {
+      //已经到了最大的一幕则切换到下个文件
+      if(Chk_File_Play_End(Area_No))
+          return 0;
 
+      if(Prog_Status.Area_Status[Area_No].In_Step < Prog_Status.Area_Status[Area_No].In_Max_Step)
+      {
+          Read_Continous_Move_Show_Data(&Show_Data_Bak, Area_No);
+      }
+      else
+      {
+          Prog_Status.Area_Status[Area_No].SCN_No ++; //显示屏数增加
+          SET_SUM(Prog_Status.Area_Status[Area_No]);
+      }
+
+      Prog_Status.Area_Status[Area_No].New_CStep_Flag = 0;
+      SET_SUM(Prog_Status.Area_Status[Area_No]);
+  }
 //-----------------
   return AREA_OK;
 }
@@ -499,7 +637,8 @@ INT8U Check_Update_Show_Data_Bak(void)
          return 1;
 
      if(Prog_Status.Area_Status[i].New_File_Flag ||\
-        Prog_Status.Area_Status[i].New_SCN_Flag)
+        Prog_Status.Area_Status[i].New_SCN_Flag ||\
+        Prog_Status.Area_Status[i].New_CStep_Flag)
      {
       Update_Show_Data_Bak(Prog_Para.Prog_No, i);// == FILE_END)
     }
@@ -874,7 +1013,8 @@ void Check_Update_Data_Prep(void)
           return;
 
     if(Prog_Status.Area_Status[i].New_File_Flag ||\
-       Prog_Status.Area_Status[i].New_SCN_Flag)
+       Prog_Status.Area_Status[i].New_SCN_Flag ||\
+       Prog_Status.Area_Status[i].New_CStep_Flag)
       return;
     
     //获取下一屏数据

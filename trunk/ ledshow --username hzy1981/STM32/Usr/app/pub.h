@@ -68,7 +68,7 @@ typedef struct
 #define SET_HT(V) do{V.Head = CHK_BYTE; V.Tail = CHK_BYTE;}while(0)
 #define CHK_HT(V) ((V.Head == CHK_BYTE && V.Tail == CHK_BYTE)?1:0)
 #define GET_VAR(A) A.Var
-#define SET_VAR(A,B) do{A.Var = B; SET_SUM(A);}while(0)
+#define SET_VAR(A,B) do{A.Var = B; /*SET_SUM(A)*/;}while(0)
 
 typedef struct
 {

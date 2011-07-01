@@ -209,6 +209,38 @@ INT16U Get_Storage_Data_Len(STORA_DI SDI)
   return 0;
 }
 
+//读取某个SDI内的数据，不进行CS校验
+INT16U Read_Storage_Data_NoCS(STORA_DI SDI, INT16U Offset, INT16U Len, void* pDst, void* pDst_Start, INT16U DstLen)
+{
+    INT32U Off;
+    INT8U Re;
+
+    TRACE();
+  #if QT_EN == 0
+    ReInit_Mem_Port();//重新初始化端口
+  #endif
+    Off = Get_Storage_Data_Off(SDI); //获取数据偏移
+    if(NULL_4BYTES EQ Off)//ASSERT(NULL_4BYTES != Off))
+    {
+      ASSERT_FAILED();
+      //*pErr = RD_STORAGE_DATA_DI_ERR;
+      return 0;
+    }
+
+    debug("read data:ID = 0x%x, Addr = %d, Off = %d, Len = %d", SDI, Off, Offset, Len);
+
+    Off += Offset; // + 内部偏移
+
+    //OS_Mutex_Pend(PUB_RW_ROM_ID); //申请写ROM的信号量ID
+    //if(Check_Power_Status() EQ POWER_ON_STATUS)
+    Re = Read_PHY_Mem(Off, pDst, Len, pDst_Start, DstLen);
+
+    if(Re > 0)
+        return Len;
+    else
+        return 0;
+
+}
 
 //读取存储器中的某项数据的固定长度，DI的值可参考Data_Para_Storage的定义
 //DI, 需要读取的数据项标识
