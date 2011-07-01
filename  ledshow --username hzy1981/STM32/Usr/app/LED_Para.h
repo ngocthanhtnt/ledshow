@@ -876,6 +876,8 @@ EXT INT8U Write_Prog_Block_Index(void);
 EXT INT16U Read_Prog_Para(INT8U Prog_No, S_Prog_Para *pProg_Para);
 EXT INT16U Read_Prog_Block_Index(INT8U Prog_No);
 EXT INT16U _Read_Prog_Block_Index(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen);
+EXT INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT16U SIndex, \
+                                  S_Show_Data *pShow_Data, INT16U X, INT16U Y);
 EXT INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT16U SIndex, \
                       S_Show_Data *pShow_Data, INT16U *pX, INT16U *pY, INT16U *pWidth, INT16U *pHeight);
 //}

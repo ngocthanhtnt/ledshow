@@ -549,6 +549,7 @@ void Com_Rcv_Byte(INT8U Ch, INT8U Byte)
   else if(Byte EQ FRAME_TAIL) //收到帧尾字符
   {
     Screen_Status.Rcv_Ch = Ch;
+	Set_Screen_Com_Time(COM_STANDBY_SEC); //通信保持时间，在这段时间内，扫描中断不进行扫描.
   }
 }
 

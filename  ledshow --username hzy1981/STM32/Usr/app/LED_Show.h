@@ -114,6 +114,7 @@ typedef struct
 
   INT8U New_File_Flag:4;
   INT8U New_SCN_Flag:4;
+  INT8U New_CStep_Flag; //新的连移步骤
 
   INT8U File_No;    //当前文件号
 
@@ -132,7 +133,7 @@ typedef struct
   INT16U Max_Step;
   INT32U Step_Timer;  //已经走过Timer，单位ms
   INT32U Stay_Time;   //已经停留的时间，单位ms
-  INT32U Out_Time;   //退出时间
+  //INT32U Out_Time;   //退出时间
   INT16U Counts;
   
   INT8U In_Mode;

@@ -1344,7 +1344,7 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
       {
           x = TEXT_LEFT_BORDER_WIDTH + layout->boundingRect().x();
           x += (page - num) * w;
-          y = LINE_POSI_ADJ + /*layout->boundingRect().y() +*/ layout->position().y();
+          y = LINE_POSI_ADJ + layout->lineAt(0).position().y() + layout->position().y();
           //y值需要+4，才能匹配，经验值
 
           reImage.fill(Qt::black);
@@ -1354,7 +1354,7 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
                 for(int j = 0; j < h; j ++)
                 {
                   if(x + i < image.width() && y + j < image.height())
-                    rgb = image.pixel(x + i,y + j);
+                    rgb = image.pixel(x + i,y + (height - h) / 2 + j);
                   else
                     rgb = Qt::black;
                   reImage.setPixel(i, j, rgb);

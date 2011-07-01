@@ -13,11 +13,19 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
    S_Point Point;
    INT16S Angle;
 
+   //return;
+
    if(Area_No >= MAX_AREA_NUM)
    {
      ASSERT_FAILED();
      return;
    }
+
+   if(pTime->Time[T_SEC] >= 60 ||\
+      pTime->Time[T_MIN] >= 60 ||\
+      pTime->Time[T_HOUR] >= 24)
+	  return;
+   
 
    Width = Get_Area_Width(Area_No);
    Height = Get_Area_Height(Area_No);
@@ -40,7 +48,7 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
      Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, (INT16S)(Radius * 0.9), \
          pClock_Para->Min_Point_Radius, pClock_Para->Min_Point_Style, pClock_Para->Min_Point_Color);
    }
-
+ 
    //Õûµã
    for(Angle = 0; Angle < 360; Angle = Angle + 360/12)
    {
@@ -50,7 +58,7 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
      Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, (INT16S)(Radius * 0.9), \
          pClock_Para->Hour_Point_Radius, pClock_Para->Hour_Point_Style, pClock_Para->Hour_Point_Color);
    }
-
+ 
    //369µã
    for(Angle = 0; Angle < 360; Angle = Angle + 90)
    {
@@ -73,6 +81,7 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
    if(pClock_Para->Sec_Line_Width)
    Fill_Clock_Line(pDst_Buf, Area_No, &Point, 90 - 360 * pTime->Time[T_SEC] / 60, Radius * 12 / 10,\
                    pClock_Para->Sec_Line_Width, pClock_Para->Sec_Line_Color);
+
 }
 /*
 struct tm {

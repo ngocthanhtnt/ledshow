@@ -642,6 +642,43 @@ void Set_Area_Border_In(INT8U Area_No)
     }
 }
 
+//计算显示分区的进入退出模式，以及最大步进数
+void Calc_Show_Mode_Step(INT8U Area_No)
+{
+    INT8U In_Mode, Out_Mode;
+
+    In_Mode = Prog_Status.File_Para[Area_No].Pic_Para.In_Mode;
+    //In_Mode == 0随机,1立即显示,2连续左移
+    if(In_Mode EQ 0) //随机
+        In_Mode = rand()%S_NUM(In_Mode_Func);//Cur_Time.Time[T_SEC] % S_NUM(In_Mode_Func);
+    else
+        In_Mode = In_Mode - 1;
+
+    Prog_Status.Area_Status[Area_No].In_Mode = In_Mode;
+        Set_Area_Border_Out(Area_No);
+    Prog_Status.Area_Status[Area_No].In_Max_Step = Get_In_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
+    Set_Area_Border_In(Area_No);
+
+    Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
+
+    if(Out_Mode EQ 0) //0随机,1不清屏,2立即清屏,3左移...
+       Out_Mode = rand()%(S_NUM(Out_Mode_Func) + 1);//Cur_Time.Time[T_SEC] % S_NUM(Out_Mode_Func);
+    else if(Out_Mode EQ 1)
+       Out_Mode = 0; //修正为0不清屏
+    else if(Out_Mode >= 2) //正常清屏方式
+       Out_Mode = Out_Mode - 1;
+
+    //0不清，1-N正常清屏方式...
+    Prog_Status.Area_Status[Area_No].Out_Mode = Out_Mode; //此时0表示不清屏,1-N表示清屏方式
+
+        Set_Area_Border_Out(Area_No);
+    if(Out_Mode >= 1)
+      Prog_Status.Area_Status[Area_No].Out_Max_Step = Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, Out_Mode - 1);
+    else //不清屏
+      Prog_Status.Area_Status[Area_No].Out_Max_Step = 100;//Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, Out_Mode - 1);
+    Set_Area_Border_In(Area_No);
+}
+
 void Update_Pic_Data(INT8U Area_No)
 {
   INT8U i;
@@ -658,12 +695,13 @@ void Update_Pic_Data(INT8U Area_No)
 
   if(Prog_Status.Play_Status.New_Prog_Flag ||\
      Prog_Status.Area_Status[Area_No].New_File_Flag ||\
-     Prog_Status.Area_Status[Area_No].New_SCN_Flag) //该节目或该分区还没有进入播放状态?
+     Prog_Status.Area_Status[Area_No].New_SCN_Flag ||\
+     Prog_Status.Area_Status[Area_No].New_CStep_Flag) //该节目或该分区还没有进入播放状态?
     return;
   
   Stay_Time = Get_File_Stay_Time(Area_No);
-  if(Stay_Time == 0)
-    Stay_Time = Get_Area_In_Step_Delay(Area_No);
+  //if(Stay_Time == 0)
+    //Stay_Time = Get_Area_In_Step_Delay(Area_No);
   //Out_Time = Get_File_Out_Time(Area_No);
   
 //---------------------------------------------------------  
@@ -671,6 +709,7 @@ void Update_Pic_Data(INT8U Area_No)
   //In_Step_Bak = Prog_Status.Area_Status[Area_No].In_Step;
 
  //------------------------------------------------------- 
+  /*
  if(Prog_Status.Area_Status[Area_No].In_Step EQ 0 &&\
     Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
   {
@@ -686,8 +725,34 @@ void Update_Pic_Data(INT8U Area_No)
     Prog_Status.Area_Status[Area_No].In_Max_Step = Get_In_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
     Set_Area_Border_In(Area_No);
   }
+  */
 
+  //-------连续左移或上移等要特殊处理
+ /*
+  if(Prog_Status.Area_Status[Area_No].New_SCN_Flag)
+  {
+	  if(Prog_Status.Area_Status[Area_No].In_Mode >= 1 &&\
+	     Prog_Status.Area_Status[Area_No].In_Mode <= 2 &&\
+	     Stay_Time EQ 0 &&\
+		 Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag) EQ 0) //连续左移和上移
+	   {
+		   In_Delay = Get_Area_In_Step_Delay(Area_No);
 
+	       if(Prog_Status.Area_Status[Area_No].Step_Timer < In_Delay)
+	        Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_PERIOD;
+	
+			if(Prog_Status.Area_Status[Area_No].Step_Timer >= In_Delay)
+			{
+			  Prog_Status.Area_Status[Area_No].Step_Timer = 0;
+			  Prog_Status.Area_Status[Area_No].In_Step += MOVE_STEP;
+			}
+			return;
+		}
+		else
+		  return;
+   }
+*/
+  /*
  if(Prog_Status.Area_Status[Area_No].Out_Step EQ 0 &&\
     Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
  {
@@ -709,7 +774,8 @@ void Update_Pic_Data(INT8U Area_No)
     else //不清屏
       Prog_Status.Area_Status[Area_No].Out_Max_Step = 100;//Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, Out_Mode - 1);
     Set_Area_Border_In(Area_No);
-}
+ }
+ */
 
   //还在移动状态
   if(Prog_Status.Area_Status[Area_No].In_Step < Prog_Status.Area_Status[Area_No].In_Max_Step)
@@ -719,7 +785,7 @@ void Update_Pic_Data(INT8U Area_No)
       if(Prog_Status.Area_Status[Area_No].Step_Timer EQ 0 &&\
          Prog_Status.Area_Status[Area_No].In_Step EQ 0)
         {
-          Prog_Status.Area_Status[Area_No].Step_Timer = In_Delay;///---进来第一次直接显示第一次的步进效果
+          //Prog_Status.Area_Status[Area_No].Step_Timer = In_Delay;///---进来第一次直接显示第一次的步进效果
 
           //Prog_Status.Area_Status[Area_No].In_Mode = In_Mode;
           //---------
@@ -755,9 +821,13 @@ void Update_Pic_Data(INT8U Area_No)
         Prog_Status.Area_Status[Area_No].Step = Prog_Status.Area_Status[Area_No].In_Step;
         Prog_Status.Area_Status[Area_No].Max_Step = Prog_Status.Area_Status[Area_No].In_Max_Step;
 
-        //----------------
-        //Prog_Status.Area_Status[Area_No].Restore_Border_Flag = 0;//可以更新
-        //-----------------
+        //是否连移数据?
+        if(Chk_Pic_Continuous_Move(Area_No))
+        {
+            Prog_Status.Area_Status[Area_No].New_CStep_Flag = NEW_FLAG;
+            SET_SUM(Prog_Status.Area_Status[Area_No]);
+        }
+
         Set_Area_Border_Out(Area_No);
         (*(In_Mode_Func[In_Mode].Func))(Area_No);//执行移动操作
         Set_Area_Border_In(Area_No);
@@ -772,21 +842,15 @@ void Update_Pic_Data(INT8U Area_No)
         {
           if(Stay_Time EQ 0) //进入阶段走完，如果停留时间是0则直接进入退出阶段!
           {
-            Prog_Status.Area_Status[Area_No].Stay_Time = Stay_Time;
+            Prog_Status.Area_Status[Area_No].Stay_Time = 0;
             Prog_Status.Area_Status[Area_No].Out_Step = 0;
             Prog_Status.Area_Status[Area_No].Step_Timer = 0;
 
-            if(Prog_Status.Area_Status[Area_No].In_Mode >= 1 &&\
-               Prog_Status.Area_Status[Area_No].In_Mode <= 6) //连续左移和上移直接进入新屏
+            if(Chk_Pic_Continuous_Move(Area_No)) //连续左移和上移直接进入新屏
             {
-                Prog_Status.Area_Status[Area_No].Stay_Time = Stay_Time;
-                Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
-                Prog_Status.Area_Status[Area_No].SCN_No ++;
                 Prog_Status.Area_Status[Area_No].In_Step = 0;
-                //Prog_Status.Area_Status[Area_No].Step_Timer = 0;
-                //Prog_Status.Area_Status[Area_No].Stay_Time = 0;
-                Prog_Status.Area_Status[Area_No].Out_Time = 0;
-                //Prog_Status.Area_Status[Area_No].Play_Flag = 0;
+                Prog_Status.Area_Status[Area_No].New_CStep_Flag = NEW_FLAG;
+                Prog_Status.Area_Status[Area_No].SCN_No ++;
                 SET_SUM(Prog_Status.Area_Status[Area_No]);
             }
           }
@@ -796,9 +860,11 @@ void Update_Pic_Data(INT8U Area_No)
   }
   else if(Prog_Status.Area_Status[Area_No].Stay_Time < Stay_Time) //停留时间未到
   {
-    if(Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag))
+    if(Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag)) //更新
     {
-        if((Prog_Status.Area_Status[Area_No].Stay_Time % 200) EQ 0)
+        //如果是显示表盘，需要定时更新背景，因为背景每秒会被秒钟覆盖修改
+        if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_CLOCK &&\
+           (Prog_Status.Area_Status[Area_No].Stay_Time % 200) EQ 0)
         {
           Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_PERIOD;
           Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
@@ -807,40 +873,22 @@ void Update_Pic_Data(INT8U Area_No)
           SET_SUM(Prog_Status.Area_Status[Area_No]);
           return;
         }
- /*
-        if(Prog_Status.Area_Status[Area_No].Stay_Time EQ MOVE_STEP_PERIOD ||\
-           Prog_Status.Area_Status[Area_No].Stay_Time % 800 EQ 0)//Sec.Var != Cur_Time.Time[T_SEC])//
-   */
+
+        //更新XXX数据，例如表盘、温度、湿度、计时等等的
         if((Prog_Status.Area_Status[Area_No].Stay_Time % 200) EQ MOVE_STEP_PERIOD)
         {
-          //Sec.Var = Cur_Time.Time[T_SEC];
-		  
           P0.X = P0.Y = 0;
-          Area_Width = Get_Area_Width(Area_No);
-          Area_Height = Get_Area_Height(Area_No);
 
-		  //STOP_SCAN_TIMER();
-		  //for(i = 0; i < 16; i ++)
-		  //LED_Scan_One_Row();
           Set_Area_Border_Out(Area_No);
           Update_XXX_Data(&Show_Data_Bak, Area_No);
-          Set_Area_Border_In(Area_No);
+          Area_Width = Get_Area_Width(Area_No);
+          Area_Height = Get_Area_Height(Area_No);
           Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Area_Width, Area_Height, &Show_Data, &P0);
-          //LED_Scan_One_Row();
-		  //Update_XXX_Data(&Show_Data, Area_No);
-		 // for(i = 0; i < 16; i ++)
-		  //LED_Scan_One_Row();
-		 // START_SCAN_TIMER();
+          Set_Area_Border_In(Area_No);
         }
     }
 
     Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_PERIOD;
-    /*
-    if(Prog_Status.Area_Status[Area_No].Stay_Time >= Stay_Time)//进入退出的移动状态
-    {
-      Prog_Status.Area_Status[Area_No].Out_Step = 0;
-    }
-    */
   }
   else if(Prog_Status.Area_Status[Area_No].Out_Step < Prog_Status.Area_Status[Area_No].Out_Max_Step)
   {
@@ -931,7 +979,7 @@ void Update_Pic_Data(INT8U Area_No)
           Prog_Status.Area_Status[Area_No].Out_Step = 0;
           Prog_Status.Area_Status[Area_No].Step_Timer = 0;
           Prog_Status.Area_Status[Area_No].Stay_Time = 0;
-          Prog_Status.Area_Status[Area_No].Out_Time = 0;
+          //Prog_Status.Area_Status[Area_No].Out_Time = 0;
 
       }
   }

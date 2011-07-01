@@ -95,7 +95,7 @@ EXT S_RT_Show_Para RT_Show_Para;
 EXT INT32U Get_Area_In_Step_Delay(INT8U Area_No);
 EXT INT32U Get_Area_Out_Step_Delay(INT8U Area_No);
 EXT INT32U Get_File_Stay_Time(INT8U Area_No);
-//EXT INT32U Get_File_Out_Time(INT8U Area_No);
+EXT INT8U Chk_Pic_Continuous_Move(INT8U Area_No);
 EXT void Set_File_Stay_Time(INT8U Area_No, INT16U ms);
 EXT void Update_Show_Data(void);
 EXT INT8U Check_Prog_Play_Time(void);
@@ -116,5 +116,6 @@ EXT void RT_Play_Status_Enter(INT16U Sec);
 EXT void RT_Play_Status_Exit(void);
 EXT void Print_Cur_Time(void);
 EXT void Self_Test(INT8U Mode);
+EXT void Read_Continous_Move_Show_Data(S_Show_Data *pDst, INT8U Area_No);
 EXT void Fac_Status_Self_Test(void);
 #endif

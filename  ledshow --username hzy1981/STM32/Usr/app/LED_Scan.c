@@ -696,7 +696,7 @@ void LED_Scan_One_Row(void)
     return;
  
 
-  Set_Clock_Hight_Speed(); //设置为高速运行模式
+  //Set_Clock_Hight_Speed(); //设置为高速运行模式
   /*
 	_RCC_SYSCLKConfig(RCC_SYSCLKSource_HSE); //设置外部时钟为HSE
 	//_RCC_HCLKConfig(RCC_SYSCLK_Div1);   //设置AHB时钟=AHB_FREQ MHz
@@ -854,11 +854,11 @@ void LED_Scan_One_Row(void)
 	}
 	 
 	//关闭OE使能
-	//Set_OE_Duty_Polarity(0, Screen_Para.Scan_Para.OE_Polarity);
+	Set_OE_Duty_Polarity(0, Screen_Para.Scan_Para.OE_Polarity);
 
 	if(Screen_Para.Scan_Para.Line_Hide > 0)
 	  _Delay_us(Screen_Para.Scan_Para.Line_Hide*10); //行消隐时间
-
+    _Delay_us(20);
     SET_LAT(0); //锁存信号输出
     SET_LAT(1); //锁存信号输出
     
@@ -868,9 +868,9 @@ void LED_Scan_One_Row(void)
       Screen_Status.Scan_Row = 0;
 	
 	//重新打开OE
-	//Set_OE_Duty_Polarity(Screen_Status.Lightness, Screen_Para.Scan_Para.OE_Polarity);
+	Set_OE_Duty_Polarity(100, Screen_Para.Scan_Para.OE_Polarity);
 	//_USART_Cmd(USART1, DISABLE);
-    Set_Clock_Normal_Speed();
+    //Set_Clock_Normal_Speed();
 	//_USART_Cmd(USART1, ENABLE); 
 	//USART_Clar
    
