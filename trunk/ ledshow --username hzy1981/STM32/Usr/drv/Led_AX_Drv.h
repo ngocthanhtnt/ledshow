@@ -26,7 +26,7 @@
 #define SPI_ReceiveData         SPI_I2S_ReceiveData
 */
 //复位脚 -PB15
-#define SE_RST(x) (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_15):GPIO_SetBits(GPIOB,GPIO_Pin_15)
+#define SET_RST(x) (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_15):GPIO_SetBits(GPIOB,GPIO_Pin_15)
 
 //SPI Flash的选通脚-PA4
 #define SET_FLASH_CS(x)	(x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_4):GPIO_SetBits(GPIOA,GPIO_Pin_4)

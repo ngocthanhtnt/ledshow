@@ -183,7 +183,7 @@ void SPI1_FLASH_Init(void)
 
   /* Deselect the FLASH: Chip Select high */
   SPI_FLASH_CS_HIGH();
-
+  SPI_Cmd(SPI1, DISABLE);
   /* SPI1 configuration */
   SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
@@ -223,19 +223,22 @@ void SPI1_CH376_Init(void)
    GPIO_Init(GPIOA, &GPIO_InitStructure);           //CH376_CS
 */
    /* SPI1 configuration */ 
+   SPI_Cmd(SPI1, DISABLE);
+
    SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
    SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
    SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
    SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
    SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
    SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
    SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
    SPI_InitStructure.SPI_CRCPolynomial = 7;
    SPI_Init(SPI1, &SPI_InitStructure);
 
    /* Enable SPI1  */
    SPI_Cmd(SPI1, ENABLE);
+
 }
 
 //SPI1读写一字节数据
@@ -287,11 +290,19 @@ void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;		//
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
+ 	
+	/* Enable the TIM4 global Interrupt*/ 
+	//秒中断
+	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;  //TIM1中断
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级2级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
+	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 
 	/* Enable the TIM2 global Interrupt */
 	//刷屏中断优先级
 	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;  //TIM2中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级1级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级1级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
@@ -299,14 +310,6 @@ void NVIC_Configuration(void)
 	/* Enable the TIM4 global Interrupt */
 	//特效中断
 	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;  //TIM4中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级2级
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
-	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
-
- 	/* Enable the TIM4 global Interrupt */
-	//边框绘制中断
-	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;  //TIM1中断
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;  //先占优先级2级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
@@ -394,7 +397,7 @@ void TIM1_Configuration(void)
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); 
 
-	TIM_TimeBaseStructure.TIM_Period = MOVE_STEP_PERIOD * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	TIM_TimeBaseStructure.TIM_Period = 1000 * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
     TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE * 2/10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; 
@@ -587,6 +590,15 @@ void Unselect_SPI_Device(void)
   SET_CH376_CS(1);	//不选中CH376
   SET_DS1302_CS(0);	//不选中DS1302
 
+}
+
+void RST_Periph(void)
+{
+  SET_RST(1);
+  Delay_us(100);
+  SET_RST(0);
+  Delay_ms(100);
+  SET_RST(1);
 }
 
 //共有的驱动函数等在此文件中定义

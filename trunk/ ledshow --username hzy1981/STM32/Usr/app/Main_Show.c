@@ -813,11 +813,11 @@ void Check_Update_Program_Para(void)
   if(Re EQ 0)
     ASSERT_FAILED();
  
-  if(Sec.Var != Pub_Timer.Sec) //每秒对实时显示区计时
+  if(Sec.Var != Cur_Time.Time[T_SEC]) //每秒对实时显示区计时
   {
     TRACE();
 
-    Sec.Var = Pub_Timer.Sec;
+    Sec.Var = Cur_Time.Time[T_SEC];
 	if(Prog_Status.Play_Status.RT_Play_Time > 0) //当前是否处于实时播放状态，是计时，并到时后退出
 	{
 	  Prog_Status.Play_Status.RT_Play_Time--;
@@ -1308,13 +1308,13 @@ void Para_Init(void)
 }
 
 void Para_Show(void)
-{
+{/*
   INT16U Len;
   //INT8U IP[4];
   //INT32U Baud; //串口波特率
 
  //显示板卡地址和串口波特率
-/*
+
   Len = RT_LED_Print(FONT0, 0x01, 0, 0, 3, "%d-%d", Screen_Para.COM_Para.Addr, Screen_Para.COM_Para.Baud);
 
 #if UDISK_EN  
@@ -1363,18 +1363,18 @@ void Self_Test(INT8U Mode)
   //-----------------------------------------
 
   //--------对时钟的测试---------------------
-
+  /*
   //while(1)
   {
  // DS1302_Init();
- /*
+
   Re &= _Get_Cur_Time(TempTime.Time);
   Print_Cur_Time();
   Delay_sec(1);//Delay_sec(2);
   Re &=_Get_Cur_Time(TempTime1.Time);
-  */
-  }
 
+  }
+  */
   if(TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
   {
     debug("时钟自检成功");

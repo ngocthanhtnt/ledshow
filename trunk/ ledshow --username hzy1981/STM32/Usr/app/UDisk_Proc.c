@@ -3,7 +3,19 @@
 
 void UDisk_Init(void)
 {
-  INT8U i=mInitCH376Host();
+ INT8U Re;
+
+  Unselect_SPI_Device();
+
+  SPI1_CH376_Init();
+  //SET_CH376_CS(0);	//选中CH376
+  Re = mInitCH376Host();
+  if(Re != USB_INT_SUCCESS)
+  {
+    ASSERT_FAILED();
+  }
+
+  //SET_CH376_CS(1);	//不选中CH376
 }
 
 
@@ -16,13 +28,19 @@ void UDisk_Proc(void)
     INT16U RealCount,len;
 	unsigned char buf[30];
 
+	if(Query376Interrupt() == FALSE)
+	  return;
+
+    Unselect_SPI_Device();
+	SPI1_CH376_Init();
+    SET_CH376_CS(0);	//选中CH376
+
 	if(CH376DiskConnect()==USB_INT_SUCCESS) //是否有U盘插入
 	{
 	    if(Flag.Var EQ 1)
 		  return;
 
 		Flag.Var = 1; //当前U盘已经处理过了
-	    SPI_CH376_Init();  //重新初始化SPI口
 
 		if(CH376DiskMount()==USB_INT_SUCCESS) //磁盘就绪?
 		{
@@ -78,4 +96,5 @@ void UDisk_Proc(void)
 	  Flag.Var = 0;
 	}
 
+    SET_CH376_CS(1);	//选中CH376
 }

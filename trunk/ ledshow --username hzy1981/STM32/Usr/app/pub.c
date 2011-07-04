@@ -119,14 +119,6 @@ INT8U Bcd2Hex_Byte(INT8U Byte)
 
 void Pub_Timer_Proc(void)
 {
-  static INT32U ms = 0;
-
-  Pub_Timer.Ms += 1;//SCAN_SCREEN_PERIOD;
-  ms += SCAN_SCREEN_PERIOD;
-  if(Pub_Timer.Ms >= 1000)
-  {
-    ms = 0;
 	Pub_Timer.Sec ++;
-  }
 }
 #undef PUB_C

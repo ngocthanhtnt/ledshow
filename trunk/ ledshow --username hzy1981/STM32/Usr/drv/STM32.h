@@ -243,6 +243,7 @@ EXT void Delay_ms(INT16U nms);
 EXT void Delay_us(INT32U nus);
 EXT void Delay_sec(INT16U sec);
 EXT void SPI1_Init(void);
+EXT void RST_Periph(void);
 EXT void Com_Init(void);
 EXT INT8U SPI1_ReadWrite(INT8U writedat);
 EXT void Soft_Rest(void);

@@ -45,7 +45,7 @@ unsigned char CH376_ReadWrite(unsigned char writedat)
 *****************************************************/
 u8 mInitCH376Host( void )  
 {
- u8 res;
+ static u8 res;
  
  xWriteCH376Cmd( CMD11_CHECK_EXIST );  			/* 测试单片机与CH376之间的通讯接口 */
  xWriteCH376Data( 0x65 );
@@ -255,7 +255,7 @@ void	mDelay0_5uS( void )  /* 至少延时0.5uS,根据单片机主频调整 */
  i=20;
  while(i--);
  */
- Delay_us(100);
+ Delay_us(5);
 }
 /*
 void main(void)
@@ -266,6 +266,7 @@ void main(void)
    
 }
 */
+#if 0
 void SPI_CH376_Init(void)
 {
    SPI_InitTypeDef SPI_InitStructure;
@@ -312,3 +313,5 @@ void SPI_CH376_Init(void)
    /* Enable SPI1  */
    SPI_Cmd(SPI1, ENABLE);
 }
+#endif
+

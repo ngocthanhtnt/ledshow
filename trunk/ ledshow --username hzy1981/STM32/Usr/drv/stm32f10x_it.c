@@ -166,7 +166,6 @@ void TIM2_IRQHandler(void)   //TIM2中断
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
 	{
 	TIM_ClearITPendingBit(TIM2, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
-	Pub_Timer_Proc();
 	LED_Scan_One_Row();
 	}
 
@@ -206,8 +205,7 @@ void TIM1_UP_IRQHandler(void)   //TIM1中断
     if (TIM_GetITStatus(TIM1, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
 	{
 	 TIM_ClearITPendingBit(TIM1, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
-
-	 Border_Show_Proc();
+	 Pub_Timer_Proc();
 	}
 
   TIM_Cmd(TIM1, ENABLE);

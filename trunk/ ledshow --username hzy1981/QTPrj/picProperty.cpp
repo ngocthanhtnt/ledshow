@@ -133,17 +133,20 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
     hLayout->addLayout(vLayout);
 
     textGroup = new QGroupBox(tr("ÎÄ±¾ÄÚÈÝ"), this);
-    editButton = new QPushButton(tr("±à¼­Æ÷"), this);
+    editButton = new QPushButton(tr("±à¼­ÄÚÈÝ"), this);
     pageBox = new QSpinBox(this);
     vLayout = new QVBoxLayout(this);
+    vLayout->addStretch(0);
     vLayout ->addWidget(editButton);
-
-    QLabel *page = new QLabel(tr("Ò³ºÅ"),this);
+    vLayout->addStretch(0);
+    QLabel *page = new QLabel(tr("µÚ"),this);
     QHBoxLayout *pageHLayout = new QHBoxLayout(this);
     pageHLayout->addWidget(page);
     pageHLayout->addWidget(pageBox);
+    QLabel *muLabel = new QLabel(tr("Ä»"),this);
+    pageHLayout->addWidget(muLabel);
     vLayout->addLayout(pageHLayout);
-
+    vLayout->addStretch(0);
     textGroup -> setLayout(vLayout);
 
     vLayout = new QVBoxLayout(this);

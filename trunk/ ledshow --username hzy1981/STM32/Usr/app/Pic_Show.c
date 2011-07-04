@@ -154,7 +154,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 20
   ,{&Move_Up_Down_Open, V_MODE, 1
 #if QT_EN
-   ,"立即显示" 
+   ,"上下开帘"
 #endif    
   } //上下开帘
 #endif
@@ -166,21 +166,21 @@ const S_Mode_Func In_Mode_Func[]=
   } //左右合帘
 #endif
 #if IN_SPEC_EFFECT_NUM > 22
-  ,{&Move_Up_Down_Close, H_MODE, 1
+  ,{&Move_Up_Down_Close, V_MODE, 1
 #if QT_EN
    ,"上下合帘" 
 #endif    
   } //上下合帘
 #endif
 #if IN_SPEC_EFFECT_NUM > 23
-  ,{&Move_Spin_CW, HV_ADD_MODE, 2
+  ,{&Move_Spin_CW, HV_ADD_MODE, 1
 #if QT_EN
    ,"顺时针覆盖" 
 #endif    
   }//顺时针
 #endif
 #if IN_SPEC_EFFECT_NUM > 24
-  ,{&Move_Spin_CCW, HV_ADD_MODE, 2
+  ,{&Move_Spin_CCW, HV_ADD_MODE, 1
 #if QT_EN
    ,"逆时针覆盖" 
 #endif    
@@ -333,17 +333,17 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 45
   ,{&Move_Left_Down_In, HV_SQRT_MODE, 1
 #if QT_EN
-   ,"左下引入"
+   ,"左下移入"
 #endif
-  }//左下引入
+  }
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 46
   ,{&Mofe_Right_Down_In, HV_SQRT_MODE, 1
 #if QT_EN
-   ,"右下引入"
+   ,"右下移入"
 #endif
-  }//右下引入
+  }
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 47
@@ -391,28 +391,28 @@ const S_Mode_Func Out_Mode_Func[]=
   }
 #endif
 #if OUT_SPEC_EFFECT_NUM > 1
-  ,{&Move_Left, H_MODE, 1
+  ,{&Move_Left_Continuous, H_MODE, 1
 #if QT_EN
    ,"左移" 
 #endif    
   }//0
 #endif
 #if OUT_SPEC_EFFECT_NUM > 2  
-  ,{&Move_Right, H_MODE, 1
+  ,{&Move_Right_Continuous, H_MODE, 1
 #if QT_EN
    ,"右移" 
 #endif    
   }//1
 #endif
 #if OUT_SPEC_EFFECT_NUM > 3  
-  ,{&Move_Up, V_MODE, 1
+  ,{&Move_Up_Continuous, V_MODE, 1
 #if QT_EN
    ,"上移" 
 #endif    
   }//2
 #endif
 #if OUT_SPEC_EFFECT_NUM >4  
-  ,{&Move_Down, V_MODE, 1
+  ,{&Move_Down_Continuous, V_MODE, 1
 #if QT_EN
    ,"下移" 
 #endif    
@@ -502,14 +502,15 @@ const S_Mode_Func Out_Mode_Func[]=
 #endif    
   }//15
 #endif
-#if OUT_SPEC_EFFECT_NUM > 17  
+
+#if OUT_SPEC_EFFECT_NUM > 17
   ,{&Move_Spin_CW, HV_ADD_MODE, 1
 #if QT_EN
    ,"顺时针覆盖" 
 #endif    
   }
 #endif
-#if OUT_SPEC_EFFECT_NUM > 18  
+#if OUT_SPEC_EFFECT_NUM > 18
   ,{&Move_Spin_CCW, HV_ADD_MODE, 1
 #if QT_EN
    ,"逆时针覆盖" 
@@ -681,7 +682,7 @@ void Calc_Show_Mode_Step(INT8U Area_No)
 
 void Update_Pic_Data(INT8U Area_No)
 {
-  INT8U i;
+  //INT8U i;
   INT8U In_Mode, Out_Mode;
   INT16U Area_Width, Area_Height;
   INT32U Stay_Time,In_Delay, Out_Delay;
@@ -852,7 +853,14 @@ void Update_Pic_Data(INT8U Area_No)
                 Prog_Status.Area_Status[Area_No].New_CStep_Flag = NEW_FLAG;
                 Prog_Status.Area_Status[Area_No].SCN_No ++;
                 SET_SUM(Prog_Status.Area_Status[Area_No]);
-            }
+            }/*
+            else if()
+            {
+                Prog_Status.Area_Status[Area_No].In_Step = 0;
+                Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
+                Prog_Status.Area_Status[Area_No].SCN_No ++;
+                SET_SUM(Prog_Status.Area_Status[Area_No]);
+            }*/
           }
 
         }

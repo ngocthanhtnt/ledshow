@@ -357,9 +357,9 @@ void CshowModeEdit::setSettingsToWidget(QString str)
       //Ãû×Ö
       settings.setValue("setFlag", 1);
       settings.setValue("inMode", 0);
-      settings.setValue("inSpeed", 50);
+      settings.setValue("inSpeed", 4);
       settings.setValue("outMode", 0);
-      settings.setValue("outSpeed", 50);
+      settings.setValue("outSpeed", 4);
       settings.setValue("stayTime", 5);
       settings.setValue("playCounts", 1);
       settings.setValue("text", QString(tr("Í¼ÎÄÏÔÊ¾")));
