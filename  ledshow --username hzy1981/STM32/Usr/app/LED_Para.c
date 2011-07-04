@@ -756,10 +756,10 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
       DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
       DstLen = DstLen * Screen_Color_Num; //屏幕支持的颜色数//每屏的字节数
 
-      Index = (DstLen * SIndex + GET_POINT_INDEX(Width, X, Y)*Screen_Color_Num/8) / BLOCK_SHOW_DATA_LEN;//块偏移
+      Index = (DstLen * SIndex + GET_POINT_INDEX(Width, X, Y)/8*Screen_Color_Num) / BLOCK_SHOW_DATA_LEN;//块偏移
       Index += Prog_Status.Block_Index.Index[Area_No][File_No]; //起始块号
 
-      Offset = (DstLen * SIndex + GET_POINT_INDEX(Width, X, Y)*Screen_Color_Num/8) % BLOCK_SHOW_DATA_LEN; //在该块中的索引
+      Offset = (DstLen * SIndex + GET_POINT_INDEX(Width, X, Y)/8*Screen_Color_Num) % BLOCK_SHOW_DATA_LEN; //在该块中的索引
       X += Border_Height;
       Y += Border_Height;
     }

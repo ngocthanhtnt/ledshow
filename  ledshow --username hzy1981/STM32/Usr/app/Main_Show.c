@@ -25,8 +25,8 @@ const INT16U Step_Delay[]=
 //获取某个窗口区域某个步进的停留时间
 INT32U Get_Area_In_Step_Delay(INT8U Area_No)
 {
-    if(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed > 0)
-      return Prog_Status.File_Para[Area_No].Pic_Para.In_Speed * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+    if(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed > 1)
+      return MOVE_STEP_PERIOD + (Prog_Status.File_Para[Area_No].Pic_Para.In_Speed - 1) * MOVE_STEP_PERIOD*4; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
 }
@@ -34,8 +34,8 @@ INT32U Get_Area_In_Step_Delay(INT8U Area_No)
 //获取某个窗口区域某个步进的停留时间
 INT32U Get_Area_Out_Step_Delay(INT8U Area_No)
 {
-    if(Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed > 0)
-      return Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+    if(Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed > 1)
+      return MOVE_STEP_PERIOD + (Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed - 1)* MOVE_STEP_PERIOD*4; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
 }
