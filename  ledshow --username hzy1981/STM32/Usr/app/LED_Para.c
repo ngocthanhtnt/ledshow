@@ -725,12 +725,12 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \
 INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT16U SIndex, \
                               S_Show_Data *pShow_Data, INT16U X, INT16U Y)
 {
-    INT16U Width,Height,Bk_X,Bk_Y;
+    INT16U Width,Height,Bk_X;//,Bk_Y;
     INT32U Offset;
     INT16U Len,DstLen,Index;
     INT8U Flag, Screen_Color_Num;
     INT8U Border_Height = 0;
-    INT8U Re, *pSrc, i;
+    INT8U Re, i;
 
     Flag = pFile_Para->Pic_Para.Flag;
 
@@ -741,7 +741,7 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
 
     Screen_Color_Num = Get_Screen_Color_Num();
     Bk_X = X;
-    Bk_Y = Y;
+    //Bk_Y = Y;
 
   #if PIC_SHOW_EN
     if(Flag EQ SHOW_PIC) //图文
@@ -763,7 +763,13 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
       X += Border_Height;
       Y += Border_Height;
     }
+    else
+    {
+      ASSERT_FAILED();
+      return 0;
+    }
   #endif
+    /*
   #if CLOCK_SHOW_EN
     else if(Flag EQ SHOW_CLOCK) //表盘
     {
@@ -874,7 +880,7 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
       ASSERT_FAILED();
       return 0;
     }
-
+*/
 
     Len = Screen_Color_Num;
     //INT8U temp[500];
@@ -885,10 +891,10 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
                               Pub_Buf, Pub_Buf, sizeof(Pub_Buf)) EQ 0)
         return -1;
 
-    pSrc = Pub_Buf;
+    //pSrc = Pub_Buf;
     i = Bk_X % 8;
 
-    while(i < 8 && X + i < Width)
+    while(i < 8 && (X + i - (Bk_X % 8)) < (Width + Border_Height))
     {
         if(Screen_Color_Num EQ 1)  //单色屏
           Re = GET_BIT(Pub_Buf[0], i);
@@ -896,9 +902,11 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
           Re = GET_BIT(Pub_Buf[0], i) +\
             ( GET_BIT(Pub_Buf[1], i)<<1);
         else if(Screen_Color_Num EQ 3) //三色屏
-          Re =  GET_BIT(Pub_Buf[0], i); +\
+          Re =  GET_BIT(Pub_Buf[0], i) +\
              ( GET_BIT(Pub_Buf[1], i)<<1)+\
              ( GET_BIT(Pub_Buf[2], i)<<2);
+	    else
+		  Re = 0;
 
         Set_Area_Point_Data(pShow_Data, Area_No, X + i - (Bk_X % 8), Y, Re);
         i++;
@@ -906,6 +914,8 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
         //if(HV_Flag EQ 0)
           //  break;
     }
+
+	return 1;
     /*
 
     Copy_Show_Data(Pub_Buf, GET_POINT_INDEX(Width, Bk_X, Bk_Y)*Screen_Color_Num/8, Len,\

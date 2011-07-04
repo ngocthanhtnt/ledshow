@@ -443,13 +443,28 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
       Re &= Save_Prog_Data_Frame_Proc(Frame, FrameLen); //保存节目显示数据
       Set_Screen_Replay_Flag(); //重播节目标志
 	}
+	else
+	  Re = 0;
   }
   else if(Cmd_Code EQ C_SCREEN_TIME) //设置时间
   {
     if(RW_Flag EQ SET_FLAG)
 	{
       mem_cpy(TempTime.Time, Frame + FDATA, sizeof(TempTime.Time), TempTime.Time, sizeof(TempTime.Time));
-      Re &= Set_Cur_Time(TempTime.Time);
+	  SET_HT(TempTime);
+	  SET_SUM(TempTime);
+	  
+	  if(Chk_Time(&TempTime))
+	  {
+        Re &= Set_Cur_Time(TempTime.Time);
+		if(Re > 0)
+		{
+	   	    mem_cpy(Cur_Time.Time, TempTime.Time, sizeof(TempTime.Time), Cur_Time.Time, sizeof(Cur_Time.Time));
+			SET_SUM(Cur_Time);
+		}
+	  }
+	  else
+	    Re = 0;
 	}
 	else
 	{

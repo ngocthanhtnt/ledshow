@@ -4,6 +4,8 @@ int main(void)
 { 
   Hardware_Init();
 
+  RST_Periph();
+
   Para_Init(); //参数初始化
 
   Com_Init(); //初始化串口
@@ -16,7 +18,7 @@ int main(void)
   Net_Init(); //网络初始化
 #endif
 
-  DS1302_Init();
+  DS1302_Init(); //启动后1s再初始化DS1302，手册要求
 
   Fac_Status_Self_Test(); //自检操作
   

@@ -687,7 +687,7 @@ INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3] __attribute__((at(SCAN_DATA_ADDR)));
 //每中断一次调用一次该函数
 void LED_Scan_One_Row(void)
 {
-  INT16U i,j,k,m,Cols;
+  INT16U i,j,Cols;
   INT16U Blocks;
   INT8U Color_Num;
   //INT32U Row_Freq;

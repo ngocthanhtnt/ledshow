@@ -218,6 +218,12 @@ void Update_Border_Data(INT8U Area_No)
   INT8U Border_Mode;
   INT8U Type;
 
+  if(Prog_Status.Play_Status.New_Prog_Flag ||\
+     Prog_Status.Area_Status[Area_No].New_File_Flag ||\
+     Prog_Status.Area_Status[Area_No].New_SCN_Flag ||\
+     Prog_Status.Area_Status[Area_No].New_CStep_Flag) //该节目或该分区还没有进入播放状态?
+    return;
+
   //第一次进入该函数，初始化相关函数头尾
   if(InitFlag.Var EQ 0)
   {

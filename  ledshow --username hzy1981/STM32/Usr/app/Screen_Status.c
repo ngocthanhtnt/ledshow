@@ -154,6 +154,20 @@ INT8U Get_Cur_Time()
   return Re;
 }
 
+INT8U Chk_Time(S_Time *pTime)
+{
+  if(CHK_SUM((*pTime)) && CHK_HT((*pTime)))
+  {
+	if(pTime->Time[T_SEC] < 60 && pTime->Time[T_MIN] < 60 && pTime->Time[T_HOUR] < 24 &&\
+	   pTime->Time[T_DATE] > 0 && pTime->Time[T_DATE] < 32 &&\
+	   pTime->Time[T_MONTH] > 0 && pTime->Time[T_MONTH] < 32)
+	   return 1;
+
+  }
+
+  return 0;
+}
+
 //每分钟读取一次实时时钟
 void Screen_Time_Proc()
 {
@@ -162,12 +176,12 @@ void Screen_Time_Proc()
   
   Diff = Pub_Timer.Sec - Sec.Var;
 
-  if(Diff != 0)
+  //if(Diff != 0)
   {
      Cur_Time.Time[T_SEC] += Diff;
-	 if(Cur_Time.Time[T_SEC] >= 60)
+	 if(Cur_Time.Time[T_SEC] >= 60 || Sec.Var EQ 0)
 	 {
-	   Cur_Time.Time[T_SEC] = 0;
+	   //Cur_Time.Time[T_SEC] = 0;
 	   Get_Cur_Time();
 	 }
          //Get_Cur_Time();//_Get_Cur_Time(Cur_Time.Time); //获取当前时间

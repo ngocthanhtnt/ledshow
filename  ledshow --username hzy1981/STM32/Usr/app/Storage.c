@@ -216,9 +216,10 @@ INT16U Read_Storage_Data_NoCS(STORA_DI SDI, INT16U Offset, INT16U Len, void* pDs
     INT8U Re;
 
     TRACE();
-  #if QT_EN == 0
+
+    Unselect_SPI_Device();
     ReInit_Mem_Port();//重新初始化端口
-  #endif
+
     Off = Get_Storage_Data_Off(SDI); //获取数据偏移
     if(NULL_4BYTES EQ Off)//ASSERT(NULL_4BYTES != Off))
     {
@@ -256,9 +257,10 @@ INT16U Read_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, INT16U Len, void* 
   INT8U Re; 
 
   TRACE();
-#if QT_EN == 0
+
+  Unselect_SPI_Device();
   ReInit_Mem_Port();//重新初始化端口
-#endif
+
   Off = Get_Storage_Data_Off(SDI); //获取数据偏移
   if(NULL_4BYTES EQ Off)//ASSERT(NULL_4BYTES != Off))
   {
@@ -304,9 +306,8 @@ INT8U Write_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, void* pSrc, INT16U
 
   TRACE();
 
-#if QT_EN == 0
+  Unselect_SPI_Device();
   ReInit_Mem_Port();//重新初始化端口
-#endif
 
   Off = Get_Storage_Data_Off(SDI); //获取数据偏移
   if(NULL_4BYTES EQ Off)
@@ -354,7 +355,6 @@ INT16U Read_Storage_Data(STORA_DI SDI, void* pDst, void* pDst_Start, INT16U DstL
 
   //Clear_CPU_Dog();     //清CPU内部看门狗
   //Clear_Ext_Dog();     //清CPU外部看门狗
-  Unselect_SPI_Device();
   //Cur_Task_ID = Get_Cur_Task_ID(); 
   //debug("Read Storage Data:0x%x", DI, Tcb[Cur_Task_ID].Name);
   Len = Get_Storage_Data_Len(SDI); 
@@ -404,7 +404,7 @@ INT8U Write_Storage_Data(STORA_DI SDI, void* pSrc, INT16U SrcLen)
 
   TRACE();
 
-  Unselect_SPI_Device();
+  //Unselect_SPI_Device();
   //Cur_Task_ID = Get_Cur_Task_ID(); 
   //debug("Write Storage Data:0x%x", DI, Tcb[Cur_Task_ID].Name);
   //获取并比较数据长度

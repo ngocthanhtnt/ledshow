@@ -127,8 +127,8 @@ TextEdit::TextEdit(QWidget *parent)
 
     alignmentChanged(textEdit->alignment());
 
-    connect(textEdit->document(), SIGNAL(modificationChanged(bool)),
-            actionSave, SLOT(setEnabled(bool)));
+    //connect(textEdit->document(), SIGNAL(modificationChanged(bool)),
+            //actionSave, SLOT(setEnabled(bool)));
     connect(textEdit->document(), SIGNAL(modificationChanged(bool)),
             this, SLOT(setWindowModified(bool)));
     connect(textEdit->document(), SIGNAL(undoAvailable(bool)),
@@ -137,7 +137,7 @@ TextEdit::TextEdit(QWidget *parent)
             actionRedo, SLOT(setEnabled(bool)));
 
     setWindowModified(textEdit->document()->isModified());
-    actionSave->setEnabled(textEdit->document()->isModified());
+    actionSave->setEnabled(true);//textEdit->document()->isModified());
     actionUndo->setEnabled(textEdit->document()->isUndoAvailable());
     actionRedo->setEnabled(textEdit->document()->isRedoAvailable());
 
@@ -175,10 +175,10 @@ TextEdit::TextEdit(QWidget *parent)
 
 void TextEdit::closeEvent(QCloseEvent *e)
 {
-    if (maybeSave())
+    //if (maybeSave())
         e->accept();
-    else
-        e->ignore();
+    //else
+        //e->ignore();
 }
 
 void TextEdit::showEvent(QShowEvent *event)
@@ -206,7 +206,7 @@ void TextEdit::setupFileActions()
     menu->addAction(a);
 
     a = new QAction(QIcon::fromTheme("document-open", QIcon(rsrcPath + "/fileopen.png")),
-                    tr("打开..."), this);
+                    tr("导入..."), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
     tb->addAction(a);
@@ -215,17 +215,17 @@ void TextEdit::setupFileActions()
     menu->addSeparator();
 
     actionSave = a = new QAction(QIcon::fromTheme("document-save", QIcon(rsrcPath + "/filesave.png")),
-                                 tr("保存"), this);
+                                 tr("导出"), this);
     a->setShortcut(QKeySequence::Save);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
-    a->setEnabled(false);
+    connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
+    //a->setEnabled(false);
     tb->addAction(a);
     menu->addAction(a);
-
+/*
     a = new QAction(tr("另存为"), this);
     a->setPriority(QAction::LowPriority);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
-    menu->addAction(a);
+    menu->addAction(a);*/
     menu->addSeparator();
 /*
 #ifndef QT_NO_PRINTER
@@ -440,13 +440,17 @@ void TextEdit::setupTextActions()
     connect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));//SLOT(textColor()));
 
     QLabel *pageLabel;
-    pageLabel = new QLabel(tr("分页"),tb);
+    pageLabel = new QLabel(tr("第"),tb);
     tb->addWidget(pageLabel);
 
     spinPage = new QSpinBox(tb);
     tb->addWidget(spinPage);
     spinPage->setValue(1);
     connect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));//SLOT(textColor()));
+
+    QLabel *muLabel;
+    muLabel = new QLabel(tr("幕"),tb);
+    tb->addWidget(muLabel);
 
     QLabel *distanceLabel;
     distanceLabel = new QLabel(tr("行距"),tb);
@@ -456,6 +460,9 @@ void TextEdit::setupTextActions()
     tb->addWidget(spinLineDis);
     spinPage->setValue(1);
     connect(spinLineDis, SIGNAL(valueChanged(int)), this, SLOT(lineDisEdit(int)));//SLOT(textColor()));
+
+    distanceLabel->setFixedWidth(0); //暂时不显示这两个，目前没有实现好
+    spinLineDis->setFixedWidth(0);
 
 }
 
@@ -470,13 +477,14 @@ bool TextEdit::load(const QString &f)
     QByteArray data = file.readAll();
     QTextCodec *codec = Qt::codecForHtml(data);
     QString str = codec->toUnicode(data);
-    if (Qt::mightBeRichText(str)) {
+    if (1/*Qt::mightBeRichText(str)*/) {
         textEdit->setHtml(str);
     } else {
         str = QString::fromLocal8Bit(data);
         textEdit->setPlainText(str);
     }
 
+    file.close();
     setCurrentFileName(f);
     return true;
 }
@@ -510,22 +518,24 @@ void TextEdit::setCurrentFileName(const QString &fileName)
         shownName = "untitled.txt";
     else
         shownName = QFileInfo(fileName).fileName();
-
+  /*
     setWindowTitle(tr("%1[*] - %2").arg(shownName).arg(tr("Rich Text")));
     setWindowModified(false);
+    */
+    setWindowTitle("");
 }
 
 void TextEdit::fileNew()
 {
-    if (maybeSave()) {
+    //if (maybeSave()) {
         textEdit->clear();
-        setCurrentFileName(QString());
-    }
+       // setCurrentFileName(QString());
+    //}
 }
 
 void TextEdit::fileOpen()
 {
-    QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."),
+    QString fn = QFileDialog::getOpenFileName(this, tr("打开文件..."),
                                               QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
     if (!fn.isEmpty())
         load(fn);
@@ -545,14 +555,19 @@ bool TextEdit::fileSave()
 
 bool TextEdit::fileSaveAs()
 {
-    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
-                                              QString(), tr("ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)"));
+    QString fn = QFileDialog::getSaveFileName(this, tr("另存为..."),
+                                              QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
     if (fn.isEmpty())
         return false;
     if (! (fn.endsWith(".odt", Qt::CaseInsensitive) || fn.endsWith(".htm", Qt::CaseInsensitive) || fn.endsWith(".html", Qt::CaseInsensitive)) )
-        fn += ".odt"; // default
-    setCurrentFileName(fn);
-    return fileSave();
+        fn += ".html"; // default
+    //setCurrentFileName(fn);
+    //return fileSave();
+    QTextDocumentWriter writer(fn);
+    bool success = writer.write(textEdit->document());
+    //if (success)
+        //textEdit->document()->setModified(false);
+    return success;
 }
 
 void TextEdit::filePrint()
@@ -883,10 +898,8 @@ void TextEdit::showInit()
 
         spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
 
-
-        //hide();
-        //move((w->width() - width())/2, (w->height() - height())/2);
         show();
+        setWindowTitle("");
     }
 }
 

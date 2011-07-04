@@ -163,11 +163,18 @@ void test_main()
 
 void DS1302_Init(void)
 {
- Unselect_SPI_Device();
- SPI_DS1302_Init();
+  INT8U Temp[8];
+  Unselect_SPI_Device();
+  SPI_DS1302_Init();
 
- WrCmd(WrEnDisCmd,WrEnDat);  //写允许
- WrCmd(OscEnDisCmd,OscEnDat); //振荡器允许
+  RecByte_1302(RdMulti,8,Temp); //读时间数据
+  
+  if((Temp[0] & 0x80 > 0))  //秒数据
+  { 
+    WrCmd(WrEnDisCmd,WrEnDat);  //写允许
+    WrCmd(OscEnDisCmd,OscEnDat); //振荡器允许
+	WrCmd(WrEnDisCmd,WrDisDat);  //写允许关闭
+  }
 }
 /*
 #define T_YEAR  0 //--除了日和年其他都从0开始计起。日从1计起，年从1900年计起
@@ -195,7 +202,9 @@ INT8U Set_Cur_Time(INT8U Time[])//S_Time *pTime)
   Unselect_SPI_Device();
   SPI_DS1302_Init(); //重新初始化SPI口
 
+  WrCmd(WrEnDisCmd,WrEnDat);  //写允许
   WriteByte_1302(WrMulti,8,Temp);//将时间值送到DS1302中
+  WrCmd(WrEnDisCmd,WrDisDat);  //写允许关闭
   return 1;
 }
 
@@ -208,6 +217,15 @@ INT8U _Get_Cur_Time(INT8U Time[])
   SPI_DS1302_Init();  //重新初始化SPI口
 
   RecByte_1302(RdMulti,8,Temp); // 读出来看看，
+
+  if((Temp[0] & 0x80)) //振荡器没有使能?
+  {
+    Temp[0] = Temp[0] & 0x7F;
+    
+	WrCmd(WrEnDisCmd,WrEnDat);  //写允许
+    WrCmd(OscEnDisCmd,OscEnDat); //振荡器允许
+	WrCmd(WrEnDisCmd,WrDisDat);  //写允许关闭
+  }
 
   Time[T_SEC] = Bcd2Hex_Byte(Temp[0]);
   Time[T_MIN] = Bcd2Hex_Byte(Temp[1]);

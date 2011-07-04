@@ -123,7 +123,7 @@ QString getScanCodeString(INT16U code)
 */
 
     return  QString::number(code / 1000) + QString::number((code % 1000) /100) +\
-            QString::number((code % 100) / 10) + QString::number(code % 10) + QString(QObject::tr((const char *)scanMode[index].info));
+            QString::number((code % 100) / 10) + QString::number(code % 10) + QString(",") + QString(QObject::tr((const char *)scanMode[index].info));
 
 }
 
@@ -2508,6 +2508,9 @@ void CfacScreenProperty::loadParaProc()
        return;
     }
 
+    getSettingsFromWidget(str);
+    getScreenCardParaFromSettings(str, Screen_Para, Card_Para);//重新获取屏幕参数和板卡参数
+
     //宽度、高度、颜色发生了修改则需要清掉所有的节目
     if(width != widthEdit->value() ||\
        height != heightEdit->value() ||\
@@ -2535,9 +2538,6 @@ void CfacScreenProperty::loadParaProc()
         //w->progManage->settingsInit();
         mainObj->emitScreenChangeSignal();
     }
-
-    getSettingsFromWidget(str);
-    getScreenCardParaFromSettings(str, Screen_Para, Card_Para);//重新获取屏幕参数和板卡参数
 
     int flag = 0;
     SET_BIT(flag, C_SCREEN_BASE_PARA);

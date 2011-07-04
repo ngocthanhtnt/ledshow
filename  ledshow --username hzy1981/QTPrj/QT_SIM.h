@@ -54,6 +54,7 @@ typedef char INT8S;
 
 #define debug qDebug
 #define Unselect_SPI_Device()
+#define ReInit_Mem_Port()
 
 typedef struct
 {
