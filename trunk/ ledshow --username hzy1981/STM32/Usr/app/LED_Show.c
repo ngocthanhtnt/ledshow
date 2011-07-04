@@ -20,6 +20,7 @@ INT8U Get_Color()
 //获取缓冲区中第Index位的值
 INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index)
 {
+/*
 #if DATA_CHK_EN
   if(Index >= (INT32U)Buf_Size * 8)
   {
@@ -27,19 +28,22 @@ INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index)
     return 0;
  }
 #endif
+*/
   return (Buf[Index >>3] & (0x01 << (Index & 0x07)))>0?1:0;
 }
 
 //设置缓冲区中第Index位的值
 void Set_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index, INT8U Value)
 {
+
 #if DATA_CHK_EN
   if(Index >= Buf_Size * 8)
   {
     ASSERT_FAILED();
     return;
   }
-#endif  
+#endif 
+ 
   if(Value EQ 0)
     Buf[Index >>3] = (Buf[Index >>3] & (~(0x01 << (Index & 0x07))));
   else
