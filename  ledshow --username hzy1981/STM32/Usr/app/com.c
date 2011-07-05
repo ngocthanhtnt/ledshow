@@ -79,9 +79,9 @@ INT16U Get_Soft_Version(INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
 INT32U Get_Com_Baud(void)
 {
   if(Screen_Para.COM_Para.Baud EQ 0) //0-9600
-    return 9600;
-  else
     return 57600;
+  else
+    return 9600;
 
 }
 
@@ -471,13 +471,38 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 
 	}
   }
-  else if(Cmd_Code EQ C_SOFT_VERSION)
+  else if(Cmd_Code EQ C_SOFT_VERSION) //软件版本号码
   {
     if(RW_Flag EQ READ_FLAG)
       {
         Len = Get_Soft_Version(Frame + FDATA, Frame, Frame_Buf_Len - FDATA);
         Re = 1;
     }
+  }
+  else if(Cmd_Code EQ C_SCREEN_OC) //手动开关机
+  {
+    if(RW_Flag EQ SET_FLAG)
+	{
+      if(Frame[FDATA] EQ CLOSE_FLAG) //进入关机状态
+	  {
+	    Screen_Status.Manual_OC_Flag = CLOSE_FLAG; //手动关机
+        //Self_Test(CMD_TEST);
+	  }
+	  else
+	  {
+        Screen_Status.Manual_OC_Flag = 0; //手动开机
+	  }
+	}
+	else
+	{  
+	   if(Screen_Status.Manual_OC_Flag > 0)
+	     Frame[FDATA] = Screen_Status.Manual_OC_Flag;
+	   else
+	     Frame[FDATA] = Screen_Status.Time_OC_Flag;
+
+	   Len = 1;
+	   Re = 1; 
+	}
   }
   else if(Cmd_Code EQ C_SELF_TEST)
   {

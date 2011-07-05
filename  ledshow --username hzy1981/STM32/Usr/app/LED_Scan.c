@@ -692,7 +692,9 @@ void LED_Scan_One_Row(void)
   INT8U Color_Num;
   //INT32U Row_Freq;
   
-  if(Screen_Status.Open_Flag EQ 0 || Screen_Status.Com_Time > 0) //关机状态，不显示,或当前在通信状态也不显示
+  if(Screen_Status.Time_OC_Flag EQ CLOSE_FLAG ||\
+     Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG ||\
+	 Screen_Status.Com_Time > 0) //关机状态，不显示,或当前在通信状态也不显示
     return;
  
 

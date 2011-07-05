@@ -841,7 +841,7 @@ void Update_Pic_Data(INT8U Area_No)
         //进入阶段如果达到MAX_STEP_NUM%同时停留时间为0则直接跳到退出阶段
         if(Prog_Status.Area_Status[Area_No].In_Step >= Prog_Status.Area_Status[Area_No].In_Max_Step)
         {
-          if(Stay_Time EQ 0) //进入阶段走完，如果停留时间是0则直接进入退出阶段!
+          //if(Stay_Time EQ 0) //进入阶段走完，如果停留时间是0则直接进入退出阶段!
           {
             Prog_Status.Area_Status[Area_No].Stay_Time = 0;
             Prog_Status.Area_Status[Area_No].Out_Step = 0;
@@ -868,13 +868,14 @@ void Update_Pic_Data(INT8U Area_No)
   }
   else if(Prog_Status.Area_Status[Area_No].Stay_Time < Stay_Time) //停留时间未到
   {
+  
     if(Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag)) //更新
     {
         //如果是显示表盘，需要定时更新背景，因为背景每秒会被秒钟覆盖修改
         if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_CLOCK &&\
-           (Prog_Status.Area_Status[Area_No].Stay_Time % 200) EQ 0)
+           Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
         {
-          Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_PERIOD;
+          Prog_Status.Area_Status[Area_No].Step_Timer = Pub_Timer.Ms100;
           Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
           Prog_Status.Area_Status[Area_No].SCN_No = 0; //重新更新背景
           Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFFFF;
@@ -883,8 +884,10 @@ void Update_Pic_Data(INT8U Area_No)
         }
 
         //更新XXX数据，例如表盘、温度、湿度、计时等等的
-        if((Prog_Status.Area_Status[Area_No].Stay_Time % 200) EQ MOVE_STEP_PERIOD)
+        if(Pub_Timer.Ms100 > Prog_Status.Area_Status[Area_No].Step_Timer + 1)
         {
+		  Prog_Status.Area_Status[Area_No].Step_Timer = 0;
+
           P0.X = P0.Y = 0;
 
           Set_Area_Border_Out(Area_No);
@@ -894,9 +897,29 @@ void Update_Pic_Data(INT8U Area_No)
           Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Area_Width, Area_Height, &Show_Data, &P0);
           Set_Area_Border_In(Area_No);
         }
+
+		//Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_PERIOD;
+
+        if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)
+		{
+	      Prog_Status.Area_Status[Area_No].Bak_Ms100 = Pub_Timer.Ms100; 
+		  Prog_Status.Area_Status[Area_No].Stay_Time = 1;
+		}
+		else
+		{
+	      Prog_Status.Area_Status[Area_No].Stay_Time = (Pub_Timer.Ms100 - Prog_Status.Area_Status[Area_No].Bak_Ms100)*100;
+		  if(Prog_Status.Area_Status[Area_No].Stay_Time >= Stay_Time)
+		  {
+		    Prog_Status.Area_Status[Area_No].Step_Timer = 0;
+			Prog_Status.Area_Status[Area_No].Out_Step = 0;
+		  }
+		}
     }
 
-    Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_PERIOD;
+
+    
+
+    //Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_PERIOD;
   }
   else if(Prog_Status.Area_Status[Area_No].Out_Step < Prog_Status.Area_Status[Area_No].Out_Max_Step)
   {

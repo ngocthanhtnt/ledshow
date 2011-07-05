@@ -324,9 +324,9 @@ bool CcomThread::connect()
         else
         {
             if(COM_Para.Baud EQ 0)
-              port->setBaudRate(BAUD9600);
-            else
               port->setBaudRate(BAUD57600);
+            else
+              port->setBaudRate(BAUD9600);
 
             //流控关、偶校验、数据位8位、停止位1位
             port->setFlowControl(FLOW_OFF);

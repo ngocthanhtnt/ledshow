@@ -134,6 +134,7 @@ typedef struct
   INT32U Step_Timer;  //已经走过Timer，单位ms
   INT32U Stay_Time;   //已经停留的时间，单位ms
   //INT32U Out_Time;   //退出时间
+  INT32U Bak_Ms100;
   INT16U Counts;
   
   INT8U In_Mode;
@@ -211,7 +212,8 @@ typedef struct
   INT16U Humidity; //湿度
   INT16U Noise; //噪音
 
-  INT8U Open_Flag;
+  INT8U Time_OC_Flag;	//定时开关机标志
+  INT8U Manual_OC_Flag; //手动关机标志
 
   INT8U CS[CS_BYTES];
 
@@ -234,8 +236,8 @@ typedef struct
 }S_Screen_Status;
 
 //EXT S_Area_Status Area_Status[MAX_AREA_NUM]; //分区状态信息
-EXT S_Prog_Status Prog_Status;   //节目状态信息
-EXT S_Screen_Status Screen_Status;
+EXT volatile S_Prog_Status Prog_Status;   //节目状态信息
+EXT volatile S_Screen_Status Screen_Status;
 
 EXT S_Show_Data Show_Data;  //显示数据
 EXT S_Show_Data Show_Data_Bak; //显示数据备份

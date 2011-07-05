@@ -119,6 +119,15 @@ INT8U Bcd2Hex_Byte(INT8U Byte)
 
 void Pub_Timer_Proc(void)
 {
-	Pub_Timer.Sec ++;
+    //static INT8U Counts = 0;
+
+    Pub_Timer.Ms100++;
+    Pub_Timer.Ms100_Counts ++;
+
+	if(Pub_Timer.Ms100_Counts >= 10)
+	{
+	  Pub_Timer.Ms100_Counts = 0;
+	  Pub_Timer.Sec ++;
+	}
 }
 #undef PUB_C

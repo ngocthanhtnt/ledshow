@@ -98,10 +98,15 @@ private:
     QAction *actionAdjTime;
     QAction *actionLightness;
     QAction *actionOpenClose;
+    QAction *actionManualClose; //手动关机
+    QAction *actionManualOpen; //手动开机
+    QAction *atcionGetOCStatus; //获取开关机状态
 
 public slots:
     void modifyScreenPara();
     void setLightness();
+    void setManualClose();
+    void setManualOpen();
     void adjTime();
     void sendDataProc();
     void exportUdsikProc();
