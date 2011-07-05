@@ -71,7 +71,7 @@ typedef struct
   INT16U Screen_Height;
   INT8U Screen_Color;
 
-  INT8U Open_Flag;
+  INT8U Time_OC_Flag;
   INT8U Tail;
 }S_RT_Show_Para;
 /*

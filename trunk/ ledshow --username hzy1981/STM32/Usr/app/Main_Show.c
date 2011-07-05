@@ -85,7 +85,8 @@ void Update_Show_Data(void)
 {
   INT8U i;
 
-  if(Screen_Status.Open_Flag EQ 0)
+  if(Screen_Status.Time_OC_Flag EQ CLOSE_FLAG ||\
+     Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG)
     return;
 
   if(Prog_Status.Play_Status.RT_Play_Flag EQ RT_PLAY_FLAG) //当前在关机状态或者实时显示状态
@@ -1236,7 +1237,7 @@ void Ram_Init(void)
 void Show_Main_Proc(void)
 {
   Screen_Proc();
-  if(Get_Screen_Open_Status() > 0) //当前在开机状态才进入
+  if(Get_Screen_Open_Status() != CLOSE_FLAG) //当前在开机状态才进入
   {
     Check_Update_Program_Para(); //检查是否需要更新节目
     Check_Update_Show_Data_Bak(); //检查是否需要更新显示备份区数据
@@ -1256,7 +1257,7 @@ void Set_RT_Show_Area(INT16U Width, INT16U Height)
   RT_Show_Para.Y = Prog_Para.Area[0].Y;
   RT_Show_Para.X_Len = Prog_Para.Area[0].X_Len;
   RT_Show_Para.Y_Len = Prog_Para.Area[0].Y_Len;	 
-  RT_Show_Para.Open_Flag = Screen_Status.Open_Flag;
+  RT_Show_Para.Time_OC_Flag = Screen_Status.Time_OC_Flag;
   //RT_Show_Para.Screen_Width = Screen_Para.Base_Para.Width;
   //RT_Show_Para.Screen_Height = Screen_Para.Base_Para.Height;
   //RT_Show_Para.Screen_Color = Screen_Para.Base_Para.Color;
@@ -1274,7 +1275,7 @@ void Set_RT_Show_Area(INT16U Width, INT16U Height)
   //Screen_Para.Base_Para.Color = 0x01;
   //SET_SUM(Screen_Para);
  
-  Screen_Status.Open_Flag = 1;
+  Screen_Status.Time_OC_Flag = 1;
 }
 
 //恢复显示参数
@@ -1291,7 +1292,7 @@ void Restore_Show_Area(void)
   //Screen_Para.Base_Para.Height = RT_Show_Para.Screen_Height;
   //Screen_Para.Base_Para.Color = RT_Show_Para.Screen_Color;
   //SET_SUM(Screen_Para);
-  Screen_Status.Open_Flag = RT_Show_Para.Open_Flag;
+  Screen_Status.Time_OC_Flag = RT_Show_Para.Time_OC_Flag;
 }
 
 
@@ -1427,7 +1428,7 @@ void Self_Test(INT8U Mode)
   Screen_Para.Base_Para.Color = 0x01;
   SET_SUM(Screen_Para);
 
-  Screen_Status.Open_Flag = 1;
+  Screen_Status.Time_OC_Flag = 0;
 
   
   //---------------

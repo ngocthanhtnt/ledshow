@@ -127,7 +127,7 @@ typedef struct
 {
   INT8U Head;
   INT8U Lightness;
-  INT8U Open_Flag;
+  INT8U Time_OC_Flag;
   INT8U CS[CS_BYTES];
   INT8U Tail;  
 }S_Screen_Status;
@@ -136,7 +136,7 @@ INT8U Shell_Print_Screen_Status(INT8U argc, INT8S **argv)
 {
  
   debug("screen status, lightness = %d, oc_flag = %d",\
-        Screen_Status.Lightness, Screen_Status.Open_Flag);
+        Screen_Status.Lightness, Screen_Status.Time_OC_Flag);
   
   return 1;
 }

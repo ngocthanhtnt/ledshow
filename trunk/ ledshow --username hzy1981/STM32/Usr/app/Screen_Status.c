@@ -94,7 +94,10 @@ void Screen_Lightness_Proc(void)
 //开关机控制
 void Screen_Open_Close_Proc(void)
 {
-  Screen_Status.Open_Flag = Get_Open_Close_Status(&Cur_Time);
+  if(Get_Open_Close_Status(&Cur_Time))
+    Screen_Status.Time_OC_Flag = 0;
+  else
+    Screen_Status.Time_OC_Flag = CLOSE_FLAG;
   
 }
 
@@ -107,7 +110,7 @@ INT8U Get_Screen_Lightness(void)
 //获取屏幕开机状态
 INT8U Get_Screen_Open_Status(void)
 {
-  return Screen_Status.Open_Flag;
+  return Screen_Status.Time_OC_Flag;
 }
 
 //设置重新播放标志

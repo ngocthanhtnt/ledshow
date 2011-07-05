@@ -20,9 +20,12 @@
 typedef struct
 {
   INT8U Head;
+  INT8U Ms100_Counts;
 
-  INT32U Ms; //ms
-  INT32U Ms10;  //10ms
+  //INT32U Ms; //ms
+  //INT32U Ms10;  //10ms
+  INT32U Ms100;
+  
   INT32U Sec;
 
   INT8U Tail;
@@ -90,7 +93,7 @@ typedef struct
 
 #define Pub_Buf _Pub_Buf.Buf
 
-EXT S_Pub_Timer Pub_Timer;
+EXT volatile S_Pub_Timer Pub_Timer;
 
 #define SEC_TIMER Pub_Timer.Sec
 #define MS10_TIMER  Pub_Timer.Ms10

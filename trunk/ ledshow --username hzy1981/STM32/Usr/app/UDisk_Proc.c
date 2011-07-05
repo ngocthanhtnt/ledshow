@@ -67,7 +67,7 @@ void UDisk_Proc(void)
 				  return;
 				}
 
-                memcpy(&len, Screen_Status.Rcv_Data + FLEN, 2);
+                memcpy(&len, (INT8U *)Screen_Status.Rcv_Data + FLEN, 2);
 				if(len <= sizeof(Screen_Status.Rcv_Data) && len > FLEN + 2)
 				{
 				  CH376ByteRead(Screen_Status.Rcv_Data + FLEN + 2, len - (FLEN + 2), &RealCount );

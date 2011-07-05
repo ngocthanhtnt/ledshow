@@ -1638,8 +1638,8 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
 
   QLabel *comBaudLabel = new QLabel(tr("≤®Ãÿ¬ "),this);
   comBaudCombo = new QComboBox(this);
-  comBaudCombo->addItem("9600");
   comBaudCombo->addItem("57600");
+  comBaudCombo->addItem("9600");
   QLabel *ipEditLabel = new QLabel(tr("IPµÿ÷∑"),this);
   ipEdit = new CipInput(this);
 

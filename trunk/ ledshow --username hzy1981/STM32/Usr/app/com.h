@@ -36,15 +36,19 @@
 #define C_SCREEN_PARA    0x04 //整体屏幕参数
 #define C_SCAN_PARA      0x05 //扫描参数
 #define C_SCREEN_OC_TIME 0x06 //定时开关机时间
-#define C_SCREEN_LIGNTNESS 0x07 //亮度
-#define C_SCREEN_TIME 0x08 //时间
-#define C_PROG_NUM    0x09 //节目数
-#define C_DEL_PROG    0x0A //删除节目
+#define C_SCREEN_OC    0x07 //开关机
+#define C_SCREEN_LIGNTNESS 0x08 //亮度
+#define C_SCREEN_TIME 0x09 //时间
+#define C_PROG_NUM    0x0A //节目数
 #define C_PROG_PARA  0x0B //节目属性
 #define C_PROG_DATA  0x0C //显示数据
 #define C_SOFT_VERSION 0x0D //屏幕信息
 #define C_SELF_TEST 0x0E //自动监测
 #define C_UPDATE      0x0F //固件升级
+
+#define CLOSE_FLAG 0x5A
+#define TIME_CLOSE_FLAG 0xA5
+
 /*
 0	0x5A	帧头
 1	Len0	帧长度低字节(从帧头到帧尾)

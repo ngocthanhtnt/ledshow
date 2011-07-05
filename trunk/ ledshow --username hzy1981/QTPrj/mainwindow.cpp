@@ -487,6 +487,23 @@ void MainWindow::setupCtrlActions()
     menu->addAction(a);
     menu->addSeparator();
 
+    //QAction *actionManualClose; //手动关机
+    //QAction *actionManualOpen; //手动开机
+    //QAction *atcionGetOCStatus; //获取开关机状态
+    actionManualClose = a = new QAction(tr("手动关机"), this);
+    a->setPriority(QAction::LowPriority);
+    a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(setManualClose()));
+    //tb->addAction(a);
+    menu->addAction(a);
+
+    actionManualOpen = a = new QAction(tr("手动开机"), this);
+    a->setPriority(QAction::LowPriority);
+    a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(setManualOpen()));
+    //tb->addAction(a);
+    menu->addAction(a);
+
     actionOpenClose = a = new QAction(tr("定时开关机"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
@@ -956,6 +973,36 @@ void MainWindow::setOpenCloseTime()
     openCloseDialog->exec();
 }
 
+//手动关机
+void MainWindow::setManualClose()
+{
+    char Flag;
+
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+
+    Flag = CLOSE_FLAG;
+#if QT_SIM_EN
+    makeProtoBufData(screenStr, SIM_MODE, C_SCREEN_OC | WR_CMD, &Flag, 1);
+#else
+    makeProtoBufData(screenStr, COM_MODE, C_SCREEN_OC | WR_CMD, &Flag, 1);
+#endif
+}
+
+//手动开机
+void MainWindow::setManualOpen()
+{
+    char Flag;
+
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+
+    Flag = 0;
+#if QT_SIM_EN
+    makeProtoBufData(screenStr, SIM_MODE, C_SCREEN_OC | WR_CMD, &Flag, 1);
+#else
+    makeProtoBufData(screenStr, COM_MODE, C_SCREEN_OC | WR_CMD, &Flag, 1);
+#endif
+}
+
 void MainWindow::sendDataProc()
 {
    CsendDataDialog *sendDataDialog = new CsendDataDialog(0, this);
@@ -1086,9 +1133,13 @@ void MainWindow::previewTimerProc()
 
 void MainWindow::previewProc()
 {
+  static INT32U msCounts = 0;
+
+  msCounts += QT_MOVE_STEP_TIMER;
   stepTimer += QT_MOVE_STEP_TIMER;
 
   Get_Cur_Time();
+  Pub_Timer.Ms100 = msCounts / 100;
   Pub_Timer.Sec = Cur_Time.Time[T_SEC]; //定时器更新
 
   Show_Main_Proc();

@@ -161,8 +161,15 @@ INT8U Get_Area_Border_Height(INT8U Area_No)
     return Prog_Para.Border_Height;
   else
   {
-      Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
-      return Simple_Border_Data[Type].Height;
+      if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check > 0)
+      {
+        Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
+        return Simple_Border_Data[Type].Height;
+      }
+      else
+      {
+          return 0;
+      }
     //return 0;
   }
 }
@@ -220,8 +227,7 @@ void Update_Border_Data(INT8U Area_No)
 
   if(Prog_Status.Play_Status.New_Prog_Flag ||\
      Prog_Status.Area_Status[Area_No].New_File_Flag ||\
-     Prog_Status.Area_Status[Area_No].New_SCN_Flag ||\
-     Prog_Status.Area_Status[Area_No].New_CStep_Flag) //该节目或该分区还没有进入播放状态?
+     Prog_Status.Area_Status[Area_No].New_SCN_Flag) //该节目或该分区还没有进入播放状态?
     return;
 
   //第一次进入该函数，初始化相关函数头尾
