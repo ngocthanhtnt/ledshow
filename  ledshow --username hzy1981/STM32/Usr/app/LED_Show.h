@@ -207,6 +207,7 @@ typedef struct
 
   INT8U Replay_Flag;
   INT8U Lightness;
+  INT8U Color_Num;
 
   INT16U Temp;    //当前温度
   INT16U Humidity; //湿度

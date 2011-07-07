@@ -330,11 +330,11 @@ INT16U Read_Prog_Block_Index(INT8U Prog_No)
 {
   INT16U Len;
   
-  Len = _Read_Prog_Block_Index(Prog_No, Prog_Status.Block_Index.Index, &Prog_Status.Block_Index, sizeof(Prog_Status.Block_Index));
+  Len = _Read_Prog_Block_Index(Prog_No, (void *)Prog_Status.Block_Index.Index, (void *)&Prog_Status.Block_Index, sizeof(Prog_Status.Block_Index));
   
   if(Len EQ 0)
   {
-      memset(Prog_Status.Block_Index.Index, 0, sizeof(Prog_Status.Block_Index.Index));
+      memset((void *)Prog_Status.Block_Index.Index, 0, sizeof(Prog_Status.Block_Index.Index));
   }
 
   SET_HT(Prog_Status.Block_Index);
@@ -362,7 +362,7 @@ INT8U _Write_Prog_Block_Index(INT8U Prog_No, void *pSrc, INT16U SrcLen)
 
 INT8U Write_Prog_Block_Index(void)
 {
-  return _Write_Prog_Block_Index(Prog_Status.Play_Status.Prog_No, &Prog_Status.Block_Index.Head + 1, BLOCK_INDEX_LEN);
+  return _Write_Prog_Block_Index(Prog_Status.Play_Status.Prog_No, (INT8U *)&Prog_Status.Block_Index.Head + 1, BLOCK_INDEX_LEN);
 }
 
 //读取文件参数
