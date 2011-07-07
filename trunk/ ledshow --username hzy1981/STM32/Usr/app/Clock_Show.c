@@ -195,7 +195,7 @@ void Update_Clock_Data(S_Show_Data *pDst, INT8U Area_No)
       Show_Date(pDst, Area_No, P0.X, P0.Y, &Cur_Time, Prog_Status.File_Para[Area_No].Clock_Para.Date_Type - 1, Prog_Status.File_Para[Area_No].Clock_Para.Date_Font, Prog_Status.File_Para[Area_No].Clock_Para.Date_Color);
    }
   
-   Show_Clock(pDst, Area_No, &sTime, &Prog_Status.File_Para[Area_No].Clock_Para);
+   Show_Clock(pDst, Area_No, &sTime, (S_Clock_Para *)&Prog_Status.File_Para[Area_No].Clock_Para);
 }
 #endif
 

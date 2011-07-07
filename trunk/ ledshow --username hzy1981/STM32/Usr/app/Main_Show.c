@@ -26,7 +26,7 @@ const INT16U Step_Delay[]=
 INT32U Get_Area_In_Step_Delay(INT8U Area_No)
 {
     if(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed > 1)
-      return MOVE_STEP_PERIOD + (Prog_Status.File_Para[Area_No].Pic_Para.In_Speed - 1) * MOVE_STEP_PERIOD*4; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+      return MOVE_STEP_PERIOD + (Prog_Status.File_Para[Area_No].Pic_Para.In_Speed - 1) * MOVE_STEP_PERIOD*2; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
 }
@@ -35,7 +35,7 @@ INT32U Get_Area_In_Step_Delay(INT8U Area_No)
 INT32U Get_Area_Out_Step_Delay(INT8U Area_No)
 {
     if(Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed > 1)
-      return MOVE_STEP_PERIOD + (Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed - 1)* MOVE_STEP_PERIOD*4; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+      return MOVE_STEP_PERIOD + (Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed - 1)* MOVE_STEP_PERIOD*2; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
 }
@@ -205,7 +205,7 @@ void Clr_Area_Status(INT8U Area_No)
     return;
   }
   
-  memset(&Prog_Status.Area_Status[Area_No], 0, sizeof(Prog_Status.Area_Status[Area_No])); 
+  memset((void *)&Prog_Status.Area_Status[Area_No], 0, sizeof(Prog_Status.Area_Status[Area_No]));
   SET_HT(Prog_Status.Area_Status[Area_No]);
 }
 /*
@@ -255,7 +255,7 @@ void Read_Continous_Move_Show_Data(S_Show_Data *pDst, INT8U Area_No)
            i = Prog_Status.Area_Status[Area_No].In_Step;
              Read_Show_Data_Point(Area_No, \
                                   Prog_Status.Area_Status[Area_No].File_No, \
-                                  &Prog_Status.File_Para[Area_No], \
+                                  (U_File_Para *)&Prog_Status.File_Para[Area_No], \
                                   Prog_Status.Area_Status[Area_No].SCN_No,\
                                   pDst, \
                                   i, \
@@ -270,7 +270,7 @@ void Read_Continous_Move_Show_Data(S_Show_Data *pDst, INT8U Area_No)
              j = Prog_Status.Area_Status[Area_No].In_Step;
              Read_Show_Data_Point(Area_No, \
                                   Prog_Status.Area_Status[Area_No].File_No, \
-                                  &Prog_Status.File_Para[Area_No], \
+                                  (U_File_Para *)&Prog_Status.File_Para[Area_No], \
                                   Prog_Status.Area_Status[Area_No].SCN_No,\
                                   pDst, \
                                   i, \
@@ -284,7 +284,7 @@ void Read_Continous_Move_Show_Data(S_Show_Data *pDst, INT8U Area_No)
            i = Prog_Status.Area_Status[Area_No].In_Max_Step - Prog_Status.Area_Status[Area_No].In_Step;
              Read_Show_Data_Point(Area_No, \
                                   Prog_Status.Area_Status[Area_No].File_No, \
-                                  &Prog_Status.File_Para[Area_No], \
+                                  (U_File_Para *)&Prog_Status.File_Para[Area_No], \
                                   Prog_Status.Area_Status[Area_No].SCN_No,\
                                   pDst, \
                                   i, \
@@ -298,7 +298,7 @@ void Read_Continous_Move_Show_Data(S_Show_Data *pDst, INT8U Area_No)
              j = Prog_Status.Area_Status[Area_No].In_Max_Step - Prog_Status.Area_Status[Area_No].In_Step;
              Read_Show_Data_Point(Area_No, \
                                   Prog_Status.Area_Status[Area_No].File_No, \
-                                  &Prog_Status.File_Para[Area_No], \
+                                  (U_File_Para *)&Prog_Status.File_Para[Area_No], \
                                   Prog_Status.Area_Status[Area_No].SCN_No,\
                                   pDst, \
                                   i, \
@@ -407,7 +407,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
        CHK_HT(Prog_Status.Area_Status[Area_No]) &&\
        CHK_SUM(Prog_Status.Area_Status[Area_No]) &&\
        Prog_Status.File_Para[Area_No].Pic_Para.Flag != SHOW_NULL &&\
-       Chk_File_Para_HT_Sum(&Prog_Status.File_Para[Area_No]))
+       Chk_File_Para_HT_Sum((U_File_Para *)&Prog_Status.File_Para[Area_No]))
     {
         debug("the same as last file ,no update");
        Len = 1;
@@ -443,14 +443,14 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
         }
         else
             Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
-                           &Prog_Status.File_Para[Area_No].Pic_Para.Flag, \
-                           &Prog_Status.File_Para[Area_No], sizeof(U_File_Para));
+                           (void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, \
+                           (void *)&Prog_Status.File_Para[Area_No], sizeof(U_File_Para));
 
         SET_VAR(Prep_Data.File_Para_Read_Flag[Area_No], DATA_READ);
     #else
         Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
-                       &Prog_Status.File_Para[Area_No].Pic_Para.Flag, \
-                       &Prog_Status.File_Para[Area_No], sizeof(U_File_Para));
+                       (void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, \
+                       (void *)&Prog_Status.File_Para[Area_No], sizeof(U_File_Para));
     #endif
     }
 
@@ -490,7 +490,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
     }
 
     SET_SUM(Prog_Status.Area_Status[Area_No]);
-    Set_File_Para_HT_Sum(&Prog_Status.File_Para[Area_No]);
+    Set_File_Para_HT_Sum((U_File_Para *)&Prog_Status.File_Para[Area_No]);
   }
 
   TRACE();
@@ -571,7 +571,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
     #else
           Len0 = Read_Show_Data(Area_No, \
                          Prog_Status.Area_Status[Area_No].File_No, \
-                         &Prog_Status.File_Para[Area_No],\
+                         (U_File_Para *)&Prog_Status.File_Para[Area_No],\
                          Prog_Status.Area_Status[Area_No].SCN_No,\
                          &Show_Data_Bak,&X,&Y,&Width,&Height);
     #endif
@@ -665,7 +665,7 @@ void Check_Update_Show_Data(void)
 
 void Clr_Prog_Status(void)
 {
-  memset(&Prog_Status, 0, sizeof(Prog_Status));
+  memset((void *)&Prog_Status, 0, sizeof(Prog_Status));
   //SET_HT(Prog_Status);
   
 }
@@ -1136,7 +1136,7 @@ void Check_Show_Data_Para(void)
     if(Re EQ 0)
         ASSERT_FAILED();
 
-    Re = Chk_File_Para_HT_Sum(&Prog_Status.File_Para[i]);
+    Re = Chk_File_Para_HT_Sum((U_File_Para *)&Prog_Status.File_Para[i]);
     if(Re EQ 0)
         ASSERT_FAILED();
   }
@@ -1173,7 +1173,7 @@ void Prog_Status_Init(void)
 {
     INT8U i;
 
-  memset(&Prog_Status, 0, sizeof(Prog_Status));
+  memset((void *)&Prog_Status, 0, sizeof(Prog_Status));
   SET_HT(Prog_Status);
   for(i = 0; i < MAX_AREA_NUM; i ++)
   {
@@ -1184,8 +1184,8 @@ void Prog_Status_Init(void)
 
       SET_SUM(Prog_Status.Area_Status[i]);
 
-      Set_File_Para_HT_Sum(&Prog_Status.File_Para[i]);
-      if(Chk_File_Para_HT_Sum(&Prog_Status.File_Para[i]) EQ 0)
+      Set_File_Para_HT_Sum((U_File_Para *)&Prog_Status.File_Para[i]);
+      if(Chk_File_Para_HT_Sum((U_File_Para *)&Prog_Status.File_Para[i]) EQ 0)
           ASSERT_FAILED();
   }
 
@@ -1201,8 +1201,8 @@ void Ram_Init(void)
   memset(&Screen_Para, 0, sizeof(Screen_Para));
   //memset(&Card_Para, 0, sizeof(Card_Para));
   memset(&Prog_Para, 0, sizeof(Prog_Para));
-  memset(&Screen_Status, 0, sizeof(Screen_Status));
-  memset(&Prog_Status, 0, sizeof(Prog_Status));
+  memset((void *)&Screen_Status, 0, sizeof(Screen_Status));
+  memset((void *)&Prog_Status, 0, sizeof(Prog_Status));
 
 #if DATA_PREP_EN >0
   memset(&Prep_Data, 0, sizeof(Prep_Data));
@@ -1306,6 +1306,7 @@ void Para_Init(void)
 {
   Ram_Init();
   Read_Screen_Para();
+  Calc_Screen_Color_Num();
 }
 
 void Para_Show(void)

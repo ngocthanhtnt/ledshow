@@ -527,6 +527,27 @@ const S_Mode_Func Out_Mode_Func[]=
 
 };
 
+void Calc_Screen_Color_Num(void)
+{
+  if(Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)
+  {
+    Screen_Status.Color_Num = 1;
+  } 
+  else if(Screen_Para.Base_Para.Color EQ 3 || Screen_Para.Base_Para.Color EQ 5 || Screen_Para.Base_Para.Color EQ 6) //Ë«É«ÆÁ)
+  {
+    Screen_Status.Color_Num = 2;
+  }
+  else if(Screen_Para.Base_Para.Color EQ 7)
+  {
+	Screen_Status.Color_Num = 3;
+  }
+  else
+  {
+	ASSERT_FAILED();
+	Screen_Status.Color_Num = 1;
+  } 
+}
+
 INT16U Get_In_Max_Step(INT16U Width, INT16U Height, INT8U In_Mode)
 {
     INT16U Re;
@@ -897,7 +918,7 @@ void Update_Pic_Data(INT8U Area_No)
           Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Area_Width, Area_Height, &Show_Data, &P0);
           Set_Area_Border_In(Area_No);
         }
-
+	   }
 		//Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_PERIOD;
 
         if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)
@@ -914,12 +935,7 @@ void Update_Pic_Data(INT8U Area_No)
 			Prog_Status.Area_Status[Area_No].Out_Step = 0;
 		  }
 		}
-    }
-
-
-    
-
-    //Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_PERIOD;
+     //Prog_Status.Area_Status[Area_No].Stay_Time += MOVE_STEP_PERIOD;
   }
   else if(Prog_Status.Area_Status[Area_No].Out_Step < Prog_Status.Area_Status[Area_No].Out_Max_Step)
   {

@@ -141,7 +141,7 @@ INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen)
       //
       Prog_Status.Play_Status.Prog_No = Prog_No;
       SET_SUM(Prog_Status.Play_Status);
-      memset(&Prog_Status.Block_Index, 0, sizeof(Prog_Status.Block_Index));
+      memset((void *)&Prog_Status.Block_Index, 0, sizeof(Prog_Status.Block_Index));
 
       SET_HT(Prog_Status.Block_Index);
       SET_SUM(Prog_Status.Block_Index);
@@ -209,7 +209,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
           {
               Prog_Status.Play_Status.Prog_No = Prog_No;
               SET_SUM(Prog_Status.Play_Status);
-              memset(&Prog_Status.Block_Index, 0, sizeof(Prog_Status.Block_Index));
+              memset((void *)&Prog_Status.Block_Index, 0, sizeof(Prog_Status.Block_Index));
 
               SET_HT(Prog_Status.Block_Index);
               SET_SUM(Prog_Status.Block_Index);
@@ -348,9 +348,10 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
     if(memcmp((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para)) != 0)
       {
       Set_Screen_Replay_Flag(); //重播节目标志
-      Screen_Para.Prog_Num = 0; //重置节目数
+      Screen_Para.Prog_Num = 0; //重置节目数	  
     }
     mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//基本参数
+    Calc_Screen_Color_Num();
   }
   else if(Cmd EQ C_SCAN_PARA && Len >= sizeof(Screen_Para.Scan_Para))
     mem_cpy((INT8U *)&Screen_Para.Scan_Para, Data, sizeof(Screen_Para.Scan_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//扫描参数
@@ -645,10 +646,10 @@ void Screen_Com_Proc(void)
       
 	 } */
    if(Screen_Status.Rcv_Data[0] EQ FRAME_HEAD && \
-      Check_Frame_Format(Screen_Status.Rcv_Data, Screen_Status.Rcv_Posi))//(Screen_Status.Rcv_Flag EQ FRAME_FLAG)
+      Check_Frame_Format((INT8U *)Screen_Status.Rcv_Data, Screen_Status.Rcv_Posi))//(Screen_Status.Rcv_Flag EQ FRAME_FLAG)
    {
      Set_Screen_Com_Time(COM_STANDBY_SEC); //到计时5s，5秒后重新播放节目
-     Rcv_Frame_Proc(Screen_Status.Rcv_Ch, Screen_Status.Rcv_Data, Screen_Status.Rcv_Posi, sizeof(Screen_Status.Rcv_Data));
+     Rcv_Frame_Proc(Screen_Status.Rcv_Ch, (INT8U *)Screen_Status.Rcv_Data, Screen_Status.Rcv_Posi, sizeof(Screen_Status.Rcv_Data));
 
    }
 
