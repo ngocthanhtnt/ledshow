@@ -1,5 +1,5 @@
 #include "Includes.h"
-
+//extern void juzhen (u8 *yuan,u8 *mud,u8 gao);
  void test()
  {
         int i; 
@@ -7,7 +7,7 @@
         unsigned char t2[8]; 
 
         transpose8(t1, t2);  
-
+		//juzhen(t1, t2, 0);
 		for(i = 0; i < 8; i	++)
 		  printf("%d = %x", i, t2[i]);
 
