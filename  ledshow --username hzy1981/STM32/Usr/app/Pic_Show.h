@@ -34,6 +34,7 @@ EXT void Set_Area_Border_In(INT8U Area_No);
 EXT void Set_Area_Border_Out(INT8U Area_No);
 EXT void Calc_Screen_Color_Num(void);
 EXT void Calc_Show_Mode_Step(INT8U Area_No);
+EXT INT8U Chk_File_Play_Status(INT8U Area_No);
 EXT void Update_Pic_Data(INT8U Area_No);
 EXT INT8U Check_XXX_Data(INT8U Flag);
 #endif

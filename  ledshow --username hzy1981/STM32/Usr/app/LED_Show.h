@@ -215,6 +215,7 @@ typedef struct
 
   INT8U Time_OC_Flag;	//定时开关机标志
   INT8U Manual_OC_Flag; //手动关机标志
+  INT8U UDisk_Flag; //是否有U盘插入
 
   INT8U CS[CS_BYTES];
 

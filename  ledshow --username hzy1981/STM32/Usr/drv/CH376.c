@@ -18,16 +18,19 @@
 #include "stm32.h"
 */
 #include "includes.h"
-//#include "USART.h"
 
-//extern INT8U SPI1_ReadWrite(INT8U writedat);
-//#include "Includes.h"
-/*
-unsigned char CH376_ReadWrite(unsigned char writedat)
+UINT8	Wait376Interrupt( void )  /* 等待CH376中断(INT#低电平)，返回中断状态码, 超时则返回ERR_USB_UNKNOWN */
 {
-  return SPI1_ReadWrite(writedat);
 
-}*/
+	UINT32	i;
+	for ( i = 0; i < 2000000; i ++ ) {  /* 计数防止超时,默认的超时时间,与单片机主频有关 */
+		if ( Query376Interrupt( ) ) return( CH376GetIntStatus( ) );  /* 检测到中断 */
+		Delay_us(1);
+/* 在等待CH376中断的过程中,可以做些需要及时处理的其它事情 */
+	}
+	return( ERR_USB_UNKNOWN );  /* 不应该发生的情况 */
+
+}
 /*****************************************************
 
  * Name:     mInitCH376Host
@@ -62,10 +65,10 @@ u8 mInitCH376Host( void )
  res = xReadCH376Data( );						// 返回操作状态
  xEndCH376Cmd( );							    // 工作模式设置结束
 
- xWriteCH376Cmd( CMD20_SET_SDO_INT );  			/* 设置SPI的SDO引脚的中断方式 */
- xWriteCH376Data( 0x16 );
- xWriteCH376Data( 0x90 );  						/* SDO引脚在SCS片选无效时兼做中断请求输出 */
- xEndCH376Cmd( );							    // 结束设置SDO引脚方式
+ //xWriteCH376Cmd( CMD20_SET_SDO_INT );  			/* 设置SPI的SDO引脚的中断方式 */
+ //xWriteCH376Data( 0x16 );
+ //xWriteCH376Data( 0x90 );  						/* SDO引脚在SCS片选无效时兼做中断请求输出 */
+ //xEndCH376Cmd( );							    // 结束设置SDO引脚方式
 
 
  if ( res == CMD_RET_SUCCESS ) 
@@ -123,6 +126,7 @@ void	xWriteCH376Cmd( u8 mCmd )  /* 向CH376写命令 */
 	SET_CH376_CS(0);
 	CH376_ReadWrite( mCmd );  /* 发出命令码 */
 
+    Delay_ms(1);
 //	DelayXms(1);;  /* 延时1.5uS确保读写周期大于1.5uS,或者用上面一行的状态查询代替 */
 
 }
@@ -144,7 +148,7 @@ void	xWriteCH376Cmd( u8 mCmd )  /* 向CH376写命令 */
 void	xWriteCH376Data( u8 mData )  /* 向CH376写数据 */
 {
 	CH376_ReadWrite( mData );
-//	mDelay0_5uS( );  /* 确保读写周期大于0.6uS */
+	mDelay0_5uS( );  /* 确保读写周期大于0.6uS */
 }
 
 /*****************************************************
@@ -164,7 +168,7 @@ void	xWriteCH376Data( u8 mData )  /* 向CH376写数据 */
 *****************************************************/
 u8	xReadCH376Data( void )  /* 从CH376读数据 */
 {
-//	mDelay0_5uS( );  /* 确保读写周期大于0.6uS */
+	mDelay0_5uS( );  /* 确保读写周期大于0.6uS */
 	return( CH376_ReadWrite( 0xff) );
 }
 /*****************************************************
@@ -255,7 +259,7 @@ void	mDelay0_5uS( void )  /* 至少延时0.5uS,根据单片机主频调整 */
  i=20;
  while(i--);
  */
- Delay_us(5);
+ Delay_us(1);
 }
 /*
 void main(void)

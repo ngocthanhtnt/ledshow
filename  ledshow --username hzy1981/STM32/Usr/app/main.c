@@ -1,8 +1,23 @@
 #include "Includes.h"
 
+ void test()
+ {
+        int i; 
+        unsigned char t1[8]={0x24,0x21,0xf0,0x7f,0x80,0x37,0xff,0x1f}; 
+        unsigned char t2[8]; 
+
+        transpose8(t1, t2);  
+
+		for(i = 0; i < 8; i	++)
+		  printf("%d = %x", i, t2[i]);
+
+ }
+
 int main(void)
 { 
   Hardware_Init();
+
+  test();
 
   RST_Periph();
 

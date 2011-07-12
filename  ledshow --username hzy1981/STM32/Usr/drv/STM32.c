@@ -594,11 +594,11 @@ void Unselect_SPI_Device(void)
 
 void RST_Periph(void)
 {
-  SET_RST(1);
-  Delay_us(100);
   SET_RST(0);
-  Delay_ms(100);
+  Delay_us(100);
   SET_RST(1);
+  Delay_ms(100);
+  SET_RST(0);
 }
 
 //共有的驱动函数等在此文件中定义

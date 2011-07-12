@@ -165,7 +165,7 @@ bool CcomThread::comRun()
             return false;
         }
 
-        fileDir = fileDir + "ledData";
+        fileDir = fileDir + "LEDDATA";
         if(dataDir.exists(fileDir) == false)
         {
             if(dataDir.mkdir(fileDir) == false)

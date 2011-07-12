@@ -701,6 +701,17 @@ void Calc_Show_Mode_Step(INT8U Area_No)
     Set_Area_Border_In(Area_No);
 }
 
+ INT8U Chk_File_Play_Status(INT8U Area_No)
+ {
+  if(Prog_Status.Play_Status.New_Prog_Flag ||\
+     Prog_Status.Area_Status[Area_No].New_File_Flag ||\
+     Prog_Status.Area_Status[Area_No].New_SCN_Flag ||\
+     Prog_Status.Area_Status[Area_No].New_CStep_Flag) //该节目或该分区还没有进入播放状态?
+    return 0;
+   else
+    return 1;
+ }
+
 void Update_Pic_Data(INT8U Area_No)
 {
   //INT8U i;
@@ -715,10 +726,7 @@ void Update_Pic_Data(INT8U Area_No)
   TRACE();
   //qDebug("update area %d, step = %d, max step = %d", Area_No, Prog_Status.Area_Status[Area_No].Step, Prog_Status.Area_Status[Area_No].Max_Step);
 
-  if(Prog_Status.Play_Status.New_Prog_Flag ||\
-     Prog_Status.Area_Status[Area_No].New_File_Flag ||\
-     Prog_Status.Area_Status[Area_No].New_SCN_Flag ||\
-     Prog_Status.Area_Status[Area_No].New_CStep_Flag) //该节目或该分区还没有进入播放状态?
+  if(Chk_File_Play_Status(Area_No) EQ 0)
     return;
   
   Stay_Time = Get_File_Stay_Time(Area_No);
