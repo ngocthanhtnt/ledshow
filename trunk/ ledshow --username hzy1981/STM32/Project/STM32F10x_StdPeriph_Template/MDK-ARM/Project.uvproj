@@ -159,7 +159,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4099</DriverSelection>
+            <DriverSelection>4098</DriverSelection>
           </Flash1>
           <Flash2>Segger\JL2CM3.dll</Flash2>
           <Flash3>"" ()</Flash3>
@@ -1106,6 +1106,11 @@
               <FileName>OS_Shell.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_Scan.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\LED_Scan.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -2308,6 +2313,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
             </File>
+            <File>
+              <FileName>LED_Scan.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\LED_Scan.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -3508,6 +3518,11 @@
               <FileName>OS_Shell.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_Scan.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\LED_Scan.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -4710,6 +4725,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
             </File>
+            <File>
+              <FileName>LED_Scan.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\LED_Scan.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -5911,6 +5931,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
             </File>
+            <File>
+              <FileName>LED_Scan.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\LED_Scan.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -7111,6 +7136,11 @@
               <FileName>OS_Shell.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\OS_Shell.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED_Scan.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\LED_Scan.h</FilePath>
             </File>
           </Files>
         </Group>

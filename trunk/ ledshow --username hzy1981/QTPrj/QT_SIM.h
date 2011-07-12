@@ -37,6 +37,7 @@ typedef char INT8S;
 
 #define SELF_TEST_STATUS 0x00
 #define Chk_JP_Status() 0x01
+#define Chk_UDisk_Processing() 0x00
 
 #define Soft_Rest()
 /*
@@ -55,6 +56,9 @@ typedef char INT8S;
 #define debug qDebug
 #define Unselect_SPI_Device()
 #define ReInit_Mem_Port()
+
+#define SCAN_INT_DISABLE()
+#define SCAN_INT_ENABLE()
 
 typedef struct
 {
@@ -79,5 +83,6 @@ EXT void Mem_Close();
 EXT INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen);
 EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
 EXT INT16S Get_Cur_Temp();
+EXT void Build_Scan_Data_Index();
 #endif
 #endif

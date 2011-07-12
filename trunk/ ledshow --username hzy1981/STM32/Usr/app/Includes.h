@@ -16,6 +16,7 @@
 #include "LED_Cfg.h"
 
 #if QT_EN == 0
+//#include <intrinsic.h>
 #include "stm32f10x_conf.h"
 #include "STM32.h"
 #include "CH376INC.h"
@@ -23,6 +24,7 @@
 #include "DS1302.h"
 #include "FILE_SYS.h"
 #include "spi_flash.h"
+#include "LED_Scan.h"
 #endif
 
 #include "Storage.h"

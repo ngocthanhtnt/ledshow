@@ -86,10 +86,11 @@ void Update_Show_Data(void)
   INT8U i;
 
   if(Screen_Status.Time_OC_Flag EQ CLOSE_FLAG ||\
-     Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG)
+     Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG ||\
+	 Chk_UDisk_Processing())
     return;
 
-  if(Prog_Status.Play_Status.RT_Play_Flag EQ RT_PLAY_FLAG) //当前在关机状态或者实时显示状态
+  if(Prog_Status.Play_Status.RT_Play_Time > 0) //当前在关机状态或者实时显示状态
 	{/*
 	  if(Prog_Status.Play_Status.RT_Play_Flag EQ RT_PLAY_FLAG)
 	  {
@@ -100,6 +101,13 @@ void Update_Show_Data(void)
 	  */
 	  return;
 	}
+
+ for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
+ {
+  if(Chk_File_Play_Status(i) EQ 0)
+    return;
+  }
+
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
       if(Screen_Status.Com_Time > 0) //收到一帧，先处理此帧
@@ -628,8 +636,8 @@ INT8U Check_Update_Show_Data_Bak(void)
   //INT32U Stay_Time;
   //S_Int8U Sec = {CHK_BYTE, 0xFF, {0},CHK_BYTE};
   
-  //if(Prog_Status.Play_Status.Play_Flag EQ 0)
-      //return 0;
+  if(Prog_Status.Play_Status.RT_Play_Time > 0)
+      return 0;
 
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
@@ -799,34 +807,42 @@ void Calc_Prog_Play_Counts(void)
     Prog_Status.Play_Status.Counts = Min_Counts; //在所有分区内的最小播放次数就是节目的总播放次数
     SET_SUM(Prog_Status.Play_Status);
 }
+
+void Check_RT_Play_Status()
+{
+  static S_Int8U Sec = {CHK_BYTE, 0xFF, CHK_BYTE};
+  
+  if(Sec.Var != Pub_Timer.Sec) //每秒对实时显示区计时
+  {
+    TRACE();
+
+    Sec.Var = Pub_Timer.Sec;
+	if(Prog_Status.Play_Status.RT_Play_Time > 0) //当前是否处于实时播放状态，是计时，并到时后退出
+	{
+	  Prog_Status.Play_Status.RT_Play_Time--;
+	  if(Prog_Status.Play_Status.RT_Play_Time EQ 0)
+	    RT_Play_Status_Exit();
+	  //return;
+	}
+  }
+}
+
 //检查是否需要更新节目参数
 void Check_Update_Program_Para(void)
 {
   INT8U Re;
   INT8U i,Prog_No;//,Count = 0;
   INT16U Len;
-  static S_Int8U Sec = {CHK_BYTE, 0xFF, CHK_BYTE};
+
   static S_Int8U Min = {CHK_BYTE, 0xFF, CHK_BYTE};
-  
-  //Sec.Var = Cur_Time.Time[T_SEC];
-  
+   
   Re = CHK_HT(Prog_Status);
   if(Re EQ 0)
     ASSERT_FAILED();
  
-  if(Sec.Var != Cur_Time.Time[T_SEC]) //每秒对实时显示区计时
-  {
-    TRACE();
+  if(Prog_Status.Play_Status.RT_Play_Time > 0)
+    return;
 
-    Sec.Var = Cur_Time.Time[T_SEC];
-	if(Prog_Status.Play_Status.RT_Play_Time > 0) //当前是否处于实时播放状态，是计时，并到时后退出
-	{
-	  Prog_Status.Play_Status.RT_Play_Time--;
-	  if(Prog_Status.Play_Status.RT_Play_Time EQ 0)
-	    RT_Play_Status_Exit();
-	}
-  }
-    //return; 
   if(Prog_Status.Play_Status.New_Prog_Flag EQ 0)//--当前在节目播放状态
   {
     TRACE();
@@ -1147,8 +1163,8 @@ void RT_Play_Status_Enter(INT16U Sec)
 {
   //if(Area_No EQ 0)
   {
-    Prog_Status.Play_Status.RT_Play_Flag = RT_PLAY_FLAG;
-	Prog_Status.Play_Status.RT_Play_Time = Sec*1000; //ms为单位
+    //Prog_Status.Play_Status.RT_Play_Flag = RT_PLAY_FLAG;
+	Prog_Status.Play_Status.RT_Play_Time = Sec;//*1000; //ms为单位
     SET_SUM(Prog_Status.Play_Status);
   }/*
   else if(Area_No <= MAX_AREA_NUM)
@@ -1164,7 +1180,7 @@ void RT_Play_Status_Enter(INT16U Sec)
 //退出实时显示状态
 void RT_Play_Status_Exit(void)
 {
-    Prog_Status.Play_Status.RT_Play_Flag = 0;
+    //Prog_Status.Play_Status.RT_Play_Flag = 0;
 	Prog_Status.Play_Status.RT_Play_Time = 0;
     SET_SUM(Prog_Status.Play_Status);
 }
@@ -1239,6 +1255,7 @@ void Show_Main_Proc(void)
   Screen_Proc();
   if(Get_Screen_Open_Status() != CLOSE_FLAG) //当前在开机状态才进入
   {
+    Check_RT_Play_Status();
     Check_Update_Program_Para(); //检查是否需要更新节目
     Check_Update_Show_Data_Bak(); //检查是否需要更新显示备份区数据
 #if DATA_PREP_EN >0    
@@ -1306,7 +1323,8 @@ void Para_Init(void)
 {
   Ram_Init();
   Read_Screen_Para();
-  Calc_Screen_Color_Num();
+  Calc_Screen_Color_Num(); //计算屏幕颜色个数
+  Build_Scan_Data_Index(); //构建索引表
 }
 
 void Para_Show(void)

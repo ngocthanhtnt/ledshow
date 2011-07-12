@@ -212,6 +212,10 @@ INT16S Get_Cur_Temp()
 {
   return 215;
 }
+
+void Build_Scan_Data_Index()
+{
+}
 #endif
 
 

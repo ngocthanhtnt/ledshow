@@ -559,7 +559,7 @@ void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen)
 //收到一个字节,中断中调用该函数
 void Com_Rcv_Byte(INT8U Ch, INT8U Byte)
 {
-  INT16U i;
+//  INT16U i;
   //static S_Int8U Head_Flag = {CHK_BYTE, 0x00, CHK_BYTE};//是否收到了帧头
 
   if(Screen_Status.Rcv_Flag EQ FRAME_FLAG) //当前已有一帧，停止继续接收，待该帧处理完
@@ -698,6 +698,9 @@ void Screen_Com_Proc(void)
             Prog_Status.Play_Status.Prog_No = 0;
             Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
             SET_SUM(Prog_Status);
+
+			Calc_Screen_Color_Num(); //计算屏幕颜色个数
+			Build_Scan_Data_Index(); //重新构建数据索引
           }
         }
 	 }
