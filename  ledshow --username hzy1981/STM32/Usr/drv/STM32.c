@@ -231,7 +231,7 @@ void SPI1_CH376_Init(void)
    SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
    SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
    SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;
+   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;
    SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
    SPI_InitStructure.SPI_CRCPolynomial = 7;
    SPI_Init(SPI1, &SPI_InitStructure);
@@ -307,9 +307,9 @@ void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 
-	/* Enable the TIM4 global Interrupt */
+	/* Enable the TIM3 global Interrupt */
 	//特效中断
-	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;  //TIM4中断
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //TIM4中断
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;  //先占优先级2级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
@@ -355,12 +355,12 @@ void TIM2_Configuration(void)
 }
 
 //定时器中断，用于实现特效，定时从备份显示数据区复制到数据区
-void TIM4_Configuration(void)
+void TIM3_Configuration(void)
 {
     //RCC_ClocksTypeDef RCC_Clocks;
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	/* TIM4 clock enable */
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 	
 	//RCC_GetClocksFreq(&RCC_Clocks);
 	/* ---------------------------------------------------------------
@@ -368,25 +368,25 @@ void TIM4_Configuration(void)
 	TIM4CLK = 36 MHz, Prescaler = 7200, TIM4 counter clock = 5K,即改变一次为5K,周期就为10K
 	--------------------------------------------------------------- */
 	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = MOVE_STEP_PERIOD * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	TIM_TimeBaseStructure.TIM_Period = /*MOVE_STEP_PERIOD*/2 * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
     TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
-	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
 	
-	/* Enables the Update event for TIM4 */
-	//TIM_UpdateDisableConfig(TIM4,ENABLE); 	//使能 TIM4 更新事件 
+	/* Enables the Update event for TIM3 */
+	//TIM_UpdateDisableConfig(TIM3,ENABLE); 	//使能 TIM4 更新事件 
 	
 	/* TIM IT enable */
 	TIM_ITConfig(  //使能或者失能指定的TIM中断
-		TIM4, //TIM4
+		TIM3, //TIM4
 		TIM_IT_Update  |  //TIM 中断源
 		TIM_IT_Trigger,   //TIM 触发中断源 
 		ENABLE  //使能
 		);
 	
 	/* TIM4 enable counter */
-	TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
+	TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
 
 }
 
@@ -414,7 +414,7 @@ void TIM1_Configuration(void)
 //设置OE占空比和极性
 
 //用于OE-PWM输出.
-void TIM3_Configuration(void)
+void TIM4_Configuration(void)
 {
     //RCC_ClocksTypeDef RCC_Clocks;
  	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
@@ -437,14 +437,14 @@ void TIM3_Configuration(void)
 	//GPIO_Init(GPIOB, &GPIO_InitStructure);
 	
 	//PB0作为OE-PWM输出
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //TIM_CH3
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8; //TIM_CH3
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;  //复用推挽输出
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 
 	/* TIM3 clock enable */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
 	
 	//不分频。PWM频率=72000000/900=80Khz
 	/* ---------------------------------------------------------------
@@ -461,20 +461,20 @@ void TIM3_Configuration(void)
 	TIM_TimeBaseStructure.TIM_Prescaler =0; //设置用来作为TIMx时钟频率除数的预分频值  不分频
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
-	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
+	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
 	
 	/* Output Compare Active Mode configuration: Channel1 */
 	TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2; //选择定时器模式:TIM脉冲宽度调制模式2
 	TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
 	TIM_OCInitStructure.TIM_Pulse = 0; //设置待装入捕获比较寄存器的脉冲值
 	TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High; //输出极性:TIM输出比较极性高
-	TIM_OC3Init(TIM3, &TIM_OCInitStructure);  //根据TIM_OCInitStruct中指定的参数初始化外设TIMx
-	TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);  //使能TIMx在CCR2上的预装载寄存器
+	TIM_OC3Init(TIM4, &TIM_OCInitStructure);  //根据TIM_OCInitStruct中指定的参数初始化外设TIMx
+	TIM_OC3PreloadConfig(TIM4, TIM_OCPreload_Enable);  //使能TIMx在CCR2上的预装载寄存器
 	
-	TIM_ARRPreloadConfig(TIM3, ENABLE); //使能TIMx在ARR上的预装载寄存器
+	TIM_ARRPreloadConfig(TIM4, ENABLE); //使能TIMx在ARR上的预装载寄存器
 
 	/* TIM3 enable counter */
-	TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
+	TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 
     Set_OE_Duty_Polarity(50, 0);
 }
