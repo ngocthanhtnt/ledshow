@@ -475,28 +475,28 @@ const S_Mode_Func Out_Mode_Func[]=
   }//11
 #endif
 #if OUT_SPEC_EFFECT_NUM > 13  
-  ,{&Move_Left_Right_Open, H_MODE, 0.5
+  ,{&Move_Left_Right_Open, H_MODE, 1
 #if QT_EN
    ,"左右开帘" 
 #endif    
   }//12
 #endif
 #if OUT_SPEC_EFFECT_NUM > 14  
-  ,{&Move_Up_Down_Open, V_MODE, 0.5
+  ,{&Move_Up_Down_Open, V_MODE, 1
 #if QT_EN
    ,"上下开帘" 
 #endif    
   }//13
 #endif
 #if OUT_SPEC_EFFECT_NUM > 15
-  ,{&Move_Left_Right_Close, H_MODE, 0.5
+  ,{&Move_Left_Right_Close, H_MODE, 1
 #if QT_EN
    ,"左右合帘" 
 #endif    
   }//14
 #endif
 #if OUT_SPEC_EFFECT_NUM > 16  
-  ,{&Move_Up_Down_Close, V_MODE, 0.5
+  ,{&Move_Up_Down_Close, V_MODE, 1
 #if QT_EN
    ,"上下合帘" 
 #endif    
@@ -923,7 +923,7 @@ void Update_Pic_Data(INT8U Area_No)
           Update_XXX_Data(&Show_Data_Bak, Area_No);
           Area_Width = Get_Area_Width(Area_No);
           Area_Height = Get_Area_Height(Area_No);
-          Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Area_Width, Area_Height, &Show_Data, &P0);
+          Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Area_Width, Area_Height, &Show_Data, &P0,0);
           Set_Area_Border_In(Area_No);
         }
 	   }
@@ -1027,7 +1027,7 @@ void Update_Pic_Data(INT8U Area_No)
 
           Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
           Prog_Status.Area_Status[Area_No].SCN_No ++;
-          Prog_Status.Area_Status[Area_No].Play_Flag = 0;
+          //Prog_Status.Area_Status[Area_No].Play_Flag = 0;
           SET_SUM(Prog_Status.Area_Status[Area_No]);
 
           Prog_Status.Area_Status[Area_No].In_Step = 0;
