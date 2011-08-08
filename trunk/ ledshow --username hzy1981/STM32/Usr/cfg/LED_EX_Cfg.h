@@ -11,7 +11,7 @@
 
 //----根据不同的屏幕和硬件配置下列项目
 #define MAX_POINTS (1024*75L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
-#define MAX_BLOCK_NUM  4000 //最大存储块数
+#define MAX_STORA_BLOCK_NUM  4000 //最大存储块数
 #define MAX_SCAN_BLOCK_NUM 8 //最大扫描块
 
 #define BORDER_SHOW_EN 1 //边框显示使能
