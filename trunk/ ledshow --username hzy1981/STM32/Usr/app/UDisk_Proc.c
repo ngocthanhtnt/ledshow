@@ -9,6 +9,7 @@ void UDisk_Init(void)
   Unselect_SPI_Device();
 
   SPI1_CH376_Init();
+  Delay_ms(100);
   //SET_CH376_CS(0);	//选中CH376
   Re = mInitCH376Host();
   if(Re != USB_INT_SUCCESS)
@@ -25,11 +26,14 @@ void Set_UDisk_Status(INT8U Status)
   Screen_Status.UDisk_Flag = Status;
 }
 
-INT8U Chk_UDisk_Processing()
+INT8U Chk_UDisk_Processing(void)
 {
    if(Screen_Status.UDisk_Flag EQ UDISK_ING) //当前有U盘插入，并且正在处理状态
      return 1;
+   else
+     return 0;
 
+	/*
    //当前没有在U盘处理状态中
    if(Query376Interrupt() EQ TRUE)
    {
@@ -42,7 +46,7 @@ INT8U Chk_UDisk_Processing()
      Screen_Status.UDisk_Flag = UDISK_NULL;
      return 0;
 	 }
-   
+   	  */
 }
      
 void UDisk_Proc(void)
@@ -53,15 +57,17 @@ void UDisk_Proc(void)
     INT16U RealCount,len;
 	unsigned char buf[30];
 
-    if(Screen_Status.UDisk_Flag != UDISK_ING) //当前有U盘中断需要处理
-	  return;
+    //if(Screen_Status.UDisk_Flag != UDISK_ING) //当前有U盘中断需要处理
+	  //return;
 
 	if(Query376Interrupt() EQ FALSE)//再次确认中断信号
 	{
       Set_UDisk_Status(UDISK_NULL);
 	  return;
 	 }
-     
+    
+	Set_UDisk_Status(UDISK_ING); 
+
 	Set_RT_Show_Area(32, 16);
 	RT_Play_Status_Enter(2);
 	

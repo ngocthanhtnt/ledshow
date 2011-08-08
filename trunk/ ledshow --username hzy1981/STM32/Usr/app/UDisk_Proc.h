@@ -14,5 +14,6 @@
 
 EXT void UDisk_Init(void);
 EXT void UDisk_Proc(void); 
+EXT INT8U Chk_UDisk_Processing(void);
 #endif
 

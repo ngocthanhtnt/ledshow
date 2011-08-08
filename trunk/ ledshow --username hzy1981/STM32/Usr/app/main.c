@@ -17,7 +17,7 @@ int main(void)
 { 
   Hardware_Init();
 
-  test();
+ // test();
 
   RST_Periph();
 

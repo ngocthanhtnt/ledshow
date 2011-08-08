@@ -110,6 +110,7 @@ EXT void Show_Main_Proc(void);
 EXT void Para_Init(void);
 EXT void Para_Show(void);
 EXT void Prog_Status_Init(void);
+EXT void Effect_Proc(void);
 EXT void Set_RT_Show_Area(INT16U Width, INT16U Height);
 EXT void Restore_Show_Area(void);
 EXT void RT_Play_Status_Enter(INT16U Sec);

@@ -33,11 +33,22 @@
 #define PROG_OK  1 //½ÚÄ¿ok
 
 #define WIN_LEAF_WIDTH 8
+#define GET_BUF_BIT(Buf, Size, Index) ((Buf[(Index) >>3] & (0x01 << ((Index) & 0x07)))>0?1:0)
+#define SET_BUF_BIT(Buf, Size, Index, Value)   do{\
+if(Value EQ 0)\
+    Buf[(Index) >>3] = (Buf[(Index) >>3] & (~(0x01 << ((Index) & 0x07))));\
+else\
+    Buf[(Index) >>3] = (Buf[(Index) >>3] | (0x01 << ((Index) & 0x07)));\
+}while(0)
+//#define Get_Buf_Bit GET_BUF_BIT
 
+//INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index)
+
+#pragma pack(1)
 typedef struct
 {
     INT8U Head;
-    INT8U Buf[50];
+    INT8U Buf[45];
     INT8U Tail;
 }S_Print_Buf;
 
@@ -120,7 +131,7 @@ typedef struct
 
   INT8U Play_Counts; //²¥·Å´ÎÊý
   //INT8U RT_Play_Flag; //ÊµÊ±²¥·Å±êÖ¾
-  INT8U Play_Flag; //²¥·Å±êÖ¾£¬0±íÊ¾Î´½øÈë²¥·Å×´Ì¬£¬1±íÊ¾½øÈë²¥·Å×´Ì¬--Ö÷ÒªÓÃÓÚÓëÖÐ¶ÏÏÔÊ¾Í¬²½
+  //INT8U Play_Flag; //²¥·Å±êÖ¾£¬0±íÊ¾Î´½øÈë²¥·Å×´Ì¬£¬1±íÊ¾½øÈë²¥·Å×´Ì¬--Ö÷ÒªÓÃÓÚÓëÖÐ¶ÏÏÔÊ¾Í¬²½
   //INT8U Restore_Border_Flag:4;
   //INT8U Update_BG_Flag:4;
 
@@ -176,6 +187,11 @@ typedef struct
     INT8U Play_Flag:4; //ÊÇ·ñ²¥·Å±êÖ¾--Ö÷ÒªÓÃÓÚÓëÖÐ¶ÏÏÔÊ¾Í¬²½
     INT8U New_Prog_Flag:4;
     INT8U CS[CS_BYTES];
+
+	INT32U Effect_Counts;
+	INT8U Effect_Flag; //ÌØÐ§±ê¾
+	INT32U Max_Effect_Counts;
+
     INT8U Tail;
 }S_Play_Status;
 
@@ -220,8 +236,12 @@ typedef struct
   INT8U CS[CS_BYTES];
 
   //É¨ÃèÊý¾Ý
+  INT16U Fold_Size;
+  INT16U BRow_X_RowsFold;
+  INT16U Rows_X_RowsFold;
+  INT16U Block_Cols; //Ò»ÌõÉ¨ÃèÏßµÄ¿í¶È
+
   INT8U Scan_Row;
-  //INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3];
 
   //½ÓÊÕÖ¡Êý¾Ý
   INT8U Rcv_Ch; //½ÓÊÕÍ¨µÀ
@@ -236,6 +256,8 @@ typedef struct
   INT8U Self_Test_Flag;
   INT8U Tail;  
 }S_Screen_Status;
+
+#pragma pack()
 
 //EXT S_Area_Status Area_Status[MAX_AREA_NUM]; //·ÖÇø×´Ì¬ÐÅÏ¢
 EXT volatile S_Prog_Status Prog_Status;   //½ÚÄ¿×´Ì¬ÐÅÏ¢
@@ -273,7 +295,7 @@ EXT void Draw_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
 //¸´ÖÆÒ»ÌõÏß
 EXT void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *pPoint1, S_Show_Data *pDst_Buf, S_Point *pPoint2);
 //¸´ÖÆÒ»¸öÌî³äºÃµÄ¾ØÐÎ
-EXT void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, S_Show_Data *pDst_Buf, S_Point *pPoint1);
+EXT void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag);
 //·´Ïò¸´ÖÆÒ»¸öÌî³äºÃµÄ¾ÙÐÐ
 EXT void Rev_Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, S_Show_Data *pDst_Buf, S_Point *pPoint1);
 //Ìî³äÒ»¸ö¾ØÐÎ

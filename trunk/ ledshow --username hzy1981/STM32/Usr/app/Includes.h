@@ -21,6 +21,7 @@
 #include "STM32.h"
 #include "CH376INC.h"
 #include "ch376.h"
+#include "UDisk_Proc.h"
 #include "DS1302.h"
 #include "FILE_SYS.h"
 #include "spi_flash.h"
@@ -44,7 +45,6 @@
 #include "Main_Show.h"
 #include "com.h"
 #include "Shell.h"
-#include "UDisk_Proc.h"
 #include "Net_Proc.h"
 
 

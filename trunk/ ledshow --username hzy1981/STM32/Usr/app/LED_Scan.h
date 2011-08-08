@@ -8,8 +8,12 @@
 #define EXT extern
 #endif
 
+#pragma pack(1)
+EXT INT8U Scan_Data[3][MAX_SCAN_BLOCK_NUM];// __attribute__((at(SCAN_DATA_ADDR)));
+EXT INT8U Scan_Data0[3][MAX_SCAN_BLOCK_NUM];
+#pragma pack()
+
 EXT void transpose8(unsigned char i[8], unsigned char o[8]);
 EXT void Build_Scan_Data_Index(void);
-EXT INT16U Get_Scan_Data(INT16U Block, INT16U Rows, INT16U BRow, INT16U Cols, INT16U Index,\
-                          INT8U Direct, INT8U Rows_Fold, INT8U Cols_Fold, INT8U *pDst);
+EXT INT16U Get_Scan_Data_Index(INT16U Block, INT16U Index);
 #endif

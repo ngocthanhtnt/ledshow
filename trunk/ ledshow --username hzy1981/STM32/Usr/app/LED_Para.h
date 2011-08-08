@@ -50,8 +50,8 @@
 #define COM_ETH   0x08
 #define COM_GPRS  0x10
 
-#define GET_TEXT_LEN(W,H) ((W%8) EQ 0)?(W*H/8):((W/8+1)*H)//((H%8) EQ 0)?(W*H/8):(W*(H/8+1))
-#define GET_POINT_INDEX(W,X,Y) (((W%8)?(W/8 + 1)*8:W)*Y + X)//(((Y>>3) * Width) + X)*8 + (Y & 0x07);
+#define GET_TEXT_LEN(W,H) (((W)%8) EQ 0)?((W)*(H)/8):(((W)/8+1)*(H))//((H%8) EQ 0)?(W*H/8):(W*(H/8+1))
+#define GET_POINT_INDEX(W,X,Y) ((((W)%8)?((W)/8 + 1)*8:(W))*(Y) + (X))//(((Y>>3) * Width) + X)*8 + (Y & 0x07);
 
 #pragma pack(1)
 typedef struct
@@ -263,7 +263,7 @@ typedef struct
   INT8U Border_Height;  //边框高度
   INT8U Temp;   //备用
 //#if BORDER_SHOW_EN > 0  
-  INT8U Border_Data[3*MAX_BORDER_POINTS/8]; //边框数据
+  INT8U Border_Data[2*MAX_BORDER_POINTS/8]; //边框数据
 //#endif  
   INT8U CS[CS_BYTES];
   

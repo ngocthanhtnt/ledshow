@@ -79,7 +79,7 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
 #endif                                   
                                    
   //节目显示数据
-  {SDI_SHOW_DATA, BLOCK_DATA_LEN, MAX_BLOCK_NUM},
+  {SDI_SHOW_DATA, BLOCK_DATA_LEN, MAX_STORA_BLOCK_NUM},
 
   {SDI_TEST_DATA, TEST_DATA_LEN, 1}
 };

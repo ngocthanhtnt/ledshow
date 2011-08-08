@@ -24,18 +24,29 @@ const INT16U Step_Delay[]=
 */
 //获取某个窗口区域某个步进的停留时间
 INT32U Get_Area_In_Step_Delay(INT8U Area_No)
-{
+{/*
     if(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed > 1)
       return MOVE_STEP_PERIOD + (Prog_Status.File_Para[Area_No].Pic_Para.In_Speed - 1) * MOVE_STEP_PERIOD*2; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+    else
+      return MOVE_STEP_PERIOD;
+	  */
+    if(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed > 1)
+      return Prog_Status.File_Para[Area_No].Pic_Para.In_Speed * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
 }
 
 //获取某个窗口区域某个步进的停留时间
 INT32U Get_Area_Out_Step_Delay(INT8U Area_No)
-{
+{	/*
     if(Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed > 1)
       return MOVE_STEP_PERIOD + (Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed - 1)* MOVE_STEP_PERIOD*2; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+    else
+      return MOVE_STEP_PERIOD;
+	  */
+
+    if(Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed > 1)
+      return Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed* MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
 }
@@ -101,13 +112,13 @@ void Update_Show_Data(void)
 	  */
 	  return;
 	}
-
+/*
  for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
  {
   if(Chk_File_Play_Status(i) EQ 0)
     return;
   }
-
+*/
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
       if(Screen_Status.Com_Time > 0) //收到一帧，先处理此帧
@@ -362,8 +373,8 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   if(Prog_Status.Play_Status.New_Prog_Flag) //在节目更新状态中，不更新文件参数
       return 0;
 
-  if(Prog_Para.Area_File_Num[Area_No] EQ 0)
-      return 0;
+  //if(Prog_Para.Area_File_Num[Area_No] EQ 0)
+      //return 0;
 /*
   if(Prog_Status.Area_Status[Area_No].New_File_Flag EQ 0 &&\
      Prog_Status.Area_Status[Area_No].New_SCN_Flag > 0)
@@ -405,6 +416,9 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
          return 0;
       }
    }
+
+   if(Prog_Para.Area_File_Num[Area_No] EQ 0)
+      return 0;
 
     debug("\r\nprog %d area %d play new file: %d", Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No);
     //先将文件参数读出 
@@ -1217,7 +1231,10 @@ void Ram_Init(void)
   memset(&Screen_Para, 0, sizeof(Screen_Para));
   //memset(&Card_Para, 0, sizeof(Card_Para));
   memset(&Prog_Para, 0, sizeof(Prog_Para));
+
   memset((void *)&Screen_Status, 0, sizeof(Screen_Status));
+  Screen_Status.Time_OC_Flag = CLOSE_FLAG;
+
   memset((void *)&Prog_Status, 0, sizeof(Prog_Status));
 
 #if DATA_PREP_EN >0
@@ -1247,6 +1264,26 @@ void Ram_Init(void)
   Prog_Status.Play_Status.Last_Prog_No = 0xFF;
   SET_HT(Prog_Status.Play_Status);
   SET_SUM(Prog_Status.Play_Status);
+
+#if QT_EN EQ 0
+  memset(Scan_Data, 0xFF, sizeof(Scan_Data));
+  memset(Scan_Data0, 0xFF, sizeof(Scan_Data0));
+#endif
+
+}
+
+void Effect_Proc(void)
+{
+  if(Prog_Status.Play_Status.Effect_Flag > 0)
+  {
+    Prog_Status.Play_Status.Effect_Counts = 0;
+    Prog_Status.Play_Status.Effect_Flag = 0;
+	
+    Show_Timer_Proc();
+
+	if(Prog_Status.Play_Status.Effect_Counts >= Prog_Status.Play_Status.Max_Effect_Counts)	//自适应速度调节，
+	  Prog_Status.Play_Status.Max_Effect_Counts = Prog_Status.Play_Status.Effect_Counts + 15;
+  }
 }
 
 //显示相关处理
@@ -1258,6 +1295,7 @@ void Show_Main_Proc(void)
     Check_RT_Play_Status();
     Check_Update_Program_Para(); //检查是否需要更新节目
     Check_Update_Show_Data_Bak(); //检查是否需要更新显示备份区数据
+	//Effect_Proc();
 #if DATA_PREP_EN >0    
     Check_Update_Data_Prep();
 #endif    
@@ -1433,12 +1471,12 @@ void Self_Test(INT8U Mode)
   debug("进入屏幕检测状态");
 #endif
 
+  return;
   //--------------扫描方式检测---------------
   Read_Screen_Para();
 
-  return;
   //-----------
-  Screen_Para.Base_Para.Width = 1024;
+  Screen_Para.Base_Para.Width = 64;
   Screen_Para.Base_Para.Height = 32;
   Screen_Para.Scan_Para.Cols_Fold = 0;
   Screen_Para.Scan_Para.Rows_Fold = 0;
@@ -1451,9 +1489,16 @@ void Self_Test(INT8U Mode)
 
   
   //---------------
-  Set_RT_Show_Area(64, 64);
-  memset(Show_Data.Color_Data, 0x55, sizeof(Show_Data.Color_Data));
+  Set_RT_Show_Area(64, 32);
+  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
 
+  Show_Data.Color_Data[0] = 0x55;
+  Show_Data.Color_Data[128] = 0xA5;
+  Show_Data.Color_Data[255] = 0x5A;
+  //Show_Data.Color_Data[17] = 0x55;
+
+  Build_Scan_Data_Index();
+  
   while(1)
   {
     RT_Play_Status_Enter(2);

@@ -5,8 +5,10 @@
 void transpose8(unsigned char i[8], unsigned char o[8]) { 
         unsigned long x, y, t; 
 
-        x = (i[0] << 24) | (i[1] << 16) | (i[2] << 8) | i[3]; 
-        y = (i[4] << 24) | (i[5] << 16) | (i[6] << 8) | i[7]; 
+        //x = (i[0] << 24) | (i[1] << 16) | (i[2] << 8) | i[3]; 
+        //y = (i[4] << 24) | (i[5] << 16) | (i[6] << 8) | i[7]; 
+        x = (i[7] << 24) | (i[6] << 16) | (i[5] << 8) | i[4]; 
+        y = (i[3] << 24) | (i[2] << 16) | (i[1] << 8) | i[0];
 
         t = (x & 0xf0f0f0f0) | ((y >> 4) & 0x0f0f0f0f); 
         y = ((x << 4) & 0xf0f0f0f0) | (y & 0x0f0f0f0f); 
@@ -32,6 +34,7 @@ void transpose8(unsigned char i[8], unsigned char o[8]) {
 unsigned int __rbit(unsigned int val) 
 */
 //-------------------------
+/*
 void Set_Clock_Hight_Speed(void)
 {
 	RCC_SYSCLKConfig(RCC_SYSCLKSource_HSE); //设置外部时钟为HSE
@@ -52,7 +55,7 @@ void Set_Clock_Hight_Speed(void)
 	{
 	}
 }
-
+ */
 void Set_Clock_Normal_Speed(void)
 {
 	RCC_SYSCLKConfig(RCC_SYSCLKSource_HSE); //设置外部时钟为HSE
@@ -89,10 +92,6 @@ typedef struct
 S_Scan_Data_Index Scan_Data_Index;
 #endif
 
-#pragma pack(1)
-INT8U Scan_Data[MAX_SCAN_BLOCK_NUM][3] __attribute__((at(SCAN_DATA_ADDR)));
-#pragma pack()
-
  //构建扫描单元0的所有扫描数据的索引，以字节为单位
 void Build_Scan_Data_Index(void)
 {
@@ -118,15 +117,7 @@ void Build_Scan_Data_Index(void)
   //每一条扫描线需要Screen_Para.Base_Para.Width / 8 * Screen_Para.Scan_Para.Rows_Fold个字节
   for(i = 0; i < Cols * (Screen_Para.Scan_Para.Rows_Fold + 1); i ++)
   {
-      Index = Get_Scan_Data(0, \
-	              Screen_Para.Scan_Para.Rows, \
-	              0,\
-	              Cols, \
-	              i, \
-	              Screen_Para.Scan_Para.Direct, \
-	              Screen_Para.Scan_Para.Rows_Fold, \
-	              Screen_Para.Scan_Para.Cols_Fold,\
-	              Scan_Data[0]);
+      Index = Get_Scan_Data_Index(0, i);
 
 	   if(Index < sizeof(Scan_Data_Index.Index))
 		  Scan_Data_Index.Index[i] = Index;
@@ -139,15 +130,14 @@ void Build_Scan_Data_Index(void)
    {
       for(j = 0; j < Screen_Para.Scan_Para.Rows && j < S_NUM(Scan_Data_Index.Block_Off[0]); j ++)
 	  {
-	      Index = Get_Scan_Data(i, \
+	      Index = Get_Scan_Data_Index(i, \
 		              Screen_Para.Scan_Para.Rows, \
 		              j,\
 		              Cols, \
 		              0, \
 		              Screen_Para.Scan_Para.Direct, \
 		              Screen_Para.Scan_Para.Rows_Fold, \
-		              Screen_Para.Scan_Para.Cols_Fold,\
-		              Scan_Data[0]);
+		              Screen_Para.Scan_Para.Cols_Fold);
 	
 		   //if(Index < sizeof(Scan_Data_Index.Index))
 			  Scan_Data_Index.Block_Off[i][j] = Index - Scan_Data_Index.Index[0];
@@ -165,9 +155,9 @@ void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
   }
 
   if(Polarity EQ 0)
-    TIM3->CCR3 = TIM3->ARR * Duty / 100;
+    TIM4->CCR3 = TIM4->ARR * Duty / 100;
   else
-    TIM3->CCR3 = TIM3->ARR * (100 - Duty) / 100;
+    TIM4->CCR3 = TIM4->ARR * (100 - Duty) / 100;
 }
 //获取第Rows行第Index个字节的移动数据对应的在屏幕数据中的坐标
 //Block表示扫描块的块号
@@ -177,92 +167,157 @@ void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
 //Index表示该扫描线中的第Index个字节
 //*pX和*pY返回坐标
 //Direct表示数据进入方向,Rows_Fold表示行折叠数，Cols_Fold表示列折数
-INT16U Get_Scan_Data(INT16U Block, INT16U Rows, INT16U BRow, INT16U Cols, INT16U Index,\
-                          INT8U Direct, INT8U Rows_Fold, INT8U Cols_Fold, INT8U *pDst)
+INT16U Get_Scan_Data_Index(INT16U Block, INT16U Index)
 {
   INT16U Fold_Size,X,Y;
-  INT8U Screen_Color_Num, *p;
-  INT8U Off;
-  //INT16U Cols;
-  
-  X = Y = 0; 
+  //INT8U  *p;
+  INT32U Temp;
+  INT8U Rows_Fold, Cols_Fold,Rows;
+  INT16U Cols;
+  INT8U Direct;
 
-  Rows_Fold ++;
-
-  if(Direct EQ 0x00 || Direct EQ 0x01) //从左边进入，则索引应该转换
-    Index = Cols - 1 - Index; //Index从0开始计数
+  //X = Y = 0; 
+  if(Screen_Para.Scan_Para.Direct < 2) //从左边进入，则索引应该转换
+    Index = Screen_Status.Block_Cols - 1 - Index; //Index从0开始计数
 		  
-  if(Rows_Fold EQ 0 || Cols_Fold EQ 0) //没有打折的现象
+  if(Screen_Para.Scan_Para.Rows_Fold EQ 0 ||\
+     Screen_Para.Scan_Para.Cols_Fold EQ 0) //没有打折的现象
   {
+      //return ((Block * Screen_Status.Block_Cols + Screen_Status.Scan_Row) * Screen_Status.Block_Cols + Index)*Screen_Status.Color_Num;
       X = Index;
 	   //每个Block对应的屏幕上的行数是 Rows*Rows_Fold
 	   //BRow表示第几条扫描线,每条扫描线对应到屏幕上的有Rows_Fold行
-	  Y = Block * Rows* Rows_Fold + BRow * Rows_Fold;// + (Index % Fold_Size) / Cols_Fold;
+	  Y = Block*Screen_Status.Rows_X_RowsFold + Screen_Status.BRow_X_RowsFold;//(Block * Rows + BRow) * Rows_Fold;//Block * Rows* Rows_Fold + BRow * Rows_Fold;//
+      return (Y*Screen_Status.Block_Cols + X)*Screen_Status.Color_Num;//ReIndex;
   }
   else
-  { 
-	  Fold_Size = Rows_Fold*Cols_Fold;  
+  {
+	  Cols = Screen_Status.Block_Cols;
+	
+	  Rows = Screen_Para.Scan_Para.Rows;
+	  Rows_Fold = Screen_Para.Scan_Para.Rows_Fold + 1;
+	  Cols_Fold = Screen_Para.Scan_Para.Cols_Fold;
+	  Direct = Screen_Para.Scan_Para.Direct;
+     
+	  Fold_Size = Screen_Status.Fold_Size;//Rows_Fold*Cols_Fold;  
 	  if(Direct EQ 0x00 || Direct EQ 0x02)//左上进入、右上进入
 	  {
-	    X = Index / Fold_Size * Cols_Fold + (Index % Fold_Size) % Cols_Fold;
+	    Temp = Index % Fold_Size; 
+	    X = Index / Fold_Size * Cols_Fold + Temp % Cols_Fold;
 	    //每个Block对应的屏幕上的行数是 Rows*Rows_Fold
 	    //BRow表示第几条扫描线,每条扫描线对应到屏幕上的有Rows_Fold行
-	    Y = Block * Rows* Rows_Fold + BRow * Rows_Fold + (Index % Fold_Size) / Cols_Fold;
+	    Y = Block*Screen_Status.Rows_X_RowsFold + Screen_Status.BRow_X_RowsFold + Temp / Cols_Fold; //(Block * Rows + BRow) * Rows_Fold + Temp / Cols_Fold;//Block * Rows* Rows_Fold + BRow * Rows_Fold + (Index % Fold_Size) / Cols_Fold;
 	  }
 	  else if(Direct EQ 0x01 || Direct EQ 0x03) //左下进入、右下进入
 	  {
-	    X = Index / Fold_Size * Cols_Fold + (Index % Fold_Size) % Cols_Fold;
+	    Temp = Index % Fold_Size; 
+	    X = Index / Fold_Size * Cols_Fold + Temp % Cols_Fold;
 	    //每个Block对应的屏幕上的行数是 Rows*Rows_Fold
 	    //BRow表示第几条扫描线,每条扫描线对应到屏幕上的有Rows_Fold行
-	    Y = Block * Rows* Rows_Fold + (BRow + 1) * Rows_Fold - (Index % Fold_Size) / Cols_Fold - 1;//Y = (Block  + 1)*  Rows * Rows_Fold - BRow * Rows_Fold - (Index % Rows_Fold);//(Index % Fold_Size) / Cols_Fold;    
+	    Y = Block*Screen_Status.Rows_X_RowsFold + Screen_Status.BRow_X_RowsFold + Temp / Cols_Fold + Rows_Fold - Temp / Cols_Fold - 1; 
 	  }
 	  else
+	  {
 	    ASSERT_FAILED();
-   }
-  Screen_Color_Num = Get_Screen_Color_Num();  
+        return 0;
+	  }
 
-  p = Show_Data.Color_Data + (Y*Cols + X)*Screen_Color_Num;
-  
-  Off = 0;
-  
-  //获取三色数据
-  //红
-  if(GET_BIT(Screen_Para.Base_Para.Color, 0))
-    *pDst = 0xFF - *(p + Off++);//Show_Data.Color_Data[Data_Index];
-  else 
-    *pDst = 0xFF;
-  
-  //绿
-  if(GET_BIT(Screen_Para.Base_Para.Color, 1))
-    *(pDst + 1) = 0xFF - *(p + Off ++);//Show_Data.Color_Data[Data_Index];
-  else 
-    *(pDst + 1) = 0xFF;
-  
-  //蓝
-  if(GET_BIT(Screen_Para.Base_Para.Color, 2))
-    *(pDst + 2) = 0xFF - *(p + Off ++);//Show_Data.Color_Data[Data_Index];
-  else 
-    *(pDst + 2) = 0xFF;  
-  //memcpy(pDst, Show_Data.Color_Data + Data_Index*Screen_Color_Num, Screen_Color_Num);
-  return (Y*Cols + X)*Screen_Color_Num;//ReIndex;
+	  //Screen_Color_Num = Screen_Status.Color_Num;//Get_Screen_Color_Num();  
+	
+	  return (Y*Cols + X)*Screen_Status.Color_Num;//ReIndex;
+   }
+
 }
- //获取扫描数据
-void Get_Scan_Data0(INT8U Row, INT16U Col)
-{
+
 #if BUILD_SCAN_DATA_INDEX_EN
+ //获取扫描数据
+void Get_Scan_Data(INT16U Blocks, INT8U Row, INT16U Col)
+{
+
   INT16U i;
   INT8U *p;
+  INT32U Temp;
 
   p = (INT8U *)Show_Data.Color_Data;
   for(i = 0; i < Scan_Data_Index.Block_Num && i < MAX_SCAN_BLOCK_NUM; i ++)
   {
-    Scan_Data[i][0] = 0xFF - *(p + Scan_Data_Index.Index[Col] +  Scan_Data_Index.Block_Off[i][Row]);
-	Scan_Data[i][1] = 0xFF - *(p + Scan_Data_Index.Index[Col] +  Scan_Data_Index.Block_Off[i][Row] + 1);
-	Scan_Data[i][2] = 0xFF - *(p + Scan_Data_Index.Index[Col] +  Scan_Data_Index.Block_Off[i][Row] + 2);
-  }
-#endif
-}
+    if(GET_BIT(Screen_Para.Base_Para.Color, 0))
+      Scan_Data[0][i] = 0xFF - *(p + Scan_Data_Index.Index[Col] +  Scan_Data_Index.Block_Off[i][Row]);
+	else
+	  Scan_Data[0][i] = 0xFF;
+   
+    if(GET_BIT(Screen_Para.Base_Para.Color, 1))
+	  Scan_Data[1][i] = 0xFF - *(p + Scan_Data_Index.Index[Col] +  Scan_Data_Index.Block_Off[i][Row] + 1);
+	else
+	  Scan_Data[1][i] = 0xFF;
+    
+	if(GET_BIT(Screen_Para.Base_Para.Color, 2))
+	  Scan_Data[2][i] = 0xFF - *(p + Scan_Data_Index.Index[Col] +  Scan_Data_Index.Block_Off[i][Row] + 2);
+    else
+	  Scan_Data[2][i] = 0xFF;
 
+	if(Screen_Para.Scan_Para.Direct EQ 0x00 || Screen_Para.Scan_Para.Direct EQ 0x01)//左边进入位序应该反
+	{
+		Temp = __RBIT(Scan_Data[0][i]);
+		Scan_Data[0][i] = *((INT8U *)&Temp + 3);
+		Temp = __RBIT(Scan_Data[1][i]);
+		Scan_Data[1][i] = *((INT8U *)&Temp + 3);
+		Temp = __RBIT(Scan_Data[2][i]);
+		Scan_Data[2][i] = *((INT8U *)&Temp + 3);
+	}
+  }	
+
+}
+#else
+void Get_Scan_Data(INT16U Blocks, INT16U Col)
+{
+    INT16U Index,Off,i;
+	INT32U Temp;
+	INT16U Cols;
+	INT8U *p;
+	
+    //Cols = Screen_Para.Base_Para.Width / 8;
+    for(i = 0; i < Blocks && i < MAX_SCAN_BLOCK_NUM; i ++)
+    {
+        //获取该扫描线上的所有字节并输出
+        Index = Get_Scan_Data_Index(i, Col);
+
+	    p = Show_Data.Color_Data + Index;
+	  
+		Off = 0;
+		//获取三色数据
+		//红
+		if(GET_BIT(Screen_Para.Base_Para.Color, 0))
+		  Scan_Data[0][i] = 0xFF - *(p + Off++);//Show_Data.Color_Data[Data_Index];
+		else 
+		  Scan_Data[0][i] = 0xFF;
+		
+		//绿
+		if(GET_BIT(Screen_Para.Base_Para.Color, 1))
+		  Scan_Data[1][i] = 0xFF - *(p + Off ++);//Show_Data.Color_Data[Data_Index];
+		else 
+		  Scan_Data[1][i] = 0xFF;
+/*		
+		//蓝
+		if(GET_BIT(Screen_Para.Base_Para.Color, 2))
+		  Scan_Data[2][i] = 0xFF - *(p + Off ++);//Show_Data.Color_Data[Data_Index];
+		else 
+		  Scan_Data[2][i] = 0xFF; 
+*/		
+		
+		if(Screen_Para.Scan_Para.Direct < 0x02)// EQ 0x00 || Screen_Para.Scan_Para.Direct EQ 0x01)//左边进入位序应该反
+		{
+			Temp = __RBIT(Scan_Data[0][i]);
+			Scan_Data[0][i] = *((INT8U *)&Temp + 3);
+			Temp = __RBIT(Scan_Data[1][i]);
+			Scan_Data[1][i] = *((INT8U *)&Temp + 3);
+			//Temp = __RBIT(Scan_Data[2][i]);
+			//Scan_Data[2][i] = *((INT8U *)&Temp + 3);
+		}
+    }
+
+}
+#endif
   
  //设置块行号
 void Set_Block_Row(INT8U Row)
@@ -289,8 +344,12 @@ void LED_Scan_One_Row(void)
 {
   INT16U i,j,Cols;
   INT16U Blocks;
-  INT8U Color_Num;
+  INT16U Temp;
+//  INT8U Color_Num;
   
+  //Delay_us(500);
+  //return;
+
   if(Screen_Status.Time_OC_Flag EQ CLOSE_FLAG ||\
      Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG ||\
 	 Screen_Status.Com_Time > 0 ||\
@@ -298,6 +357,12 @@ void LED_Scan_One_Row(void)
     return;
  
 
+  Prog_Status.Play_Status.Effect_Counts++;
+  if(Prog_Status.Play_Status.Effect_Counts >= Prog_Status.Play_Status.Max_Effect_Counts)
+  {
+    //Prog_Status.Play_Status.Effect_Counts = 0;
+	Prog_Status.Play_Status.Effect_Flag = 1;
+  }
   //Set_Clock_Hight_Speed(); //设置为高速运行模式
   if(Screen_Para.Scan_Para.Rows EQ 0)
   {
@@ -305,125 +370,65 @@ void LED_Scan_One_Row(void)
 	SET_SUM(Screen_Para);
   }
 
-  Color_Num = Get_Screen_Color_Num();
+  Screen_Status.Color_Num = Get_Screen_Color_Num();
+  Screen_Status.Block_Cols = Screen_Para.Base_Para.Width / 8;	//一条扫描线的长度，此处待修改
+  Screen_Status.Fold_Size = Screen_Para.Scan_Para.Cols_Fold * (Screen_Para.Scan_Para.Rows_Fold + 1);
+  Screen_Status.BRow_X_RowsFold = Screen_Status.Scan_Row * (Screen_Para.Scan_Para.Rows_Fold + 1);
+  Screen_Status.Rows_X_RowsFold = Screen_Para.Scan_Para.Rows * (Screen_Para.Scan_Para.Rows_Fold + 1); 
   //Block数可以理解为单元板纵向的个数
-  Blocks = Screen_Para.Base_Para.Height / (Screen_Para.Scan_Para.Rows * (Screen_Para.Scan_Para.Rows_Fold + 1)); //1.2.4.8.16扫？
- 
-  if(Blocks > MAX_SCAN_BLOCK_NUM)
-	 Blocks = MAX_SCAN_BLOCK_NUM;
 
-  Cols = Screen_Para.Base_Para.Width / 8;
+  Blocks = Screen_Para.Base_Para.Height / (Screen_Para.Scan_Para.Rows * (Screen_Para.Scan_Para.Rows_Fold + 1)); //1.2.4.8.16扫？
+	
+  if(Blocks > MAX_SCAN_BLOCK_NUM)
+	Blocks = MAX_SCAN_BLOCK_NUM;
+
+  Cols = (Screen_Para.Base_Para.Width / 8)* (Screen_Para.Scan_Para.Rows_Fold + 1);
   //对每个Blocks进行扫描
   //每一条扫描线需要Screen_Para.Base_Para.Width / 8 * Screen_Para.Scan_Para.Rows_Fold个字节
-  for(i = 0; i < Cols * (Screen_Para.Scan_Para.Rows_Fold + 1); i ++)
+  for(i = 0; i < Cols ; i ++)
   {
-#if BUILD_SCAN_DATA_INDEX_EN
-  	Get_Scan_Data0(Screen_Status.Scan_Row, i);	
-#else
-    //对每个Block的每条扫描线同时输出一个字节
-    for(j = 0; j < Blocks; j++)
-    {
-    //获取该扫描线上的所有字节并输出
-      Get_Scan_Data(j, \
-              Screen_Para.Scan_Para.Rows, \
-              Screen_Status.Scan_Row,\
-              Cols, \
-              i, \
-              Screen_Para.Scan_Para.Direct, \
-              Screen_Para.Scan_Para.Rows_Fold, \
-              Screen_Para.Scan_Para.Cols_Fold,\
-              Scan_Data[j]);
-    }
-#endif	
+      Get_Scan_Data(Blocks, i);
 
-#if SCAN_DATA_MODE EQ 0    
-    //对所有的block输出一个字节
-    //如果是从左向右，应该先输出高位再输出低位
-    if(Screen_Para.Scan_Para.Direct EQ 0x00 || Screen_Para.Scan_Para.Direct EQ 0x01)
-    {
-	 if(Color_Num EQ 1)
-	 {  
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,7); 
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,6);
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,5);
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,4);
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,3);
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,2);
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,1); 
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,0);
-	  }
-	  else if(Color_Num EQ 2)
+
+#if SCAN_DATA_MODE EQ 0
+
+#if MAX_SCAN_BLOCK_NUM EQ 4
+      transpose8(Scan_Data[0], Scan_Data0[0]);
+	  for(j = 0; j < 8; j ++)
 	  {
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,7); 
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,6);
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,5);
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,4);
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,3);
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,2);
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,1); 
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,0);
-	  }	
-	  else
-	  {
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,7); 
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,6);
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,5);
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,4);
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,3);
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,2);
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,1); 
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,0);	  
-	  }   
-     }
-     else //如果从右往左输出应该先输出低位
-     {
-	 
-	 if(Color_Num EQ 1)
-	 {  
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,0); 
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,1);
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,2);
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,3);
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,4);
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,5);
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,6); 
-	   SET_SHIFT_BIT_1(Blocks, Scan_Data,7);
-	  }
-	  else if(Color_Num EQ 2)
-	  {
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,0); 
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,1);
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,2);
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,3);
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,4);
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,5);
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,6); 
-	   SET_SHIFT_BIT_2(Blocks, Scan_Data,7);
-	  }
-	  else
-	  {
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,0); 
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,1);
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,2);
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,3);
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,4);
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,5);
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,6); 
-	   SET_SHIFT_BIT_3(Blocks, Scan_Data,7);
-	  }
-	       
-     }
-	}
+	    __nop();
+		__nop();
+	    SET_CLK_LOW();
+        GPIOB->ODR = (GPIOB->ODR & 0xFF00) | Scan_Data0[0][j]; //输出R1
+		__nop();
+		SET_CLK_HIGH();
+	   }
+#elif MAX_SCAN_BLOCK_NUM EQ 8
+;
+#elif MAX_SCAN_BLOCK_NUM EQ 16
+;
+#elif MAX_SCAN_BLOCK_NUM EQ 32
+;
 #else
+#error "MAX_SCAN_BLOCK_NUM error"
+#endif
+
+#endif
+
+   }
 	 //此处是硬件扫描方式代码
-#endif	 
+
+  //return;	 
 	//关闭OE使能
 	Set_OE_Duty_Polarity(0, Screen_Para.Scan_Para.OE_Polarity);
 
 	if(Screen_Para.Scan_Para.Line_Hide > 0)
 	  Delay_us(Screen_Para.Scan_Para.Line_Hide*10); //行消隐时间
     Delay_us(20);
+
     SET_LAT(0); //锁存信号输出
+	__nop();
+	__nop();
     SET_LAT(1); //锁存信号输出
     
     Set_Block_Row(Screen_Status.Scan_Row);
@@ -432,7 +437,7 @@ void LED_Scan_One_Row(void)
       Screen_Status.Scan_Row = 0;
 	
 	//重新打开OE
-	Set_OE_Duty_Polarity(100, Screen_Para.Scan_Para.OE_Polarity);
+	Set_OE_Duty_Polarity(50, Screen_Para.Scan_Para.OE_Polarity);
 	//_USART_Cmd(USART1, DISABLE);
     //Set_Clock_Normal_Speed();
 	//_USART_Cmd(USART1, ENABLE); 
