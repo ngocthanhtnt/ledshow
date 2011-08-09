@@ -189,7 +189,8 @@ typedef struct
     INT8U CS[CS_BYTES];
 
 	INT32U Effect_Counts;
-	INT8U Effect_Flag; //ÌØÐ§±ê¾
+	INT8U Effect_Flag; //ÌØÐ§±ê¾
+
 	INT32U Max_Effect_Counts;
 
     INT8U Tail;

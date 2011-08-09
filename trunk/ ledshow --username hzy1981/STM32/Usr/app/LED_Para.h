@@ -270,28 +270,47 @@ typedef struct
   INT8U Tail;
 }S_Prog_Para;
 
-typedef struct
-{
-  INT8U Head;
-  
-  INT8U Flag; //标志
-  INT8U Prog_No; //节目号
-  INT8U Area_No; //分区号
-  INT8U File_No; //文件号
-  INT8U In_Mode; //引入方式
-  INT16U In_Speed; //进入速度
-  INT8U Add_Mode; //追加方式
-  INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
-  INT8U Out_Mode; //引出方式  
-  INT16U Out_Speed;
-  INT8U Tail;
-}S__Para;
+/*
+  INT8U Flag; \//标志
+  INT8U Prog_No; \//节目号
+  INT8U Area_No; \//分区号
+  INT8U File_No; \//文件号
+  INT8U In_Mode; \//引入方式
+  INT16U In_Speed; \//进入速度
+  INT8U Add_Mode; \//追加方式
+  INT16U Stay_Time; \//停留时间，最高位为单位，0表示s，1表示ms
+  INT8U Out_Mode; \//引出方式
+  INT16U Out_Speed; \//引出时间
+  INT16U SNum; \//分屏个数
+  INT8U Play_Counts; \
+  INT8U Border_Check; \//是否边框
+  INT8U Border_Type; \//边框类型
+  INT8U Border_Color; \//边框颜色
+  INT8U Border_Mode; \//边框模式
+  INT16U Border_StayTime //停留时间
+*/
+#define BASE_PIC_PARA  INT8U Flag; \
+  INT8U Prog_No; \
+  INT8U Area_No; \
+  INT8U File_No; \
+  INT8U In_Mode; \
+  INT16U In_Speed; \
+  INT16U Stay_Time; \
+  INT8U Out_Mode; \
+  INT16U Out_Speed; \
+  INT16U SNum; \
+  INT8U Play_Counts; \
+  INT8U Border_Check; \
+  INT8U Border_Type; \
+  INT8U Border_Color; \
+  INT8U Border_Mode; \
+  INT16U Border_StayTime;\
 
 //图文参数
 typedef struct
 {
   INT8U Head;
-  
+/*  
   INT8U Flag; //标志
   INT8U Prog_No; //节目号
   INT8U Area_No; //分区号
@@ -311,7 +330,8 @@ typedef struct
   INT8U Border_Color; //边框颜色
   INT8U Border_Mode; //边框模式
   INT16U Border_StayTime; //停留时间
-
+ */
+  BASE_PIC_PARA
 //-------------------------------------------
 
   //INT8U Color; //颜色
@@ -325,25 +345,7 @@ typedef struct
 {
   INT8U Head;
   
-  INT8U Flag; //标志
-  INT8U Prog_No; //节目号
-  INT8U Area_No; //分区号
-  INT8U File_No; //文件号
-  INT8U In_Mode; //引入方式
-  INT16U In_Speed; //进入速度
-  INT8U Add_Mode; //追加方式
-  INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
-  INT8U Out_Mode; //引出方式	
-  INT16U Out_Speed; //引出时间
-  INT16U SNum; //分屏个数
-
-  INT8U Play_Counts;
-
-  INT8U Border_Check; //是否边框
-  INT8U Border_Type; //边框类型
-  INT8U Border_Color; //边框颜色
-  INT8U Border_Mode; //边框模式
-  INT16U Border_StayTime; //停留时间
+  BASE_PIC_PARA
 //-------------------------------------------
   INT8U Diff_Flag;  //时差标志,0加，1减  
   INT8U Hour_Diff;  //时差小时
@@ -398,25 +400,7 @@ typedef struct
 {
   INT8U Head;
   
-  INT8U Flag; //标志
-  INT8U Prog_No; //节目号
-  INT8U Area_No; //分区号
-  INT8U File_No; //文件号
-  INT8U In_Mode; //引入方式
-  INT16U In_Speed; //进入速度
-  INT8U Add_Mode; //追加方式
-  INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
-  INT8U Out_Mode; //引出方式	
-  INT16U Out_Speed; //引出时间
-  INT16U SNum; //分屏个数
-
-  INT8U Play_Counts;
-
-  INT8U Border_Check; //是否边框
-  INT8U Border_Type; //边框类型
-  INT8U Border_Color; //边框颜色
-  INT8U Border_Mode; //边框模式
-  INT16U Border_StayTime; //停留时间
+  BASE_PIC_PARA
 //-------------------------------------------
   INT8U Dst_Year; //目标年
   INT8U Dst_Month; //目标月
@@ -450,25 +434,7 @@ typedef struct
 {
   INT8U Head;
   
-  INT8U Flag; //标志
-  INT8U Prog_No; //节目号
-  INT8U Area_No; //分区号
-  INT8U File_No; //文件号
-  INT8U In_Mode; //引入方式
-  INT16U In_Speed; //进入速度
-  INT8U Add_Mode; //追加方式
-  INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
-  INT8U Out_Mode; //引出方式	
-  INT16U Out_Speed; //引出时间
-  INT16U SNum; //分屏个数
-
-  INT8U Play_Counts;
-
-  INT8U Border_Check; //是否边框
-  INT8U Border_Type; //边框类型
-  INT8U Border_Color; //边框颜色
-  INT8U Border_Mode; //边框模式
-  INT16U Border_StayTime; //停留时间
+  BASE_PIC_PARA
 //-------------------------------------------
   INT8U Diff_Flag;  //时差标志,0加，1减
   INT8U Hour_Diff;  //时差小时
@@ -518,25 +484,7 @@ typedef struct
 {
   INT8U Head;
 
-  INT8U Flag; //标志
-  INT8U Prog_No; //节目号
-  INT8U Area_No; //分区号
-  INT8U File_No; //文件号
-  INT8U In_Mode; //引入方式
-  INT16U In_Speed; //进入速度
-  INT8U Add_Mode; //追加方式
-  INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
-  INT8U Out_Mode; //引出方式
-  INT16U Out_Speed; //引出时间
-  INT16U SNum; //分屏个数
-
-  INT8U Play_Counts;
-
-  INT8U Border_Check; //是否边框
-  INT8U Border_Type; //边框类型
-  INT8U Border_Color; //边框颜色
-  INT8U Border_Mode; //边框模式
-  INT16U Border_StayTime; //停留时间
+  BASE_PIC_PARA
 //-------------------------------------------
   INT8U Show_Mode;  //显示方式
   INT8U Show_Color; //显示颜色
@@ -581,25 +529,7 @@ typedef struct
 {
   INT8U Head;
   
-  INT8U Flag; //标志
-  INT8U Prog_No; //节目号
-  INT8U Area_No; //分区号
-  INT8U File_No; //文件号
-  INT8U In_Mode; //引入方式
-  INT16U In_Speed; //进入速度
-  INT8U Add_Mode; //追加方式
-  INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
-  INT8U Out_Mode; //引出方式	
-  INT16U Out_Speed; //引出时间
-  INT16U SNum; //分屏个数
-
-  INT8U Play_Counts;
-
-  INT8U Border_Check; //是否边框
-  INT8U Border_Type; //边框类型
-  INT8U Border_Color; //边框颜色
-  INT8U Border_Mode; //边框模式
-  INT16U Border_StayTime; //停留时间
+  BASE_PIC_PARA
 //-------------------------------------------
   INT8U Show_Mode;  //显示方式 
   INT8U Show_Color; //显示颜色
@@ -629,25 +559,7 @@ typedef struct
 {
   INT8U Head;
   
-  INT8U Flag; //标志
-  INT8U Prog_No; //节目号
-  INT8U Area_No; //分区号
-  INT8U File_No; //文件号
-  INT8U In_Mode; //引入方式
-  INT16U In_Speed; //进入速度
-  INT8U Add_Mode; //追加方式
-  INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
-  INT8U Out_Mode; //引出方式	
-  INT16U Out_Speed; //引出时间
-  INT16U SNum; //分屏个数
-
-  INT8U Play_Counts;
-
-  INT8U Border_Check; //是否边框
-  INT8U Border_Type; //边框类型
-  INT8U Border_Color; //边框颜色
-  INT8U Border_Mode; //边框模式
-  INT16U Border_StayTime; //停留时间
+  BASE_PIC_PARA
 //-------------------------------------------
   INT8U Show_Mode;  //显示方式 
   INT8U Show_Color; //显示颜色
@@ -677,25 +589,7 @@ typedef struct
 {
   INT8U Head;
   
-  INT8U Flag; //标志
-  INT8U Prog_No; //节目号
-  INT8U Area_No; //分区号
-  INT8U File_No; //文件号
-  INT8U In_Mode; //引入方式
-  INT16U In_Speed; //进入速度
-  INT8U Add_Mode; //追加方式
-  INT16U Stay_Time; //停留时间，最高位为单位，0表示s，1表示ms
-  INT8U Out_Mode; //引出方式	
-  INT16U Out_Speed; //引出时间
-  INT16U SNum; //分屏个数
-
-  INT8U Play_Counts;
-
-  INT8U Border_Check; //是否边框
-  INT8U Border_Type; //边框类型
-  INT8U Border_Color; //边框颜色
-  INT8U Border_Mode; //边框模式
-  INT16U Border_StayTime; //停留时间
+  BASE_PIC_PARA
 //-------------------------------------------
   INT8U Show_Mode;  //显示方式 
   INT8U Show_Color; //显示颜色

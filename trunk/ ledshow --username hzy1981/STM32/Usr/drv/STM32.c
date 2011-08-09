@@ -231,7 +231,7 @@ void SPI1_CH376_Init(void)
    SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
    SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
    SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;
+   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
    SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
    SPI_InitStructure.SPI_CRCPolynomial = 7;
    SPI_Init(SPI1, &SPI_InitStructure);
@@ -398,7 +398,12 @@ void TIM1_Configuration(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); 
 
 	TIM_TimeBaseStructure.TIM_Period = 100 * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
-    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE * 2/10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+
+#if  PCLK2_VALUE ==	HCLK_VALUE   
+	TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE /10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+#else
+	TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE * 2 /10000-1); 
+#endif
 
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; 
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
