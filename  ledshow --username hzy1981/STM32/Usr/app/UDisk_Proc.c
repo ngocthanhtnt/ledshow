@@ -168,7 +168,11 @@ void UDisk_Proc(void)
 		          if(RealCount EQ len - (FLEN + 2) && Check_Frame_Format((INT8U *)Screen_Status.Rcv_Data, len))
 		          {
 				    Re = Rcv_Frame_Proc(CH_UDISK, (INT8U *)Screen_Status.Rcv_Data, len, sizeof(Screen_Status.Rcv_Data)); 
-                    if(Re EQ 0)
+                    
+					Unselect_SPI_Device();
+	                SPI1_CH376_Init();
+					
+					if(Re EQ 0)
 					{
 					  //Screen_Status.UDisk_Flag = UDISK_END; //¥¶¿ÌÕÍ±œ
 					  ASSERT_FAILED();

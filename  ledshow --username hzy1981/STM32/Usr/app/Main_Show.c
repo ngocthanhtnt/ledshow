@@ -1146,7 +1146,7 @@ void Check_Show_Data_Para(void)
   //INT8U Flag;
 
   Re &= CHK_HT(Screen_Para);
-  Re &= CHK_HT(Card_Para);  
+  //Re &= CHK_HT(Card_Para);  
   Re &= CHK_HT(Prog_Para);
   Re &= CHK_HT(Prog_Status);
   Re &= CHK_HT(Cur_Block_Index);
@@ -1257,6 +1257,7 @@ void Ram_Init(void)
   SET_HT(Show_Data_Bak);
   SET_HT(Cur_Block_Index);
   SET_HT(Cur_Time);
+  SET_HT(Pub_Timer);
 
   Prog_Status_Init();
 
@@ -1421,7 +1422,7 @@ void Self_Test(INT8U Mode)
   //-----------------------------------------
 
   //--------对时钟的测试---------------------
-  /*
+  
   //while(1)
   {
  // DS1302_Init();
@@ -1432,7 +1433,7 @@ void Self_Test(INT8U Mode)
   Re &=_Get_Cur_Time(TempTime1.Time);
 
   }
-  */
+ 
   if(TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
   {
     debug("时钟自检成功");
