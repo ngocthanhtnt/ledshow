@@ -511,7 +511,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	{
       if(Frame[FDATA] EQ 0x00) //½øÈë×Ô¼ì×´Ì¬
 	  {
-                Self_Test(CMD_TEST);
+                Scan_Mode_Test(CMD_TEST);
 	  }
 	  else
 	  {

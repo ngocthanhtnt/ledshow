@@ -13,6 +13,7 @@
 #define EXT extern
 #endif
 
+#define SNOW_RATIO 4 //Æ®Ñ©µÄÊý¾Ý±ÈÀý
 #define PI 3.1415926535
 
 #define MAX_STEP_NUM 100
@@ -189,7 +190,7 @@ typedef struct
     INT8U CS[CS_BYTES];
 
 	INT32U Effect_Counts;
-	INT8U Effect_Flag; //ÌØÐ§±ê¾
+	INT8U Effect_Flag; //ÌØÐ§±ê?
 
 	INT32U Max_Effect_Counts;
 
@@ -255,6 +256,7 @@ typedef struct
   INT8U Rcv_Data[((BLOCK_DATA_LEN > SCREEN_PARA_LEN) ? BLOCK_DATA_LEN : SCREEN_PARA_LEN) + 20];
 
   INT8U Self_Test_Flag;
+  INT8U Scan_Mode_Test_Flag;
   INT8U Tail;  
 }S_Screen_Status;
 

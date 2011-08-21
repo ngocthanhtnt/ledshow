@@ -40,8 +40,7 @@
 #define STOP_SHOW_TIMER()  TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设  
 #define START_SHOW_TIMER() TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 
-#define CHK_JP_STATUS0  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)
-#define CHK_JP_STATUS1  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_14)
+//#define CHK_JP_STATUS1  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_14)
  
 // 把“位带地址＋位序号”转换别名地址宏 
 #define BITBAND(addr, bitnum) ((addr & 0xF0000000)+0x2000000+((addr &0xFFFFF)<<5)+(bitnum<<2)) 
@@ -263,5 +262,7 @@ EXT INT8U Chk_JP_Status(void);
 EXT void UART2_Init(void); //串口2初始化
 EXT void Com_Send_Byte(INT8U Ch, INT8U Data);
 EXT void Unselect_SPI_Device(void);
-
+EXT void Self_Test(INT8U Mode);
+EXT INT8U Chk_Test_Key_Status(void);
+EXT void Fac_Status_Self_Test(void);
 #endif

@@ -41,6 +41,8 @@ int main(void)
 
   while(1)
   {
+    Screen_Test();
+
 #if SHELL_EN
     Shell_Proc();
 #endif

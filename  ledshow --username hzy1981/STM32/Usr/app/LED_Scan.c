@@ -1,6 +1,7 @@
 #define LED_SCAN_C
 #include "Includes.h"
 
+volatile INT32U test_temp = 0, test_x=0, test_y=0;
 //此算法相当牛逼，将i数组中的8个
 void transpose8(unsigned char i[8], unsigned char o[8]) { 
         unsigned long x, y, t; 
@@ -169,7 +170,7 @@ void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
 //Direct表示数据进入方向,Rows_Fold表示行折叠数，Cols_Fold表示列折数
 INT16U Get_Scan_Data_Index(INT16U Block, INT16U Index)
 {
-  INT16U Fold_Size,X,Y;
+  INT32U Fold_Size,X,Y;
   //INT8U  *p;
   INT32U Temp;
   INT8U Rows_Fold, Cols_Fold,Rows;
@@ -202,11 +203,23 @@ INT16U Get_Scan_Data_Index(INT16U Block, INT16U Index)
 	  Fold_Size = Screen_Status.Fold_Size;//Rows_Fold*Cols_Fold;  
 	  if(Direct EQ 0x00 || Direct EQ 0x02)//左上进入、右上进入
 	  {
+
 	    Temp = Index % Fold_Size; 
 	    X = Index / Fold_Size * Cols_Fold + Temp % Cols_Fold;
 	    //每个Block对应的屏幕上的行数是 Rows*Rows_Fold
 	    //BRow表示第几条扫描线,每条扫描线对应到屏幕上的有Rows_Fold行
 	    Y = Block*Screen_Status.Rows_X_RowsFold + Screen_Status.BRow_X_RowsFold + Temp / Cols_Fold; //(Block * Rows + BRow) * Rows_Fold + Temp / Cols_Fold;//Block * Rows* Rows_Fold + BRow * Rows_Fold + (Index % Fold_Size) / Cols_Fold;
+/*	  
+		if(Screen_Para.Scan_Para.Direct EQ 0 && Screen_Para.Scan_Para.Rows_Fold EQ 0x01 && Screen_Para.Scan_Para.Cols_Fold EQ 0x01)
+		{
+		   test_x = X;
+		   test_y = Y;
+
+		   test_x = Index;
+		   test_y = Fold_Size;
+
+		   test_temp = Index;// = test_temp;
+		}	*/  
 	  }
 	  else if(Direct EQ 0x01 || Direct EQ 0x03) //左下进入、右下进入
 	  {
@@ -282,6 +295,7 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
         //获取该扫描线上的所有字节并输出
         Index = Get_Scan_Data_Index(i, Col);
 
+	   //test_temp = Index;
 	    p = Show_Data.Color_Data + Index;
 	  
 		Off = 0;
@@ -371,7 +385,7 @@ void LED_Scan_One_Row(void)
   }
 
   Screen_Status.Color_Num = Get_Screen_Color_Num();
-  Screen_Status.Block_Cols = Screen_Para.Base_Para.Width / 8;	//一条扫描线的长度，此处待修改
+  Screen_Status.Block_Cols = (Screen_Para.Base_Para.Width / 8)* (Screen_Para.Scan_Para.Rows_Fold + 1);//Screen_Para.Base_Para.Width / 8;	//一条扫描线的长度，此处待修改
   Screen_Status.Fold_Size = Screen_Para.Scan_Para.Cols_Fold * (Screen_Para.Scan_Para.Rows_Fold + 1);
   Screen_Status.BRow_X_RowsFold = Screen_Status.Scan_Row * (Screen_Para.Scan_Para.Rows_Fold + 1);
   Screen_Status.Rows_X_RowsFold = Screen_Para.Scan_Para.Rows * (Screen_Para.Scan_Para.Rows_Fold + 1); 
@@ -382,7 +396,7 @@ void LED_Scan_One_Row(void)
   if(Blocks > MAX_SCAN_BLOCK_NUM)
 	Blocks = MAX_SCAN_BLOCK_NUM;
 
-  Cols = (Screen_Para.Base_Para.Width / 8)* (Screen_Para.Scan_Para.Rows_Fold + 1);
+  Cols = Screen_Status.Block_Cols;
   //对每个Blocks进行扫描
   //每一条扫描线需要Screen_Para.Base_Para.Width / 8 * Screen_Para.Scan_Para.Rows_Fold个字节
   for(i = 0; i < Cols ; i ++)

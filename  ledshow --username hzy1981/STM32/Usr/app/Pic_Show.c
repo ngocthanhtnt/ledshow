@@ -187,14 +187,14 @@ const S_Mode_Func In_Mode_Func[]=
   }//ÄæÊ±Õë¸²¸Ç
 #endif
 #if IN_SPEC_EFFECT_NUM > 25
-  ,{&Move_Up_Snow, H_MODE, 3
+  ,{&Move_Up_Snow, V_MODE, SNOW_RATIO
 #if QT_EN
    ,"ÉÏÆ®Ñ©" 
 #endif    
   } //ÉÏÆ®Ñ©
 #endif
 #if IN_SPEC_EFFECT_NUM > 26
-  ,{&Move_Down_Snow, H_MODE, 3
+  ,{&Move_Down_Snow, V_MODE, SNOW_RATIO
 #if QT_EN
    ,"ÏÂÆ®Ñ©" 
 #endif    

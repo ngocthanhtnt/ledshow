@@ -205,13 +205,13 @@ extern OS_INT8U OS_Debug_Print_En(void);
 void OS_Debug_Print(CONST OS_INT8S *format, ...)
 {
   va_list ap;
-  
+ 
   if(Chk_JP_Status() != FAC_STATUS) //工厂状态才允许打印调试信息
     return;
-
+/*
   if(OS_Debug_Print_En() EQ 0)
     return;
-  
+*/ 
   va_start(ap,format);
   OS_vsPrintf(format,ap);
   OS_Put_Char('\r'); //--增加换行符

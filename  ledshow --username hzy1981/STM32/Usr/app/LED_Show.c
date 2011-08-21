@@ -1,7 +1,7 @@
 #define LED_SHOW_C
 #include "Includes.h"
 
-#define SNOW_RATIO 4 //飘雪的数据比例
+
 #define STRETCH_RATIO 2//拉伸比例
 //#define TENSILE_STEP 10//Tensile
 //#define COMPRESSION_RATIO
@@ -2341,7 +2341,7 @@ void Move_Spin_CCW(INT8U Area_No)
 }
 
 void Copy_Snow_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
-                    S_Show_Data *pDst, S_Point *pPoint1)
+                    S_Show_Data *pDst, S_Point *pPoint1, INT16U Step)
 {
   INT16U i,j,k;
   INT16U x, y;
@@ -2352,30 +2352,15 @@ void Copy_Snow_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X
       {
         Re = Get_Area_Point_Data(pSrc, Area_No, pPoint0->X + i, pPoint0->Y + j);
 
-        y = pPoint1->Y + j * SNOW_RATIO;
+        y = pPoint1->Y + j * SNOW_RATIO + (i + 0) % SNOW_RATIO;
         x = pPoint0->X + i;
 
-        if((x % 8) EQ 0)
-            y +=8;
-        else if((x % 8) EQ 1)
-            y +=4;
-        else if((x % 8) EQ 2)
-            y +=1;
-        else if((x % 8) EQ 3)
-            y +=7;
-        else if((x % 8) EQ 4)
-            y +=5;
-        else if((x % 8) EQ 5)
-            y +=2;
-        else if((x % 8) EQ 6)
-            y +=6;
-        else if((x % 8) EQ 7)
-            y +=0;
+        //y += (x % SNOW_RATIO);
 
         Set_Area_Point_Data(pDst, Area_No, pPoint1->X + i, y,Re);
 
-        for(k = 1; k < SNOW_RATIO; k++)
-          Set_Area_Point_Data(pDst, Area_No, pPoint1->X + i, pPoint1->Y + j * SNOW_RATIO + k, 0);
+        //for(k = 1; k < SNOW_RATIO; k++)
+          //Set_Area_Point_Data(pDst, Area_No, pPoint1->X + i, pPoint1->Y + j * SNOW_RATIO + k, 0);
 
   }
 }
@@ -2396,7 +2381,7 @@ void Move_Up_Snow(INT8U Area_No)
 
         P1.X = 0;
         P1.Y = Prog_Para.Area[Area_No].Y_Len - Step_Len * SNOW_RATIO;
-        Copy_Snow_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Step_Len, &Show_Data,&P1);
+        Copy_Snow_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Step_Len, &Show_Data,&P1, Prog_Status.Area_Status[Area_No].Step);
     }
     else
     {/*
@@ -2423,13 +2408,13 @@ void Move_Up_Snow(INT8U Area_No)
         P1.X = 0;
         P1.Y = Step_Len;
         Y_Len = (Prog_Para.Area[Area_No].Y_Len - Step_Len) / SNOW_RATIO;
-        Copy_Snow_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Y_Len, &Show_Data,&P1);
+        Copy_Snow_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Y_Len, &Show_Data,&P1, Prog_Status.Area_Status[Area_No].Step);
 
         P0.X = 0;
         P0.Y = 0;
         Y_Len = Step_Len;// / SNOW_RATIO;
 
-        Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Y_Len, &Show_Data,&P0,0);
+        Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Y_Len, &Show_Data,&P0,Prog_Status.Area_Status[Area_No].Step);
 
 
         //------------
@@ -2444,16 +2429,16 @@ void Move_Down_Snow(INT8U Area_No)
     S_Point P0,P1;
 
     //下降还没有到底的时间段
-    if(Prog_Status.Area_Status[Area_No].Step <= (Prog_Status.Area_Status[Area_No].Max_Step / SNOW_RATIO))
+    if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step / SNOW_RATIO)//(Prog_Status.Area_Status[Area_No].Max_Step / SNOW_RATIO))
     {
         //y = (height - y0)
-        Step_Len = Prog_Para.Area[Area_No].Y_Len * Prog_Status.Area_Status[Area_No].Step / Prog_Status.Area_Status[Area_No].Max_Step;
+        Step_Len = Prog_Status.Area_Status[Area_No].Step / SNOW_RATIO;//Prog_Para.Area[Area_No].Y_Len * Prog_Status.Area_Status[Area_No].Step / Prog_Status.Area_Status[Area_No].Max_Step;
         P0.X = 0;
         P0.Y = Prog_Para.Area[Area_No].Y_Len - Step_Len;
 
         P1.X = 0;
         P1.Y = 0;
-        Copy_Snow_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Step_Len, &Show_Data,&P1);
+        Copy_Snow_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Step_Len, &Show_Data,&P1, Prog_Status.Area_Status[Area_No].Step);
     }
     else
     {
@@ -2465,12 +2450,12 @@ void Move_Down_Snow(INT8U Area_No)
 
         P1.X = 0;
         P1.Y = 0;
-        Copy_Snow_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Y_Len, &Show_Data,&P1);
+        Copy_Snow_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Y_Len, &Show_Data,&P1, Prog_Status.Area_Status[Area_No].Step);
 
         P0.X = 0;
         P0.Y = Prog_Para.Area[Area_No].Y_Len - Step_Len;
 
-        Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Step_Len, &Show_Data,&P0,0);
+        Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Prog_Para.Area[Area_No].X_Len, Step_Len, &Show_Data,&P0, Prog_Status.Area_Status[Area_No].Step);
 
 
     }

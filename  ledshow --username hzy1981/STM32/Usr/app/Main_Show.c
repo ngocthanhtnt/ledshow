@@ -1273,6 +1273,7 @@ void Ram_Init(void)
 
 }
 
+//特效处理函数，定时调用
 void Effect_Proc(void)
 {
   if(Prog_Status.Play_Status.Effect_Flag > 0)
@@ -1331,7 +1332,7 @@ void Set_RT_Show_Area(INT16U Width, INT16U Height)
   //Screen_Para.Base_Para.Color = 0x01;
   //SET_SUM(Screen_Para);
  
-  Screen_Status.Time_OC_Flag = 1;
+  Screen_Status.Time_OC_Flag = OPEN_FLAG;
 }
 
 //恢复显示参数
@@ -1389,91 +1390,132 @@ void Print_Cur_Time(void)
                                              Cur_Time.Time[T_HOUR], Cur_Time.Time[T_MIN], Cur_Time.Time[T_SEC]);
 }
 
-void Self_Test(INT8U Mode)
+//对屏幕进行测试
+void Screen_Test(void)
+{
+  INT16U i, j;
+  S_Point P0,P1;
+
+  //测试按键按下并且当前没有在工厂状态，则进入屏幕自检
+  if(!(Chk_Test_Key_Status() && Chk_JP_Status() EQ NORMAL_STATUS))
+    return;
+
+ //设置实时显示区域
+  Set_RT_Show_Area(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+ 
+  i = 0;
+  //全屏亮灭测试
+  RT_Play_Status_Enter(1);
+  
+  while(1)
+  {
+    memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
+
+	Delay_ms(100);
+	if(Chk_Test_Key_Status())
+	  break;
+
+	Delay_ms(100);
+	if(Chk_Test_Key_Status())
+	  break;
+
+	Delay_ms(100);
+	if(Chk_Test_Key_Status())
+	  break;
+
+    memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+
+	Delay_ms(100);
+	if(Chk_Test_Key_Status())
+	  break;
+
+	Delay_ms(100);
+	if(Chk_Test_Key_Status())
+	  break;
+
+
+   }
+   
+ i=0;
+  //横向线测试
+  while(1)
+  {
+    P0.X = i;
+	P0.Y = 0;
+
+	P1.X = i;
+	P1.Y = Screen_Para.Base_Para.Height - 1;
+    Draw_Line(&Show_Data, 0, &P0, &P1, 0x03);
+
+	Delay_ms(100);
+	if(Chk_Test_Key_Status())
+	  break;
+
+	Delay_ms(100);
+	if(Chk_Test_Key_Status())
+	  break;
+
+	Delay_ms(100);
+	if(Chk_Test_Key_Status())
+	  break;
+
+	Draw_Line(&Show_Data, 0, &P0, &P1, 0x00);
+	i++;
+	if(i >= Screen_Para.Base_Para.Width)
+	  i = 0;
+
+   }
+
+  i=0;
+  //纵向线测试
+  while(1)
+  {
+    P0.X = 0;
+	P0.Y = i;
+
+	P1.X = Screen_Para.Base_Para.Width - 1;
+	P1.Y = i;
+
+    Draw_Line(&Show_Data, 0, &P0, &P1, 0x03);
+
+	Delay_ms(100);
+	if(Chk_Test_Key_Status())
+	  break;
+
+	Delay_ms(100);
+	if(Chk_Test_Key_Status())
+	  break;
+
+	Delay_ms(100);
+	if(Chk_Test_Key_Status())
+	  break;
+
+	Draw_Line(&Show_Data, 0, &P0, &P1, 0x00);
+	i++;
+	if(i >= Screen_Para.Base_Para.Height)
+	  i = 0;
+
+   }
+
+  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+  
+  Restore_Show_Area();
+  RT_Play_Status_Exit(); //退出实时显示状态
+}
+
+//扫描模式的自检
+void Scan_Mode_Test(INT8U Mode)
 {
   INT32U Data = 0x55AA5AA5;
-  INT8U Re = 1,i,j,k, m, n, Max_Cols_Fold;
+  INT8U Re = 1,i,j,k, m, n, tmp, Max_Cols_Fold;
   INT8U Direct,ErrFlag = 0;
   S_Time TempTime,TempTime1;
 
-  if(Screen_Status.Self_Test_Flag) //防止重复进入
+  if(Screen_Status.Scan_Mode_Test_Flag) //防止重复进入
     return;
 
-  Screen_Status.Self_Test_Flag = 1;
+  Screen_Status.Scan_Mode_Test_Flag = 1;
 
-#if QT_EN EQ 0
-  //--------对存储器的测试---------------
-  Write_Storage_Data(SDI_TEST_DATA, &Data, sizeof(Data));
-  Delay_ms(10);
-  memset(&Data, 0x00, sizeof(Data));
-  Read_Storage_Data(SDI_TEST_DATA, &Data, &Data, sizeof(Data));
-
-  if(0x55AA5AA5 EQ Data)
-  {
-    debug("SPI Flash 自检成功");
-    Re = Re & 1;
-  }
-  else
-  { 
-    debug("SPI Flash 自检失败"); 
-	Re = 0;
-	ErrFlag	|= 0x01;
-  }
-  //-----------------------------------------
-
-  //--------对时钟的测试---------------------
-  
-  //while(1)
-  {
- // DS1302_Init();
-
-  Re &= _Get_Cur_Time(TempTime.Time);
-  Print_Cur_Time();
-  Delay_sec(1);//Delay_sec(2);
-  Re &=_Get_Cur_Time(TempTime1.Time);
-
-  }
- 
-  if(TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
-  {
-    debug("时钟自检成功");
-    Re = Re & 1;
-  }
-  else
-  {
-    debug("时钟自检失败"); 
-	Re = 0;
-	ErrFlag	|= 0x02;
-  }
-  //-----------------------------------------
-
-  //---------对485和232的测试---------------
-  Screen_Status.Rcv_Posi = 0;
-  Com_Send_Byte(CH_COM, 0xA5);
-  Delay_ms(5); 
-  if(Screen_Status.Rcv_Data[0] EQ 0xA5) //自检成功
-  {
-    debug("串口自检成功");
-    Re = Re & 1;
-  }
-  else
-  {
-    debug("串口自检失败"); 
-	Re = 0;
-	ErrFlag	|= 0x04;
-  }
-  //---------------------------------------
-
-  if(Re EQ 0)
-	debug("外围器件自检失败！");
-  else
-	debug("外围器件自检成功！");
-
-  debug("进入屏幕检测状态");
-#endif
-
-  return;
-  //--------------扫描方式检测---------------
   Read_Screen_Para();
 
   //-----------
@@ -1485,21 +1527,21 @@ void Self_Test(INT8U Mode)
   Screen_Para.Scan_Para.Direct = 0x02;
   Screen_Para.Base_Para.Color = 0x01;
   SET_SUM(Screen_Para);
-
-  Screen_Status.Time_OC_Flag = 0;
-
-  
   //---------------
-  Set_RT_Show_Area(64, 32);
+  //debug("test!!!");
+  //Screen_Test();
+  //----------
+  Set_RT_Show_Area(32, 16);
   memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
 
-  Show_Data.Color_Data[0] = 0x55;
-  Show_Data.Color_Data[128] = 0xA5;
-  Show_Data.Color_Data[255] = 0x5A;
+  Screen_Status.Time_OC_Flag = OPEN_FLAG;
+  //Show_Data.Color_Data[0] = 0x55;
+  //Show_Data.Color_Data[128] = 0xA5;
+  //Show_Data.Color_Data[255] = 0x5A;
   //Show_Data.Color_Data[17] = 0x55;
 
   Build_Scan_Data_Index();
-  
+ /* 
   while(1)
   {
     RT_Play_Status_Enter(2);
@@ -1518,51 +1560,59 @@ void Self_Test(INT8U Mode)
 #endif
 	}
   }
-
+   */
   while(1)
   {
-    if(Mode EQ FAC_TEST && Chk_JP_Status() != SELF_TEST_STATUS) //不是自检状态退出
-          break;
+   //if(Mode EQ FAC_TEST && Chk_JP_Status() != SELF_TEST_STATUS) //不是自检状态退出
+     //     break;
+
+  for(m = 0; m < 5; m ++)
+  {
+    if(m EQ 0)
+	  Screen_Para.Scan_Para.Rows = 16;  //1/16扫描
+	else if(m EQ 1)
+	  Screen_Para.Scan_Para.Rows = 8;	//1/8扫描
+	else if(m EQ 2)
+	  Screen_Para.Scan_Para.Rows = 4;	//1/4扫描
+	else if(m EQ 3)
+	  Screen_Para.Scan_Para.Rows = 2;	//1/2扫描
+	else
+	  Screen_Para.Scan_Para.Rows = 1;	//静态扫描
+
+	SET_SUM(Screen_Para);
 
     for(i = 0; i < 4; i ++)
 	{
 
         Screen_Para.Scan_Para.Direct = i;
 
-      for(j = 0; j <= MAX_ROWS_FOLD; j ++)
+		if(i EQ 0x01 || i EQ 0x03) //左下入或者右下入，都不需再测试直行的数据，因为和左上入和右上入直行是一样的。
+		  tmp = 0x01;
+		else
+		  tmp = 0x00;
+
+      for(j = tmp; j <= MAX_ROWS_FOLD; j ++)
 	  {
 	    Screen_Para.Scan_Para.Rows_Fold = j;
 
 		if(j EQ 0)
-		  Max_Cols_Fold = 1;
+		  Max_Cols_Fold = 0;
 	    else
 		  Max_Cols_Fold = MAX_COLS_FOLD;
 
-		for(k = 1; k <= Max_Cols_Fold; k ++)
+		for(k = 0; k <= Max_Cols_Fold; k ++)
 	    {
           Screen_Para.Scan_Para.Cols_Fold = k;
 		  
 		  //5种扫描方式逐步试验
-		  for(m = 0; m < 5; m ++)
-		  {
-		    if(m EQ 0)
-			  Screen_Para.Scan_Para.Rows = 16;  //1/16扫描
-			else if(m EQ 1)
-			  Screen_Para.Scan_Para.Rows = 8;	//1/8扫描
-			else if(m EQ 2)
-			  Screen_Para.Scan_Para.Rows = 4;	//1/4扫描
-			else if(m EQ 3)
-			  Screen_Para.Scan_Para.Rows = 2;	//1/2扫描
-			else
-			  Screen_Para.Scan_Para.Rows = 1;	//静态扫描
 
-			SET_SUM(Screen_Para);
 
-			RT_Play_Status_Enter(2);
+			RT_Play_Status_Enter(1);
             LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%d%d%d%d", m, i, j, k);
 		    //memset(Show_Data.Color_Data, 0x55, sizeof(Show_Data.Color_Data));
-           
-		    for(n = 0; n < 20; n ++)
+           	//Delay_sec(100);
+			
+		    for(n = 0; n < 5; n ++)
 			{
 			  Delay_ms(100);
 			  Screen_Com_Proc();
@@ -1572,29 +1622,15 @@ void Self_Test(INT8U Mode)
    w->previewTimerProc();
 #endif
 			}
+			
 
 		  }
 	    }
 	   }
 	 }
 
-	 Restore_Show_Area();
+	 //Restore_Show_Area();
 
   }
 }
 
- //工厂状态自检
- void Fac_Status_Self_Test(void)
- {
-   
-  if(Chk_JP_Status() != SELF_TEST_STATUS)
-    return;
-
-  Delay_ms(10);
-
-  if(Chk_JP_Status() != SELF_TEST_STATUS)
-    return;
-
-  Self_Test(FAC_TEST);
-
- }

@@ -122,8 +122,14 @@
 #define SET_B7(x)
 //B8
 #define SET_B8(x)
-
-
+//打开LED调试灯
+#define SET_TEST_LED_ON() GPIO_ResetBits(GPIOB,GPIO_Pin_9)
+//关闭LED调试灯
+#define SET_TEST_LED_OFF() GPIO_SetBits(GPIOB,GPIO_Pin_9)
+//检查测试键状态
+#define CHK_TEST_KEY_STATUS() GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_14)
+//检查跳线状态
+#define CHK_FAC_JP_STATUS()  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)
 
 EXT void Put_Char(char c);
 //EXT INT8U Get_Cur_Time(void);//S_Time *pTime);
