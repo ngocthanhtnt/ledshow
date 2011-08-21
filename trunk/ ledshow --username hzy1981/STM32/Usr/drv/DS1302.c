@@ -168,13 +168,15 @@ void DS1302_Init(void)
   SPI_DS1302_Init();
 
   RecByte_1302(RdMulti,8,Temp); //读时间数据
-  
+  WrCmd(WrEnDisCmd,WrEnDat);  //写允许 
+
+  WrCmd(WrCharge, 0x00); //关闭涓流充电
   if((Temp[0] & 0x80 > 0))  //秒数据
   { 
-    WrCmd(WrEnDisCmd,WrEnDat);  //写允许
     WrCmd(OscEnDisCmd,OscEnDat); //振荡器允许
-	WrCmd(WrEnDisCmd,WrDisDat);  //写允许关闭
   }
+
+  WrCmd(WrEnDisCmd,WrDisDat);  //写允许关闭
 }
 /*
 #define T_YEAR  0 //--除了日和年其他都从0开始计起。日从1计起，年从1900年计起

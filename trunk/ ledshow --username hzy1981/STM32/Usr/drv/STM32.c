@@ -77,7 +77,14 @@ void SysTick_Configuration(void)
 //SYSCLK单位为Hz,nms单位为ms
 //对72M条件下,nms<=1864 
 void Delay_ms(INT16U nms)
-{	 		  	  
+{
+  INT16U i;
+
+  for(i = 0; i < nms*10; i++)
+  {
+    Delay_us(100);
+  }
+/*	 		  	  
 	INT32U temp;
 			   
 	//SysTick->LOAD=(u32)nms*fac_ms;//时间加载(SysTick->LOAD为24bit)
@@ -91,6 +98,7 @@ void Delay_ms(INT16U nms)
 	while(temp&0x01&&!(temp&(1<<16)));//等待时间到达   
 	SysTick->CTRL=0x00;       //关闭计数器
 	SysTick->VAL =0X00;       //清空计数器	  	    
+*/
 }   
 //延时nus
 //nus为要延时的us数.		    								   
@@ -98,7 +106,7 @@ void Delay_us(INT32U nus)
 {		
 	INT32U temp;	    	 
 	//SysTick->LOAD=nus*fac_us; //时间加载	  		 
-	SysTick->LOAD=nus*(HCLK_VALUE / 8000000);;
+	SysTick->LOAD=nus*(HCLK_VALUE / 8000000);
 	SysTick->VAL=0x00;        //清空计数器
 	SysTick->CTRL=0x01 ;      //开始倒数 	 
 	do
@@ -486,8 +494,8 @@ void TIM4_Configuration(void)
 
 INT8U Chk_JP_Status(void)
 {
-  return SELF_TEST_STATUS;
-
+  //return SELF_TEST_STATUS;
+ /*
   if(CHK_JP_STATUS0 && CHK_JP_STATUS1) //自检状态
   {
     return SELF_TEST_STATUS;
@@ -502,18 +510,38 @@ INT8U Chk_JP_Status(void)
   }
   else
     return NORMAL_STATUS;  //正常运行状态
+	*/
+
+  if(CHK_FAC_JP_STATUS())
+    return FAC_STATUS;
+  else
+    return NORMAL_STATUS;
 }
 
 void UART2_Init(void) //串口2初始化
 {
     USART_InitTypeDef USART_InitStructure = {0};
+    GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE );
+
+	//PA3串口1接收
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+ 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	
+	//PA2串口1发送
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
 	//串口2用作调试信息输出
 	USART_InitStructure.USART_BaudRate            = 115200;//Get_Com_Baud();
 	USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits            = USART_StopBits_1;
-	USART_InitStructure.USART_Parity              = USART_Parity_Even ;
+	USART_InitStructure.USART_Parity              = USART_Parity_No ;
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode                = USART_Mode_Rx | USART_Mode_Tx;
 	USART_Init(USART2, &USART_InitStructure);
@@ -636,5 +664,123 @@ void ReInit_Mem_Port(void)
 #else
 #endif
 }
+
+//测试显示灯的闪烁
+void Test_LED_Flash(INT8U Counts, INT16U nms)
+{
+  INT8U i;
+
+  for(i = 0; i < Counts; i ++)
+  {
+    SET_TEST_LED_OFF();
+	Delay_ms(nms);
+	SET_TEST_LED_ON();
+	Delay_ms(nms);
+  }
+}
+
+INT8U Chk_Test_Key_Status(void)
+{
+  INT8U i;
+
+  for(i = 0; i < 10; i ++)
+  {
+	  if(CHK_TEST_KEY_STATUS() EQ 0)
+	    return 0;
+
+	  Delay_ms(10);
+  }
+
+  return 1;
+
+}
+
+//自身硬件的检测
+void Self_Test(INT8U Mode)
+{
+  INT32U Data = 0x55AA5AA5;
+  INT8U Re = 1;
+  INT8U ErrFlag = 0;
+  S_Time TempTime,TempTime1;
+
+  debug("-----------系统自检开始---------------");
+#if QT_EN EQ 0
+  //--------对存储器的测试---------------
+  Write_Storage_Data(SDI_TEST_DATA, &Data, sizeof(Data));
+  Delay_ms(10);
+  memset(&Data, 0x00, sizeof(Data));
+  Read_Storage_Data(SDI_TEST_DATA, &Data, &Data, sizeof(Data));
+
+  if(0x55AA5AA5 EQ Data)
+  {
+    debug("SPI Flash 自检成功");
+    Re = Re & 1;
+  }
+  else
+  { 
+    debug("SPI Flash 自检失败"); 
+	Re = 0;
+	ErrFlag	|= 0x01;
+  }
+  //-----------------------------------------
+
+  //--------对时钟的测试---------------------
+  
+  //while(1)
+  {
+ // DS1302_Init();
+
+  Re &= _Get_Cur_Time(TempTime.Time);
+  Print_Cur_Time();
+  Delay_sec(1);//Delay_sec(2);
+  Re &=_Get_Cur_Time(TempTime1.Time);
+
+  }
+ 
+  if(TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
+  {
+    debug("时钟自检成功");
+    Re = Re & 1;
+  }
+  else
+  {
+    debug("时钟自检失败"); 
+	Re = 0;
+	ErrFlag	|= 0x02;
+  }
+  //-----------------------------------------
+
+  //---------对485和232的测试---------------
+  Screen_Status.Rcv_Posi = 0;
+  Com_Send_Byte(CH_COM, 0xA5);
+  Delay_ms(5); 
+  if(Screen_Status.Rcv_Data[0] EQ 0xA5) //自检成功
+  {
+    debug("串口自检成功");
+    Re = Re & 1;
+  }
+  else
+  {
+    debug("串口自检失败"); 
+	Re = 0;
+	ErrFlag	|= 0x04;
+  }
+  //---------------------------------------
+
+  if(Re EQ 0)
+	debug("外围器件自检失败！");
+  else
+	debug("外围器件自检成功！");
+
+  debug("进入屏幕检测状态");
+#endif
+}
+
+ //工厂状态自检
+ void Fac_Status_Self_Test(void)
+ {
+  Self_Test(FAC_TEST); //自身硬件检测
+
+ }
 
 #endif

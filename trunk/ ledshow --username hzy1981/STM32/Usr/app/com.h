@@ -47,7 +47,7 @@
 #define C_UPDATE      0x0F //¹Ì¼þÉý¼¶
 
 #define CLOSE_FLAG 0x5A
-#define TIME_CLOSE_FLAG 0xA5
+#define OPEN_FLAG  0xA5
 
 /*
 0	0x5A	Ö¡Í·

@@ -22,7 +22,7 @@
 #define FAC_TEST 0x00 //π§≥ß◊¥Ã¨≤‚ ‘
 #define CMD_TEST 0x01 //√¸¡Ó◊¥Ã¨≤‚ ‘
 
-#define MAX_ROWS_FOLD 4
+#define MAX_ROWS_FOLD 3
 #define MAX_COLS_FOLD 4
 
 typedef struct
@@ -115,8 +115,7 @@ EXT void Set_RT_Show_Area(INT16U Width, INT16U Height);
 EXT void Restore_Show_Area(void);
 EXT void RT_Play_Status_Enter(INT16U Sec);
 EXT void RT_Play_Status_Exit(void);
+EXT void Screen_Test(void);
 EXT void Print_Cur_Time(void);
-EXT void Self_Test(INT8U Mode);
 EXT void Read_Continous_Move_Show_Data(S_Show_Data *pDst, INT8U Area_No);
-EXT void Fac_Status_Self_Test(void);
 #endif

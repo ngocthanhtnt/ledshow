@@ -24,6 +24,7 @@
 #define WrMulti     0xbe //写入多个字节的指令代码
 #define WrSingle    0x84 //写入单个字节的指令代码
 #define RdMulti     0xbf //读出多个字节的指令代码
+#define WrCharge    0x90 //充电设置
 
 EXT INT8U _Get_Cur_Time(INT8U Time[]);
 EXT INT8U Set_Cur_Time(INT8U Time[]);
