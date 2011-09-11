@@ -641,7 +641,7 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
     {
         for(i = p0 -> X; i <= p1->X ; i ++)
         {
-          j = GET_LINE_Y((INT32S)p0->X,(INT32S)p0->Y, (INT32S)p1->X, (INT32S)p1->Y, i);//(INT32S)pLeft->Y + (INT32S)(i - pLeft ->X)((INT32S)(pRgiht->Y) - (INT32S)(pLeft->Y))/(pRight -> X - pLeft->X) ;
+          j = (INT32S)GET_LINE_Y((INT32S)p0->X,(INT32S)p0->Y, (INT32S)p1->X, (INT32S)p1->Y, i);//(INT32S)pLeft->Y + (INT32S)(i - pLeft ->X)((INT32S)(pRgiht->Y) - (INT32S)(pLeft->Y))/(pRight -> X - pLeft->X) ;
           if(j < 0)
             ASSERT_FAILED();
 
@@ -703,7 +703,7 @@ void Draw_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
   {
       for(i = p0 -> X; i <= p1->X ; i ++)
       {
-        j = GET_LINE_Y((INT32S)p0->X,(INT32S)p0->Y, (INT32S)p1->X, (INT32S)p1->Y, i);//(INT32S)pLeft->Y + (INT32S)(i - pLeft ->X)((INT32S)(pRgiht->Y) - (INT32S)(pLeft->Y))/(pRight -> X - pLeft->X) ;
+        j = (INT32S)GET_LINE_Y((INT32S)p0->X,(INT32S)p0->Y, (INT32S)p1->X, (INT32S)p1->Y, i);//(INT32S)pLeft->Y + (INT32S)(i - pLeft ->X)((INT32S)(pRgiht->Y) - (INT32S)(pLeft->Y))/(pRight -> X - pLeft->X) ;
 
         if(j < 0)
           ASSERT_FAILED();
@@ -780,12 +780,12 @@ void Copy_Filled_Triangle(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0
 */
     while(Temp0.X <= pRight -> X)
     {
-      Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
+      Temp0.Y = (INT16U)GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
       Temp1.X = Temp0.X;
       if(Temp1.X < pMid->X)
-        Temp1.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)Temp1.X);
+        Temp1.Y = (INT16U)GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)Temp1.X);
       else
-        Temp1.Y = GET_LINE_Y((INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)pRight ->X, (INT32S)pRight->Y,  (INT32S)Temp1.X);
+        Temp1.Y = (INT16U)GET_LINE_Y((INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)pRight ->X, (INT32S)pRight->Y,  (INT32S)Temp1.X);
 
 
       Temp2.X = Temp0.X + pPoint3->X - pPoint0->X;
@@ -877,12 +877,12 @@ void Fill_Triangle(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Poi
 //#if 0
   while(Temp0.X <= pRight -> X)
   {
-    Temp0.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
+    Temp0.Y = (INT16U)GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pRight->X, (INT32S)pRight->Y, (INT32S)Temp0.X);
     Temp1.X = Temp0.X;
     if(Temp1.X < pMid->X)
-      Temp1.Y = GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)Temp1.X);
+      Temp1.Y = (INT16U)GET_LINE_Y((INT32S)pLeft ->X, (INT32S)pLeft->Y, (INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)Temp1.X);
     else
-      Temp1.Y = GET_LINE_Y((INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)pRight ->X, (INT32S)pRight->Y,  (INT32S)Temp1.X);
+      Temp1.Y = (INT16U)GET_LINE_Y((INT32S)pMid->X, (INT32S)pMid->Y, (INT32S)pRight ->X, (INT32S)pRight->Y,  (INT32S)Temp1.X);
 
     Draw_Line(pDst_Buf, Area_No, &Temp0, &Temp1, Value);
 /*
@@ -3683,7 +3683,7 @@ INT16U RT_LED_Print(INT8U Font, INT8U Color, INT16U X, INT16U Y, INT16U Sec, con
 {
   va_list ap;
 
-  Set_RT_Show_Area(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
   RT_Play_Status_Enter(Sec);
 
   memset(Print_Buf, 0, sizeof(Print_Buf));

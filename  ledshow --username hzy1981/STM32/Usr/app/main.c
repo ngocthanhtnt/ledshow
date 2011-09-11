@@ -35,13 +35,17 @@ int main(void)
 
   DS1302_Init(); //启动后1s再初始化DS1302，手册要求
 
-  Fac_Status_Self_Test(); //自检操作
+  //Fac_Status_Self_Test(); //自检操作
   
   Para_Show(); //上电参数显示
 
+  SET_STATUS_LED_ON(); //打开LED状态灯
+
   while(1)
   {
-    Screen_Test();
+    Screen_Test(); //屏幕检测
+
+	Self_Test(); //硬件自检
 
 #if SHELL_EN
     Shell_Proc();

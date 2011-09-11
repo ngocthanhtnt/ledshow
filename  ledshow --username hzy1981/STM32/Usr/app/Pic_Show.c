@@ -561,19 +561,19 @@ INT16U Get_In_Max_Step(INT16U Width, INT16U Height, INT8U In_Mode)
     switch(In_Mode_Func[In_Mode].Step_Mode)
     {
     case H_MODE:
-        Re = Width*In_Mode_Func[In_Mode].Fac;
+        Re = (INT16U)(Width*In_Mode_Func[In_Mode].Fac);
         break;
     case V_MODE:
-        Re = Height*In_Mode_Func[In_Mode].Fac;
+        Re = (INT16U)(Height*In_Mode_Func[In_Mode].Fac);
         break;
     case HV_ADD_MODE:
-        Re = (Width + Height)*In_Mode_Func[In_Mode].Fac;
+        Re = (INT16U)((Width + Height)*In_Mode_Func[In_Mode].Fac);
         break;
     case HV_SQRT_MODE:
-        Re = Sqrt(Width*Width + Height*Height)*In_Mode_Func[In_Mode].Fac;
+        Re = (INT16U)(Sqrt(Width*Width + Height*Height)*In_Mode_Func[In_Mode].Fac);
         break;
     case FIX_MODE:
-        Re = In_Mode_Func[In_Mode].Fac;
+        Re = (INT16U)In_Mode_Func[In_Mode].Fac;
         break;
     default:
         Re = 100;

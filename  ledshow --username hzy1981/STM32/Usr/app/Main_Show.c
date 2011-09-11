@@ -1306,7 +1306,7 @@ void Show_Main_Proc(void)
 }
 
 //建立一个实时显示区域,并保存原来的显示参数
-void Set_RT_Show_Area(INT16U Width, INT16U Height)
+void Set_RT_Show_Area(INT16U X, INT16U Y, INT16U Width, INT16U Height)
 {
 //---备份当前参数
   RT_Show_Para.Area_Num = Prog_Para.Area_Num;
@@ -1321,8 +1321,8 @@ void Set_RT_Show_Area(INT16U Width, INT16U Height)
   SET_HT(RT_Show_Para);
 
   Prog_Para.Area_Num = 1; //分区数1
-  Prog_Para.Area[0].X = 0;
-  Prog_Para.Area[0].Y = 0;
+  Prog_Para.Area[0].X = X;
+  Prog_Para.Area[0].Y = Y;
   Prog_Para.Area[0].X_Len = Width;//Screen_Para.Base_Para.Width;
   Prog_Para.Area[0].Y_Len = Height;//Screen_Para.Base_Para.Height;
   SET_SUM(Prog_Para);
@@ -1395,49 +1395,75 @@ void Screen_Test(void)
 {
   INT16U i, j;
   S_Point P0,P1;
+  INT8U Test_Key_Up_Flag;
 
   //测试按键按下并且当前没有在工厂状态，则进入屏幕自检
-  if(!(Chk_Test_Key_Status() && Chk_JP_Status() EQ NORMAL_STATUS))
+  if(!(Chk_Test_Key_Down() && Chk_JP_Status() EQ NORMAL_STATUS))
     return;
 
+  Test_Key_Up_Flag = 0;
  //设置实时显示区域
-  Set_RT_Show_Area(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
  
+ //Set_RT_Show_Area(713, 0, 247, 64);//Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
   i = 0;
   //全屏亮灭测试
   RT_Play_Status_Enter(1);
-  
+ /*-------------
+  while(1)
+  {
+	 Show_Data.Color_Data[(120 -1 )*2] = 0x55;
+	 Show_Data.Color_Data[120 * 2 * 40 + (120 - 2) * 2 + 1] = 0x55;
+	 Show_Data.Color_Data[120 * 2 * 41 + (120 - 2) * 2 + 1] = 0xAA;
+  	 Show_Data.Color_Data[120 * 2 * 42 + (120 - 1) * 2 + 1] = 0x00;
+   	 Show_Data.Color_Data[120 * 2 * 43 + (120 - 1) * 2 + 1] = 0xFF;
+  }*/
+  //-------------------
   while(1)
   {
     memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
 
-	Delay_ms(100);
-	if(Chk_Test_Key_Status())
-	  break;
+    for(j = 0; j < 300; j ++)
+	{
+		Delay_ms(1);
 
-	Delay_ms(100);
-	if(Chk_Test_Key_Status())
-	  break;
+		if(Test_Key_Up_Flag EQ 0)
+		  Test_Key_Up_Flag = Chk_Test_Key_Up();
 
-	Delay_ms(100);
-	if(Chk_Test_Key_Status())
+		if(Test_Key_Up_Flag && Chk_Test_Key_Down())
+		{
+		  Test_Key_Up_Flag = 0;
+		  break;
+		}
+	 }
+
+	if(j != 300)
 	  break;
 
     memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
 
-	Delay_ms(100);
-	if(Chk_Test_Key_Status())
+    for(j = 0; j < 300; j ++)
+	{
+		Delay_ms(1);
+
+		if(Test_Key_Up_Flag EQ 0)
+		  Test_Key_Up_Flag = Chk_Test_Key_Up();
+
+		if(Test_Key_Up_Flag && Chk_Test_Key_Down())
+		{
+		  Test_Key_Up_Flag = 0;
+		  break;
+		}
+	 }
+
+	if(j != 300)
 	  break;
-
-	Delay_ms(100);
-	if(Chk_Test_Key_Status())
-	  break;
-
-
    }
    
+  //Delay_ms(500);
  i=0;
   //横向线测试
+  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
   while(1)
   {
     P0.X = i;
@@ -1447,16 +1473,21 @@ void Screen_Test(void)
 	P1.Y = Screen_Para.Base_Para.Height - 1;
     Draw_Line(&Show_Data, 0, &P0, &P1, 0x03);
 
-	Delay_ms(100);
-	if(Chk_Test_Key_Status())
-	  break;
+    for(j = 0; j < 300; j ++)
+	{
+		Delay_ms(1);
 
-	Delay_ms(100);
-	if(Chk_Test_Key_Status())
-	  break;
+		if(Test_Key_Up_Flag EQ 0)
+		  Test_Key_Up_Flag = Chk_Test_Key_Up();
 
-	Delay_ms(100);
-	if(Chk_Test_Key_Status())
+		if(Test_Key_Up_Flag && Chk_Test_Key_Down())
+		{
+		  Test_Key_Up_Flag = 0;
+		  break;
+		}
+	 }
+
+	if(j != 300)
 	  break;
 
 	Draw_Line(&Show_Data, 0, &P0, &P1, 0x00);
@@ -1466,8 +1497,10 @@ void Screen_Test(void)
 
    }
 
+  //Delay_ms(500);
   i=0;
   //纵向线测试
+  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
   while(1)
   {
     P0.X = 0;
@@ -1478,16 +1511,21 @@ void Screen_Test(void)
 
     Draw_Line(&Show_Data, 0, &P0, &P1, 0x03);
 
-	Delay_ms(100);
-	if(Chk_Test_Key_Status())
-	  break;
+    for(j = 0; j < 300; j ++)
+	{
+		Delay_ms(1);
 
-	Delay_ms(100);
-	if(Chk_Test_Key_Status())
-	  break;
+		if(Test_Key_Up_Flag EQ 0)
+		  Test_Key_Up_Flag = Chk_Test_Key_Up();
 
-	Delay_ms(100);
-	if(Chk_Test_Key_Status())
+		if(Test_Key_Up_Flag && Chk_Test_Key_Down())
+		{
+		  Test_Key_Up_Flag = 0;
+		  break;
+		}
+	 }
+
+	if(j != 300)
 	  break;
 
 	Draw_Line(&Show_Data, 0, &P0, &P1, 0x00);
@@ -1501,6 +1539,31 @@ void Screen_Test(void)
   
   Restore_Show_Area();
   RT_Play_Status_Exit(); //退出实时显示状态
+}
+
+//重新播放所有节目
+void Replay_Prog(void)
+{
+	debug("replay prog");
+	
+	memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
+	memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
+	#if DATA_PREP_EN
+	memset(&Prep_Data, 0, sizeof(Prep_Data));
+	SET_HT(Prep_Data);
+	#endif
+	Screen_Status.Replay_Flag = 0; //清除重新播放标志
+	SET_SUM(Screen_Status);
+	
+	//重新开始从第0节目播放
+	Prog_Status.Play_Status.Last_Prog_No = 0xFF;
+	Prog_Status.Play_Status.Prog_No = 0;
+	Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+	SET_SUM(Prog_Status);
+	
+	Calc_Screen_Color_Num(); //计算屏幕颜色个数
+	Build_Scan_Data_Index(); //重新构建数据索引
+
 }
 
 //扫描模式的自检
@@ -1531,7 +1594,7 @@ void Scan_Mode_Test(INT8U Mode)
   //debug("test!!!");
   //Screen_Test();
   //----------
-  Set_RT_Show_Area(32, 16);
+  Set_RT_Show_Area(0, 0, 32, 16);
   memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
 
   Screen_Status.Time_OC_Flag = OPEN_FLAG;

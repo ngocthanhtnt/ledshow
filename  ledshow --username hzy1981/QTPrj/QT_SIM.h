@@ -36,8 +36,10 @@ typedef char INT8S;
 #define FILE_WR 2
 
 #define SELF_TEST_STATUS 0x00
+#define NORMAL_STATUS 0x00
 #define Chk_JP_Status() 0x01
 #define Chk_UDisk_Processing() 0x00
+#define Chk_Test_Key_Status() 0x00
 
 #define Soft_Rest()
 /*

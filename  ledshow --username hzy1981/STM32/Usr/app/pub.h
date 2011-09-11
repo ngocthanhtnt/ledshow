@@ -42,6 +42,14 @@ typedef struct
 #define Check_Sum OS_Check_Sum
 #define Set_Sum OS_Set_Sum
 
+#if defined ( __CC_ARM   )
+#define nop() __nop()
+#elif defined ( __ICCARM__ )
+#define nop() __no_operation()
+#else
+#define nop()
+#endif
+
 /*
 #if QT_EN == 0
 #define debug OS_Debug_Print

@@ -672,36 +672,61 @@ void Test_LED_Flash(INT8U Counts, INT16U nms)
 
   for(i = 0; i < Counts; i ++)
   {
-    SET_TEST_LED_OFF();
+    SET_STATUS_LED_OFF();
 	Delay_ms(nms);
-	SET_TEST_LED_ON();
+	SET_STATUS_LED_ON();
 	Delay_ms(nms);
   }
 }
 
-INT8U Chk_Test_Key_Status(void)
+INT8U Chk_Test_Key_Up(void)
 {
   INT8U i;
 
-  for(i = 0; i < 10; i ++)
+  for(i = 0; i < 20; i ++)
   {
-	  if(CHK_TEST_KEY_STATUS() EQ 0)
-	    return 0;
+	  if(CHK_TEST_KEY_STATUS())
+	    break;
 
-	  Delay_ms(10);
+	  Delay_ms(1);
   }
 
-  return 1;
+  if(i EQ 20)
+    return 1;
+
+  return 0;
 
 }
 
+INT8U Chk_Test_Key_Down(void)
+{
+  INT8U i;
+
+  for(i = 0; i < 20; i ++)
+  {
+	  if(CHK_TEST_KEY_STATUS() EQ 0)
+	    break;
+
+	  Delay_ms(1);
+  }
+
+  if(i EQ 20)
+    return 1;
+
+  return 0;
+}
+
 //自身硬件的检测
-void Self_Test(INT8U Mode)
+void Self_Test(void)
 {
   INT32U Data = 0x55AA5AA5;
   INT8U Re = 1;
   INT8U ErrFlag = 0;
   S_Time TempTime,TempTime1;
+
+   //当前在工厂状态且按下测试键则进入自检状态
+  if(!(Chk_Test_Key_Down() && Chk_JP_Status() EQ FAC_STATUS))
+    return;
 
   debug("-----------系统自检开始---------------");
 #if QT_EN EQ 0
@@ -721,6 +746,8 @@ void Self_Test(INT8U Mode)
     debug("SPI Flash 自检失败"); 
 	Re = 0;
 	ErrFlag	|= 0x01;
+
+	Test_LED_Flash(1, 500);
   }
   //-----------------------------------------
 
@@ -737,7 +764,7 @@ void Self_Test(INT8U Mode)
 
   }
  
-  if(TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
+  if(Re > 0 && TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
   {
     debug("时钟自检成功");
     Re = Re & 1;
@@ -747,6 +774,8 @@ void Self_Test(INT8U Mode)
     debug("时钟自检失败"); 
 	Re = 0;
 	ErrFlag	|= 0x02;
+
+	Test_LED_Flash(2, 500);
   }
   //-----------------------------------------
 
@@ -764,6 +793,8 @@ void Self_Test(INT8U Mode)
     debug("串口自检失败"); 
 	Re = 0;
 	ErrFlag	|= 0x04;
+
+	Test_LED_Flash(3, 500);
   }
   //---------------------------------------
 
@@ -772,14 +803,13 @@ void Self_Test(INT8U Mode)
   else
 	debug("外围器件自检成功！");
 
-  debug("进入屏幕检测状态");
 #endif
 }
 
  //工厂状态自检
  void Fac_Status_Self_Test(void)
  {
-  Self_Test(FAC_TEST); //自身硬件检测
+  Self_Test(); //自身硬件检测
 
  }
 
