@@ -335,6 +335,18 @@ INT16U Read_Screen_Para_Frame_Proc(INT16U Cmd, INT8U *pDst, INT8U *pDst_Start, I
   }
 }
 
+//检查屏幕大小和颜色参数是否正确
+INT8U Check_Screen_Base_Para(void)
+{
+  if(Screen_Para.Base_Para.Height /16 > MAX_SCAN_BLOCK_NUM)
+    return 0;
+  
+  if(Screen_Para.Base_Para.Height * Screen_Para.Base_Para.Width * Get_Screen_Color_Num() >  MAX_POINTS * 2)
+    return 0;
+
+   return 1;
+}
+
 //从帧中读取工厂参数和用户参数到变量中
 //Cmd控制码
 //Frame数据域起始
@@ -342,15 +354,33 @@ INT16U Read_Screen_Para_Frame_Proc(INT16U Cmd, INT8U *pDst, INT8U *pDst_Start, I
 INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 {
   if(Cmd EQ C_SCREEN_PARA && Len >= sizeof(Screen_Para) - CHK_BYTE_LEN)
-      mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para) - CHK_BYTE_LEN, (INT8U *)&Screen_Para, sizeof(Screen_Para));//
+  {
+    mem_cpy(Pub_Buf, (INT8U *)&Screen_Para, sizeof(Screen_Para), Pub_Buf, sizeof(Pub_Buf));
+    mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para) - CHK_BYTE_LEN, (INT8U *)&Screen_Para, sizeof(Screen_Para));//
+	if(Check_Screen_Base_Para() EQ 0)
+	{
+	  memcpy((INT8U *)&Screen_Para, Pub_Buf, sizeof(Screen_Para)); //恢复屏幕参数
+	  Screen_Status.Com_Err_Flag = COM_ERR_PARA_INVALID;
+	  return 0;
+	}
+  }
   else if(Cmd EQ C_SCREEN_BASE_PARA && Len >= sizeof(Screen_Para.Base_Para))
   {
+    mem_cpy(Pub_Buf, (INT8U *)&Screen_Para.Base_Para, sizeof(Screen_Para.Base_Para), Pub_Buf, sizeof(Pub_Buf)); //备份当前屏幕参数
+
     if(memcmp((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para)) != 0)
       {
       Set_Screen_Replay_Flag(); //重播节目标志
       Screen_Para.Prog_Num = 0; //重置节目数	  
     }
     mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//基本参数
+
+ 	if(Check_Screen_Base_Para() EQ 0) //基本参数不正确，则恢复以前的参数
+	{
+	  memcpy((INT8U *)&Screen_Para.Base_Para, Pub_Buf, sizeof(Screen_Para.Base_Para)); //恢复屏幕参数
+	  Screen_Status.Com_Err_Flag = COM_ERR_PARA_INVALID;
+	  return 0;
+	}
     Calc_Screen_Color_Num();
   }
   else if(Cmd EQ C_SCAN_PARA && Len >= sizeof(Screen_Para.Scan_Para))
@@ -370,6 +400,7 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
   else
   {
     ASSERT_FAILED();
+	Screen_Status.Com_Err_Flag = COM_ERR_PARA_LEN_ERR;
     return 0;
   }
 
@@ -395,7 +426,9 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 
 
   Re = 1;
-  //pData = Frame + FDATA; 
+  //pData = Frame + FDATA;
+  Screen_Status.Com_Err_Flag = 0;
+   
   Cmd_Code = (Frame[FCMD] & 0x1F);// + (INT16U)Frame[FCMD + 1] * 256;
   RW_Flag = ((Frame[FCMD] & WR_CMD) >> 5);
   Seq = Frame[FSEQ];
@@ -511,7 +544,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	{
       if(Frame[FDATA] EQ 0x00) //进入自检状态
 	  {
-                Scan_Mode_Test(CMD_TEST);
+        Scan_Mode_Test(CMD_TEST);
 	  }
 	  else
 	  {
@@ -532,6 +565,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
   else
   {
      Cmd_Code = Cmd_Code | 0x80;
+	 Frame[FDATA] = Screen_Status.Com_Err_Flag; //错误信息字
      Len = 1;
   }
 
@@ -681,27 +715,7 @@ void Screen_Com_Proc(void)
         {
 		  //Clr_Rcv_Flag();
           if(Screen_Status.Replay_Flag EQ REPLAY_FLAG) //有重新播放标志
-          {
-            debug("replay prog");
-
-            memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
-            memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
-#if DATA_PREP_EN
-            memset(&Prep_Data, 0, sizeof(Prep_Data));
-            SET_HT(Prep_Data);
-#endif
-            Screen_Status.Replay_Flag = 0; //清除重新播放标志
-            SET_SUM(Screen_Status);
-
-            //重新开始从第0节目播放
-            Prog_Status.Play_Status.Last_Prog_No = 0xFF;
-            Prog_Status.Play_Status.Prog_No = 0;
-            Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
-            SET_SUM(Prog_Status);
-
-			Calc_Screen_Color_Num(); //计算屏幕颜色个数
-			Build_Scan_Data_Index(); //重新构建数据索引
-          }
+            Replay_Prog();
         }
 	 }
 }

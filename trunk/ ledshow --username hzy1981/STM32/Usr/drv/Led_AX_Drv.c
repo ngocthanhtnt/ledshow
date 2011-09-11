@@ -16,6 +16,12 @@ void GPIO_Configuration()
 
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
     //-------------------IO口初始化-----------------------
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11; //PA11应该作为上拉输入口,CH376的输入检测  
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  
+  //-----------------------------------------------
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 

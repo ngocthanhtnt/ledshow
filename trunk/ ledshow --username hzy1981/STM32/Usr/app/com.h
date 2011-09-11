@@ -90,6 +90,9 @@ A	…	帧数据域内容
 
 #define READ_FLAG 0x00
 #define SET_FLAG  0x01
+
+#define COM_ERR_PARA_INVALID 0x01 //参数不合法
+#define COM_ERR_PARA_LEN_ERR 0x02 //参数长度错误
 /*
 //通信接收数据的缓冲区
 typedef struct

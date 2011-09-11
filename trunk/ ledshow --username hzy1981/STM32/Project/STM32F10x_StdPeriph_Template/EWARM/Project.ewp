@@ -39,20 +39,20 @@
         <option>
           <name>Input variant</name>
           <version>1</version>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>Input description</name>
-          <state>Full formatting.</state>
+          <state>No specifier n, no float nor long long, no scan set, no assignment suppressing.</state>
         </option>
         <option>
           <name>Output variant</name>
           <version>0</version>
-          <state>0</state>
+          <state>3</state>
         </option>
         <option>
           <name>Output description</name>
-          <state>Full formatting.</state>
+          <state>No specifier a, A, no specifier n, no float nor long long, no flags.</state>
         </option>
         <option>
           <name>GOutputBinary</name>
@@ -70,16 +70,16 @@
         <option>
           <name>GRuntimeLibSelect</name>
           <version>0</version>
-          <state>2</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibSelectSlave</name>
           <version>0</version>
-          <state>2</state>
+          <state>1</state>
         </option>
         <option>
           <name>RTDescription</name>
-          <state>Use the full configuration of the C/C++ runtime library. Full locale interface, C locale, file descriptor support, multibytes in printf and scanf, and hex floats in strtod.</state>
+          <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
         </option>
         <option>
           <name>OGProductVersion</name>
@@ -133,7 +133,7 @@
         </option>
         <option>
           <name>RTConfigPath2</name>
-          <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Full.h</state>
+          <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
         </option>
       </data>
     </settings>
@@ -146,7 +146,8 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>USE_STDPERIPH_DRIVER</state>
+          <state>STM32F10X_MD</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -190,7 +191,7 @@
         </option>
         <option>
           <name>CCDiagRemark</name>
-          <state></state>
+          <state>Pa082</state>
         </option>
         <option>
           <name>CCDiagWarning</name>
@@ -207,7 +208,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>0000000</state>
+          <state>1111111</state>
         </option>
         <option>
           <name>CCDebugInfo</name>
@@ -301,16 +302,16 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>1</state>
+          <state>3</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>1</state>
+          <state>3</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -642,7 +643,7 @@
         </option>
         <option>
           <name>IlinkMapFile</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IlinkLogFile</name>
@@ -5321,31 +5322,31 @@
     <group>
       <name>App</name>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Border_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Border_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Border_Show.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Clock_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Clock_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Clock_Show.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\com.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\com.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\com.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Flash_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Flash_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Flash_Show.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Humidity_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Humidity_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Humidity_Show.h</name>
@@ -5357,46 +5358,52 @@
         <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Cfg.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Para.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Para.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Para.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Scan.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Scan.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Scan.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\led_show.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\LED_Show_Proc.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Lun_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Lun_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Lun_Show.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\main.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\main.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Main_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Main_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Main_Show.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Noise_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Net_Proc.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Net_Proc.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Noise_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Noise_Show.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\nongli.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\nongli.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\nongli.h</name>
@@ -5405,133 +5412,85 @@
         <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Cfg.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Core.cpp</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Core.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Event.cpp</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Event.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Ext.cpp</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Ext.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Includes.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Mem.cpp</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Mem.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Msg.cpp</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Msg.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Msg_Q.cpp</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Msg_Q.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Mutex.cpp</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Mutex.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Port.cpp</name>
-      </file>
-      <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Port.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Port_a.asm</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Pub.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Pub.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Pub.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Sem.cpp</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Sem.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Shell.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Shell.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Shell.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Time.cpp</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\OS_Time.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Pic_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Pic_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Pic_Show.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\pub.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\platform_config.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\pub.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\pub.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Screen_Status.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Screen_Status.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Screen_Status.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Shell.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Shell.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Shell.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Storage.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Storage.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Storage.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Temp_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Temp_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Temp_Show.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Time_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Time_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Time_Show.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\Timer_Show.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\Timer_Show.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\Timer_Show.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\app\ZK.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\UDisk_Proc.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\UDisk_Proc.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\app\ZK.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\app\ZK.h</name>
@@ -5540,25 +5499,25 @@
     <group>
       <name>Cfg</name>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\cfg\LED_A0_Cfg.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\cfg\LED_AX_Cfg.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\cfg\LED_B0_Cfg.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\cfg\LED_BX_Cfg.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\cfg\LED_C0_Cfg.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\cfg\LED_CX_Cfg.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\cfg\LED_D0_Cfg.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\cfg\LED_DX_Cfg.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\cfg\LED_E0_Cfg.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\cfg\LED_EX_Cfg.h</name>
       </file>
     </group>
     <group>
       <name>Drv</name>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\CH376.C</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\CH376.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\drv\CH376.H</name>
@@ -5567,43 +5526,55 @@
         <name>$PROJ_DIR$\..\..\..\Usr\drv\CH376INC.H</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\FILE_SYS.C</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\DS1302.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\DS1302.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\FILE_SYS.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\drv\FILE_SYS.H</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\Led_A0_Drv.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\Led_AX_Drv.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_A0_Drv.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_AX_Drv.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_B0_Drv.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_BX_Drv.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_B0_Drv.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_BX_Drv.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_C0_Drv.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_CX_Drv.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_C0_Drv.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_CX_Drv.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_D0_Drv.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_DX_Drv.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_D0_Drv.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_DX_Drv.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_E0_Drv.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_EX_Drv.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_E0_Drv.h</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\LED_EX_Drv.h</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\Usr\drv\STM32.cpp</name>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\spi_flash.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\spi_flash.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\Usr\drv\STM32.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\Usr\drv\STM32.h</name>

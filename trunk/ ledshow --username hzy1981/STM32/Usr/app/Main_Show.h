@@ -111,11 +111,13 @@ EXT void Para_Init(void);
 EXT void Para_Show(void);
 EXT void Prog_Status_Init(void);
 EXT void Effect_Proc(void);
-EXT void Set_RT_Show_Area(INT16U Width, INT16U Height);
+EXT void Set_RT_Show_Area(INT16U X, INT16U Y, INT16U Width, INT16U Height);
 EXT void Restore_Show_Area(void);
 EXT void RT_Play_Status_Enter(INT16U Sec);
 EXT void RT_Play_Status_Exit(void);
 EXT void Screen_Test(void);
 EXT void Print_Cur_Time(void);
 EXT void Read_Continous_Move_Show_Data(S_Show_Data *pDst, INT8U Area_No);
+EXT void Replay_Prog(void);
+EXT void Scan_Mode_Test(INT8U Mode);
 #endif

@@ -68,7 +68,7 @@ void UDisk_Proc(void)
     
 	Set_UDisk_Status(UDISK_ING); 
 
-	Set_RT_Show_Area(32, 16);
+	Set_RT_Show_Area(0, 0, 32, 16);
 	RT_Play_Status_Enter(2);
 	
     Unselect_SPI_Device();
@@ -130,10 +130,10 @@ void UDisk_Proc(void)
 			//strcpy((char *)buf, "\\led_data\\");
 			//itoa(Screen_Para.COM_Para.Addr, buf + 10, 10); //文件名是板地址,找不到文件则以广播地址读
 			//sprintf(buf, (const char *)"\\%d.dat", Screen_Para.COM_Para.Addr);
-			strcpy(buf, "\\LEDDATA\\0.DAT");
+			strcpy((char *)buf, "\\LEDDATA\\0.DAT");
 			if(CH376FileOpenPath(buf)!=USB_INT_SUCCESS)
 			{
-			  strcpy(buf, "\\LEDDATA\\65536.DAT");
+			  strcpy((char *)buf, "\\LEDDATA\\65536.DAT");
 
 			  if(CH376FileOpenPath(buf)!=USB_INT_SUCCESS) //找不到文件则以广播地址读
 			  {
@@ -167,6 +167,7 @@ void UDisk_Proc(void)
 				  CH376ByteRead((INT8U *)Screen_Status.Rcv_Data + FLEN + 2, len - (FLEN + 2), &RealCount );
 		          if(RealCount EQ len - (FLEN + 2) && Check_Frame_Format((INT8U *)Screen_Status.Rcv_Data, len))
 		          {
+				    Set_Screen_Com_Time(1); //到计时1秒后重新播放节目
 				    Re = Rcv_Frame_Proc(CH_UDISK, (INT8U *)Screen_Status.Rcv_Data, len, sizeof(Screen_Status.Rcv_Data)); 
                     
 					Unselect_SPI_Device();

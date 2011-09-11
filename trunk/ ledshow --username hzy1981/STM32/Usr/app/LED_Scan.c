@@ -410,11 +410,11 @@ void LED_Scan_One_Row(void)
       transpose8(Scan_Data[0], Scan_Data0[0]);
 	  for(j = 0; j < 8; j ++)
 	  {
-	    __nop();
-		__nop();
+	    nop();
+	    nop();
 	    SET_CLK_LOW();
         GPIOB->ODR = (GPIOB->ODR & 0xFF00) | Scan_Data0[0][j]; //输出R1
-		__nop();
+		nop();
 		SET_CLK_HIGH();
 	   }
 #elif MAX_SCAN_BLOCK_NUM EQ 8
@@ -441,8 +441,8 @@ void LED_Scan_One_Row(void)
     Delay_us(20);
 
     SET_LAT(0); //锁存信号输出
-	__nop();
-	__nop();
+	nop();
+	nop();
     SET_LAT(1); //锁存信号输出
     
     Set_Block_Row(Screen_Status.Scan_Row);

@@ -1,5 +1,5 @@
-#ifndef LED_CX_CFG_H
-#define LED_CX_CFG_H
+#ifndef LED_BX_CFG_H
+#define LED_BX_CFG_H
 
 #define MOVE_STEP_PERIOD 20 //移动步进时间,单位为ms
 //#define MIN_STAY_TIME  10//每屏最小停留时间,单位为ms
