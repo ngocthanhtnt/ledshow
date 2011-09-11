@@ -1,11 +1,11 @@
 #ifndef LED_BX_CFG_H
 #define LED_BX_CFG_H
 						 
-#define CARD_SUB_B0 0x00
-#define CARD_SUB_B1 0x01
-#define CARD_SUB_B2 0x02
+//#define CARD_SUB_B0 0x00
+//#define CARD_SUB_B1 0x01
+//#define CARD_SUB_B2 0x02
 
-#define CARD_SUB_TYPE CARD_SUB_B0 //BX系列子卡类型
+//#define CARD_SUB_TYPE CARD_SUB_B0 //BX系列子卡类型
 
  //-------------------时钟相关配置---------------
 #define HSE_VALUE 12000000 //外部晶振频率
@@ -24,8 +24,13 @@
 
 
 //----------------------------------------
-
+#if defined(CARD_B0)
 #define CARD_NAME "CARD_B0"  //卡名称
+#elif defined(CARD_A1)
+#define CARD_NAME "CARD_B1"  //卡名称
+#else
+#error "card BX name error"
+#endif
 
 #define SCAN_SCREEN_PERIOD 300//扫屏周期,单位us
 #define MOVE_STEP_PERIOD 50//5 //移动步进时间,单位为ms
