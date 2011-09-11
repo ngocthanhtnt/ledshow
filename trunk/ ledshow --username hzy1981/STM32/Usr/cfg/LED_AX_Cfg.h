@@ -1,11 +1,11 @@
 #ifndef LED_AX_CFG_H
 #define LED_AX_CFG_H
 						 
-#define CARD_SUB_A0 0x00
-#define CARD_SUB_A1 0x01
-#define CARD_SUB_A2 0x02
+//#define CARD_SUB_A0 0x00
+//#define CARD_SUB_A1 0x01
+//#define CARD_SUB_A2 0x02
 
-#define CARD_SUB_TYPE CARD_SUB_A0 //AX系列子卡类型
+//#define CARD_SUB_TYPE CARD_SUB_A0 //AX系列子卡类型
 
  //-------------------时钟相关配置---------------
 #define HSE_VALUE 12000000 //外部晶振频率
@@ -24,8 +24,13 @@
 
 
 //----------------------------------------
-
+#if defined(CARD_A0)
 #define CARD_NAME "CARD_A0"  //卡名称
+#elif defined(CARD_A1)
+#define CARD_NAME "CARD_A1"  //卡名称
+#else
+#error "card AX name error"
+#endif
 
 #define SCAN_SCREEN_PERIOD 300//扫屏周期,单位us
 #define MOVE_STEP_PERIOD 50//5 //移动步进时间,单位为ms

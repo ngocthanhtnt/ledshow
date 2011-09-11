@@ -1,11 +1,11 @@
 #ifndef LED_CFG_H
 #define LED_CFG_H
 
-#define CARD_AX 0x00
-#define CARD_BX 0x10
-#define CARD_CX 0x20
-#define CARD_DX 0x30
-#define CARD_EX 0x40
+//#define CARD_AX 0x00
+//#define CARD_BX 0x10
+//#define CARD_CX 0x20
+//#define CARD_DX 0x30
+//#define CARD_EX 0x40
 
 
 //节目特征字
@@ -36,7 +36,7 @@
 #define QT_SIM_EN 0//使用QT仿真STM32情况。不同于预览
 #endif
 
-#define CARD_TYPE CARD_AX //A系列板卡针对小条屏，其他针对中大屏
+//#define CARD_TYPE CARD_AX //A系列板卡针对小条屏，其他针对中大屏
 //QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
 
 
@@ -93,13 +93,18 @@
 #define TEXT_SHOW_EN   1 //内码文字
 
 //-----------------以下为了兼容STM32程序--------------
-#define CARD_SUB_A0 0x00
-#define CARD_SUB_A1 0x01
-#define CARD_SUB_A2 0x02
+//#define CARD_A0 0x00
+//#define CARD_A1 0x01
+//#define CARD_A2 0x02
 
-#define CARD_SUB_TYPE CARD_SUB_A0 //AX系列子卡类型
-
+//#define CARD_SUB_TYPE CARD_SUB_A0 //AX系列子卡类型
+#if defined(CARD_A0)
 #define CARD_NAME "CARD_A0"  //卡名称
+#elif defined(CARD_A1)
+#define CARD_NAME "CARD_A1"  //卡名称
+#else
+#error "card AX name error"
+#endif
 
 #define UDIS_EN  1//u盘使能
 #define NET_EN	 1//网络使能
@@ -109,19 +114,19 @@
 #include "STM32.h"
 
 
-#if CARD_TYPE == CARD_AX
+#if defined(CARD_AX)
 #include "LED_AX_Cfg.h"
 #include "LED_AX_Drv.h"
-#elif CARD_TYPE == CARD_BX
+#elif defined(CARD_BX)
 #include "LED_BX_Cfg.h"
 #include "LED_BX_Drv.h"
-#elif CARD_TYPE == CARD_CX
+#elif defined(CARD_CX)
 #include "LED_CX_Cfg.h"
 #include "LED_CX_Drv.h"
-#elif CARD_TYPE == CARD_DX
+#elif defined(CARD_DX)
 #include "LED_DX_Cfg.h"
 #include "LED_DX_Drv.h"
-#elif CARD_TYPE == CARD_EX
+#elif defined(CARD_EX)
 #include "LED_EX_Cfg.h"
 #include "LED_EX_Drv.h"
 #else

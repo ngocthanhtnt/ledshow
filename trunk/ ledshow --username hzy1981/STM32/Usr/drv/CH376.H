@@ -8,6 +8,7 @@
 #define	ERR_USB_UNKNOWN		0xFA				/* 未知错误,不应该发生的情况,需检查硬件或者程序错误 */
 #define xEndCH376Cmd() SET_CH376_CS(1)//GPIO_SetBits(GPIOA,GPIO_Pin_1);
 
+UINT8	Wait376Interrupt( void );
 u8 mInitCH376Host( void );
 u8 mWaitInterrupt( void );
 void xWriteCH376Cmd( u8 mCmd );
