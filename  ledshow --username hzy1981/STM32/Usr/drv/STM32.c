@@ -783,7 +783,7 @@ void Self_Test(void)
   Screen_Status.Rcv_Posi = 0;
   Com_Send_Byte(CH_COM, 0xA5);
   Delay_ms(5); 
-  if(Screen_Status.Rcv_Data[0] EQ 0xA5) //自检成功
+  if(RCV_DATA_BUF[0] EQ 0xA5) //自检成功
   {
     debug("串口自检成功");
     Re = Re & 1;

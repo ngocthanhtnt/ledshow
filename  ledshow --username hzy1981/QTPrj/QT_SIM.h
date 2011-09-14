@@ -39,7 +39,8 @@ typedef char INT8S;
 #define NORMAL_STATUS 0x00
 #define Chk_JP_Status() 0x01
 #define Chk_UDisk_Processing() 0x00
-#define Chk_Test_Key_Status() 0x00
+#define Chk_Test_Key_Down() 0x00
+#define Chk_Test_Key_Up() 0x00
 
 #define Soft_Rest()
 /*

@@ -41,7 +41,7 @@
 #define FONT_NUM 1 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
-#define MAX_POINTS (480*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
+#define MAX_POINTS (512*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  4000 //最大存储块数
 #define MAX_SCAN_BLOCK_NUM 4 //最大扫描块
 

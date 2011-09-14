@@ -9,14 +9,14 @@
 
  //-------------------时钟相关配置---------------
 #define HSE_VALUE 12000000 //外部晶振频率
-#define HCLK_VALUE  HSE_VALUE*9
+#define HCLK_VALUE  HSE_VALUE*11
 //#define H_HCLK_VALUE HSE_VALUE*9
 #define PCLK1_VALUE HCLK_VALUE/2
-#define PCLK2_VALUE	HCLK_VALUE/2
+#define PCLK2_VALUE	HCLK_VALUE/4
 
-#define HCLK_MUL  RCC_PLLMul_9	//正常运行时AHB速度
+#define HCLK_MUL  RCC_PLLMul_11	//正常运行时AHB速度
 #define PCLK1_DIV RCC_HCLK_Div2 //最高APB/2--这是正常运行时速度,这里不能为DIV1，因为定时器使用的分频系数默认PCLK1分频>1
-#define PCLK2_DIV RCC_HCLK_Div2 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/4不能超过24M
+#define PCLK2_DIV RCC_HCLK_Div4 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/4不能超过24M
 
 //#define H_HCLK_MUL  RCC_PLLMul_9  //高速运行时AHB速度
 //#define H_PCLK1_DIV RCC_HCLK_Div2 //高速运行时APB1速度--确保和正常运行时保持一致，这样就不需要调整各外设的Clock 
@@ -32,7 +32,7 @@
 #error "card BX name error"
 #endif
 
-#define SCAN_SCREEN_PERIOD 300//扫屏周期,单位us
+#define SCAN_SCREEN_PERIOD 250//扫屏周期,单位us
 #define MOVE_STEP_PERIOD 50//5 //移动步进时间,单位为ms
 #define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 
@@ -41,9 +41,9 @@
 #define FONT_NUM 1 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
-#define MAX_POINTS (480*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
+#define MAX_POINTS (1280*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  4000 //最大存储块数
-#define MAX_SCAN_BLOCK_NUM 4 //最大扫描块
+#define MAX_SCAN_BLOCK_NUM 16 //最大扫描块
 
 #define DATA_PREP_EN 0 //数据预准备
 #define BUILD_SCAN_DATA_INDEX_EN 0 //构建扫描数据索引使能

@@ -55,7 +55,7 @@
 #define MAX_PROG_NUM 10 //最大节目数
 #define MAX_AREA_NUM 6 //每个节目下最大分区数
 #define MAX_FILE_NUM 8 //每个分区下最大文件数
-#define BLOCK_DATA_LEN 489 //每块数据的大小
+#define BLOCK_DATA_LEN 459 //每块数据的大小, BLOCK_DATA_LEN - 9应该可整除法2和3
 #define MAX_BORDER_POINTS (40*8) //边框数据大小
 //#endif
 
@@ -92,12 +92,10 @@
 #define NOISE_SHOW_EN  1 //噪音
 #define TEXT_SHOW_EN   1 //内码文字
 
+#define CARD_NAME "CARD_A0"  //卡名称
 //-----------------以下为了兼容STM32程序--------------
-//#define CARD_A0 0x00
-//#define CARD_A1 0x01
-//#define CARD_A2 0x02
-
-//#define CARD_SUB_TYPE CARD_SUB_A0 //AX系列子卡类型
+#else
+/*
 #if defined(CARD_A0)
 #define CARD_NAME "CARD_A0"  //卡名称
 #elif defined(CARD_A1)
@@ -111,6 +109,7 @@
 #define GPRS_EN  1//GPRS使能
 #else //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 0
+*/
 #include "STM32.h"
 
 

@@ -253,7 +253,7 @@ typedef struct
   INT8U Byte_Time; //接受字节倒计时
   INT16U Rcv_Posi;
 
-  INT8U Rcv_Data[((BLOCK_DATA_LEN > SCREEN_PARA_LEN) ? BLOCK_DATA_LEN : SCREEN_PARA_LEN) + 20];
+  INT8U Rcv_Data[MAX_COM_BUF_LEN];//((BLOCK_DATA_LEN > SCREEN_PARA_LEN) ? BLOCK_DATA_LEN : SCREEN_PARA_LEN) + 20];
   INT8U Com_Err_Flag; //通信错误标志字
 
   INT8U Self_Test_Flag;

@@ -529,6 +529,8 @@ const S_Mode_Func Out_Mode_Func[]=
 
 void Calc_Screen_Color_Num(void)
 {
+  Screen_Status.Color_Num = Get_Screen_Color_Num();
+/*
   if(Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)
   {
     Screen_Status.Color_Num = 1;
@@ -545,7 +547,8 @@ void Calc_Screen_Color_Num(void)
   {
 	ASSERT_FAILED();
 	Screen_Status.Color_Num = 1;
-  } 
+  }
+  */ 
 }
 
 INT16U Get_In_Max_Step(INT16U Width, INT16U Height, INT8U In_Mode)
