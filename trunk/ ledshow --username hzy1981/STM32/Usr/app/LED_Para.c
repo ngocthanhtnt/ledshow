@@ -8,7 +8,8 @@ extern S_Show_Data protoShowData;
 //返回屏幕支持的颜色数
 INT8U Get_Screen_Color_Num(void)
 {
- 
+  return GET_COLOR_NUM(Screen_Para.Base_Para.Color);
+/* 
   if(Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)
       return 1;
   else if(Screen_Para.Base_Para.Color EQ 3 || Screen_Para.Base_Para.Color EQ 5 || Screen_Para.Base_Para.Color EQ 6)
@@ -17,7 +18,7 @@ INT8U Get_Screen_Color_Num(void)
       return 3;
   else
       return 0;
-
+*/
 #if 0
     if(Screen_Para.Base_Para.Color < 3)// || Screen_Para.Base_Para.Color EQ 4)
         return 1;

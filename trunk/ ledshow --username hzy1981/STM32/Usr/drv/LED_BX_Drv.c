@@ -12,7 +12,7 @@ void GPIO_Configuration()
 
   //AFIO_MAPR = 0x02000000; //释放出三个JTAG的口,做普通IO口线  //释放出三个JTAG的口,做普通IO口线  //释放出三个JTAG的口,做普通IO口线
   
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE, ENABLE);
 
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 
@@ -63,6 +63,15 @@ void GPIO_Configuration()
   SET_R6(1);
   SET_R7(1);
   SET_R8(1);
+  SET_R9(1);
+  SET_R10(1);
+  SET_R11(1);
+  SET_R12(1);
+  SET_R13(1);
+  SET_R14(1);
+  SET_R15(1);
+  SET_R16(1);
+
   SET_G1(1);
   SET_G2(1);
   SET_G3(1);
@@ -71,7 +80,14 @@ void GPIO_Configuration()
   SET_G6(1);
   SET_G7(1);
   SET_G8(1);
-
+  SET_G9(1);
+  SET_G10(1);
+  SET_G11(1);
+  SET_G12(1);
+  SET_G13(1);
+  SET_G14(1);
+  SET_G15(1);
+  SET_G16(1);
 
 /*
   //PB0作为OE-PWM输出

@@ -93,6 +93,8 @@ A	…	帧数据域内容
 
 #define COM_ERR_PARA_INVALID 0x01 //参数不合法
 #define COM_ERR_PARA_LEN_ERR 0x02 //参数长度错误
+
+#define RCV_DATA_BUF Screen_Status.Rcv_Data
 /*
 //通信接收数据的缓冲区
 typedef struct

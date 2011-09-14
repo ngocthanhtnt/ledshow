@@ -146,7 +146,9 @@ void UDisk_Proc(void)
 
  			while(1)
 			{
-				CH376ByteRead((INT8U *)Screen_Status.Rcv_Data, FLEN + 2, &RealCount );
+			    Set_Screen_Com_Time(1); //到计时1秒后重新播放节目
+
+				CH376ByteRead((INT8U *)RCV_DATA_BUF, FLEN + 2, &RealCount );
                 if(RealCount EQ 0)
 				{
   				  //RT_LED_Print(FONT0, 0x01, 0, 0, 3, "ok");
@@ -161,14 +163,14 @@ void UDisk_Proc(void)
 				  break;
 				}
 
-                memcpy(&len, (INT8U *)Screen_Status.Rcv_Data + FLEN, 2);
-				if(len <= sizeof(Screen_Status.Rcv_Data) && len > FLEN + 2)
+                memcpy(&len, (INT8U *)RCV_DATA_BUF + FLEN, 2);
+				if(len <= sizeof(RCV_DATA_BUF) && len > FLEN + 2)
 				{
-				  CH376ByteRead((INT8U *)Screen_Status.Rcv_Data + FLEN + 2, len - (FLEN + 2), &RealCount );
-		          if(RealCount EQ len - (FLEN + 2) && Check_Frame_Format((INT8U *)Screen_Status.Rcv_Data, len))
+				  CH376ByteRead((INT8U *)RCV_DATA_BUF + FLEN + 2, len - (FLEN + 2), &RealCount );
+		          if(RealCount EQ len - (FLEN + 2) && Check_Frame_Format((INT8U *)RCV_DATA_BUF, len))
 		          {
-				    Set_Screen_Com_Time(1); //到计时1秒后重新播放节目
-				    Re = Rcv_Frame_Proc(CH_UDISK, (INT8U *)Screen_Status.Rcv_Data, len, sizeof(Screen_Status.Rcv_Data)); 
+
+				    Re = Rcv_Frame_Proc(CH_UDISK, (INT8U *)RCV_DATA_BUF, len, sizeof(RCV_DATA_BUF)); 
                     
 					Unselect_SPI_Device();
 	                SPI1_CH376_Init();

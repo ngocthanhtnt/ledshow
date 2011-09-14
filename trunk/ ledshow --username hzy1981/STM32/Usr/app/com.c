@@ -252,7 +252,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
         ASSERT_FAILED();
       }
     }
-
+  /*
     memset(Pub_Buf, 0, sizeof(Pub_Buf));
     
     Pub_Buf[0] = File_Para_Info.Prog_No;
@@ -264,16 +264,26 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
     Pub_Buf[6] = Len / 256;
     Pub_Buf[7] = 0; //下一帧的存储索引--备用
     Pub_Buf[8] = 0;
+	*/
 
+    Frame[FDATA - 9] = File_Para_Info.Prog_No;
+    Frame[FDATA - 8] = (File_Para_Info.Area_No <<4) + File_Para_Info.File_No;
+    Frame[FDATA - 7] = File_Para_Info.Type;   
+    Frame[FDATA - 6] = (Seq0 - 1)%256; //Seq0不是数据是参数，数据从0计，因此-1
+    Frame[FDATA - 5] = (Seq0 - 1)/256;
+    Frame[FDATA - 4] = Len % 256;
+    Frame[FDATA - 3] = Len / 256;
+    Frame[FDATA - 2] = 0; //下一帧的存储索引--备用
+    Frame[FDATA - 1] = 0; 
 #if BLOCK_HEAD_DATA_LEN != 9
 #error "BLOCK_HEAD_DATA_LEN error"
 #endif
 
-    mem_cpy(Pub_Buf + BLOCK_HEAD_DATA_LEN, &Frame[FDATA], Len, Pub_Buf, sizeof(Pub_Buf));
+    //mem_cpy(Pub_Buf + BLOCK_HEAD_DATA_LEN, &Frame[FDATA], Len, Pub_Buf, sizeof(Pub_Buf));
     
 
     //当前分块数据
-    Write_Storage_Data(SDI_SHOW_DATA + Cur_Block_Index.Index, Pub_Buf, BLOCK_DATA_LEN);
+    Write_Storage_Data(SDI_SHOW_DATA + Cur_Block_Index.Index, Frame + FDATA - 9, BLOCK_DATA_LEN);
     
     //保存当前索引
     Cur_Block_Index.Index ++;
@@ -336,12 +346,16 @@ INT16U Read_Screen_Para_Frame_Proc(INT16U Cmd, INT8U *pDst, INT8U *pDst_Start, I
 }
 
 //检查屏幕大小和颜色参数是否正确
-INT8U Check_Screen_Base_Para(void)
+INT8U Check_Screen_Base_Para(S_Screen_Base_Para *pPara)
 {
-  if(Screen_Para.Base_Para.Height /16 > MAX_SCAN_BLOCK_NUM)
+  INT8U Color_Num;
+
+  Color_Num = GET_COLOR_NUM(pPara->Color);
+
+  if(pPara -> Height /16 > MAX_SCAN_BLOCK_NUM)
     return 0;
   
-  if(Screen_Para.Base_Para.Height * Screen_Para.Base_Para.Width * Get_Screen_Color_Num() >  MAX_POINTS * 2)
+  if((pPara -> Height) * (pPara->Width) * Color_Num >  MAX_POINTS * 2)
     return 0;
 
    return 1;
@@ -353,34 +367,42 @@ INT8U Check_Screen_Base_Para(void)
 //Len数据域长度
 INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 {
+#pragma pack(1)
+  S_Screen_Base_Para Base_Para;
+#pragma pack()
+
   if(Cmd EQ C_SCREEN_PARA && Len >= sizeof(Screen_Para) - CHK_BYTE_LEN)
   {
-    mem_cpy(Pub_Buf, (INT8U *)&Screen_Para, sizeof(Screen_Para), Pub_Buf, sizeof(Pub_Buf));
-    mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para) - CHK_BYTE_LEN, (INT8U *)&Screen_Para, sizeof(Screen_Para));//
-	if(Check_Screen_Base_Para() EQ 0)
+    memcpy((INT8U *)&Base_Para, Data, sizeof(Base_Para));
+
+	if(Check_Screen_Base_Para(&Base_Para) EQ 0)
 	{
-	  memcpy((INT8U *)&Screen_Para, Pub_Buf, sizeof(Screen_Para)); //恢复屏幕参数
 	  Screen_Status.Com_Err_Flag = COM_ERR_PARA_INVALID;
 	  return 0;
 	}
+
+	mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para) - CHK_BYTE_LEN, (INT8U *)&Screen_Para.Base_Para, sizeof(Screen_Para));
+    SET_SUM(Screen_Para);
   }
   else if(Cmd EQ C_SCREEN_BASE_PARA && Len >= sizeof(Screen_Para.Base_Para))
   {
-    mem_cpy(Pub_Buf, (INT8U *)&Screen_Para.Base_Para, sizeof(Screen_Para.Base_Para), Pub_Buf, sizeof(Pub_Buf)); //备份当前屏幕参数
+    memcpy((INT8U *)&Base_Para, Data, sizeof(Base_Para));
 
-    if(memcmp((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para)) != 0)
-      {
-      Set_Screen_Replay_Flag(); //重播节目标志
-      Screen_Para.Prog_Num = 0; //重置节目数	  
-    }
-    mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//基本参数
-
- 	if(Check_Screen_Base_Para() EQ 0) //基本参数不正确，则恢复以前的参数
+ 	if(Check_Screen_Base_Para(&Base_Para) EQ 0) //基本参数不正确，则恢复以前的参数
 	{
-	  memcpy((INT8U *)&Screen_Para.Base_Para, Pub_Buf, sizeof(Screen_Para.Base_Para)); //恢复屏幕参数
 	  Screen_Status.Com_Err_Flag = COM_ERR_PARA_INVALID;
 	  return 0;
 	}
+
+	//参数发生了修改则重新播放ss
+    if(memcmp((INT8U *)&Screen_Para.Base_Para, (INT8U *)&Base_Para, sizeof(Screen_Para.Base_Para)) != 0)
+    {
+      Set_Screen_Replay_Flag(); //重播节目标志
+      Screen_Para.Prog_Num = 0; //重置节目数	  
+    }
+
+	memcpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para));
+	SET_SUM(Screen_Para);
     Calc_Screen_Color_Num();
   }
   else if(Cmd EQ C_SCAN_PARA && Len >= sizeof(Screen_Para.Scan_Para))
@@ -576,7 +598,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
   Send_Frame_Proc(Ch, Frame, Len); //向来数据的通道发送应答数据
   
   
-  //memset(Screen_Status.Rcv_Data, 0, sizeof(Screen_Status.Rcv_Data));
+  //memset(RCV_DATA_BUF, 0, sizeof(RCV_DATA_BUF));
   
   return Len;
 }
@@ -599,7 +621,7 @@ void Com_Rcv_Byte(INT8U Ch, INT8U Byte)
   if(Screen_Status.Rcv_Flag EQ FRAME_FLAG) //当前已有一帧，停止继续接收，待该帧处理完
       return;
 
-  if(Screen_Status.Rcv_Posi >= sizeof(Screen_Status.Rcv_Data))
+  if(Screen_Status.Rcv_Posi >= sizeof(RCV_DATA_BUF))
     {
      Clr_Rcv_Flag();
   }
@@ -607,25 +629,24 @@ void Com_Rcv_Byte(INT8U Ch, INT8U Byte)
   if(Screen_Status.Head_Flag EQ 0) //--没有收到帧头，则收到的字节放到起始位置
     Screen_Status.Rcv_Posi = 0;
 
-  Screen_Status.Rcv_Data[Screen_Status.Rcv_Posi] = Byte;
-  Screen_Status.Rcv_Posi++;
-
   Screen_Status.Byte_Time = COM_STANDBY_SEC; //字节接收倒计时，倒计时结束还没有收到完整的一帧则清除接收到得数据
 
-  //连续收到3个COM_BYTE认为要进入通信状态了!
-  if(Byte EQ COM_BYTE)
-  {
-	Set_Screen_Com_Time(COM_STANDBY_SEC); //通信保持时间，在这段时间内，扫描中断不进行扫描.
-  }
-  else if(Byte EQ FRAME_HEAD)
+  if(Byte EQ FRAME_HEAD)
   {	
 	Screen_Status.Head_Flag = 1; //收到帧头
+	Set_Screen_Com_Time(COM_STANDBY_SEC); //通信保持时间，在这段时间内，扫描中断不进行扫描
   }
   else if(Byte EQ FRAME_TAIL) //收到帧尾字符
   {
     Screen_Status.Rcv_Ch = Ch;
 	Set_Screen_Com_Time(COM_STANDBY_SEC); //通信保持时间，在这段时间内，扫描中断不进行扫描.
   }
+
+  if(Screen_Status.Head_Flag)
+  {
+	RCV_DATA_BUF[Screen_Status.Rcv_Posi] = Byte;
+	Screen_Status.Rcv_Posi++;
+  }								   
 }
 
 void Chk_Exit_Test_Scan_Mode()
@@ -634,10 +655,10 @@ void Chk_Exit_Test_Scan_Mode()
 	
 	if(Screen_Status.Rcv_Flag EQ FRAME_FLAG)
 	{	 
-	   Cmd_Code = Screen_Status.Rcv_Data[FCMD];// + (INT16U)Frame[FCMD + 1] * 256;
+	   Cmd_Code = RCV_DATA_BUF[FCMD];// + (INT16U)Frame[FCMD + 1] * 256;
 	   if(Cmd_Code EQ C_SELF_TEST)
 	   {
-		 if(Screen_Status.Rcv_Data[FDATA] EQ 0x01) //退出
+		 if(RCV_DATA_BUF[FDATA] EQ 0x01) //退出
 		 {
 		   Soft_Rest(); //软件复位
 		 }
@@ -661,15 +682,15 @@ void Screen_Com_Proc(void)
        //for(i = 0; i < Screen_Status.Rcv_Posi; i ++)
 	  i = 0;
       {
-          if(Screen_Status.Rcv_Data[i] EQ FRAME_HEAD && \
-             Check_Frame_Format(Screen_Status.Rcv_Data + i, Screen_Status.Rcv_Posi - i))
+          if(RCV_DATA_BUF[i] EQ FRAME_HEAD && \
+             Check_Frame_Format(RCV_DATA_BUF + i, Screen_Status.Rcv_Posi - i))
           {
 		    
 			 Set_Screen_Com_Time(COM_STANDBY_SEC); //到计时5s，5秒后重新播放节目 
              
 			 if(i != 0) //将数据复制到开始
               {
-                 memcpy(Screen_Status.Rcv_Data, Screen_Status.Rcv_Data + i, Screen_Status.Rcv_Posi - i);
+                 memcpy(RCV_DATA_BUF, RCV_DATA_BUF + i, Screen_Status.Rcv_Posi - i);
                  Screen_Status.Rcv_Posi = Screen_Status.Rcv_Posi - i;
              }
 
@@ -679,11 +700,11 @@ void Screen_Com_Proc(void)
           }
       
 	 } */
-   if(Screen_Status.Rcv_Data[0] EQ FRAME_HEAD && \
-      Check_Frame_Format((INT8U *)Screen_Status.Rcv_Data, Screen_Status.Rcv_Posi))//(Screen_Status.Rcv_Flag EQ FRAME_FLAG)
+   if(Screen_Status.Head_Flag > 0 &&\
+      Check_Frame_Format((INT8U *)RCV_DATA_BUF, Screen_Status.Rcv_Posi))//(Screen_Status.Rcv_Flag EQ FRAME_FLAG)
    {
      Set_Screen_Com_Time(COM_STANDBY_SEC); //到计时5s，5秒后重新播放节目
-     Rcv_Frame_Proc(Screen_Status.Rcv_Ch, (INT8U *)Screen_Status.Rcv_Data, Screen_Status.Rcv_Posi, sizeof(Screen_Status.Rcv_Data));
+     Rcv_Frame_Proc(Screen_Status.Rcv_Ch, (INT8U *)RCV_DATA_BUF, Screen_Status.Rcv_Posi, sizeof(RCV_DATA_BUF));
 
    }
 

@@ -53,6 +53,8 @@
 #define GET_TEXT_LEN(W,H) (((W)%8) EQ 0)?((W)*(H)/8):(((W)/8+1)*(H))//((H%8) EQ 0)?(W*H/8):(W*(H/8+1))
 #define GET_POINT_INDEX(W,X,Y) ((((W)%8)?((W)/8 + 1)*8:(W))*(Y) + (X))//(((Y>>3) * Width) + X)*8 + (Y & 0x07);
 
+#define GET_COLOR_NUM(X) ((X) < 3)?1:2
+
 #pragma pack(1)
 typedef struct
 {
@@ -294,10 +296,10 @@ typedef struct
   INT8U Area_No; \
   INT8U File_No; \
   INT8U In_Mode; \
-  INT16U In_Speed; \
+  INT8U In_Speed; \
   INT16U Stay_Time; \
   INT8U Out_Mode; \
-  INT16U Out_Speed; \
+  INT8U Out_Speed; \
   INT16U SNum; \
   INT8U Play_Counts; \
   INT8U Border_Check; \
@@ -729,12 +731,12 @@ typedef struct
 
 
 #define MAX(a,b,c,d) (((a)>(b)?(a):(b))>(c)?((a)>(b)?(a):(b)):(c))>(d)?(((a)>(b)?(a):(b))>(c)?((a)>(b)?(a):(b)):(c)):(d)
-#define MAX_COM_BUF_LEN (MAX(BLOCK_DATA_LEN , SCREEN_PARA_LEN, FILE_PARA_LEN, PROG_PARA_LEN) + 20)
+#define MAX_COM_BUF_LEN (MAX(BLOCK_DATA_LEN , SCREEN_PARA_LEN, FILE_PARA_LEN, PROG_PARA_LEN)) + 20
 
 typedef struct
 {
   INT8U Head;
-  INT8U Buf[MAX_COM_BUF_LEN + 50];
+  INT8U Buf[MAX_COM_BUF_LEN];
   INT8U Tail;
 }S_Pub_Buf;
 

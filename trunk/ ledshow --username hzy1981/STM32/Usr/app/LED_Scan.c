@@ -420,7 +420,21 @@ void LED_Scan_One_Row(void)
 #elif MAX_SCAN_BLOCK_NUM EQ 8
 ;
 #elif MAX_SCAN_BLOCK_NUM EQ 16
-;
+      transpose8(&Scan_Data[0][0], &Scan_Data0[0][0]);
+	  transpose8(&Scan_Data[0][8], &Scan_Data0[0][8]);
+	  transpose8(&Scan_Data[1][0], &Scan_Data0[1][0]);
+	  transpose8(&Scan_Data[1][8], &Scan_Data0[1][8]);
+	  for(j = 0; j < 8; j ++)
+	  {
+	    nop();
+	    nop();
+	    SET_CLK_LOW();
+        GPIOD->ODR = (GPIOD->ODR & 0xFF00) | Scan_Data0[0][j]; //输出R1
+		GPIOD->ODR = (GPIOD->ODR & 0x00FF) | (Scan_Data0[0][8 + j]<<8); //输出R1
+		GPIOE->ODR = (GPIOE->ODR & 0xFF00) | Scan_Data0[1][j]; //输出R1
+		GPIOE->ODR = (GPIOE->ODR & 0x00FF) | (Scan_Data0[1][8 + j]<<8); //输出R1
+		SET_CLK_HIGH();
+	   }
 #elif MAX_SCAN_BLOCK_NUM EQ 32
 ;
 #else
