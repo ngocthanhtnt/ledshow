@@ -32,8 +32,8 @@
 #error "card BX name error"
 #endif
 
-#define SCAN_SCREEN_PERIOD 250//扫屏周期,单位us
-#define MOVE_STEP_PERIOD 50//5 //移动步进时间,单位为ms
+#define SCAN_SCREEN_PERIOD 500//扫屏周期,单位us
+#define MOVE_STEP_PERIOD 30//5 //移动步进时间,单位为ms
 #define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 
 #define IN_SPEC_EFFECT_NUM 47 //进入特效个数

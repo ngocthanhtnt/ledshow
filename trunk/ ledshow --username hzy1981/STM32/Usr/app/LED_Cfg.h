@@ -75,7 +75,7 @@
 #define FONT_NUM 2 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
-#define MAX_POINTS (2048*256L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
+#define MAX_POINTS (4096*256L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
 
 #define DATA_PREP_EN 0
 #define MAX_STORA_BLOCK_NUM  4000

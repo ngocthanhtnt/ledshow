@@ -291,7 +291,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
           else
             imageBk = getSLineTextImage(picStr, width,height,i);
 
-          //imageBk.save("d:\\mkprotoimag.png");
+
           //获取的图形的宽度和高度应该和分区的宽度和高度一致
           if(imageBk.width() != width || imageBk.height() != height)
           {
@@ -305,6 +305,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
           Screen_Para.Base_Para.Width -=  2*borderHeight; //getTextShowData函数需要使用到屏幕宽度，高度等，因此需要重置改参数
           Screen_Para.Base_Para.Height -= 2*borderHeight;
 
+          //imageBk.save("d:\\mkprotoimag.png");
           getTextShowData(imageBk, &protoShowData, 0, 0);
 
           Screen_Para.Base_Para.Width +=  2*borderHeight;
