@@ -2499,7 +2499,7 @@ void CfacScreenProperty::loadParaProc()
        return;
     }
 
-    if(Card_Para.Max_Points < (unsigned int)(widthEdit->value() * heightEdit->value()))
+    if(Card_Para.Max_Points < (unsigned int)(widthEdit->value() * heightEdit->value()/GET_COLOR_NUM(color)))
     {
        QMessageBox::information(w, QObject::tr("提示"),
                               screenName + QObject::tr("点数超出板卡支持上限，请重新设置！"),QObject::tr("确定"));

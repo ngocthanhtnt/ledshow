@@ -1144,7 +1144,7 @@ int getTextPageNum(int mode ,int moveFlag, int imageHeight, int w, int h, int li
         {
             pagePosi[pageNum++] = linePosi[0];
             startLine = 0;
-            for(int i =0; i < lineNum; i ++)
+            for(int i =1; i < lineNum; i ++)
             {
                 if(linePosi[i + 1] - linePosi[startLine] > h)
                 {

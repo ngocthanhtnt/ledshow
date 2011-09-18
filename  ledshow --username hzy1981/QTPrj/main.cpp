@@ -30,10 +30,10 @@ void resetCardtoCardParaFile()
 {
   QSettings cardIniFile(CARD_INI_FILE,QSettings::IniFormat,0);
 
-  cardIniFile.beginGroup("AS-A0");
-  cardIniFile.setValue("maxPoints", 1024*128);
+  cardIniFile.beginGroup("AS-A1");
+  cardIniFile.setValue("maxPoints", 1024*64);
   cardIniFile.setValue("flag", 1); //第0位表示是否支持全彩
-  cardIniFile.setValue("maxHeight", 128);
+  cardIniFile.setValue("maxHeight", 64);
   cardIniFile.setValue("FontNum", 1);
   cardIniFile.setValue("inModeNum", 51);
   cardIniFile.setValue("outModeNum", 20);
@@ -43,9 +43,9 @@ void resetCardtoCardParaFile()
   cardIniFile.endGroup();
 
   cardIniFile.beginGroup("AS-B0");
-  cardIniFile.setValue("maxPoints", 512*128);
+  cardIniFile.setValue("maxPoints", 1280*128);
   cardIniFile.setValue("flag", 0);
-  cardIniFile.setValue("maxHeight", 128);
+  cardIniFile.setValue("maxHeight", 256);
   cardIniFile.setValue("FontNum", 1);
   cardIniFile.setValue("inModeNum", 51);
   cardIniFile.setValue("outModeNum", 20);

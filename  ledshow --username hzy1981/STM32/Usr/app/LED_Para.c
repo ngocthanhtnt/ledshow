@@ -477,12 +477,12 @@ INT8U Check_Prog_Show_Data(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pD
 //Area_No表示图文数据所在分区号
 //X、Y表示目标图形显示的坐标
 //Width,Height复制的图形的宽度和高度
-INT16U Copy_Show_Data(void *pSrc, INT16U Off, INT16U SrcLen,\
+INT16U Copy_Show_Data(void *pSrc, INT32U Off, INT16U SrcLen,\
                      S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT16U Width, INT16U Height)
 {
   //INT16U Width,Height;
-  INT16U X0,Y0,Off0,Row_Points;
-  INT32U i,Len;
+  INT16U X0,Y0,Row_Points;
+  INT32U i,Len,Off0;
   INT8U Re = 0;
   INT8U Screen_Color_Num;
 /*

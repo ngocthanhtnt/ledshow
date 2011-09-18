@@ -14,7 +14,7 @@
  }
 
 int main(void)
-{ 
+{// SystemInit();
   Hardware_Init();
 
  // test();

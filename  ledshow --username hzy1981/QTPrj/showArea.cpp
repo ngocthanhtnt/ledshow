@@ -1144,6 +1144,7 @@ void CshowArea::paintEvent(QPaintEvent *)
     saveProgPara(Prog_Para_Bak);
 
     resetShowPara(geometry().width(), geometry().height(), screenPara.Base_Para.Color);
+    Calc_Screen_Color_Num();
     painter.begin(this);
 
     color =getColor();
