@@ -29,6 +29,56 @@ void transpose8(unsigned char i[8], unsigned char o[8]) {
         o[3] = y >> 24; o[2] = y >> 16; o[1] = y >> 8; o[0] = y; 
 }
 
+void transpose4(unsigned char i[8], unsigned char o[8]) {
+
+        unsigned long x, y, t; 
+
+        //x = (i[0] << 24) | (i[1] << 16) | (i[2] << 8) | i[3]; 
+        //y = (i[4] << 24) | (i[5] << 16) | (i[6] << 8) | i[7]; 
+        x = (i[7] << 24) | (i[6] << 16) | (i[5] << 8) | i[4]; 
+        y = (i[3] << 24) | (i[2] << 16) | (i[1] << 8) | i[0];
+
+        t = (x & 0xf0f0f0f0) | ((y >> 4) & 0x0f0f0f0f); 
+        y = ((x << 4) & 0xf0f0f0f0) | (y & 0x0f0f0f0f); 
+        x = t; 
+
+        t = (x ^ (x >> 14)) & 0x0000cccc; 
+        x = x ^ t ^ (t << 14); 
+        t = (y ^ (y >> 14)) & 0x0000cccc; 
+        y = y ^ t ^ (t << 14); 
+
+        t = (x ^ (x >> 7)) & 0x00aa00aa; 
+        x = x ^ t ^ (t << 7); 
+        t = (y ^ (y >> 7)) & 0x00aa00aa; 
+        y = y ^ t ^ (t << 7); 
+
+        //o[7] = x >> 24; o[6] = x >> 16; o[5] = x >> 8; o[4] = x; 
+        o[3] = y >> 24; o[2] = y >> 16; o[1] = y >> 8; o[0] = y; 
+/* 
+        volatile unsigned long x, t;         
+        //x = (i[0] << 24) | (i[1] << 16) | (i[2] << 8) | i[3]; 
+        //y = (i[4] << 24) | (i[5] << 16) | (i[6] << 8) | i[7]; 
+        x = (i[3] << 28) | (i[2] << 20) | (i[1] << 12) | (i[0] << 4); 
+        //y = (i[3] << 24) | (i[2] << 16) | (i[1] << 8) | i[0];
+
+        t = (x & 0xf0f0f0f0);// | ((y >> 4) & 0x0f0f0f0f); 
+        //y = ((x << 4) & 0xf0f0f0f0) | (y & 0x0f0f0f0f); 
+        x = t; 
+
+        t = (x ^ (x >> 14)) & 0x0000cccc; 
+        x = x ^ t ^ (t << 14); 
+        //t = (y ^ (y >> 14)) & 0x0000cccc; 
+        //y = y ^ t ^ (t << 14); 
+
+        t = (x ^ (x >> 7)) & 0x00aa00aa; 
+        x = x ^ t ^ (t << 7); 
+        //t = (y ^ (y >> 7)) & 0x00aa00aa; 
+        //y = y ^ t ^ (t << 7); 
+
+        o[3] = x >> 28; o[2] = x >> 20; o[1] = x >> 12; o[0] = x >> 4; 
+        //o[3] = y >> 24; o[2] = y >> 16; o[1] = y >> 8; o[0] = y;  
+*/
+}
 /*
 //按位逆序函数
 #include  "intrinsics.h" 
@@ -83,7 +133,7 @@ void Set_Clock_Normal_Speed(void)
 typedef struct
 {
   INT8U Head;
-  INT16U Index[MAX_POINTS*2/(8*16)]; //记录第0扫描单元内的一条扫描线的所有数据偏移
+  INT16U Index[MAX_SCAN_WIDTH]; //记录第0扫描单元内的一条扫描线的所有数据偏移
 
   INT16U Block_Off[MAX_SCAN_BLOCK_NUM][16];
   INT8U Block_Num;
@@ -96,6 +146,22 @@ S_Scan_Data_Index Scan_Data_Index;
  //构建扫描单元0的所有扫描数据的索引，以字节为单位
 void Build_Scan_Data_Index(void)
 {
+  INT16U Cols, i,j,Index;
+  INT8U Color_Num;
+
+  if(Screen_Para.Scan_Para.Rows EQ 0)
+  {
+	Screen_Para.Scan_Para.Rows = 16;
+	SET_SUM(Screen_Para);
+  }
+
+  for(i = 0; i < Screen_Para.Base_Para.Width; i ++)
+    for(j = 0; j < (Screen_Para.Scan_Para.Rows_Fold + 1); j ++)
+	{
+
+
+	}
+   
 #if BUILD_SCAN_DATA_INDEX_EN
   INT16U Cols, i,j,Index;
   INT8U Color_Num;
@@ -160,6 +226,7 @@ void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
   else
     TIM4->CCR3 = TIM4->ARR * (100 - Duty) / 100;
 }
+
 //获取第Rows行第Index个字节的移动数据对应的在屏幕数据中的坐标
 //Block表示扫描块的块号
 //Rows表示行号，该行号对应接口中的ABCD的行号,几分之几扫?
@@ -171,26 +238,24 @@ void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
 INT16U Get_Scan_Data_Index(INT16U Block, INT16U Index)
 {
   INT32U Fold_Size,X,Y;
-  //INT8U  *p;
   INT32U Temp;
   INT8U Rows_Fold, Cols_Fold,Rows;
   INT16U Cols;
   INT8U Direct;
 
-  //X = Y = 0; 
   if(Screen_Para.Scan_Para.Direct < 2) //从左边进入，则索引应该转换
     Index = Screen_Status.Block_Cols - 1 - Index; //Index从0开始计数
-		  
+				  
   if(Screen_Para.Scan_Para.Rows_Fold EQ 0 ||\
      Screen_Para.Scan_Para.Cols_Fold EQ 0) //没有打折的现象
-  {
+  {	
       //return ((Block * Screen_Status.Block_Cols + Screen_Status.Scan_Row) * Screen_Status.Block_Cols + Index)*Screen_Status.Color_Num;
       X = Index;
 	   //每个Block对应的屏幕上的行数是 Rows*Rows_Fold
 	   //BRow表示第几条扫描线,每条扫描线对应到屏幕上的有Rows_Fold行
 	  Y = Block*Screen_Status.Rows_X_RowsFold + Screen_Status.BRow_X_RowsFold;//(Block * Rows + BRow) * Rows_Fold;//Block * Rows* Rows_Fold + BRow * Rows_Fold;//
       return (Y*Screen_Status.Block_Cols + X)*Screen_Status.Color_Num;//ReIndex;
-  }
+  }	
   else
   {
 	  Cols = Screen_Status.Block_Cols;
@@ -209,17 +274,7 @@ INT16U Get_Scan_Data_Index(INT16U Block, INT16U Index)
 	    //每个Block对应的屏幕上的行数是 Rows*Rows_Fold
 	    //BRow表示第几条扫描线,每条扫描线对应到屏幕上的有Rows_Fold行
 	    Y = Block*Screen_Status.Rows_X_RowsFold + Screen_Status.BRow_X_RowsFold + Temp / Cols_Fold; //(Block * Rows + BRow) * Rows_Fold + Temp / Cols_Fold;//Block * Rows* Rows_Fold + BRow * Rows_Fold + (Index % Fold_Size) / Cols_Fold;
-/*	  
-		if(Screen_Para.Scan_Para.Direct EQ 0 && Screen_Para.Scan_Para.Rows_Fold EQ 0x01 && Screen_Para.Scan_Para.Cols_Fold EQ 0x01)
-		{
-		   test_x = X;
-		   test_y = Y;
-
-		   test_x = Index;
-		   test_y = Fold_Size;
-
-		   test_temp = Index;// = test_temp;
-		}	*/  
+ 
 	  }
 	  else if(Direct EQ 0x01 || Direct EQ 0x03) //左下进入、右下进入
 	  {
@@ -235,80 +290,42 @@ INT16U Get_Scan_Data_Index(INT16U Block, INT16U Index)
         return 0;
 	  }
 
-	  //Screen_Color_Num = Screen_Status.Color_Num;//Get_Screen_Color_Num();  
-	
-	  return (Y*Cols + X)*Screen_Status.Color_Num;//ReIndex;
+      return (Y*Cols + X)*Screen_Status.Color_Num;//ReIndex;
    }
 
 }
 
-#if BUILD_SCAN_DATA_INDEX_EN
- //获取扫描数据
-void Get_Scan_Data(INT16U Blocks, INT8U Row, INT16U Col)
-{
-
-  INT16U i;
-  INT8U *p;
-  INT32U Temp;
-
-  p = (INT8U *)Show_Data.Color_Data;
-  for(i = 0; i < Scan_Data_Index.Block_Num && i < MAX_SCAN_BLOCK_NUM; i ++)
-  {
-    if(GET_BIT(Screen_Para.Base_Para.Color, 0))
-      Scan_Data[0][i] = 0xFF - *(p + Scan_Data_Index.Index[Col] +  Scan_Data_Index.Block_Off[i][Row]);
-	else
-	  Scan_Data[0][i] = 0xFF;
-   
-    if(GET_BIT(Screen_Para.Base_Para.Color, 1))
-	  Scan_Data[1][i] = 0xFF - *(p + Scan_Data_Index.Index[Col] +  Scan_Data_Index.Block_Off[i][Row] + 1);
-	else
-	  Scan_Data[1][i] = 0xFF;
-    
-	if(GET_BIT(Screen_Para.Base_Para.Color, 2))
-	  Scan_Data[2][i] = 0xFF - *(p + Scan_Data_Index.Index[Col] +  Scan_Data_Index.Block_Off[i][Row] + 2);
-    else
-	  Scan_Data[2][i] = 0xFF;
-
-	if(Screen_Para.Scan_Para.Direct EQ 0x00 || Screen_Para.Scan_Para.Direct EQ 0x01)//左边进入位序应该反
-	{
-		Temp = __RBIT(Scan_Data[0][i]);
-		Scan_Data[0][i] = *((INT8U *)&Temp + 3);
-		Temp = __RBIT(Scan_Data[1][i]);
-		Scan_Data[1][i] = *((INT8U *)&Temp + 3);
-		Temp = __RBIT(Scan_Data[2][i]);
-		Scan_Data[2][i] = *((INT8U *)&Temp + 3);
-	}
-  }	
-
-}
-#else
+#if SCAN_DATA_MODE EQ SCAN_SOFT_MODE1
 void Get_Scan_Data(INT16U Blocks, INT16U Col)
 {
-    INT16U Index,Off,i;
+    INT16U Index,i;
 	INT32U Temp;
 	INT16U Cols;
 	INT8U *p;
 	
-    //Cols = Screen_Para.Base_Para.Width / 8;
+
+	Index = Get_Scan_Data_Index(0, Col); //先计算第0个block的对应索引，后面的block都是加一个同样的值
+    
+	//Cols = Screen_Para.Base_Para.Width / 8;
     for(i = 0; i < Blocks && i < MAX_SCAN_BLOCK_NUM; i ++)
     {
         //获取该扫描线上的所有字节并输出
-        Index = Get_Scan_Data_Index(i, Col);
+        //Index = Get_Scan_Data_Index(i, Col);
 
 	   //test_temp = Index;
 	    p = Show_Data.Color_Data + Index;
 	  
-		Off = 0;
+		//Off = 0;
 		//获取三色数据
 		//红
 		if(GET_BIT(Screen_Para.Base_Para.Color, 0))
-		  Scan_Data[0][i] = 0xFF - *(p + Off++);//Show_Data.Color_Data[Data_Index];
+		  Scan_Data[0][i] = 0xFF - *p;//Show_Data.Color_Data[Data_Index];
 		else 
 		  Scan_Data[0][i] = 0xFF;
 		
 		//绿
 		if(GET_BIT(Screen_Para.Base_Para.Color, 1))
-		  Scan_Data[1][i] = 0xFF - *(p + Off ++);//Show_Data.Color_Data[Data_Index];
+		  Scan_Data[1][i] = 0xFF - *(p +1);//Show_Data.Color_Data[Data_Index];
 		else 
 		  Scan_Data[1][i] = 0xFF;
 /*		
@@ -328,10 +345,51 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 			//Temp = __RBIT(Scan_Data[2][i]);
 			//Scan_Data[2][i] = *((INT8U *)&Temp + 3);
 		}
+
+		Index += Screen_Status.Block_Bytes;
     }
 
 }
-#endif
+#elif SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
+void Get_Scan_Data(INT16U Blocks, INT16U Col)
+{
+    INT16U Index,i;
+	INT32U Temp;
+	INT16U Cols;
+	INT8U *p;
+	
+    if(Screen_Para.Scan_Para.Direct < 2) //从左边进入，则索引应该转换
+      Col = Screen_Status.Block_Cols - 1 - Col; //Index从0开始计数
+
+	Index = (Col + Screen_Status.ScanRow_X_BlockCols)* Screen_Status.Color_Num;//Get_Scan_Data_Index(0, Col); //先计算第0个block的对应索引，后面的block都是加一个同样的值
+    
+	if(Screen_Status.Color_Num < 2)
+	{
+		for(i = 0; i < Blocks; i ++)
+		{
+		    p = Show_Data.Color_Data + Index;
+		  
+			Scan_Data[0][i] = *p;//Show_Data.Color_Data[Data_Index];
+		
+			Index += Screen_Status.Block_Bytes;
+		}
+	}
+	else
+	{
+		for(i = 0; i < Blocks; i ++)
+		{
+		    p = Show_Data.Color_Data + Index;
+		  
+			Scan_Data[0][i] = *p;//Show_Data.Color_Data[Data_Index]; 		    
+			Scan_Data[1][i] = *(p +1);//Show_Data.Color_Data[Data_Index];
+
+			Index += Screen_Status.Block_Bytes;
+		}
+
+	}
+
+}
+#endif 
   
  //设置块行号
 void Set_Block_Row(INT8U Row)
@@ -389,31 +447,33 @@ void LED_Scan_One_Row(void)
   Screen_Status.Fold_Size = Screen_Para.Scan_Para.Cols_Fold * (Screen_Para.Scan_Para.Rows_Fold + 1);
   Screen_Status.BRow_X_RowsFold = Screen_Status.Scan_Row * (Screen_Para.Scan_Para.Rows_Fold + 1);
   Screen_Status.Rows_X_RowsFold = Screen_Para.Scan_Para.Rows * (Screen_Para.Scan_Para.Rows_Fold + 1); 
+  Screen_Status.Block_Bytes = Screen_Para.Scan_Para.Rows*Screen_Status.Block_Cols * Screen_Status.Color_Num; //每个扫描单元的字节数
+  Screen_Status.ScanRow_X_BlockCols	= Screen_Status.Block_Cols * Screen_Status.Scan_Row; 
   //Block数可以理解为单元板纵向的个数
 
   Blocks = Screen_Para.Base_Para.Height / (Screen_Para.Scan_Para.Rows * (Screen_Para.Scan_Para.Rows_Fold + 1)); //1.2.4.8.16扫？
 	
   if(Blocks > MAX_SCAN_BLOCK_NUM)
 	Blocks = MAX_SCAN_BLOCK_NUM;
-
   Cols = Screen_Status.Block_Cols;
+
+#if SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
+
   //对每个Blocks进行扫描
   //每一条扫描线需要Screen_Para.Base_Para.Width / 8 * Screen_Para.Scan_Para.Rows_Fold个字节
   for(i = 0; i < Cols ; i ++)
   {
       Get_Scan_Data(Blocks, i);
 
+#if MAX_SCAN_BLOCK_NUM EQ 4//A型卡最多4条扫描线
+      transpose8(&Scan_Data[0][0], &Scan_Data[0][0]);	//R1-R4,G1-G4
 
-#if SCAN_DATA_MODE EQ 0
-
-#if MAX_SCAN_BLOCK_NUM EQ 4
-      transpose8(Scan_Data[0], Scan_Data0[0]);
 	  for(j = 0; j < 8; j ++)
 	  {
 	    nop();
 	    nop();
 	    SET_CLK_LOW();
-        GPIOB->ODR = (GPIOB->ODR & 0xFF00) | Scan_Data0[0][j]; //输出R1
+        GPIOB->ODR = (GPIOB->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R4,G1-G4
 		nop();
 		SET_CLK_HIGH();
 	   }
@@ -421,37 +481,150 @@ void LED_Scan_One_Row(void)
 ;
 #elif MAX_SCAN_BLOCK_NUM EQ 16
 
-      transpose8(&Scan_Data[0][0], &Scan_Data0[0][0]);	//R1-R8
-	  if(Blocks > 8)
-	    transpose8(&Scan_Data[0][8], &Scan_Data0[0][8]); //R9-R16
-	  
-	  if(Screen_Status.Color_Num > 1)
-	  {
-	    transpose8(&Scan_Data[1][0], &Scan_Data0[1][0]); //G1-G8
-	    if(Blocks > 8)
-	      transpose8(&Scan_Data[1][8], &Scan_Data0[1][8]); //G9-G16
-	  }
+	    if(Blocks <= 4)
+		   transpose4(&Scan_Data[0][0], &Scan_Data[0][0]);	//R1-R4
+ 		else
+		{
+			transpose8(&Scan_Data[0][0], &Scan_Data[0][0]);	//R1-R8
+			if(Blocks > 8)
+			{
+			   if(Blocks <= 12)
+			     transpose4(&Scan_Data[0][8], &Scan_Data[0][8]); //R9-R16
+			   else
+			     transpose8(&Scan_Data[0][8], &Scan_Data[0][8]); //R9-R16
+			}
+		}
 
-	  for(j = 0; j < 8; j ++)
-	  {
-	    nop();
-	    nop();
-	    SET_CLK_LOW();
-        GPIOD->ODR = (GPIOD->ODR & 0xFF00) | Scan_Data0[0][j]; //输出R1-R8
-		GPIOD->ODR = (GPIOD->ODR & 0x00FF) | (Scan_Data0[0][8 + j]<<8); //输出R9-R16
-		GPIOE->ODR = (GPIOE->ODR & 0xFF00) | Scan_Data0[1][j]; //输出G1-G8
-		GPIOE->ODR = (GPIOE->ODR & 0x00FF) | (Scan_Data0[1][8 + j]<<8); //输出G9-G16
-		SET_CLK_HIGH();
-	   }
-#elif MAX_SCAN_BLOCK_NUM EQ 32
-;
+		if(Screen_Status.Color_Num > 1)
+		{
+	      if(Blocks <= 4)
+		    transpose4(&Scan_Data[1][0], &Scan_Data[1][0]);	//R1-R8
+		  else
+		  {
+		    transpose8(&Scan_Data[1][0], &Scan_Data[1][0]); //G1-G8
+  			if(Blocks > 8)
+			{
+			    if(Blocks <= 12)
+				  transpose4(&Scan_Data[1][8], &Scan_Data[1][8]);	//R1-R8
+				else
+			      transpose8(&Scan_Data[1][8], &Scan_Data[1][8]); //R9-R16
+			}
+		  }
+
+	      if(Blocks <= 8)
+		  {
+			  for(j = 0; j < 8; j ++)
+			  {
+			        Temp = Scan_Data[0][j];// + (Scan_Data[0][8 + j]<<8);
+					GPIOD->ODR = Temp;//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
+					SET_CLK_LOW();
+	
+					Temp = Scan_Data[1][j];// + (Scan_Data[1][8 + j]<<8);
+					GPIOE->ODR = Temp;//(GPIOE->ODR & 0xFF00) | Scan_Data[1][j]; //输出G1-G8
+					SET_CLK_HIGH();
+			   }
+		  }
+		  else
+		  {
+			  for(j = 0; j < 8; j ++)
+			  {
+			        Temp = Scan_Data[0][j] + (Scan_Data[0][8 + j]<<8);
+					GPIOD->ODR = Temp;//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
+					SET_CLK_LOW();
+	
+					Temp = Scan_Data[1][j] + (Scan_Data[1][8 + j]<<8);
+					GPIOE->ODR = Temp;//(GPIOE->ODR & 0xFF00) | Scan_Data[1][j]; //输出G1-G8
+					SET_CLK_HIGH();
+			   }
+		  }
+		}
+		else
+		{
+	      if(Blocks <= 8)
+		  {
+			for(j = 0; j < 8; j ++)
+			{
+				Temp = Scan_Data[0][j];// + (Scan_Data[0][8 + j]<<8);
+				SET_CLK_LOW();
+				GPIOD->ODR = Temp;//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
+				SET_CLK_HIGH();
+			}
+		  }
+		  else
+		  {
+			for(j = 0; j < 8; j ++)
+			{
+				Temp = Scan_Data[0][j] + (Scan_Data[0][8 + j]<<8);
+				SET_CLK_LOW();
+				GPIOD->ODR = Temp;//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
+				SET_CLK_HIGH();
+			}
+		  }
+		}
 #else
 #error "MAX_SCAN_BLOCK_NUM error"
 #endif
 
-#endif
-
    }
+#elif SCAN_DATA_MODE EQ SCAN_SOFT_MODE1
+
+    for(i = 0; i < Cols ; i ++)
+    {
+        Get_Scan_Data(Blocks, i);
+		
+		if(Blocks <= 8)
+		{
+			if(Screen_Status.Color_Num < 2)
+			{	
+				for(j = 0; j < 8; j ++)
+				{
+					Temp = Scan_Data[0][j];// + (Scan_Data[0][8 + j]<<8);
+					GPIOD->ODR = Temp;//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
+					SET_CLK_LOW();
+					SET_CLK_HIGH();
+				}
+			}
+			else
+			{
+ 				for(j = 0; j < 8; j ++)
+				{
+					Temp = Scan_Data[0][j];// + (Scan_Data[0][8 + j]<<8);
+					GPIOD->ODR = Temp;//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
+					SET_CLK_LOW();
+					Temp = Scan_Data[1][j];/// + (Scan_Data[1][8 + j]<<8);
+					GPIOE->ODR = Temp;//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
+					SET_CLK_HIGH();
+				}
+			}
+		}
+		else
+		{
+			if(Screen_Status.Color_Num < 2)
+			{	
+				for(j = 0; j < 8; j ++)
+				{
+					Temp = Scan_Data[0][j] + (Scan_Data[0][8 + j]<<8);
+					GPIOD->ODR = Temp;//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
+					SET_CLK_LOW();
+					SET_CLK_HIGH();
+				}
+			}
+			else
+			{
+ 				for(j = 0; j < 8; j ++)
+				{
+					Temp = Scan_Data[0][j] + (Scan_Data[0][8 + j]<<8);
+					GPIOD->ODR = Temp;//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
+					SET_CLK_LOW();
+					Temp = Scan_Data[1][j] + (Scan_Data[1][8 + j]<<8);
+					GPIOE->ODR = Temp;//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
+					SET_CLK_HIGH();
+				}
+			}
+
+		}
+	}
+#endif
 	 //此处是硬件扫描方式代码
 
   //return;	 

@@ -10,24 +10,24 @@
  //-------------------时钟相关配置---------------
 #ifdef CARD_A0
 #define HSE_VALUE 12000000 //外部晶振频率
-#define HCLK_VALUE  HSE_VALUE*4
+#define HCLK_VALUE  HSE_VALUE*3
 //#define H_HCLK_VALUE HSE_VALUE*9
 #define PCLK1_VALUE HCLK_VALUE/2
-#define PCLK2_VALUE	HCLK_VALUE/2
+#define PCLK2_VALUE	HCLK_VALUE/1
 
-#define HCLK_MUL  RCC_PLLMul_4	//正常运行时AHB速度
+#define HCLK_MUL  RCC_PLLMul_3	//正常运行时AHB速度
 #define PCLK1_DIV RCC_HCLK_Div2 //最高APB/2--这是正常运行时速度,这里不能为DIV1，因为定时器使用的分频系数默认PCLK1分频>1
-#define PCLK2_DIV RCC_HCLK_Div2 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/4不能超过24M
+#define PCLK2_DIV RCC_HCLK_Div1 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/4不能超过24M
 #elif defined(CARD_A1)
 #define HSE_VALUE 12000000 //外部晶振频率
-#define HCLK_VALUE  HSE_VALUE*9
+#define HCLK_VALUE  HSE_VALUE*6
 //#define H_HCLK_VALUE HSE_VALUE*9
 #define PCLK1_VALUE HCLK_VALUE/2
-#define PCLK2_VALUE	HCLK_VALUE/2
+#define PCLK2_VALUE	HCLK_VALUE/1
 
-#define HCLK_MUL  RCC_PLLMul_9	//正常运行时AHB速度
+#define HCLK_MUL  RCC_PLLMul_6	//正常运行时AHB速度
 #define PCLK1_DIV RCC_HCLK_Div2 //最高APB/2--这是正常运行时速度,这里不能为DIV1，因为定时器使用的分频系数默认PCLK1分频>1
-#define PCLK2_DIV RCC_HCLK_Div2 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/4不能超过24M
+#define PCLK2_DIV RCC_HCLK_Div1 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/4不能超过24M
 #endif
 //#define H_HCLK_MUL  RCC_PLLMul_9  //高速运行时AHB速度
 //#define H_PCLK1_DIV RCC_HCLK_Div2 //高速运行时APB1速度--确保和正常运行时保持一致，这样就不需要调整各外设的Clock 
@@ -47,7 +47,7 @@
 #define MOVE_STEP_PERIOD 50//5 //移动步进时间,单位为ms
 #define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 
-#define IN_SPEC_EFFECT_NUM 47 //进入特效个数
+#define IN_SPEC_EFFECT_NUM 45 //进入特效个数
 #define OUT_SPEC_EFFECT_NUM 20 //退出特效个数
 #define FONT_NUM 1 //内嵌字体个数
 
@@ -55,7 +55,7 @@
 #ifdef CARD_A0
 #define MAX_POINTS (180*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  2000 //最大存储块数
-#elif defined(A1)
+#elif defined(CARD_A1)
 #define MAX_POINTS (512*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  4000 //最大存储块数
 #endif
@@ -64,7 +64,7 @@
 
 #define DATA_PREP_EN 0 //数据预准备
 #define BUILD_SCAN_DATA_INDEX_EN 0 //构建扫描数据索引使能
-#define SCAN_DATA_MODE 0 //0表示软件扫描方式，1表示硬件扫描方式
+#define SCAN_DATA_MODE SCAN_SOFT_MODE0 //0表示软件扫描方式，1表示硬件扫描方式
 
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能

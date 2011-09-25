@@ -260,6 +260,7 @@ EXT void SPI1_CH376_Init(void);
 EXT void Set_Block_OE_En(INT8U Value);
 EXT INT8U Chk_JP_Status(void);
 EXT void UART2_Init(void); //´®¿Ú2³õÊ¼»¯
+EXT void UART3_Init(void);
 EXT void Com_Send_Byte(INT8U Ch, INT8U Data);
 EXT void Unselect_SPI_Device(void);
 EXT void Self_Test(void);

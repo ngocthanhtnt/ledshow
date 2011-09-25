@@ -210,6 +210,38 @@ INT8U Get_Area_TopLeft(INT8U Area_No, S_Point *pPoint)
   return 1;
 }
 
+INT16U TempX, TempY;
+INT32U Get_Area_Point_Index0(INT8U Area_No, INT16U X, INT16U Y)
+{
+  INT32U Index;
+  INT16U X0,Y0,Bit;
+
+  
+  if(Area_No < MAX_AREA_NUM)
+  {
+    X += Prog_Para.Area[Area_No].X;
+    Y += Prog_Para.Area[Area_No].Y;
+  }
+
+  TempX = X;
+  TempY = Y;
+
+  if(Screen_Para.Scan_Para.Direct < 2)
+  {
+    Bit = 7 - (X % 8);
+    Y0 = Y /(Screen_Para.Scan_Para.Rows*8)*(Screen_Para.Scan_Para.Rows*8) + (Y % Screen_Para.Scan_Para.Rows) + Bit * Screen_Para.Scan_Para.Rows;
+	X0 = X/8*8 + ((Y / Screen_Para.Scan_Para.Rows) % 8);
+  }
+  else
+  {
+    Bit = X % 8;
+    Y0 = Y /(Screen_Para.Scan_Para.Rows*8)*(Screen_Para.Scan_Para.Rows*8) + (Y % Screen_Para.Scan_Para.Rows) + Bit*Screen_Para.Scan_Para.Rows;
+	X0 = X/8*8 + ((Y / Screen_Para.Scan_Para.Rows) % 8);
+  }
+
+  Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width,X0,Y0);
+  return Index;
+}
 //获取区域中某点的索引
 //Area_No表示分区号
 //x,y表示在分区内的坐标
@@ -423,8 +455,11 @@ void Set_Area_Point_Data(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U 
 {
   INT32U Index;
   
-  Index = Get_Area_Point_Index(Area_No, X, Y);
-  
+  if(pDst_Buf EQ &Show_Data_Bak)
+    Index = Get_Area_Point_Index(Area_No, X, Y);
+  else
+    Index = Get_Area_Point_Index0(Area_No, X, Y);
+
   if(Screen_Status.Color_Num <2)//Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)  //0,1,2,4单色屏
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data),Index, (Value & 0x01));
   else if(Screen_Status.Color_Num EQ 2)//Screen_Para.Base_Para.Color EQ 3 || Screen_Para.Base_Para.Color EQ 5 || Screen_Para.Base_Para.Color EQ 6) //双色屏
@@ -976,7 +1011,91 @@ void Copy_Filled_Rect0(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, I
 	}
   
 }
+ 
+#if SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
+void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
+  S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
+  {
+    INT16U i,j;
+    INT8U Data0, Data1;
+	INT16U StartX0,StartY0,StartX1,StartY1;
+	INT16U Byte_Index; 
+	INT8U Bit_Index, Color_Num;
 
+	StartX0 = Prog_Para.Area[Area_No].X + pPoint0->X;
+	StartY0 = Prog_Para.Area[Area_No].Y + pPoint0->Y;
+
+	StartX1 = Prog_Para.Area[Area_No].X + pPoint1->X;
+	StartY1 = Prog_Para.Area[Area_No].Y + pPoint1->Y;
+
+	Color_Num = GET_COLOR_NUM(Screen_Para.Base_Para.Color);
+    if(Color_Num <2) //单色屏
+	{
+	    for(i = 0; i < X_Len;  i++)
+	    {
+	      for(j = 0; j < Y_Len; j++)
+	      {
+		    Byte_Index = (((StartY0 + j) * Screen_Para.Base_Para.Width) + StartX0 + i) >> 3;//*Screen_Status.Color_Num;
+			Bit_Index = (StartX0 + i) & 0x07; 
+			//Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width, StartX0 + i, StartY0 + j);
+			Data0 = GET_BIT(pSrc_Buf->Color_Data[Byte_Index], Bit_Index);//Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data),Index);
+
+		    Byte_Index = (((StartY1 + j) * Screen_Para.Base_Para.Width) + StartX1 + i) >> 3;//*Screen_Status.Color_Num;
+			Bit_Index = (StartX1 + i) & 0x07;
+			if(Data0)
+			  SET_BIT(pDst_Buf->Color_Data[Byte_Index], Bit_Index);
+			else
+			  CLR_BIT(pDst_Buf->Color_Data[Byte_Index], Bit_Index);
+		  }
+		}
+	}
+	else
+	{
+	    for(i = 0; i < X_Len;  i++)
+	    {
+	      for(j = 0; j < Y_Len; j++)
+	      {
+		    Byte_Index = ((((StartY0 + j) * Screen_Para.Base_Para.Width) + StartX0 + i) >> 3)*2;//*Screen_Status.Color_Num;
+			Bit_Index = (StartX0 + i) & 0x07; 
+			//Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width, StartX0 + i, StartY0 + j);
+			Data0 = GET_BIT(pSrc_Buf->Color_Data[Byte_Index], Bit_Index);//Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data),Index);
+			Data1 = GET_BIT(pSrc_Buf->Color_Data[Byte_Index + 1], Bit_Index);
+
+		    Byte_Index = ((((StartY1 + j) * Screen_Para.Base_Para.Width) + StartX1 + i) >> 3)*2;//*Screen_Status.Color_Num;
+			Bit_Index = (StartX1 + i) & 0x07;
+			if(Data0)
+			  OS_SET_BIT(pDst_Buf->Color_Data[Byte_Index], Bit_Index);
+			else
+			  OS_CLR_BIT(pDst_Buf->Color_Data[Byte_Index], Bit_Index);
+
+ 			if(Data1)
+			  OS_SET_BIT(pDst_Buf->Color_Data[Byte_Index+1], Bit_Index);
+			else
+			  OS_CLR_BIT(pDst_Buf->Color_Data[Byte_Index+1], Bit_Index);
+		  }
+		}
+
+	}
+  }
+#elif SCAN_DATA_MODE EQ SCAN_SOFT_MODE1
+void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
+  S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
+{
+    INT16U i,j;
+    INT8U Data;
+
+    for(i = 0; i < X_Len;  i++)
+    {
+     for(j = 0; j < Y_Len; j++)
+      {
+        Data = Get_Area_Point_Data(pSrc_Buf, Area_No, pPoint0->X + i, pPoint0->Y + j);
+        Set_Area_Point_Data(pDst_Buf, Area_No, pPoint1->X + i, pPoint1->Y + j, Data);
+      }
+ }
+}
+#endif
+
+/*
 void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
   S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
 {
@@ -994,7 +1113,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
      //SCAN_INT_ENABLE();
  }
 }
-
+&/
 /*
 //复制一个矩形
 void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
