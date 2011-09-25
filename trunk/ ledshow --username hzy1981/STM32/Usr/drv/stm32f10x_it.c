@@ -161,7 +161,9 @@ void SysTick_Handler(void)
 extern void LED_Scan_One_Row(void);
 void TIM2_IRQHandler(void)   //TIM2中断
 {
-    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+//#if RMDK_SIM_EN
+    GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+//#endif
     TIM_Cmd(TIM2, DISABLE);
 
     if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
@@ -171,7 +173,9 @@ void TIM2_IRQHandler(void)   //TIM2中断
 	}
 
 	TIM_Cmd(TIM2, ENABLE);
-	//GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
+//#if RMDK_SIM_EN
+	GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
+//#endif
 }
 
 /**
@@ -183,7 +187,9 @@ extern void Show_Timer_Proc(void);
 
 void TIM3_IRQHandler(void)   //TIM4中断
 {
-    
+//#if RMDK_SIM_EN
+    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+//#endif    
   TIM_Cmd(TIM3, DISABLE);
 
     if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
@@ -191,11 +197,15 @@ void TIM3_IRQHandler(void)   //TIM4中断
 	 TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
      //Delay_ms(5);
 	 //Show_Timer_Proc();
+	 //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 	 Effect_Proc();
+	 //GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
 	}
 
   TIM_Cmd(TIM3, ENABLE);
-  
+//#if RMDK_SIM_EN
+	//GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
+//#endif  
 
 }
 
@@ -252,8 +262,10 @@ void USART3_IRQHandler(void)	//串口3中断服务程序
    if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 	{
 	Res =USART_ReceiveData(USART3);//(USART1->DR);	//读取接收到的数据
-
-    Com_Rcv_Byte(CH_GPRS, Res);
+  
+     while (!(USART3->SR & USART_FLAG_TXE));
+     USART3->DR = (Res & (uint16_t)0x01FF);
+    //Com_Rcv_Byte(CH_GPRS, Res);
 	 
 	}
 }

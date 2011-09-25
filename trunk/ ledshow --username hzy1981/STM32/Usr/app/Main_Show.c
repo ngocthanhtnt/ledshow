@@ -1276,7 +1276,7 @@ void Ram_Init(void)
 //特效处理函数，定时调用
 void Effect_Proc(void)
 {
-  if(Prog_Status.Play_Status.Effect_Flag > 0)
+  //if(Prog_Status.Play_Status.Effect_Flag > 0)
   {
     Prog_Status.Play_Status.Effect_Counts = 0;
     Prog_Status.Play_Status.Effect_Flag = 0;
@@ -1361,7 +1361,7 @@ void Restore_Show_Area(void)
 //显示初始化
 void Para_Init(void)
 {
-  Ram_Init();
+
   Read_Screen_Para();
   Calc_Screen_Color_Num(); //计算屏幕颜色个数
   Build_Scan_Data_Index(); //构建索引表
@@ -1396,10 +1396,45 @@ void Screen_Test(void)
   INT16U i, j;
   S_Point P0,P1;
   INT8U Test_Key_Up_Flag;
+/*
+   Screen_Para.Base_Para.Width = 64; 
+   Screen_Para.Base_Para.Height = 32;
+   Screen_Para.Base_Para.Color = 0x01;
 
+   Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+
+   
+   while(1)
+   {
+   	 Set_Area_Point_Data(&Show_Data, 0, 34, 16, 0x01);
+	
+
+   }  
+*/
+ //--------------------
+#if RMDK_SIM_EN EQ 0
   //测试按键按下并且当前没有在工厂状态，则进入屏幕自检
   if(!(Chk_Test_Key_Down() && Chk_JP_Status() EQ NORMAL_STATUS))
     return;
+#else
+#if defined(CARD_A0)
+   Screen_Para.Base_Para.Width = 720; 
+   Screen_Para.Base_Para.Height = 32;
+   Screen_Para.Base_Para.Color = 0x01;
+   SET_SUM(Screen_Para);
+#elif defined(CARD_A1)
+   Screen_Para.Base_Para.Width = 1024; 
+   Screen_Para.Base_Para.Height = 64;
+   Screen_Para.Base_Para.Color = 0x01;
+#elif defined(CARD_B0)
+   Screen_Para.Base_Para.Width = 2048; 
+   Screen_Para.Base_Para.Height = 64;
+   Screen_Para.Base_Para.Color = 0x01;
+   SET_SUM(Screen_Para);
+#else
+#error "RMDK_SIIM card type error"
+#endif
+#endif
 
   Test_Key_Up_Flag = 0;
  //设置实时显示区域

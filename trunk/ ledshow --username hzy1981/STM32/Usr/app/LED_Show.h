@@ -242,6 +242,9 @@ typedef struct
   INT16U BRow_X_RowsFold;
   INT16U Rows_X_RowsFold;
   INT16U Block_Cols; //一条扫描线的宽度
+  INT16U Block_Bytes; //一条扫描线的字节数
+  INT16U Row0_Start_Index; //第0行第一个字节的索引
+  INT16U ScanRow_X_BlockCols;
 
   INT8U Scan_Row;
 

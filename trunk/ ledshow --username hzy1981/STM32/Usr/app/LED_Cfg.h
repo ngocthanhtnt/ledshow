@@ -6,7 +6,9 @@
 //#define CARD_CX 0x20
 //#define CARD_DX 0x30
 //#define CARD_EX 0x40
-
+#define SCAN_HARD_MODE   0x00//硬件扫描模式
+#define SCAN_SOFT_MODE0	 0x01//软件扫描模式0 --在扫描中断中进行数据转换
+#define SCAN_SOFT_MODE1	 0x02//软件扫描模式1 --在特效中断中进行数据转换
 
 //节目特征字
 #define BORDER_SHOW_BIT 0x00
@@ -31,9 +33,11 @@
 #if defined(__CC_ARM) || defined(__ICCARM__)
 #define QT_EN 0//在QT环境下编译使用QT
 #define QT_SIM_EN 0//使用QT仿真STM32情况。不同于预览
+#define RMDK_SIM_EN	1
 #else
 #define QT_EN 1//在QT环境下编译使用QT
 #define QT_SIM_EN 0//使用QT仿真STM32情况。不同于预览
+#define RMDK_SIM_EN 0
 #endif
 
 //#define CARD_TYPE CARD_AX //A系列板卡针对小条屏，其他针对中大屏

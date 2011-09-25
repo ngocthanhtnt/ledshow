@@ -213,6 +213,7 @@ void Hardware_Init(void)
   TIM4_Configuration();
 
   UART2_Init();
+  UART3_Init();
 
   Unselect_SPI_Device(); //不选中任何一个SPI设备
 

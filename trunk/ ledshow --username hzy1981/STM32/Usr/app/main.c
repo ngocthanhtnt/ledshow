@@ -4,9 +4,10 @@
  {
         int i; 
         unsigned char t1[8]={0x24,0x21,0xf0,0x7f,0x80,0x37,0xff,0x1f}; 
-        unsigned char t2[8]; 
+        unsigned char t2[8];//0xEA,0xE8,0xE9,0xC8,0xEC,0x6F,0x4C,0x54 
 
-        transpose8(t1, t2);  
+	    transpose8(t1, t2);
+        transpose4(t1, t2);  
 		//juzhen(t1, t2, 0);
 		for(i = 0; i < 8; i	++)
 		  printf("%d = %x", i, t2[i]);
@@ -14,10 +15,11 @@
  }
 
 int main(void)
-{// SystemInit();
+{
+  Ram_Init();
   Hardware_Init();
 
- // test();
+  //test();
 
   RST_Periph();
 
