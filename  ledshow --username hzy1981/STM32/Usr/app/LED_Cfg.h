@@ -33,7 +33,7 @@
 #if defined(__CC_ARM) || defined(__ICCARM__)
 #define QT_EN 0//在QT环境下编译使用QT
 #define QT_SIM_EN 0//使用QT仿真STM32情况。不同于预览
-#define RMDK_SIM_EN	1
+#define RMDK_SIM_EN	0
 #else
 #define QT_EN 1//在QT环境下编译使用QT
 #define QT_SIM_EN 0//使用QT仿真STM32情况。不同于预览
@@ -84,6 +84,7 @@
 #define DATA_PREP_EN 0
 #define MAX_STORA_BLOCK_NUM  4000
 #define MAX_SCAN_BLOCK_NUM 10
+#define SCAN_DATA_MODE SCAN_SOFT_MODE0
 
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能

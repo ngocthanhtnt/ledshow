@@ -210,11 +210,11 @@ INT8U Get_Area_TopLeft(INT8U Area_No, S_Point *pPoint)
   return 1;
 }
 
-INT16U TempX, TempY;
+//INT16U TempX, TempY;
 INT32U Get_Area_Point_Index0(INT8U Area_No, INT16U X, INT16U Y)
 {
   INT32U Index;
-  INT16U X0,Y0,Bit;
+  //INT16U X0,Y0,Bit;
 
   
   if(Area_No < MAX_AREA_NUM)
@@ -223,23 +223,26 @@ INT32U Get_Area_Point_Index0(INT8U Area_No, INT16U X, INT16U Y)
     Y += Prog_Para.Area[Area_No].Y;
   }
 
-  TempX = X;
-  TempY = Y;
-
   if(Screen_Para.Scan_Para.Direct < 2)
-  {
-    Bit = 7 - (X % 8);
-    Y0 = Y /(Screen_Para.Scan_Para.Rows*8)*(Screen_Para.Scan_Para.Rows*8) + (Y % Screen_Para.Scan_Para.Rows) + Bit * Screen_Para.Scan_Para.Rows;
-	X0 = X/8*8 + ((Y / Screen_Para.Scan_Para.Rows) % 8);
-  }
-  else
-  {
-    Bit = X % 8;
-    Y0 = Y /(Screen_Para.Scan_Para.Rows*8)*(Screen_Para.Scan_Para.Rows*8) + (Y % Screen_Para.Scan_Para.Rows) + Bit*Screen_Para.Scan_Para.Rows;
-	X0 = X/8*8 + ((Y / Screen_Para.Scan_Para.Rows) % 8);
-  }
+    X = X ^ 0x07;//(X & 0xFFFFFFF8) + ~(X & 0x07);
 
-  Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width,X0,Y0);
+  if(Screen_Para.Scan_Para.Rows_Fold EQ 0 ||\
+     Screen_Para.Scan_Para.Cols_Fold EQ 0)
+   {
+
+#if QT_EN
+    Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
+#else
+    Index = Screen_Para.Base_Para.Width*Y + X;//GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
+#endif
+	 //if(Screen_Para.Scan_Para.Direct < 2)
+	   //Index = Screen_Para.Base_Para.Width/8 - 1 - Index;
+   }
+   else
+   {
+	 Index = 0;
+   }
+  
   return Index;
 }
 //获取区域中某点的索引
@@ -276,29 +279,15 @@ INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y)
 #endif 
 */ 
     //Index = (((Y>>3) * Screen_Para.Base_Para.Width) + X)*8 + (Y & 0x07);
-    Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
-    return Index; 
+
   }
-  else if(Area_No EQ MAX_AREA_NUM) //表示整屏数据
-  {/*
-#if DATA_CHK_EN
-    if(X >= Screen_Para.Base_Para.Width ||\
-       Y >= Screen_Para.Base_Para.Height)
-    {
-      ASSERT_FAILED();
-      return 0;
-    }
+
+#if QT_EN
+    Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
+#else
+    Index = Screen_Para.Base_Para.Width*Y + X;//GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
 #endif
-*/  
-    //Index = (((Y>>3) * Screen_Para.Base_Para.Width) + X)*8 + (Y & 0x07);
-    Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
-    return Index;  
-  }
-  else
-  {
-    ASSERT_FAILED();
-    return 0;
-  }
+    return Index;
 }
 
 //位拷贝
@@ -378,26 +367,40 @@ INT8U Get_Area_Point_Data(S_Show_Data *pSrc_Buf, INT8U Area_No, INT16U X, INT16U
 {
   INT32U Index;
   INT32U Temp;
+  INT8U Value;
 
+#if QT_EN
   Index = Get_Area_Point_Index(Area_No, X, Y);
+#else
+  if(pSrc_Buf EQ &Show_Data_Bak)
+    Index = Get_Area_Point_Index(Area_No, X, Y);
+  else
+    Index = Get_Area_Point_Index0(Area_No, X, Y);
+#endif
 
   if(Screen_Status.Color_Num <2)//Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)  //0,1,2,4单色屏
-    return Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data),Index);
+    Value = Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data),Index);
   else if(Screen_Status.Color_Num EQ 2)//Screen_Para.Base_Para.Color EQ 3 || Screen_Para.Base_Para.Color EQ 5 || Screen_Para.Base_Para.Color EQ 6) //双色屏
   {
     Temp = ((Index>>3)<<4);
-    return Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), Temp + (Index & 0x07)) +\
+    Value = Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), Temp + (Index & 0x07)) +\
       (Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), Temp + 8 + (Index & 0x07))<<1);
   }
   else if(Screen_Status.Color_Num EQ 3)// //三色屏
   {
      Temp = (Index>>3)*24;
-     return Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), Temp + (Index & 0x07)) +\
+     Value = Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), Temp + (Index & 0x07)) +\
       (Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), Temp + 8 + (Index & 0x07))<<1)+
       (Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data), Temp + 16 + (Index & 0x07))<<2);
   } 
   else
-    return 0;
+    Value = 0;
+
+#if QT_EN EQ 0
+	if(pSrc_Buf EQ &Show_Data && Screen_Para.Scan_Para.Data_Polarity EQ 0) //数据极性的判断
+      Value = ~Value;
+#endif
+    return Value;
 }
 /*
 INT8U Get_Area_Offset_Len(S_Show_Data *pBuf, INT8U Area_No, INT8U **pOff, INT16U *pLen)
@@ -454,11 +457,20 @@ void Set_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT8U Width, I
 void Set_Area_Point_Data(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, INT8U Value) //设置一个区域的点   
 {
   INT32U Index;
-  
+
+#if QT_EN
+  Index = Get_Area_Point_Index(Area_No, X, Y);
+#else
   if(pDst_Buf EQ &Show_Data_Bak)
     Index = Get_Area_Point_Index(Area_No, X, Y);
   else
+  {
     Index = Get_Area_Point_Index0(Area_No, X, Y);
+
+	if(Screen_Para.Scan_Para.Data_Polarity EQ 0) //数据极性的判断
+      Value = ~Value;
+  }
+#endif
 
   if(Screen_Status.Color_Num <2)//Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)  //0,1,2,4单色屏
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data),Index, (Value & 0x01));
@@ -1012,7 +1024,7 @@ void Copy_Filled_Rect0(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, I
   
 }
  
-#if SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
+#if SCAN_DATA_MODE EQ SCAN_SOFT_MODE1
 void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
   S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
   {
@@ -1077,7 +1089,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
 	}
   }
-#elif SCAN_DATA_MODE EQ SCAN_SOFT_MODE1
+#elif SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
 void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
   S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
 {
@@ -1113,7 +1125,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
      //SCAN_INT_ENABLE();
  }
 }
-&/
+*/
 /*
 //复制一个矩形
 void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
@@ -2462,8 +2474,8 @@ void Move_Spin_CCW(INT8U Area_No)
 void Copy_Snow_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
                     S_Show_Data *pDst, S_Point *pPoint1, INT16U Step)
 {
-  INT16U i,j,k;
-  INT16U x, y;
+  INT16U i,j;//,k;
+  INT16U y;
   INT8U Re;
 
   for(i = 0;i < X_Len; i ++)
@@ -2472,7 +2484,7 @@ void Copy_Snow_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X
         Re = Get_Area_Point_Data(pSrc, Area_No, pPoint0->X + i, pPoint0->Y + j);
 
         y = pPoint1->Y + j * SNOW_RATIO + (i + 0) % SNOW_RATIO;
-        x = pPoint0->X + i;
+        //x = pPoint0->X + i;
 
         //y += (x % SNOW_RATIO);
 

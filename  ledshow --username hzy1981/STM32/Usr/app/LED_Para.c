@@ -244,16 +244,34 @@ INT16U _Read_Screen_Para(INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
     return Len;
 }
 
+void Chk_Data_Polarity_Change(INT8U Old_Polarity)
+{
+#if QT_EN EQ 0
+    INT16U i;
+
+	if(Screen_Para.Scan_Para.Data_Polarity != Old_Polarity)
+	{
+	  for(i = 0; i < sizeof(Show_Data.Color_Data); i ++)
+	    Show_Data.Color_Data[i] = ~Show_Data.Color_Data[i];
+	}
+#endif
+}
+
 //读取屏幕参数
 INT16U Read_Screen_Para(void)
 {
     INT16U Len;
+	INT8U Data_Polarity;
+
+    Data_Polarity = Screen_Para.Scan_Para.Data_Polarity;
 
     Len = _Read_Screen_Para(&Screen_Para.Head + 1, &Screen_Para.Head, sizeof(Screen_Para));
 	if(Len EQ 0)
 	{
 	  memset(&Screen_Para, 0, sizeof(Screen_Para));
 	}
+
+	Chk_Data_Polarity_Change(Data_Polarity); //检查数据极性是否发生修改
 
 	SET_HT(Screen_Para);
 	SET_SUM(Screen_Para);

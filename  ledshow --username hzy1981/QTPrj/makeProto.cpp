@@ -626,6 +626,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
         return counts;
     }
 
+    Calc_Screen_Color_Num();
     dataBuf = (char *)malloc(PROTO_DATA_BUF_LEN);
     //读取屏幕参数
     //预览模式或者仿真模式需要写屏幕参数到本地文件

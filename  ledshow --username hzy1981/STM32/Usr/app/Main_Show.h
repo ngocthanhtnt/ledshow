@@ -91,7 +91,7 @@ EXT S_Prep_Data Prep_Data;
 #endif
 
 EXT S_RT_Show_Para RT_Show_Para;
-
+EXT void Ram_Init(void);
 EXT INT32U Get_Area_In_Step_Delay(INT8U Area_No);
 EXT INT32U Get_Area_Out_Step_Delay(INT8U Area_No);
 EXT INT32U Get_File_Stay_Time(INT8U Area_No);
@@ -119,5 +119,7 @@ EXT void Screen_Test(void);
 EXT void Print_Cur_Time(void);
 EXT void Read_Continous_Move_Show_Data(S_Show_Data *pDst, INT8U Area_No);
 EXT void Replay_Prog(void);
+EXT void Clr_Show_Data(void);
+EXT void Set_Show_Data(void);
 EXT void Scan_Mode_Test(INT8U Mode);
 #endif
