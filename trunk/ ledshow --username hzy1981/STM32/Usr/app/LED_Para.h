@@ -51,7 +51,7 @@
 #define COM_GPRS  0x10
 
 #define GET_TEXT_LEN(W,H) (((W)%8) EQ 0)?((W)*(H)/8):(((W)/8+1)*(H))//((H%8) EQ 0)?(W*H/8):(W*(H/8+1))
-#define GET_POINT_INDEX(W,X,Y) ((((W)%8)?((W)/8 + 1)*8:(W))*(Y) + (X))//(((Y>>3) * Width) + X)*8 + (Y & 0x07);
+#define GET_POINT_INDEX(W,X,Y) ((((W)%8)?((W)/8 + 1)*8:(W))*(Y) + (X))//((W)*(Y) + (X))//
 
 #define GET_COLOR_NUM(X) ((X) < 3)?1:2
 
@@ -756,6 +756,8 @@ EXT S_Cur_Block_Index Cur_Block_Index;
 
 EXT S_Time Cur_Time; //当前时间 
 EXT INT8U Get_Screen_Color_Num(void);
+EXT void Clr_All_Show_Data(void);
+EXT void Chk_Data_Polarity_Change(INT8U Old_Polarity);
 EXT INT16U Read_Screen_Para(void);
 EXT INT8U Write_Screen_Para(void);
 EXT INT16U _Read_Prog_Para(INT8U Prog_No, INT8U *pDst, INT8U *pDst_Start, INT16U DstLen);

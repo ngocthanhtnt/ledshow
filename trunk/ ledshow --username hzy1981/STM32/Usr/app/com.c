@@ -370,6 +370,9 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 #pragma pack(1)
   S_Screen_Base_Para Base_Para;
 #pragma pack()
+  INT8U Data_Polarity;
+
+  Data_Polarity = Screen_Para.Scan_Para.Data_Polarity;
 
   if(Cmd EQ C_SCREEN_PARA && Len >= sizeof(Screen_Para) - CHK_BYTE_LEN)
   {
@@ -428,6 +431,8 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 
   SET_SUM(Screen_Para);
   Write_Screen_Para(); //±£´æÆÁÄ»²ÎÊý
+
+  Chk_Data_Polarity_Change(Data_Polarity);
   return 1;
 }
 

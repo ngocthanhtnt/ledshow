@@ -240,11 +240,37 @@ void Clr_All_Area_Status()
 */
 void Clr_Show_Data(void)
 {
-  memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
+#if QT_EN
+  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+#else
+  if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
+    memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
+  else
+    memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+#endif
+}
+
+void Set_Show_Data(void)
+{
+#if QT_EN
+  memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
+#else
+  if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
+    memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+  else
+    memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
+#endif
+}
+/*
+void Clr_All_Show_Data(void)
+{
+  Clr_Show_Data();
+
   memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
   SET_HT(Show_Data);
   SET_HT(Show_Data_Bak);
 }
+*/
 
 //读取连移数据
 void Read_Continous_Move_Show_Data(S_Show_Data *pDst, INT8U Area_No)
@@ -982,7 +1008,7 @@ void Check_Update_Program_Para(void)
         {
           TRACE();
 
-          Clr_Show_Data();
+          Clr_All_Show_Data();
 
           Prog_Status.Play_Status.Last_Prog_No = Prog_No;
           Prog_Status.Play_Status.New_Prog_Flag = 0;
@@ -1240,7 +1266,13 @@ void Ram_Init(void)
 #if DATA_PREP_EN >0
   memset(&Prep_Data, 0, sizeof(Prep_Data));
 #endif  
-  memset(&Show_Data, 0, sizeof(Show_Data));
+
+#if QT_EN
+  memset(&Show_Data, 0x00, sizeof(Show_Data));
+#else
+  memset(&Show_Data, 0xFF, sizeof(Show_Data));
+#endif
+
   memset(&Show_Data_Bak, 0, sizeof(Show_Data_Bak));
   memset(&Cur_Block_Index, 0, sizeof(Cur_Block_Index));
   memset(&Cur_Time, 0, sizeof(Cur_Time));
@@ -1361,7 +1393,7 @@ void Restore_Show_Area(void)
 //显示初始化
 void Para_Init(void)
 {
-
+  Ram_Init();
   Read_Screen_Para();
   Calc_Screen_Color_Num(); //计算屏幕颜色个数
   Build_Scan_Data_Index(); //构建索引表
@@ -1396,21 +1428,21 @@ void Screen_Test(void)
   INT16U i, j;
   S_Point P0,P1;
   INT8U Test_Key_Up_Flag;
-/*
+ /*
    Screen_Para.Base_Para.Width = 64; 
    Screen_Para.Base_Para.Height = 32;
-   Screen_Para.Base_Para.Color = 0x01;
+   Screen_Para.Base_Para.Color = 0x03;
 
    Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
 
    
    while(1)
    {
-   	 Set_Area_Point_Data(&Show_Data, 0, 34, 16, 0x01);
-	
-
+   	 Set_Area_Point_Data(&Show_Data, 0, 32, 16, 0x01);
+	 Set_Area_Point_Data(&Show_Data, 0, 32, 17, 0x02);
+	 Set_Area_Point_Data(&Show_Data, 0, 32, 18, 0x03);
    }  
-*/
+  */
  //--------------------
 #if RMDK_SIM_EN EQ 0
   //测试按键按下并且当前没有在工厂状态，则进入屏幕自检
@@ -1456,7 +1488,7 @@ void Screen_Test(void)
   //-------------------
   while(1)
   {
-    memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
+	Set_Show_Data();
 
     for(j = 0; j < 300; j ++)
 	{
@@ -1475,7 +1507,7 @@ void Screen_Test(void)
 	if(j != 300)
 	  break;
 
-    memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+    Clr_Show_Data();
 
     for(j = 0; j < 300; j ++)
 	{
@@ -1498,7 +1530,8 @@ void Screen_Test(void)
   //Delay_ms(500);
  i=0;
   //横向线测试
-  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+  Clr_Show_Data();
+
   while(1)
   {
     P0.X = i;
@@ -1535,7 +1568,7 @@ void Screen_Test(void)
   //Delay_ms(500);
   i=0;
   //纵向线测试
-  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+  Clr_Show_Data();
   while(1)
   {
     P0.X = 0;
@@ -1570,7 +1603,7 @@ void Screen_Test(void)
 
    }
 
-  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+  Clr_Show_Data();
   
   Restore_Show_Area();
   RT_Play_Status_Exit(); //退出实时显示状态
@@ -1581,7 +1614,7 @@ void Replay_Prog(void)
 {
 	debug("replay prog");
 	
-	memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
+	Clr_Show_Data();
 	memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
 	#if DATA_PREP_EN
 	memset(&Prep_Data, 0, sizeof(Prep_Data));
@@ -1604,10 +1637,10 @@ void Replay_Prog(void)
 //扫描模式的自检
 void Scan_Mode_Test(INT8U Mode)
 {
-  INT32U Data = 0x55AA5AA5;
-  INT8U Re = 1,i,j,k, m, n, tmp, Max_Cols_Fold;
-  INT8U Direct,ErrFlag = 0;
-  S_Time TempTime,TempTime1;
+  //INT32U Data = 0x55AA5AA5;
+  INT8U i,j,k, m, n, tmp, Max_Cols_Fold;
+  //INT8U Direct,ErrFlag = 0;
+  //S_Time TempTime,TempTime1;
 
   if(Screen_Status.Scan_Mode_Test_Flag) //防止重复进入
     return;
@@ -1630,7 +1663,7 @@ void Scan_Mode_Test(INT8U Mode)
   //Screen_Test();
   //----------
   Set_RT_Show_Area(0, 0, 32, 16);
-  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+  Clr_Show_Data();
 
   Screen_Status.Time_OC_Flag = OPEN_FLAG;
   //Show_Data.Color_Data[0] = 0x55;
