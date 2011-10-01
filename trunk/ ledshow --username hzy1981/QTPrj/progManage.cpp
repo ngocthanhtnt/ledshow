@@ -908,6 +908,14 @@ void CprogManage::_deleteItem(int flag)
             //updateItemSubIndex(curItem);
             updateTextHead(parent);
 
+            if(type != AREA_PROPERTY)//当前删除的是文件播放类型
+            {
+              if(parent->childCount() EQ 0) //改分区下没有其他文件播放类型了
+                {
+                    w->screenArea->updateShowArea(parent); //更新改分区的显示部分.---已经没有文件了，清除该分区的显示
+              }
+            }
+
         }
         else
         {/*

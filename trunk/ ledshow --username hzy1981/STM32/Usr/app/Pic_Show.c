@@ -172,6 +172,23 @@ const S_Mode_Func In_Mode_Func[]=
 #endif    
   } //上下合帘
 #endif
+
+#if IN_SPEC_EFFECT_NUM > 21
+  ,{&Move_Left_Right_Reel_Open, H_MODE, 1
+#if QT_EN
+   ,"左右卷轴打开"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 21
+  ,{&Move_Up_Down_Reel_Open, V_MODE, 1
+#if QT_EN
+   ,"上下卷轴打开"
+#endif
+  }
+#endif
+
 #if IN_SPEC_EFFECT_NUM > 23
   ,{&Move_Spin_CW, HV_ADD_MODE, 1
 #if QT_EN
@@ -380,7 +397,7 @@ const S_Mode_Func In_Mode_Func[]=
 
 };
 
-//数据移入方式
+//数据移出方式
 const S_Mode_Func Out_Mode_Func[]=
 {
 #if OUT_SPEC_EFFECT_NUM > 0   
@@ -501,6 +518,22 @@ const S_Mode_Func Out_Mode_Func[]=
    ,"上下合帘" 
 #endif    
   }//15
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 13
+  ,{&Move_Left_Right_Reel_Close, H_MODE, 1
+#if QT_EN
+   ,"左右卷轴关闭"
+#endif
+  }//12
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 13
+  ,{&Move_Up_Down_Reel_Close, V_MODE, 1
+#if QT_EN
+   ,"上下卷轴关闭"
+#endif
+  }//12
 #endif
 
 #if OUT_SPEC_EFFECT_NUM > 17
