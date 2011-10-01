@@ -102,6 +102,7 @@ public:
     //int getHeight();
 
     void draw_point(int x,int y, int value);
+    void clrShowData();
     void setAreaType(int type);
     CshowArea(QWidget *parent = 0, int i = 0);
     ~CshowArea();

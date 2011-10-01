@@ -759,6 +759,7 @@ INT8U _Check_Prog_End(void)
 //返回1表示结束了，0表示还没有结束
 INT8U Check_Prog_End(void)
 {
+    /*
 #if QT_EN
   if(Preview_Mode EQ PREVIEW_SCREEN)
       return _Check_Prog_End();
@@ -767,6 +768,9 @@ INT8U Check_Prog_End(void)
 #else
   return _Check_Prog_End();
 #endif
+  */
+
+return _Check_Prog_End();
 }
 
 //定时信息中，星期的第0位表示星期1，第6位表示星期六

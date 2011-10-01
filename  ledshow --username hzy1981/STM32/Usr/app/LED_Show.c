@@ -7,6 +7,9 @@
 //#define COMPRESSION_RATIO
 #define REV_FLAG 0x01
 #define SCAN_DIS_FLAG 0x02
+
+#define REEL_WIDTH 4
+
 //获取缓冲区中第Index位的值
 INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index)
 {
@@ -2146,12 +2149,12 @@ void Move_Up_Down_Open(INT8U Area_No)
    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0], Prog_Para.Area[Area_No].X_Len, MOVE_STEP, &Show_Data, &Point[0],0);
 
    Point[0].X = 0;
-   Point[0].Y = (Prog_Para.Area[Area_No].Y_Len  - Prog_Status.Area_Status[Area_No].Step) / 2;
+   Point[0].Y = (Prog_Para.Area[Area_No].Y_Len/2  - Prog_Status.Area_Status[Area_No].Step/2);
 
    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0], Prog_Para.Area[Area_No].X_Len, MOVE_STEP, &Show_Data, &Point[0],0);
 
    Point[0].X = 0;
-   Point[0].Y = (Prog_Para.Area[Area_No].Y_Len  + Prog_Status.Area_Status[Area_No].Step) / 2;
+   Point[0].Y = (Prog_Para.Area[Area_No].Y_Len/2  + Prog_Status.Area_Status[Area_No].Step/2);
 
    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0], Prog_Para.Area[Area_No].X_Len, MOVE_STEP, &Show_Data, &Point[0],0);
 }
@@ -2176,35 +2179,20 @@ void Move_Up_Down_Close(INT8U Area_No)
 
 //左右开帘
 void Move_Left_Right_Open(INT8U Area_No)
-{/*
-  S_Point Temp;
-  
-  //if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
-  {
-    Temp.X = (Prog_Status.Area_Status[Area_No].Max_Step - Prog_Status.Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].X_Len / (Prog_Status.Area_Status[Area_No].Max_Step*2);
-    Temp.Y = 0; 
-    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp,  Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp);
-    //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
-  }
-  */
-
+{
     S_Point Point[2];
 
     Point[0].X = Prog_Para.Area[Area_No].X_Len / 2;
     Point[0].Y = 0;
 
-    //Point[1].X = Prog_Para.Area[Area_No].X_Len - 1;
-    //Point[1].Y = Prog_Para.Area[Area_No].Y_Len / 2;
-
-    //Copy_Line(&Show_Data_Bak, Area_No, &Point[0], &Point[1], &Show_Data, &Point[0]);
     Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0],  MOVE_STEP, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Point[0],0);
 
-    Point[0].X = (Prog_Para.Area[Area_No].X_Len  - Prog_Status.Area_Status[Area_No].Step) / 2;
+    Point[0].X = (Prog_Para.Area[Area_No].X_Len/2  - Prog_Status.Area_Status[Area_No].Step/2);
     Point[0].Y = 0;
 
     Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0], MOVE_STEP, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Point[0],0);
 
-    Point[0].X = (Prog_Para.Area[Area_No].X_Len  + Prog_Status.Area_Status[Area_No].Step) / 2;
+    Point[0].X = (Prog_Para.Area[Area_No].X_Len/2  + Prog_Status.Area_Status[Area_No].Step/2);
     Point[0].Y = 0;
 
     Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0], MOVE_STEP, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Point[0],0);
@@ -2226,6 +2214,224 @@ void Move_Left_Right_Close(INT8U Area_No)
       Temp.Y = 0;//* Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*2);
       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp,  MOVE_STEP, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp,0);
       //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
+    }
+}
+
+//左右卷轴打开
+void Move_Left_Right_Reel_Open(INT8U Area_No)
+{
+    S_Point Point[2];
+    INT16U Len;
+
+    Point[0].X = Prog_Para.Area[Area_No].X_Len / 2;
+    Point[0].Y = 0;
+
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0],  MOVE_STEP, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Point[0],0);
+
+    Point[0].X = (Prog_Para.Area[Area_No].X_Len/2  - Prog_Status.Area_Status[Area_No].Step/2);
+    Point[0].Y = 0;
+
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0], MOVE_STEP, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Point[0],0);
+
+    //-----复制轴----
+    if(Point[0].X > REEL_WIDTH)
+    {
+      Point[1].X = Point[0].X - REEL_WIDTH;
+      Len = REEL_WIDTH;
+    }
+    else
+    {
+      Point[1].X = 0;
+      Len = Point[0].X - Point[1].X;
+    }
+    Point[1].Y = 0;
+    Fill_Rect(&Show_Data, Area_No, &Point[1], Len, Prog_Para.Area[Area_No].Y_Len, 1);
+    //---------------------
+
+    Point[0].X = (Prog_Para.Area[Area_No].X_Len/2  + Prog_Status.Area_Status[Area_No].Step/2);
+    Point[0].Y = 0;
+
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0], MOVE_STEP, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Point[0],0);
+
+    //-----复制轴----
+    if(Point[0].X < Prog_Para.Area[Area_No].X_Len)
+    {
+        Point[1].X = Point[0].X + MOVE_STEP;
+        if(Point[0].X + MOVE_STEP + REEL_WIDTH < Prog_Para.Area[Area_No].X_Len)
+        {
+          Len = REEL_WIDTH;
+        }
+        else
+        {
+          Len = Prog_Para.Area[Area_No].X_Len - Point[0].X;
+        }
+        Point[1].Y = 0;
+        Fill_Rect(&Show_Data, Area_No, &Point[1], Len, Prog_Para.Area[Area_No].Y_Len, 1);
+    }
+    //---------------------
+}
+
+//左右卷轴关闭
+void Move_Left_Right_Reel_Close(INT8U Area_No)
+{
+    S_Point Temp[2];
+    INT16U Len;
+
+    //if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
+    {
+      Temp[0].X = (Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) /2 ;
+      Temp[0].Y = 0;//* Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*2);
+      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp[0], MOVE_STEP, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp[0],0);
+
+      //-----复制轴----
+      if(Temp[0].X + MOVE_STEP < Prog_Para.Area[Area_No].X_Len / 2)
+      {
+          Temp[1].X = Temp[0].X + MOVE_STEP;
+          if(Temp[1].X + REEL_WIDTH > Prog_Para.Area[Area_No].X_Len / 2)
+            Len = Prog_Para.Area[Area_No].X_Len / 2 - Temp[1].X;
+          else
+          {
+            Len = REEL_WIDTH;
+          }
+          Temp[1].Y = 0;
+          Fill_Rect(&Show_Data, Area_No, &Temp[1], Len, Prog_Para.Area[Area_No].Y_Len, 1);
+      }
+      //---------------------
+
+      Temp[0].X = Prog_Para.Area[Area_No].X_Len - (Prog_Status.Area_Status[Area_No].Step  + MOVE_STEP) / 2;
+      Temp[0].Y = 0;//* Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*2);
+      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp[0],  MOVE_STEP, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp[0],0);
+      //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
+      //-----复制轴----
+      if(Temp[0].X >= Prog_Para.Area[Area_No].X_Len / 2 + REEL_WIDTH)
+      {
+          Temp[1].X = Temp[0].X - REEL_WIDTH;
+          Len = REEL_WIDTH;
+      }
+      else
+      {
+          Temp[1].X = Prog_Para.Area[Area_No].X_Len / 2;
+          Len = Temp[0].X - Temp[1].X;
+      }
+      Temp[1].Y = 0;
+      Fill_Rect(&Show_Data, Area_No, &Temp[1], Len, Prog_Para.Area[Area_No].Y_Len, 1);
+
+      //---------------------
+
+    }
+}
+//上下卷轴打开
+void Move_Up_Down_Reel_Open(INT8U Area_No)
+{
+    /*
+  S_Point Temp;
+
+  //if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
+  {
+    Temp.X = 0;
+    Temp.Y = (Prog_Status.Area_Status[Area_No].Max_Step - Prog_Status.Area_Status[Area_No].Step)*Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*2);
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Prog_Status.Area_Status[Area_No].Step * Prog_Para.Area[Area_No].Y_Len / Prog_Status.Area_Status[Area_No].Max_Step, &Show_Data, &Temp);
+    //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
+  }
+  */
+
+   S_Point Point[2];
+   INT16U Len;
+
+   Point[0].X = 0;
+   Point[0].Y = Prog_Para.Area[Area_No].Y_Len / 2;
+
+   //Point[1].X = Prog_Para.Area[Area_No].X_Len - 1;
+   //Point[1].Y = Prog_Para.Area[Area_No].Y_Len / 2;
+
+   //Copy_Line(&Show_Data_Bak, Area_No, &Point[0], &Point[1], &Show_Data, &Point[0]);
+   Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0], Prog_Para.Area[Area_No].X_Len, MOVE_STEP, &Show_Data, &Point[0],0);
+
+   Point[0].X = 0;
+   Point[0].Y = (Prog_Para.Area[Area_No].Y_Len/2  - Prog_Status.Area_Status[Area_No].Step/2);
+
+   Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0], Prog_Para.Area[Area_No].X_Len, MOVE_STEP, &Show_Data, &Point[0],0);
+   //-----复制轴----
+   if(Point[0].Y > REEL_WIDTH)
+   {
+     Point[1].Y = Point[0].Y - REEL_WIDTH;
+     Len = REEL_WIDTH;
+   }
+   else
+   {
+     Point[1].Y = 0;
+     Len = Point[0].Y - Point[1].Y;
+   }
+   Point[1].X = 0;
+   Fill_Rect(&Show_Data, Area_No, &Point[1], Prog_Para.Area[Area_No].X_Len, Len, 1);
+   //---------------------
+
+   Point[0].X = 0;
+   Point[0].Y = (Prog_Para.Area[Area_No].Y_Len/2  + Prog_Status.Area_Status[Area_No].Step/2);
+
+   Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Point[0], Prog_Para.Area[Area_No].X_Len, MOVE_STEP, &Show_Data, &Point[0],0);
+   //-----复制轴----
+   if(Point[0].Y < Prog_Para.Area[Area_No].Y_Len)
+   {
+       Point[1].Y = Point[0].Y + MOVE_STEP;
+       if(Point[0].Y + MOVE_STEP + REEL_WIDTH < Prog_Para.Area[Area_No].Y_Len)
+       {
+         Len = REEL_WIDTH;
+       }
+       else
+       {
+         Len = Prog_Para.Area[Area_No].Y_Len - Point[0].Y;
+       }
+       Point[1].X = 0;
+       Fill_Rect(&Show_Data, Area_No, &Point[1], Prog_Para.Area[Area_No].X_Len, Len, 1);
+   }
+   //---------------------
+}
+
+//上下卷轴关闭
+void Move_Up_Down_Reel_Close(INT8U Area_No)
+{
+    S_Point Temp[2];
+    INT16U Len;
+
+    //if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
+    {
+      Temp[0].X = 0;
+      Temp[0].Y = (Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) /2 ;//* Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*2);
+      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp[0], Prog_Para.Area[Area_No].X_Len, MOVE_STEP, &Show_Data, &Temp[0],0);
+      //-----复制轴----
+      if(Temp[0].Y + MOVE_STEP < Prog_Para.Area[Area_No].Y_Len / 2)
+      {
+          Temp[1].Y = Temp[0].Y + MOVE_STEP;
+          if(Temp[1].Y + REEL_WIDTH > Prog_Para.Area[Area_No].Y_Len / 2)
+            Len = Prog_Para.Area[Area_No].Y_Len / 2 - Temp[1].Y;
+          else
+          {
+            Len = REEL_WIDTH;
+          }
+          Temp[1].X = 0;
+          Fill_Rect(&Show_Data, Area_No, &Temp[1], Prog_Para.Area[Area_No].X_Len, Len, 1);
+      }
+      //---------------------
+      Temp[0].X = 0;
+      Temp[0].Y = Prog_Para.Area[Area_No].Y_Len - (Prog_Status.Area_Status[Area_No].Step  + MOVE_STEP) / 2;//* Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*2);
+      Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp[0], Prog_Para.Area[Area_No].X_Len, MOVE_STEP, &Show_Data, &Temp[0],0);
+      //Prog_Status.Area_Status[Area_No].Step += MOVE_STEP;
+      //-----复制轴----
+      if(Temp[0].Y >= Prog_Para.Area[Area_No].Y_Len / 2 + REEL_WIDTH)
+      {
+          Temp[1].Y = Temp[0].Y - REEL_WIDTH;
+          Len = REEL_WIDTH;
+      }
+      else
+      {
+          Temp[1].Y = Prog_Para.Area[Area_No].Y_Len / 2;
+          Len = Temp[0].Y - Temp[1].Y;
+      }
+      Temp[1].X = 0;
+      Fill_Rect(&Show_Data, Area_No, &Temp[1], Prog_Para.Area[Area_No].X_Len, Len, 1);
+
+      //---------------------
     }
 }
 

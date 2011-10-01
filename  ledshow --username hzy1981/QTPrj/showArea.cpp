@@ -670,6 +670,11 @@ CshowArea::CshowArea(QWidget *parent, int colorFlag):QWidget(parent)
     setAutoFillBackground(true);
 }
 
+void CshowArea::clrShowData()
+{
+  memset(showData.Color_Data, 0, sizeof(showData.Color_Data));
+}
+
 //设置分区类型,0表示
 void CshowArea::setAreaType(int type)
 {

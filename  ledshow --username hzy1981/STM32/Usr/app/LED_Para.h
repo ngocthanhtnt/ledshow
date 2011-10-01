@@ -192,6 +192,12 @@ typedef struct
     INT8U APN[40];
     INT8U Mode; //0唤醒方式，1在线方式
 }S_GPRS_Para;
+
+typedef struct
+{
+    INT8U Time[5];
+}S_Valid_Date;
+
 //屏幕参数
 //数据级性--正、反
 //OE级性--低有效、高有效
@@ -233,6 +239,7 @@ typedef struct
   //命令2
   S_Screen_Lightness Lightness;//[MAX_LIGHTNESS_TIME]; //强度
 
+  S_Valid_Date Valid_Date; //有效日期--到达改日期后自动关闭--全0表示不启用改参数
   //命令3
   INT8U Prog_Num; //节目数
   INT8U CS[CS_BYTES];
