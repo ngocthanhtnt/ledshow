@@ -141,7 +141,7 @@ public slots:
     void statusChange(QString str);
     void progressChange(int progress);
     void comEnd(bool flag);
-
+    void hideSlot();
     void comStart();
     void comShow();
 public:
