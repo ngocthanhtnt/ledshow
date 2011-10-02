@@ -1142,6 +1142,8 @@ void MainWindow::previewProc()
   Pub_Timer.Ms100 = msCounts / 100;
   Pub_Timer.Sec = Cur_Time.Time[T_SEC]; //定时器更新
 
+  Calc_Screen_Color_Num(); //重新计算屏幕颜色，可能在其他地方有修改
+
   Show_Main_Proc();
   Show_Main_Proc();
   Show_Main_Proc();

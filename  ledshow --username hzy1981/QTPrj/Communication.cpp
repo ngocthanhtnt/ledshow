@@ -577,11 +577,17 @@ CcomStatus::CcomStatus(QWidget * parent):QDockWidget(tr("Í¨ÐÅ×´Ì¬"), parent)
     connect(this->clrButton, SIGNAL(clicked()), this->screenNameEdit, SLOT(clear()));
     connect(this->clrButton, SIGNAL(clicked()), this->progressBar, SLOT(reset()));
 
-    connect(this->hideButton, SIGNAL(clicked()), this, SLOT(close()));
+    connect(this->hideButton, SIGNAL(clicked()), this, SLOT(hideSlot()));
     //connect(this, SIGNAL(comStart()), this->comth)
     //connect(this, SIGNAL(Start()), this, SLOT(comStart()));
     //QObject::connect(port, SIGNAL(readyRead()), this, SLOT(receive()));
     progressList->setVisible(false);
+}
+
+void CcomStatus::hideSlot()
+{
+  hide();
+   // w->actionComStatus->setChecked(false);
 }
 
 bool checkComMode(INT8U COM_Mode)
