@@ -53,7 +53,7 @@
 #define GET_TEXT_LEN(W,H) (((W)%8) EQ 0)?((W)*(H)/8):(((W)/8+1)*(H))//((H%8) EQ 0)?(W*H/8):(W*(H/8+1))
 #define GET_POINT_INDEX(W,X,Y) ((((W)%8)?((W)/8 + 1)*8:(W))*(Y) + (X))//((W)*(Y) + (X))//
 
-#define GET_COLOR_NUM(X) ((X) < 3)?1:2
+#define GET_COLOR_NUM(X) (((X) < 3)?1:2)
 
 #pragma pack(1)
 typedef struct
@@ -81,6 +81,8 @@ typedef struct
   INT8U Data_Polarity; //数据极性
   INT8U OE_Polarity; //OE极性
   INT8U RG_Reverse; //红绿反转
+
+  INT8U _138Check; //是否138译码器，0表示有，1表示没有
 }S_Scan_Para;
 
 typedef struct
@@ -167,7 +169,7 @@ typedef struct
 
     INT16U Addr; //地址
     //串口
-    INT8U Baud;  //波特率,0表示9600,1表示57600
+    INT8U Baud;  //波特率,0表示57600,1表示9600
 
     INT8U Bak; //备用
 }S_COM_Para;
@@ -241,12 +243,19 @@ typedef struct
 
   S_Valid_Date Valid_Date; //有效日期--到达改日期后自动关闭--全0表示不启用改参数
   //命令3
-  INT8U Prog_Num; //节目数
+  //INT8U Prog_Num; //节目数
   INT8U CS[CS_BYTES];
 
   INT8U Tail;
 }S_Screen_Para;
 
+typedef struct
+{
+  INT8U Head;
+  INT8U Num;
+  INT8U Tail;
+  INT8U CS[CS_BYTES];
+}S_Prog_Num;
 
 //节目属性
 typedef struct
@@ -266,7 +275,7 @@ typedef struct
   
   INT8U Border_Check; //是否显示边框
   INT8U Border_Mode;  //边框模式
-  INT16U Border_StayTime;
+  INT8U Border_Speed;
 
   INT8U Border_Width;   //边框宽度
   INT8U Border_Height;  //边框高度
@@ -296,7 +305,7 @@ typedef struct
   INT8U Border_Type; \//边框类型
   INT8U Border_Color; \//边框颜色
   INT8U Border_Mode; \//边框模式
-  INT16U Border_StayTime //停留时间
+  INT8U Border_Speed //停留时间
 */
 #define BASE_PIC_PARA  INT8U Flag; \
   INT8U Prog_No; \
@@ -313,7 +322,7 @@ typedef struct
   INT8U Border_Type; \
   INT8U Border_Color; \
   INT8U Border_Mode; \
-  INT16U Border_StayTime;\
+  INT8U Border_Speed;\
 
 //图文参数
 typedef struct
@@ -338,7 +347,7 @@ typedef struct
   INT8U Border_Type; //边框类型
   INT8U Border_Color; //边框颜色
   INT8U Border_Mode; //边框模式
-  INT16U Border_StayTime; //停留时间
+  INT8U Border_Speed; //停留时间
  */
   BASE_PIC_PARA
 //-------------------------------------------
@@ -730,6 +739,7 @@ typedef struct
 
 #define SCREEN_PARA_LEN (sizeof(S_Screen_Para) -CHK_BYTE_LEN)
 #define PROG_PARA_LEN   (sizeof(S_Prog_Para)-CHK_BYTE_LEN)
+#define PROG_NUM_LEN    (sizeof(S_Prog_Num)-CHK_BYTE_LEN)
 #define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN)
 #define BLOCK_INDEX_LEN (sizeof(S_Prog_Block_Index) - CHK_BYTE_LEN)
 //#define BLOCK_DATA_LEN 249
@@ -756,6 +766,7 @@ EXT S_Pub_Buf _Pub_Buf;
 EXT S_Screen_Para Screen_Para; //显示屏相关参数
 EXT S_Card_Para Card_Para;   //板卡支持的参数
 EXT S_Prog_Para Prog_Para;  //当前节目属性[MAX_PROGRAM_NUM]; //节目个数
+EXT S_Prog_Num Prog_Num;
 //EXT S_Prog_Block_Index Prog_Block_Index; //当前节目的存储参数
 EXT S_Cur_Block_Index Cur_Block_Index;
 //EXT S_Clock_Para Clock_Para;
@@ -763,8 +774,11 @@ EXT S_Cur_Block_Index Cur_Block_Index;
 
 EXT S_Time Cur_Time; //当前时间 
 EXT INT8U Get_Screen_Color_Num(void);
+EXT void Chk_Baud_Change(INT8U Old_Baud);
 EXT void Clr_All_Show_Data(void);
 EXT void Chk_Data_Polarity_Change(INT8U Old_Polarity);
+EXT INT8U Write_Prog_Num(void);
+EXT INT8U Read_Prog_Num(void);
 EXT INT16U Read_Screen_Para(void);
 EXT INT8U Write_Screen_Para(void);
 EXT INT16U _Read_Prog_Para(INT8U Prog_No, INT8U *pDst, INT8U *pDst_Start, INT16U DstLen);

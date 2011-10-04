@@ -26,6 +26,10 @@
 #define SDI_PROG_PARA_BK0   0x200 //备份0
 #define SDI_PROG_PARA_BK1   0x300 //备份1
 
+#define SDI_PROG_NUM		0x400 //节目个数
+#define SDI_PROG_NUM_BK0    0x500
+#define SDI_PROG_NUM_BK1	0x600
+
 #define SDI_PROG_BLOCK_INDEX     0x1000
 #define SDI_PROG_BLOCK_INDEX_BK0 0x2000
 #define SDI_PROG_BLOCK_INDEX_BK1 0x3000

@@ -667,7 +667,7 @@ void CcomStatus::getCOMParaFromSettings(QString str)
     comThread->COM_Port = settings.value("comPort").toString();
 
     comThread->COM_Para.Addr = settings.value("screenID").toInt();
-    comThread->COM_Para.Baud = settings.value("comBaud").toInt();
+    comThread->COM_Para.Baud = settings.value("baud").toInt();
 
     comThread->ETH_Para.IP = settings.value("ip").toInt();
 
@@ -688,9 +688,9 @@ void CcomStatus::getCOMParaFromSettings(QString str)
       str1 = tr("串口通信方式, ");
       str1 += comThread->COM_Port + tr(" 波特率:");
       if(comThread->COM_Para.Baud EQ 0)
-          str1 += tr("9600");
-      else
           str1 += tr("57600");
+      else
+          str1 += tr("9600");
 
       paraEdit->append(str1);
     }

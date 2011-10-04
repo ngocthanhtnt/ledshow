@@ -295,8 +295,8 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
 
         x = 0;//256;
         y = 0;
-        xLen = 256;
-        yLen = 256;
+        xLen = DEF_SCN_WIDTH / 2;
+        yLen = DEF_SCN_HEIGHT;
 
         settings.setValue("x", x);
         settings.setValue("y", y);

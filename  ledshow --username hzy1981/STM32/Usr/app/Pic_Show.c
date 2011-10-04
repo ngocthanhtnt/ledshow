@@ -176,7 +176,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 23
   ,{&Move_Left_Right_Reel_Open, H_MODE, 1
 #if QT_EN
-   ,"左右卷轴打开"
+   ,"左右卷轴"
 #endif
   }
 #endif
@@ -184,7 +184,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 24
   ,{&Move_Up_Down_Reel_Open, V_MODE, 1
 #if QT_EN
-   ,"上下卷轴打开"
+   ,"上下卷轴"
 #endif
   }
 #endif
@@ -255,17 +255,17 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 34
   ,{&Move_Left_Tensile, FIX_MODE, 100
 #if QT_EN
-   ,"左拉伸" 
+   ,"右拉伸"
 #endif    
-  }//左拉伸
+  }//右拉伸
 #endif
 #if IN_SPEC_EFFECT_NUM > 35
   //{&Move_Right_Tensile}//右拉伸
   ,{&Move_Up_Tensile, FIX_MODE, 100
 #if QT_EN
-   ,"上拉伸" 
+   ,"下拉伸"
 #endif    
-  }//上拉伸
+  }//下拉伸
 #endif
 #if IN_SPEC_EFFECT_NUM > 36
   //{&Move_Down_Tensile}//下拉伸
@@ -523,7 +523,7 @@ const S_Mode_Func Out_Mode_Func[]=
 #if OUT_SPEC_EFFECT_NUM > 17
   ,{&Move_Left_Right_Reel_Close, H_MODE, 1
 #if QT_EN
-   ,"左右卷轴关闭"
+   ,"左右卷轴"
 #endif
   }//12
 #endif
@@ -531,7 +531,7 @@ const S_Mode_Func Out_Mode_Func[]=
 #if OUT_SPEC_EFFECT_NUM > 18
   ,{&Move_Up_Down_Reel_Close, V_MODE, 1
 #if QT_EN
-   ,"上下卷轴关闭"
+   ,"上下卷轴"
 #endif
   }//12
 #endif
@@ -748,12 +748,20 @@ void Calc_Show_Mode_Step(INT8U Area_No)
     return 1;
  }
 
+INT16U Calc_Move_Step(void)
+{
+  INT32U Size;
+
+  Size = Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * GET_COLOR_NUM(Screen_Para.Base_Para.Color)/8;
+  return Size / 8192 + 1;
+}
+
 void Update_Pic_Data(INT8U Area_No)
 {
   //INT8U i;
   INT8U In_Mode, Out_Mode;
   INT16U Area_Width, Area_Height;
-  INT32U Stay_Time,In_Delay, Out_Delay;
+  INT32U Stay_Time,In_Delay, Out_Delay;// Size;
   //INT32U In_Step_Bak;
   //INT32U Out_Time;
   S_Point P0;
@@ -766,83 +774,9 @@ void Update_Pic_Data(INT8U Area_No)
     return;
   
   Stay_Time = Get_File_Stay_Time(Area_No);
-  //if(Stay_Time == 0)
-    //Stay_Time = Get_Area_In_Step_Delay(Area_No);
-  //Out_Time = Get_File_Out_Time(Area_No);
-  
-//---------------------------------------------------------  
 
-  //In_Step_Bak = Prog_Status.Area_Status[Area_No].In_Step;
-
- //------------------------------------------------------- 
-  /*
- if(Prog_Status.Area_Status[Area_No].In_Step EQ 0 &&\
-    Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
-  {
-    In_Mode = Prog_Status.File_Para[Area_No].Pic_Para.In_Mode;
-    //In_Mode == 0随机,1立即显示,2连续左移
-    if(In_Mode EQ 0) //随机
-        In_Mode = rand()%S_NUM(In_Mode_Func);//Cur_Time.Time[T_SEC] % S_NUM(In_Mode_Func);
-    else
-        In_Mode = In_Mode - 1;
-
-    Prog_Status.Area_Status[Area_No].In_Mode = In_Mode;
-	Set_Area_Border_Out(Area_No);
-    Prog_Status.Area_Status[Area_No].In_Max_Step = Get_In_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
-    Set_Area_Border_In(Area_No);
-  }
-  */
-
-  //-------连续左移或上移等要特殊处理
- /*
-  if(Prog_Status.Area_Status[Area_No].New_SCN_Flag)
-  {
-	  if(Prog_Status.Area_Status[Area_No].In_Mode >= 1 &&\
-	     Prog_Status.Area_Status[Area_No].In_Mode <= 2 &&\
-	     Stay_Time EQ 0 &&\
-		 Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag) EQ 0) //连续左移和上移
-	   {
-		   In_Delay = Get_Area_In_Step_Delay(Area_No);
-
-	       if(Prog_Status.Area_Status[Area_No].Step_Timer < In_Delay)
-	        Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_PERIOD;
-	
-			if(Prog_Status.Area_Status[Area_No].Step_Timer >= In_Delay)
-			{
-			  Prog_Status.Area_Status[Area_No].Step_Timer = 0;
-			  Prog_Status.Area_Status[Area_No].In_Step += MOVE_STEP;
-			}
-			return;
-		}
-		else
-		  return;
-   }
-*/
-  /*
- if(Prog_Status.Area_Status[Area_No].Out_Step EQ 0 &&\
-    Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
- {
-    Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
-
-    if(Out_Mode EQ 0) //0随机,1不清屏,2立即清屏,3左移...
-       Out_Mode = rand()%(S_NUM(Out_Mode_Func) + 1);//Cur_Time.Time[T_SEC] % S_NUM(Out_Mode_Func);
-    else if(Out_Mode EQ 1)
-       Out_Mode = 0; //修正为0不清屏
-    else if(Out_Mode >= 2) //正常清屏方式
-       Out_Mode = Out_Mode - 1;
-
-    //0不清，1-N正常清屏方式...
-    Prog_Status.Area_Status[Area_No].Out_Mode = Out_Mode; //此时0表示不清屏,1-N表示清屏方式
-
-	Set_Area_Border_Out(Area_No);
-    if(Out_Mode >= 1)
-      Prog_Status.Area_Status[Area_No].Out_Max_Step = Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, Out_Mode - 1);
-    else //不清屏
-      Prog_Status.Area_Status[Area_No].Out_Max_Step = 100;//Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, Out_Mode - 1);
-    Set_Area_Border_In(Area_No);
- }
- */
-
+  //Size = Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * GET_COLOR_NUM(Screen_Para.Base_Para.Color)/8;
+  MOVE_STEP = Calc_Move_Step();//Size / 8192 + 1;
   //还在移动状态
   if(Prog_Status.Area_Status[Area_No].In_Step < Prog_Status.Area_Status[Area_No].In_Max_Step)
   {
@@ -871,10 +805,14 @@ void Update_Pic_Data(INT8U Area_No)
       if(Prog_Status.Area_Status[Area_No].Step_Timer >= In_Delay)
       {
         Prog_Status.Area_Status[Area_No].Step_Timer = 0;
-        Prog_Status.Area_Status[Area_No].In_Step += MOVE_STEP;
 
-        if(Prog_Status.Area_Status[Area_No].In_Step > Prog_Status.Area_Status[Area_No].In_Max_Step)
-          Prog_Status.Area_Status[Area_No].In_Step = Prog_Status.Area_Status[Area_No].In_Max_Step;
+		if(Prog_Status.Area_Status[Area_No].In_Step + MOVE_STEP > Prog_Status.Area_Status[Area_No].In_Max_Step) 
+		  MOVE_STEP = Prog_Status.Area_Status[Area_No].In_Max_Step - Prog_Status.Area_Status[Area_No].In_Step;
+        
+		Prog_Status.Area_Status[Area_No].In_Step += MOVE_STEP;
+
+        //if(Prog_Status.Area_Status[Area_No].In_Step > Prog_Status.Area_Status[Area_No].In_Max_Step)
+          //Prog_Status.Area_Status[Area_No].In_Step = Prog_Status.Area_Status[Area_No].In_Max_Step;
 
         In_Mode = Prog_Status.Area_Status[Area_No].In_Mode;
 
@@ -1017,10 +955,14 @@ void Update_Pic_Data(INT8U Area_No)
             if(Prog_Status.Area_Status[Area_No].Step_Timer >= Out_Delay)
             {
               Prog_Status.Area_Status[Area_No].Step_Timer = 0;
-              Prog_Status.Area_Status[Area_No].Out_Step += MOVE_STEP;
 
-              if(Prog_Status.Area_Status[Area_No].Out_Step > Prog_Status.Area_Status[Area_No].Out_Max_Step)
-                Prog_Status.Area_Status[Area_No].Out_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
+			  if(Prog_Status.Area_Status[Area_No].Out_Step + MOVE_STEP > Prog_Status.Area_Status[Area_No].Out_Max_Step) 
+			    MOVE_STEP = Prog_Status.Area_Status[Area_No].Out_Max_Step - Prog_Status.Area_Status[Area_No].Out_Step;
+              
+			  Prog_Status.Area_Status[Area_No].Out_Step += MOVE_STEP;
+
+              //if(Prog_Status.Area_Status[Area_No].Out_Step > Prog_Status.Area_Status[Area_No].Out_Max_Step)
+                //Prog_Status.Area_Status[Area_No].Out_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
 
               //---------
               Out_Mode = Prog_Status.Area_Status[Area_No].Out_Mode;

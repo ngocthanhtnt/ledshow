@@ -234,7 +234,7 @@ INT8U setScreenParaToSettings(QString screenStr, S_Screen_Para &screenPara)
    }
 
    settings.setValue("screenID", screenPara.COM_Para.Addr);
-   settings.setValue("comBaud", screenPara.COM_Para.Baud);
+   settings.setValue("baud", screenPara.COM_Para.Baud);
 
    settings.setValue("ip", screenPara.ETH_Para.IP);
    settings.setValue("mac", screenPara.ETH_Para.Mac);
@@ -309,7 +309,7 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
         screenPara.Base_Para.Color = 0x07;
 
     screenPara.COM_Para.Addr = (INT16U)settings.value("screenID").toInt();
-    screenPara.COM_Para.Baud = settings.value("comBaud").toInt();
+    screenPara.COM_Para.Baud = (INT8U)settings.value("baud").toInt();
 
     screenPara.ETH_Para.IP = settings.value("ip").toInt();
     screenPara.ETH_Para.Mac = settings.value("mac").toInt();
@@ -321,6 +321,7 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     screenPara.Scan_Para.Line_Order = settings.value("lineOrder").toInt();
     screenPara.Scan_Para.Line_Hide = settings.value("lineHide").toInt();
     screenPara.Scan_Para.Clk_Freq = settings.value("freq").toInt(); //移位频率
+    screenPara.Scan_Para._138Check = settings.value("138Check").toInt();
 
     //扫描方式
     int scanMode = settings.value("scanMode").toInt();
@@ -1699,7 +1700,7 @@ void CcomTest::autoConnect()
     settings.beginGroup("comTest");
 
     oldComMode = settings.value("comMode").toInt(); //老的通信模式
-    oldComBaud = settings.value("comBaud").toInt(); //老的波特率
+    oldComBaud = settings.value("baud").toInt(); //老的波特率
     oldComPortStr = settings.value("comPort").toString(); //保存老的端口
 
     settings.setValue("comMode", 0); //串口通信方式
@@ -1714,7 +1715,7 @@ void CcomTest::autoConnect()
             settings.beginGroup("comTest");
 
             settings.setValue("comPort", portList.at(i)); //设置端口
-            settings.setValue("comBaud", j); //设置波特率
+            settings.setValue("baud", j); //设置波特率
 
             settings.endGroup();
             settings.endGroup();
@@ -1741,7 +1742,7 @@ void CcomTest::autoConnect()
     settings.beginGroup("comTest");
 
     settings.setValue("comPort", oldComPortStr);
-    settings.setValue("comBaud", oldComBaud);
+    settings.setValue("baud", oldComBaud);
     settings.setValue("comMode", oldComMode);
 
     settings.endGroup();
@@ -1805,7 +1806,7 @@ void CcomTest::getSettingsFromWidget(QString str)
     settings.setValue("comPort", comPortEdit->currentText());
     //settings.setValue("comPort", comPortEdit->currentIndex());
 
-    settings.setValue("comBaud", comBaudCombo->currentIndex());
+    settings.setValue("baud", comBaudCombo->currentIndex());
     settings.setValue("ip", ipEdit->getIP());
 
     settings.endGroup();
@@ -1821,7 +1822,7 @@ void getComTestParaFromSettings(QString str, S_Screen_Para &screenPara)
     screenPara.Com_Port = settings.value("comPort").toInt();
 
     screenPara.COM_Para.Addr = settings.value("screenID").toInt();
-    screenPara.COM_Para.Baud = settings.value("comBaud").toInt();
+    screenPara.COM_Para.Baud = settings.value("baud").toInt();
 
     screenPara.ETH_Para.IP = settings.value("ip").toInt();
 
@@ -1842,7 +1843,7 @@ void CcomTest::setSettingsToWidget(QString str)
     screenIDEdit->setValue(settings.value("screenID").toInt());
     //comPortEdit->setCurrentIndex(settings.value("comPort").toInt());
     comPortEdit->setEditText(settings.value("comPort").toString());
-    comBaudCombo->setCurrentIndex(settings.value("comBaud").toInt());
+    comBaudCombo->setCurrentIndex(settings.value("baud").toInt());
     ipEdit->setIP(settings.value("ip").toInt());
 
     settings.endGroup();
@@ -1908,8 +1909,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     screenIDEdit->setFixedWidth(WIDTH_0);
 
     baudCombo = new QComboBox(this);
-    baudCombo->addItem("9600");
     baudCombo->addItem("57600");
+    baudCombo->addItem("9600");
     baudCombo->setFixedWidth(WIDTH_0);
 
     redGreenRevCheck = new QCheckBox(tr("红绿取反"),this);
@@ -1935,19 +1936,21 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     widthEdit->setFixedWidth(WIDTH_0);
     widthEdit->setSingleStep(8);
     widthEdit->setMinimum(8);
-    widthEdit->setMaximum(4096);
-    widthEdit->setFocusPolicy(Qt::NoFocus); //禁止键盘输入
-    widthEdit->setValue(256); //初始默认值
+    widthEdit->setMaximum(8192);
+    //widthEdit->setFocusPolicy(Qt::NoFocus); //禁止键盘输入
+    widthEdit->setValue(DEF_SCN_WIDTH); //初始默认值
 
     heightEdit = new QSpinBox(this);
     heightEdit->setFixedWidth(WIDTH_0);
     heightEdit->setSingleStep(8);
     heightEdit->setMinimum(8);
     heightEdit->setMaximum(4096);
-    heightEdit->setFocusPolicy(Qt::NoFocus); //禁止键盘输入
-    heightEdit->setValue(256); //初始默认值
+    //heightEdit->setFocusPolicy(Qt::NoFocus); //禁止键盘输入
+    heightEdit->setValue(DEF_SCN_HEIGHT); //初始默认值
 
-    _138Check = new QCheckBox(tr("使用138译码器"),this);
+    _138Combo = new QComboBox(this);//new QCheckBox(tr("使用138译码器"),this);
+    _138Combo->addItem(tr("有"));
+    _138Combo->addItem(tr("无"));
 
     //----------------------------------------------------------------
 
@@ -1968,13 +1971,16 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    gridLayout->addWidget(screenIDEdit, 0, 1);
    gridLayout->addWidget(baudComboLabel, 0, 2);
    gridLayout->addWidget(baudCombo, 0, 3);
-   gridLayout->addWidget(redGreenRevCheck,0,4,1,2);
+
 
    gridLayout->addWidget(dataPolarityLabel, 1, 0);
    gridLayout->addWidget(dataPolarityCombo, 1, 1);
+   /*-----------不需要软件设置OE，直接硬件跳线选择--------
    gridLayout->addWidget(oePolarityLabel, 1, 2);
    gridLayout->addWidget(oePolarityCombo, 1, 3);
-   gridLayout->addWidget(_138Check, 1, 4, 1, 2);
+   */
+
+   gridLayout->addWidget(redGreenRevCheck,1,2,1,2);
 
    gridLayout->addWidget(widthLabel, 2, 0);
    gridLayout->addWidget(widthEdit, 2, 1);
@@ -2094,12 +2100,12 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    lineHideCombo->addItem(tr("2"));
    lineHideCombo->addItem(tr("3"));
    lineHideCombo->addItem(tr("4"));
-   lineHideCombo->addItem(tr("5"));
-   lineHideCombo->addItem(tr("6"));
-   lineHideCombo->addItem(tr("7"));
-   lineHideCombo->addItem(tr("8"));
-   lineHideCombo->addItem(tr("9"));
-   lineHideCombo->addItem(tr("10最长"));
+   lineHideCombo->addItem(tr("5最长"));
+   //lineHideCombo->addItem(tr("6"));
+   //lineHideCombo->addItem(tr("7"));
+   //lineHideCombo->addItem(tr("8"));
+   //lineHideCombo->addItem(tr("9"));
+   //lineHideCombo->addItem(tr("10最长"));
 
    dataMirrorCombo = new QComboBox(this);
    dataMirrorCombo->addItem(tr("正常"));
@@ -2114,10 +2120,11 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    vLayout = new QVBoxLayout(this);
 
    gridLayout = new QGridLayout(this);
-   QLabel *freqLabel = new QLabel(tr("时钟频率"),this);
-   QLabel *lineHideLabel = new QLabel(tr("行消隐"),this);
-   QLabel *dataMirrorLabel = new QLabel(tr("数据镜像"),this);
-   QLabel *lineOrderLabel = new QLabel(tr("行顺序"),this);
+   freqLabel = new QLabel(tr("时钟频率"),this);
+   lineHideLabel = new QLabel(tr("行消隐"),this);
+   dataMirrorLabel = new QLabel(tr("数据镜像"),this);
+   lineOrderLabel = new QLabel(tr("行顺序"),this);
+   _138Label= new QLabel(tr("138译码器"), this);
 
    gridLayout->addWidget(defParaCheck,0,0,1,2);
 
@@ -2127,8 +2134,10 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    gridLayout->addWidget(lineHideLabel, 1, 2);
    gridLayout->addWidget(lineHideCombo,1,3);
 
-   gridLayout->addWidget(dataMirrorLabel, 2, 0);
-   gridLayout->addWidget(dataMirrorCombo, 2, 1);
+   //gridLayout->addWidget(dataMirrorLabel, 2, 0);
+   //gridLayout->addWidget(dataMirrorCombo, 2, 1);
+   gridLayout->addWidget(_138Label, 2, 0);
+   gridLayout->addWidget(_138Combo, 2, 1);
 
    gridLayout->addWidget(lineOrderLabel, 2, 2);
    gridLayout->addWidget(lineOrderCombo,2,3);
@@ -2152,6 +2161,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    vLayout->addLayout(hLayout);
    readParaGroup->setLayout(vLayout);
    tabWidget->addTab(readParaGroup, tr("回读参数"));
+
 
    hLayout = new QHBoxLayout(this);
    endButton = new QPushButton(tr("关闭"), this);
@@ -2219,8 +2229,15 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    memset(&readScreenPara, 0, sizeof(readScreenPara));
 
 
-  //----暂时将网络参数删除！
+  //----暂时将网络参数和回读参数删除！
    tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
+   tabWidget->removeTab(tabWidget->indexOf(readParaGroup));
+   //-------------
+   oePolarityLabel->setVisible(false);
+   oePolarityCombo->setVisible(false);
+
+   dataMirrorLabel->setVisible(false);
+   dataMirrorCombo->setVisible(false);
 }
 
 /*
@@ -2241,7 +2258,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
  QComboBox *colorCombo; //颜色
  QSpinBox *widthEdit; //屏宽
  QSpinBox *heightEdit; //屏高
- QCheckBox *_138Check;     //是否有138译码器
+ QCheckBox *_138Combo;     //是否有138译码器
  QComboBox *scanModeCombo; //扫描方式
 
  //高级设置
@@ -2275,7 +2292,7 @@ void CfacScreenProperty::getSettingsFromWidget(QString str)
   settings.setValue("color", colorCombo->currentIndex());
   settings.setValue("width", widthEdit->value());
   settings.setValue("height", heightEdit->value());
-  settings.setValue("_138Check", _138Check->isChecked());
+  settings.setValue("138Check", _138Combo->currentIndex());
   settings.setValue("scanMode", scanModeCombo->currentText().mid(0, 4).toInt());
 
   settings.setValue("advDefPara", defParaCheck->isChecked());
@@ -2322,7 +2339,7 @@ void CfacScreenProperty::setSettingsToWidget(QString str)
         widthEdit->setValue(DEF_SCN_WIDTH);
         heightEdit->setValue(DEF_SCN_HEIGHT);
     }
-    _138Check->setChecked(settings.value("_138Check").toBool());
+    _138Combo->setCurrentIndex(settings.value("138Check").toInt());
     scanModeCombo->setCurrentIndex(getScanModeIndex(settings.value("scanMode").toInt()));
 
     defParaCheck->setChecked(settings.value("advDefPara").toBool());
@@ -2540,11 +2557,11 @@ void CfacScreenProperty::loadParaProc()
     }
 
     int flag = 0;
-    SET_BIT(flag, C_SCREEN_BASE_PARA);
-    SET_BIT(flag, C_SCREEN_COM_PARA);
-    SET_BIT(flag, C_SCREEN_ETH_PARA);
-    SET_BIT(flag, C_SCREEN_GPRS_PARA);
-    SET_BIT(flag, C_SCAN_PARA);
+    SET_BIT(flag, C_SCREEN_PARA);
+    //SET_BIT(flag, C_SCREEN_COM_PARA);
+    //SET_BIT(flag, C_SCREEN_ETH_PARA);
+    //SET_BIT(flag, C_SCREEN_GPRS_PARA);
+    //SET_BIT(flag, C_SCAN_PARA);
     //SET_BIT(flag, C_SCREEN_OC_TIME);
 
     if(QT_SIM_EN)
@@ -2557,7 +2574,7 @@ void CfacScreenProperty::loadParaProc()
     {
       QMessageBox::information(w, tr("提示"),
                              tr("参数发送成功！"),tr("确定"));
-      this->parentWidget()->close(); //参数设置成功则关闭窗口
+      //this->parentWidget()->close(); //参数设置成功则关闭窗口
     }
     else
     {
@@ -2635,11 +2652,19 @@ void CfacScreenProperty::defParaCheckProc()
     lineHideCombo->setCurrentIndex(0);
     dataMirrorCombo->setCurrentIndex(0);
     lineOrderCombo->setCurrentIndex(0);
+    _138Combo->setCurrentIndex(0);
 
     freqCombo->setEnabled(false);
     lineHideCombo->setEnabled(false);
     dataMirrorCombo->setEnabled(false);
     lineOrderCombo->setEnabled(false);
+    _138Combo->setEnabled(false);
+
+    freqLabel->setEnabled(false);
+    lineHideLabel->setEnabled(false);
+    dataMirrorLabel->setEnabled(false);
+    lineOrderLabel->setEnabled(false);
+    _138Label->setEnabled(false);
   }
   else
   {
@@ -2647,6 +2672,13 @@ void CfacScreenProperty::defParaCheckProc()
       lineHideCombo->setEnabled(true);
       dataMirrorCombo->setEnabled(true);
       lineOrderCombo->setEnabled(true);
+      _138Combo->setEnabled(true);
+
+      freqLabel->setEnabled(true);
+      lineHideLabel->setEnabled(true);
+      dataMirrorLabel->setEnabled(true);
+      lineOrderLabel->setEnabled(true);
+      _138Label->setEnabled(true);
   }
 }
 

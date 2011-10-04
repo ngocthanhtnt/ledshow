@@ -37,8 +37,8 @@
 #define ANTIALIAS_VALUE 0x55
 
 #define MIN_AREA 8
-#define DEF_SCN_WIDTH 256
-#define DEF_SCN_HEIGHT 256
+#define DEF_SCN_WIDTH 512
+#define DEF_SCN_HEIGHT 64
 #define DEF_SCN_COLOR  0x01
 
 class CshowArea:public QWidget

@@ -587,8 +587,9 @@ void UART3_Init(void)
 	USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
 	USART_Cmd(USART3, ENABLE);
 }
-//初始化串口
-void Com_Init(void) 
+
+//串口1用于232/485通信
+void UART1_Init(void)
 {
 	USART_InitTypeDef USART_InitStructure = {0};
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -617,6 +618,12 @@ void Com_Init(void)
 	USART_Init(USART1, &USART_InitStructure);
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 	USART_Cmd(USART1, ENABLE); 
+}
+
+//初始化串口
+void Com_Init(void) 
+{
+   UART1_Init();
 
 //	Com_Send_Byte(CH_COM, 0x77);
 //	Com_Send_Byte(CH_COM, 0x88);
