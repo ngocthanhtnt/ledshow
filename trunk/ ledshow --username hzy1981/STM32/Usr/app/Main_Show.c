@@ -119,6 +119,7 @@ void Update_Show_Data(void)
     return;
   }
 */
+ 
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
       if(Screen_Status.Com_Time > 0) //收到一帧，先处理此帧
@@ -925,7 +926,7 @@ void Check_Update_Program_Para(void)
       }
 #endif
 
-      if(Prog_Status.Play_Status.Prog_No >= Screen_Para.Prog_Num ||\
+      if(Prog_Status.Play_Status.Prog_No >= Prog_Num.Num ||\
          Prog_Status.Play_Status.Prog_No >= MAX_PROG_NUM)
       {
         Prog_Status.Play_Status.Prog_No = 0;
@@ -1176,7 +1177,7 @@ void Check_Show_Data_Para(void)
   //INT8U Flag;
 
   Re &= CHK_HT(Screen_Para);
-  //Re &= CHK_HT(Card_Para);  
+  Re &= CHK_HT(Prog_Num);  
   Re &= CHK_HT(Prog_Para);
   Re &= CHK_HT(Prog_Status);
   Re &= CHK_HT(Cur_Block_Index);
@@ -1259,7 +1260,7 @@ void Ram_Init(void)
   //INT8U i;
 
   memset(&Screen_Para, 0, sizeof(Screen_Para));
-  //memset(&Card_Para, 0, sizeof(Card_Para));
+  memset(&Prog_Num, 0, sizeof(Prog_Num));
   memset(&Prog_Para, 0, sizeof(Prog_Para));
 
   memset((void *)&Screen_Status, 0, sizeof(Screen_Status));
@@ -1282,7 +1283,7 @@ void Ram_Init(void)
   memset(&Cur_Time, 0, sizeof(Cur_Time));
 
   SET_HT(Screen_Para);
-//  SET_HT(Card_Para);
+  SET_HT(Prog_Num);
   SET_HT(Prog_Para);
   SET_HT(Screen_Status);
 #if DATA_PREP_EN >0
@@ -1399,6 +1400,7 @@ void Para_Init(void)
 {
   Ram_Init();
   Read_Screen_Para();
+  Read_Prog_Num();
   Calc_Screen_Color_Num(); //计算屏幕颜色个数
   Build_Scan_Data_Index(); //构建索引表
 }

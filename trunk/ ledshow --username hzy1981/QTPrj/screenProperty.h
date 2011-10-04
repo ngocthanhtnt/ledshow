@@ -311,15 +311,21 @@ public slots:
  QComboBox *colorCombo; //颜色
  QSpinBox *widthEdit; //屏宽
  QSpinBox *heightEdit; //屏高
- QCheckBox *_138Check;     //是否有138译码器
  QComboBox *scanModeCombo; //扫描方式
 
  //高级设置
+ QLabel *freqLabel;// = new QLabel(tr("时钟频率"),this);
+ QLabel *lineHideLabel;// = new QLabel(tr("行消隐"),this);
+ QLabel *dataMirrorLabel;// = new QLabel(tr("数据镜像"),this);
+ QLabel *lineOrderLabel;// = new QLabel(tr("行顺序"),this);
+ QLabel *_138Label;
+
  QCheckBox *defParaCheck; //使用默认参数
  QComboBox *freqCombo; //扫描频率
  QComboBox *lineHideCombo; //行消隐藏
  QComboBox *dataMirrorCombo; //数据镜像
  QComboBox *lineOrderCombo; //行顺序
+ QComboBox *_138Combo;     //是否有138译码器
  //------------------
 
  //CcomTest *comTest;

@@ -191,6 +191,46 @@ INT8U Chk_File_Para_HT_Sum(U_File_Para *pPara)
     return Re;
 }
 
+//写入节目个数
+INT8U Write_Prog_Num(void)
+{
+  //INT8U Prog_No = Prog_Para.Prog_No;
+  Write_Storage_Data(SDI_PROG_NUM , &Prog_Num.Num, sizeof(Prog_Num.Num));
+  
+#ifdef SDI_SCREEN_PARA_BK0 
+  Write_Storage_Data(SDI_PROG_NUM_BK0, &Prog_Num.Num, sizeof(Prog_Num.Num));
+#endif
+
+#ifdef SDI_SCREEN_PARA_BK1 
+  Write_Storage_Data(SDI_PROG_NUM_BK1, &Prog_Num.Num, sizeof(Prog_Num.Num));
+#endif  
+ 
+  return 1;
+
+}
+
+//读取节目个数
+INT8U Read_Prog_Num(void)
+{
+    INT16U Len;
+
+    Len = Read_Storage_Data(SDI_PROG_NUM,  &Prog_Num.Num, &Prog_Num.Num, sizeof(Prog_Num.Num));
+  #ifdef SDI_PROG_NUM_BK0
+    if(Len EQ 0)
+      Len = Read_Storage_Data(SDI_PROG_NUM_BK0,  &Prog_Num.Num, &Prog_Num.Num, sizeof(Prog_Num.Num));
+  #endif
+
+  #ifdef SDI_PROG_NUM_BK1
+    if(Len EQ 0)
+      Len = Read_Storage_Data(SDI_PROG_NUM_BK1,  &Prog_Num.Num, &Prog_Num.Num, sizeof(Prog_Num.Num));
+  #endif
+
+    if(Len EQ 0)
+	  Prog_Num.Num = 0;
+
+	SET_SUM(Prog_Num);
+	return Len;
+}
 
 //保存参数帧处理
 INT8U _Write_Screen_Para(INT8U *pSrc, INT16U SrcLen)
@@ -234,6 +274,11 @@ INT16U _Read_Screen_Para(INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
     if(Len EQ 0)
       Len = Read_Storage_Data(SDI_SCREEN_PARA_BK1,  pDst, pDst_Start, DstLen);
   #endif
+
+   #ifdef SDI_SCREEN_PARA_BK2
+    if(Len EQ 0)
+      Len = Read_Storage_Data(SDI_SCREEN_PARA_BK2,  pDst, pDst_Start, DstLen);
+  #endif
  /*
     if(Len EQ 0)
     {
@@ -244,6 +289,7 @@ INT16U _Read_Screen_Para(INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
     return Len;
 }
 
+//检查数据极性参数是否发生修改
 void Chk_Data_Polarity_Change(INT8U Old_Polarity)
 {
 #if QT_EN EQ 0
@@ -254,6 +300,18 @@ void Chk_Data_Polarity_Change(INT8U Old_Polarity)
 	  for(i = 0; i < sizeof(Show_Data.Color_Data); i ++)
 	    Show_Data.Color_Data[i] = ~Show_Data.Color_Data[i];
 	}
+#endif
+}
+
+//检查波特率参数是否发生修改
+void Chk_Baud_Change(INT8U Old_Baud)
+{
+#if QT_EN EQ 0
+  if(Old_Baud != Screen_Para.COM_Para.Baud)
+  {
+    Delay_ms(5);
+    UART1_Init(); //重新初始化通信端口
+  }
 #endif
 }
 
@@ -1140,7 +1198,7 @@ void Clr_All_Show_Data(void)
 {
   INT8U i;
 
-  for(i = 0; i < Screen_Para.Prog_Num; i ++)
+  for(i = 0; i < Prog_Num.Num && i < MAX_PROG_NUM; i ++)
     Clr_Prog_Show_Data(i);
   
 }

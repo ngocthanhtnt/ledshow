@@ -184,7 +184,7 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     //QGridLayout *gridLayout;
     //QHBoxLayout *hLayout;
     //QVBoxLayout *vLayout;
-    QValidator *inoutSpeedValidator = new QIntValidator(0,999,this);
+    //QValidator *inoutSpeedValidator = new QIntValidator(0,999,this);
     QValidator *stayTimeValidator = new QIntValidator(0,9999,this);
     QValidator *playCountsValidator = new QIntValidator(1,255,this);
     //gridLayout = new QGridLayout(this);
@@ -1617,7 +1617,7 @@ void getBorderParaFromeSettings(QString str, U_File_Para &para)
 
     para.Pic_Para.Border_Mode = settings.value("borderMode").toInt();
     //para.Border_Speed = settings.value("borderSpeed").toInt();
-    para.Pic_Para.Border_StayTime = (INT16U)(settings.value("borderSpeed").toInt() + 1)*MOVE_STEP_PERIOD;
+    para.Pic_Para.Border_Speed = (INT8U)settings.value("borderSpeed").toInt();// + 1)*MOVE_STEP_PERIOD;
 
     para.Pic_Para.Border_Check = check;
     para.Pic_Para.Border_Color = getColorDataFromIndex(color);

@@ -632,6 +632,24 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
     //预览模式或者仿真模式需要写屏幕参数到本地文件
     //if(mode EQ PREVIEW_MODE || mode EQ SIM_MODE)
     {
+        //设置屏幕参数
+        if(GET_BIT(flag, C_SCREEN_PARA))
+        {
+            len = makeFrame((char *)&Screen_Para.Base_Para, sizeof(Screen_Para) - CHK_BYTE_LEN,\
+                       C_SCREEN_PARA | WR_CMD, seq++, frameBuf);
+            counts++;
+            fwrite(frameBuf, len, 1, file);
+        }
+
+        //串口通信参数
+        if(GET_BIT(flag, C_SCREEN_COM_PARA))
+        {
+            len = makeFrame((char *)&Screen_Para.COM_Para, sizeof(Screen_Para.COM_Para),\
+                       C_SCREEN_COM_PARA | WR_CMD, seq++, frameBuf);
+            counts++;
+            fwrite(frameBuf, len, 1, file);
+        }
+
         //设置屏幕基本参数
         if(GET_BIT(flag, C_SCREEN_BASE_PARA))
         {
@@ -680,7 +698,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
     progNum = progList.size();
     debug("prog num = %d", progNum);
 
-    //if(GET_BIT(flag, C_SCREEN_LIGNTNESS))
+    if(GET_BIT(flag, C_PROG_DATA))
     {
       len = makeFrame((char *)&progNum, sizeof(progNum),\
                C_PROG_NUM | WR_CMD, seq++, frameBuf);

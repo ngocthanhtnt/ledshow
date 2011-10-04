@@ -17,7 +17,7 @@ typedef struct
   S_Area Area[MAX_AREA_NUM]; //区域定义
   
   INT8U Border_Check; //是否显示边框
-  INT16U Border_StayTime;
+  INT8U Border_Speed;
   //INT8U Border_Speed; //边框运行速度
   INT8U Border_Mode;  //边框模式
   INT8U Border_Width;   //边框宽度
@@ -45,6 +45,15 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
 #ifdef SDI_SCREEN_PARA_BK2
   {SDI_SCREEN_PARA_BK2, SCREEN_PARA_LEN, 1},  
 #endif
+
+  //节目个数
+  {SDI_PROG_NUM, PROG_NUM_LEN, 1},
+#ifdef  SDI_PROG_NUM_BK0
+  {SDI_PROG_NUM_BK0, PROG_PARA_LEN, 1},
+#endif
+#ifdef SDI_PROG_NUM_BK1
+  {SDI_PROG_NUM_BK1, PROG_PARA_LEN, 1},
+#endif 
 
   //节目参数及备份
   {SDI_PROG_PARA, PROG_PARA_LEN, MAX_PROG_NUM},

@@ -378,23 +378,47 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 
 	Index = (Col + Screen_Status.ScanRow_X_BlockCols)* Screen_Status.Color_Num;//Get_Scan_Data_Index(0, Col); //先计算第0个block的对应索引，后面的block都是加一个同样的值
    
-	if(Screen_Status.Color_Num < 2)
+    if(Screen_Para.Scan_Para.RG_Reverse EQ 1) //OE极性反转
 	{
-		for(i = 0; i < Blocks; i ++)
+ 		if(Screen_Status.Color_Num < 2)
 		{
-			Scan_Data[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index];
-			Index += Screen_Status.Block_Bytes;
+			for(i = 0; i < Blocks; i ++)
+			{
+				Scan_Data[1][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index];
+				Index += Screen_Status.Block_Bytes;
+			}
+		}
+		else
+		{
+			for(i = 0; i < Blocks; i ++)
+			{
+	     		Scan_Data[1][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index]; 		    
+				Scan_Data[0][i] = Show_Data.Color_Data[Index + 1];//Show_Data.Color_Data[Data_Index];
+				Index += Screen_Status.Block_Bytes;
+			}
+	
 		}
 	}
 	else
 	{
-		for(i = 0; i < Blocks; i ++)
+		if(Screen_Status.Color_Num < 2)
 		{
-     		Scan_Data[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index]; 		    
-			Scan_Data[1][i] = Show_Data.Color_Data[Index + 1];//Show_Data.Color_Data[Data_Index];
-			Index += Screen_Status.Block_Bytes;
+			for(i = 0; i < Blocks; i ++)
+			{
+				Scan_Data[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index];
+				Index += Screen_Status.Block_Bytes;
+			}
 		}
-
+		else
+		{
+			for(i = 0; i < Blocks; i ++)
+			{
+	     		Scan_Data[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index]; 		    
+				Scan_Data[1][i] = Show_Data.Color_Data[Index + 1];//Show_Data.Color_Data[Data_Index];
+				Index += Screen_Status.Block_Bytes;
+			}
+	
+		}
 	}
 
 }
@@ -411,11 +435,30 @@ void Set_Block_Row(INT8U Row)
   }
 
   Row = (INT8U)(((INT8S)Screen_Status.Scan_Row + Screen_Para.Scan_Para.Line_Order) % Screen_Para.Scan_Para.Rows);
-    
-  SET_A((Row & 0x01));
-  SET_B(((Row & 0x02) >> 1));
-  SET_C(((Row & 0x04) >> 2));
-  SET_D(((Row & 0x08) >> 3));
+  
+  if(Screen_Para.Scan_Para._138Check != 1) //0表示有138译码器
+  {  
+    SET_A((Row & 0x01));
+    SET_B(((Row & 0x02) >> 1));
+    SET_C(((Row & 0x04) >> 2));
+    SET_D(((Row & 0x08) >> 3));
+  }
+  else //没有138译码器的情况下
+  {
+    SET_A(0);
+    SET_B(0);
+    SET_C(0);
+    SET_D(0);
+
+	if(Row EQ 0)
+	  SET_A(1);
+	else if(Row EQ 1)
+	  SET_B(1);
+    else if(Row EQ 2)
+	  SET_C(1);
+	else if(Row EQ 3)
+	  SET_D(1);
+  }
 }
 
                        

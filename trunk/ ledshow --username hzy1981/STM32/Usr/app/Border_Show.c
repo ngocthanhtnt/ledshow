@@ -211,7 +211,7 @@ void Restore_Border_Data(INT8U Area_No)
 //更新边框数据
 void Update_Border_Data(INT8U Area_No)
 {
-  INT32U Max_Step;
+  INT32U Max_Step;//, Size;
   static S_Int8U InitFlag = {CHK_BYTE, 0, CHK_BYTE};
   INT8U i;
 
@@ -248,7 +248,7 @@ void Update_Border_Data(INT8U Area_No)
 
       TRACE();
 
-      Step_Time = Prog_Para.Border_StayTime;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
+      Step_Time = (INT16U)(Prog_Para.Border_Speed + 1)*MOVE_STEP_PERIOD;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
       Prog_Status.Border_Status[Area_No].Timer += MOVE_STEP_PERIOD;
       Max_Step = Screen_Para.Base_Para.Width + Screen_Para.Base_Para.Height;
       //Timer[Area_No].Var += MOVE_STEP_PERIOD;
@@ -286,7 +286,7 @@ void Update_Border_Data(INT8U Area_No)
 */
       TRACE();
 //#if 0
-      Step_Time = Prog_Status.File_Para[Area_No].Pic_Para.Border_StayTime;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
+      Step_Time = (INT16U)(Prog_Status.File_Para[Area_No].Pic_Para.Border_Speed + 1)*MOVE_STEP_PERIOD;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
       Prog_Status.Border_Status[Area_No].Timer += MOVE_STEP_PERIOD;
       Max_Step = 0xFFFFFFFF;//Prog_Para.Area[Area_No].X_Len + Prog_Para.Area[Area_No].Y_Len;//Screen_Para.Base_Para.Width + Screen_Para.Base_Para.Height;
       //Timer[Area_No].Var += MOVE_STEP_PERIOD;
@@ -309,16 +309,21 @@ void Update_Border_Data(INT8U Area_No)
       //pBorder_Data = Prog_Para.Border_Data;
 */
 }
+  //Size = Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * GET_COLOR_NUM(Screen_Para.Base_Para.Color)/8;
+  MOVE_STEP = Calc_Move_Step();//Size / 8192 + 1;
 
   if(Prog_Status.Border_Status[Area_No].Timer >= Step_Time)
   {
     Prog_Status.Border_Status[Area_No].Timer = 0;
 
-    if(Prog_Status.Border_Status[Area_No].Step < Max_Step)
+	if(Prog_Status.Border_Status[Area_No].Step + MOVE_STEP > Max_Step)
+	  MOVE_STEP = Max_Step - Prog_Status.Border_Status[Area_No].Step;
+    
+	if(Prog_Status.Border_Status[Area_No].Step < Max_Step)
       Prog_Status.Border_Status[Area_No].Step += MOVE_STEP;
 
-    if(Prog_Status.Border_Status[Area_No].Step >= Max_Step)
-      Prog_Status.Border_Status[Area_No].Step = Prog_Status.Border_Status[Area_No].Step % Max_Step;
+    //if(Prog_Status.Border_Status[Area_No].Step >= Max_Step)
+      //Prog_Status.Border_Status[Area_No].Step = Prog_Status.Border_Status[Area_No].Step % Max_Step;
 
 
     Timer[Area_No].Var ++;

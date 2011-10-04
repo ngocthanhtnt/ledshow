@@ -335,8 +335,8 @@ INT16U Read_Screen_Para_Frame_Proc(INT16U Cmd, INT8U *pDst, INT8U *pDst_Start, I
   }
   else if(Cmd EQ C_PROG_NUM)
   {
-    mem_cpy(pDst, (INT8U *)&Screen_Para.Prog_Num, sizeof(Screen_Para.Prog_Num), (INT8U *)&Screen_Para, sizeof(Screen_Para));
-    return sizeof(Screen_Para.Prog_Num);
+    mem_cpy(pDst, (INT8U *)&Prog_Num.Num, sizeof(Prog_Num.Num), pDst_Start, DstLen);
+    return sizeof(Prog_Num.Num);
   }
   else
   {
@@ -361,6 +361,14 @@ INT8U Check_Screen_Base_Para(S_Screen_Base_Para *pPara)
    return 1;
 }
 
+//重置节目个数
+void Set_Prog_Num(INT8U Num)
+{
+
+      Prog_Num.Num = 0; //重置节目数
+	  SET_SUM(Prog_Num);
+	  Write_Prog_Num();	
+}
 //从帧中读取工厂参数和用户参数到变量中
 //Cmd控制码
 //Frame数据域起始
@@ -384,7 +392,14 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 	  return 0;
 	}
 
-	mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para) - CHK_BYTE_LEN, (INT8U *)&Screen_Para.Base_Para, sizeof(Screen_Para));
+	//参数发生了修改则重新播放ss
+    if(memcmp((INT8U *)&Screen_Para.Base_Para, (INT8U *)&Base_Para, sizeof(Screen_Para.Base_Para)) != 0)
+    {
+      Set_Screen_Replay_Flag(); //重播节目标志
+  	  Set_Prog_Num(0); //重置节目个数为0
+    }
+
+	mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para) - CHK_BYTE_LEN, (INT8U *)&Screen_Para, sizeof(Screen_Para));
     SET_SUM(Screen_Para);
   }
   else if(Cmd EQ C_SCREEN_BASE_PARA && Len >= sizeof(Screen_Para.Base_Para))
@@ -401,7 +416,7 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
     if(memcmp((INT8U *)&Screen_Para.Base_Para, (INT8U *)&Base_Para, sizeof(Screen_Para.Base_Para)) != 0)
     {
       Set_Screen_Replay_Flag(); //重播节目标志
-      Screen_Para.Prog_Num = 0; //重置节目数	  
+      Set_Prog_Num(0);	//重置节目个数为0  
     }
 
 	memcpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para));
@@ -416,11 +431,18 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
     mem_cpy((INT8U *)&Screen_Para.OC_Time, Data, sizeof(Screen_Para.OC_Time), (INT8U *)&Screen_Para, sizeof(Screen_Para)); //定时开关机时间
   else if(Cmd EQ C_SCREEN_LIGNTNESS && Len >= sizeof(Screen_Para.Lightness))
     mem_cpy((INT8U *)&Screen_Para.Lightness, Data, sizeof(Screen_Para.Lightness), (INT8U *)&Screen_Para, sizeof(Screen_Para)); //亮度参数
-  else if(Cmd EQ C_PROG_NUM && Len>=sizeof(Screen_Para.Prog_Num))
+  else if(Cmd EQ C_PROG_NUM && Len>=sizeof(Prog_Num.Num))
   {
-    if(memcmp((INT8U *)&Screen_Para.Prog_Num, Data, sizeof(Screen_Para.Prog_Num)!=0))
-      Set_Screen_Replay_Flag(); //重播节目标志
-    mem_cpy((INT8U *)&Screen_Para.Prog_Num, Data, sizeof(Screen_Para.Prog_Num), (INT8U *)&Screen_Para, sizeof(Screen_Para));
+    if(Data[0] <= MAX_PROG_NUM)
+	{
+	    if(Prog_Num.Num != Data[0])//, sizeof(Prog_Num.Num)!=0))
+	      Set_Screen_Replay_Flag(); //重播节目标志
+	 
+	    Set_Prog_Num(Data[0]); //重置节目个数
+		return 1;
+	}
+	else
+	  return 0;
   }
   else
   {
@@ -443,7 +465,7 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 //Ch表示通道
 INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf_Len)
 {
-  INT8U Cmd_Code;
+  INT8U Cmd_Code,Baud;
   S_Time TempTime;
   INT8U Re;
   INT16U Len = 0;  //应答帧数据长
@@ -455,7 +477,8 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
   Re = 1;
   //pData = Frame + FDATA;
   Screen_Status.Com_Err_Flag = 0;
-   
+  Baud = Screen_Para.COM_Para.Baud;
+     
   Cmd_Code = (Frame[FCMD] & 0x1F);// + (INT16U)Frame[FCMD + 1] * 256;
   RW_Flag = ((Frame[FCMD] & WR_CMD) >> 5);
   Seq = Frame[FSEQ];
@@ -473,11 +496,14 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
       Cmd_Code EQ C_SCREEN_LIGNTNESS ||\
       Cmd_Code EQ C_SCREEN_BASE_PARA ||\
       Cmd_Code EQ C_SCAN_PARA ||\
+	  Cmd_Code EQ C_SCREEN_COM_PARA ||\
       Cmd_Code EQ C_PROG_NUM ||\
       Cmd_Code EQ C_SCREEN_PARA)
   {
     if(RW_Flag EQ SET_FLAG)
+	{
       Re &= Save_Screen_Para_Frame_Proc(Cmd_Code, Frame + FDATA, FrameLen - F_NDATA_LEN); //更新内存中的参数
+	}
 	else
 	{
 	  Len = Read_Screen_Para_Frame_Proc(Cmd_Code, Frame + FDATA, Frame, Frame_Buf_Len);
@@ -602,7 +628,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
   Clr_Rcv_Flag(); //发数据前清空接收标志
   Send_Frame_Proc(Ch, Frame, Len); //向来数据的通道发送应答数据
   
-  
+  Chk_Baud_Change(Baud); //检查波特率参数是否发生修改
   //memset(RCV_DATA_BUF, 0, sizeof(RCV_DATA_BUF));
   
   return Len;
