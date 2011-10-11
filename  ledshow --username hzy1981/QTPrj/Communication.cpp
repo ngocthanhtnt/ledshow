@@ -408,11 +408,15 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
   }
   else if(mode EQ COM_MODE)//串口通信模式
   {
-    for(i = 0; i < 3; i ++)
+    for(i = 0; i < 2; i ++)
     {
       port->write(data, len);
 
-      comReStr = tr("发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答...") + QString::number(len);
+      if(i EQ 0)
+        comReStr = tr("发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答...");// + QString::number(len);
+      else
+        comReStr = tr("重复发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答...");
+
       emit this->comStatusChanged(comReStr);
       re = waitComRcv(2); //等待应答
       if(re > 0)

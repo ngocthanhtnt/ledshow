@@ -748,12 +748,14 @@ void Calc_Show_Mode_Step(INT8U Area_No)
     return 1;
  }
 
+//计算每次步进的步进值
 INT16U Calc_Move_Step(void)
 {
   INT32U Size;
 
+  return 1;
   Size = Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * GET_COLOR_NUM(Screen_Para.Base_Para.Color)/8;
-  return Size / 8192 + 1;
+  return Size / 2048 + 1;
 }
 
 void Update_Pic_Data(INT8U Area_No)

@@ -273,10 +273,11 @@ public slots:
  void defParaCheckProc();
  void cardChangeProc();
  void endProc(); //保存参数
- void loadParaProc(); //加载参数
  void importParaProc(); //导入参数
  void readParaProc(); //回读参数
  void setTestProc(); // 自检
+ void comLoadParaProc(); //通信加载参数
+ void udiskLoadParaProc(); //U盘加载参数
  public:
  QTabWidget *tabWidget;
 
@@ -335,7 +336,8 @@ public slots:
  QPushButton *importParaButton;
 
  QPushButton *endButton;
- QPushButton *loadButton;
+ QPushButton *comLoadButton;
+ QPushButton *udiskLoadButton;
  QPushButton *exportButton;
  QPushButton *selfTestButton;
 
@@ -343,6 +345,7 @@ public slots:
  int paraFlag; //表示新建屏幕、1表示修改屏幕，2表示显示屏幕
  int SendPara();
  void setEditEnable(bool flag);
+  void loadParaProc(INT8U Mode); //加载参数
  void getScreenCardParaFromWidget(S_Screen_Para &screenPara, S_Card_Para &cardPara);
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);

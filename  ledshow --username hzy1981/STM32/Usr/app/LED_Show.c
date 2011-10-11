@@ -1096,9 +1096,11 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
   S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
 {
+ /*
     INT16U i,j;
     INT8U Data;
 
+   //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
     for(i = 0; i < X_Len;  i++)
     {
      for(j = 0; j < Y_Len; j++)
@@ -1107,6 +1109,114 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
         Set_Area_Point_Data(pDst_Buf, Area_No, pPoint1->X + i, pPoint1->Y + j, Data);
       }
  }
+  //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
+*/
+
+
+    INT16U Index0, Index1, Off0, Off1, Len, Diff,i,j,X0,Y0,X1,Y1;
+    INT8U *pSrc, *pDst, Data;
+
+        //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+
+    //Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y); //源点索引
+    //Index1 = Get_Area_Point_Index(Area_No, pPoint1->X, pPoint1->Y); //目标点索引
+
+    //Off0 = (Index0 % 8);
+    //Off1 = (Index1 % 8);
+
+    X0 = Prog_Para.Area[Area_No].X + pPoint0->X;
+    Y0 = Prog_Para.Area[Area_No].Y + pPoint0->Y;
+
+    X1 = Prog_Para.Area[Area_No].X + pPoint1->X;
+    Y1 = Prog_Para.Area[Area_No].Y + pPoint1->Y;
+
+    if((X0 % 8) > (X1 % 8)) //源数据需要左移
+        Diff = (X0 % 8) - (X1 % 8);
+    else
+        Diff = (X1 % 8) - (X0 % 8);
+
+    if(X_Len > (8 - (X1 % 8)) + (X_Len % 8))
+      Len = (X_Len - (8 - (X1 % 8)) - (X_Len % 8))/8; //每行的字节数，除去头和尾的字节,头和尾需要特殊处理
+    else
+      Len = 0;
+
+    if((X0 % 8) > (X1 % 8)) //源数据需要左移
+    {
+        for(i = 0; i < Y_Len; i ++)
+        {
+            Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y + i); //源点索引
+            Index1 = Get_Area_Point_Index(Area_No, pPoint1->X, pPoint1->Y + i); //目标点索引
+
+            pSrc = pSrc_Buf->Color_Data + (Index0 >> 3)*Screen_Status.Color_Num;
+            pDst = pDst_Buf->Color_Data + ((Index1 + 8) >> 3)*Screen_Status.Color_Num;
+
+            for(j = 0; j < Len; j ++)
+            {
+                Data = ((*pSrc) >> (Diff)) + (*(pSrc + 1) << (8 - Diff));
+#if QT_EN EQ 0
+                if(Screen_Para.Scan_Para.Data_Polarity EQ 0) //数据极性的判断
+                  Data = ~Data;
+#endif
+                *pDst = Data;
+                pDst++;
+                pSrc++;
+
+                if(Screen_Status.Color_Num EQ 2)
+                {
+                    pDst++;
+                    pSrc++;
+                    Data = ((*pSrc) >> (Diff)) + (*(pSrc + 1) << (8 - Diff));
+#if QT_EN EQ 0
+                    if(Screen_Para.Scan_Para.Data_Polarity EQ 0) //数据极性的判断
+                      Data = ~Data;
+#endif
+                    *pDst = Data;
+                }
+            }
+        }
+
+    }
+    else
+    {
+
+        for(i = 0; i < Y_Len; i ++)
+        {
+            Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y + i); //源点索引
+            Index1 = Get_Area_Point_Index(Area_No, pPoint1->X, pPoint1->Y + i); //目标点索引
+
+            pSrc = pSrc_Buf->Color_Data + (Index0 >> 3)*Screen_Status.Color_Num;
+            pDst = pDst_Buf->Color_Data + ((Index1 + 8) >> 3)*Screen_Status.Color_Num;
+
+            for(j = 0; j < Len; j ++)
+            {
+                Data =((*pSrc) >> (8 - Diff)) + (*(pSrc + 1) << Diff);
+ #if QT_EN EQ 0
+                if(Screen_Para.Scan_Para.Data_Polarity EQ 0) //数据极性的判断
+                  Data = ~Data;
+ #endif
+                *pDst = Data;
+                pDst++;
+                pSrc++;
+
+
+                if(Screen_Status.Color_Num EQ 2)
+                {
+                    pDst++;
+                    pSrc++;
+                   *pDst =((*pSrc) >> (8 - Diff)) + (*(pSrc + 1) << Diff);
+ #if QT_EN EQ 0
+                    if(Screen_Para.Scan_Para.Data_Polarity EQ 0) //数据极性的判断
+                      Data = ~Data;
+ #endif
+                    *pDst = Data;
+                }
+            }
+
+        }
+    }
+
+       // GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
+
 }
 #endif
 
