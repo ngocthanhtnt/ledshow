@@ -162,7 +162,7 @@ extern void LED_Scan_One_Row(void);
 void TIM2_IRQHandler(void)   //TIM2中断
 {
 //#if RMDK_SIM_EN
-    GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 //#endif
     TIM_Cmd(TIM2, DISABLE);
 
@@ -174,7 +174,7 @@ void TIM2_IRQHandler(void)   //TIM2中断
 
 	TIM_Cmd(TIM2, ENABLE);
 //#if RMDK_SIM_EN
-	GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
+	//GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
 //#endif
 }
 

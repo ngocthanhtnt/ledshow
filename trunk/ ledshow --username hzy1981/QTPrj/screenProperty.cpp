@@ -1683,7 +1683,7 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
 
 }
 
-//手动连接
+//自动连接
 void CcomTest::autoConnect()
 {
     INT8U temp[100];
@@ -1726,7 +1726,7 @@ void CcomTest::autoConnect()
             if(re EQ true)
             {
                 QMessageBox::information(w, tr("提示"),
-                                       tr("测试成功！"),tr("确定"));
+                                       tr("测试成功！该参数将被设置为当前通信参数。"),tr("确定"));
 
                 setSettingsToWidget(screenStr);
 
@@ -2165,13 +2165,16 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
 
    hLayout = new QHBoxLayout(this);
    endButton = new QPushButton(tr("关闭"), this);
-   loadButton = new QPushButton(tr("加载参数"), this);
+   comLoadButton = new QPushButton(tr("通信加载参数"), this);
+   udiskLoadButton = new QPushButton(tr("U盘加载参数"), this);
    //exportButton = new QPushButton(tr("导出配置文件"), this);
   // saveButton = new QPushButton(tr("保存参数"), this);
    //defButton = new QPushButton(tr("恢复默认"), this);
 
    hLayout->addStretch();
-   hLayout->addWidget(loadButton);
+   hLayout->addWidget(comLoadButton);
+   hLayout->addStretch();
+   hLayout->addWidget(udiskLoadButton);
    hLayout->addStretch();
    hLayout->addWidget(endButton);
    hLayout->addStretch();
@@ -2193,7 +2196,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    mainVLayout->addLayout(hLayout);
 
    //endButton->setVisible(false);
-   //loadButton->setVisible(false);
+   //comLoadButton->setVisible(false);
 
    //mainLayout->addStretch(10);
    setLayout(mainVLayout);
@@ -2204,7 +2207,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
        setEditEnable(false);
        //comTest->setVisible(false);
        endButton->setVisible(false);
-       loadButton->setVisible(false);
+       comLoadButton->setVisible(false);
+       udiskLoadButton->setVisible(false);
        tabWidget->removeTab(tabWidget->indexOf(readParaGroup));
    }
      //this->setc
@@ -2213,7 +2217,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
 
   connect(defParaCheck, SIGNAL(stateChanged(int)), this, SLOT(defParaCheckProc()));
   connect(cardCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(cardChangeProc()));
-   connect(loadButton, SIGNAL(clicked()), this, SLOT(loadParaProc()));
+   connect(comLoadButton, SIGNAL(clicked()), this, SLOT(comLoadParaProc()));
+   connect(udiskLoadButton, SIGNAL(clicked()), this, SLOT(udiskLoadParaProc()));
    connect(endButton, SIGNAL(clicked()), this, SLOT(endProc()));
    connect(selfTestButton, SIGNAL(clicked()), this, SLOT(setTestProc()));
    connect(readParaButton, SIGNAL(clicked()), this, SLOT(readParaProc()));
@@ -2367,7 +2372,8 @@ void CfacScreenProperty::setEditEnable(bool flag)
         baseParaGroup->setEnabled(false);
         advanceParaGroup->setEnabled(false);
         readParaGroup->setEnabled(false);
-        loadButton->setEnabled(false);
+        comLoadButton->setEnabled(false);
+        udiskLoadButton->setEnabled(false);
         //exportButton->setEnabled(false);
         //comTest->setEnabled(false);
     }
@@ -2378,7 +2384,8 @@ void CfacScreenProperty::setEditEnable(bool flag)
         baseParaGroup->setEnabled(true);
         advanceParaGroup->setEnabled(true);
         readParaGroup->setEnabled(true);
-        loadButton->setEnabled(true);
+        comLoadButton->setEnabled(true);
+        udiskLoadButton->setEnabled(true);
         //exportButton->setEnabled(true);
         //comTest->setEnabled(true);
     }
@@ -2479,8 +2486,18 @@ void CfacScreenProperty::importParaProc()
                             QObject::tr("参数导入成功!"),QObject::tr("确定"));
 }
 
+void CfacScreenProperty::udiskLoadParaProc()
+{
+  loadParaProc(UDISK_MODE);
+}
+
+void CfacScreenProperty::comLoadParaProc()
+{
+  loadParaProc(COM_MODE);
+}
+
 //加载参数
-void CfacScreenProperty::loadParaProc()
+void CfacScreenProperty::loadParaProc(INT8U Mode)
 {
     QString str;
     INT8U temp[100];
@@ -2567,20 +2584,29 @@ void CfacScreenProperty::loadParaProc()
     if(QT_SIM_EN)
       makeProtoFileData(str, SIM_MODE, flag);
     else
-      makeProtoFileData(str, COM_MODE, flag);
+      makeProtoFileData(str, Mode, flag);
 
-    int len;
-    if(w->comStatus->waitComEnd(temp, sizeof(temp), &len))
+    if(Mode EQ UDISK_MODE)
     {
-      QMessageBox::information(w, tr("提示"),
-                             tr("参数发送成功！"),tr("确定"));
-      //this->parentWidget()->close(); //参数设置成功则关闭窗口
+        QMessageBox::information(w, QObject::tr("提示"),
+                                w->comStatus->getComReStr(),QObject::tr("确定"));
     }
     else
     {
-        QMessageBox::information(w, tr("提示"),
-                               tr("参数发送失败！"),tr("确定"));
+        int len;
+        if(w->comStatus->waitComEnd(temp, sizeof(temp), &len))
+        {
+          QMessageBox::information(w, tr("提示"),
+                                 tr("参数发送成功！"),tr("确定"));
+          //this->parentWidget()->close(); //参数设置成功则关闭窗口
+        }
+        else
+        {
+            QMessageBox::information(w, tr("提示"),
+                                   tr("参数发送失败！"),tr("确定"));
+        }
     }
+
 }
 
 //设置进入检测状态
