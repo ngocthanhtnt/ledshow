@@ -279,6 +279,9 @@ EXT S_Show_Data Show_Data_Bak; //显示数据备份
 EXT S_Show_Data Show_Data_Prep;
 #endif
 //#define Pub_Buf Show_Data.Color_Data
+#ifdef LED_SHOW_C
+const INT8U Bit_Mask[9] = {0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF};
+#endif
 
 //获取当前颜色方案
 EXT INT8U Get_Color(void); //获取当前的颜色方案
@@ -292,6 +295,8 @@ EXT INT32U Get_Area_Size(INT8U Area_No);
 EXT INT8U Get_Area_TopLeft(INT8U Area_No, S_Point *pPoint);
 EXT INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y); //获取某个区域的数据缓冲区起始
 //多位的拷贝
+EXT INT16U Copy_Show_Data(INT8U *pSrc, INT32U Off, INT16U SrcLen,\
+                          S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT16U Width, INT16U Height);
 EXT void Bits_Copy(INT8U *pSrc, INT16U Src_Len, INT32U Src_Index, INT32U Bits, INT8U *pDst, INT16U Dst_Len, INT32U Dst_Index);
 EXT INT8U Get_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT16U Width, INT16U X, INT16U Y);
 EXT void Set_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT8U Width, INT16U X, INT16U Y, INT8U Value);

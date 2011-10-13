@@ -244,9 +244,9 @@ void Clr_Show_Data(void)
 #if QT_EN
   memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
 #else
-  if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
-    memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
-  else
+  //if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
+    //memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
+  //else
     memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
 #endif
 }
@@ -256,9 +256,9 @@ void Set_Show_Data(void)
 #if QT_EN
   memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
 #else
-  if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
-    memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
-  else
+ // if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
+   // memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+  //else
     memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
 #endif
 }
@@ -1272,12 +1272,7 @@ void Ram_Init(void)
   memset(&Prep_Data, 0, sizeof(Prep_Data));
 #endif  
 
-#if QT_EN
   memset(&Show_Data, 0x00, sizeof(Show_Data));
-#else
-  memset(&Show_Data, 0xFF, sizeof(Show_Data));
-#endif
-
   memset(&Show_Data_Bak, 0, sizeof(Show_Data_Bak));
   memset(&Cur_Block_Index, 0, sizeof(Cur_Block_Index));
   memset(&Cur_Time, 0, sizeof(Cur_Time));

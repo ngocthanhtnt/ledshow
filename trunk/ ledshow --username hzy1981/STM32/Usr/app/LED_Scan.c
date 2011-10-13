@@ -25,16 +25,23 @@ void transpose8(unsigned char i[8], unsigned char o[8]/*, unsigned char flag*/) 
         t = (y ^ (y >> 7)) & 0x00aa00aa; 
         y = y ^ t ^ (t << 7); 
 
-		//if(flag > 0)
+		if(Screen_Para.Scan_Para.Data_Polarity != 1) //数据极性为低
+		{
+		   x = ~x;
+		   y = ~y;
+		}
+		
+		if(Screen_Para.Scan_Para.Direct > 0)
 		{
           o[7] = x >> 24; o[6] = x >> 16; o[5] = x >> 8; o[4] = x; 
           o[3] = y >> 24; o[2] = y >> 16; o[1] = y >> 8; o[0] = y;
-		}/*
+		}
 		else
 		{
           o[0] = x >> 24; o[1] = x >> 16; o[2] = x >> 8; o[3] = x; 
           o[4] = y >> 24; o[5] = y >> 16; o[6] = y >> 8; o[7] = y;		
-		}*/ 
+		} 
+
 }
 
 void transpose4(unsigned char i[8], unsigned char o[8]/*, unsigned char flag*/) {
@@ -60,16 +67,22 @@ void transpose4(unsigned char i[8], unsigned char o[8]/*, unsigned char flag*/) 
         t = (y ^ (y >> 7)) & 0x00aa00aa; 
         y = y ^ t ^ (t << 7); 
 
-		//if(flag > 0)
+		if(Screen_Para.Scan_Para.Data_Polarity != 1) //数据极性为低
+		{
+		   x = ~x;
+		   y = ~y;
+		}
+
+		if(Screen_Para.Scan_Para.Direct > 0)
 		{
           o[7] = x >> 24; o[6] = x >> 16; o[5] = x >> 8; o[4] = x; 
           o[3] = y >> 24; o[2] = y >> 16; o[1] = y >> 8; o[0] = y;
-		}/*
+		}
 		else
 		{
           o[0] = x >> 24; o[1] = x >> 16; o[2] = x >> 8; o[3] = x; 
           o[4] = y >> 24; o[5] = y >> 16; o[6] = y >> 8; o[7] = y;		
-		}*/ 
+		} 
 /* 
         volatile unsigned long x, t;         
         //x = (i[0] << 24) | (i[1] << 16) | (i[2] << 8) | i[3]; 
