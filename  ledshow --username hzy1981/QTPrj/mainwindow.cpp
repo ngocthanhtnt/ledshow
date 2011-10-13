@@ -1103,7 +1103,7 @@ void MainWindow::preview(INT8U previewMode)
 
 
   //关联定时器计满信号和相应的槽函数
-  timer->start(QT_MOVE_STEP_TIMER);
+  ///timer->start(QT_MOVE_STEP_TIMER);
   timer->stop();
 
   timer->start(QT_MOVE_STEP_TIMER);

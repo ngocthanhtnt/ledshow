@@ -5,6 +5,7 @@
 extern S_Show_Data protoShowData;
 #endif
 
+
 //返回屏幕支持的颜色数
 INT8U Get_Screen_Color_Num(void)
 {
@@ -293,6 +294,7 @@ INT16U _Read_Screen_Para(INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
 void Chk_Data_Polarity_Change(INT8U Old_Polarity)
 {
 #if QT_EN EQ 0
+    /*
     INT16U i;
 
 	if(Screen_Para.Scan_Para.Data_Polarity != Old_Polarity)
@@ -300,6 +302,7 @@ void Chk_Data_Polarity_Change(INT8U Old_Polarity)
 	  for(i = 0; i < sizeof(Show_Data.Color_Data); i ++)
 	    Show_Data.Color_Data[i] = ~Show_Data.Color_Data[i];
 	}
+        */
 #endif
 }
 
@@ -545,89 +548,7 @@ INT8U Check_Prog_Show_Data(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pD
   
 }
 
-//复制图文数据,从读取到的缓冲区复制到Show_Data中
-//pSrc表示从存储器中读出的显示数据
-//Off表示pSrc起始的数据在一屏显示数据中的偏移
-//SrcLen表示pSrc起始的数据长度
-//pDst表示目标显示缓冲区
-//Area_No表示图文数据所在分区号
-//X、Y表示目标图形显示的坐标
-//Width,Height复制的图形的宽度和高度
-INT16U Copy_Show_Data(void *pSrc, INT32U Off, INT16U SrcLen,\
-                     S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT16U Width, INT16U Height)
-{
-  //INT16U Width,Height;
-  INT16U X0,Y0,Row_Points;
-  INT32U i,Len,Off0;
-  INT8U Re = 0;
-  INT8U Screen_Color_Num;
-/*
-  Area_Width = Get_Area_Width(Area_No);
-  Area_Height = Get_Area_Height(Area_No);
-  Dst_Off = X *
-*/
-  Screen_Color_Num = Get_Screen_Color_Num();
-  Len = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1)); //每屏显示的数据长度
-  Len = Len * Screen_Color_Num; //每一幕显示需要的字节数!
-  
-#if QT_EN && QT_SIM_EN
-  if(Off + SrcLen > Len)
-  {
-    if(memcmp(pSrc, protoShowData.Color_Data + Off, Len - Off) != 0)
-     ASSERT_FAILED();
-  }
-  else
-  {
-    if(memcmp(pSrc, protoShowData.Color_Data + Off, SrcLen) != 0)
-      ASSERT_FAILED();
-  }
-#endif
-  if((Off % Len) % Screen_Color_Num != 0)
-      ASSERT_FAILED();
 
-  Off0 = Off * 8 / Screen_Color_Num;
-  Off = (Off % Len) * 8 / Screen_Color_Num; //Off在一屏显示数据中的偏移, Off/Len表示是第多少幕
-
-  //debug("copy show data, start x = %d, y = %d", (((Off)/8) % Width), (((Off)/8) / Width)*8 + (Off)%8);
-
-  Row_Points = ((Width % 8) EQ 0)?Width:((Width / 8 + 1)*8);
-
-  if(Row_Points EQ 0)
-      return 0;
-
-  //本次复制有多少点数？SrcLen*8/Screen_Color_Num
-  for(i = 0; i <SrcLen*8/Screen_Color_Num && (i + Off0)<Len*8/Screen_Color_Num; i ++)
-  {
-    //第i个点对应在该分区内的坐标??
-    //X0 = //(((Off + i)/8) % Width);
-    //Y0 = //(((Off + i)/8) / Width)*8 + (Off + i)%8;
-
-    X0 = (Off + i) % Row_Points;
-    Y0 = (Off + i) / Row_Points;
-
-    if(X0 < Width && Y0 < Height) //X0,Y0必须在X_Len和Y_Len的范围内
-    {
-        if(Screen_Color_Num EQ 1)  //单色屏
-          Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, i);
-        else if(Screen_Color_Num EQ 2) //双色屏
-          Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, ((i>>3)<<4) + (i & 0x07)) +\
-            (Get_Buf_Bit((INT8U *)pSrc, SrcLen, ((i>>3)<<4) + 8 + (i & 0x07))<<1);
-        else if(Screen_Color_Num EQ 3) //三色屏
-          Re = Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + (i & 0x07)) +\
-            (Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + 8 + (i & 0x07))<<1)+
-            (Get_Buf_Bit((INT8U *)pSrc, SrcLen, (i>>3)*24 + 16 + (i & 0x07))<<2);
-  
-        //if(Re > 0)
-            //qDebug("re = %d, x = %d, y = %d", Re, X0, Y0);
-        Set_Area_Point_Data(pDst, Area_No, X + X0, Y + Y0, Re);
-     }
-    // else
-      // qDebug("out x0 = %d, y0 = %d", X0, Y0);
-  }
-  
-  //debug("copy show data, off = %d, len = %d", Off, i);
-  return i*Screen_Color_Num/8;
-}
 /*
 //读取当前节目的分区Area_No的第File_No文件的第SIndex屏的显示数据
 INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, INT8U Flag, INT16U SIndex, \

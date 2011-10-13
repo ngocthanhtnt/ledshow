@@ -454,7 +454,7 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
   SET_SUM(Screen_Para);
   Write_Screen_Para(); //保存屏幕参数
 
-  Chk_Data_Polarity_Change(Data_Polarity);
+  Chk_Data_Polarity_Change(Data_Polarity); //该函数暂未作用
   return 1;
 }
 
