@@ -835,7 +835,9 @@ void Update_Pic_Data(INT8U Area_No)
         }
 
         Set_Area_Border_Out(Area_No);
+		//STOP_SCAN_TIMER();
         (*(In_Mode_Func[In_Mode].Func))(Area_No);//Ö´ÐÐÒÆ¶¯²Ù×÷
+		//START_SCAN_TIMER();
         Set_Area_Border_In(Area_No);
 
         TRACE();
