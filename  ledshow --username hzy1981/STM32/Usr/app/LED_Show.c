@@ -1150,13 +1150,16 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
     else
       Len = 0;
 
+	//STOP_SCAN_TIMER();
     //qDebug("len = %d",Len);
     Color_Num = Screen_Status.Color_Num;
     if((X0 % 8) >= (X1 % 8)) //源数据需要左移
     {
         for(i = 0; i < Y_Len; i ++)
         {
-            Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y + i); //源点索引
+		    //STOP_SCAN_TIMER();
+            
+			Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y + i); //源点索引
             Index1 = Get_Area_Point_Index(Area_No, pPoint1->X, pPoint1->Y + i); //目标点索引
 
             pSrc = pSrc_Buf->Color_Data + (Index0 >> 3) * Color_Num;
@@ -1170,7 +1173,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
             Data = (*pSrc >> Diff) +  (*(pSrc + Color_Num) << (8 - Diff));
             *pDst = (*pDst & Mask)  + (Data & ~Mask); //保留*pDst的低位
 
-            if(Color_Num EQ 2)
+            if(Color_Num > 1)
             {
                 pSrc++;
                 pDst++;
@@ -1188,7 +1191,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
                 *pDst = Data;
 
 
-                if(Screen_Status.Color_Num EQ 2)
+                if(Color_Num > 1)
                 {
                     pDst++;
                     pSrc++;
@@ -1209,7 +1212,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
               Data = ((*pSrc) >> (Diff)) + (*(pSrc + Color_Num) << (8 - Diff));
               *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
 
-              if(Color_Num EQ 2)
+              if(Color_Num > 1)
               {
                   pSrc++;
                   pDst++;
@@ -1218,6 +1221,8 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
                   *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
               }
             }
+			
+			//START_SCAN_TIMER();
         }
 
     }
@@ -1226,6 +1231,8 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
         for(i = 0; i < Y_Len; i ++)
         {
+			
+
             Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y + i); //源点索引
             Index1 = Get_Area_Point_Index(Area_No, pPoint1->X, pPoint1->Y + i); //目标点索引
 
@@ -1240,7 +1247,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
             Data = (*pSrc << Diff);
             *pDst = (*pDst & Mask)  + (Data & ~Mask);
 
-            if(Screen_Status.Color_Num EQ 2)
+            if(Color_Num > 1)
             {
                 pDst++;
                 pSrc++;
@@ -1257,7 +1264,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
                 Data =((*(pSrc - Color_Num)) >> (8 - Diff)) + (*pSrc << Diff);
                 *pDst = Data;
 
-                if(Screen_Status.Color_Num EQ 2)
+                if(Color_Num > 1)
                 {
                     pDst++;
                     pSrc++;
@@ -1278,7 +1285,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
               Data = ((*(pSrc - Color_Num)) >> (8 -Diff)) + (*pSrc << Diff);
               *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
 
-              if(Color_Num EQ 2)
+              if(Color_Num > 1)
               {
                   pDst++;
                   pSrc++;
@@ -1287,9 +1294,11 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
                   *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
               }
             }
+
+		
         }
     }
-
+	//START_SCAN_TIMER();
        // GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
 
 }
@@ -1329,7 +1338,7 @@ INT16U Copy_Show_Data(INT8U *pSrc, INT32U Off, INT16U SrcLen,\
   INT16U X0,Y0,Row_Points, Data0,Data1, Mask;
   INT32U i,Len,Off0,Index;
   INT8U *pData, Bit;// Mask, Data;
-  INT8U Screen_Color_Num;
+  INT8U Screen_Color_Num,Re;
 /*
   Area_Width = Get_Area_Width(Area_No);
   Area_Height = Get_Area_Height(Area_No);
@@ -1385,7 +1394,7 @@ INT16U Copy_Show_Data(INT8U *pSrc, INT32U Off, INT16U SrcLen,\
         Set_Area_Point_Data(pDst, Area_No, X + X0, Y + Y0, Re);
      }
   }
-  */
+*/
   //Diff = X % 8; //整个显示区对于整8的一个偏移
   //Mask = Bit_Mask(X % 8);
 
@@ -1411,14 +1420,14 @@ INT16U Copy_Show_Data(INT8U *pSrc, INT32U Off, INT16U SrcLen,\
           Data0 = Data0 << Bit; //16位数据
 
           *(INT8U *)&Data1 = *pData;
-          *((INT8U *)&Data1 + 1) = *(pData + 1);
+          *((INT8U *)&Data1 + 1) = *(pData + Screen_Color_Num);
 
           Data1 = (Data1 & Mask) + Data0;
 
           *pData = *(INT8U *)&Data1;
-          *(pData + 1) = *((INT8U *)&Data1 + 1);
+          *(pData + Screen_Color_Num) = *((INT8U *)&Data1 + 1);
 
-          if(Screen_Color_Num EQ 2)
+          if(Screen_Color_Num > 1) //双色、三色屏
           {
               Data0 = pSrc[(i >> 3) * Screen_Color_Num + 1]; //将数据放入pData指向的内存的Bit位开始，后8位
               Data0 = Data0 << Bit; //16位数据
@@ -1426,12 +1435,28 @@ INT16U Copy_Show_Data(INT8U *pSrc, INT32U Off, INT16U SrcLen,\
               pData ++;
 
               *(INT8U *)&Data1 = *pData;
-              *((INT8U *)&Data1 + 1) = *(pData + 1);
+              *((INT8U *)&Data1 + 1) = *(pData + Screen_Color_Num);
 
               Data1 = (Data1 & Mask) + Data0;
 
               *pData = *(INT8U *)&Data1;
-              *(pData + 1) = *((INT8U *)&Data1 + 1);
+              *(pData + Screen_Color_Num) = *((INT8U *)&Data1 + 1);
+
+	           if(Screen_Color_Num > 2) //三色屏
+	           {
+	              Data0 = pSrc[(i >> 3) * Screen_Color_Num + 2]; //将数据放入pData指向的内存的Bit位开始，后8位
+	              Data0 = Data0 << Bit; //16位数据
+	
+	              pData ++;
+	
+	              *(INT8U *)&Data1 = *pData;
+	              *((INT8U *)&Data1 + 1) = *(pData + Screen_Color_Num);
+	
+	              Data1 = (Data1 & Mask) + Data0;
+	
+	              *pData = *(INT8U *)&Data1;
+	              *(pData + Screen_Color_Num) = *((INT8U *)&Data1 + 1);
+	          }
           }
      }
 
@@ -1743,7 +1768,7 @@ void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_
             else
               *pDst = (*pDst & Mask);
 
-            if(Screen_Status.Color_Num EQ 2)
+            if(Screen_Status.Color_Num > 1)
             {
               pDst++;
 
@@ -1763,7 +1788,7 @@ void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_
                   *pDst = 0;
 
 
-                if(Screen_Status.Color_Num EQ 2)
+                if(Screen_Status.Color_Num > 1)
                 {
                     pDst++;
 
@@ -1786,7 +1811,7 @@ void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_
                 else
                   *pDst = (*pDst) & ~Mask;
 
-               if(Screen_Status.Color_Num EQ 2)
+               if(Screen_Status.Color_Num > 1)
                 {
                   pDst++;
 

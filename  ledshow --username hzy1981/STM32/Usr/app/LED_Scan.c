@@ -523,13 +523,13 @@ void LED_Scan_One_Row(void)
 	Blocks = MAX_SCAN_BLOCK_NUM;
   Cols = Screen_Status.Block_Cols;
 
-  //Direct = (Screen_Para.Scan_Para.Direct < 2)?0:1; //左入为0，数据反向，右入为1，数据维持
+ /* //Direct = (Screen_Para.Scan_Para.Direct < 2)?0:1; //左入为0，数据反向，右入为1，数据维持
 
   if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
     memset(Scan_Data, 0xFF, sizeof(Scan_Data));
   else
     memset(Scan_Data, 0x00, sizeof(Scan_Data));
-
+*/
 #if SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
 
   //对每个Blocks进行扫描
@@ -716,3 +716,14 @@ void LED_Scan_One_Row(void)
 	//USART_Clar
    
 }
+/*
+void LED_Scan_One_Row(void)
+{
+  INT8U i;
+
+  for(i = 0; i < 16; i ++)
+    _LED_Scan_One_Row();
+
+}
+*/
+
