@@ -721,7 +721,7 @@ void LED_Scan_One_Row(void)
 {
   INT8U i;
 
-  for(i = 0; i < 16; i ++)
+  for(i = 0; i < 15; i ++)
     _LED_Scan_One_Row();
 
 }
