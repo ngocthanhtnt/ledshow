@@ -30,12 +30,11 @@
 #define SPI_FLASH_CS_HIGH() SET_FLASH_CS(1)
 #define SPI_FLASH_CS_LOW() SET_FLASH_CS(0)
 
-#define STOP_SCAN_TIMER()  TIM_Cmd(TIM2, DISABLE);  //使能TIMx外设  
-#define START_SCAN_TIMER() TIM_Cmd(TIM2, ENABLE);  //使能TIMx外设
-
 #define SCAN_INT_DISABLE() TIM_ITConfig(TIM2,TIM_IT_Update|TIM_IT_Trigger,DISABLE)  //使能
 #define SCAN_INT_ENABLE()  TIM_ITConfig(TIM2,TIM_IT_Update|TIM_IT_Trigger,ENABLE)
 
+#define STOP_SCAN_TIMER()  SCAN_INT_DISABLE()//TIM_Cmd(TIM2, DISABLE);  //使能TIMx外设  
+#define START_SCAN_TIMER() SCAN_INT_ENABLE() //TIM_Cmd(TIM2, ENABLE);  //使能TIMx外设
 
 #define STOP_SHOW_TIMER()  TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设  
 #define START_SHOW_TIMER() TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
