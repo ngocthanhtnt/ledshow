@@ -1118,10 +1118,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
         //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 
     X0 = Prog_Para.Area[Area_No].X + pPoint0->X; //源数据在整体屏幕中的起始位置
-    //Y0 = Prog_Para.Area[Area_No].Y + pPoint0->Y;
-
     X1 = Prog_Para.Area[Area_No].X + pPoint1->X; //目标数据在整体屏幕中的起始位置
-    //Y1 = Prog_Para.Area[Area_No].Y + pPoint1->Y;
 
     if((X0 % 8) > (X1 % 8)) //源数据需要左移
         Diff = (X0 % 8) - (X1 % 8);
@@ -1133,9 +1130,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
     else
       Len = 0;
 
-        //STOP_SCAN_TIMER();
-        //LED_Scan_One_Row();
-    //qDebug("len = %d",Len);
+
     Color_Num = Screen_Status.Color_Num;
 
     Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y); //源点索引
@@ -1148,14 +1143,15 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
     {
         pSrc = pSrc0;// + i * Color_Num;     //该列第一个数据的源地址
         pDst = pDst0;// + i * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
+		
+		Mask = Bit_Mask[X1 & 0x07];
+		if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
+	      Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
 
         //第一列
         for(j = 0; j < Y_Len; j ++) //每列多少行
         {
-              Mask = Bit_Mask[X1 & 0x07];
-              if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
-                Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
-
+ 
               Data = (*pSrc >> Diff) +  (*(pSrc + Color_Num) << (8 - Diff));
               *pDst = (*pDst & Mask)  + (Data & ~Mask); //保留*pDst的低位
 
@@ -1180,12 +1176,6 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
           for(j = 0; j < Y_Len; j ++) //每列多少行
           {
-
-            //else
-            {
-                //pDst++;
-                //pSrc++;
-
                 Data = (*pSrc >> Diff) + (*(pSrc + Color_Num) << (8 - Diff));
                 *pDst = Data;
 
@@ -1198,11 +1188,10 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
                     Data = (*pSrc >> Diff) + (*(pSrc + Color_Num) << (8 - Diff));
                     *pDst = Data;
                 }
-            }
+
 
             pSrc += Screen_Para.Base_Para.Width/8 * Color_Num;
             pDst += Screen_Para.Base_Para.Width/8 * Color_Num;
-            //START_SCAN_TIMER();
           }
 
           //最后列
@@ -1210,11 +1199,11 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
           {
               pSrc = pSrc0 + (Len + 1) * Color_Num;     //该列第一个数据的源地址
               pDst = pDst0 + (Len + 1) * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
-
-              for(j = 0; j < Y_Len; j ++) //每列多少行
+              
+			  Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
+              
+			  for(j = 0; j < Y_Len; j ++) //每列多少行
               {
-                //Data = (*pSrc) & Bit_Mask[((X0 + X_Len - 1) & 0x07) + 1];
-                Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
                 Data = ((*pSrc) >> (Diff)) + (*(pSrc + Color_Num) << (8 - Diff));
                 *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
 
@@ -1231,22 +1220,20 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
                 pDst += Screen_Para.Base_Para.Width/8 * Color_Num;
             }
           }
-          //}
         }
-
     }
     else
     {
         pSrc = pSrc0;// + i * Color_Num;     //该列第一个数据的源地址
         pDst = pDst0;// + i * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
+	
+		Mask = Bit_Mask[X1 & 0x07];
+		if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
+		  Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
 
         //第一列
         for(j = 0; j < Y_Len; j ++) //每列多少行
         {
-            Mask = Bit_Mask[X1 & 0x07];
-            if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
-              Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
-
             Data = (*pSrc << Diff);
             *pDst = (*pDst & Mask)  + (Data & ~Mask);
 
@@ -1291,11 +1278,11 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
       {
           pSrc = pSrc0 + (Len + 1) * Color_Num;     //该列第一个数据的源地址
           pDst = pDst0 + (Len + 1) * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
-
-          for(j = 0; j < Y_Len; j ++) //每列多少行
+          
+		  Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
+          
+		  for(j = 0; j < Y_Len; j ++) //每列多少行
           {
-              Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
-
               Data = ((*(pSrc - Color_Num)) >> (8 -Diff)) + (*pSrc << Diff);
               *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
 
