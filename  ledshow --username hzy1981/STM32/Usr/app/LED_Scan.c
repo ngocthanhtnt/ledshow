@@ -391,7 +391,7 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 
 	Index = (Col + Screen_Status.ScanRow_X_BlockCols)* Screen_Status.Color_Num;//Get_Scan_Data_Index(0, Col); //先计算第0个block的对应索引，后面的block都是加一个同样的值
    
-    if(Screen_Para.Scan_Para.RG_Reverse EQ 1) //OE极性反转
+    if(Screen_Para.Scan_Para.RG_Reverse EQ 1) //红绿反向
 	{
  		if(Screen_Status.Color_Num < 2)
 		{

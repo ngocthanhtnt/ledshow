@@ -42,6 +42,9 @@ typedef char INT8S;
 #define Chk_Test_Key_Down() 0x00
 #define Chk_Test_Key_Up() 0x00
 
+#define START_SCAN_TIMER()
+#define STOP_SCAN_TIMER()
+
 #define Soft_Rest()
 /*
 #define FILE_T char *

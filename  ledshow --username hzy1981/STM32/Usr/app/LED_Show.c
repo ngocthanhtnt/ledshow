@@ -218,8 +218,12 @@ INT8U Get_Area_TopLeft(INT8U Area_No, S_Point *pPoint)
 INT32U Get_Area_Point_Index0(INT8U Area_No, INT16U X, INT16U Y)
 {
   INT32U Index;
+  INT8U Rows_Fold;
   //INT16U X0,Y0,Bit;
-
+#if QT_EN
+  Index = Get_Area_Point_Index(Area_No, X, Y);
+  return Index;
+#else
   
   if(Area_No < MAX_AREA_NUM)
   {
@@ -234,20 +238,27 @@ INT32U Get_Area_Point_Index0(INT8U Area_No, INT16U X, INT16U Y)
      Screen_Para.Scan_Para.Cols_Fold EQ 0)
    {
 
-#if QT_EN
-    Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
-#else
     Index = Screen_Para.Base_Para.Width*Y + X;//GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
-#endif
-	 //if(Screen_Para.Scan_Para.Direct < 2)
-	   //Index = Screen_Para.Base_Para.Width/8 - 1 - Index;
+
    }
    else
    {
-	 Index = 0;
+       Rows_Fold = Screen_Para.Scan_Para.Rows_Fold + 1;
+
+       Index = Y / Rows_Fold * Rows_Fold * Screen_Para.Base_Para.Width / 8;//前面有Index条扫描线
+       Index += X / 8 / Screen_Para.Scan_Para.Cols_Fold * (Rows_Fold * Screen_Para.Scan_Para.Cols_Fold);//本条扫描线内前面有多少扫描块
+
+       //扫描块内的字节偏移
+       if(Screen_Para.Scan_Para.Direct EQ 0x00 || Screen_Para.Scan_Para.Direct EQ 0x02) //上入
+         Index += (Y % Rows_Fold) * Screen_Para.Scan_Para.Cols_Fold + (X / 8) % Screen_Para.Scan_Para.Cols_Fold;
+       else
+         Index += (Rows_Fold - 1 - (Y % Rows_Fold)) * Screen_Para.Scan_Para.Cols_Fold + (X / 8) % Screen_Para.Scan_Para.Cols_Fold;
+
+       Index = Index * 8 +  (X % 8);
    }
   
   return Index;
+#endif
 }
 //获取区域中某点的索引
 //Area_No表示分区号
@@ -373,14 +384,12 @@ INT8U Get_Area_Point_Data(S_Show_Data *pSrc_Buf, INT8U Area_No, INT16U X, INT16U
   INT32U Temp;
   INT8U Value;
 
-#if QT_EN
-  Index = Get_Area_Point_Index(Area_No, X, Y);
-#else
+
   if(pSrc_Buf EQ &Show_Data_Bak)
     Index = Get_Area_Point_Index(Area_No, X, Y);
   else
     Index = Get_Area_Point_Index0(Area_No, X, Y);
-#endif
+
 
   if(Screen_Status.Color_Num <2)//Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)  //0,1,2,4单色屏
     Value = Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data),Index);
@@ -1112,10 +1121,11 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
   S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
 {
     INT32U Index0, Index1;
-    INT16U Len, Diff,i,j,Mask,X0,X1;//,Y1;
+    INT16U Len, Diff,i,j,Mask,X0,X1,Width;//,Y1;
+	INT16S Width0,Width1;
     INT8U *pSrc, *pDst, *pSrc0, *pDst0, Data, Color_Num;
 
-        //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 
     X0 = Prog_Para.Area[Area_No].X + pPoint0->X; //源数据在整体屏幕中的起始位置
     X1 = Prog_Para.Area[Area_No].X + pPoint1->X; //目标数据在整体屏幕中的起始位置
@@ -1132,23 +1142,41 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
 
     Color_Num = Screen_Status.Color_Num;
+    Width = Screen_Para.Base_Para.Width/8 * Color_Num;
 
     Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y); //源点索引
-    Index1 = Get_Area_Point_Index(Area_No, pPoint1->X, pPoint1->Y); //目标点索引
+    Index1 = Get_Area_Point_Index0(Area_No, pPoint1->X, pPoint1->Y); //目标点索引,目标数据应该是Show_Data
 
     pSrc0 = pSrc_Buf->Color_Data + (Index0 >> 3) * Color_Num;
     pDst0 = pDst_Buf->Color_Data + (Index1 >> 3) * Color_Num;
+
+    //上下行之间的两个字节在内存中的距离
+    if(Screen_Para.Scan_Para.Direct EQ 0x01 ||\
+       Screen_Para.Scan_Para.Direct EQ 0x03) //从上面入,左上或者右上
+    {
+      Width0 = Screen_Para.Scan_Para.Cols_Fold * Color_Num; //同一条扫描线上，上下两个字节之间的距离
+      //两条扫描线上的距离
+      Width1 = ((Screen_Para.Scan_Para.Rows_Fold + 1)*Screen_Para.Base_Para.Width / 8 - Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Cols_Fold) * Color_Num;
+    }
+    else
+    {
+      Width0 = (0 - Screen_Para.Scan_Para.Cols_Fold) * Color_Num;
+      Width1 = ((Screen_Para.Scan_Para.Rows_Fold + 1)*Screen_Para.Base_Para.Width / 8 + Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Cols_Fold) * Color_Num;
+
+    }
 
     if((X0 % 8) >= (X1 % 8)) //源数据需要左移
     {
         pSrc = pSrc0;// + i * Color_Num;     //该列第一个数据的源地址
         pDst = pDst0;// + i * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
 		
-		Mask = Bit_Mask[X1 & 0x07];
-		if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
-	      Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
+        Mask = Bit_Mask[X1 & 0x07];
+        if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
+          Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
 
         //第一列
+        STOP_SCAN_TIMER();
+
         for(j = 0; j < Y_Len; j ++) //每列多少行
         {
  
@@ -1157,16 +1185,26 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
               if(Color_Num > 1)
               {
-                  pSrc++;
-                  pDst++;
-
-                  Data = (*pSrc >> Diff) +  (*(pSrc + Color_Num) << (8 - Diff));
-                  *pDst = (*pDst & Mask)  + (Data & ~Mask); //保留*pDst的低位
+                  Data = (*(pSrc + 1) >> Diff) +  (*(pSrc + 1 + Color_Num) << (8 - Diff));
+                  *(pDst + 1) = (*(pDst + 1) & Mask)  + (Data & ~Mask); //保留*pDst的低位
               }
 
-              pSrc += Screen_Para.Base_Para.Width/8 * Color_Num;
-              pDst += Screen_Para.Base_Para.Width/8 * Color_Num;
+              pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
+
+              if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+              {
+                  pDst += Width;
+              }
+              else
+              {
+                  if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
+                    pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
+                  else
+                    pDst += Width0;
+              }
         }
+
+        START_SCAN_TIMER();
 
         //中间所有列
         for(i = 0; i < Len; i ++) //多少列字节
@@ -1174,64 +1212,90 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
           pSrc = pSrc0 + (i + 1) * Color_Num;     //该列第一个数据的源地址
           pDst = pDst0 + (i + 1) * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
 
+          STOP_SCAN_TIMER();
+
           for(j = 0; j < Y_Len; j ++) //每列多少行
           {
-                Data = (*pSrc >> Diff) + (*(pSrc + Color_Num) << (8 - Diff));
-                *pDst = Data;
+            Data = (*pSrc >> Diff) + (*(pSrc + Color_Num) << (8 - Diff));
+            *pDst = Data;
 
 
-                if(Color_Num > 1)
-                {
-                    pDst++;
-                    pSrc++;
-
-                    Data = (*pSrc >> Diff) + (*(pSrc + Color_Num) << (8 - Diff));
-                    *pDst = Data;
-                }
+            if(Color_Num > 1)
+            {
+                Data = (*(pSrc + 1) >> Diff) + (*(pSrc + 1 + Color_Num) << (8 - Diff));
+                *(pDst + 1) = Data;
+            }
 
 
-            pSrc += Screen_Para.Base_Para.Width/8 * Color_Num;
-            pDst += Screen_Para.Base_Para.Width/8 * Color_Num;
-          }
+            pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
 
-          //最后列
-          if((X1 + X_Len - 1) /8 > X1 / 8)
-          {
-              pSrc = pSrc0 + (Len + 1) * Color_Num;     //该列第一个数据的源地址
-              pDst = pDst0 + (Len + 1) * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
-              
-			  Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
-              
-			  for(j = 0; j < Y_Len; j ++) //每列多少行
-              {
-                Data = ((*pSrc) >> (Diff)) + (*(pSrc + Color_Num) << (8 - Diff));
-                *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
-
-                if(Color_Num > 1)
-                {
-                    pSrc++;
-                    pDst++;
-
-                    Data = ((*pSrc) >> (Diff)) + (*(pSrc + Color_Num) << (8 - Diff));
-                    *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
-                }
-
-                pSrc += Screen_Para.Base_Para.Width/8 * Color_Num;
-                pDst += Screen_Para.Base_Para.Width/8 * Color_Num;
+            if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+            {
+                pDst += Width;
+            }
+            else
+            {
+                if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
+                  pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
+                else
+                  pDst += Width0;
             }
           }
+
+          START_SCAN_TIMER();
         }
+
+        //最后列
+      if((X1 + X_Len - 1) /8 > X1 / 8)
+      {
+          pSrc = pSrc0 + (Len + 1) * Color_Num;     //该列第一个数据的源地址
+          pDst = pDst0 + (Len + 1) * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
+          
+          Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
+
+          STOP_SCAN_TIMER();
+
+          for(j = 0; j < Y_Len; j ++) //每列多少行
+          {
+            Data = ((*pSrc) >> (Diff)) + (*(pSrc + Color_Num) << (8 - Diff));
+            *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
+
+            if(Color_Num > 1)
+            {
+                Data = ((*(pSrc + 1)) >> (Diff)) + (*(pSrc + 1 + Color_Num) << (8 - Diff));
+                *(pDst + 1) = ((*(pDst + 1)) & ~Mask)  + (Data & Mask);
+            }
+
+            pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
+
+            if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+            {
+                pDst += Width;
+            }
+            else
+            {
+                if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
+                  pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
+                else
+                  pDst += Width0;
+            }
+        }
+
+        START_SCAN_TIMER();
+      }
     }
     else
     {
         pSrc = pSrc0;// + i * Color_Num;     //该列第一个数据的源地址
         pDst = pDst0;// + i * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
 	
-		Mask = Bit_Mask[X1 & 0x07];
-		if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
-		  Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
+        Mask = Bit_Mask[X1 & 0x07];
+        if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
+          Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
 
         //第一列
+        STOP_SCAN_TIMER();
+
         for(j = 0; j < Y_Len; j ++) //每列多少行
         {
             Data = (*pSrc << Diff);
@@ -1239,21 +1303,33 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
             if(Color_Num > 1)
             {
-                pDst++;
-                pSrc++;
-
-                Data = (*pSrc << Diff);
-                *pDst = (*pDst & Mask)  + (Data & ~Mask);
+                Data = (*(pSrc + 1) << Diff);
+                *(pDst + 1) = (*(pDst + 1) & Mask)  + (Data & ~Mask);
             }
 
-            pSrc += Screen_Para.Base_Para.Width/8 * Color_Num;
-            pDst += Screen_Para.Base_Para.Width/8 * Color_Num;
+            pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
+
+            if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+            {
+                pDst += Width;
+            }
+            else
+            {
+                if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
+                  pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
+                else
+                  pDst += Width0;
+            }
         }
+
+        START_SCAN_TIMER();
 
         for(i = 0; i < Len; i ++) //多少列字节
         {
           pSrc = pSrc0 + (i + 1) * Color_Num;     //该列第一个数据的源地址
           pDst = pDst0 + (i + 1) * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
+
+          STOP_SCAN_TIMER();
 
           for(j = 0; j < Y_Len; j ++)
           {
@@ -1262,16 +1338,26 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
             if(Color_Num > 1)
             {
-                pDst++;
-                pSrc++;
-
-               Data =((*(pSrc - Color_Num)) >> (8 - Diff)) + (*pSrc << Diff);
-               *pDst = Data;
+               Data =((*(pSrc + 1 - Color_Num)) >> (8 - Diff)) + (*(pSrc + 1) << Diff);
+               *(pDst + 1) = Data;
             }
 
-            pSrc += Screen_Para.Base_Para.Width/8 * Color_Num;
-            pDst += Screen_Para.Base_Para.Width/8 * Color_Num;
+            pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
+
+            if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+            {
+                pDst += Width;
+            }
+            else
+            {
+                if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
+                  pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
+                else
+                  pDst += Width0;
+            }
          }
+
+         START_SCAN_TIMER();
       }
 
       if((X1 + X_Len - 1) /8 > X1 / 8)
@@ -1279,27 +1365,41 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
           pSrc = pSrc0 + (Len + 1) * Color_Num;     //该列第一个数据的源地址
           pDst = pDst0 + (Len + 1) * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
           
-		  Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
-          
-		  for(j = 0; j < Y_Len; j ++) //每列多少行
+          Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
+
+          STOP_SCAN_TIMER();
+
+          for(j = 0; j < Y_Len; j ++) //每列多少行
           {
               Data = ((*(pSrc - Color_Num)) >> (8 -Diff)) + (*pSrc << Diff);
               *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
 
               if(Color_Num > 1)
               {
-                  pDst++;
-                  pSrc++;
-
-                  Data = ((*(pSrc - Color_Num)) >> (8 -Diff)) + (*pSrc << Diff);
-                  *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
+                  Data = ((*(pSrc + 1 - Color_Num)) >> (8 -Diff)) + (*(pSrc + 1) << Diff);
+                  *(pDst + 1) = ((*(pDst + 1)) & ~Mask)  + (Data & Mask);
               }
 
-              pSrc += Screen_Para.Base_Para.Width/8 * Color_Num;
-              pDst += Screen_Para.Base_Para.Width/8 * Color_Num;
+              pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
+
+              if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+              {
+                  pDst += Width;
+              }
+              else
+              {
+                  if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
+                    pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
+                  else
+                    pDst += Width0;
+              }
           }
+
+          START_SCAN_TIMER();
       }
     }
+
+        //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
 }
 
 /*
@@ -1310,7 +1410,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
     INT16U Len, Diff,i,j,Mask,X0,X1;//,Y1;
     INT8U *pSrc, *pDst, Data, Color_Num;
 
-        //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+    GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 
     X0 = Prog_Para.Area[Area_No].X + pPoint0->X; //源数据在整体屏幕中的起始位置
     //Y0 = Prog_Para.Area[Area_No].Y + pPoint0->Y;
@@ -1479,7 +1579,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
     }
 	//LED_Scan_One_Row();
 	//START_SCAN_TIMER();
-       // GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
+     GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
 
 }
 */
@@ -1913,7 +2013,7 @@ void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_
   */
 
     INT32U Index1;
-    INT16U Len, i,j,Mask,X1;//,Y1;
+    INT16U Len, i,j,Mask,X1,Width;//,Y1;
     INT8U *pDst;
 
         //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
@@ -1928,81 +2028,86 @@ void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_
     else
       Len = 0;
 
+    //目标是Show_Data，则需要特殊处理
+    if(pDst_Buf EQ &Show_Data)
+    {
+        if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+            Width = Screen_Status.Color_Num;
+        else
+            Width = Screen_Para.Scan_Para.Cols_Fold * Screen_Status.Color_Num; //同一条扫描线上，上下两个字节之间的距离
+    }
+    else
+    {
+        Width = GET_COLOR_NUM(Screen_Para.Base_Para.Color);
+    }
     //qDebug("len = %d",Len);
 
-    //if((X0 % 8) >= (X1 % 8)) //源数据需要左移
-    //{
-        for(i = 0; i < Y_Len; i ++)
+
+    for(i = 0; i < Y_Len; i ++)
+    {
+        Index1 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y + i); //源点索引
+
+        pDst = pDst_Buf->Color_Data + (Index1 >> 3)*Screen_Status.Color_Num;
+
+        //第一个字节特殊处理
+        Mask = Bit_Mask[X1 & 0x07];
+
+        if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
+          Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
+
+        if(GET_BIT(Value, 0))
+          *pDst = (*pDst & Mask)  + (0xFF & ~Mask); //保留*pDst的低位
+        else
+          *pDst = (*pDst & Mask);
+
+        if(Screen_Status.Color_Num > 1)
         {
-            Index1 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y + i); //源点索引
+          if(GET_BIT(Value, 1))
+            *(pDst + 1) = (*(pDst + 1) & Mask)  + (0xFF & ~Mask); //保留*pDst的低位
+          else
+            *(pDst + 1) = (*(pDst + 1) & Mask);
+        }
 
-            pDst = pDst_Buf->Color_Data + (Index1 >> 3)*Screen_Status.Color_Num;
-
-            //第一个字节特殊处理
-            Mask = Bit_Mask[X1 & 0x07];
-
-            if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
-              Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
+        for(j = 0; j < Len; j ++)
+        {
+            pDst += Width;
 
             if(GET_BIT(Value, 0))
-              *pDst = (*pDst & Mask)  + (0xFF & ~Mask); //保留*pDst的低位
+              *pDst = 0xFF;
             else
-              *pDst = (*pDst & Mask);
+              *pDst = 0;
+
 
             if(Screen_Status.Color_Num > 1)
             {
-              pDst++;
-
-              if(GET_BIT(Value, 1))
-                *pDst = (*pDst & Mask)  + (0xFF & ~Mask); //保留*pDst的低位
-              else
-                *pDst = (*pDst & Mask);
-            }
-
-            for(j = 0; j < Len; j ++)
-            {
-                pDst++;
-
-                if(GET_BIT(Value, 0))
-                  *pDst = 0xFF;
+                if(GET_BIT(Value, 1))
+                  *(pDst + 1) = 0xFF;
                 else
-                  *pDst = 0;
-
-
-                if(Screen_Status.Color_Num > 1)
-                {
-                    pDst++;
-
-                    if(GET_BIT(Value, 1))
-                      *pDst = 0xFF;
-                    else
-                      *pDst = 0;
-                }
-            }
-
-            //最后一个字节特殊处理
-            if((X1 + X_Len - 1) /8 > X1 / 8)
-            {
-                pDst++;
-
-                Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
-
-                if(GET_BIT(Value, 0))
-                  *pDst = ((*pDst) & ~Mask)  + (0xFF & Mask);
-                else
-                  *pDst = (*pDst) & ~Mask;
-
-               if(Screen_Status.Color_Num > 1)
-                {
-                  pDst++;
-
-                  if(GET_BIT(Value, 1))
-                    *pDst = ((*pDst) & ~Mask)  + (0xFF & Mask);
-                  else
-                    *pDst = (*pDst) & ~Mask;
-                }
+                  *(pDst + 1) = 0;
             }
         }
+
+        //最后一个字节特殊处理
+        if((X1 + X_Len - 1) /8 > X1 / 8)
+        {
+            pDst += Width;
+
+            Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
+
+            if(GET_BIT(Value, 0))
+              *pDst = ((*pDst) & ~Mask)  + (0xFF & Mask);
+            else
+              *pDst = (*pDst) & ~Mask;
+
+           if(Screen_Status.Color_Num > 1)
+            {
+              if(GET_BIT(Value, 1))
+                *(pDst + 1) = ((*(pDst + 1)) & ~Mask)  + (0xFF & Mask);
+              else
+                *(pDst + 1) = (*(pDst + 1)) & ~Mask;
+            }
+        }
+    }
 }
 
 
