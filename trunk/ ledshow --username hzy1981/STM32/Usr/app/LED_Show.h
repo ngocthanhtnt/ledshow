@@ -248,6 +248,8 @@ typedef struct
   INT16U ScanRow_X_BlockCols;
 
   INT8U Scan_Row;
+  INT16S Block_Data_Off[10]; //扫描块内数据的偏移
+  INT16S Block0_Index;//_Off[MAX_BLOCK_NUM];
 
   //接收帧数据
   INT8U Rcv_Ch; //接收通道

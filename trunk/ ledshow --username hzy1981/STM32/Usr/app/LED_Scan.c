@@ -383,13 +383,12 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 void Get_Scan_Data(INT16U Blocks, INT16U Col)
 {
     INT16U Index,i;
+	INT16U Addr;
 	//INT32U Temp;
 	//INT16U Cols;
 	
-    if(Screen_Para.Scan_Para.Direct < 2) //从左边进入，则索引应该转换
-      Col = Screen_Status.Block_Cols - 1 - Col; //Index从0开始计数
 
-	Index = (Col + Screen_Status.ScanRow_X_BlockCols)* Screen_Status.Color_Num;//Get_Scan_Data_Index(0, Col); //先计算第0个block的对应索引，后面的block都是加一个同样的值
+	Index = Screen_Status.Block0_Index + Screen_Status.ScanRow_X_BlockCols;//Screen_Status.Scan_Row * Screen_Para.Base_Para.Width / 8 * Screen_Status.Color_Num;//Get_Scan_Data_Index(0, Col); //先计算第0个block的对应索引，后面的block都是加一个同样的值
    
     if(Screen_Para.Scan_Para.RG_Reverse EQ 1) //红绿反向
 	{
@@ -409,7 +408,6 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 				Scan_Data[0][i] = Show_Data.Color_Data[Index + 1];//Show_Data.Color_Data[Data_Index];
 				Index += Screen_Status.Block_Bytes;
 			}
-	
 		}
 	}
 	else
@@ -434,6 +432,11 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 		}
 	}
 
+    //if(Screen_Para.Scan_Para.Direct < 2) //从左边进入，则索引应该转换
+      Screen_Status.Block0_Index += Screen_Status.Block_Data_Off[Col % Screen_Status.Fold_Size];
+//	else
+//	  Screen_Status.Block0_Index - Screen_Status.Block_Data_Off[Col % Screen_Status.Fold_Size];
+  	//Screen_Status.Block0_Index = Screen_Status.Block0_Index + Screen_Status.Block_Data_Off[Col % Screen_Status.Fold_Size]; 
 }
 #endif 
   
@@ -474,6 +477,104 @@ void Set_Block_Row(INT8U Row)
   }
 }
 
+INT16S Get_Data_Index(INT16U X, INT16U Y)
+{
+
+  return Y*Screen_Para.Base_Para.Width / 8 + X;
+}
+
+//计算一个扫描块内数据的偏移
+void Calc_Block_Data_Addr_Off(void)
+{
+   INT8U i;
+   INT16U Size;
+
+   Size = Screen_Status.Fold_Size;//(Screen_Para.Scan_Para.Rows_Fold + 1) * Screen_Para.Scan_Para.Cols_Fold;
+   
+   if(Screen_Para.Scan_Para.Rows_Fold EQ 0 || Screen_Para.Scan_Para.Cols_Fold EQ 0)
+   {
+  	   for(i = 0; i < Size; i ++)
+		 Screen_Status.Block_Data_Off[i] = Screen_Status.Color_Num;
+
+	   Screen_Status.Block0_Index = 0;
+
+	   if(Screen_Para.Scan_Para.Direct < 2)
+	     Screen_Status.Block0_Index = 0;
+	   else
+	     Screen_Status.Block0_Index = (Screen_Para.Base_Para.Width / 8 - 1) * Screen_Status.Color_Num;
+
+	   return;
+   } 
+
+   if(Screen_Para.Scan_Para.Direct EQ 0x00) //左上入
+   {
+	   for(i = 0; i < Size; i ++)
+	   {
+	      if(i EQ Size - 1)
+		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(1, 0) - \
+			                                  Get_Data_Index(0, Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Rows);
+		  else if(i % Screen_Para.Scan_Para.Cols_Fold EQ 1)
+		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(0, Screen_Para.Scan_Para.Rows) - Get_Data_Index(Screen_Para.Scan_Para.Cols_Fold - 1, 0);
+	      else
+		    Screen_Status.Block_Data_Off[i] = 1;
+
+	      Screen_Status.Block_Data_Off[i] = Screen_Status.Block_Data_Off[i] * Screen_Status.Color_Num;
+	   }
+
+	   Screen_Status.Block0_Index = 0;
+   }
+   else if(Screen_Para.Scan_Para.Direct EQ 0x01) //左下入
+   {
+	   for(i = 0; i < Size; i ++)
+	   {
+	      if(i EQ Size - 1)
+		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(1, Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Rows) - \
+			                                  Get_Data_Index(0, 0);
+		  else if(i % Screen_Para.Scan_Para.Cols_Fold EQ 1)
+		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(0, 0) - Get_Data_Index(Screen_Para.Scan_Para.Cols_Fold - 1, Screen_Para.Scan_Para.Rows);
+	      else
+		    Screen_Status.Block_Data_Off[i] = 1;
+
+		  Screen_Status.Block_Data_Off[i] = Screen_Status.Block_Data_Off[i] * Screen_Status.Color_Num;
+	   }
+
+	   Screen_Status.Block0_Index = Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Rows * Screen_Para.Base_Para.Width / 8 * Screen_Status.Color_Num;
+   }
+   else if(Screen_Para.Scan_Para.Direct EQ 0x02) //右上入
+   {
+ 	   for(i = 0; i < Size; i ++)
+	   {
+	      if(i EQ Size - 1)
+		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(0, 0) -\
+			                                  Get_Data_Index(1, Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Rows);			                                  
+		  else if(i % Screen_Para.Scan_Para.Cols_Fold EQ 1)
+		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(Screen_Para.Scan_Para.Cols_Fold - 1, Screen_Para.Scan_Para.Rows) - Get_Data_Index(0, 0);
+	      else
+		    Screen_Status.Block_Data_Off[i] = -1;
+
+	      Screen_Status.Block_Data_Off[i] = Screen_Status.Block_Data_Off[i] * Screen_Status.Color_Num;
+	   }
+
+	   Screen_Status.Block0_Index = (Screen_Para.Base_Para.Width / 8 - 1) * Screen_Status.Color_Num;
+   }
+   else	//右下入
+   {
+	   for(i = 0; i < Size; i ++)
+	   {
+	      if(i EQ Size - 1)
+		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(0, Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Rows) - \
+			                                  Get_Data_Index(1, 0);
+		  else if(i % Screen_Para.Scan_Para.Cols_Fold EQ 1)
+		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(Screen_Para.Scan_Para.Cols_Fold - 1, 0) - Get_Data_Index(0, Screen_Para.Scan_Para.Rows);
+	      else
+		    Screen_Status.Block_Data_Off[i] = -1;
+
+		  Screen_Status.Block_Data_Off[i] = Screen_Status.Block_Data_Off[i] * Screen_Status.Color_Num;
+	   }
+
+	   Screen_Status.Block0_Index = ((Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Rows  + 1)* Screen_Para.Base_Para.Width / 8 - 1)* Screen_Status.Color_Num;
+   }
+}
                        
 //调用该函数每次扫描一行
 //每中断一次调用一次该函数
@@ -494,13 +595,15 @@ void LED_Scan_One_Row(void)
 	 Chk_UDisk_Processing()) //关机状态，不显示,或当前在通信状态也不显示
     return;
  
-
+ GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+ /*
   Prog_Status.Play_Status.Effect_Counts++;
   if(Prog_Status.Play_Status.Effect_Counts >= Prog_Status.Play_Status.Max_Effect_Counts)
   {
     //Prog_Status.Play_Status.Effect_Counts = 0;
 	Prog_Status.Play_Status.Effect_Flag = 1;
   }
+  */
   //Set_Clock_Hight_Speed(); //设置为高速运行模式
   if(Screen_Para.Scan_Para.Rows EQ 0)
   {
@@ -513,15 +616,18 @@ void LED_Scan_One_Row(void)
   Screen_Status.Fold_Size = Screen_Para.Scan_Para.Cols_Fold * (Screen_Para.Scan_Para.Rows_Fold + 1);
   Screen_Status.BRow_X_RowsFold = Screen_Status.Scan_Row * (Screen_Para.Scan_Para.Rows_Fold + 1);
   Screen_Status.Rows_X_RowsFold = Screen_Para.Scan_Para.Rows * (Screen_Para.Scan_Para.Rows_Fold + 1); 
-  Screen_Status.Block_Bytes = Screen_Para.Scan_Para.Rows*Screen_Status.Block_Cols * Screen_Status.Color_Num; //每个扫描单元的字节数
-  Screen_Status.ScanRow_X_BlockCols	= Screen_Status.Block_Cols * Screen_Status.Scan_Row; 
+  Screen_Status.Block_Bytes = (Screen_Para.Scan_Para.Rows_Fold + 1) * Screen_Para.Scan_Para.Rows * Screen_Para.Base_Para.Width / 8 * Screen_Status.Color_Num; //每个扫描单元的字节数
+  Screen_Status.ScanRow_X_BlockCols	= Screen_Status.Color_Num * Screen_Status.Scan_Row * Screen_Para.Base_Para.Width / 8; 
   //Block数可以理解为单元板纵向的个数
 
   Blocks = Screen_Para.Base_Para.Height / (Screen_Para.Scan_Para.Rows * (Screen_Para.Scan_Para.Rows_Fold + 1)); //1.2.4.8.16扫？
 	
   if(Blocks > MAX_SCAN_BLOCK_NUM)
 	Blocks = MAX_SCAN_BLOCK_NUM;
+
   Cols = Screen_Status.Block_Cols;
+
+  Calc_Block_Data_Addr_Off();
 
  /* //Direct = (Screen_Para.Scan_Para.Direct < 2)?0:1; //左入为0，数据反向，右入为1，数据维持
 
@@ -714,7 +820,7 @@ void LED_Scan_One_Row(void)
     //Set_Clock_Normal_Speed();
 	//_USART_Cmd(USART1, ENABLE); 
 	//USART_Clar
-   
+    GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出  
 }
 /*
 void LED_Scan_One_Row(void)

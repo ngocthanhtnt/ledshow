@@ -234,8 +234,9 @@ INT32U Get_Area_Point_Index0(INT8U Area_No, INT16U X, INT16U Y)
   //if(Screen_Para.Scan_Para.Direct < 2)
    // X = X ^ 0x07;//(X & 0xFFFFFFF8) + ~(X & 0x07);
 
-  if(Screen_Para.Scan_Para.Rows_Fold EQ 0 ||\
-     Screen_Para.Scan_Para.Cols_Fold EQ 0)
+  //if(Screen_Para.Scan_Para.Rows_Fold EQ 0 ||\
+     //Screen_Para.Scan_Para.Cols_Fold EQ 0) 
+   if(1)
    {
 
     Index = Screen_Para.Base_Para.Width*Y + X;//GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
@@ -245,8 +246,9 @@ INT32U Get_Area_Point_Index0(INT8U Area_No, INT16U X, INT16U Y)
    {
        Rows_Fold = Screen_Para.Scan_Para.Rows_Fold + 1;
 
-       Index = Y / Rows_Fold * Rows_Fold * Screen_Para.Base_Para.Width / 8;//前面有Index条扫描线
-       Index += X / 8 / Screen_Para.Scan_Para.Cols_Fold * (Rows_Fold * Screen_Para.Scan_Para.Cols_Fold);//本条扫描线内前面有多少扫描块
+       Index = Y / (Rows_Fold * Screen_Para.Scan_Para.Rows) * (Rows_Fold * Screen_Para.Scan_Para.Rows) * Screen_Para.Base_Para.Width / 8;//计算得Rn 、Gn的n值
+       //(Y % (Rows_Fold * Screen_Para.Scan_Para.Rows)) % Screen_Para.Scan_Para.Rows;
+	   Index += X / 8 / Screen_Para.Scan_Para.Cols_Fold * (Rows_Fold * Screen_Para.Scan_Para.Cols_Fold);//本条扫描线内前面有多少扫描块
 
        //扫描块内的字节偏移
        if(Screen_Para.Scan_Para.Direct EQ 0x00 || Screen_Para.Scan_Para.Direct EQ 0x02) //上入
@@ -471,19 +473,12 @@ void Set_Area_Point_Data(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U 
 {
   INT32U Index;
 
-#if QT_EN
-  Index = Get_Area_Point_Index(Area_No, X, Y);
-#else
   if(pDst_Buf EQ &Show_Data_Bak)
     Index = Get_Area_Point_Index(Area_No, X, Y);
   else
   {
     Index = Get_Area_Point_Index0(Area_No, X, Y);
-
-	//if(Screen_Para.Scan_Para.Data_Polarity EQ 0) //数据极性的判断
-      //Value = ~Value;
   }
-#endif
 
   if(Screen_Status.Color_Num <2)//Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)  //0,1,2,4单色屏
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data),Index, (Value & 0x01));
@@ -1191,7 +1186,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
               pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
 
-              if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+              if(1)
               {
                   pDst += Width;
               }
@@ -1229,7 +1224,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
             pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
 
-            if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+            if(1)
             {
                 pDst += Width;
             }
@@ -1268,7 +1263,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
             pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
 
-            if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+            if(1)
             {
                 pDst += Width;
             }
@@ -1309,7 +1304,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
             pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
 
-            if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+            if(1)
             {
                 pDst += Width;
             }
@@ -1344,7 +1339,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
             pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
 
-            if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+            if(1)
             {
                 pDst += Width;
             }
@@ -1382,7 +1377,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
               pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
 
-              if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+              if(1)
               {
                   pDst += Width;
               }
@@ -2031,7 +2026,7 @@ void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_
     //目标是Show_Data，则需要特殊处理
     if(pDst_Buf EQ &Show_Data)
     {
-        if(Screen_Para.Scan_Para.Rows_Fold EQ 0)
+        if(1)
             Width = Screen_Status.Color_Num;
         else
             Width = Screen_Para.Scan_Para.Cols_Fold * Screen_Status.Color_Num; //同一条扫描线上，上下两个字节之间的距离
