@@ -1430,10 +1430,15 @@ void Screen_Test(void)
   S_Point P0,P1;
   INT8U Test_Key_Up_Flag;
  /*
-   Screen_Para.Base_Para.Width = 1064; 
+   Screen_Para.Base_Para.Width = 1024; 
    Screen_Para.Base_Para.Height = 64;
    Screen_Para.Base_Para.Color = 0x03;
-   Screen_Status.Color_Num = 1;
+   Screen_Status.Color_Num = 2;
+
+   Screen_Para.Scan_Para.Direct = 0x03;
+   Screen_Para.Scan_Para.Rows_Fold = 0x02;
+   Screen_Para.Scan_Para.Cols_Fold = 0x02;
+   Screen_Para.Scan_Para.Rows = 16;
 
    Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
    P0.X = 0;
