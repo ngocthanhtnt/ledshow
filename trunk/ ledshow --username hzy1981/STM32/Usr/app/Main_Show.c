@@ -1429,15 +1429,15 @@ void Screen_Test(void)
   INT16U i, j;
   S_Point P0,P1;
   INT8U Test_Key_Up_Flag;
- /*
-   Screen_Para.Base_Para.Width = 1024; 
-   Screen_Para.Base_Para.Height = 64;
-   Screen_Para.Base_Para.Color = 0x03;
-   Screen_Status.Color_Num = 2;
+ 
+   Screen_Para.Base_Para.Width = 64; 
+   Screen_Para.Base_Para.Height = 32;
+   Screen_Para.Base_Para.Color = 0x01;
+   Screen_Status.Color_Num = 1;
 
-   Screen_Para.Scan_Para.Direct = 0x03;
-   Screen_Para.Scan_Para.Rows_Fold = 0x02;
-   Screen_Para.Scan_Para.Cols_Fold = 0x02;
+   Screen_Para.Scan_Para.Direct = 0x03;//0x03;
+   Screen_Para.Scan_Para.Rows_Fold = 0x01;//0x01;
+   Screen_Para.Scan_Para.Cols_Fold = 0x08;//0x02;
    Screen_Para.Scan_Para.Rows = 16;
 
    Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
@@ -1450,13 +1450,13 @@ void Screen_Test(void)
    while(1)
    {
 
-   	 //Set_Area_Point_Data(&Show_Data, 0, 32, 16, 0x01);
+   	 Set_Area_Point_Data(&Show_Data, 0, 63, 31, 0x01);
 	// Set_Area_Point_Data(&Show_Data, 0, 32, 17, 0x02);
 	// Set_Area_Point_Data(&Show_Data, 0, 32, 18, 0x03);
 
-   Copy_Filled_Rect(&Show_Data_Bak, 0, &P0, 1064, 64, &Show_Data, &P1, 0);
+   //Copy_Filled_Rect(&Show_Data_Bak, 0, &P0, 1064, 64, &Show_Data, &P1, 0);
    }  
- */ 
+  
  //--------------------
 #if RMDK_SIM_EN EQ 0
   //测试按键按下并且当前没有在工厂状态，则进入屏幕自检
