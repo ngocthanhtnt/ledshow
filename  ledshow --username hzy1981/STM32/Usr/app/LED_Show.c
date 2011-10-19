@@ -387,11 +387,7 @@ INT8U Get_Area_Point_Data(S_Show_Data *pSrc_Buf, INT8U Area_No, INT16U X, INT16U
   INT8U Value;
 
 
-  if(pSrc_Buf EQ &Show_Data_Bak)
-    Index = Get_Area_Point_Index(Area_No, X, Y);
-  else
-    Index = Get_Area_Point_Index0(Area_No, X, Y);
-
+  Index = Get_Area_Point_Index(Area_No, X, Y);
 
   if(Screen_Status.Color_Num <2)//Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)  //0,1,2,4单色屏
     Value = Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data),Index);
@@ -473,12 +469,7 @@ void Set_Area_Point_Data(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U 
 {
   INT32U Index;
 
-  if(pDst_Buf EQ &Show_Data_Bak)
-    Index = Get_Area_Point_Index(Area_No, X, Y);
-  else
-  {
-    Index = Get_Area_Point_Index0(Area_No, X, Y);
-  }
+  Index = Get_Area_Point_Index(Area_No, X, Y);
 
   if(Screen_Status.Color_Num <2)//Screen_Para.Base_Para.Color < 3 || Screen_Para.Base_Para.Color EQ 4)  //0,1,2,4单色屏
     Set_Buf_Bit(pDst_Buf->Color_Data, sizeof(pDst_Buf->Color_Data),Index, (Value & 0x01));
@@ -1140,11 +1131,11 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
     Width = Screen_Para.Base_Para.Width/8 * Color_Num;
 
     Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y); //源点索引
-    Index1 = Get_Area_Point_Index0(Area_No, pPoint1->X, pPoint1->Y); //目标点索引,目标数据应该是Show_Data
+    Index1 = Get_Area_Point_Index(Area_No, pPoint1->X, pPoint1->Y); //目标点索引,目标数据应该是Show_Data
 
     pSrc0 = pSrc_Buf->Color_Data + (Index0 >> 3) * Color_Num;
     pDst0 = pDst_Buf->Color_Data + (Index1 >> 3) * Color_Num;
-
+  /*
     //上下行之间的两个字节在内存中的距离
     if(Screen_Para.Scan_Para.Direct EQ 0x01 ||\
        Screen_Para.Scan_Para.Direct EQ 0x03) //从上面入,左上或者右上
@@ -1159,7 +1150,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
       Width1 = ((Screen_Para.Scan_Para.Rows_Fold + 1)*Screen_Para.Base_Para.Width / 8 + Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Cols_Fold) * Color_Num;
 
     }
-
+	*/
     if((X0 % 8) >= (X1 % 8)) //源数据需要左移
     {
         pSrc = pSrc0;// + i * Color_Num;     //该列第一个数据的源地址
@@ -1185,18 +1176,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
               }
 
               pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
-
-              if(1)
-              {
-                  pDst += Width;
-              }
-              else
-              {
-                  if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
-                    pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
-                  else
-                    pDst += Width0;
-              }
+			  pDst += Width;
         }
 
         START_SCAN_TIMER();
@@ -1223,18 +1203,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
 
             pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
-
-            if(1)
-            {
-                pDst += Width;
-            }
-            else
-            {
-                if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
-                  pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
-                else
-                  pDst += Width0;
-            }
+		    pDst += Width;
           }
 
           START_SCAN_TIMER();
@@ -1262,18 +1231,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
             }
 
             pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
-
-            if(1)
-            {
-                pDst += Width;
-            }
-            else
-            {
-                if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
-                  pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
-                else
-                  pDst += Width0;
-            }
+		    pDst += Width;
         }
 
         START_SCAN_TIMER();
@@ -1303,18 +1261,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
             }
 
             pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
-
-            if(1)
-            {
-                pDst += Width;
-            }
-            else
-            {
-                if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
-                  pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
-                else
-                  pDst += Width0;
-            }
+			pDst += Width;
         }
 
         START_SCAN_TIMER();
@@ -1338,18 +1285,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
             }
 
             pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
-
-            if(1)
-            {
-                pDst += Width;
-            }
-            else
-            {
-                if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
-                  pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
-                else
-                  pDst += Width0;
-            }
+			pDst += Width;
          }
 
          START_SCAN_TIMER();
@@ -1376,18 +1312,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
               }
 
               pSrc += Width;//Screen_Para.Base_Para.Width/8 * Color_Num;
-
-              if(1)
-              {
-                  pDst += Width;
-              }
-              else
-              {
-                  if(j % Screen_Para.Scan_Para.Rows_Fold EQ 0)
-                    pDst += Width1;//Screen_Para.Base_Para.Width/8 * Color_Num;
-                  else
-                    pDst += Width0;
-              }
+			  pDst += Width;
           }
 
           START_SCAN_TIMER();
@@ -2024,17 +1949,7 @@ void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_
       Len = 0;
 
     //目标是Show_Data，则需要特殊处理
-    if(pDst_Buf EQ &Show_Data)
-    {
-        if(1)
-            Width = Screen_Status.Color_Num;
-        else
-            Width = Screen_Para.Scan_Para.Cols_Fold * Screen_Status.Color_Num; //同一条扫描线上，上下两个字节之间的距离
-    }
-    else
-    {
-        Width = GET_COLOR_NUM(Screen_Para.Base_Para.Color);
-    }
+    Width = Screen_Status.Color_Num;//GET_COLOR_NUM(Screen_Para.Base_Para.Color);
     //qDebug("len = %d",Len);
 
 
