@@ -1112,6 +1112,25 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
     INT8U *pSrc, *pDst, *pSrc0, *pDst0, Data, Color_Num;
 
     //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+///-----------判断参数的正确性---------------
+    if(pPoint0->X >= Prog_Para.Area[Area_No].X_Len ||\
+       pPoint0->Y >= Prog_Para.Area[Area_No].Y_Len ||\
+       pPoint1->X >= Prog_Para.Area[Area_No].X_Len ||\
+       pPoint1->Y >= Prog_Para.Area[Area_No].Y_Len)
+        return;
+
+    if(pPoint0->X + X_Len >= Prog_Para.Area[Area_No].X_Len)
+        X_Len = Prog_Para.Area[Area_No].X_Len - pPoint0->X;
+
+    if(pPoint0->Y + Y_Len >= Prog_Para.Area[Area_No].Y_Len)
+        Y_Len = Prog_Para.Area[Area_No].Y_Len - pPoint0->Y;
+
+    if(pPoint1->X + X_Len >= Prog_Para.Area[Area_No].X_Len)
+        X_Len = Prog_Para.Area[Area_No].X_Len - pPoint1->X;
+
+    if(pPoint1->Y + Y_Len >= Prog_Para.Area[Area_No].Y_Len)
+        Y_Len = Prog_Para.Area[Area_No].Y_Len - pPoint1->Y;
+///-----------判断参数的正确性---------------
 
     X0 = Prog_Para.Area[Area_No].X + pPoint0->X; //源数据在整体屏幕中的起始位置
     X1 = Prog_Para.Area[Area_No].X + pPoint1->X; //目标数据在整体屏幕中的起始位置
@@ -1937,6 +1956,17 @@ void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_
     INT8U *pDst;
 
         //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+    ///-----------判断参数的正确性---------------
+    if(pPoint0->X >= Prog_Para.Area[Area_No].X_Len ||\
+       pPoint0->Y >= Prog_Para.Area[Area_No].Y_Len)
+        return;
+
+    if(pPoint0->X + X_Len >= Prog_Para.Area[Area_No].X_Len)
+        X_Len = Prog_Para.Area[Area_No].X_Len - pPoint0->X;
+
+    if(pPoint0->Y + Y_Len >= Prog_Para.Area[Area_No].Y_Len)
+        Y_Len = Prog_Para.Area[Area_No].Y_Len - pPoint0->Y;
+    ///-----------判断参数的正确性---------------
 
     X1 = Prog_Para.Area[Area_No].X + pPoint0->X; //在整体屏幕中的位置
     //Y1 = Prog_Para.Area[Area_No].Y + pPoint0->Y;
