@@ -1185,7 +1185,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
         for(i = 0; i < Len; i ++) //多少列字节
         {
           pSrc = pSrc0 + (i + 1) * Color_Num;     //该列第一个数据的源地址
-          pDst = pDst0 + (i + 1) * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
+          pDst = pDst0 + (i + 1) * Color_Num;//(Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
 
           STOP_SCAN_TIMER();
 
@@ -1213,7 +1213,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
       if((X1 + X_Len - 1) /8 > X1 / 8)
       {
           pSrc = pSrc0 + (Len + 1) * Color_Num;     //该列第一个数据的源地址
-          pDst = pDst0 + (Len + 1) * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
+          pDst = pDst0 + (Len + 1) * Color_Num;//(Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
           
           Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
 
@@ -1269,7 +1269,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
         for(i = 0; i < Len; i ++) //多少列字节
         {
           pSrc = pSrc0 + (i + 1) * Color_Num;     //该列第一个数据的源地址
-          pDst = pDst0 + (i + 1) * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
+          pDst = pDst0 + (i + 1) * Color_Num;//(Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
 
           STOP_SCAN_TIMER();
 
@@ -1294,7 +1294,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
       if((X1 + X_Len - 1) /8 > X1 / 8)
       {
           pSrc = pSrc0 + (Len + 1) * Color_Num;     //该列第一个数据的源地址
-          pDst = pDst0 + (Len + 1) * (Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
+          pDst = pDst0 + (Len + 1) * Color_Num;//(Screen_Para.Scan_Para.Rows_Fold + 1) * Color_Num; //该列第一个数据的目标地址
           
           Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
 

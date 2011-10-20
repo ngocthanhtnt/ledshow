@@ -397,7 +397,7 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 		{
 			for(i = 0; i < Blocks; i ++)
 			{
-				Scan_Data[1][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index];
+				Scan_Data0[1][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index];
 				Index += Screen_Status.Block_Bytes;
 			}
 		}
@@ -405,8 +405,8 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 		{
 			for(i = 0; i < Blocks; i ++)
 			{
-	     		Scan_Data[1][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index]; 		    
-				Scan_Data[0][i] = Show_Data.Color_Data[Index + 1];//Show_Data.Color_Data[Data_Index];
+	     		Scan_Data0[1][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index]; 		    
+				Scan_Data0[0][i] = Show_Data.Color_Data[Index + 1];//Show_Data.Color_Data[Data_Index];
 				Index += Screen_Status.Block_Bytes;
 			}
 		}
@@ -417,7 +417,7 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 		{
 			for(i = 0; i < Blocks; i ++)
 			{
-				Scan_Data[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index];
+				Scan_Data0[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index];
 				Index += Screen_Status.Block_Bytes;
 			}
 		}
@@ -425,8 +425,8 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 		{
 			for(i = 0; i < Blocks; i ++)
 			{
-	     		Scan_Data[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index]; 		    
-				Scan_Data[1][i] = Show_Data.Color_Data[Index + 1];//Show_Data.Color_Data[Data_Index];
+	     		Scan_Data0[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index]; 		    
+				Scan_Data0[1][i] = Show_Data.Color_Data[Index + 1];//Show_Data.Color_Data[Data_Index];
 				Index += Screen_Status.Block_Bytes;
 			}
 	
@@ -494,6 +494,7 @@ void Calc_Block_Data_Addr_Off(void)
    
    if(Screen_Para.Scan_Para.Rows_Fold EQ 0 || Screen_Para.Scan_Para.Cols_Fold EQ 0)
    {
+       Size = 1;
   	   for(i = 0; i < Size; i ++)
 	   {
 	     if(Screen_Para.Scan_Para.Direct > 1)
@@ -514,12 +515,12 @@ void Calc_Block_Data_Addr_Off(void)
 
    if(Screen_Para.Scan_Para.Direct EQ 0x00) //左上入
    {
- 	   for(i = 0; i < Size; i ++)
+ 	   for(i = 0; i < Size && i < sizeof(Screen_Status.Block_Data_Off); i ++)
 	   {
 	      if(i EQ Size - 1)
 		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(0, Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Rows) - \
 			                                  Get_Data_Index(1, 0);
-		  else if(i % Screen_Para.Scan_Para.Cols_Fold EQ 1)
+		  else if((i % Screen_Para.Scan_Para.Cols_Fold) EQ Screen_Para.Scan_Para.Cols_Fold - 1)
 		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(Screen_Para.Scan_Para.Cols_Fold - 1, 0) - Get_Data_Index(0, Screen_Para.Scan_Para.Rows);
 	      else
 		    Screen_Status.Block_Data_Off[i] = -1;
@@ -537,7 +538,7 @@ void Calc_Block_Data_Addr_Off(void)
 	      if(i EQ Size - 1)
 		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(0, 0) -\
 			                                  Get_Data_Index(1, Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Rows);			                                  
-		  else if(i % Screen_Para.Scan_Para.Cols_Fold EQ 1)
+		  else if((i % Screen_Para.Scan_Para.Cols_Fold) EQ Screen_Para.Scan_Para.Cols_Fold - 1)
 		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(Screen_Para.Scan_Para.Cols_Fold - 1, Screen_Para.Scan_Para.Rows) - Get_Data_Index(0, 0);
 	      else
 		    Screen_Status.Block_Data_Off[i] = -1;
@@ -554,7 +555,7 @@ void Calc_Block_Data_Addr_Off(void)
 	      if(i EQ Size - 1)
 		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(1, Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Rows) - \
 			                                  Get_Data_Index(0, 0);
-		  else if(i % Screen_Para.Scan_Para.Cols_Fold EQ 1)
+		  else if((i % Screen_Para.Scan_Para.Cols_Fold) EQ Screen_Para.Scan_Para.Cols_Fold - 1)
 		    Screen_Status.Block_Data_Off[i] = Get_Data_Index(0, 0) - Get_Data_Index(Screen_Para.Scan_Para.Cols_Fold - 1, Screen_Para.Scan_Para.Rows);
 	      else
 		    Screen_Status.Block_Data_Off[i] = 1;
@@ -643,10 +644,10 @@ void LED_Scan_One_Row(void)
 
   //Direct = (Screen_Para.Scan_Para.Direct < 2)?0:1; //左入为0，数据反向，右入为1，数据维持
 
-  if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
-    memset(Scan_Data, 0xFF, sizeof(Scan_Data));
-  else
-    memset(Scan_Data, 0x00, sizeof(Scan_Data));
+ // if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
+   // memset(Scan_Data0, 0xFF, sizeof(Scan_Data));
+ // else
+    memset(Scan_Data0, 0x00, sizeof(Scan_Data));
 
 #if SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
 
@@ -657,7 +658,7 @@ void LED_Scan_One_Row(void)
       Get_Scan_Data(Blocks, i);
 
 #if MAX_SCAN_BLOCK_NUM EQ 4//A型卡最多4条扫描线
-      transpose8(&Scan_Data[0][0], &Scan_Data[0][0]/*, Direct*/);	//R1-R4,G1-G4
+      transpose8(&Scan_Data0[0][0], &Scan_Data[0][0]/*, Direct*/);	//R1-R4,G1-G4
 
 	  Temp = (GPIOB->ODR & 0xFF00) ;
 	  for(j = 0; j < 8; j ++)
@@ -672,32 +673,32 @@ void LED_Scan_One_Row(void)
 #elif MAX_SCAN_BLOCK_NUM EQ 16
 
 	    if(Blocks <= 4)
-		   transpose4(&Scan_Data[0][0], &Scan_Data[0][0]/*, Direct*/);	//R1-R4
+		   transpose4(&Scan_Data0[0][0], &Scan_Data[0][0]/*, Direct*/);	//R1-R4
  		else
 		{
-			transpose8(&Scan_Data[0][0], &Scan_Data[0][0]/*, Direct*/);	//R1-R8
+			transpose8(&Scan_Data0[0][0], &Scan_Data[0][0]/*, Direct*/);	//R1-R8
 			if(Blocks > 8)
 			{
 			   if(Blocks <= 12)
-			     transpose4(&Scan_Data[0][8], &Scan_Data[0][8]/*, Direct*/); //R9-R16
+			     transpose4(&Scan_Data0[0][8], &Scan_Data[0][8]/*, Direct*/); //R9-R16
 			   else
-			     transpose8(&Scan_Data[0][8], &Scan_Data[0][8]/*, Direct*/); //R9-R16
+			     transpose8(&Scan_Data0[0][8], &Scan_Data[0][8]/*, Direct*/); //R9-R16
 			}
 		}
 
 		if(Screen_Status.Color_Num > 1)
 		{
 	      if(Blocks <= 4)
-		    transpose4(&Scan_Data[1][0], &Scan_Data[1][0]/*, Direct*/);	//R1-R8
+		    transpose4(&Scan_Data0[1][0], &Scan_Data[1][0]/*, Direct*/);	//R1-R8
 		  else
 		  {
-		    transpose8(&Scan_Data[1][0], &Scan_Data[1][0]/*, Direct*/); //G1-G8
+		    transpose8(&Scan_Data0[1][0], &Scan_Data[1][0]/*, Direct*/); //G1-G8
   			if(Blocks > 8)
 			{
 			    if(Blocks <= 12)
-				  transpose4(&Scan_Data[1][8], &Scan_Data[1][8]/*, Direct*/);	//R1-R8
+				  transpose4(&Scan_Data0[1][8], &Scan_Data[1][8]/*, Direct*/);	//R1-R8
 				else
-			      transpose8(&Scan_Data[1][8], &Scan_Data[1][8]/*, Direct*/); //R9-R16
+			      transpose8(&Scan_Data0[1][8], &Scan_Data[1][8]/*, Direct*/); //R9-R16
 			}
 		  }
 
