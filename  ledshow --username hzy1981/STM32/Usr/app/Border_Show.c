@@ -52,58 +52,49 @@ INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y) //»ñÈ¡Ò»¸öÇøÓòÄÚÒ
                                 Prog_Status.File_Para[Area_No].Pic_Para.Border_Color, Simple_Border_Data[Type].Width, X, Y);
     }
 }
-/*
-void Copy_Border_8Bits(INT8U Data[], INT32U Index)
-{
-   INT16U Posi;
-   INT8U Bit;
-   INT8U Color_Num;
 
-   Color_Num = Screen_Status.Color_Num;
-   Posi = (Index >> 3)*Color_Num; //×Ö½ÚÎ»ÖÃ
-   Bit = (Index & 0x07);
-   
-   Show_Data.Color_Data[Posi] = (Show_Data.Color_Data[Posi] & Bit_Mask[Bit]) + (Data[0] << Bit);
-   Show_Data.Color_Data[Posi + Color_Num] = (Show_Data.Color_Data[Posi + Color_num] & ~Bit_Mask[Bit]) + (Data[0] >> (8 - Bit));
-
-   if(Color_Num > 1)
-   {
-     Posi++;
-
-     Show_Data.Color_Data[Posi] = (Show_Data.Color_Data[Posi] & Bit_Mask[Bit]) + (Data[0] << Bit);
-     Show_Data.Color_Data[Posi + Color_Num] = (Show_Data.Color_Data[Posi + Color_num] & ~Bit_Mask[Bit]) + (Data[0] >> (8 - Bit));
-   }
-}
-  
 void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, INT8U Height,  INT32U Step)
 {
    INT8U Re;
    INT16U i,j;
    INT16U Area_Width, Area_Height, Border_Width;
-   INT16U Temp;
+   S_Point P0,P1;
    INT8U Color;
    S_Show_Data *pShow_Data;
-  
+
    Area_Width = Get_Area_Width(Area_No); //·ÖÇøµÄ¿í¶ÈºÍ¸ß¶È
    Area_Height = Get_Area_Height(Area_No);
    Border_Width = Get_Area_Border_Width(Area_No);
 
    //ÔÚPub_BufÖÐ½¨Á¢Ò»¸öShow_Data,ÓÃÓÚ¸´ÖÆÊý¾Ý
-   pShow_Data = (S_Show_Data *) &_Pub_Buf;
+   //pShow_Data = (S_Show_Data *) &_Pub_Buf;
 
-   if(Area_No EQ MAX_AREA_NUM)
-     memcpy(pShow_Data->Color_Data, Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data)); 
-   else	  //·ÖÇø±ß¿ò
+   //ÉÏÏÂ±ß¿ò
+   for(i = 0; i < Border_Width; i ++)
+     for(j = 0; j < Height; j ++)
+     {
+       Re = Get_Border_Point_Data(Area_No, (i + Step) % Border_Width, j);
+       Set_Area_Point_Data(pDst, Area_No, i, j, Re); //ÉÏ±ß¿ò
+       Set_Area_Point_Data(pDst, Area_No, Border_Width - (i + Step) % Border_Width, Area_Height-1 - j, Re); //ÏÂ±ß¿ò
+     }
+
+   P0.X = 0;
+   P0.Y = 0;
+
+   P1.X = 0;
+   P1.Y = 0;
+   while(P1.X < Area_Width)
    {
-	 Color = Prog_Status.File_Para[Area_No].Pic_Para.Border_Color; //±ß¿òÑÕÉ«
-	 if(Color EQ 0x01) //ºìÉ«
-	 {
-	   
-	 }
+      P1.X = P1.X + Border_Width;
+      P1.Y = 0;
+      Copy_Filled_Rect(pDst, Area_No,&P0, Border_Width, Height, pDst, &P1, 0);
+
+      P1.Y = Area_Height - 1 - Height;
+      Copy_Filled_Rect(pDst, Area_No,&P0, Border_Width, Height, pDst, &P1, 0);
    }
-     
+
 }
-*/                     
+/*
 //»æÖÆ±ß¿ò
 //pDst±íÊ¾Ä¿±ê»æÖÆÇø
 //Area_No±íÊ¾Ä¿±ê·ÖÇø
@@ -152,7 +143,7 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
        Set_Area_Point_Data(pDst, Area_No, Area_Width-1 -j, i, Re); //ÓÒ±ß¿ò
      }   
 }
-
+*/
 
 //Çå³ý±ß½ç--ÉÁË¸Ê±µ÷ÓÃ
 void Clr_Border(S_Show_Data *pDst, INT8U Area_No, INT8U Width, INT8U Height)
