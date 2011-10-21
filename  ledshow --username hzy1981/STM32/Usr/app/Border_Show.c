@@ -59,8 +59,9 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
    INT16U i,j;
    INT16U Area_Width, Area_Height, Border_Width;
    S_Point P0,P1;
-   INT8U Color;
-   S_Show_Data *pShow_Data;
+   //INT8U Color;
+   //S_Show_Data *pShow_Data;
+   INT16U Temp;
 
    Area_Width = Get_Area_Width(Area_No); //分区的宽度和高度
    Area_Height = Get_Area_Height(Area_No);
@@ -75,7 +76,7 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
      {
        Re = Get_Border_Point_Data(Area_No, (i + Step) % Border_Width, j);
        Set_Area_Point_Data(pDst, Area_No, i, j, Re); //上边框
-       Set_Area_Point_Data(pDst, Area_No, Border_Width - (i + Step) % Border_Width, Area_Height-1 - j, Re); //下边框
+       Set_Area_Point_Data(pDst, Area_No, Border_Width - 1 - i, Area_Height-1 - j, Re); //下边框
      }
 
    P0.X = 0;
@@ -86,13 +87,28 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
    while(P1.X < Area_Width)
    {
       P1.X = P1.X + Border_Width;
+      P0.Y = 0;
       P1.Y = 0;
       Copy_Filled_Rect(pDst, Area_No,&P0, Border_Width, Height, pDst, &P1, 0);
 
-      P1.Y = Area_Height - 1 - Height;
+      P0.Y = Area_Height - Height;
+      P1.Y = Area_Height - Height;
       Copy_Filled_Rect(pDst, Area_No,&P0, Border_Width, Height, pDst, &P1, 0);
    }
 
+   //左右边框
+   if(Area_Height > Height)
+       Temp = Area_Height - Height;
+   else
+       Temp = 0;
+
+   for(i = Height; i < Temp; i ++)
+     for(j = 0; j < Height; j ++)
+     {
+       Re = Get_Border_Point_Data(Area_No, (i + Area_Width + Step) % Border_Width, j);
+       Set_Area_Point_Data(pDst, Area_No, j, Area_Height - 1 - i, Re); //左边框
+       Set_Area_Point_Data(pDst, Area_No, Area_Width - 1- j, i, Re); //右边框
+     }
 }
 /*
 //绘制边框
@@ -148,38 +164,28 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
 //清除边界--闪烁时调用
 void Clr_Border(S_Show_Data *pDst, INT8U Area_No, INT8U Width, INT8U Height)
 {
-    INT8U Re;
-    INT16U i,j;
-    INT16U Area_Width, Area_Height;
 
+    INT16U Area_Width, Area_Height;//, Border_Width, Border_Height;
+    S_Point P0;
 
     Area_Width = Get_Area_Width(Area_No); //分区的宽度和高度
     Area_Height = Get_Area_Height(Area_No);
+    //Border_Width = Get_Area_Border_Width(Area_No);
+    //Border_Height = Get_Area_Border_Height(Area_No);
 
-    //边框长宽是否合理
-    if(Width*Height > MAX_BORDER_POINTS || Width EQ 0 || Height EQ 0)
-    {
-        ASSERT_FAILED();
-        return;
-    }
+    P0.X = 0;
+    P0.Y = 0;
 
-    //上下边框
-    for(i = 0; i < Area_Width; i ++)
-      for(j = 0; j < Height; j ++)
-      {
-        Re = 0;//Get_Border_Point_Data(Area_No, (i + Prog_Para.Border_Width *Step / MAX_STEP_NUM) % Prog_Para.Border_Width, j);
-        Set_Area_Point_Data(pDst, Area_No, i, j, Re); //上边框
-        Set_Area_Point_Data(pDst, Area_No, Area_Width-1 - i, Area_Height-1 - j, Re); //下边框
-      }
+    Fill_Rect(pDst, Area_No, &P0, Area_Width, Height, 0);
 
-    //左右边框
-    for(i = 0; i < Area_Height; i ++)
-      for(j = 0; j < Height; j ++)
-      {
-        Re = 0;//Get_Border_Point_Data(Area_No, (i + Prog_Para.Border_Width *Step / MAX_STEP_NUM) % Prog_Para.Border_Width, j);
-        Set_Area_Point_Data(pDst, Area_No, j, Area_Height - 1 - i, Re); //左边框
-        Set_Area_Point_Data(pDst, Area_No, Area_Width-1 -j, i, Re); //右边框
-      }
+    P0.Y = Area_Height - Height;
+    Fill_Rect(pDst, Area_No, &P0, Area_Width, Height, 0);
+
+    P0.Y = 0;
+    Fill_Rect(pDst, Area_No, &P0, Height, Area_Height, 0);
+
+    P0.X = Area_Width - Height;
+    Fill_Rect(pDst, Area_No, &P0, Height, Area_Height, 0);
 }
 
 //获取某个分区的宽度
@@ -395,7 +401,7 @@ void Update_Border_Data(INT8U Area_No)
     else if(Border_Mode EQ BORDER_CLKWS) //顺时针
     {
       Draw_Border(&Show_Data, Area_No, pBorder_Data, \
-                  Border_Width, Border_Height, Max_Step - Prog_Status.Border_Status[Area_No].Step);
+                  Border_Width, Border_Height, Max_Step - Border_Width - Prog_Status.Border_Status[Area_No].Step);
     }
     else if(Border_Mode EQ BORDER_CCLKWS) //逆时针
     {
@@ -406,7 +412,7 @@ void Update_Border_Data(INT8U Area_No)
     {
       if(Flag[Area_No].Var EQ 0)
         Draw_Border(&Show_Data, Area_No, pBorder_Data, \
-                    Border_Width, Border_Height, Max_Step - Prog_Status.Border_Status[Area_No].Step);
+                    Border_Width, Border_Height, Max_Step - Border_Width - Prog_Status.Border_Status[Area_No].Step);
       else
         Clr_Border(&Show_Data, Area_No, Border_Width, Border_Height);      
     }
