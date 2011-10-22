@@ -218,7 +218,7 @@ INT8U Get_Area_TopLeft(INT8U Area_No, S_Point *pPoint)
 INT32U Get_Area_Point_Index0(INT8U Area_No, INT16U X, INT16U Y)
 {
   INT32U Index;
-  INT8U Rows_Fold;
+  //INT8U Rows_Fold;
   //INT16U X0,Y0,Bit;
 #if QT_EN
   Index = Get_Area_Point_Index(Area_No, X, Y);
@@ -231,33 +231,7 @@ INT32U Get_Area_Point_Index0(INT8U Area_No, INT16U X, INT16U Y)
     Y += Prog_Para.Area[Area_No].Y;
   }
 
-  //if(Screen_Para.Scan_Para.Direct < 2)
-   // X = X ^ 0x07;//(X & 0xFFFFFFF8) + ~(X & 0x07);
-
-  //if(Screen_Para.Scan_Para.Rows_Fold EQ 0 ||\
-     //Screen_Para.Scan_Para.Cols_Fold EQ 0) 
-   if(1)
-   {
-
-    Index = Screen_Para.Base_Para.Width*Y + X;//GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
-
-   }
-   else
-   {
-       Rows_Fold = Screen_Para.Scan_Para.Rows_Fold + 1;
-
-       Index = Y / (Rows_Fold * Screen_Para.Scan_Para.Rows) * (Rows_Fold * Screen_Para.Scan_Para.Rows) * Screen_Para.Base_Para.Width / 8;//计算得Rn 、Gn的n值
-       //(Y % (Rows_Fold * Screen_Para.Scan_Para.Rows)) % Screen_Para.Scan_Para.Rows;
-	   Index += X / 8 / Screen_Para.Scan_Para.Cols_Fold * (Rows_Fold * Screen_Para.Scan_Para.Cols_Fold);//本条扫描线内前面有多少扫描块
-
-       //扫描块内的字节偏移
-       if(Screen_Para.Scan_Para.Direct EQ 0x00 || Screen_Para.Scan_Para.Direct EQ 0x02) //上入
-         Index += (Y % Rows_Fold) * Screen_Para.Scan_Para.Cols_Fold + (X / 8) % Screen_Para.Scan_Para.Cols_Fold;
-       else
-         Index += (Rows_Fold - 1 - (Y % Rows_Fold)) * Screen_Para.Scan_Para.Cols_Fold + (X / 8) % Screen_Para.Scan_Para.Cols_Fold;
-
-       Index = Index * 8 +  (X % 8);
-   }
+  Index = Screen_Para.Base_Para.Width*Y + X;//GET_POINT_INDEX(Screen_Para.Base_Para.Width,X,Y);
   
   return Index;
 #endif
@@ -1107,33 +1081,56 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
   S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
 {
     INT32U Index0, Index1;
-    INT16U Len, Diff,i,j,Mask,X0,X1,Width;//,Y1;
-	INT16S Width0,Width1;
+    INT16U Len, Diff,i,j,Mask,X0,Y0, X1,Y1,Width,Height;//,Y1;
+    //INT16S Width0,Width1;
     INT8U *pSrc, *pDst, *pSrc0, *pDst0, Data, Color_Num;
 
     //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 ///-----------判断参数的正确性---------------
-    if(pPoint0->X >= Prog_Para.Area[Area_No].X_Len ||\
-       pPoint0->Y >= Prog_Para.Area[Area_No].Y_Len ||\
-       pPoint1->X >= Prog_Para.Area[Area_No].X_Len ||\
-       pPoint1->Y >= Prog_Para.Area[Area_No].Y_Len)
+    X0 = pPoint0->X; //源数据在整体屏幕中的起始位置
+    Y0 = pPoint0->Y; //源数据在整体屏幕中的起始位置
+    X1 = pPoint1->X; //目标数据在整体屏幕中的起始位置
+    Y1 = pPoint1->Y;
+
+    if(Area_No < MAX_AREA_NUM)
+    {
+        Width = Prog_Para.Area[Area_No].X_Len;
+        Height = Prog_Para.Area[Area_No].Y_Len;
+    }
+    else
+    {
+        Width = Screen_Para.Base_Para.Width;
+        Height = Screen_Para.Base_Para.Height;
+    }
+
+    if(X0 >= Width || Y0 >= Height ||\
+       X1 >= Width || Y1 >= Height)
         return;
 
-    if(pPoint0->X + X_Len >= Prog_Para.Area[Area_No].X_Len)
-        X_Len = Prog_Para.Area[Area_No].X_Len - pPoint0->X;
+    if(X0 + X_Len >= Width)
+        X_Len = Width - X0;
 
-    if(pPoint0->Y + Y_Len >= Prog_Para.Area[Area_No].Y_Len)
-        Y_Len = Prog_Para.Area[Area_No].Y_Len - pPoint0->Y;
+    if(Y0 + Y_Len >= Height)
+        Y_Len = Height - Y0;
 
-    if(pPoint1->X + X_Len >= Prog_Para.Area[Area_No].X_Len)
-        X_Len = Prog_Para.Area[Area_No].X_Len - pPoint1->X;
+    if(X1 + X_Len >= Width)
+        X_Len = Width - X1;
 
-    if(pPoint1->Y + Y_Len >= Prog_Para.Area[Area_No].Y_Len)
-        Y_Len = Prog_Para.Area[Area_No].Y_Len - pPoint1->Y;
-///-----------判断参数的正确性---------------
+    if(Y1 + Y_Len >= Height)
+        Y_Len = Height - Y1;
 
-    X0 = Prog_Para.Area[Area_No].X + pPoint0->X; //源数据在整体屏幕中的起始位置
-    X1 = Prog_Para.Area[Area_No].X + pPoint1->X; //目标数据在整体屏幕中的起始位置
+///---------------------------------------------
+
+    if(Area_No < MAX_AREA_NUM)
+    {
+      X0 = Prog_Para.Area[Area_No].X + pPoint0->X; //源数据在整体屏幕中的起始位置
+      X1 = Prog_Para.Area[Area_No].X + pPoint1->X; //目标数据在整体屏幕中的起始位置
+    }
+    else
+    {
+        X0 = pPoint0->X; //源数据在整体屏幕中的起始位置
+        X1 = pPoint1->X; //目标数据在整体屏幕中的起始位置
+    }
 
     if((X0 % 8) > (X1 % 8)) //源数据需要左移
         Diff = (X0 % 8) - (X1 % 8);
@@ -1558,7 +1555,7 @@ INT16U Copy_Show_Data(INT8U *pSrc, INT32U Off, INT16U SrcLen,\
   INT16U X0,Y0,Row_Points, Data0,Data1, Mask;
   INT32U i,Len,Off0,Index;
   INT8U *pData, Bit;// Mask, Data;
-  INT8U Screen_Color_Num,Re;
+  INT8U Screen_Color_Num;//,Re;
 /*
   Area_Width = Get_Area_Width(Area_No);
   Area_Height = Get_Area_Height(Area_No);
@@ -1952,23 +1949,41 @@ void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_
   */
 
     INT32U Index1;
-    INT16U Len, i,j,Mask,X1,Width;//,Y1;
+    INT16U Len, i,j,Mask,X0,X1,Y0,Width,Height;//,Y1;
     INT8U *pDst;
 
         //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
     ///-----------判断参数的正确性---------------
-    if(pPoint0->X >= Prog_Para.Area[Area_No].X_Len ||\
-       pPoint0->Y >= Prog_Para.Area[Area_No].Y_Len)
-        return;
+        X0 = pPoint0->X; //源数据在整体屏幕中的起始位置
+        Y0 = pPoint0->Y; //源数据在整体屏幕中的起始位置
 
-    if(pPoint0->X + X_Len >= Prog_Para.Area[Area_No].X_Len)
-        X_Len = Prog_Para.Area[Area_No].X_Len - pPoint0->X;
+        if(Area_No < MAX_AREA_NUM)
+        {
+            Width = Prog_Para.Area[Area_No].X_Len;
+            Height = Prog_Para.Area[Area_No].Y_Len;
+        }
+        else
+        {
+            Width = Screen_Para.Base_Para.Width;
+            Height = Screen_Para.Base_Para.Height;
+        }
 
-    if(pPoint0->Y + Y_Len >= Prog_Para.Area[Area_No].Y_Len)
-        Y_Len = Prog_Para.Area[Area_No].Y_Len - pPoint0->Y;
-    ///-----------判断参数的正确性---------------
+        if(X0 >= Width || Y0 >= Height)
+            return;
 
-    X1 = Prog_Para.Area[Area_No].X + pPoint0->X; //在整体屏幕中的位置
+        if(X0 + X_Len >= Width)
+            X_Len = Width - X0;
+
+        if(Y0 + Y_Len >= Height)
+            Y_Len = Height - Y0;
+
+    ///---------------------------------------------
+
+    if(Area_No < MAX_AREA_NUM)
+      X1 = Prog_Para.Area[Area_No].X + pPoint0->X; //在整体屏幕中的位置
+    else
+      X1 = pPoint0->X; //在整体屏幕中的位置
+
     //Y1 = Prog_Para.Area[Area_No].Y + pPoint0->Y;
 
     //Diff = 0;
@@ -2971,7 +2986,7 @@ void Move_Left_Right_Reel_Close(INT8U Area_No)
 
     //if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
     {
-      Temp[0].X = (Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) /2 ;
+      Temp[0].X = Prog_Status.Area_Status[Area_No].Step / 2 ;
       Temp[0].Y = 0;//* Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*2);
       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp[0], MOVE_STEP, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp[0],0);
 
@@ -3096,7 +3111,7 @@ void Move_Up_Down_Reel_Close(INT8U Area_No)
     //if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
     {
       Temp[0].X = 0;
-      Temp[0].Y = (Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) /2 ;//* Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*2);
+      Temp[0].Y = Prog_Status.Area_Status[Area_No].Step/2 ;//* Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*2);
       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp[0], Prog_Para.Area[Area_No].X_Len, MOVE_STEP, &Show_Data, &Temp[0],0);
       //-----复制轴----
       if(Temp[0].Y + MOVE_STEP < Prog_Para.Area[Area_No].Y_Len / 2)
