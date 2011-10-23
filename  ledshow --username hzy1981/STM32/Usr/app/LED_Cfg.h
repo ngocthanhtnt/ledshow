@@ -71,7 +71,7 @@
 //显示效果配置
 #define MOVE_STEP_PERIOD 40 //移动步进时间,单位为ms
 //#define MIN_STAY_TIME  10//每屏最小停留时间,单位为ms
-//#define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
+#define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
  
 
 #define IN_SPEC_EFFECT_NUM 53 //进入特效个数
@@ -97,14 +97,14 @@
 #define NOISE_SHOW_EN  1 //噪音
 #define TEXT_SHOW_EN   1 //内码文字
 
-#define CARD_NAME "CARD_A0"  //卡名称
+#define CARD_NAME "A0"  //卡名称
 //-----------------以下为了兼容STM32程序--------------
 #else
 /*
 #if defined(CARD_A0)
-#define CARD_NAME "CARD_A0"  //卡名称
+#define CARD_NAME "A0"  //卡名称
 #elif defined(CARD_A1)
-#define CARD_NAME "CARD_A1"  //卡名称
+#define CARD_NAME "A1"  //卡名称
 #else
 #error "card AX name error"
 #endif

@@ -175,22 +175,7 @@ S_Scan_Data_Index Scan_Data_Index;
  //构建扫描单元0的所有扫描数据的索引，以字节为单位
 void Build_Scan_Data_Index(void)
 {
-  INT16U i,j;//,Index;
-  //INT8U Color_Num;
-
-  if(Screen_Para.Scan_Para.Rows EQ 0)
-  {
-	Screen_Para.Scan_Para.Rows = 16;
-	SET_SUM(Screen_Para);
-  }
-
-  for(i = 0; i < Screen_Para.Base_Para.Width; i ++)
-    for(j = 0; j < (Screen_Para.Scan_Para.Rows_Fold + 1); j ++)
-	{
-
-
-	}
-   
+  
 #if BUILD_SCAN_DATA_INDEX_EN
   INT16U Cols, i,j,Index;
   INT8U Color_Num;
@@ -384,7 +369,7 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 {
     INT16U i;
 	INT32S Index;
-	INT16U Addr;
+	//INT16U Addr;
 	//INT32U Temp;
 	//INT16U Cols;
 	

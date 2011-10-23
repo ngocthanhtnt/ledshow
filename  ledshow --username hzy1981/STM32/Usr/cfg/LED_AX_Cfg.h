@@ -36,16 +36,16 @@
 
 //----------------------------------------
 #if defined(CARD_A0)
-#define CARD_NAME "CARD_A0"  //卡名称
+#define CARD_NAME "A0"  //卡名称
 #elif defined(CARD_A1)
-#define CARD_NAME "CARD_A1"  //卡名称
+#define CARD_NAME "A1"  //卡名称
 #else
 #error "card AX name error"
 #endif
 
 #define SCAN_SCREEN_PERIOD 300//扫屏周期,单位us
 #define MOVE_STEP_PERIOD 50//5 //移动步进时间,单位为ms
-//#define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
+#define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 
 #define IN_SPEC_EFFECT_NUM 53 //进入特效个数
 #define OUT_SPEC_EFFECT_NUM 22 //退出特效个数

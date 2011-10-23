@@ -269,7 +269,7 @@ typedef struct
 
 #pragma pack()
 
-#define MOVE_STEP Screen_Status.Move_Step
+//#define MOVE_STEP Screen_Status.Move_Step
 //EXT S_Area_Status Area_Status[MAX_AREA_NUM]; //分区状态信息
 EXT volatile S_Prog_Status Prog_Status;   //节目状态信息
 EXT volatile S_Screen_Status Screen_Status;

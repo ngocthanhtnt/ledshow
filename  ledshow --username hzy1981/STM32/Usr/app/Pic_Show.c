@@ -713,7 +713,7 @@ void Calc_Show_Mode_Step(INT8U Area_No)
         In_Mode = In_Mode - 1;
 
     Prog_Status.Area_Status[Area_No].In_Mode = In_Mode;
-        Set_Area_Border_Out(Area_No);
+    Set_Area_Border_Out(Area_No);
     Prog_Status.Area_Status[Area_No].In_Max_Step = Get_In_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
     Set_Area_Border_In(Area_No);
 
@@ -778,7 +778,7 @@ void Update_Pic_Data(INT8U Area_No)
   Stay_Time = Get_File_Stay_Time(Area_No);
 
   //Size = Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * GET_COLOR_NUM(Screen_Para.Base_Para.Color)/8;
-  MOVE_STEP = Calc_Move_Step();//Size / 8192 + 1;
+  //MOVE_STEP = Calc_Move_Step();//Size / 8192 + 1;
   //»¹ÔÚÒÆ¶¯×´Ì¬
   if(Prog_Status.Area_Status[Area_No].In_Step < Prog_Status.Area_Status[Area_No].In_Max_Step)
   {
@@ -808,13 +808,13 @@ void Update_Pic_Data(INT8U Area_No)
       {
         Prog_Status.Area_Status[Area_No].Step_Timer = 0;
 
-		if(Prog_Status.Area_Status[Area_No].In_Step + MOVE_STEP > Prog_Status.Area_Status[Area_No].In_Max_Step) 
-		  MOVE_STEP = Prog_Status.Area_Status[Area_No].In_Max_Step - Prog_Status.Area_Status[Area_No].In_Step;
+		//if(Prog_Status.Area_Status[Area_No].In_Step + MOVE_STEP > Prog_Status.Area_Status[Area_No].In_Max_Step) 
+		  //MOVE_STEP = Prog_Status.Area_Status[Area_No].In_Max_Step - Prog_Status.Area_Status[Area_No].In_Step;
         
 		Prog_Status.Area_Status[Area_No].In_Step += MOVE_STEP;
 
-        //if(Prog_Status.Area_Status[Area_No].In_Step > Prog_Status.Area_Status[Area_No].In_Max_Step)
-          //Prog_Status.Area_Status[Area_No].In_Step = Prog_Status.Area_Status[Area_No].In_Max_Step;
+        if(Prog_Status.Area_Status[Area_No].In_Step > Prog_Status.Area_Status[Area_No].In_Max_Step)
+          Prog_Status.Area_Status[Area_No].In_Step = Prog_Status.Area_Status[Area_No].In_Max_Step;
 
         In_Mode = Prog_Status.Area_Status[Area_No].In_Mode;
 
@@ -960,13 +960,13 @@ void Update_Pic_Data(INT8U Area_No)
             {
               Prog_Status.Area_Status[Area_No].Step_Timer = 0;
 
-			  if(Prog_Status.Area_Status[Area_No].Out_Step + MOVE_STEP > Prog_Status.Area_Status[Area_No].Out_Max_Step) 
-			    MOVE_STEP = Prog_Status.Area_Status[Area_No].Out_Max_Step - Prog_Status.Area_Status[Area_No].Out_Step;
+			  //if(Prog_Status.Area_Status[Area_No].Out_Step + MOVE_STEP > Prog_Status.Area_Status[Area_No].Out_Max_Step) 
+			    //MOVE_STEP = Prog_Status.Area_Status[Area_No].Out_Max_Step - Prog_Status.Area_Status[Area_No].Out_Step;
               
 			  Prog_Status.Area_Status[Area_No].Out_Step += MOVE_STEP;
 
-              //if(Prog_Status.Area_Status[Area_No].Out_Step > Prog_Status.Area_Status[Area_No].Out_Max_Step)
-                //Prog_Status.Area_Status[Area_No].Out_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
+              if(Prog_Status.Area_Status[Area_No].Out_Step > Prog_Status.Area_Status[Area_No].Out_Max_Step)
+                Prog_Status.Area_Status[Area_No].Out_Step = Prog_Status.Area_Status[Area_No].Out_Max_Step;
 
               //---------
               Out_Mode = Prog_Status.Area_Status[Area_No].Out_Mode;
