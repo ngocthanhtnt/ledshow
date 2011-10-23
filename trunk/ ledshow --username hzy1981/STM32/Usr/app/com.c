@@ -70,6 +70,10 @@ INT16U Get_Soft_Version(INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
 
     mem_cpy(pDst + Len, (INT8U *)__DATE__, sizeof(__DATE__), pDst_Start, DstLen); //日期
     Len += strlen(__DATE__);
+	pDst[Len++] = ' ';
+
+    mem_cpy(pDst + Len, (INT8U *)__TIME__, sizeof(__TIME__), pDst_Start, DstLen); //日期
+    Len += strlen(__TIME__);
     pDst[Len++] = '\0';
 
     return SOFT_VERSION_LEN;
@@ -467,7 +471,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 {
   INT8U Cmd_Code,Baud;
   S_Time TempTime;
-  INT8U Re;
+  INT8U Re, Temp;
   INT16U Len = 0;  //应答帧数据长
   INT8U Seq, Seq0;
   INT8U RW_Flag; //读写标志
@@ -595,15 +599,22 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
   {
     if(RW_Flag EQ SET_FLAG)
 	{
-      if(Frame[FDATA] EQ 0x00) //进入自检状态
+	  Temp = Frame[FDATA];
+      //先发送应答
+	  Cmd_Code = Cmd_Code | 0x40; //肯定应答
+	  Len = Make_Frame(Frame + FDATA, 0, (INT8U *)&Screen_Para.COM_Para.Addr, Cmd_Code,  0, Seq, Seq0, (char *)Frame);
+	  Send_Frame_Proc(Ch, Frame, Len); //向来数据的通道发送应答数据
+	  //先发送应答
+	  
+      if(Temp EQ 0x00) //进入自检状态
 	  {
         Scan_Mode_Test(CMD_TEST);
 	  }
 	  else
 	  {
         Soft_Rest(); //软件复位
-
 	  }
+	  return Len;
 	}
 
   }
@@ -766,8 +777,13 @@ void Screen_Com_Proc(void)
         if(Screen_Status.Com_Time EQ 0)
         {
 		  //Clr_Rcv_Flag();
-          if(Screen_Status.Replay_Flag EQ REPLAY_FLAG) //有重新播放标志
-            Replay_Prog();
+
         }
 	 }
+
+  if(Screen_Status.Replay_Flag EQ REPLAY_FLAG)
+  {
+	   if(Prog_Status.Play_Status.RT_Play_Time EQ 0 && Screen_Status.Com_Time EQ 0) //有重新播放标志
+	    Replay_Prog();
+   }		   
 }

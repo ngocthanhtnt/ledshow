@@ -22,8 +22,8 @@
 #define FAC_TEST 0x00 //¹¤³§×´Ì¬²âÊÔ
 #define CMD_TEST 0x01 //ÃüÁî×´Ì¬²âÊÔ
 
-#define MAX_ROWS_FOLD 3
-#define MAX_COLS_FOLD 4
+#define MAX_ROWS_FOLD 2
+#define MAX_COLS_FOLD 2
 
 typedef struct
 {

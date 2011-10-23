@@ -301,7 +301,7 @@ void Update_Border_Data(INT8U Area_No)
 
       Step_Time = (INT16U)(Prog_Para.Border_Speed + 1)*MOVE_STEP_PERIOD;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
       Prog_Status.Border_Status[Area_No].Timer += MOVE_STEP_PERIOD;
-      Max_Step = Screen_Para.Base_Para.Width + Screen_Para.Base_Para.Height;
+      Max_Step = 0xFFFFFFFF;//Screen_Para.Base_Para.Width + Screen_Para.Base_Para.Height;
       //Timer[Area_No].Var += MOVE_STEP_PERIOD;
       Border_Mode = Prog_Para.Border_Mode;
       Border_Width = Get_Area_Border_Width(Area_No);
@@ -361,20 +361,20 @@ void Update_Border_Data(INT8U Area_No)
 */
 }
   //Size = Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * GET_COLOR_NUM(Screen_Para.Base_Para.Color)/8;
-  MOVE_STEP = Calc_Move_Step();//Size / 8192 + 1;
+  //MOVE_STEP = Calc_Move_Step();//Size / 8192 + 1;
 
   if(Prog_Status.Border_Status[Area_No].Timer >= Step_Time)
   {
     Prog_Status.Border_Status[Area_No].Timer = 0;
 
-	if(Prog_Status.Border_Status[Area_No].Step + MOVE_STEP > Max_Step)
-	  MOVE_STEP = Max_Step - Prog_Status.Border_Status[Area_No].Step;
+	if(Prog_Status.Border_Status[Area_No].Step + MOVE_STEP + Border_Width >= Max_Step)
+	  Prog_Status.Border_Status[Area_No].Step = 0;//Max_Step - Prog_Status.Border_Status[Area_No].Step;
     
-	if(Prog_Status.Border_Status[Area_No].Step < Max_Step)
+	//if(Prog_Status.Border_Status[Area_No].Step < Max_Step)
       Prog_Status.Border_Status[Area_No].Step += MOVE_STEP;
 
     //if(Prog_Status.Border_Status[Area_No].Step >= Max_Step)
-      //Prog_Status.Border_Status[Area_No].Step = Prog_Status.Border_Status[Area_No].Step % Max_Step;
+     //Prog_Status.Border_Status[Area_No].Step = Prog_Status.Border_Status[Area_No].Step % Max_Step;
 
 
     Timer[Area_No].Var ++;

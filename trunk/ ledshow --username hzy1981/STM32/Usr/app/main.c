@@ -1,5 +1,7 @@
 #include "Includes.h"
-//extern void juzhen (u8 *yuan,u8 *mud,u8 gao);
+
+#define MAIN_STACK_SIZE 320
+ 
  void test()
  {
         int i; 
@@ -14,8 +16,51 @@
 
  }
 
+typedef struct
+{
+  INT8U Head;
+
+  INT32U Stack[MAIN_STACK_SIZE];	//人工堆栈
+  INT16U Left;
+
+  INT8U Tail;
+}S_Stack;
+
+
+S_Stack Main_Stack = {CHK_BYTE, {0}, 0, CHK_BYTE};
+
+//检测系统堆栈剩余情况
+void Chk_Main_Stack(void)
+{
+  INT16U i = 0;
+  static INT8U Min = 0xFF;
+
+  if(CHK_HT(Main_Stack) EQ 0)
+  {
+    ASSERT_FAILED();
+  }
+
+  //每分钟打印一次堆栈大小
+  if(Min != Cur_Time.Time[T_MIN])
+  {
+    Min = Cur_Time.Time[T_MIN]; 
+	  
+	while(Main_Stack.Stack[i] EQ 0)
+	{ 
+	i ++;
+	}
+	
+	Main_Stack.Left = i*4;
+
+    debug("stack left %d", Main_Stack.Left);
+  }
+
+}
+
 int main(void)
 {
+  __set_MSP((INT32U)(&Main_Stack.Stack[MAIN_STACK_SIZE - 1])); //修改为人工堆栈方式
+
   Ram_Init();
   Hardware_Init();
 
@@ -61,6 +106,8 @@ int main(void)
 #if NET_EN
 	Net_Proc();
 #endif
+
+    Chk_Main_Stack();
   }
   
 }

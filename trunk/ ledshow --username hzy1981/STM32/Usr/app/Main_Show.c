@@ -239,28 +239,26 @@ void Clr_All_Area_Status()
     }
 }
 */
+
+void Clr_Show_Bak_Data(void)
+{
+
+}
+
 void Clr_Show_Data(void)
 {
-#if QT_EN
-  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
-#else
   //if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
     //memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
   //else
     memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
-#endif
 }
 
 void Set_Show_Data(void)
 {
-#if QT_EN
-  memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
-#else
  // if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
    // memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
   //else
     memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
-#endif
 }
 /*
 void Clr_All_Show_Data(void)
@@ -1634,6 +1632,7 @@ void Replay_Prog(void)
 	
 	Clr_Show_Data();
 	memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
+
 	#if DATA_PREP_EN
 	memset(&Prep_Data, 0, sizeof(Prep_Data));
 	SET_HT(Prep_Data);
@@ -1656,7 +1655,7 @@ void Replay_Prog(void)
 void Scan_Mode_Test(INT8U Mode)
 {
   //INT32U Data = 0x55AA5AA5;
-  INT8U i,j,k, m, n, tmp, Max_Cols_Fold;
+  INT8U i,j,k, m, n, tmp, Max_Cols_Fold, Max_Rows_Fold;
   //INT8U Direct,ErrFlag = 0;
   //S_Time TempTime,TempTime1;
 
@@ -1666,7 +1665,7 @@ void Scan_Mode_Test(INT8U Mode)
   Screen_Status.Scan_Mode_Test_Flag = 1;
 
   Read_Screen_Para();
-
+ /*
   //-----------
   Screen_Para.Base_Para.Width = 64;
   Screen_Para.Base_Para.Height = 32;
@@ -1676,6 +1675,7 @@ void Scan_Mode_Test(INT8U Mode)
   Screen_Para.Scan_Para.Direct = 0x02;
   Screen_Para.Base_Para.Color = 0x01;
   SET_SUM(Screen_Para);
+  */
   //---------------
   //debug("test!!!");
   //Screen_Test();
@@ -1690,32 +1690,13 @@ void Scan_Mode_Test(INT8U Mode)
   //Show_Data.Color_Data[17] = 0x55;
 
   Build_Scan_Data_Index();
- /* 
-  while(1)
-  {
-    RT_Play_Status_Enter(2);
-    //LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "%d%d%d%d", 1, 2, 3, 4);
-    //memset(Show_Data.Color_Data, 0x01, sizeof(Show_Data.Color_Data));
-   
-    for(n = 0; n < 20; n ++)
-	{
-	  Delay_ms(100);
-	  Screen_Com_Proc();
 
-#if QT_EN
-   memcpy(&(w->previewArea->screenPara), &Screen_Para, sizeof(Screen_Para));
-   w->previewArea->setFixedSize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-   w->previewTimerProc();
-#endif
-	}
-  }
-   */
   while(1)
   {
    //if(Mode EQ FAC_TEST && Chk_JP_Status() != SELF_TEST_STATUS) //不是自检状态退出
      //     break;
 
-  for(m = 0; m < 5; m ++)
+  for(m = 0; m < 3; m ++)	//三种常用的扫描方式
   {
     if(m EQ 0)
 	  Screen_Para.Scan_Para.Rows = 16;  //1/16扫描
@@ -1723,33 +1704,45 @@ void Scan_Mode_Test(INT8U Mode)
 	  Screen_Para.Scan_Para.Rows = 8;	//1/8扫描
 	else if(m EQ 2)
 	  Screen_Para.Scan_Para.Rows = 4;	//1/4扫描
+	  /*
 	else if(m EQ 3)
 	  Screen_Para.Scan_Para.Rows = 2;	//1/2扫描
 	else
 	  Screen_Para.Scan_Para.Rows = 1;	//静态扫描
+	 */
 
 	SET_SUM(Screen_Para);
 
-    for(i = 0; i < 4; i ++)
-	{
+	if(Screen_Para.Scan_Para.Rows EQ 16) //1/16扫没有打折现象
+	  Max_Rows_Fold = 0;
+	else
+	  Max_Rows_Fold = MAX_ROWS_FOLD;
 
+    for(i = 0; i < 4; i ++)	//4个方向
+	{
         Screen_Para.Scan_Para.Direct = i;
 
 		if(i EQ 0x01 || i EQ 0x03) //左下入或者右下入，都不需再测试直行的数据，因为和左上入和右上入直行是一样的。
-		  tmp = 0x01;
+		  tmp = 0x01; //下面Rows_Fold起始==1
 		else
 		  tmp = 0x00;
 
-      for(j = tmp; j <= MAX_ROWS_FOLD; j ++)
+      for(j = tmp; j <= Max_Rows_Fold; j ++)
 	  {
 	    Screen_Para.Scan_Para.Rows_Fold = j;
 
 		if(j EQ 0)
+		{
 		  Max_Cols_Fold = 0;
+		  tmp = 0;
+		}
 	    else
+		{
 		  Max_Cols_Fold = MAX_COLS_FOLD;
+		  tmp = 1;
+		 }
 
-		for(k = 0; k <= Max_Cols_Fold; k ++)
+		for(k = tmp; k <= Max_Cols_Fold; k ++)
 	    {
           Screen_Para.Scan_Para.Cols_Fold = k;
 		  

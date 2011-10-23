@@ -78,9 +78,11 @@ void SysTick_Configuration(void)
 //对72M条件下,nms<=1864 
 void Delay_ms(INT16U nms)
 {
-  INT16U i;
+  INT32U i, nms10;
 
-  for(i = 0; i < nms*10; i++)
+  nms10 = nms*10;
+
+  for(i = 0; i < nms10; i++)
   {
     Delay_us(100);
   }
@@ -631,7 +633,7 @@ void Com_Init(void)
 
 void Soft_Rest(void) //软件复位
 {
-
+  while(1);
 }
 
 /*

@@ -1117,11 +1117,8 @@ void Clr_Prog_Show_Data(INT8U Prog_No)
 //清除所有的显示数据
 void Clr_All_Show_Data(void)
 {
-  INT8U i;
-
-  for(i = 0; i < Prog_Num.Num && i < MAX_PROG_NUM; i ++)
-    Clr_Prog_Show_Data(i);
-  
+  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+  memset(Show_Data_Bak.Color_Data, 0x00, sizeof(Show_Data_Bak.Color_Data));
 }
 
 //写当前显示数据存储索引
