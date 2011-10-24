@@ -131,8 +131,20 @@ QString getScanCodeString(INT16U code)
 INT16U getScanCodeFromScreenPara(S_Screen_Para &screenPara)
 {
   INT16U code = 0;
+  INT16U Rows;
 
-  code += screenPara.Scan_Para.Rows * 1000;
+  if(screenPara.Scan_Para.Rows EQ 16)
+    Rows = 0;
+  else if(screenPara.Scan_Para.Rows EQ 8)
+    Rows = 1;
+  else if(screenPara.Scan_Para.Rows EQ 4)
+    Rows = 2;
+  else if(screenPara.Scan_Para.Rows EQ 2)
+    Rows = 3;
+  else
+    Rows = 4;
+
+  code += Rows * 1000;
   code += screenPara.Scan_Para.Direct * 100;
   code += screenPara.Scan_Para.Cols_Fold * 10;
   code += screenPara.Scan_Para.Rows_Fold;
@@ -1619,7 +1631,7 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   QLabel *comModeLabel = new QLabel(tr("通信方式"),this);
   comModeCombo = new QComboBox(this);
   comModeCombo->addItem(tr("串口"));
-  QLabel *screenIDLabel = new QLabel(tr("硬件地址"),this);
+  QLabel *screenIDLabel = new QLabel(tr("屏幕地址"),this);
   screenIDEdit = new QSpinBox(this);
   QLabel *comPortLabel = new QLabel(tr("串口号"),this);
   comPortEdit = new QComboBox(this);
@@ -1956,7 +1968,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     //----------------------------------------------------------------
 
 
-    QLabel *screenIDLabel  = new QLabel(tr("硬件地址"),this);
+    QLabel *screenIDLabel  = new QLabel(tr("屏幕地址"),this);
     //QLabel *screenIDInfoLabel = new QLabel(tr("(多屏幕组网时每个屏号应该唯一)"),this);
     QLabel *baudComboLabel = new QLabel(tr("波特率"),this);
    QLabel *dataPolarityLabel = new QLabel(tr("数据极性"),this);
@@ -2237,7 +2249,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
 
   //----暂时将网络参数和回读参数删除！
    tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
-   tabWidget->removeTab(tabWidget->indexOf(readParaGroup));
+   //tabWidget->removeTab(tabWidget->indexOf(readParaGroup));
    //-------------
    oePolarityLabel->setVisible(false);
    oePolarityCombo->setVisible(false);
@@ -2371,6 +2383,7 @@ void CfacScreenProperty::setEditEnable(bool flag)
         cardGroup->setEnabled(false);
         netParaGroup->setEnabled(false);
         baseParaGroup->setEnabled(false);
+        scanParaGroup->setEnabled(false);
         advanceParaGroup->setEnabled(false);
         readParaGroup->setEnabled(false);
         comLoadButton->setEnabled(false);
@@ -2383,6 +2396,7 @@ void CfacScreenProperty::setEditEnable(bool flag)
         cardGroup->setEnabled(true);
         netParaGroup->setEnabled(true);
         baseParaGroup->setEnabled(true);
+        scanParaGroup->setEnabled(true);
         advanceParaGroup->setEnabled(true);
         readParaGroup->setEnabled(true);
         comLoadButton->setEnabled(true);
@@ -2432,23 +2446,33 @@ void CfacScreenProperty::readParaProc()
         memcpy(&readScreenPara.Base_Para, rcvBuf, len);
         readScreenParaFlag = true;
 
-        screenParaStr += tr("屏幕宽度:%1,高度:%2,颜色:").arg(readScreenPara.Base_Para.Width).arg(readScreenPara.Base_Para.Height);
-        if(readScreenPara.Base_Para.Color & 0x01)
-            screenParaStr += tr("红色");
-        else if(readScreenPara.Base_Para.Color & 0x02)
-            screenParaStr += tr("+绿色");
-        else if(readScreenPara.Base_Para.Color & 0x04)
-            screenParaStr += tr("+蓝色");
-
-        screenParaStr += ". ";
-
         //扫描方式
         INT16U scanMode = getScanCodeFromScreenPara(readScreenPara);
         QString scanString = getScanCodeString(scanMode);
 
-        screenParaStr += QObject::tr("扫描方式:") + scanString;
+        screenParaStr += QObject::tr("\r\n扫描方式:") + scanString;
         //---------------
 
+        screenParaStr += tr("\r\n屏幕宽度:%1,高度:%2,颜色:").arg(readScreenPara.Base_Para.Width).arg(readScreenPara.Base_Para.Height);
+        if(readScreenPara.Base_Para.Color & 0x01)
+            screenParaStr += tr("红色");
+        if(readScreenPara.Base_Para.Color & 0x02)
+            screenParaStr += tr("+绿色");
+        if(readScreenPara.Base_Para.Color & 0x04)
+            screenParaStr += tr("+蓝色");
+
+        screenParaStr += tr("\r\n屏幕地址:%1,波特率:%2,数据极性:%3,红绿取反:%4").\
+                         arg(readScreenPara.COM_Para.Addr).\
+                         arg((readScreenPara.COM_Para.Baud EQ 0)?57600:9600).\
+                         arg((readScreenPara.Scan_Para.Data_Polarity EQ 0)?tr("负极性"):tr("正极性")).\
+                         arg((readScreenPara.Scan_Para.RG_Reverse EQ 0)?tr("无"):tr("有"));
+
+
+        screenParaStr += tr("\r\n时钟频率:%1,行消隐:%2,138译码器:%3,行顺序:%4").\
+                         arg(freqCombo->itemText(readScreenPara.Scan_Para.Clk_Freq)).\
+                         arg(lineHideCombo->itemText(readScreenPara.Scan_Para.Line_Hide)).\
+                         arg(_138Combo->itemText(readScreenPara.Scan_Para._138Check)).\
+                         arg(lineOrderCombo->itemText(readScreenPara.Scan_Para.Line_Order));
 
         readParaEdit->setText(screenParaStr);
     }
@@ -2502,6 +2526,7 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
 {
     QString str;
     INT8U temp[100];
+    int colorNum;
 
     str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
     debug("loadpara:%s",(const char *)str.toLocal8Bit());
@@ -2516,28 +2541,41 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
     settings.endGroup();
     settings.endGroup();
 
-    getScreenCardParaFromSettings(str, Screen_Para, Card_Para);//重新获取屏幕参数和板卡参数
+    colorNum = color + 1; //颜色个数
 
-    if(card != cardCombo->currentIndex())
+    if(card != cardCombo->currentIndex()) //板卡类型发生了变化
     {
        mainObj->emitScreenChangeSignal();
+
+       settings.beginGroup(str);
+       settings.beginGroup("facPara");
+       settings.setValue("cardType", cardCombo->currentIndex());
+       settings.endGroup();
+       settings.endGroup();
     }
+
+    getScreenCardParaFromSettings(str, Screen_Para, Card_Para);//重新获取屏幕参数和板卡参数
+
 
     int index = getScreenIndex(str);
     QString screenName = QString::number(index) + QObject::tr("号屏幕");
 
-    if(Card_Para.Max_Height < heightEdit->value())
+    if(!(widthEdit->value() > 0 &&\
+         heightEdit->value() > 0 &&\
+         widthEdit->value() % 8 == 0 &&\
+         heightEdit->value() % 8 == 0))
     {
        QMessageBox::information(w, QObject::tr("提示"),
-                              screenName + QObject::tr("高度超出板卡支持上限，请重新设置！"),QObject::tr("确定"));
-       setSettingsToWidget(str);
+                              QObject::tr("屏幕的长宽应必须大于0且为8的倍数，请重新设置！"),QObject::tr("确定"));
+       //setSettingsToWidget(str);
        return;
     }
 
-    if(Card_Para.Max_Points < (unsigned int)(widthEdit->value() * heightEdit->value()/GET_COLOR_NUM(color)))
+    if(Card_Para.Max_Points < (unsigned int)(widthEdit->value() * heightEdit->value()*colorNum))
     {
        QMessageBox::information(w, QObject::tr("提示"),
-                              screenName + QObject::tr("点数超出板卡支持上限，请重新设置！"),QObject::tr("确定"));
+                                screenName + QObject::tr("超出控制组件") + QObject::tr("最大支持点数：单色") + QString::number(Card_Para.Max_Points) +\
+                                                                                   tr("，双色") + QString::number(Card_Para.Max_Points/2) + QObject::tr("，请重新设置!"),QObject::tr("确定"));
 
        setSettingsToWidget(str);
        return;
@@ -2716,6 +2754,8 @@ void CfacScreenProperty::cardChangeProc()
 
     memcpy(&cardPara_Bak, &Card_Para, sizeof(Card_Para));
 
+    cardParaEdit->clear();
+
     getCardParaFromSettings(cardCombo->currentText(), Card_Para);
     QString pointsStr = tr("最大点数：单色") + QString::number(Card_Para.Max_Points) +\
                           tr("，双色") + QString::number(Card_Para.Max_Points/2);
@@ -2723,7 +2763,7 @@ void CfacScreenProperty::cardChangeProc()
     if(Card_Para.Flag & 0x01) //支持全彩
       pointsStr += tr("，全彩") + QString::number(Card_Para.Max_Points/3);
 
-    pointsStr += tr("，最大高度：") + QString::number(Card_Para.Max_Height);
+    //pointsStr += tr("，最大高度：") + QString::number(Card_Para.Max_Height);
     cardParaEdit->setText(pointsStr);
 
     QString fileStr = tr("支持：") +\
@@ -2749,6 +2789,7 @@ void CfacScreenProperty::cardChangeProc()
                      (((Card_Para.Com_Mode & COM_UDISK)>0)?tr("、U盘"):tr("")) +\
                      (((Card_Para.Com_Mode & COM_ETH)>0)?tr("、以太网"):tr("")) +\
                      (((Card_Para.Com_Mode & COM_GPRS)>0)?tr("、GSM/GPRS"):tr(""));
+
 
     cardParaEdit->append(comStr);
     memcpy(&Card_Para, &cardPara_Bak, sizeof(Card_Para));

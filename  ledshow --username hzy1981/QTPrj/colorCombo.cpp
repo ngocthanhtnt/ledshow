@@ -12,9 +12,11 @@ CcolorCombo::CcolorCombo(QWidget *parent):QComboBox(parent)
 void CcolorCombo::setItems()
 {
     QPixmap *pixmap;//(16,16);
+    int tmp;
 
     disconnect(this, SIGNAL(currentIndexChanged(int)), this, SIGNAL(indexChangeSignal()));
 
+    tmp = this->currentIndex();
     clear();
     if(GET_BIT(Screen_Para.Base_Para.Color, 0x00)>0 ||\
        Screen_Para.Base_Para.Color EQ 0)// || Screen_Para.Base_Para.Color > 7)
@@ -47,6 +49,9 @@ void CcolorCombo::setItems()
         QIcon yellowicon(*pixmap);
         addItem(yellowicon, tr(""));
     }
+
+    if(tmp >= this->count())
+        this->setCurrentIndex(0);
 
     connect(this, SIGNAL(currentIndexChanged(int)), this, SIGNAL(indexChangeSignal()));
 
