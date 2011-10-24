@@ -898,6 +898,9 @@ void TextEdit::showInit()
 
         spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
 
+        colorCombo->setCurrentIndex(0);
+        this->textColor();
+
         show();
         setWindowTitle("");
     }
@@ -965,6 +968,7 @@ void TextEdit::getSettingsFromWidget(QString str)
     settings.beginGroup("textEdit");
     settings.setValue("text", getEdit()->toHtml());
     settings.setValue("page", spinPage->value());
+    //settings.setValue("color", colorCombo->currentIndex());
     settings.endGroup();
     settings.endGroup();
 
@@ -984,6 +988,7 @@ void TextEdit::setSettingsToWidget(QString str)
     {
        settings.setValue("page", 0);
        settings.setValue("text", QString(""));
+       //settings.setValue("color", 0);
        settings.setValue("setFlag", 1);
     }
     text = settings.value("text").toString();
@@ -991,6 +996,7 @@ void TextEdit::setSettingsToWidget(QString str)
         text == QString(tr("Í¼ÎÄÏÔÊ¾"));
 
     int page = settings.value("page").toInt();
+    //int color = settings.value("color").toInt();
     settings.endGroup();
     settings.endGroup();
 
@@ -1017,6 +1023,8 @@ void TextEdit::setSettingsToWidget(QString str)
       smLineCombo->setEnabled(true);
     }
     connect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));
+
+    //colorCombo->setCurrentIndex(color);
 }
 /*
 ¹þ¹þ£¬QGraphicsTextItem  ×Ö¼ä¾à£ºvoid QFont::setLetterSpacing ( SpacingType type, qreal spacing )
