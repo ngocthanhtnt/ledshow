@@ -1,4 +1,4 @@
-/* CH376п╬ф╛ нд╪Чо╣мЁ╡Ц V1.1 */
+/* CH376п╬ф╛ нд╪Чо╣мЁ╡Ц V1.2 */
 /* лА╧╘нд╪Чо╣мЁЁёсцвсЁлпР,лА╧╘цЭаН╢Р╟Э */
 /* ╡╩й╧сц╣двсЁлпР©иртв╒йм╣Т,╢с╤Ь╫зт╪╣╔ф╛╩З╣дЁлпРROM©у╪Д╨мйЩ╬щRAM©у╪Д */
 /* уБюО╣двсЁлпРйгм╗╧Щю╗╨ежп╣д╠Да©╢╚╣щ╡нйЩ,хГ╧Ш╡нйЩ╫о╤Ю,н╙ак╫зт╪RAM,р╡©ирт╡н©╪CH375всЁлпР©Б╦дЁим╗╧Щм╛р╩х╚╬ж╠Да©/а╙╨о╫А╧╧CH376_CMD_DATA╢╚╣щ */
@@ -13,6 +13,7 @@
 /* ╤╗рЕ EN_DISK_QUERY сцсзлА╧╘╢еелхща©╡Ия╞╨мйёсЮ©у╪Д╡Ия╞╣двсЁлпР,д╛хойг╡╩лА╧╘ */
 /* ╤╗рЕ EN_SECTOR_ACCESS сцсзлА╧╘ртихгЬн╙╣╔н╩╤ап╢нд╪Ч╣двсЁлпР,д╛хойг╡╩лА╧╘ */
 /* ╤╗рЕ EN_LONG_NAME сцсзлА╧╘ж╖ЁжЁ╓нд╪ЧцШ╣двсЁлпР,д╛хойг╡╩лА╧╘ */
+/* ╤╗рЕ DEF_IC_V43_U сцсзх╔╣Тж╖Ёж╣м╟Ф╠╬╣дЁлпР╢ЗбК,╫Жж╖ЁжV4.3╪╟ртио╟Ф╠╬╣дCH376п╬ф╛,д╛хойгж╖Ёж╣м╟Ф╠╬ */
 
 #include "stm32f10x.h"
 #include "CH376INC.h"
@@ -79,6 +80,25 @@ void	CH376SetFileName( PUINT8 name )  /* иХжц╫╚р╙╡ывВ╣днд╪Ч╣днд╪ЧцШ */
 {
 /*	UINT8	i;*/
 	UINT8	c;
+#ifndef	DEF_IC_V43_U
+	UINT8	s;
+	xWriteCH376Cmd( CMD01_GET_IC_VER );
+	if ( xReadCH376Data( ) < 0x43 ) {
+		if ( CH376ReadVar8( VAR_DISK_STATUS ) < DEF_DISK_READY ) {
+			xWriteCH376Cmd( CMD10_SET_FILE_NAME );
+			xWriteCH376Data( 0 );
+			s = CH376SendCmdWaitInt( CMD0H_FILE_OPEN );
+			if ( s == USB_INT_SUCCESS ) {
+				s = CH376ReadVar8( 0xCF );
+				if ( s ) {
+					CH376WriteVar32( 0x4C, CH376ReadVar32( 0x4C ) + ( (UINT16)s << 8 ) );
+					CH376WriteVar32( 0x50, CH376ReadVar32( 0x50 ) + ( (UINT16)s << 8 ) );
+					CH376WriteVar32( 0x70, 0 );
+				}
+			}
+		}
+	}
+#endif
 	xWriteCH376Cmd( CMD10_SET_FILE_NAME );
 /*	for ( i = MAX_FILE_NAME_LEN; i != 0; -- i ) {
 		c = *name;
@@ -232,7 +252,9 @@ UINT8	CH376DiskMount( void )  /* ЁУй╪╩╞╢еел╡╒╡Бйт╢еелйг╥Я╬мпВ */
 UINT8	CH376FileOpen( PUINT8 name )  /* тз╦Ыд©б╪╩Руъ╣╠г╟д©б╪об╢Р©╙нд╪Ч╩Руъд©б╪(нд╪Ч╪п) */
 {
 	CH376SetFileName( name );  /* иХжц╫╚р╙╡ывВ╣днд╪Ч╣днд╪ЧцШ */
+#ifndef	DEF_IC_V43_U
 	if ( name[0] == DEF_SEPAR_CHAR1 || name[0] == DEF_SEPAR_CHAR2 ) CH376WriteVar32( VAR_CURRENT_CLUST, 0 );
+#endif
 	return( CH376SendCmdWaitInt( CMD0H_FILE_OPEN ) );
 }
 
@@ -245,7 +267,9 @@ UINT8	CH376FileCreate( PUINT8 name )  /* тз╦Ыд©б╪╩Руъ╣╠г╟д©б╪обпб╫╗нд╪Ч,хГ╧Шнд╪Ч
 UINT8	CH376DirCreate( PUINT8 name )  /* тз╦Ыд©б╪обпб╫╗д©б╪(нд╪Ч╪п)╡╒╢Р©╙,хГ╧Шд©б╪ря╬╜╢Фтздгц╢ж╠╫с╢Р©╙ */
 {
 	CH376SetFileName( name );  /* иХжц╫╚р╙╡ывВ╣днд╪Ч╣днд╪ЧцШ */
+#ifndef	DEF_IC_V43_U
 	if ( name[0] == DEF_SEPAR_CHAR1 || name[0] == DEF_SEPAR_CHAR2 ) CH376WriteVar32( VAR_CURRENT_CLUST, 0 );
+#endif
 	return( CH376SendCmdWaitInt( CMD0H_DIR_CREATE ) );
 }
 
@@ -443,6 +467,12 @@ UINT8	CH376DiskQuery( PUINT32 DiskFre )  /* ╡Ия╞╢еелйёсЮ©у╪Дпео╒,ихгЬйЩ */
 {
 	UINT8	s;
 	UINT8	c0, c1, c2, c3;
+#ifndef	DEF_IC_V43_U
+	xWriteCH376Cmd( CMD01_GET_IC_VER );
+	if ( xReadCH376Data( ) < 0x43 ) {
+		if ( CH376ReadVar8( VAR_DISK_STATUS ) >= DEF_DISK_READY ) CH376WriteVar8( VAR_DISK_STATUS, DEF_DISK_MOUNTED );
+	}
+#endif
 	s = CH376SendCmdWaitInt( CMD0H_DISK_QUERY );
 	if ( s == USB_INT_SUCCESS ) {  /* ╡н©╪CH376INC.Hнд╪ЧжпCH376_CMD_DATA╫А╧╧╣дDiskQuery */
 		xWriteCH376Cmd( CMD01_RD_USB_DATA0 );
@@ -549,9 +579,12 @@ UINT8	CH376SecRead( PUINT8 buf, UINT8 ReqCount, PUINT8 RealCount )  /* ртихгЬн╙╣
 	UINT8	s;
 	UINT8	cnt;
 	UINT32	StaSec;
+#ifndef	DEF_IC_V43_U
 	UINT32	fsz, fofs;
+#endif
 	if ( RealCount ) *RealCount = 0;
 	do {
+#ifndef	DEF_IC_V43_U
 		xWriteCH376Cmd( CMD01_GET_IC_VER );
 		cnt = xReadCH376Data( );
 		if ( cnt == 0x41 ) {
@@ -572,11 +605,14 @@ UINT8	CH376SecRead( PUINT8 buf, UINT8 ReqCount, PUINT8 RealCount )  /* ртихгЬн╙╣
 			else cnt = 0xFF;
 		}
 		else cnt = 0xFF;
+#endif
 		xWriteCH376Cmd( CMD1H_SEC_READ );
 		xWriteCH376Data( ReqCount );
 		xEndCH376Cmd( );
 		s = Wait376Interrupt( );
+#ifndef	DEF_IC_V43_U
 		if ( cnt != 0xFF ) CH376WriteVar8( VAR_FILE_SIZE + 3, cnt );
+#endif
 		if ( s != USB_INT_SUCCESS ) return( s );
 		xWriteCH376Cmd( CMD01_RD_USB_DATA0 );
 		xReadCH376Data( );  /* Ё╓╤хвэйгsizeof(CH376_CMD_DATA.SectorRead) */
@@ -630,9 +666,12 @@ UINT8	CH376SecWrite( PUINT8 buf, UINT8 ReqCount, PUINT8 RealCount )  /* ртихгЬн╙
 
 UINT8	CH376LongNameWrite( PUINT8 buf, UINT16 ReqCount )  /* Ё╓нд╪ЧцШв╗сц╣двж╫зп╢всЁлпР */
 {
-	UINT8	s, c;
+	UINT8	s;
+#ifndef	DEF_IC_V43_U
+	UINT8	c;
 	c = CH376ReadVar8( VAR_DISK_STATUS );
 	if ( c == DEF_DISK_OPEN_ROOT ) CH376WriteVar8( VAR_DISK_STATUS, DEF_DISK_OPEN_DIR );
+#endif
 	xWriteCH376Cmd( CMD2H_BYTE_WRITE );
 	xWriteCH376Data( (UINT8)ReqCount );
 	xWriteCH376Data( (UINT8)(ReqCount>>8) );
@@ -651,7 +690,9 @@ UINT8	CH376LongNameWrite( PUINT8 buf, UINT16 ReqCount )  /* Ё╓нд╪ЧцШв╗сц╣двж╫зп╢
 		}
 /*		else if ( s == USB_INT_SUCCESS ) return( s );*/  /* ╫АйЬ */
 		else {
+#ifndef	DEF_IC_V43_U
 			if ( c == DEF_DISK_OPEN_ROOT ) CH376WriteVar8( VAR_DISK_STATUS, c );
+#endif
 			return( s );  /* ╢МнС */
 		}
 	}
