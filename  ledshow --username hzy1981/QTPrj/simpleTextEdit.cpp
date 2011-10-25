@@ -304,8 +304,24 @@ void getShowModeParaFromSettings(QString str, U_File_Para &para)
   settings.endGroup();
 }
 
+//如果进入方式是连续左移、连续上移、左平移、右平移、上平移、下平移，则不清屏
+void CshowModeEdit::inModeChanged()
+{
+    if(inModeCombo->currentIndex() >= 2 && inModeCombo->currentIndex() < 8)
+    {
+      outModeCombo->setCurrentIndex(1);
+      outModeCombo->setEnabled(false);
+    }
+    else
+    {
+      //outModeCombo->setCurrentIndex(2);
+      outModeCombo->setEnabled(true);
+    }
+}
+
 void CshowModeEdit::connectSignal()
 {
+    connect(inModeCombo, SIGNAL(currentIndexChanged(int)),this, SLOT(inModeChanged()));
     connect(inModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     connect(outModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     connect(inSpeedEdit, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
@@ -317,6 +333,7 @@ void CshowModeEdit::connectSignal()
 
 void CshowModeEdit::disconnectSignal()
 {
+    disconnect(inModeCombo, SIGNAL(currentIndexChanged(int)),this, SLOT(inModeChanged()));
     disconnect(inModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     disconnect(outModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     disconnect(inSpeedEdit, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));
@@ -357,9 +374,9 @@ void CshowModeEdit::setSettingsToWidget(QString str)
       //名字
       settings.setValue("setFlag", 1);
       settings.setValue("inMode", 0);
-      settings.setValue("inSpeed", 4);
+      settings.setValue("inSpeed", 0);
       settings.setValue("outMode", 0);
-      settings.setValue("outSpeed", 4);
+      settings.setValue("outSpeed", 0);
       settings.setValue("stayTime", 5);
       settings.setValue("playCounts", 1);
       settings.setValue("text", QString(tr("图文显示")));
@@ -382,6 +399,8 @@ void CshowModeEdit::setSettingsToWidget(QString str)
     settings.endGroup();
 
     connectSignal();
+
+    inModeChanged();
 }
 
 CshowModeEdit::~CshowModeEdit()

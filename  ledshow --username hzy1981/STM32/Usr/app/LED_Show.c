@@ -246,17 +246,8 @@ INT32U Get_Area_Point_Index(INT8U Area_No, INT16U X, INT16U Y)
   
   if(Area_No < MAX_AREA_NUM)
   {
-  /*
-#if DATA_CHK_EN
-    if(X >= Prog_Para.Area[Area_No].X_Len ||\
-       Y >= Prog_Para.Area[Area_No].Y_Len)
-    {
-      //ASSERT_FAILED();
-      return 0;
-    }
-#endif
-*/
-  
+
+
     X += Prog_Para.Area[Area_No].X;
     Y += Prog_Para.Area[Area_No].Y;
 /*
@@ -442,6 +433,13 @@ void Set_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT8U Width, I
 void Set_Area_Point_Data(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, INT8U Value) //设置一个区域的点   
 {
   INT32U Index;
+
+    if(X >= Prog_Para.Area[Area_No].X_Len ||\
+       Y >= Prog_Para.Area[Area_No].Y_Len)
+    {
+      ASSERT_FAILED();
+      return;
+    }
 
   Index = Get_Area_Point_Index(Area_No, X, Y);
 
@@ -697,7 +695,7 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
 
         P2.X = (INT16U)(p0->X + Xdiff);
         P2.Y = (INT16U)(p0->Y + Ydiff);
-        Copy_Filled_Rect(pSrc_Buf, Area_No, p0, 1, p1->Y - p0->Y, pDst_Buf, &P2, 0);
+        Copy_Filled_Rect(pSrc_Buf, Area_No, p0, 1, p1->Y + 1 - p0->Y, pDst_Buf, &P2, 0);
     }
     else if(p0->Y EQ p1->Y)
     {
@@ -706,7 +704,7 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
 
         P2.X = (INT16U)(p0->X + Xdiff);
         P2.Y = (INT16U)(p0->Y + Ydiff);
-        Copy_Filled_Rect(pSrc_Buf, Area_No, p0, p1->X - p0->X, 1, pDst_Buf, &P2, 0);
+        Copy_Filled_Rect(pSrc_Buf, Area_No, p0, p1->X + 1 - p0->X, 1, pDst_Buf, &P2, 0);
     }
 
 }
@@ -757,14 +755,14 @@ void Draw_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
       p0 = Get_Up_Point(pPoint0, pPoint1);
       p1 = Get_Down_Point(pPoint0, pPoint1);
 
-      Fill_Rect(pDst_Buf, Area_No, p0, 1, p1->Y - p0->Y, Value);
+      Fill_Rect(pDst_Buf, Area_No, p0, 1, p1->Y + 1 - p0->Y, Value);
   }
   else if(p0->Y EQ p1->Y) //一条横线
   {
       p0 = Get_Left_Point(pPoint0, pPoint1);
       p1 = Get_Right_Point(pPoint0, pPoint1);
 
-      Fill_Rect(pDst_Buf, Area_No, p0, p1->X - p0->X, 1, Value);
+      Fill_Rect(pDst_Buf, Area_No, p0, p1->X + 1 - p0->X, 1, Value);
   }
 
 }

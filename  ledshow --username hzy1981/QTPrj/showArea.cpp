@@ -758,6 +758,7 @@ void CshowArea::mousePressEvent(QMouseEvent *event)
         oldArea->update();
     }
     */
+    //qDebug("mousePressEvent");
 }
 
 //鼠标松开
@@ -805,6 +806,13 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
     if(areaType EQ 0)
         return;
 
+    if(this != w->screenArea->getFocusArea()) //当前不是焦点分区
+    {
+      mousePressed = false;
+      dragFlag = 0;
+      setCursor(Qt::ArrowCursor);
+      return;
+    }
 
     x0 = event->x();
     y0 = event->y();
