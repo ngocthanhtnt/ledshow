@@ -557,13 +557,13 @@ void CclockProperty::setSettingsToWidget(QString str)
     int setFlag = settings.value("setFlag").toBool();
     if(setFlag EQ 0)
     {
-      settings.setValue("pointRadius", 3);   //整点半径
-      settings.setValue("point369Radius", 3); //369点半径
-      settings.setValue("pointMinRadius", 3); //369点半径
+      settings.setValue("pointRadius", 2);   //整点半径
+      settings.setValue("point369Radius", 2); //369点半径
+      settings.setValue("pointMinRadius", 0); //369点半径
 
-      settings.setValue("hourWidth", 8);//时钟宽度
-      settings.setValue("minWidth", 5); //分钟宽度
-      settings.setValue("secWidth", 3); //秒钟宽度
+      settings.setValue("hourWidth", 3);//时钟宽度
+      settings.setValue("minWidth", 2); //分钟宽度
+      settings.setValue("secWidth", 1); //秒钟宽度
 
       settings.setValue("pointColor", RED_INDEX); //整点颜色
       settings.setValue("point369Color", RED_INDEX); //369点颜色
@@ -623,6 +623,13 @@ void CclockProperty::leftEdit()
     int index,posi;
 
     index = posiEdit->item->currentIndex();
+
+    //需要调整的显示项目被选中才能调整其位置
+    if(index EQ 0 && simpleTextEdit->isChecked() EQ false ||\
+       index EQ 1 && dateEdit->isChecked() EQ false ||\
+       index EQ 2 && weekEdit->isChecked() EQ false)
+        return;
+
     if(index EQ 0) //固定文本左移
       str = QString("textX");//left = settings.value("textX").toInt();
     else if(index EQ 1)
@@ -657,6 +664,13 @@ void CclockProperty::rightEdit()
     int index,posi;
 
     index = posiEdit->item->currentIndex();
+
+    //需要调整的显示项目被选中才能调整其位置
+    if(index EQ 0 && simpleTextEdit->isChecked() EQ false ||\
+       index EQ 1 && dateEdit->isChecked() EQ false ||\
+       index EQ 2 && weekEdit->isChecked() EQ false)
+        return;
+
     if(index EQ 0) //固定文本左移
       str = QString("textX");//left = settings.value("textX").toInt();
     else if(index EQ 1)
@@ -691,6 +705,13 @@ void CclockProperty::upEdit()
     int index,posi;
 
     index = posiEdit->item->currentIndex();
+
+    //需要调整的显示项目被选中才能调整其位置
+    if(index EQ 0 && simpleTextEdit->isChecked() EQ false ||\
+       index EQ 1 && dateEdit->isChecked() EQ false ||\
+       index EQ 2 && weekEdit->isChecked() EQ false)
+        return;
+
     if(index EQ 0) //固定文本左移
       str = QString("textY");//left = settings.value("textX").toInt();
     else if(index EQ 1)
@@ -725,6 +746,13 @@ void CclockProperty::downEdit()
     int index,posi;
 
     index = posiEdit->item->currentIndex();
+
+    //需要调整的显示项目被选中才能调整其位置
+    if(index EQ 0 && simpleTextEdit->isChecked() EQ false ||\
+       index EQ 1 && dateEdit->isChecked() EQ false ||\
+       index EQ 2 && weekEdit->isChecked() EQ false)
+        return;
+
     if(index EQ 0) //固定文本左移
       str = QString("textY");//left = settings.value("textX").toInt();
     else if(index EQ 1)
