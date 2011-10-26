@@ -282,56 +282,30 @@ const S_Mode_Func In_Mode_Func[]=
 #endif    
   }//水平拉伸
 #endif
+
 #if IN_SPEC_EFFECT_NUM > 38
-  ,{&Move_Left_Stretch, H_MODE, 3
-#if QT_EN
-   ,"左移弹出" 
-#endif    
-  } //左移弹出
-#endif
-#if IN_SPEC_EFFECT_NUM > 39
-  ,{&Move_Up_Stretch, V_MODE, 1
-#if QT_EN
-   ,"上移弹出" 
-#endif    
-  } //上移弹出
-#endif
-#if IN_SPEC_EFFECT_NUM > 40
   ,{&Move_Horizontal_Window, FIX_MODE, 100
 #if QT_EN
    ,"水平百叶窗" 
 #endif    
   }//WIN_LEAF_WIDTH} //水平百叶窗
 #endif
-#if IN_SPEC_EFFECT_NUM > 41
+#if IN_SPEC_EFFECT_NUM > 39
   ,{&Move_Vertical_Window, FIX_MODE, 100
 #if QT_EN
    ,"垂直百叶窗" 
 #endif    
   }//WIN_LEAF_WIDTH} //垂直百叶窗
 #endif
-#if IN_SPEC_EFFECT_NUM > 42
-  ,{&Move_Left_Compress, FIX_MODE, 100
-#if QT_EN
-   ,"向左压缩" 
-#endif    
-  } //向左压缩
-#endif
-#if IN_SPEC_EFFECT_NUM > 43
-  ,{&Move_Up_Compress, FIX_MODE, 100
-#if QT_EN
-   ,"向上压缩" 
-#endif    
-  }//向上压缩
-#endif
-#if IN_SPEC_EFFECT_NUM > 44
+
+#if IN_SPEC_EFFECT_NUM > 40
   ,{&Move_Fade_In, FIX_MODE, 100
 #if QT_EN
    ,"淡入" 
 #endif    
   }//淡入
 #endif
-#if IN_SPEC_EFFECT_NUM > 45
+#if IN_SPEC_EFFECT_NUM > 41
   ,{&Move_Left_Up_In, HV_SQRT_MODE, 1
 #if QT_EN
    ,"左上移入"
@@ -339,7 +313,7 @@ const S_Mode_Func In_Mode_Func[]=
   }//左上移入
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 46
+#if IN_SPEC_EFFECT_NUM > 42
   ,{&Move_Right_Up_In, HV_SQRT_MODE, 1
 #if QT_EN
    ,"右上移入"
@@ -347,7 +321,7 @@ const S_Mode_Func In_Mode_Func[]=
   }//右上移入
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 47
+#if IN_SPEC_EFFECT_NUM > 43
   ,{&Move_Left_Down_In, HV_SQRT_MODE, 1
 #if QT_EN
    ,"左下移入"
@@ -355,7 +329,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 48
+#if IN_SPEC_EFFECT_NUM > 44
   ,{&Mofe_Right_Down_In, HV_SQRT_MODE, 1
 #if QT_EN
    ,"右下移入"
@@ -363,7 +337,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 49
+#if IN_SPEC_EFFECT_NUM > 45
   ,{&Move_Left_Compress_0, H_MODE, 1
 #if QT_EN
    ,"左压入0"
@@ -371,7 +345,7 @@ const S_Mode_Func In_Mode_Func[]=
   }//右下引入
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 50
+#if IN_SPEC_EFFECT_NUM > 46
   ,{&Move_Right_Compress_0, H_MODE, 1
 #if QT_EN
    ,"右压入0"
@@ -379,7 +353,7 @@ const S_Mode_Func In_Mode_Func[]=
   }//右下引入
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 51
+#if IN_SPEC_EFFECT_NUM > 47
   ,{&Move_Up_Compress_0, V_MODE, 1
 #if QT_EN
    ,"上压入0"
@@ -387,7 +361,7 @@ const S_Mode_Func In_Mode_Func[]=
   }//右下引入
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 52
+#if IN_SPEC_EFFECT_NUM > 48
   ,{&Move_Down_Compress_0, V_MODE, 1
 #if QT_EN
    ,"下压入0"
@@ -395,6 +369,35 @@ const S_Mode_Func In_Mode_Func[]=
   }//右下引入
 #endif
 
+#if IN_SPEC_EFFECT_NUM > 49
+  ,{&Move_Left_Compress, FIX_MODE, 100
+#if QT_EN
+   ,"向左压缩" 
+#endif    
+  } //向左压缩
+#endif
+#if IN_SPEC_EFFECT_NUM > 50
+  ,{&Move_Up_Compress, FIX_MODE, 100
+#if QT_EN
+   ,"向上压缩" 
+#endif    
+  }//向上压缩
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 51
+  ,{&Move_Left_Stretch, H_MODE, 3
+#if QT_EN
+   ,"左移弹出" 
+#endif    
+  } //左移弹出
+#endif
+#if IN_SPEC_EFFECT_NUM > 52
+  ,{&Move_Up_Stretch, V_MODE, 1
+#if QT_EN
+   ,"上移弹出" 
+#endif    
+  } //上移弹出
+#endif
 };
 
 //数据移出方式

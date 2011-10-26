@@ -1465,16 +1465,16 @@ void Screen_Test(void)
   if(!(Chk_Test_Key_Down() && Chk_JP_Status() EQ NORMAL_STATUS))
     return;
 #else
-#if defined(CARD_A0)
+#if defined(CARD_A)
    Screen_Para.Base_Para.Width = 720; 
    Screen_Para.Base_Para.Height = 32;
    Screen_Para.Base_Para.Color = 0x01;
    SET_SUM(Screen_Para);
-#elif defined(CARD_A1)
+#elif defined(CARD_B)
    Screen_Para.Base_Para.Width = 1024; 
    Screen_Para.Base_Para.Height = 64;
    Screen_Para.Base_Para.Color = 0x01;
-#elif defined(CARD_B0)
+#elif defined(CARD_C)
    Screen_Para.Base_Para.Width = 2048; 
    Screen_Para.Base_Para.Height = 64;
    Screen_Para.Base_Para.Color = 0x01;

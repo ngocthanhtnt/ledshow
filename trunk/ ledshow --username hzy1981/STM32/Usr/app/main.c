@@ -1,6 +1,6 @@
 #include "Includes.h"
 
-#define MAIN_STACK_SIZE 320
+#define MAIN_STACK_SIZE 300
  
  void test()
  {

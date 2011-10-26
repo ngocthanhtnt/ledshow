@@ -1,11 +1,11 @@
-#ifndef LED_CX_DRV_H
-#define LED_CX_DRV_H
+#ifndef LED_ABX_DRV_H
+#define LED_ABX_DRV_H
 
 #include "Pub.h"
 //#include "BitBandIO.h"
 
 #undef EXT
-#ifdef LED_CX_DRV_C
+#ifdef LED_ABX_DRV_C
 #define EXT
 #else
 #define EXT  extern
@@ -63,39 +63,45 @@
 #define SET_CLK_LOW() GPIOA->BRR = GPIO_Pin_1
 #define SET_CLK_HIGH() GPIOA->BSRR = GPIO_Pin_1
 //R1-PB2
-#define SET_R1(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_0):(GPIOD->BSRR = GPIO_Pin_0)
-#define SET_R2(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_1):(GPIOD->BSRR = GPIO_Pin_1)
-#define SET_R3(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_2):(GPIOD->BSRR = GPIO_Pin_2)
-#define SET_R4(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_3):(GPIOD->BSRR = GPIO_Pin_3)
-#define SET_R5(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_4):(GPIOD->BSRR = GPIO_Pin_4)
-#define SET_R6(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_5):(GPIOD->BSRR = GPIO_Pin_5)
-#define SET_R7(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_6):(GPIOD->BSRR = GPIO_Pin_6)
-#define SET_R8(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_7):(GPIOD->BSRR = GPIO_Pin_7)
-#define SET_R9(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_8):(GPIOD->BSRR = GPIO_Pin_8)
-#define SET_R10(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_9):(GPIOD->BSRR = GPIO_Pin_9)
-#define SET_R11(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_10):(GPIOD->BSRR = GPIO_Pin_10)
-#define SET_R12(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_11):(GPIOD->BSRR = GPIO_Pin_11)
-#define SET_R13(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_12):(GPIOD->BSRR = GPIO_Pin_12)
-#define SET_R14(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_13):(GPIOD->BSRR = GPIO_Pin_13)
-#define SET_R15(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_14):(GPIOD->BSRR = GPIO_Pin_14)
-#define SET_R16(x) (x == 0)?(GPIOD->BRR = GPIO_Pin_15):(GPIOD->BSRR = GPIO_Pin_15)
+#define SET_R1(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_0):(GPIOB->BSRR = GPIO_Pin_0)
+#define _SET_R1(x) GPIOB0 = x
+//R2-PB12					  
+#define SET_R2(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_1):(GPIOB->BSRR = GPIO_Pin_1)
+#define _SET_R2(x) GPIOB1 = x
+//R3-PB13
+#define SET_R3(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_2):(GPIOB->BSRR = GPIO_Pin_2)
+#define _SET_R3(x) GPIOB2 = x
+//R4-PB14
+#define SET_R4(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_3):(GPIOB->BSRR = GPIO_Pin_3)
+#define _SET_R4(x) GPIOB3 = x
+//R5
+#define SET_R5(x) 
+//R6
+#define SET_R6(x)
+//R7
+#define SET_R7(x) 
+//R8
+#define SET_R8(x) 
 //G1-PA15
-#define SET_G1(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_0):(GPIOE->BSRR = GPIO_Pin_0)
-#define SET_G2(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_1):(GPIOE->BSRR = GPIO_Pin_1)
-#define SET_G3(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_2):(GPIOE->BSRR = GPIO_Pin_2) 
-#define SET_G4(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_3):(GPIOE->BSRR = GPIO_Pin_3)
-#define SET_G5(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_4):(GPIOE->BSRR = GPIO_Pin_4)
-#define SET_G6(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_5):(GPIOE->BSRR = GPIO_Pin_5) 
-#define SET_G7(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_6):(GPIOE->BSRR = GPIO_Pin_6)
-#define SET_G8(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_7):(GPIOE->BSRR = GPIO_Pin_7)
-#define SET_G9(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_8):(GPIOE->BSRR = GPIO_Pin_8)
-#define SET_G10(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_9):(GPIOE->BSRR = GPIO_Pin_9)
-#define SET_G11(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_10):(GPIOE->BSRR = GPIO_Pin_10) 
-#define SET_G12(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_11):(GPIOE->BSRR = GPIO_Pin_11)
-#define SET_G13(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_12):(GPIOE->BSRR = GPIO_Pin_12)
-#define SET_G14(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_13):(GPIOE->BSRR = GPIO_Pin_13) 
-#define SET_G15(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_14):(GPIOE->BSRR = GPIO_Pin_14)
-#define SET_G16(x) (x == 0)?(GPIOE->BRR = GPIO_Pin_15):(GPIOE->BSRR = GPIO_Pin_15)
+#define SET_G1(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_4):(GPIOB->BSRR = GPIO_Pin_4)
+#define _SET_G1(x) GPIOB4 = x
+//G2
+#define SET_G2(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_5):(GPIOB->BSRR = GPIO_Pin_5)
+#define _SET_G2(x) GPIOB5 = x 
+//G3
+#define SET_G3(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_6):(GPIOB->BSRR = GPIO_Pin_6) 
+#define _SET_G3(x) GPIOB6 = x
+//G4
+#define SET_G4(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_7):(GPIOB->BSRR = GPIO_Pin_7)
+#define _SET_G4(x) GPIOB7 = x  
+//G5
+#define SET_G5(x) 
+//G6
+#define SET_G6(x)  
+//G7
+#define SET_G7(x) 
+//G8
+#define SET_G8(x) 
 //B1
 #define SET_B1(x)
 #define _SET_B1(x)

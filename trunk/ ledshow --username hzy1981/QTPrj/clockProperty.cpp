@@ -625,9 +625,9 @@ void CclockProperty::leftEdit()
     index = posiEdit->item->currentIndex();
 
     //需要调整的显示项目被选中才能调整其位置
-    if(index EQ 0 && simpleTextEdit->isChecked() EQ false ||\
-       index EQ 1 && dateEdit->isChecked() EQ false ||\
-       index EQ 2 && weekEdit->isChecked() EQ false)
+    if((index EQ 0 && simpleTextEdit->isChecked() EQ false) ||\
+       (index EQ 1 && dateEdit->isChecked() EQ false) ||\
+       (index EQ 2 && weekEdit->isChecked() EQ false))
         return;
 
     if(index EQ 0) //固定文本左移
@@ -666,9 +666,9 @@ void CclockProperty::rightEdit()
     index = posiEdit->item->currentIndex();
 
     //需要调整的显示项目被选中才能调整其位置
-    if(index EQ 0 && simpleTextEdit->isChecked() EQ false ||\
-       index EQ 1 && dateEdit->isChecked() EQ false ||\
-       index EQ 2 && weekEdit->isChecked() EQ false)
+    if((index EQ 0 && simpleTextEdit->isChecked() EQ false) ||\
+       (index EQ 1 && dateEdit->isChecked() EQ false) ||\
+       (index EQ 2 && weekEdit->isChecked() EQ false))
         return;
 
     if(index EQ 0) //固定文本左移
@@ -707,9 +707,9 @@ void CclockProperty::upEdit()
     index = posiEdit->item->currentIndex();
 
     //需要调整的显示项目被选中才能调整其位置
-    if(index EQ 0 && simpleTextEdit->isChecked() EQ false ||\
-       index EQ 1 && dateEdit->isChecked() EQ false ||\
-       index EQ 2 && weekEdit->isChecked() EQ false)
+    if((index EQ 0 && simpleTextEdit->isChecked() EQ false) ||\
+       (index EQ 1 && dateEdit->isChecked() EQ false) ||\
+       (index EQ 2 && weekEdit->isChecked() EQ false))
         return;
 
     if(index EQ 0) //固定文本左移
@@ -748,9 +748,9 @@ void CclockProperty::downEdit()
     index = posiEdit->item->currentIndex();
 
     //需要调整的显示项目被选中才能调整其位置
-    if(index EQ 0 && simpleTextEdit->isChecked() EQ false ||\
-       index EQ 1 && dateEdit->isChecked() EQ false ||\
-       index EQ 2 && weekEdit->isChecked() EQ false)
+    if((index EQ 0 && simpleTextEdit->isChecked() EQ false) ||\
+       (index EQ 1 && dateEdit->isChecked() EQ false) ||\
+       (index EQ 2 && weekEdit->isChecked() EQ false))
         return;
 
     if(index EQ 0) //固定文本左移
