@@ -8,7 +8,7 @@
 //#define CARD_SUB_TYPE CARD_SUB_A0 //AX系列子卡类型
 
  //-------------------时钟相关配置---------------
-#ifdef CARD_A0
+#ifdef CARD_A
 #define HSE_VALUE 12000000 //外部晶振频率
 #define HCLK_VALUE  HSE_VALUE*3
 //#define H_HCLK_VALUE HSE_VALUE*9
@@ -18,7 +18,7 @@
 #define HCLK_MUL  RCC_PLLMul_3	//正常运行时AHB速度
 #define PCLK1_DIV RCC_HCLK_Div2 //最高APB/2--这是正常运行时速度,这里不能为DIV1，因为定时器使用的分频系数默认PCLK1分频>1
 #define PCLK2_DIV RCC_HCLK_Div1 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/8不能超过24M
-#elif defined(CARD_A1)
+#elif defined(CARD_B)
 #define HSE_VALUE 12000000 //外部晶振频率
 #define HCLK_VALUE  HSE_VALUE*6
 //#define H_HCLK_VALUE HSE_VALUE*9
@@ -35,10 +35,10 @@
 
 
 //----------------------------------------
-#if defined(CARD_A0)
-#define CARD_NAME "A0"  //卡名称
-#elif defined(CARD_A1)
-#define CARD_NAME "A1"  //卡名称
+#if defined(CARD_A)
+#define CARD_NAME "A"  //卡名称
+#elif defined(CARD_B)
+#define CARD_NAME "B"  //卡名称
 #else
 #error "card AX name error"
 #endif
@@ -52,10 +52,10 @@
 #define FONT_NUM 1 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
-#ifdef CARD_A0
+#ifdef CARD_A
 #define MAX_POINTS (180*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  2000 //最大存储块数
-#elif defined(CARD_A1)
+#elif defined(CARD_B)
 #define MAX_POINTS (512*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  4000 //最大存储块数
 #endif

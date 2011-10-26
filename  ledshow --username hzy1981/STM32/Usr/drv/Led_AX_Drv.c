@@ -1,7 +1,7 @@
 #define LED_AX_DRV_C
 #include "Includes.h"
 
-#if defined(CARD_AX)
+#if defined(CARD_A) || defined(CARD_B)
 
 #define  AFIO_MAPR      (*(volatile unsigned long *)0x40010004)//复用重映射和调试I/O配置寄存器
 

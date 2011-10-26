@@ -45,16 +45,8 @@
 
 
 #define OE_PWM_FREQ 10000 //10KPWM频率
-/*
-#if (CARD_TYPE & 0xF0) == (CARD_AX & 0xF0)
-#define APP_NAME "条屏LED播放系统"
-#define MAX_PROG_NUM 10 //最大节目数
-#define MAX_AREA_NUM 2 //每个节目下最大分区数
-#define MAX_FILE_NUM 8 //每个分区下最大文件数
-#define BLOCK_DATA_LEN 129 //每块数据的大小
-#define MAX_BORDER_POINTS (16*8) //边框数据大小
-#else
-*/
+#define COMPANY_NAME "AS"
+
 #define APP_NAME "大屏LED播放系统"
 #define MAX_PROG_NUM 10 //最大节目数
 #define MAX_AREA_NUM 6 //每个节目下最大分区数
@@ -118,19 +110,19 @@
 #include "STM32.h"
 
 
-#if defined(CARD_AX)
-#include "LED_AX_Cfg.h"
-#include "LED_AX_Drv.h"
-#elif defined(CARD_BX)
-#include "LED_BX_Cfg.h"
-#include "LED_BX_Drv.h"
-#elif defined(CARD_CX)
+#if defined(CARD_A) || defined(CARD_B)
+#include "LED_ABX_Cfg.h"
+#include "LED_ABX_Drv.h"
+//#elif defined(CARD_BX)
+//#include "LED_BX_Cfg.h"
+//#include "LED_BX_Drv.h"
+#elif defined(CARD_C)
 #include "LED_CX_Cfg.h"
 #include "LED_CX_Drv.h"
-#elif defined(CARD_DX)
+#elif defined(CARD_D)
 #include "LED_DX_Cfg.h"
 #include "LED_DX_Drv.h"
-#elif defined(CARD_EX)
+#elif defined(CARD_E)
 #include "LED_EX_Cfg.h"
 #include "LED_EX_Drv.h"
 #else

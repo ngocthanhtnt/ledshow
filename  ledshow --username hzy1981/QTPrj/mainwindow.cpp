@@ -835,7 +835,7 @@ MainWindow::MainWindow(QWidget *parent)
     //setupViewActions();
     setupEditActions();
     setupCtrlActions();
-    setupToolActions();
+    //setupToolActions();
     setupHelpActions();
 
 
