@@ -870,7 +870,7 @@ MainWindow::MainWindow(QWidget *parent)
    connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
 
 
-   //comStatus->show();
+   setWindowTitle(tr(APP_NAME));
 }
 
 void MainWindow::screenCardParaChangeProc()

@@ -661,14 +661,22 @@ void CcomStatus::getUDiskParaFromSettings(QString str)
 void CcomStatus::getCOMParaFromSettings(QString str)
 {
     QString str1;
+    //int flag;
     QStringList screenGroups;
     //int screenSize;
 
     settings.beginGroup(str);
     settings.beginGroup("comTest");
 
+    //flag = settings.value("flag");
+
     comThread->COM_Mode = settings.value("comMode").toInt();
     comThread->COM_Port = settings.value("comPort").toString();
+    if(comThread->COM_Port EQ "")
+    {
+        comThread->COM_Port = getComPortList().at(0);
+        //settings.setValue("comPort", comThread->COM_Port);
+    }
 
     comThread->COM_Para.Addr = settings.value("screenID").toInt();
     comThread->COM_Para.Baud = settings.value("baud").toInt();

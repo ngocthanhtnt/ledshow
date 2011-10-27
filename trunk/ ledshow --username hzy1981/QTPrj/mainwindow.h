@@ -30,7 +30,7 @@
 
 #define CARD_INI_FILE ".\\cfg\\card.ini"     //板卡配置文件
 #define SCREEN_INI_FILE ".\\cfg\\screen.ini" //屏幕配置文件
-#define PROG_INI_FILE ".\\cfg\\temp.ini"     //节目配置文件
+#define PROG_INI_FILE ".\\cfg\\progData.ini"     //节目配置文件
 
 #define PROTO_DATA_FILE ".\\data\\protoData.dat"      //协议数据文件
 #define UDISK_PROTO_FILE ".\\data\\uDiskData.dat"      //协议数据文件

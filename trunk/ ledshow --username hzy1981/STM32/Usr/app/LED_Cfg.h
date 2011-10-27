@@ -59,6 +59,8 @@
 #define ASSERT_EN 1
 #include "QT_SIM.h"
 
+#define APP_NAME "LED图文编辑系统"
+
 #define SCAN_SCREEN_PERIOD 200//扫屏周期,单位us
 //显示效果配置
 #define MOVE_STEP_PERIOD 40 //移动步进时间,单位为ms
