@@ -1847,6 +1847,8 @@ void getComTestParaFromSettings(QString str, S_Screen_Para &screenPara)
 */
 void CcomTest::setSettingsToWidget(QString str)
 {
+    QString comPort;
+
     disconnect(this, SIGNAL(editSignal()), this, SLOT(editSlot()));
 
     settings.beginGroup(str);
@@ -1854,8 +1856,11 @@ void CcomTest::setSettingsToWidget(QString str)
 
     comModeCombo->setCurrentIndex(settings.value("comMode").toInt());
     screenIDEdit->setValue(settings.value("screenID").toInt());
-    //comPortEdit->setCurrentIndex(settings.value("comPort").toInt());
-    comPortEdit->setEditText(settings.value("comPort").toString());
+    comPort = settings.value("comPort").toString();
+    if(comPort EQ "")
+        comPort = getComPortList().at(0);
+    comPortEdit->setEditText(comPort);
+
     comBaudCombo->setCurrentIndex(settings.value("baud").toInt());
     ipEdit->setIP(settings.value("ip").toInt());
 
