@@ -317,7 +317,7 @@ bool CcomThread::connect()
         if(port->open(QIODevice::ReadWrite) EQ false)
         {
 
-            comReStr = tr("打开串口失败！请检查该串口是否已被占用");
+            comReStr = tr("打开串口失败！");
             emit comStatusChanged(comReStr);
             return false;
         }
@@ -334,7 +334,7 @@ bool CcomThread::connect()
             port->setDataBits(DATA_8);
             port->setStopBits(STOP_1);
 
-          comReStr = tr("打开串口成功");
+          comReStr = tr("打开串口成功！");
 
           char comByteBuf[50];
           memset(comByteBuf, COM_BYTE, sizeof(comByteBuf));
@@ -674,7 +674,8 @@ void CcomStatus::getCOMParaFromSettings(QString str)
     comThread->COM_Port = settings.value("comPort").toString();
     if(comThread->COM_Port EQ "")
     {
-        comThread->COM_Port = getComPortList().at(0);
+        if(getComPortList().count() > 0)
+          comThread->COM_Port = getComPortList().at(0);
         //settings.setValue("comPort", comThread->COM_Port);
     }
 
