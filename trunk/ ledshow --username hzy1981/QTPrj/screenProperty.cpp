@@ -1858,7 +1858,10 @@ void CcomTest::setSettingsToWidget(QString str)
     screenIDEdit->setValue(settings.value("screenID").toInt());
     comPort = settings.value("comPort").toString();
     if(comPort EQ "")
-        comPort = getComPortList().at(0);
+     {
+        if(getComPortList().count() > 0)
+          comPort = getComPortList().at(0);
+     }
     comPortEdit->setEditText(comPort);
 
     comBaudCombo->setCurrentIndex(settings.value("baud").toInt());
@@ -2024,6 +2027,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    scanParaGroup = new QWidget(this);//QGroupBox(tr("基本参数"),this);
    scanModeCombo = new QComboBox(this);
    selfTestButton = new QPushButton(tr("自动检测"), this);
+   QLabel *scanModeInfo = new QLabel(tr("选择框内前4位数字为扫描方式的特征码，自动检测时显示在屏幕左上角"), this);
    scanPicWidget = new QWidget(this);
 
    gridLayout = new QGridLayout(this);
@@ -2038,10 +2042,10 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
        modeString = getScanCodeString(scanMode[i].code);
        scanModeCombo->addItem(modeString);
    }
-   //gridLayout->addWidget(scanModeLabel, 0, 0, 1, 1);
-   gridLayout->addWidget(scanModeCombo, 0, 0, 1, 5);
-   gridLayout->addWidget(selfTestButton, 0, 5, 1, 1);
-   gridLayout->addWidget(scanPicWidget, 1, 0, 3, 6);
+   gridLayout->addWidget(scanModeInfo, 0, 0, 1, 6);
+   gridLayout->addWidget(scanModeCombo, 1, 0, 1, 5);
+   gridLayout->addWidget(selfTestButton, 1, 5, 1, 1);
+   gridLayout->addWidget(scanPicWidget, 2, 0, 3, 6);
 
    scanParaGroup->setLayout(gridLayout);
    tabWidget->addTab(scanParaGroup, tr("扫描参数"));
@@ -2663,6 +2667,9 @@ void CfacScreenProperty::setTestProc()
 
     if(this->selfTestButton->text() EQ tr("自动检测"))
     {
+        QMessageBox::information(w, tr("提示"),
+                               tr("进入自动检测状态前请确定已加载正确的屏幕宽度、高度参数到屏幕，进入自检状态后，请观察屏幕左上角的显示内容（3分钟左右），如正常显示4位数字，则该4位数字作为特征码对应的扫描方式就是该屏幕正确的扫描方式，例如显示\"0020\"，对应的扫描方式为 \"0200, 1/16扫,右入直行一路带16行数据(P10常用)\""),tr("确定"));
+        //this->parentWidget()->close(); //参数设置成功则关闭窗口
       tmp = 0x00; //进入
       this->selfTestButton->setText(tr("退出检测"));
     }

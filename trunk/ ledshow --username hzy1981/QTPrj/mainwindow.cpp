@@ -472,7 +472,7 @@ void MainWindow::setupCtrlActions()
     tb->setWindowTitle(tr("File Actions"));
     addToolBar(tb);
 
-    QMenu *menu = new QMenu(tr("控制"), this);
+    QMenu *menu = new QMenu(tr("操作"), this);
     ctrlMenu = menu;//控制菜单
     menuBar()->addMenu(menu);
     menu->setEnabled(false);
