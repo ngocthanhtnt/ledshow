@@ -569,7 +569,59 @@ void Calc_Block_Data_Addr_Off(void)
 	   Screen_Status.Block0_Index = 0;
   }
 }
-                       
+
+void Clr_Cur_Scan_Row(void)
+{
+  INT16U Cols, i,j;
+  INT8U Data;
+
+  Cols = (Screen_Para.Base_Para.Width / 8)* (Screen_Para.Scan_Para.Rows_Fold + 1);
+
+  if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
+    Data = 0xFF;
+  else
+    Data = 0;
+    
+  //对每个Blocks进行扫描
+  //每一条扫描线需要Screen_Para.Base_Para.Width / 8 * Screen_Para.Scan_Para.Rows_Fold个字节
+  for(i = 0; i < Cols ; i ++)
+  {
+      //Get_Scan_Data(Blocks, i);
+
+#if MAX_SCAN_BLOCK_NUM EQ 4//A型卡最多4条扫描线
+	  for(j = 0; j < 8; j ++)
+	  {
+	    nop();
+	    SET_CLK_LOW();
+        GPIOB->ODR = Data;//Temp | Scan_Data[0][j]; //输出R1-R4,G1-G4
+		SET_CLK_HIGH();
+	   }
+#elif MAX_SCAN_BLOCK_NUM EQ 8
+;
+#elif MAX_SCAN_BLOCK_NUM EQ 16
+
+
+	  for(j = 0; j < 8; j ++)
+	  {
+		GPIOD->ODR = Data;//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
+		SET_CLK_LOW();
+
+		GPIOE->ODR = Data;//(GPIOE->ODR & 0xFF00) | Scan_Data[1][j]; //输出G1-G8
+		SET_CLK_HIGH();
+	   }
+	
+#else
+#error "MAX_SCAN_BLOCK_NUM error"
+#endif
+
+   }
+
+    SET_LAT(0); //锁存信号输出
+	nop();
+	nop();
+    SET_LAT(1); //锁存信号输出
+}
+                      
 //调用该函数每次扫描一行
 //每中断一次调用一次该函数
 void LED_Scan_One_Row(void)
@@ -577,17 +629,25 @@ void LED_Scan_One_Row(void)
   INT16U i,j,Cols;
   INT16U Blocks;
   INT16U Temp;
+  static INT32U Flag = 0;
   //INT8U Direct;
 //  INT8U Color_Num;
   
   //Delay_us(500);
   //return;
+  if(Flag EQ 0xA5) //防止重复进入
+    return;
+ 
+  Flag = 0xA5;
 
   if(Screen_Status.Time_OC_Flag EQ CLOSE_FLAG ||\
      Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG ||\
 	 Screen_Status.Com_Time > 0 ||\
 	 Chk_UDisk_Processing()) //关机状态，不显示,或当前在通信状态也不显示
+	 {
+	 Flag = 0;
     return;
+	}
  
  GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
  /*
@@ -818,16 +878,18 @@ void LED_Scan_One_Row(void)
     //Set_Clock_Normal_Speed();
 	//_USART_Cmd(USART1, ENABLE); 
 	//USART_Clar
-    GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出  
+    GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出 
+	
+	Flag = 0; 
 }
-/*
-void LED_Scan_One_Row(void)
+
+void LED_Scan_Screen(void)
 {
   INT8U i;
 
   for(i = 0; i < 15; i ++)
-    _LED_Scan_One_Row();
+    LED_Scan_One_Row();
 
 }
-*/
+
 
