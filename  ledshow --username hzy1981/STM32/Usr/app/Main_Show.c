@@ -31,7 +31,7 @@ INT32U Get_Area_In_Step_Delay(INT8U Area_No)
       return MOVE_STEP_PERIOD;
 	  */
     if(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed > 1)
-      return (INT32U)Prog_Status.File_Para[Area_No].Pic_Para.In_Speed * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+      return MOVE_STEP_PERIOD + ((INT32U)Prog_Status.File_Para[Area_No].Pic_Para.In_Speed - 1)* 4 * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
 }
@@ -46,7 +46,7 @@ INT32U Get_Area_Out_Step_Delay(INT8U Area_No)
 	  */
 
     if(Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed > 1)
-      return (INT32U)Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed* MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+      return MOVE_STEP_PERIOD + ((INT32U)Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed - 1) * 4 * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
 }

@@ -59,7 +59,7 @@
 #define ASSERT_EN 1
 #include "QT_SIM.h"
 
-#define APP_NAME "LED图文编辑系统"
+#define APP_NAME "LED图文编辑系统 2011"
 
 #define SCAN_SCREEN_PERIOD 200//扫屏周期,单位us
 //显示效果配置

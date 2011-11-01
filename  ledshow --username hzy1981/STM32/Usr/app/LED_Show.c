@@ -10,7 +10,8 @@
 
 #define REEL_WIDTH 4
 
-
+extern void LED_Scan_Screen(void);
+extern void Clr_Cur_Scan_Row(void);
 //获取缓冲区中第Index位的值
 INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index)
 {
@@ -1009,72 +1010,9 @@ void Copy_Filled_Rect0(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, I
   
 }
  
-#if SCAN_DATA_MODE EQ SCAN_SOFT_MODE1
-void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
-  S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
-  {
-    INT16U i,j;
-    INT8U Data0, Data1;
-	INT16U StartX0,StartY0,StartX1,StartY1;
-	INT16U Byte_Index; 
-	INT8U Bit_Index, Color_Num;
 
-	StartX0 = Prog_Para.Area[Area_No].X + pPoint0->X;
-	StartY0 = Prog_Para.Area[Area_No].Y + pPoint0->Y;
-
-	StartX1 = Prog_Para.Area[Area_No].X + pPoint1->X;
-	StartY1 = Prog_Para.Area[Area_No].Y + pPoint1->Y;
-
-	Color_Num = GET_COLOR_NUM(Screen_Para.Base_Para.Color);
-    if(Color_Num <2) //单色屏
-	{
-	    for(i = 0; i < X_Len;  i++)
-	    {
-	      for(j = 0; j < Y_Len; j++)
-	      {
-		    Byte_Index = (((StartY0 + j) * Screen_Para.Base_Para.Width) + StartX0 + i) >> 3;//*Screen_Status.Color_Num;
-			Bit_Index = (StartX0 + i) & 0x07; 
-			//Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width, StartX0 + i, StartY0 + j);
-			Data0 = GET_BIT(pSrc_Buf->Color_Data[Byte_Index], Bit_Index);//Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data),Index);
-
-		    Byte_Index = (((StartY1 + j) * Screen_Para.Base_Para.Width) + StartX1 + i) >> 3;//*Screen_Status.Color_Num;
-			Bit_Index = (StartX1 + i) & 0x07;
-			if(Data0)
-			  SET_BIT(pDst_Buf->Color_Data[Byte_Index], Bit_Index);
-			else
-			  CLR_BIT(pDst_Buf->Color_Data[Byte_Index], Bit_Index);
-		  }
-		}
-	}
-	else
-	{
-	    for(i = 0; i < X_Len;  i++)
-	    {
-	      for(j = 0; j < Y_Len; j++)
-	      {
-		    Byte_Index = ((((StartY0 + j) * Screen_Para.Base_Para.Width) + StartX0 + i) >> 3)*2;//*Screen_Status.Color_Num;
-			Bit_Index = (StartX0 + i) & 0x07; 
-			//Index = GET_POINT_INDEX(Screen_Para.Base_Para.Width, StartX0 + i, StartY0 + j);
-			Data0 = GET_BIT(pSrc_Buf->Color_Data[Byte_Index], Bit_Index);//Get_Buf_Bit(pSrc_Buf->Color_Data, sizeof(pSrc_Buf->Color_Data),Index);
-			Data1 = GET_BIT(pSrc_Buf->Color_Data[Byte_Index + 1], Bit_Index);
-
-		    Byte_Index = ((((StartY1 + j) * Screen_Para.Base_Para.Width) + StartX1 + i) >> 3)*2;//*Screen_Status.Color_Num;
-			Bit_Index = (StartX1 + i) & 0x07;
-			if(Data0)
-			  OS_SET_BIT(pDst_Buf->Color_Data[Byte_Index], Bit_Index);
-			else
-			  OS_CLR_BIT(pDst_Buf->Color_Data[Byte_Index], Bit_Index);
-
- 			if(Data1)
-			  OS_SET_BIT(pDst_Buf->Color_Data[Byte_Index+1], Bit_Index);
-			else
-			  OS_CLR_BIT(pDst_Buf->Color_Data[Byte_Index+1], Bit_Index);
-		  }
-		}
-
-	}
-  }
-#elif SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
+//该函数为按列复制的方式
+/*
 void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
   S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
 {
@@ -1149,22 +1087,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
     pSrc0 = pSrc_Buf->Color_Data + (Index0 >> 3) * Color_Num;
     pDst0 = pDst_Buf->Color_Data + (Index1 >> 3) * Color_Num;
-  /*
-    //上下行之间的两个字节在内存中的距离
-    if(Screen_Para.Scan_Para.Direct EQ 0x01 ||\
-       Screen_Para.Scan_Para.Direct EQ 0x03) //从上面入,左上或者右上
-    {
-      Width0 = Screen_Para.Scan_Para.Cols_Fold * Color_Num; //同一条扫描线上，上下两个字节之间的距离
-      //两条扫描线上的距离
-      Width1 = ((Screen_Para.Scan_Para.Rows_Fold + 1)*Screen_Para.Base_Para.Width / 8 - Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Cols_Fold) * Color_Num;
-    }
-    else
-    {
-      Width0 = (0 - Screen_Para.Scan_Para.Cols_Fold) * Color_Num;
-      Width1 = ((Screen_Para.Scan_Para.Rows_Fold + 1)*Screen_Para.Base_Para.Width / 8 + Screen_Para.Scan_Para.Rows_Fold * Screen_Para.Scan_Para.Cols_Fold) * Color_Num;
 
-    }
-	*/
     if((X0 % 8) >= (X1 % 8)) //源数据需要左移
     {
         pSrc = pSrc0;// + i * Color_Num;     //该列第一个数据的源地址
@@ -1333,19 +1256,79 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
       }
     }
 
+	//for(i = 0 ; i< 16; i ++)
+	  //LED_Scan_One_Row();
+
+    //LED_Scan_Screen();
+	//SCAN_INT_ENABLE();
         //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
 }
+*/
 
-/*
+//该函数为按行复制的方式。
 void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
   S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
 {
     INT32U Index0, Index1;
-    INT16U Len, Diff,i,j,Mask,X0,X1;//,Y1;
+    INT16U Len, Diff,i,j,Mask,X0,X1,Y0,Y1,Width,Height;//,Y1;
     INT8U *pSrc, *pDst, Data, Color_Num;
 
-    GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+///-----------判断参数的正确性---------------
+    X0 = pPoint0->X; //源数据在整体屏幕中的起始位置
+    Y0 = pPoint0->Y; //源数据在整体屏幕中的起始位置
+    X1 = pPoint1->X; //目标数据在整体屏幕中的起始位置
+    Y1 = pPoint1->Y;
 
+    if(Area_No < MAX_AREA_NUM)
+    {
+        Width = Prog_Para.Area[Area_No].X_Len;
+        Height = Prog_Para.Area[Area_No].Y_Len;
+    }
+    else
+    {
+        Width = Screen_Para.Base_Para.Width;
+        Height = Screen_Para.Base_Para.Height;
+    }
+
+    if(X0 >= Width || Y0 >= Height ||\
+       X1 >= Width || Y1 >= Height)
+        return;
+
+    if(X0 + X_Len >= Width)
+        X_Len = Width - X0;
+
+    if(Y0 + Y_Len >= Height)
+        Y_Len = Height - Y0;
+
+    if(X1 + X_Len >= Width)
+        X_Len = Width - X1;
+
+    if(Y1 + Y_Len >= Height)
+        Y_Len = Height - Y1;
+
+///---------------------------------------------
+
+    if(Area_No < MAX_AREA_NUM)
+    {
+      X0 = Prog_Para.Area[Area_No].X + pPoint0->X; //源数据在整体屏幕中的起始位置
+      X1 = Prog_Para.Area[Area_No].X + pPoint1->X; //目标数据在整体屏幕中的起始位置
+    }
+    else
+    {
+        X0 = pPoint0->X; //源数据在整体屏幕中的起始位置
+        X1 = pPoint1->X; //目标数据在整体屏幕中的起始位置
+    }
+
+    if((X0 % 8) > (X1 % 8)) //源数据需要左移
+        Diff = (X0 % 8) - (X1 % 8);
+    else
+        Diff = (X1 % 8) - (X0 % 8);
+
+    if(X_Len > (8 - (X1 % 8)) + (((X1 + X_Len - 1) % 8) + 1))
+        Len = (X_Len - (8 - (X1 % 8)) - (((X1 + X_Len - 1) % 8) + 1))/8; //每行的字节数，除去头和尾的字节,头和尾需要特殊处理
+    else
+      Len = 0;
     X0 = Prog_Para.Area[Area_No].X + pPoint0->X; //源数据在整体屏幕中的起始位置
     //Y0 = Prog_Para.Area[Area_No].Y + pPoint0->Y;
 
@@ -1513,31 +1496,10 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
     }
 	//LED_Scan_One_Row();
 	//START_SCAN_TIMER();
-     GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
+     //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
 
 }
-*/
-#endif
 
-/*
-void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len,\
-  S_Show_Data *pDst_Buf, S_Point *pPoint1, INT8U Flag)
-{
-    INT16U i,j;
-    INT8U Data;
-
-    for(i = 0; i < X_Len;  i++)
-    {
-     //SCAN_INT_DISABLE();
-     for(j = 0; j < Y_Len; j++)
-      {
-        Data = Get_Area_Point_Data(pSrc_Buf, Area_No, pPoint0->X + i, pPoint0->Y + j);
-        Set_Area_Point_Data(pDst_Buf, Area_No, pPoint1->X + i, pPoint1->Y + j, Data);
-      }
-     //SCAN_INT_ENABLE();
- }
-}
-*/
 //复制图文数据,从读取到的缓冲区复制到Show_Data中
 //pSrc表示从存储器中读出的显示数据
 //Off表示pSrc起始的数据在一屏显示数据中的偏移
