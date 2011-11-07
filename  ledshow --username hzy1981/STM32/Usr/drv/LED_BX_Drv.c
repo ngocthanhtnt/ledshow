@@ -207,7 +207,7 @@ void Hardware_Init(void)
 
   GPIO_Configuration();
 
-  TIM1_Configuration();    
+  //TIM1_Configuration();    
   TIM2_Configuration();
   TIM3_Configuration();
   TIM4_Configuration();

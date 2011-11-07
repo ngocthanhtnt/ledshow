@@ -1306,8 +1306,12 @@ void Ram_Init(void)
 //特效处理函数，定时调用
 void Effect_Proc(void)
 {
+  static S_Int32U Ms_Timer = {CHK_BYTE, 0x00, CHK_BYTE};
   //if(Prog_Status.Play_Status.Effect_Flag > 0)
+  if(Pub_Timer.Ms >= MOVE_STEP_PERIOD + Ms_Timer.Var)
   {
+    Ms_Timer.Var = Pub_Timer.Ms; 
+
     Prog_Status.Play_Status.Effect_Counts = 0;
     Prog_Status.Play_Status.Effect_Flag = 0;
 	
@@ -1427,9 +1431,9 @@ void Screen_Test(void)
   INT16U i, j;
   S_Point P0,P1;
   INT8U Test_Key_Up_Flag;
- /*
-   Screen_Para.Base_Para.Width = 64; 
-   Screen_Para.Base_Para.Height = 32;
+ 
+   Screen_Para.Base_Para.Width = 2560; 
+   Screen_Para.Base_Para.Height = 64;
    Screen_Para.Base_Para.Color = 0x01;
    Screen_Status.Color_Num = 1;
 
@@ -1458,7 +1462,7 @@ void Screen_Test(void)
 
    //Copy_Filled_Rect(&Show_Data_Bak, 0, &P0, 1064, 64, &Show_Data, &P1, 0);
    }  
- */
+
  //--------------------
 #if RMDK_SIM_EN EQ 0
   //测试按键按下并且当前没有在工厂状态，则进入屏幕自检

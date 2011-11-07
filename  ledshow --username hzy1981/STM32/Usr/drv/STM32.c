@@ -307,9 +307,9 @@ void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
 	 	
-	/* Enable the TIM4 global Interrupt*/ 
-	//秒中断
-	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;  //TIM1中断
+	/* Enable the TIM3 global Interrupt*/ 
+	//m秒中断
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //TIM3中断
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级2级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
@@ -322,14 +322,14 @@ void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
-
-	/* Enable the TIM3 global Interrupt */
+/*
 	//特效中断
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //TIM4中断
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 4;  //先占优先级2级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
+*/
 }
 
 //定时器中断，用于直接扫描屏
@@ -384,7 +384,8 @@ void TIM3_Configuration(void)
 	TIM4CLK = 36 MHz, Prescaler = 7200, TIM4 counter clock = 5K,即改变一次为5K,周期就为10K
 	--------------------------------------------------------------- */
 	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = MOVE_STEP_PERIOD * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	//周期为1ms
+	TIM_TimeBaseStructure.TIM_Period = 10; //MOVE_STEP_PERIOD * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
     TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
@@ -406,6 +407,8 @@ void TIM3_Configuration(void)
 
 }
 
+//101系列不存在TIM1定时器
+/*
 //定时器中断，用于绘制边框
 void TIM1_Configuration(void)
 {
@@ -432,6 +435,7 @@ void TIM1_Configuration(void)
 	TIM_ITConfig(TIM1, TIM_IT_Update, ENABLE); 
 	TIM_Cmd(TIM1, ENABLE);
 }
+*/
 //设置OE占空比和极性
 
 //用于OE-PWM输出.
@@ -860,4 +864,34 @@ void Self_Test(void)
 
  }
 
+/*
+//用于测试DMA方式
+//--------------------------------------------
+void DMA_Configuration(void)
+{
+  DMA_InitTypeDef DMA_InitStructure;
+
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+
+  DMA_DeInit(DMA1_Channel5);
+
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOD->ODR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)SRC_Buffer;
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+  DMA_InitStructure.DMA_BufferSize = 1;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+
+  DMA_Init(DMA1_Channel5, &DMA_InitStructure);
+
+  DMA_Cmd(DMA1_Channel5, ENABLE);
+}
+*/
+
+//-------------------------------------
 #endif

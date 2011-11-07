@@ -185,7 +185,7 @@ void TIM2_IRQHandler(void)   //TIM2中断
   */
 extern void Show_Timer_Proc(void);
 
-void TIM3_IRQHandler(void)   //TIM4中断
+void TIM3_IRQHandler(void)   //TIM3中断--100ms周期
 {
 //#if RMDK_SIM_EN
     //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
@@ -198,7 +198,7 @@ void TIM3_IRQHandler(void)   //TIM4中断
      //Delay_ms(5);
 	 //Show_Timer_Proc();
 	 //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
-	 Effect_Proc();
+	 Pub_Timer_Proc();//Effect_Proc();
 	 //GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
 	}
 
@@ -208,8 +208,8 @@ void TIM3_IRQHandler(void)   //TIM4中断
 //#endif  
 
 }
-
-extern void Border_Show_Proc(void);
+/*
+//extern void Border_Show_Proc(void);
 void TIM1_UP_IRQHandler(void)   //TIM1中断
 {
   TIM_Cmd(TIM1, DISABLE);
@@ -223,6 +223,7 @@ void TIM1_UP_IRQHandler(void)   //TIM1中断
   TIM_Cmd(TIM1, ENABLE);
 
 }
+*/
 
 /**
   * @brief  This function handles TIM3 global interrupt request.
