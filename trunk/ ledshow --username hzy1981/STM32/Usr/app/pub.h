@@ -22,10 +22,12 @@ typedef struct
   INT8U Head;
   INT8U Ms100_Counts;
 
-  //INT32U Ms; //ms
   //INT32U Ms10;  //10ms
   INT32U Ms100;
-  
+
+  INT32U Ms;
+  INT32U Ms_Counts; //ms
+    
   INT32U Sec;
 
   INT8U Tail;
