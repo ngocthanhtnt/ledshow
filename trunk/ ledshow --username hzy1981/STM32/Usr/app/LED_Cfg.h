@@ -44,7 +44,7 @@
 //QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
 
 
-#define OE_PWM_FREQ 10000 //10KPWM频率
+#define OE_PWM_FREQ 1000 //1KPWM频率
 #define COMPANY_NAME "AS"
 
 #define APP_NAME "大屏LED播放系统"

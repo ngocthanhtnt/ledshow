@@ -28,12 +28,19 @@ void GPIO_Configuration()
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //PA11应该作为上拉输入口,CH376的输入检测  
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
+  //PA.0和PA.1为输入口,用于捕获移位脉冲
+  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0 | GPIO_Pin_1;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
   //------------输出口----
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
   //PA的输出口
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_12 | GPIO_Pin_15;   
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_12 | GPIO_Pin_14;   
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
  
@@ -212,12 +219,15 @@ void Hardware_Init(void)
   TIM3_Configuration();
   TIM4_Configuration();
 
+  DMA_Configuration();
+
   UART2_Init();
   UART3_Init();
 
   Unselect_SPI_Device(); //不选中任何一个SPI设备
 
   SPI1_FLASH_Init();
+  SPI2_Init();
 
   
 

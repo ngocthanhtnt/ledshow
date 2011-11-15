@@ -135,6 +135,15 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
+  //volatile INT32U i = 0;
+
+  SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+  GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+  //Show_Timer_Proc();
+  Delay_us(5);
+
+  GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
+  SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 }
 
 /******************************************************************************/
@@ -164,15 +173,7 @@ void TIM2_IRQHandler(void)   //TIM2中断
 //#if RMDK_SIM_EN
     //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 //#endif
-    TIM_Cmd(TIM2, DISABLE);
 
-    if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
-	{
-	TIM_ClearITPendingBit(TIM2, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
-	LED_Scan_One_Row();
-	}
-
-	TIM_Cmd(TIM2, ENABLE);
 //#if RMDK_SIM_EN
 	//GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
 //#endif
@@ -189,7 +190,18 @@ void TIM3_IRQHandler(void)   //TIM3中断--100ms周期
 {
 //#if RMDK_SIM_EN
     //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
-//#endif    
+//#endif 
+
+	TIM_Cmd(TIM3, DISABLE);
+	
+	if(TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
+	{
+		TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
+		LED_Scan_One_Row();
+	}
+	
+	TIM_Cmd(TIM3, ENABLE);
+	/* 
   TIM_Cmd(TIM3, DISABLE);
 
     if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
@@ -203,6 +215,43 @@ void TIM3_IRQHandler(void)   //TIM3中断--100ms周期
 	}
 
   TIM_Cmd(TIM3, ENABLE);
+  */
+//#if RMDK_SIM_EN
+	//GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
+//#endif  
+
+}
+
+void TIM4_IRQHandler(void)   //TIM3中断--100ms周期
+{
+//#if RMDK_SIM_EN
+    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+//#endif 
+
+	//TIM_Cmd(TIM4, DISABLE);
+	
+	if(TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
+	{
+		TIM_ClearITPendingBit(TIM4, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
+		Pub_Timer_Proc();
+	}
+	
+	//TIM_Cmd(TIM4, ENABLE);
+	/* 
+  TIM_Cmd(TIM3, DISABLE);
+
+    if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
+	{
+	 TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
+     //Delay_ms(5);
+	 //Show_Timer_Proc();
+	 //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+	 Pub_Timer_Proc();//Effect_Proc();
+	 //GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
+	}
+
+  TIM_Cmd(TIM3, ENABLE);
+  */
 //#if RMDK_SIM_EN
 	//GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
 //#endif  
