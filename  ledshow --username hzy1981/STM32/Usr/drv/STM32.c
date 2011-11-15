@@ -66,9 +66,13 @@ void RCC_Configuration(void)
 //SYSCLK:系统时钟
 void SysTick_Configuration(void)
 {
-	SysTick->CTRL&=0xfffffffb;//bit2清空,选择外部时钟  HCLK/8
-	//fac_us=SYSCLK/8;		    
-	//fac_ms=(u16)fac_us*1000;
+	//SysTick->CTRL&=0xfffffffb;//bit2清空,选择外部时钟  HCLK/8
+    if (SysTick_Config(HCLK_VALUE / 1000 * MOVE_STEP_PERIOD))     // (72MHz/1000)*SYSCLK=1MS
+	{ 
+	   /* Capture error */
+	   ASSERT_FAILED(); 
+	    while (1);
+	}
 }	
 //延时nms
 //注意nms的范围
@@ -78,14 +82,12 @@ void SysTick_Configuration(void)
 //对72M条件下,nms<=1864 
 void Delay_ms(INT16U nms)
 {
-  INT32U i, nms10;
+  INT32U ms
 
-  nms10 = nms*10;
+  ms = Pub_Timer.Ms;
 
-  for(i = 0; i < nms10; i++)
-  {
-    Delay_us(100);
-  }
+  while(ms + nms >= Pub_Timer.Ms)
+  ;
 /*	 		  	  
 	INT32U temp;
 			   
@@ -101,23 +103,23 @@ void Delay_ms(INT16U nms)
 	SysTick->CTRL=0x00;       //关闭计数器
 	SysTick->VAL =0X00;       //清空计数器	  	    
 */
-}   
+} 
+
+ 
 //延时nus
 //nus为要延时的us数.		    								   
 void Delay_us(INT32U nus)
-{		
-	INT32U temp;	    	 
-	//SysTick->LOAD=nus*fac_us; //时间加载	  		 
-	SysTick->LOAD=nus*(HCLK_VALUE / 8000000);
-	SysTick->VAL=0x00;        //清空计数器
-	SysTick->CTRL=0x01 ;      //开始倒数 	 
-	do
-	{
-		temp=SysTick->CTRL;
+{
+  volatile INT32U i;
+  volatile INT32U j; 
+   
+  i =0;
+ 
+  j = 28 * nus * (HCLK_VALUE / 1000000) / 72;
+  while(i <= j) 
+  {
+    i++;
 	}
-	while(temp&0x01&&!(temp&(1<<16)));//等待时间到达   
-	SysTick->CTRL=0x00;       //关闭计数器
-	SysTick->VAL =0X00;       //清空计数器	 
 }
 
 //sec为要延时的秒
@@ -251,22 +253,48 @@ void SPI1_CH376_Init(void)
 
 }
 
+/*******************************************************************************
+* Function Name  : SPI_FLASH_Init
+* Description    : Initializes the peripherals used by the SPI FLASH driver.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+void SPI2_Init(void)
+{
+  SPI_InitTypeDef  SPI_InitStructure;
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+  /* Enable SPI1 and GPIO clocks */
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2, ENABLE);
+
+  /* Configure SPI1 pins: SCK, MISO and MOSI */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_15;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+  /* Deselect the FLASH: Chip Select high */
+  //SPI_FLASH_CS_HIGH();
+  //SPI_Cmd(SPI2, DISABLE);
+  /* SPI1 configuration */
+  SPI_InitStructure.SPI_Direction = SPI_Direction_1Line_Tx;
+  SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+  SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+  SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
+  SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
+  SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
+  SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+  SPI_InitStructure.SPI_CRCPolynomial = 7;
+  SPI_Init(SPI2, &SPI_InitStructure);
+  /* Enable SPI1  */
+  SPI_Cmd(SPI2, ENABLE);
+}
+
 //SPI1读写一字节数据
 INT8U SPI1_ReadWrite(INT8U writedat)
 {
-#if 0
-   /* Loop while DR register in not emplty */
-   while (SPI_GetFlagStatus(SPI1, SPI_FLAG_TXE) == RESET);
-
-   /* Send byte through the SPI1 peripheral */
-   SPI_SendData(SPI1, writedat);
-
-   /* Wait to receive a byte */
-   while (SPI_GetFlagStatus(SPI1, SPI_FLAG_RXNE) == RESET);
-
-   /* Return the byte read from the SPI bus */
-   return SPI_ReceiveData(SPI1);
-#endif
    /* Loop while DR register in not emplty */
   while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
 
@@ -280,6 +308,23 @@ INT8U SPI1_ReadWrite(INT8U writedat)
   return SPI_I2S_ReceiveData(SPI1);
 }
 
+//SPI2发送接收一个字节
+INT8U SPI2_ReadWrite(INT8U writedat)
+{
+   /* Loop while DR register in not emplty */
+  while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+
+  /* Send byte through the SPI1 peripheral */
+  SPI_I2S_SendData(SPI2, writedat);
+
+  /* Wait to receive a byte */
+  //while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_RXNE) == RESET);
+
+  /* Return the byte read from the SPI bus */
+  //return SPI_I2S_ReceiveData(SPI2);
+  return 1;
+}
+
 void NVIC_Configuration(void)
 {
     //----------中断优先级设置--------
@@ -288,7 +333,7 @@ void NVIC_Configuration(void)
 	
 	/* Configure the NVIC Preemption Priority Bits */  
 	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);	//设置优先级分组：先占优先级0位,从优先级4位
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);		//设置优先级分组：先占优先级2位,从优先级2位
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);		//设置优先级分组：先占优先级2位,从优先级2位
 	
 	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);   //向量表位于FLASH
 	
@@ -302,75 +347,106 @@ void NVIC_Configuration(void)
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
 
 	NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;		//USART1中断
- 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级0级
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;		//
+ 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;		//
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
 	 	
-	/* Enable the TIM3 global Interrupt*/ 
+	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;  //1ms中断
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;  //从优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
+	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器	/* Enable the TIM3 global Interrupt*/ 
+
 	//m秒中断
-	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //TIM3中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级2级
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //扫描特效
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 
-	/* Enable the TIM2 global Interrupt */
-	//刷屏中断优先级
-	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;  //TIM2中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3;  //先占优先级1级
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
-	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
-/*
-	//特效中断
-	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //TIM4中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 4;  //先占优先级2级
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
-	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
-*/
+
+    NVIC_SetPriority (SysTick_IRQn, 4);                //抢占优先级为1
 }
 
-//定时器中断，用于直接扫描屏
+//DMA初始化。
+void DMA_Configuration(void)
+{
+  DMA_InitTypeDef DMA_InitStructure;
+
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+
+  DMA_DeInit(DMA1_Channel5);
+
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOD->ODR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][0]; //红色数据起始地址
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+  DMA_InitStructure.DMA_BufferSize = 8;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+
+  DMA_Init(DMA1_Channel5, &DMA_InitStructure);
+
+  /* DMA1 Channel5 enable */
+  DMA_Cmd(DMA1_Channel5, ENABLE);
+
+  DMA_DeInit(DMA1_Channel7);
+
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOE->ODR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[1][0]; //绿色数据起始地址
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+  DMA_InitStructure.DMA_BufferSize = 8;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+
+  DMA_Init(DMA1_Channel7, &DMA_InitStructure);
+
+  /* DMA1 Channel5 enable */
+  DMA_Cmd(DMA1_Channel7, ENABLE);
+}
+
+//定时器2,输入捕获中断!!两个通道，下降沿捕获！
 void TIM2_Configuration(void)
 {
-    //RCC_ClocksTypeDef RCC_Clocks;
-//void RCC_GetClocksFreq(RCC_ClocksTypeDef* RCC_Clocks)
-	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
-	/* TIM2 clock enable */
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+  TIM_ICInitTypeDef  TIM_ICInitStructure;
 
-    //RCC_GetClocksFreq(&RCC_Clocks);	
-	
-	/* ---------------------------------------------------------------
-	TIM2CLK 即PCLK1=36MHz
-	TIM2CLK = 36 MHz, Prescaler = 7200, TIM2 counter clock = 5K,即改变一次为5K,周期就为10K
-	--------------------------------------------------------------- */
-	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = SCAN_SCREEN_PERIOD / 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
-    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
-	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
-	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
-	
-	/* Enables the Update event for TIM2 */
-	//TIM_UpdateDisableConfig(TIM2,ENABLE); 	//使能 TIM2 更新事件 
-	
-	/* TIM IT enable */
-	TIM_ITConfig(  //使能或者失能指定的TIM中断
-		TIM2, //TIM2
-		TIM_IT_Update  |  //TIM 中断源
-		TIM_IT_Trigger,   //TIM 触发中断源 
-		ENABLE  //使能
-		);
-	
-	/* TIM2 enable counter */
-	TIM_Cmd(TIM2, ENABLE);  //使能TIMx外设
+  TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;// | TIM_Channel_2;
+  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
+  TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
+  TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+  TIM_ICInitStructure.TIM_ICFilter = 0x0;
+
+  TIM_ICInit(TIM2, &TIM_ICInitStructure);
+
+  TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;// | TIM_Channel_2;
+  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
+  TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
+  TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+  TIM_ICInitStructure.TIM_ICFilter = 0x0;
+
+  TIM_ICInit(TIM2, &TIM_ICInitStructure);
+    
+  /* TIM enable counter */
+  TIM_Cmd(TIM2, ENABLE);
+
+  /* Enable the CC2 Interrupt Request */
+  TIM_DMACmd(TIM2, TIM_DMA_CC1, ENABLE);
+
+  TIM_DMACmd(TIM2, TIM_DMA_CC2, ENABLE);
 
 }
 
-//定时器中断，用于实现特效，定时从备份显示数据区复制到数据区
+//扫描中断
 void TIM3_Configuration(void)
 {
     //RCC_ClocksTypeDef RCC_Clocks;
@@ -385,8 +461,8 @@ void TIM3_Configuration(void)
 	--------------------------------------------------------------- */
 	/* Time base configuration */
 	//周期为1ms
-	TIM_TimeBaseStructure.TIM_Period = 10; //MOVE_STEP_PERIOD * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
-    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+	TIM_TimeBaseStructure.TIM_Period = SCAN_SCREEN_PERIOD / 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
@@ -397,8 +473,7 @@ void TIM3_Configuration(void)
 	/* TIM IT enable */
 	TIM_ITConfig(  //使能或者失能指定的TIM中断
 		TIM3, //TIM4
-		TIM_IT_Update  |  //TIM 中断源
-		TIM_IT_Trigger,   //TIM 触发中断源 
+		TIM_IT_Update,   //TIM 触发中断源 
 		ENABLE  //使能
 		);
 	
@@ -482,8 +557,8 @@ void TIM4_Configuration(void)
 	TIM3CLK = 36 MHz, Prescaler = 0, TIM3 counter clock = 36MHz
 	--------------------------------------------------------------- */
 	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = (PCLK1_VALUE * 2 / OE_PWM_FREQ); //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 80K
-	TIM_TimeBaseStructure.TIM_Prescaler =0; //设置用来作为TIMx时钟频率除数的预分频值  不分频
+	TIM_TimeBaseStructure.TIM_Period = (PCLK1_VALUE * 2 / OE_PWM_FREQ / 10); //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 80K
+	TIM_TimeBaseStructure.TIM_Prescaler = 9; //设置用来作为TIMx时钟频率除数的预分频值  不分频
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
 	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
@@ -497,7 +572,12 @@ void TIM4_Configuration(void)
 	TIM_OC3PreloadConfig(TIM4, TIM_OCPreload_Enable);  //使能TIMx在CCR2上的预装载寄存器
 	
 	TIM_ARRPreloadConfig(TIM4, ENABLE); //使能TIMx在ARR上的预装载寄存器
-
+	
+	TIM_ITConfig(  //使能或者失能指定的TIM中断
+		TIM4, //TIM4
+		TIM_IT_Update,   //TIM 触发中断源 
+		ENABLE  //使能
+		);
 	/* TIM3 enable counter */
 	TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 
@@ -536,13 +616,13 @@ void UART2_Init(void) //串口2初始化
     GPIO_InitTypeDef GPIO_InitStructure;
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE );
-
+  /*
 	//PA3串口1接收
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
  	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	
+*/	
 	//PA2串口1发送
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -550,12 +630,12 @@ void UART2_Init(void) //串口2初始化
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	//串口2用作调试信息输出
-	USART_InitStructure.USART_BaudRate            = 115200;//Get_Com_Baud();
+	USART_InitStructure.USART_BaudRate            = 4500000;//Get_Com_Baud();
 	USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits            = USART_StopBits_1;
 	USART_InitStructure.USART_Parity              = USART_Parity_No ;
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-	USART_InitStructure.USART_Mode                = USART_Mode_Rx | USART_Mode_Tx;
+	USART_InitStructure.USART_Mode                = USART_Mode_Tx;	//只发不收
 	USART_Init(USART2, &USART_InitStructure);
 	//USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 	USART_Cmd(USART2, ENABLE);

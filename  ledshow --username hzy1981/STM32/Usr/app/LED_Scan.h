@@ -8,10 +8,11 @@
 #define EXT extern
 #endif
 
-#pragma pack(1)
-EXT INT8U Scan_Data[3][MAX_SCAN_BLOCK_NUM];// __attribute__((at(SCAN_DATA_ADDR)));
-EXT INT8U Scan_Data0[3][MAX_SCAN_BLOCK_NUM];
-#pragma pack()
+//#pragma pack(1)
+EXT INT8U Scan_Data[2][MAX_SCAN_BLOCK_NUM];// __attribute__((at(SCAN_DATA_ADDR)));
+EXT INT8U Scan_Data0[2][MAX_SCAN_BLOCK_NUM];
+EXT INT8U Scan_Data1[2][MAX_SCAN_BLOCK_NUM];
+//#pragma pack()
 
 EXT void transpose8(unsigned char i[8], unsigned char o[8]/*, unsigned char flag*/);
 EXT void transpose4(unsigned char i[8], unsigned char o[8]/*, unsigned char flag*/);

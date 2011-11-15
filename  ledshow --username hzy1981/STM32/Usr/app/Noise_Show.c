@@ -59,14 +59,14 @@ INT16U Get_Noise_Min_Height(INT8U Area_No)
 void Show_Noise(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U Y, INT16U Noise, INT8U Type, INT8U Font, INT8U Color)
 {
     char const *p;
-    INT8U d; //i为整数部分，d为小数部分
+    //INT8U d; //i为整数部分，d为小数部分
     INT8U i;
     //INT16U uNoise;    
     if(Type >= S_NUM(NoiseStr0))
       return;
     
     p = NoiseStr0[Type].str;
-    d = Noise % 10;
+    //d = Noise % 10;
     i = Noise / 10;
     
     //if(Type EQ 0)

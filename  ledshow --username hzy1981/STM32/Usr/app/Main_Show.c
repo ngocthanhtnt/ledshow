@@ -1438,8 +1438,8 @@ void Screen_Test(void)
    Screen_Status.Color_Num = 1;
 
    Screen_Para.Scan_Para.Direct = 0x02;//0x03;
-   Screen_Para.Scan_Para.Rows_Fold = 0x01;//0x01;
-   Screen_Para.Scan_Para.Cols_Fold = 0x08;//0x02;
+   Screen_Para.Scan_Para.Rows_Fold = 0x00;//0x01;
+   Screen_Para.Scan_Para.Cols_Fold = 0x00;//0x02;
    Screen_Para.Scan_Para.Rows = 16;
 
    Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);

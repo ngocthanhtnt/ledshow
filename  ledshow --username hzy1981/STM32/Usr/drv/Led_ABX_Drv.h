@@ -49,13 +49,13 @@
 //A-PB6
 #define SET_A(x)  (x == 0)?(GPIOB->BRR = GPIO_Pin_12):(GPIOB->BSRR = GPIO_Pin_12)//GPIO_ResetBits(GPIOB,GPIO_Pin_6):GPIO_SetBits(GPIOB,GPIO_Pin_6) //do{if(x==0) GPIO_ResetBits(GPIOB,GPIO_Pin_6); else GPIO_SetBits(GPIOB,GPIO_Pin_6);}while(0)//
 //B-PB7
-#define SET_B(x)  (x == 0)?(GPIOB->BRR = GPIO_Pin_13):(GPIOB->BSRR = GPIO_Pin_13)//GPIO_ResetBits(GPIOB,GPIO_Pin_7):GPIO_SetBits(GPIOB,GPIO_Pin_7)
+#define SET_B(x)  (x == 0)?(GPIOB->BRR = GPIO_Pin_10):(GPIOB->BSRR = GPIO_Pin_10)//GPIO_ResetBits(GPIOB,GPIO_Pin_7):GPIO_SetBits(GPIOB,GPIO_Pin_7)
 //C-PB8
-#define SET_C(x)  (x == 0)?(GPIOB->BRR = GPIO_Pin_14):(GPIOB->BSRR = GPIO_Pin_14)//GPIO_ResetBits(GPIOB,GPIO_Pin_8):GPIO_SetBits(GPIOB,GPIO_Pin_8)
+#define SET_C(x)  (x == 0)?(GPIOB->BRR = GPIO_Pin_11):(GPIOB->BSRR = GPIO_Pin_11)//GPIO_ResetBits(GPIOB,GPIO_Pin_8):GPIO_SetBits(GPIOB,GPIO_Pin_8)
 //D-PB9
-#define SET_D(x)  (x == 0)?(GPIOB->BRR = GPIO_Pin_15):(GPIOB->BSRR = GPIO_Pin_15)//GPIO_ResetBits(GPIOB,GPIO_Pin_9):GPIO_SetBits(GPIOB,GPIO_Pin_9)
+#define SET_D(x)  (x == 0)?(GPIOB->BRR = GPIO_Pin_14):(GPIOB->BSRR = GPIO_Pin_14)//GPIO_ResetBits(GPIOB,GPIO_Pin_9):GPIO_SetBits(GPIOB,GPIO_Pin_9)
 //LAT-STB-PA0
-#define SET_LAT(x) (x == 0)?(GPIOA->BRR = GPIO_Pin_0):(GPIOA->BSRR = GPIO_Pin_0)//GPIO_ResetBits(GPIOA,GPIO_Pin_0):GPIO_SetBits(GPIOA,GPIO_Pin_0)
+#define SET_LAT(x) (x == 0)?(GPIOA->BRR = GPIO_Pin_3):(GPIOA->BSRR = GPIO_Pin_3)//GPIO_ResetBits(GPIOA,GPIO_Pin_0):GPIO_SetBits(GPIOA,GPIO_Pin_0)
 //OE-PB8
 #define SET_OE(x) (x == 0)?(GPIOB->BRR = GPIO_Pin_8):(GPIOB->BSRR = GPIO_Pin_8)//GPIO_ResetBits(GPIOB,GPIO_Pin_0):GPIO_SetBits(GPIOB,GPIO_Pin_0)
 //CLK-PA1

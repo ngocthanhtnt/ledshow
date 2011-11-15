@@ -120,7 +120,7 @@
 	   SET_CLK_HIGH();}while(0);
   */
 #define SCAN_DATA_ADDR 0x20001000
-
+/*
 #define SET_SHIFT_BIT_1(Block_Num, Data, i) do{\
        SET_CLK_LOW();\
   	   SET_R1(MEM_ADDR(BITBAND((INT32U)SCAN_DATA_ADDR, i)));\
@@ -220,7 +220,7 @@
        ASSERT_FAILED();\
 	 }\
 }while(0);
-
+*/
 typedef unsigned int INT32U;
 typedef int INT32S;
 typedef unsigned short int INT16U;
@@ -248,6 +248,7 @@ EXT void SPI1_Init(void);
 EXT void RST_Periph(void);
 EXT void Com_Init(void);
 EXT INT8U SPI1_ReadWrite(INT8U writedat);
+EXT INT8U SPI2_ReadWrite(INT8U writedat);
 EXT void Soft_Rest(void);
 EXT void NVIC_Configuration(void);
 EXT void TIM2_Configuration(void);
@@ -256,6 +257,7 @@ EXT void TIM3_Configuration(void);
 EXT void TIM1_Configuration(void);
 EXT void SPI1_FLASH_Init(void);
 EXT void SPI1_CH376_Init(void);
+EXT void SPI2_Init(void);
 EXT void Set_Block_OE_En(INT8U Value);
 EXT INT8U Chk_JP_Status(void);
 EXT void UART1_Init(void);
@@ -267,4 +269,5 @@ EXT void Self_Test(void);
 EXT INT8U Chk_Test_Key_Down(void);
 EXT INT8U Chk_Test_Key_Up(void);
 EXT void Fac_Status_Self_Test(void);
+EXT void DMA_Configuration(void);
 #endif

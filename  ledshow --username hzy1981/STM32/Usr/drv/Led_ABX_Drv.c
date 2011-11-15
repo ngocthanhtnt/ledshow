@@ -168,12 +168,14 @@ void Hardware_Init(void)
   TIM3_Configuration();
   TIM4_Configuration();
 
+  DMA_Configuration();
+
   UART2_Init();
 
   Unselect_SPI_Device(); //不选中任何一个SPI设备
 
   SPI1_FLASH_Init();
-
+  SPI2_Init();
   
 
 }
