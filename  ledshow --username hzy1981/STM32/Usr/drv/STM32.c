@@ -82,27 +82,19 @@ void SysTick_Configuration(void)
 //对72M条件下,nms<=1864 
 void Delay_ms(INT16U nms)
 {
-  INT32U ms
+  INT32U ms,counts = 0;
 
   ms = Pub_Timer.Ms;
 
-  while(ms + nms >= Pub_Timer.Ms)
-  ;
-/*	 		  	  
-	INT32U temp;
-			   
-	//SysTick->LOAD=(u32)nms*fac_ms;//时间加载(SysTick->LOAD为24bit)
-	SysTick->LOAD=(u32)nms*(HCLK_VALUE / 8000000) * 1000;
-	SysTick->VAL =0x00;           //清空计数器
-	SysTick->CTRL=0x01 ;          //开始倒数  
-	do
+  while(1)
+  {
+    if(ms != Pub_Timer.Ms)
 	{
-		temp=SysTick->CTRL;
+	  counts ++;
+	  if(counts > nms)
+	   return;
 	}
-	while(temp&0x01&&!(temp&(1<<16)));//等待时间到达   
-	SysTick->CTRL=0x00;       //关闭计数器
-	SysTick->VAL =0X00;       //清空计数器	  	    
-*/
+  }
 } 
 
  
@@ -284,12 +276,14 @@ void SPI2_Init(void)
   SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
   SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
+  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
   SPI_InitStructure.SPI_CRCPolynomial = 7;
   SPI_Init(SPI2, &SPI_InitStructure);
   /* Enable SPI1  */
   SPI_Cmd(SPI2, ENABLE);
+
+  SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Tx, ENABLE);
 }
 
 //SPI1读写一字节数据
@@ -369,6 +363,7 @@ void NVIC_Configuration(void)
     NVIC_SetPriority (SysTick_IRQn, 4);                //抢占优先级为1
 }
 
+const INT8U SPI2_DMA_Data[] = {0x24, 0x25, 0x26};
 //DMA初始化。
 void DMA_Configuration(void)
 {
@@ -377,6 +372,25 @@ void DMA_Configuration(void)
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
   DMA_DeInit(DMA1_Channel5);
+
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&SPI2->DR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)SPI2_DMA_Data; //需要发送的Dma数据
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+  DMA_InitStructure.DMA_BufferSize = 3;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_Low;
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+
+  DMA_Init(DMA1_Channel5, &DMA_InitStructure);
+
+  /* DMA1 Channel1 enable */
+  //DMA_Cmd(DMA1_Channel1, ENABLE);
+
+  DMA_DeInit(DMA1_Channel1);
 
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOD->ODR;
   DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][0]; //红色数据起始地址
@@ -390,10 +404,10 @@ void DMA_Configuration(void)
   DMA_InitStructure.DMA_Priority = DMA_Priority_High;
   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
 
-  DMA_Init(DMA1_Channel5, &DMA_InitStructure);
+  DMA_Init(DMA1_Channel1, &DMA_InitStructure);
 
   /* DMA1 Channel5 enable */
-  DMA_Cmd(DMA1_Channel5, ENABLE);
+  DMA_Cmd(DMA1_Channel1, ENABLE);
 
   DMA_DeInit(DMA1_Channel7);
 
@@ -406,7 +420,7 @@ void DMA_Configuration(void)
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
   DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
   DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-  DMA_InitStructure.DMA_Priority = DMA_Priority_Medium;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
 
   DMA_Init(DMA1_Channel7, &DMA_InitStructure);
@@ -420,7 +434,7 @@ void TIM2_Configuration(void)
 {
   TIM_ICInitTypeDef  TIM_ICInitStructure;
 
-  TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;// | TIM_Channel_2;
+  TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;// | TIM_Channel_2;
   TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
   TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
   TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
@@ -428,7 +442,7 @@ void TIM2_Configuration(void)
 
   TIM_ICInit(TIM2, &TIM_ICInitStructure);
 
-  TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;// | TIM_Channel_2;
+  TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;// | TIM_Channel_2;
   TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
   TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
   TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
@@ -440,9 +454,9 @@ void TIM2_Configuration(void)
   TIM_Cmd(TIM2, ENABLE);
 
   /* Enable the CC2 Interrupt Request */
-  TIM_DMACmd(TIM2, TIM_DMA_CC1, ENABLE);
-
   TIM_DMACmd(TIM2, TIM_DMA_CC2, ENABLE);
+
+  TIM_DMACmd(TIM2, TIM_DMA_CC3, ENABLE);
 
 }
 
