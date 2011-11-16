@@ -690,7 +690,7 @@ void Clr_Cur_Scan_Row(void)
 //SPI频率2.5M比较合适
 void LED_Scan_One_Row(void)
 {
-  INT16U i,j,k,Cols;
+  INT16U i,Cols;
   INT16U Blocks;
   INT8U *pDst;
   static INT32U Flag = 0;
@@ -811,24 +811,7 @@ void LED_Scan_One_Row(void)
 		  }
 		}
 
-		for(k = 0; k < 8; k ++)
-		{
-			GPIOA->BRR = GPIO_Pin_1;
-			GPIOD->ODR = Scan_Data[0][k];//(GPIOD->ODR & 0xFF00) | Scan_Data[0][j]; //输出R1-R8
-			GPIOA->BSRR = GPIO_Pin_1;
-		}
 		/*
-	   Scan_Data0[0][0] = 0x5A;
-	   Scan_Data0[0][1] = 0x00;
-	   Scan_Data0[0][2] = 0x5B;
-	   Scan_Data0[0][3] = 0x00;
-
-	   Scan_Data0[1][0] = 0xA5;
-	   Scan_Data0[1][1] = 0x00;
-	   Scan_Data0[1][2] = 0xA6;
-	   Scan_Data0[1][3] = 0x00;
-		*/
-		GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
 		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET); //等待上次发送完成
 //应该不需要换地址，因为只要DMA速度比数据生成速度快，就不存在追赶上的问题。如果慢就可能发生。新生成的数据覆盖即将输出的数据的问题
  
@@ -839,8 +822,15 @@ void LED_Scan_One_Row(void)
  		DMA1_Channel7->CCR &= (uint16_t)(~DMA_CCR1_EN);
 		DMA1_Channel7->CMAR = (uint32_t)(pDst + MAX_SCAN_BLOCK_NUM);
 		DMA1_Channel7->CCR |= DMA_CCR1_EN;
+		*/
 
-		//SPI_I2S_SendData(SPI2, 0);
+		//SPI_I2S_SendData(SPI2, 0x24);
+		//DMA_Cmd(DMA1_Channel5, ENABLE);
+		DMA1_Channel5->CCR &= (uint16_t)(~DMA_CCR1_EN); //关闭DMA通道
+		DMA1_Channel5->CNDTR = 3;//(uint32_t)pDst;//pDMA_InitStruct->DMA_MemoryBaseAddr;
+	    DMA1_Channel5->CCR |= DMA_CCR1_EN; //打开DMA通道
+
+		GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
 	   //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出 
 
 #else
