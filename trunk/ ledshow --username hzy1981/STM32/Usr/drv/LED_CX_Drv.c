@@ -28,8 +28,8 @@ void GPIO_Configuration()
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //PA11应该作为上拉输入口,CH376的输入检测  
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-  //PA.0和PA.1为输入口,用于捕获移位脉冲
-  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0 | GPIO_Pin_1;
+  //PA.1和PA.2为输入口,用于捕获移位脉冲
+  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_1 | GPIO_Pin_2;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
@@ -40,7 +40,7 @@ void GPIO_Configuration()
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
   //PA的输出口
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_12 | GPIO_Pin_14;   
+  GPIO_InitStructure.GPIO_Pin = /*GPIO_Pin_0 | */GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14| GPIO_Pin_15;   
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
  
@@ -158,23 +158,7 @@ void Mem_Init(void)
 
 }
 
-//获取当前温度
-INT16S Get_Cur_Temp(void)
-{
-  return -215; 
-}
 
-//获取当前湿度
-INT16U Get_Cur_Humidity(void)
-{
-  return 60; 
-}
-
-//获取当前噪音
-INT16U Get_Cur_Noise(void)
-{
-  return 60;
-}
 //设置移位数据
 //Block表示块号
 //RGB表示颜色0-R，1-G，2-B
@@ -221,7 +205,7 @@ void Hardware_Init(void)
 
   DMA_Configuration();
 
-  UART2_Init();
+  //UART2_Init();
   UART3_Init();
 
   Unselect_SPI_Device(); //不选中任何一个SPI设备

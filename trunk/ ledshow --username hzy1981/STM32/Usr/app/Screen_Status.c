@@ -1,6 +1,68 @@
 #define SCREEN_STATUS_C
 #include "Includes.h"
 
+
+//获取当前温度
+INT16S Get_Cur_Temp(void)
+{
+  return Screen_Status.Temp; 
+}
+
+//获取当前湿度
+INT16U Get_Cur_Humidity(void)
+{
+  return Screen_Status.Humidity; 
+}
+
+//获取当前噪音
+INT16U Get_Cur_Noise(void)
+{
+  return Screen_Status.Noise;
+}
+
+//环境变量处理
+void Screen_Env_Proc()
+{
+#if ENV_VAR_EN
+  static S_Int32U Sec = {CHK_BYTE, 0xFFFFFFFF, CHK_BYTE};
+  static S_Int32U Counts = {CHK_BYTE, 0x00, CHK_BYTE};
+
+  //接收到数据达到一帧则处理
+  if(Screen_Status.Env_Rcv_Posi >= 3 + F_NDATA_LEN)
+  {
+    Screen_Status.Env_Frame_Flag = 1;
+
+    if(Check_Frame_Format((INT8U *)Screen_Status.Env_Rcv_Data, Screen_Status.Env_Rcv_Posi))	  
+	  Rcv_Frame_Proc(CH_ENV, (INT8U *)Screen_Status.Env_Rcv_Data, Screen_Status.Env_Rcv_Posi, sizeof(Screen_Status.Env_Rcv_Data)); 
+
+	Clr_Env_Rcv_Data();
+  }
+
+  //每秒发送一帧查询数据
+  if(Sec.Var != Pub_Timer.Sec)
+  {
+    Sec.Var = Pub_Timer.Sec;
+    Counts.Var ++;
+
+	Clr_Env_Rcv_Data();
+
+    Screen_Status.Env_Frame_Flag = 1; //利用接收缓冲区发送数据，因此在打包发送期间不能接收数据
+
+	if(Counts.Var EQ 1)
+      Send_Env_Frame(0x00);
+	else if(Counts.Var EQ 2)
+      Send_Env_Frame(0x01);
+	else if(Counts.Var >= 3)
+    { 
+	  Send_Env_Frame(0x02);
+	  Counts.Var = 0;
+	 }
+
+	 Screen_Status.Env_Frame_Flag = 0;
+  }
+#endif
+}
+
 //亮度控制--获取pTime所处时段的亮度
 INT8U Get_Cur_Time_Lightness(S_Time *pTime)
 {

@@ -259,8 +259,14 @@ typedef struct
   INT8U Byte_Time; //接受字节倒计时
   INT16U Rcv_Posi;
 
-  INT8U Rcv_Data[MAX_COM_BUF_LEN];//((BLOCK_DATA_LEN > SCREEN_PARA_LEN) ? BLOCK_DATA_LEN : SCREEN_PARA_LEN) + 20];
+  INT8U Com_Rcv_Data[MAX_COM_BUF_LEN];//((BLOCK_DATA_LEN > SCREEN_PARA_LEN) ? BLOCK_DATA_LEN : SCREEN_PARA_LEN) + 20];
   INT8U Com_Err_Flag; //通信错误标志字
+
+#if ENV_VAR_EN
+  INT8U Env_Rcv_Data[15]; //接收环境变量数据缓冲区
+  INT8U Env_Frame_Flag;	  //环境变量帧标志
+  INT8U Env_Rcv_Posi;	  //接收缓冲区位置
+#endif
 
   INT8U Self_Test_Flag;
   INT8U Scan_Mode_Test_Flag;

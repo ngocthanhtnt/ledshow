@@ -131,8 +131,8 @@ void Delay_sec(INT16U sec)
 //发送调试信息一个字节
 void OS_Put_Char(char Data)
 {
-   while (!(USART2->SR & USART_FLAG_TXE));
-   USART2->DR = (Data & (uint16_t)0x01FF);
+   while (!(USART1->SR & USART_FLAG_TXE));
+   USART1->DR = (Data & (uint16_t)0x01FF);
 }
 
 //发送一个字节通信数据
@@ -272,17 +272,26 @@ void SPI2_Init(void)
   /* SPI1 configuration */
   SPI_InitStructure.SPI_Direction = SPI_Direction_1Line_Tx;
   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
-  SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+  SPI_InitStructure.SPI_DataSize = SPI_DataSize_16b;//SPI_DataSize_8b;
   SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
   SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
   SPI_InitStructure.SPI_CRCPolynomial = 7;
   SPI_Init(SPI2, &SPI_InitStructure);
   /* Enable SPI1  */
   SPI_Cmd(SPI2, ENABLE);
-
+/*
+  while(1)
+  {
+  SPI_I2S_SendData(SPI2, 0x55);
+  while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+  }
+*/
+  SPI_I2S_SendData(SPI2, 0xFF);
+  while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
+  
   SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Tx, ENABLE);
 }
 
@@ -334,36 +343,40 @@ void NVIC_Configuration(void)
 	
     /* Enable the USARTy Interrupt */
 	//串口接收中断，优先级最高
-	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;		//USART1中断
+	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;		//USART1中断,用于接收通信数据
  	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;		//
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
-
-	NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;		//USART1中断
+ 
+	NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;		//USART3中断,用于接收传感器数据
  	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;		//
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
-	 	
+ 	 	
 	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;  //1ms中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;  //从优先级0级
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
-	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器	/* Enable the TIM3 global Interrupt*/ 
-
-	//m秒中断
-	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //扫描特效
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;  //从优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 
+	//扫描中断
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //扫描特效
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
+	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 
-    NVIC_SetPriority (SysTick_IRQn, 4);                //抢占优先级为1
+	//特效中断
+    NVIC_SetPriority (SysTick_IRQn, 0x0C);                //抢占优先级为1
 }
 
-const INT8U SPI2_DMA_Data[] = {0x24, 0x25, 0x26};
+//INT8U SPI2_DMA_Data[] = {0x24, 0x92, 0x49};
+//INT8U SPI2_DMA_Data[] = {0x11, 0x11, 0x11, 0x11};
+//INT16U SPI2_DMA_Data[] = {0x0303, 0x0303, 0x0303, 0x0303};
+//INT16U SPI2_DMA_Data[] = {0x0204, 0x0810, 0x2040, 0x81FF};
+INT16U SPI2_DMA_Data[] = {0x0101, 0x0101, 0x0101, 0x0101};
 //DMA初始化。
 void DMA_Configuration(void)
 {
@@ -376,10 +389,10 @@ void DMA_Configuration(void)
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&SPI2->DR;
   DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)SPI2_DMA_Data; //需要发送的Dma数据
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
-  DMA_InitStructure.DMA_BufferSize = 3;
+  DMA_InitStructure.DMA_BufferSize = 4;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;//DMA_PeripheralDataSize_Byte;
   DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
   DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
   DMA_InitStructure.DMA_Priority = DMA_Priority_Low;
@@ -392,8 +405,8 @@ void DMA_Configuration(void)
 
   DMA_DeInit(DMA1_Channel1);
 
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOD->ODR;
-  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][0]; //红色数据起始地址
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOE->ODR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[1][0]; //红色数据起始地址
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
   DMA_InitStructure.DMA_BufferSize = 8;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -411,8 +424,8 @@ void DMA_Configuration(void)
 
   DMA_DeInit(DMA1_Channel7);
 
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOE->ODR;
-  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[1][0]; //绿色数据起始地址
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOD->ODR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][0]; //绿色数据起始地址
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
   DMA_InitStructure.DMA_BufferSize = 8;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -433,6 +446,8 @@ void DMA_Configuration(void)
 void TIM2_Configuration(void)
 {
   TIM_ICInitTypeDef  TIM_ICInitStructure;
+
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 
   TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;// | TIM_Channel_2;
   TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
