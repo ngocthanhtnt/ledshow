@@ -44,7 +44,8 @@
 #define C_PROG_DATA  0x0C //显示数据
 #define C_SOFT_VERSION 0x0D //屏幕信息
 #define C_SELF_TEST 0x0E //自动监测
-#define C_UPDATE      0x0F //固件升级
+#define C_ENV_VAR   0x0F  //环境变量
+#define C_UPDATE    0x1F //固件升级
 
 #define CLOSE_FLAG 0x5A
 #define OPEN_FLAG  0xA5
@@ -85,7 +86,8 @@ A	…	帧数据域内容
 #define CH_GPRS  0x01
 #define CH_NET 0x02
 #define CH_UDISK  0x03 //UDisk不需要单独的Buf，可以使用 COM_BUF，就是串口通信的Buf
-#define CH_SIM 0x04 //仿真
+#define CH_ENV 0x04
+#define CH_SIM 0x05 //仿真
 //#define RCV_BUF_NUM 1
 
 #define READ_FLAG 0x00
@@ -94,7 +96,7 @@ A	…	帧数据域内容
 #define COM_ERR_PARA_INVALID 0x01 //参数不合法
 #define COM_ERR_PARA_LEN_ERR 0x02 //参数长度错误
 
-#define RCV_DATA_BUF Screen_Status.Rcv_Data
+#define RCV_DATA_BUF Screen_Status.Com_Rcv_Data
 /*
 //通信接收数据的缓冲区
 typedef struct
@@ -109,6 +111,9 @@ typedef struct
 EXT S_Rcv_Buf Rcv_Buf;
 */
 EXT void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen);
+EXT void Env_Rcv_Byte(INT8U Ch, INT8U Byte);
+EXT void Send_Env_Frame(INT8U Flag);
+EXT void Clr_Env_Rcv_Data(void);
 EXT INT32U Get_Com_Baud(void);
 EXT void Com_Rcv_Byte(INT8U Ch, INT8U Byte);
 EXT INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len);

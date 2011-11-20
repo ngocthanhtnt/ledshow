@@ -17,6 +17,9 @@
 
 #define MAX_LIGHTNESS 16 //1-16
 
+EXT INT16S Get_Cur_Temp(void);
+EXT INT16U Get_Cur_Humidity(void);
+EXT INT16U Get_Cur_Noise(void);
 EXT INT8U Get_Cur_Time(void);
 EXT INT8U Chk_Time(S_Time *pTime);
 EXT void Set_Screen_Com_Time(INT8U Sec);

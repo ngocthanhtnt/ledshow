@@ -32,16 +32,37 @@ void transpose8(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) {
 		   x = ~x;
 		   y = ~y;
 		}
-		
-		if(Screen_Para.Scan_Para.Direct > 0)
+/*		
+		nop();
+		nop();
+		nop();
+		nop();
+		nop();
+		nop();
+*/
+		if(Screen_Para.Scan_Para.Direct > 1)
 		{
-          o[0] = y; o[2] = y >> 8; o[4] = y >> 16; o[6] = y >> 24; 
-          o[8] = x; o[10] = x >> 8; o[12] = x >> 16; o[14] = x >> 24;    
+          o[0] = y; 
+		  o[2] = y >> 8; 
+		  o[4] = y >> 16; 
+		  o[6] = y >> 24; 
+          o[8] = x; 
+		  o[10] = x >> 8; 
+		  o[12] = x >> 16; 
+		  //GPIOB->BRR = GPIO_Pin_9;
+		  o[14] = x >> 24;    
 		}
 		else
 		{
-          o[0] = x >> 24; o[2] = x >> 16; o[4] = x >> 8; o[6] = x; 
-          o[8] = y >> 24; o[10] = y >> 16; o[12] = y >> 8; o[14] = y;		
+          o[0] = x >> 24; 
+		  o[2] = x >> 16; 
+		  o[4] = x >> 8; 
+		  o[6] = x; 
+          o[8] = y >> 24; 
+		  o[10] = y >> 16; 
+		  o[12] = y >> 8; 
+		  //GPIOB->BRR = GPIO_Pin_9;
+		  o[14] = y;		
 		} 
 
 }
@@ -75,7 +96,7 @@ void transpose4(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) {
 		   y = ~y;
 		}
 
-		if(Screen_Para.Scan_Para.Direct > 0)
+		if(Screen_Para.Scan_Para.Direct > 1)
 		{
           o[0] = y; o[2] = y >> 8; o[4] = y >> 16; o[6] = y >> 24; 
           o[8] = x; o[10] = x >> 8; o[12] = x >> 16; o[14] = x >> 24; 
@@ -690,7 +711,7 @@ void Clr_Cur_Scan_Row(void)
 //SPI频率2.5M比较合适
 void LED_Scan_One_Row(void)
 {
-  INT16U i,Cols;
+  INT16U i,j,Cols;
   INT16U Blocks;
   INT8U *pDst;
   static INT32U Flag = 0;
@@ -713,7 +734,7 @@ void LED_Scan_One_Row(void)
     return;
 	}
  
-    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+    GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 
 
   if(Screen_Para.Scan_Para.Rows EQ 0)
@@ -746,10 +767,10 @@ void LED_Scan_One_Row(void)
 
   //Direct = (Screen_Para.Scan_Para.Direct < 2)?0:1; //左入为0，数据反向，右入为1，数据维持
 
- // if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
-   // memset(Scan_Data0, 0xFF, sizeof(Scan_Data));
- // else
-    memset(Scan_Data0, 0x00, sizeof(Scan_Data0));
+  if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
+    memset(Scan_Data1, 0xFF, sizeof(Scan_Data));
+  else
+    memset(Scan_Data1, 0x00, sizeof(Scan_Data0));
 
 #if SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
 
@@ -758,12 +779,13 @@ void LED_Scan_One_Row(void)
   for(i = 0; i < Cols ; i ++)
   {
       //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+	  //GPIOB->BSRR = GPIO_Pin_9;
       Get_Scan_Data(Blocks, i);
 
-	  if(i & 0x01)
-	    pDst = &Scan_Data0[0][0];
-	  else
+	  //if(i & 0x01)
 	    pDst = &Scan_Data1[0][0];
+	  //else
+	    //pDst = &Scan_Data1[0][0];
  
 #if MAX_SCAN_BLOCK_NUM EQ 4//A型卡最多4条扫描线
       transpose8(&Scan_Data[0][0], pDst/*, Direct*/);	//R1-R4,G1-G4
@@ -779,16 +801,15 @@ void LED_Scan_One_Row(void)
 #elif MAX_SCAN_BLOCK_NUM EQ 8
 ;
 #elif MAX_SCAN_BLOCK_NUM EQ 16
-
 	    if(Blocks <= 4)
-		   transpose4(&Scan_Data[0][0], pDst/*, Direct*/);	//R1-R4
+		   transpose8(&Scan_Data[0][0], pDst/*, Direct*/);	//R1-R4
  		else
 		{
 			transpose8(&Scan_Data[0][0], pDst/*, Direct*/);	//R1-R8
 			if(Blocks > 8)
 			{
 			   if(Blocks <= 12)
-			     transpose4(&Scan_Data[0][8], pDst + 1/*, Direct*/); //R9-R16
+			     transpose8(&Scan_Data[0][8], pDst + 1/*, Direct*/); //R9-R16
 			   else
 			     transpose8(&Scan_Data[0][8], pDst + 1/*, Direct*/); //R9-R16
 			}
@@ -797,40 +818,59 @@ void LED_Scan_One_Row(void)
 		if(Screen_Status.Color_Num > 1)
 		{
 	      if(Blocks <= 4)
-		    transpose4(&Scan_Data[1][0], pDst + MAX_SCAN_BLOCK_NUM/*, Direct*/);	//R1-R8
+		    transpose8(&Scan_Data[1][0], pDst + MAX_SCAN_BLOCK_NUM/*, Direct*/);	//R1-R8
 		  else
 		  {
 		    transpose8(&Scan_Data[1][0], pDst + MAX_SCAN_BLOCK_NUM/*, Direct*/); //G1-G8
   			if(Blocks > 8)
 			{
 			    if(Blocks <= 12)
-				  transpose4(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1/*, Direct*/);	//R1-R8
+				  transpose8(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1/*, Direct*/);	//R1-R8
 				else
 			      transpose8(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1/*, Direct*/); //R9-R16
 			}
 		  }
 		}
 
-		/*
-		while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET); //等待上次发送完成
+		
+		//while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET); //等待上次发送完成
+
 //应该不需要换地址，因为只要DMA速度比数据生成速度快，就不存在追赶上的问题。如果慢就可能发生。新生成的数据覆盖即将输出的数据的问题
- 
-		DMA1_Channel5->CCR &= (uint16_t)(~DMA_CCR1_EN); //关闭DMA通道
-		DMA1_Channel5->CMAR = (uint32_t)pDst;//pDMA_InitStruct->DMA_MemoryBaseAddr;
-	    DMA1_Channel5->CCR |= DMA_CCR1_EN; //打开DMA通道
+/*
+		DMA1_Channel1->CCR &= (uint16_t)(~DMA_CCR1_EN); //关闭DMA通道
+		DMA1_Channel1->CMAR = (uint32_t)pDst;//pDMA_InitStruct->DMA_MemoryBaseAddr;
+	    DMA1_Channel1->CNDTR = 8;//(uint32_t)pDst;
+		DMA1_Channel1->CCR |= DMA_CCR1_EN; //打开DMA通道
 
  		DMA1_Channel7->CCR &= (uint16_t)(~DMA_CCR1_EN);
 		DMA1_Channel7->CMAR = (uint32_t)(pDst + MAX_SCAN_BLOCK_NUM);
+		DMA1_Channel7->CNDTR = 8;
 		DMA1_Channel7->CCR |= DMA_CCR1_EN;
-		*/
-
+  */
+ 
 		//SPI_I2S_SendData(SPI2, 0x24);
 		//DMA_Cmd(DMA1_Channel5, ENABLE);
-		DMA1_Channel5->CCR &= (uint16_t)(~DMA_CCR1_EN); //关闭DMA通道
-		DMA1_Channel5->CNDTR = 3;//(uint32_t)pDst;//pDMA_InitStruct->DMA_MemoryBaseAddr;
-	    DMA1_Channel5->CCR |= DMA_CCR1_EN; //打开DMA通道
+		//GPIOD->ODR = 0x5555;
+		//SPI2->DR = 0xAA;
+	
+	    //Delay_us(1);
+		//for(j = 0; j < 1; j ++)
+		//nop();
+		
+		while(DMA1_Channel7->CNDTR !=8); 
 
-		GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
+		//nop(); nop();nop();nop();nop();nop(); 		
+		memcpy(Scan_Data0, Scan_Data1, 2*MAX_SCAN_BLOCK_NUM);
+	    //GPIOB->BRR = GPIO_Pin_9;
+		DMA1_Channel5->CCR &= (uint16_t)(~DMA_CCR1_EN); //关闭DMA通道
+		DMA1_Channel5->CNDTR = 4;//(uint32_t)pDst;//pDMA_InitStruct->DMA_MemoryBaseAddr;
+		__set_PRIMASK(0); //开总中断
+		//nop();
+		__set_PRIMASK(1); //关总中断 dma传输过程中，中断对dma时序有影响，因此传输过程中关闭
+	    DMA1_Channel5->CCR |= DMA_CCR1_EN; //打开DMA通道
+		
+
+		
 	   //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出 
 
 #else

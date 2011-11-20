@@ -133,6 +133,7 @@
 
 #endif
 
+#define ENV_VAR_EN (TEMP_SHOW_EN | HUMIDITY_SHOW_EN | NOISE_SHOW_EN)
 //½ÚÄ¿ÌØÕ÷×Ö
 #define FILE_EN_WORD ((BORDER_SHOW_EN<<BORDER_SHOW_BIT) |\
                        (PIC_SHOW_EN << PIC_SHOW_BIT) |\

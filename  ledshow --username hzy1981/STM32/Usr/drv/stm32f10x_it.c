@@ -138,11 +138,11 @@ void SysTick_Handler(void)
   //volatile INT32U i = 0;
 
   SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-  GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
-  //Show_Timer_Proc();
-  Delay_us(5);
+  //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+  Show_Timer_Proc();
+  //Delay_us(5);
 
-  GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
+  //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
   SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 }
 
@@ -304,7 +304,7 @@ void USART2_IRQHandler(void)	//串口2中断服务程序
 	}
 }
 
-//串口中断3用于GPRS数据的接收
+//串口中断3用于接收环境变量数据
 void USART3_IRQHandler(void)	//串口3中断服务程序
 {
    u8 Res;
@@ -313,8 +313,9 @@ void USART3_IRQHandler(void)	//串口3中断服务程序
 	{
 	Res =USART_ReceiveData(USART3);//(USART1->DR);	//读取接收到的数据
   
-     while (!(USART3->SR & USART_FLAG_TXE));
-     USART3->DR = (Res & (uint16_t)0x01FF);
+	 Env_Rcv_Byte(CH_ENV, Res); //接收环境变量
+     //while (!(USART3->SR & USART_FLAG_TXE));
+     //USART3->DR = (Res & (uint16_t)0x01FF);
     //Com_Rcv_Byte(CH_GPRS, Res);
 	 
 	}
