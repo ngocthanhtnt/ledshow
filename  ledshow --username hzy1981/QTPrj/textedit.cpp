@@ -1081,7 +1081,7 @@ int getTextImageLineNum(int w, QString str)
 QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[])
 {
     QTextEdit edit;
-    QTextLayout *layout;
+    QTextLayout *layout = 0;
 
     edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
     edit.setLineWrapColumnOrWidth(w + TEXT_LEFT_BORDER_WIDTH + TEXT_RIGHT_BORDER_WIDTH);
@@ -1117,10 +1117,14 @@ QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[])
        }
     }
 
-    linePosi[lineNum] = (int)(layout->position().y() + layout->boundingRect().height());
-    linePosi[lineNum]+=LINE_POSI_ADJ;//--!!!此处如果不+1可能导致图像上行的数据进入本行，本行的最后一行数据进入下行
-    *pLineNum = lineNum;
-
+    if(layout != 0)
+    {
+        linePosi[lineNum] = (int)(layout->position().y() + layout->boundingRect().height());
+        linePosi[lineNum]+=LINE_POSI_ADJ;//--!!!此处如果不+1可能导致图像上行的数据进入本行，本行的最后一行数据进入下行
+        *pLineNum = lineNum;
+    }
+    else
+        *pLineNum = 0;
     //image.save("d:\\Image.png");
     return image;
 }

@@ -140,29 +140,29 @@ QIcon getTypeIcon(INT8U type)
   if(type EQ SCREEN_PROPERTY)
       icon = QIcon::fromTheme(QObject::tr("屏幕"), QIcon(rsrcPath1 + QObject::tr("/屏幕.png")));
   else if(type EQ PROG_PROPERTY)
-     icon = QIcon::fromTheme(QObject::tr("节目"), QIcon(rsrcPath1 + QObject::tr("/节目22.png")));
+     icon = QIcon::fromTheme(QObject::tr("节目"), QIcon(rsrcPath1 + QObject::tr("/节目.png")));
   else if(type EQ AREA_PROPERTY)
      icon = QIcon::fromTheme(QObject::tr("分区"), QIcon(rsrcPath1 + QObject::tr("/分区.png")));
   else if(type EQ PIC_STEXT_PROPERTY)
-     icon = QIcon::fromTheme(QObject::tr("字幕"), QIcon(rsrcPath1 + QObject::tr("/字幕.ico")));
+     icon = QIcon::fromTheme(QObject::tr("字幕"), QIcon(rsrcPath1 + QObject::tr("/字幕.png")));
   else if(type EQ PIC_MTEXT_PROPERTY)
-     icon = QIcon::fromTheme(QObject::tr("文本"), QIcon(rsrcPath1 + QObject::tr("/图文22.png")));
+     icon = QIcon::fromTheme(QObject::tr("文本"), QIcon(rsrcPath1 + QObject::tr("/图文.png")));
   else if(type EQ PIC_FLASH_PROPERTY)
-     icon = QIcon::fromTheme(QObject::tr("动画"), QIcon(rsrcPath1 + QObject::tr("/动画.ico")));
+     icon = QIcon::fromTheme(QObject::tr("动画"), QIcon(rsrcPath1 + QObject::tr("/动画.png")));
   else if(type EQ CLOCK_PROPERTY)
-     icon = QIcon::fromTheme(QObject::tr("表盘"), QIcon(rsrcPath1 + QObject::tr("/表盘.ico")));
+     icon = QIcon::fromTheme(QObject::tr("表盘"), QIcon(rsrcPath1 + QObject::tr("/表盘.png")));
   else if(type EQ TIME_PROPERTY)
-     icon = QIcon::fromTheme(QObject::tr("时间"), QIcon(rsrcPath1 + QObject::tr("/日历22.png")));
+     icon = QIcon::fromTheme(QObject::tr("时间"), QIcon(rsrcPath1 + QObject::tr("/日历.png")));
   else if(type EQ TIMER_PROPERTY)
-     icon = QIcon::fromTheme(QObject::tr("计时"), QIcon(rsrcPath1 + QObject::tr("/计时.ico")));
+     icon = QIcon::fromTheme(QObject::tr("计时"), QIcon(rsrcPath1 + QObject::tr("/计时.png")));
   else if(type EQ LUN_PROPERTY)
      icon = QIcon::fromTheme(QObject::tr("农历"), QIcon(rsrcPath1 + QObject::tr("/农历.png")));
   else if(type EQ TEMP_PROPERTY)
-     icon = QIcon::fromTheme(QObject::tr("温度"), QIcon(rsrcPath1 + QObject::tr("/温度22.png")));
+     icon = QIcon::fromTheme(QObject::tr("温度"), QIcon(rsrcPath1 + QObject::tr("/温度.png")));
   else if(type EQ HUMIDITY_PROPERTY)
      icon = QIcon::fromTheme(QObject::tr("湿度"), QIcon(rsrcPath1 + QObject::tr("/湿度.png")));
   else if(type EQ NOISE_PROPERTY)
-     icon = QIcon::fromTheme(QObject::tr("噪音"), QIcon(rsrcPath1 + QObject::tr("/噪音.ico")));
+     icon = QIcon::fromTheme(QObject::tr("噪音"), QIcon(rsrcPath1 + QObject::tr("/噪音.png")));
 
   return icon;
 }
@@ -306,7 +306,7 @@ void MainWindow::setupEditActions()
     menu->addSeparator();
     tb->addSeparator();
 
-    QIcon delIcon = QIcon::fromTheme(tr("删除"), QIcon(rsrcPath1 + tr("/删除222.png")));
+    QIcon delIcon = QIcon::fromTheme(tr("删除"), QIcon(rsrcPath1 + tr("/删除.png")));
     actionDel = a = new QAction(delIcon, tr("删除"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), progManage, SLOT(deleteItem())); //删除节目
@@ -519,7 +519,7 @@ void MainWindow::setupCtrlActions()
     menu->addAction(a);
 
 
-    QIcon adjTimeIcon = QIcon::fromTheme(tr("校时"), QIcon(rsrcPath1 + tr("/校时22.png")));
+    QIcon adjTimeIcon = QIcon::fromTheme(tr("校时"), QIcon(rsrcPath1 + tr("/校时.png")));
     actionAdjTime = a = new QAction(adjTimeIcon, tr("校时"), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(adjTime()));
@@ -528,14 +528,14 @@ void MainWindow::setupCtrlActions()
     menu->addSeparator();
     tb->addSeparator();
 
-    QIcon sendIcon = QIcon::fromTheme(tr("发送数据"), QIcon(rsrcPath1 + tr("/发送22.png")));
+    QIcon sendIcon = QIcon::fromTheme(tr("发送数据"), QIcon(rsrcPath1 + tr("/发送.png")));
     actionSendData = a = new QAction(sendIcon, tr("发送数据"), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(sendDataProc()));
     tb->addAction(a);
     menu->addAction(a);
 
-    QIcon udiskIcon = QIcon::fromTheme(tr("导出U盘"), QIcon(rsrcPath1 + tr("/导U盘22.png")));
+    QIcon udiskIcon = QIcon::fromTheme(tr("导出U盘"), QIcon(rsrcPath1 + tr("/导U盘.png")));
     actionUDisk = a = new QAction(udiskIcon, tr("导出U盘文件"), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(exportUdsikProc()));
@@ -552,7 +552,7 @@ void MainWindow::setupCtrlActions()
     menu->addAction(a);
     menu->addSeparator();
 
-    QIcon previewIcon = QIcon::fromTheme("节目预览", QIcon(rsrcPath1 + tr("/预览2222.png")));
+    QIcon previewIcon = QIcon::fromTheme("节目预览", QIcon(rsrcPath1 + tr("/预览.png")));
     actionPreview = a = new QAction(previewIcon, tr("节目预览"), this);
     a->setPriority(QAction::LowPriority);
     a->setShortcut(QKeySequence::New);
