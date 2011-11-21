@@ -47,7 +47,7 @@
 #define OE_PWM_FREQ 1000 //1KPWM频率
 #define COMPANY_NAME "AS"
 
-#define APP_NAME "大屏LED播放系统"
+//#define APP_NAME "大屏LED播放系统"
 #define MAX_PROG_NUM 16 //最大节目数
 #define MAX_AREA_NUM 6 //每个节目下最大分区数
 #define MAX_FILE_NUM 8 //每个分区下最大文件数

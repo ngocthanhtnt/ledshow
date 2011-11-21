@@ -417,7 +417,7 @@ void CprogProperty::connectSignal()
     connect(weekCheck[4], SIGNAL(clicked()),this,SLOT(edited()));
     connect(weekCheck[5], SIGNAL(clicked()),this,SLOT(edited()));
     connect(weekCheck[6], SIGNAL(clicked()),this,SLOT(edited()));
-    connect(weekCheck[7], SIGNAL(clicked()),this,SLOT(edited()));
+    //connect(weekCheck[7], SIGNAL(clicked()),this,SLOT(edited()));
     //-----------------
     connect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     connect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
@@ -458,7 +458,7 @@ void CprogProperty::disconnectSignal()
     disconnect(weekCheck[4], SIGNAL(clicked()),this,SLOT(edited()));
     disconnect(weekCheck[5], SIGNAL(clicked()),this,SLOT(edited()));
     disconnect(weekCheck[6], SIGNAL(clicked()),this,SLOT(edited()));
-    disconnect(weekCheck[7], SIGNAL(clicked()),this,SLOT(edited()));
+    //disconnect(weekCheck[7], SIGNAL(clicked()),this,SLOT(edited()));
     //-----------------
     disconnect(dateTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     disconnect(weekTimerCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));

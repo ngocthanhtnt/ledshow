@@ -1,7 +1,7 @@
 #define SCREEN_STATUS_C
 #include "Includes.h"
 
-
+#if QT_EN EQ 0
 //获取当前温度
 INT16S Get_Cur_Temp(void)
 {
@@ -19,6 +19,7 @@ INT16U Get_Cur_Noise(void)
 {
   return Screen_Status.Noise;
 }
+#endif
 
 //环境变量处理
 void Screen_Env_Proc()
