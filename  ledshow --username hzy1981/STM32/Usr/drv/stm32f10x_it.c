@@ -167,26 +167,15 @@ void SysTick_Handler(void)
   * @param  None
   * @retval None
   */
-extern void LED_Scan_One_Row(void);
-void TIM2_IRQHandler(void)   //TIM2中断
-{
-//#if RMDK_SIM_EN
-    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
-//#endif
-
-//#if RMDK_SIM_EN
-	//GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
-//#endif
-}
 
 /**
   * @brief  This function handles TIM4 global interrupt request.
   * @param  None
   * @retval None
   */
-extern void Show_Timer_Proc(void);
+extern void LED_Scan_One_Row(void);
 
-void TIM3_IRQHandler(void)   //TIM3中断--100ms周期
+void TIM3_IRQHandler(void)   //TIM3中断--用于扫描
 {
 //#if RMDK_SIM_EN
     //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
@@ -201,78 +190,30 @@ void TIM3_IRQHandler(void)   //TIM3中断--100ms周期
 	}
 	
 	TIM_Cmd(TIM3, ENABLE);
-	/* 
-  TIM_Cmd(TIM3, DISABLE);
-
-    if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
-	{
-	 TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
-     //Delay_ms(5);
-	 //Show_Timer_Proc();
-	 //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
-	 Pub_Timer_Proc();//Effect_Proc();
-	 //GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
-	}
-
-  TIM_Cmd(TIM3, ENABLE);
-  */
-//#if RMDK_SIM_EN
-	//GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
-//#endif  
-
 }
 
-void TIM4_IRQHandler(void)   //TIM3中断--100ms周期
-{
-//#if RMDK_SIM_EN
-    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
-//#endif 
 
-	//TIM_Cmd(TIM4, DISABLE);
-	
-	if(TIM_GetITStatus(TIM4, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
+#if TIM1_EN EQ 0
+//该中断为100us一次,pwm频率为10k，因此周期100us
+void TIM2_IRQHandler(void)   //TIM3中断--100ms周期
+{
+	if(TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
 	{
-		TIM_ClearITPendingBit(TIM4, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
+		TIM_ClearITPendingBit(TIM2, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
 		Pub_Timer_Proc();
 	}
-	
-	//TIM_Cmd(TIM4, ENABLE);
-	/* 
-  TIM_Cmd(TIM3, DISABLE);
-
-    if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
-	{
-	 TIM_ClearITPendingBit(TIM3, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
-     //Delay_ms(5);
-	 //Show_Timer_Proc();
-	 //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
-	 Pub_Timer_Proc();//Effect_Proc();
-	 //GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
-	}
-
-  TIM_Cmd(TIM3, ENABLE);
-  */
-//#if RMDK_SIM_EN
-	//GPIO_ResetBits(GPIOB,GPIO_Pin_9);//测试输出
-//#endif  
-
 }
-/*
-//extern void Border_Show_Proc(void);
+#else
+//该中断为1ms一次
 void TIM1_UP_IRQHandler(void)   //TIM1中断
 {
-  TIM_Cmd(TIM1, DISABLE);
-
     if (TIM_GetITStatus(TIM1, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
 	{
 	 TIM_ClearITPendingBit(TIM1, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
 	 Pub_Timer_Proc();
 	}
-
-  TIM_Cmd(TIM1, ENABLE);
-
 }
-*/
+#endif
 
 /**
   * @brief  This function handles TIM3 global interrupt request.

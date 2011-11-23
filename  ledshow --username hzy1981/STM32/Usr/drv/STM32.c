@@ -354,13 +354,20 @@ void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;		//
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
- 	 	
-	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;  //1ms中断
+
+#if TIM1_EN
+	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;  //1ms中断
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
-
+#else 	 	
+	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;  //1ms中断
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
+	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
+#endif
 	//扫描中断
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //扫描特效
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
@@ -446,8 +453,27 @@ void DMA_Configuration(void)
 void TIM2_Configuration(void)
 {
   TIM_ICInitTypeDef  TIM_ICInitStructure;
+  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+
+	TIM_TimeBaseStructure.TIM_Period = 100 / 10 * (PCLK1_VALUE * 2/100000); //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	TIM_TimeBaseStructure.TIM_Prescaler =0;//(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
+	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
+	
+	/* Enables the Update event for TIM3 */
+	//TIM_UpdateDisableConfig(TIM3,ENABLE); 	//使能 TIM4 更新事件 
+	
+	/* TIM IT enable */
+#if TIM1_EN EQ 0
+	TIM_ITConfig(  //使能或者失能指定的TIM中断
+		TIM2, //TIM4
+		TIM_IT_Update,   //TIM 触发中断源 
+		ENABLE  //使能
+		);
+#endif
 
   TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;// | TIM_Channel_2;
   TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
@@ -512,10 +538,12 @@ void TIM3_Configuration(void)
 }
 
 //101系列不存在TIM1定时器
-/*
+
 //定时器中断，用于绘制边框
+
 void TIM1_Configuration(void)
 {
+#if TIM1_EN
     //RCC_ClocksTypeDef RCC_Clocks;
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); 
@@ -538,8 +566,10 @@ void TIM1_Configuration(void)
 	
 	TIM_ITConfig(TIM1, TIM_IT_Update, ENABLE); 
 	TIM_Cmd(TIM1, ENABLE);
+#endif
 }
-*/
+
+
 //设置OE占空比和极性
 
 //用于OE-PWM输出.
@@ -586,8 +616,8 @@ void TIM4_Configuration(void)
 	TIM3CLK = 36 MHz, Prescaler = 0, TIM3 counter clock = 36MHz
 	--------------------------------------------------------------- */
 	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = (PCLK1_VALUE * 2 / OE_PWM_FREQ / 10); //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 80K
-	TIM_TimeBaseStructure.TIM_Prescaler = 9; //设置用来作为TIMx时钟频率除数的预分频值  不分频
+	TIM_TimeBaseStructure.TIM_Period = (PCLK1_VALUE * 2 / OE_PWM_FREQ / 10)/10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 80K
+	TIM_TimeBaseStructure.TIM_Prescaler = 0; //设置用来作为TIMx时钟频率除数的预分频值  不分频
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
 	TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
@@ -601,16 +631,20 @@ void TIM4_Configuration(void)
 	TIM_OC3PreloadConfig(TIM4, TIM_OCPreload_Enable);  //使能TIMx在CCR2上的预装载寄存器
 	
 	TIM_ARRPreloadConfig(TIM4, ENABLE); //使能TIMx在ARR上的预装载寄存器
-	
+/*
+#if TIM1_EN EQ 0	
 	TIM_ITConfig(  //使能或者失能指定的TIM中断
 		TIM4, //TIM4
 		TIM_IT_Update,   //TIM 触发中断源 
 		ENABLE  //使能
 		);
+#endif
+*/
 	/* TIM3 enable counter */
 	TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 
     Set_OE_Duty_Polarity(50, 0);
+
 }
 
 INT8U Chk_JP_Status(void)

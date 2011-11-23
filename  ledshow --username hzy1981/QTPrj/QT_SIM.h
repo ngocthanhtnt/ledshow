@@ -66,6 +66,7 @@ typedef char INT8S;
 #define SCAN_INT_DISABLE()
 #define SCAN_INT_ENABLE()
 
+#define TIM1_EN 1
 typedef struct
 {
     INT8U Head;

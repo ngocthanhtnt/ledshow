@@ -262,6 +262,7 @@ INT8U setScreenParaToSettings(QString screenStr, S_Screen_Para &screenPara)
    //settings.setValue("");
    settings.setValue("scanMode", getScanCodeFromScreenPara(screenPara));
 
+   settings.endGroup();
    //亮度调节
    settings.beginGroup("lightness");
    settings.setValue("adjMode", screenPara.Lightness.Mode);
@@ -291,7 +292,7 @@ INT8U setScreenParaToSettings(QString screenStr, S_Screen_Para &screenPara)
 
    settings.endGroup();
 
-   settings.endGroup();
+
    settings.endGroup();
 
    return 1;
@@ -345,7 +346,7 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     //----------------------
     screenPara.Scan_Para.Screen_Freq = 0; //屏频
     //
-
+    settings.endGroup();
     //亮度调节
     settings.beginGroup("lightness");
     screenPara.Lightness.Mode = settings.value("adjMode").toInt();
@@ -373,7 +374,7 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
 
     settings.endGroup();
 
-    settings.endGroup();
+
     settings.endGroup();
 
    cardSettings.beginGroup("");

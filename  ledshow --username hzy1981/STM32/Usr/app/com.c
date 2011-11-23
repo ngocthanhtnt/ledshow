@@ -716,7 +716,7 @@ void Send_Env_Frame(INT8U Flag)
 #if ENV_VAR_EN
   INT16U Len;
 
-  Len =  Make_Frame((INT8U *)Screen_Status.Env_Rcv_Data, 1, (INT8U *)&Screen_Para.COM_Para.Addr, C_ENV_VAR, 0, 0, 0, (char *)&Flag);
+  Len =  Make_Frame((INT8U *)&Flag, 1, (INT8U *)&Screen_Para.COM_Para.Addr, C_ENV_VAR, 0, 0, 0, (char *)Screen_Status.Env_Rcv_Data);
   Send_Frame_Proc(CH_ENV, (INT8U *)Screen_Status.Env_Rcv_Data, Len); //向来数据的通道发送应答数据
 #endif
 }

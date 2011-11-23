@@ -18,11 +18,7 @@
 #define PCLK1_DIV RCC_HCLK_Div2 //最高APB/2--这是正常运行时速度,这里不能为DIV1，因为定时器使用的分频系数默认PCLK1分频>1
 #define PCLK2_DIV RCC_HCLK_Div1 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/8不能超过24M
 
-//#define H_HCLK_MUL  RCC_PLLMul_9  //高速运行时AHB速度
-//#define H_PCLK1_DIV RCC_HCLK_Div2 //高速运行时APB1速度--确保和正常运行时保持一致，这样就不需要调整各外设的Clock 
-//#define H_PCLK2_DIV RCC_HCLK_Div1 //高速运行时APB2速度--确保和正常运行时保持一致，这样就不需要调整各外设的Clock 
-
-
+#define TIM1_EN 0
 //----------------------------------------
 #if defined(CARD_C)
 #define CARD_NAME "C"  //卡名称
