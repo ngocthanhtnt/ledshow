@@ -119,7 +119,8 @@ INT8U Bcd2Hex_Byte(INT8U Byte)
 
 void Pub_Timer_Proc(void)
 {
-    //static INT8U Counts = 0;
+//GPIO_SetBits(GPIOB,GPIO_Pin_9); //≤‚ ‘ ‰≥ˆ
+#if TIM1_EN
 	Pub_Timer.Ms++;
 	Pub_Timer.Ms_Counts++;
 	if(Pub_Timer.Ms_Counts >= 100)
@@ -135,5 +136,30 @@ void Pub_Timer_Proc(void)
 		  Pub_Timer.Sec ++;
 		}
 	}
+#else
+    Pub_Timer.Us100_Counts++;
+	if(Pub_Timer.Us100_Counts >= 10)
+	{
+	    Pub_Timer.Us100_Counts = 0;
+
+		Pub_Timer.Ms++;
+		Pub_Timer.Ms_Counts++;
+		if(Pub_Timer.Ms_Counts >= 100)
+		{
+		    Pub_Timer.Ms_Counts = 0;
+	
+		    Pub_Timer.Ms100++;
+		    Pub_Timer.Ms100_Counts ++;
+		
+			if(Pub_Timer.Ms100_Counts >= 10)
+			{
+			  Pub_Timer.Ms100_Counts = 0;
+			  Pub_Timer.Sec ++;
+			}
+		}
+	}
+#endif
+
+//GPIO_ResetBits(GPIOB,GPIO_Pin_9); //≤‚ ‘ ‰≥ˆ
 }
 #undef PUB_C

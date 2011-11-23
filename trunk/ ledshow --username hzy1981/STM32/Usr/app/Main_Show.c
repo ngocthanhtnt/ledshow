@@ -1431,7 +1431,7 @@ void Screen_Test(void)
   INT16U i, j;
   S_Point P0,P1;
   INT8U Test_Key_Up_Flag;
- /*
+/*
    Screen_Para.Base_Para.Width = 64; 
    Screen_Para.Base_Para.Height = 32;
    Screen_Para.Base_Para.Color = 0x03;
@@ -1464,7 +1464,7 @@ void Screen_Test(void)
 
    //Copy_Filled_Rect(&Show_Data_Bak, 0, &P0, 1064, 64, &Show_Data, &P1, 0);
    }  
-*/
+ */
  //--------------------
 #if RMDK_SIM_EN EQ 0
   //测试按键按下并且当前没有在工厂状态，则进入屏幕自检

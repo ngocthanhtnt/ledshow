@@ -319,10 +319,14 @@ void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
     ASSERT_FAILED();
   }
 
+  //TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设
+
   if(Polarity EQ 0)
     TIM4->CCR3 = TIM4->ARR * Duty / 100;
   else
     TIM4->CCR3 = TIM4->ARR * (100 - Duty) / 100;
+
+  //TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 }
 
 //获取第Rows行第Index个字节的移动数据对应的在屏幕数据中的坐标
@@ -711,7 +715,7 @@ void Clr_Cur_Scan_Row(void)
 //SPI频率2.5M比较合适
 void LED_Scan_One_Row(void)
 {
-  INT16U i,j,Cols;
+  INT16U i,Cols;
   INT16U Blocks;
   INT8U *pDst;
   static INT32U Flag = 0;
@@ -734,7 +738,7 @@ void LED_Scan_One_Row(void)
     return;
 	}
  
-    GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 
 
   if(Screen_Para.Scan_Para.Rows EQ 0)
@@ -954,12 +958,12 @@ void LED_Scan_One_Row(void)
       Screen_Status.Scan_Row = 0;
 	
 	//重新打开OE
-	Set_OE_Duty_Polarity(50, Screen_Para.Scan_Para.OE_Polarity);
+	Set_OE_Duty_Polarity(Screen_Status.Lightness, Screen_Para.Scan_Para.OE_Polarity);
 	//_USART_Cmd(USART1, DISABLE);
     //Set_Clock_Normal_Speed();
 	//_USART_Cmd(USART1, ENABLE); 
 	//USART_Clar
-    GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
+    //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
 	Flag = 0; 
 }
 
