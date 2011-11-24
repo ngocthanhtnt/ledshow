@@ -953,7 +953,10 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
          //Re = Get_Buf_Point_Data((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data), color, Border_Data[index].Width, i, j);
           Re = Get_Rect_Buf_Bit((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data),\
                            para.Border_Width, i, j);
-          Re = (Re << color);
+          if(color < 2)
+            Re = (Re << color);
+          else
+            Re = (Re << 1) + Re;
           Set_Buf_Point_Data((INT8U *)para.Border_Data, sizeof(para.Border_Data), Screen_Para.Base_Para.Color, para.Border_Width, i, j, Re);
        }
   //memcpy(para.Border_Data, Border_Data[index].Data, sizeof(Border_Data[index].Data));

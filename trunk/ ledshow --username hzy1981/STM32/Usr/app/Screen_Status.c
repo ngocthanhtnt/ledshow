@@ -150,8 +150,12 @@ void Screen_Lightness_Proc(void)
    INT8U Lightness;
 
    Lightness = Get_Cur_Time_Lightness(&Cur_Time); 
-   Screen_Status.Lightness = 100 * Lightness / (MAX_LIGHTNESS_LEVEL - 1); //转化为百分数
-  
+   Lightness = 100 * Lightness / (MAX_LIGHTNESS_LEVEL - 1); //转化为百分数
+   if(Lightness >= 100)
+     Lightness = 0;
+   else
+     Lightness = 100 - Lightness;
+   Screen_Status.Lightness = Lightness;
    //Set_OE_Duty()
 }
 

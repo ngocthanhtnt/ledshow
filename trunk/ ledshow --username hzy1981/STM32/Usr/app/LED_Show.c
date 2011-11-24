@@ -329,7 +329,7 @@ INT8U Get_Buf_Point_Data(INT8U Buf[], INT16U Buf_Len, INT8U Color, INT16U Width,
  
  if(Color < 3 || Color EQ 4)  //0,1,2,4单色屏
     return Get_Buf_Bit(Buf, Buf_Len,Index);
-  else if(Color EQ 3 || Screen_Para.Base_Para.Color EQ 5 || Color EQ 6) //双色屏
+  else if(Color EQ 3 || Color EQ 5 || Color EQ 6) //双色屏
     return Get_Buf_Bit(Buf, Buf_Len, ((Index>>3)<<4) + (Index & 0x07)) +\
       (Get_Buf_Bit(Buf, Buf_Len, ((Index>>3)<<4) + 8 + (Index & 0x07))<<1);
   else if(Color EQ 7) //三色屏
@@ -435,12 +435,24 @@ void Set_Area_Point_Data(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U 
 {
   INT32U Index;
 
+  if(Area_No < MAX_AREA_NUM)
+  {
     if(X >= Prog_Para.Area[Area_No].X_Len ||\
        Y >= Prog_Para.Area[Area_No].Y_Len)
     {
       ASSERT_FAILED();
       return;
     }
+  }
+  else
+  {
+    if(X >= Screen_Para.Base_Para.Width ||\
+       Y >= Screen_Para.Base_Para.Height)
+      {
+        ASSERT_FAILED();
+        return;
+    }
+  }
 
   Index = Get_Area_Point_Index(Area_No, X, Y);
 
@@ -1329,10 +1341,10 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
         Len = (X_Len - (8 - (X1 % 8)) - (((X1 + X_Len - 1) % 8) + 1))/8; //每行的字节数，除去头和尾的字节,头和尾需要特殊处理
     else
       Len = 0;
-    X0 = Prog_Para.Area[Area_No].X + pPoint0->X; //源数据在整体屏幕中的起始位置
+    //X0 = Prog_Para.Area[Area_No].X + pPoint0->X; //源数据在整体屏幕中的起始位置
     //Y0 = Prog_Para.Area[Area_No].Y + pPoint0->Y;
 
-    X1 = Prog_Para.Area[Area_No].X + pPoint1->X; //目标数据在整体屏幕中的起始位置
+    //X1 = Prog_Para.Area[Area_No].X + pPoint1->X; //目标数据在整体屏幕中的起始位置
     //Y1 = Prog_Para.Area[Area_No].Y + pPoint1->Y;
 
     if((X0 % 8) > (X1 % 8)) //源数据需要左移
@@ -2125,6 +2137,7 @@ void Fill_Clock_Point(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, \
                       INT16S Angle, INT16U Len, INT16U Radius, INT8U Style, INT8U Value)
 {
    S_Point Point[5];
+   INT8U Hour;
    
    Get_Angle_Point(pCenter, Angle, Len, &Point[0]); //找到圆的中心点
 
@@ -2157,8 +2170,14 @@ void Fill_Clock_Point(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, \
      Point[0].X = Point[0].X - Get_Font_Width(FONT0)/2;
      Point[0].Y = Point[0].Y - Get_Font_Height(FONT0)/2;;
 
-     LED_Print(FONT0, Value, pDst_Buf, Area_No, Point[0].X, Point[0].Y, "%d", ((360 - Angle)/(360/12) + 3) % 12);
-       //Fill_Rect(pDst_Buf, Area_No, &Point, Radius*2, Radius*2, Value);
+     Hour = ((360 - Angle)/(360/12) + 3) % 12;
+     if(Hour EQ 0)
+         Hour = 12;
+
+     if(Hour EQ 12)
+       LED_Print(FONT0, Value, pDst_Buf, Area_No, Point[0].X - FONT0_WIDTH/2, Point[0].Y, "%d", Hour);
+     else
+       LED_Print(FONT0, Value, pDst_Buf, Area_No, Point[0].X, Point[0].Y, "%d", Hour);
 
    }
 }
