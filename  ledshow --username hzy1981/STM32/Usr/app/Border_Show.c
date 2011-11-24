@@ -39,7 +39,7 @@ INT8U Get_Simple_Border_Height(INT8U Type)
 //X\Y±íÊ¾ÔÚ±ß¿òÊý¾Ý¿éÄÚµÄË÷Òý
 INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y) //»ñÈ¡Ò»¸öÇøÓòÄÚÒ»¸öµãµÄÊý¾Ý
 {
-    INT8U Type;
+    INT8U Type,Data,Color,Index;
 
     if(Area_No EQ MAX_AREA_NUM)
       return Get_Buf_Point_Data(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data), Screen_Para.Base_Para.Color, Prog_Para.Border_Width, X, Y);
@@ -48,8 +48,18 @@ INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y) //»ñÈ¡Ò»¸öÇøÓòÄÚÒ
 
       Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
 
-      return Get_Buf_Point_Data((INT8U *)Simple_Border_Data[Type].Data, sizeof(Simple_Border_Data[Type].Data), \
-                                Prog_Status.File_Para[Area_No].Pic_Para.Border_Color, Simple_Border_Data[Type].Width, X, Y);
+      Index = GET_POINT_INDEX(Simple_Border_Data[Type].Width,X,Y);
+      //return Get_Buf_Point_Data((INT8U *)Simple_Border_Data[Type].Data, sizeof(Simple_Border_Data[Type].Data),
+                                //Prog_Status.File_Para[Area_No].Pic_Para.Border_Color, Simple_Border_Data[Type].Width, X, Y);
+
+      Data = Get_Buf_Bit((INT8U *)Simple_Border_Data[Type].Data, sizeof(Simple_Border_Data[Type].Data),Index);
+      Color = Prog_Status.File_Para[Area_No].Pic_Para.Border_Color;
+      if(Color <= 0x01)
+          return Data;
+      else if(Color EQ 0x02)
+          return Data<<1;
+      else
+          return (Data <<1) + Data;
     }
 }
 
@@ -65,18 +75,18 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
 
    Area_Width = Get_Area_Width(Area_No); //·ÖÇøµÄ¿í¶ÈºÍ¸ß¶È
    Area_Height = Get_Area_Height(Area_No);
-   Border_Width = Get_Area_Border_Width(Area_No);
+   Width = Get_Area_Border_Width(Area_No);
 
    //ÔÚPub_BufÖÐ½¨Á¢Ò»¸öShow_Data,ÓÃÓÚ¸´ÖÆÊý¾Ý
    //pShow_Data = (S_Show_Data *) &_Pub_Buf;
 
    //ÉÏÏÂ±ß¿ò
-   for(i = 0; i < Border_Width; i ++)
+   for(i = 0; i < Width; i ++)
      for(j = 0; j < Height; j ++)
      {
-       Re = Get_Border_Point_Data(Area_No, (i + Step) % Border_Width, j);
+       Re = Get_Border_Point_Data(Area_No, (i + Step) % Width, j);
        Set_Area_Point_Data(pDst, Area_No, i, j, Re); //ÉÏ±ß¿ò
-       Set_Area_Point_Data(pDst, Area_No, Border_Width - 1 - i, Area_Height-1 - j, Re); //ÏÂ±ß¿ò
+       Set_Area_Point_Data(pDst, Area_No, Width - 1 - i, Area_Height-1 - j, Re); //ÏÂ±ß¿ò
      }
 
    P0.X = 0;
@@ -86,29 +96,50 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
    P1.Y = 0;
    while(P1.X < Area_Width)
    {
-      P1.X = P1.X + Border_Width;
+      P1.X = P1.X + Width;
       P0.Y = 0;
       P1.Y = 0;
-      Copy_Filled_Rect(pDst, Area_No,&P0, Border_Width, Height, pDst, &P1, 0);
+      Copy_Filled_Rect(pDst, Area_No,&P0, Width, Height, pDst, &P1, 0);
 
       P0.Y = Area_Height - Height;
       P1.Y = Area_Height - Height;
-      Copy_Filled_Rect(pDst, Area_No,&P0, Border_Width, Height, pDst, &P1, 0);
+      Copy_Filled_Rect(pDst, Area_No,&P0, Width, Height, pDst, &P1, 0);
    }
 
+   /*
    //×óÓÒ±ß¿ò
    if(Area_Height > Height)
        Temp = Area_Height - Height;
    else
        Temp = 0;
-
-   for(i = Height; i < Temp; i ++)
+   */
+   for(i = 0; i < Width; i ++)
      for(j = 0; j < Height; j ++)
      {
-       Re = Get_Border_Point_Data(Area_No, (i + Area_Width + Step) % Border_Width, j);
-       Set_Area_Point_Data(pDst, Area_No, j, Area_Height - 1 - i, Re); //×ó±ß¿ò
-       Set_Area_Point_Data(pDst, Area_No, Area_Width - 1- j, i, Re); //ÓÒ±ß¿ò
+       Re = Get_Border_Point_Data(Area_No, (i + Area_Width + Step) % Width, j);
+       Set_Area_Point_Data(pDst, Area_No, j, Height + Width - i, Re); //×ó±ß¿ò
+       Set_Area_Point_Data(pDst, Area_No, Area_Width - 1 - j, Height + i, Re); //ÓÒ±ß¿ò
      }
+
+   P0.X = 0;
+   P0.Y = Height;
+
+   P1.X = 0;
+   P1.Y = Height;
+   while(P1.Y < Area_Height - Height)
+   {
+      P1.Y = P1.Y + Width;
+      if(P1.Y + Width >= Area_Height - Height)
+          Width = Area_Height - Height - P1.Y;
+
+      P0.X = 0;
+      P1.X = 0;
+      Copy_Filled_Rect(pDst, Area_No,&P0,Height, Width,  pDst, &P1, 0);
+
+      P0.X = Area_Width - Height;
+      P1.X = Area_Width - Height;
+      Copy_Filled_Rect(pDst, Area_No,&P0,Height, Width, pDst, &P1, 0);
+   }
 }
 /*
 //»æÖÆ±ß¿ò
