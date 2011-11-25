@@ -30,10 +30,17 @@ INT32U Get_Area_In_Step_Delay(INT8U Area_No)
     else
       return MOVE_STEP_PERIOD;
 	  */
+#if QT_EN
+    if(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed > 1)
+      return MOVE_STEP_PERIOD + ((INT32U)Prog_Status.File_Para[Area_No].Pic_Para.In_Speed - 1) * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+    else
+      return MOVE_STEP_PERIOD;
+#else
     if(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed > 1)
       return MOVE_STEP_PERIOD + ((INT32U)Prog_Status.File_Para[Area_No].Pic_Para.In_Speed - 1)* 4 * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
+#endif
 }
 
 //获取某个窗口区域某个步进的停留时间
@@ -44,11 +51,17 @@ INT32U Get_Area_Out_Step_Delay(INT8U Area_No)
     else
       return MOVE_STEP_PERIOD;
 	  */
-
+#if QT_EN
+    if(Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed > 1)
+      return MOVE_STEP_PERIOD + ((INT32U)Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed - 1) * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+    else
+      return MOVE_STEP_PERIOD;
+#else
     if(Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed > 1)
       return MOVE_STEP_PERIOD + ((INT32U)Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed - 1) * 4 * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
+#endif
 }
 /*
 //获取文件引入时间

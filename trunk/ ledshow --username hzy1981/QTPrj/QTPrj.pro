@@ -145,3 +145,4 @@ HEADERS  += mainwindow.h \
 
 RESOURCES += \
     textedit.qrc
+RC_FILE = app.rc

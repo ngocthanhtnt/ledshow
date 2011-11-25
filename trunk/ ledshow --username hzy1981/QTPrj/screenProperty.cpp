@@ -15,7 +15,7 @@ extern MainWindow *w;
 extern QSettings settings;
 
 //屏幕配置文件
-QSettings screenSettings(SCREEN_INI_FILE,QSettings::IniFormat,0);
+//QSettings screenSettings(SCREEN_INI_FILE,QSettings::IniFormat,0);
 //控制卡配置文件
 QSettings cardSettings(CARD_INI_FILE,QSettings::IniFormat,0);
 

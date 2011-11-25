@@ -369,7 +369,7 @@ INT8U Check_Screen_Base_Para(S_Screen_Base_Para *pPara)
 void Set_Prog_Num(INT8U Num)
 {
 
-      Prog_Num.Num = 0; //重置节目数
+      Prog_Num.Num = Num; //重置节目数
 	  SET_SUM(Prog_Num);
 	  Write_Prog_Num();	
 }
@@ -443,6 +443,7 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 	      Set_Screen_Replay_Flag(); //重播节目标志
 	 
 	    Set_Prog_Num(Data[0]); //重置节目个数
+            Write_Prog_Num();
 		return 1;
 	}
 	else

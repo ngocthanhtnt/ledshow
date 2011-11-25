@@ -66,28 +66,28 @@ void MainWindow::setupFileActions()
     QAction *a;
 
     a = new QAction(tr("新建"), this);
-    a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setPriority(QAction::LowPriority);
+    ////a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
     //tb->addAction(a);
     menu->addAction(a);
 
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
     a = new QAction(tr("打开"), this);
-    a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::Open);
+    //a->setPriority(QAction::LowPriority);
+    ////a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
     //tb->addAction(a);
     menu->addAction(a);
-
+/*
     a = new QAction(tr("保存"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
     //tb->addAction(a);
     menu->addAction(a);
-
+*/
     a = new QAction(tr("另存为"), this);
-    a->setShortcut(QKeySequence::Save);
+    ////a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     //tb->addAction(a);
     menu->addAction(a);
@@ -95,8 +95,8 @@ void MainWindow::setupFileActions()
     menu->addSeparator();
 
     a = new QAction(tr("退出"), this);
-    a->setPriority(QAction::LowPriority);
-    //connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
+    //a->setPriority(QAction::LowPriority);
+    connect(a, SIGNAL(triggered()), this, SLOT(close()));
     menu->addAction(a);
 
 }
@@ -115,19 +115,19 @@ void MainWindow::setupViewActions()
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
     a = new QAction(tr("状态栏"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
     //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("控制窗口"), this);
-    a->setShortcut(QKeySequence::Open);
+    //a->setShortcut(QKeySequence::Open);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
     //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("属性窗口"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
     //tb->addAction(a);
     menu->addAction(a);
@@ -174,7 +174,7 @@ void MainWindow::setupEditActions()
     tb->setWindowTitle(tr("File Actions"));
     addToolBar(tb);
 
-    QMenu *menu = new QMenu(tr("编辑"), this);
+    QMenu *menu = new QMenu(tr("增加"), this);
     menuBar()->addMenu(menu);
 
     QAction *a;
@@ -196,7 +196,7 @@ void MainWindow::setupEditActions()
     QIcon screenIcon = getTypeIcon(SCREEN_PROPERTY);//QIcon::fromTheme(tr("屏幕"), QIcon(rsrcPath1 + tr("/屏幕.png")));
     actionScreen = a = new QAction(screenIcon, tr("屏幕"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), progManage, SLOT(newScreen())); //新建节目
     //tb->addAction(a);
 
@@ -206,7 +206,7 @@ void MainWindow::setupEditActions()
     QIcon progIcon = getTypeIcon(PROG_PROPERTY);//QIcon::fromTheme("节目", QIcon(rsrcPath1 + tr("/节目22.png")));
     actionProg = a = new QAction(progIcon, tr("节目"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), progManage, SLOT(newProg())); //新建节目
     tb->addAction(a);
 
@@ -217,7 +217,7 @@ void MainWindow::setupEditActions()
     QIcon areaIcon = getTypeIcon(AREA_PROPERTY);//QIcon::fromTheme(tr("分区"), QIcon(rsrcPath1 + tr("/分区.png")));
     actionArea = a = new QAction(areaIcon, tr("分区"), this);
     a->setIconText(tr("分区"));
-    a->setShortcut(QKeySequence::Open);
+    //a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), progManage, SLOT(newArea())); //新建分区
     tb->addAction(a);
     menu->addAction(a);
@@ -226,7 +226,7 @@ void MainWindow::setupEditActions()
 
     QIcon stextIcon = getTypeIcon(PIC_STEXT_PROPERTY);//QIcon::fromTheme(tr("字幕"), QIcon(rsrcPath1 + tr("/字幕.ico")));
     actionSText = a = new QAction(stextIcon, tr("字幕"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     a->setEnabled(true);//(bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newSText())); //新建节目
     tb->addAction(a);
@@ -234,7 +234,7 @@ void MainWindow::setupEditActions()
 
     QIcon mtextIcon = getTypeIcon(PIC_MTEXT_PROPERTY);//QIcon::fromTheme(tr("文本"), QIcon(rsrcPath1 + tr("/图文22.png")));
     actionMText = a = new QAction(mtextIcon, tr("文本"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newPic())); //新建节目
     tb->addAction(a);
@@ -242,7 +242,7 @@ void MainWindow::setupEditActions()
 
     QIcon flashIcon = getTypeIcon(PIC_FLASH_PROPERTY);//QIcon::fromTheme(tr("动画"), QIcon(rsrcPath1 + tr("/动画.ico")));
     actionFlash = a = new QAction(flashIcon, tr("动画"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newFlash()));
     tb->addAction(a);
@@ -250,7 +250,7 @@ void MainWindow::setupEditActions()
 
     QIcon clockIcon = getTypeIcon(CLOCK_PROPERTY);//QIcon::fromTheme(tr("表盘"), QIcon(rsrcPath1 + tr("/表盘.ico")));
     actionClock = a = new QAction(clockIcon, tr("表盘"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Clock_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newClock()));
     tb->addAction(a);
@@ -258,7 +258,7 @@ void MainWindow::setupEditActions()
 
     QIcon timeIcon = getTypeIcon(TIME_PROPERTY);//QIcon::fromTheme(tr("时间"), QIcon(rsrcPath1 + tr("/日历22.png")));
     actionTime = a = new QAction(timeIcon, tr("时间"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Time_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTime()));
     tb->addAction(a);
@@ -266,7 +266,7 @@ void MainWindow::setupEditActions()
 
     QIcon lunIcon = getTypeIcon(LUN_PROPERTY);//QIcon::fromTheme(tr("农历"), QIcon(rsrcPath1 + tr("/农历22.png")));
     actionNongli = a = new QAction(lunIcon, tr("农历"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Lun_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newLun()));
     tb->addAction(a);
@@ -274,7 +274,7 @@ void MainWindow::setupEditActions()
 
     QIcon timerIcon = getTypeIcon(TIMER_PROPERTY);//QIcon::fromTheme(tr("计时"), QIcon(rsrcPath1 + tr("/计时.png")));
     actionTimer = a = new QAction(timerIcon, tr("计时"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Timer_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTimer()));
     tb->addAction(a);
@@ -282,7 +282,7 @@ void MainWindow::setupEditActions()
 
     QIcon tempIcon = getTypeIcon(TEMP_PROPERTY);//QIcon::fromTheme(tr("温度"), QIcon(rsrcPath1 + tr("/温度22.png")));
     actionTemp = a = new QAction(tempIcon, tr("温度"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Temp_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTemp()));
     tb->addAction(a);
@@ -290,7 +290,7 @@ void MainWindow::setupEditActions()
 
     QIcon humidityIcon = getTypeIcon(HUMIDITY_PROPERTY);//QIcon::fromTheme(tr("湿度"), QIcon(rsrcPath1 + tr("/湿度.png")));
     actionHumidi = a = new QAction(humidityIcon, tr("湿度"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Humidity_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newHumidity()));
     tb->addAction(a);
@@ -298,7 +298,7 @@ void MainWindow::setupEditActions()
 
     QIcon noiseIcon = getTypeIcon(NOISE_PROPERTY);//QIcon::fromTheme(tr("湿度"), QIcon(rsrcPath1 + tr("/噪音.ico")));
     actionNoise = a = new QAction(noiseIcon, tr("噪音"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Humidity_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newNoise()));
     tb->addAction(a);
@@ -308,7 +308,7 @@ void MainWindow::setupEditActions()
 
     QIcon delIcon = QIcon::fromTheme(tr("删除"), QIcon(rsrcPath1 + tr("/删除.png")));
     actionDel = a = new QAction(delIcon, tr("删除"), this);
-    a->setShortcut(QKeySequence::Save);
+    //a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), progManage, SLOT(deleteItem())); //删除节目
     tb->addAction(a);
     menu->addAction(a);
@@ -481,7 +481,7 @@ void MainWindow::setupCtrlActions()
 
     actionModiScreenPara = a = new QAction(tr("修改屏幕参数"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(modifyScreenPara()));
     //tb->addAction(a);
     menu->addAction(a);
@@ -492,28 +492,28 @@ void MainWindow::setupCtrlActions()
     //QAction *atcionGetOCStatus; //获取开关机状态
     actionManualClose = a = new QAction(tr("手动关机"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(setManualClose()));
     //tb->addAction(a);
     menu->addAction(a);
 
     actionManualOpen = a = new QAction(tr("手动开机"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(setManualOpen()));
     //tb->addAction(a);
     menu->addAction(a);
 
     actionOpenClose = a = new QAction(tr("定时开关机"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(setOpenCloseTime()));
     //tb->addAction(a);
     menu->addAction(a);
 
     actionLightness = a = new QAction(tr("调节亮度"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(setLightness()));
     //tb->addAction(a);
     menu->addAction(a);
@@ -521,7 +521,7 @@ void MainWindow::setupCtrlActions()
 
     QIcon adjTimeIcon = QIcon::fromTheme(tr("校时"), QIcon(rsrcPath1 + tr("/校时.png")));
     actionAdjTime = a = new QAction(adjTimeIcon, tr("校时"), this);
-    a->setShortcut(QKeySequence::Open);
+    //a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(adjTime()));
     tb->addAction(a);
     menu->addAction(a);
@@ -530,14 +530,14 @@ void MainWindow::setupCtrlActions()
 
     QIcon sendIcon = QIcon::fromTheme(tr("发送数据"), QIcon(rsrcPath1 + tr("/发送.png")));
     actionSendData = a = new QAction(sendIcon, tr("发送数据"), this);
-    a->setShortcut(QKeySequence::Open);
+    //a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(sendDataProc()));
     tb->addAction(a);
     menu->addAction(a);
 
     QIcon udiskIcon = QIcon::fromTheme(tr("导出U盘"), QIcon(rsrcPath1 + tr("/导U盘.png")));
     actionUDisk = a = new QAction(udiskIcon, tr("导出U盘文件"), this);
-    a->setShortcut(QKeySequence::Open);
+    //a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(exportUdsikProc()));
     tb->addAction(a);
     menu->addAction(a);
@@ -555,7 +555,7 @@ void MainWindow::setupCtrlActions()
     QIcon previewIcon = QIcon::fromTheme("节目预览", QIcon(rsrcPath1 + tr("/预览.png")));
     actionPreview = a = new QAction(previewIcon, tr("节目预览"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(previewProg()));
     tb->addAction(a);
     menu->addAction(a);
@@ -563,7 +563,7 @@ void MainWindow::setupCtrlActions()
     //QIcon previewIcon = QIcon::fromTheme("预览", QIcon(rsrcPath1 + tr("/预览2222.png")));
     actionScreenPreiew = a = new QAction(tr("整体预览"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(previewScreen()));
     menu->addAction(a);
 
@@ -583,19 +583,19 @@ void MainWindow::setupToolActions()
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
     a = new QAction(tr("画图板"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
     //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("计算器"), this);
-    a->setShortcut(QKeySequence::Open);
+    //a->setShortcut(QKeySequence::Open);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
     //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("记事本"), this);
-    a->setShortcut(QKeySequence::Open);
+    //a->setShortcut(QKeySequence::Open);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
     //tb->addAction(a);
     menu->addAction(a);
@@ -615,13 +615,13 @@ void MainWindow::setupHelpActions()
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
     a = new QAction(tr("关于"), this);
     a->setPriority(QAction::LowPriority);
-    a->setShortcut(QKeySequence::New);
+    //a->setShortcut(QKeySequence::New);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
     //tb->addAction(a);
     menu->addAction(a);
 
     a = new QAction(tr("帮助"), this);
-    a->setShortcut(QKeySequence::Open);
+    //a->setShortcut(QKeySequence::Open);
     //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
     //tb->addAction(a);
     menu->addAction(a);
@@ -673,15 +673,25 @@ void MainWindow::fileSaveAs()
     //QString fileName;
     QString newFileName;
 
-    newFileName = QFileDialog::getSaveFileName(this, tr("保存配置文件"), ".", tr("配置文件(.ini)"));
+    newFileName = QFileDialog::getSaveFileName(this, tr("保存配置文件"), ".", tr("配置文件(*.ini)"));
     if(newFileName.length()==0)
         return;
 
-    if(QFile::copy(PROG_INI_FILE, newFileName) == true) //保存老的文件
+    if(QFile::exists(newFileName)) //文件存在
     {
-      settings.beginGroup("file");
-      settings.setValue("cfgFile", newFileName); //配置文件名
-      settings.endGroup();
+      if(QFile::remove(newFileName) == false) //删除失败
+        {
+          QMessageBox::warning(w, tr("提示"),
+                                   tr("文件替换失败，请确认该文件是否被其他程序占用") + newFileName, tr("确定"));
+          return;
+      }
+
+    }
+
+    if(QFile::copy(PROG_INI_FILE, newFileName) == false) //保存老的文件
+    {
+        QMessageBox::warning(w, tr("提示"),
+                                 tr("配置文件保存失败"), tr("确定"));
    }
 
 }
@@ -689,23 +699,41 @@ void MainWindow::fileSaveAs()
 //新建文件
 void MainWindow::fileNew()
 {
-    QString newFileName;
+    if(progManage->treeWidget->topLevelItemCount() > 0)
+    {
+        int Re =  QMessageBox::warning(w, tr("提示"),
+                                 tr("当前编辑内容将会被清除重建"), tr("保存当前内容再新建"),tr("不保存直接新建"),tr("取消"));
 
-    newFileName = QFileDialog::getSaveFileName(this, tr("新建配置文件"), ".", tr("配置文件(.ini)"));
-    if(newFileName.length()==0)
-        return;
+        if(Re EQ 0)
+        {
+            fileSaveAs();
+            //return;
+        }
+        else if(Re EQ 2)
+        {
+            return;
+        }
+    }
 
-    fileSave(); //保存老文件
 
-    settings.remove("program");//clear(); //清除
+    for(int i = 0; i < progManage->treeWidget->topLevelItemCount(); i ++)
+    {
+        //QTreeWidgetItem *item = progManage->treeWidget->indexOfTopLevelItem(i);
+        progManage->_deleteItem(0);
 
-    settings.beginGroup("file");
-    settings.setValue("cfgFile", newFileName);
-    settings.endGroup();
+    }
 
+    settings.clear();//clear(); //清除
+
+    //settings.beginGroup("file");
+    //settings.setValue("cfgFile", newFileName);
+    //settings.endGroup();
+
+    //screenArea->screenSettingsInit();
     progManage->settingsInit();
-    progManage->newProg();
-    progManage->newArea();
+    //progManage->newScreen();
+    //progManage->newProg();
+    //progManage->newArea();
 }
 
 //打开文件
@@ -714,7 +742,23 @@ void MainWindow::fileOpen()
     QString newFileName;
     QString oldFileName;
 
-    newFileName = QFileDialog::getOpenFileName(this, tr("打开配置文件"), ".", tr("配置文件(.ini)"));
+    if(progManage->treeWidget->topLevelItemCount() > 0)
+    {
+        int Re =  QMessageBox::warning(w, tr("提示"),
+                                 tr("当前编辑内容将会被清除"), tr("保存当前内容再打开"),tr("不保存直接打开"),tr("取消"));
+
+        if(Re EQ 0)
+        {
+            fileSaveAs();
+            //return;
+        }
+        else if(Re EQ 2)
+        {
+            return;
+        }
+    }
+
+    newFileName = QFileDialog::getOpenFileName(this, tr("打开配置文件"), ".", tr("配置文件(*.ini)"));
     if(newFileName.length()==0)
     {
         return;
