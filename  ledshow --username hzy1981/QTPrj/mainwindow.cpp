@@ -702,7 +702,7 @@ void MainWindow::fileNew()
     if(progManage->treeWidget->topLevelItemCount() > 0)
     {
         int Re =  QMessageBox::warning(w, tr("提示"),
-                                 tr("当前编辑内容将会被清除重建"), tr("保存当前内容再新建"),tr("不保存直接//a->setShortcut"),tr("取消"));
+                                 tr("当前编辑内容将会被清除重建"), tr("保存当前内容再新建"),tr("不保存直接新建"),tr("取消"));
 
         if(Re EQ 0)
         {
