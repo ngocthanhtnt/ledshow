@@ -49,6 +49,7 @@
 #include <QSpinBox>
 #include <QDialog>
 #include "colorCombo.h"
+#include "tablePropertyEdit.h"
 #include "simpleTextEdit.h"
 
 #define MAX_LINE_NUM 1000
@@ -81,6 +82,7 @@ private:
     void setupFileActions();
     void setupEditActions();
     void setupTextActions();
+    void setupTableActions();
     bool load(const QString &f);
     bool maybeSave();
     void setCurrentFileName(const QString &fileName);
@@ -132,7 +134,20 @@ private:
         *actionRedo,
         *actionCut,
         *actionCopy,
-        *actionPaste;
+        *actionPaste,
+
+        *actionInsertTable, //插入表格
+        *actionInsertRowAbove,
+        *actionInsertRowBelow,
+        *actionInsertColumnLeft,
+        *actionInsertColumnRight,
+        *actionSelectTable,
+        *actionSelectRow,
+        *actionSelectColumn,
+        *actionDeleteTable,
+        *actionDeleteRow,
+        *actionDeleteColumn,
+        *actionTableProperty;
 
     QComboBox *comboStyle;
     QFontComboBox *comboFont;
@@ -140,11 +155,13 @@ private:
     CcolorCombo *colorCombo;
     CsmLineCombo *smLineCombo; //单行字幕或多行文本
 
+    CtablePropertyEdit *tablePropertyEdit;
     QSpinBox *spinLineDis; //行距
 
     QToolBar *tb;
     QString fileName;
     QTextEdit *textEdit;
+    QTextTableFormat tableFormat;
 };
 
 QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[]);
