@@ -103,6 +103,7 @@ TextEdit::TextEdit(QWidget *parent)
     setupFileActions();
     setupEditActions();
     setupTextActions();
+    setupTableActions();
 /*
     {
         QMenu *helpMenu = new QMenu(tr("Help"), this);
@@ -171,6 +172,8 @@ TextEdit::TextEdit(QWidget *parent)
     //QColor color = new QColor();
     palette = new QPalette(QPalette::Base,QColor(Qt::black));
     textEdit->setPalette(*palette);//->setPalette(palette);
+
+    setWindowTitle(tr("编辑器"));
 }
 
 void TextEdit::closeEvent(QCloseEvent *e)
@@ -301,6 +304,77 @@ void TextEdit::setupEditActions()
 #ifndef QT_NO_CLIPBOARD
     actionPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
 #endif
+}
+/*
+*actionInsertTable, //插入表格
+*actionInsertRowAbove;
+*actionInsertRowBelow;
+*actionInsertColumnLeft;
+*actionInsertColumnRight;
+*actionSelectTable;
+*actionSelectRow;
+*actionSelectColumn;
+*actionDeleteTable;
+*actionDeleteRow;
+*actionDeleteColumn;
+*actionTableProperty;
+*/
+void TextEdit::setupTableActions()
+{
+
+    tablePropertyEdit = new CtablePropertyEdit(this);
+
+    QMenu *menuTable = new QMenu(tr("表格"), this);
+    menuBar()->addMenu(menuTable);
+
+    QMenu *menuInsert = new QMenu(tr("插入"), menuTable);
+    actionInsertTable = new QAction(tr("新表格"), this);
+    actionInsertTable->setPriority(QAction::LowPriority);
+    connect(actionInsertTable, SIGNAL(triggered()), tablePropertyEdit, SLOT(show()));//SLOT(textBold()));
+    menuInsert->addAction(actionInsertTable);
+
+
+    actionInsertRowAbove = new QAction(tr("上插入一行"),this);
+    //connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(textBold()));
+    menuInsert->addAction(actionInsertRowAbove);
+
+    actionInsertRowBelow = new QAction(tr("下插入一行"),this);
+    //connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(textBold()));
+    menuInsert->addAction(actionInsertRowBelow);
+
+    actionInsertColumnLeft = new QAction(tr("左插入一列"),this);
+    //connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(textBold()));
+    menuInsert->addAction(actionInsertColumnLeft);
+
+    actionInsertColumnRight = new QAction(tr("右插入一列"),this);
+    //connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(textBold()));
+    menuInsert->addAction(actionInsertColumnRight);
+
+    QMenu *menuDelete = new QMenu(tr("删除"), menuTable);
+    actionDeleteTable = new QAction(tr("删除表格"), this);
+    actionDeleteTable->setPriority(QAction::LowPriority);
+    //connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(textBold()));
+    menuDelete->addAction(actionDeleteTable);
+
+    actionDeleteRow = new QAction(tr("删除行"), this);
+    actionDeleteRow->setPriority(QAction::LowPriority);
+    //connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(textBold()));
+    menuDelete->addAction(actionDeleteRow);
+
+    actionDeleteColumn = new QAction(tr("删除列"), this);
+    actionDeleteColumn->setPriority(QAction::LowPriority);
+    //connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(textBold()));
+    menuDelete->addAction(actionDeleteColumn);
+
+    actionTableProperty = new QAction(tr("属性"), this);
+    actionTableProperty->setPriority(QAction::LowPriority);
+    //connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(textBold()));
+
+    menuTable->addAction(menuInsert->menuAction());
+    menuTable->addAction(menuDelete->menuAction());
+    menuTable->addAction(actionTableProperty);
+
+
 }
 
 void TextEdit::setupTextActions()

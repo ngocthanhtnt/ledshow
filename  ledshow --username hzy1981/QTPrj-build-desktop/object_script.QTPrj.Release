@@ -43,6 +43,7 @@ INPUT(
 ./release\Border_Show.o
 ./release\ZK.o
 ./release\Communication.o
+./release\tablePropertyEdit.o
 ./release\moc_mainwindow.o
 ./release\moc_showArea.o
 ./release\moc_progManage.o
@@ -63,5 +64,6 @@ INPUT(
 ./release\moc_humidityProperty.o
 ./release\moc_noiseProperty.o
 ./release\moc_Communication.o
+./release\moc_tablePropertyEdit.o
 ./release\qrc_textedit.o
 );
