@@ -37,6 +37,9 @@ void updatePicShowArea(CshowArea *area)
         settings.beginGroup("smLine");
         area->smLineFlag = settings.value("smLineCheck").toBool();
         settings.endGroup();
+
+
+        area->editMode = (settings.value("subType").toInt() EQ PIC_TABLE_PROPERTY)?1:0;
 /*
         settings.beginGroup("showMode"); //是否是连续左移模式?
         area->moveFlag = (settings.value("inMode").toInt() EQ MOVE_LEFT_CONTINUOUS_INDEX)?true:false;
@@ -163,7 +166,7 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
     hLayout->addStretch(10);
     setLayout(hLayout);
 
-    edit = new TextEdit(this);
+    edit = new TextEdit(this, 1);
     //edit->getEdit()->clear();
     connectSignal();
     //connect(editButton, SIGNAL(clicked()), this, SLOT(propertyEdited()));

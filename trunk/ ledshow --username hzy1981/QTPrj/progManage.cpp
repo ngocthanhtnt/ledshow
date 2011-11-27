@@ -163,6 +163,8 @@ QString getTypeString(int type)
         Qstr = QObject::tr("字幕");
     else if(type == PIC_MTEXT_PROPERTY)
         Qstr = QObject::tr("文本");
+    else if(type == PIC_TABLE_PROPERTY)
+        Qstr = QObject::tr("表格");
     else if(type == PIC_FLASH_PROPERTY)
         Qstr = QObject::tr("动画");
     else if(type == CLOCK_PROPERTY)
@@ -683,6 +685,11 @@ void CprogManage::newSText()
 void CprogManage::newPic() //新图文
 {
   newFile(PIC_PROPERTY,PIC_MTEXT_PROPERTY);
+}
+
+void CprogManage::newTable()//新表格
+{
+  newFile(PIC_PROPERTY,PIC_TABLE_PROPERTY);
 }
 
 void CprogManage::newFlash() //新动画

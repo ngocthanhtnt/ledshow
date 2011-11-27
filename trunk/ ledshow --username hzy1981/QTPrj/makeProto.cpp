@@ -243,7 +243,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
     //getBorderParaFromeSettings(fileStr, filePara);// 获取边框参数
 
-    if(type EQ PIC_STEXT_PROPERTY || type EQ PIC_MTEXT_PROPERTY)
+    if(type EQ PIC_STEXT_PROPERTY || type EQ PIC_MTEXT_PROPERTY || type EQ PIC_TABLE_PROPERTY)
     {
       len = sizeof(S_Pic_Para) - CHK_BYTE_LEN; //真正的参数长度，不包括头尾校验
 
@@ -267,16 +267,23 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
       int lineNum,pageNum;
       QImage image;
       //整个文本的图形
-      if(moveFlag != MOVE_LEFT_CONTINUOUS)
+      if(type EQ PIC_TABLE_PROPERTY)
       {
-          image = getTextImage(width, picStr, &lineNum, linePosi);
-          //整体的行数
-          pageNum = getTextPageNum(smLineFlag, moveFlag, image.height(), width, height, lineNum, linePosi, pagePosi);
+        image = getTableImage(width, height, picStr, &pageNum);
       }
       else
       {
-          pageNum = getSLineTextPageNum(picStr, width);
-          //image = getSLineTextImage(picStr, width,height,page);
+          if(moveFlag != MOVE_LEFT_CONTINUOUS)
+          {
+              image = getTextImage(width, picStr, &lineNum, linePosi);
+              //整体的行数
+              pageNum = getTextPageNum(smLineFlag, moveFlag, image.height(), width, height, lineNum, linePosi, pagePosi);
+          }
+          else
+          {
+              pageNum = getSLineTextPageNum(picStr, width);
+              //image = getSLineTextImage(picStr, width,height,page);
+          }
       }
       getPicParaFromSettings(fileStr, filePara);
       filePara.Pic_Para.SNum = pageNum;
@@ -286,11 +293,17 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
       for(int i = 0; i < pageNum; i ++)
       {
           //获取每页的图像
-          if(moveFlag != MOVE_LEFT_CONTINUOUS)
-            imageBk = getTextPageImage(smLineFlag, image, width, height, i, pagePosi);
+          if(type EQ PIC_TABLE_PROPERTY)
+          {
+             imageBk = getTablePageImage(image, width, height, i);
+          }
           else
-            imageBk = getSLineTextImage(picStr, width,height,i);
-
+          {
+              if(moveFlag != MOVE_LEFT_CONTINUOUS)
+                imageBk = getTextPageImage(smLineFlag, image, width, height, i, pagePosi);
+              else
+                imageBk = getSLineTextImage(picStr, width,height,i);
+          }
 
           //获取的图形的宽度和高度应该和分区的宽度和高度一致
           if(imageBk.width() != width || imageBk.height() != height)

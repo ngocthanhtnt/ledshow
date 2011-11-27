@@ -67,6 +67,7 @@
 #include <QPrintPreviewDialog>
 #include <QPainter>
 #include <QTextEdit>
+#include <QTextTable>
 #include <QImage>
 #include <QSettings>
 #include <QTextBrowser>
@@ -94,9 +95,15 @@ extern QSettings settings;
 int linePosi[MAX_LINE_NUM];
 int pagePosi[MAX_LINE_NUM];
 
-TextEdit::TextEdit(QWidget *parent)
+CtextEdit::CtextEdit(QWidget *parent): QTextEdit(parent)
+{
+
+}
+
+TextEdit::TextEdit(QWidget *parent, int mode)
     : QMainWindow(parent)
 {
+    editMode = mode;
     //setWindowFlags(windowFlags() | Qt::WType_TopLevel);
     setWindowModality(Qt::WindowModal);//Qt::WindowModal
     setToolButtonStyle(Qt::ToolButtonFollowStyle);
@@ -112,7 +119,7 @@ TextEdit::TextEdit(QWidget *parent)
         helpMenu->addAction(tr("About &Qt"), qApp, SLOT(aboutQt()));
     }
 */
-    textEdit = new QTextEdit(this);
+    textEdit = new CtextEdit(this);
     connect(textEdit, SIGNAL(currentCharFormatChanged(QTextCharFormat)),
             this, SLOT(currentCharFormatChanged(QTextCharFormat)));
     connect(textEdit, SIGNAL(cursorPositionChanged()),
@@ -154,6 +161,7 @@ TextEdit::TextEdit(QWidget *parent)
 
     connect(textEdit, SIGNAL(copyAvailable(bool)), actionCut, SLOT(setEnabled(bool)));
     connect(textEdit, SIGNAL(copyAvailable(bool)), actionCopy, SLOT(setEnabled(bool)));
+
 
 #ifndef QT_NO_CLIPBOARD
     connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardDataChanged()));
@@ -322,12 +330,15 @@ void TextEdit::setupEditActions()
 void TextEdit::setupTableActions()
 {
 
+    if(editMode EQ 0) //文本方式，没有表格
+        return;
+
     tablePropertyEdit = new CtablePropertyEdit(this);
 
-    QMenu *menuTable = new QMenu(tr("表格"), this);
+    menuTable = new QMenu(tr("表格"), this);
     menuBar()->addMenu(menuTable);
 
-    QMenu *menuInsert = new QMenu(tr("插入"), menuTable);
+    menuInsert = new QMenu(tr("插入"), menuTable);
     actionInsertTable = new QAction(tr("新表格"), this);
     actionInsertTable->setPriority(QAction::LowPriority);
     connect(actionInsertTable, SIGNAL(triggered()), tablePropertyEdit, SLOT(show()));//SLOT(textBold()));
@@ -350,7 +361,7 @@ void TextEdit::setupTableActions()
     //connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(textBold()));
     menuInsert->addAction(actionInsertColumnRight);
 
-    QMenu *menuDelete = new QMenu(tr("删除"), menuTable);
+    menuDelete = new QMenu(tr("删除"), menuTable);
     actionDeleteTable = new QAction(tr("删除表格"), this);
     actionDeleteTable->setPriority(QAction::LowPriority);
     //connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(textBold()));
@@ -374,7 +385,38 @@ void TextEdit::setupTableActions()
     menuTable->addAction(menuDelete->menuAction());
     menuTable->addAction(actionTableProperty);
 
+    connect(menuTable, SIGNAL(aboutToShow()), this, SLOT(setupTableMenu()));
+    connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(tableNew()));
+    /*
+    connect(mw->ui.actionTableProperty, SIGNAL(triggered()), this, SLOT(tableProperties()));
+    connect(mw->ui.actionDeleteTable, SIGNAL(triggered()), this, SLOT(tableDelete()));
+    connect(mw->ui.actionInsertRowAbove, SIGNAL(triggered()), this, SLOT(rowInsertAbove()));
+    connect(mw->ui.actionInsertRowBelow, SIGNAL(triggered()), this, SLOT(rowInsertBelow()));
+    connect(mw->ui.actionDeleteRow, SIGNAL(triggered()), this, SLOT(rowDelete()));
+    connect(mw->ui.actionInsertColumnLeft, SIGNAL(triggered()), this, SLOT(columnInsertLeft()));
+    connect(mw->ui.actionInsertColumnRight, SIGNAL(triggered()), this, SLOT(columnInsertRight()));
+    connect(mw->ui.actionDeleteColumn, SIGNAL(triggered()), this, SLOT(columnDelete()));
+    */
+    menuTable0 = new QMenu(tr("表格"));
+            //menuTable->addAction( tr("Select"), this, SLOT(tableSelect()) );
+            menuTable0->addAction( tr("删除"), this, SLOT(tableDelete()) );
 
+    menuRow = new QMenu(tr("行"));
+            menuRow->addAction( tr("上插入"), this, SLOT(rowInsertAbove()) );
+            menuRow->addAction( tr("下插入"), this, SLOT(rowInsertBelow()) );
+            menuRow->addAction( tr("删除"), this, SLOT(rowDelete()) );
+
+    menuColumn = new QMenu(tr("列"));
+            menuColumn->addAction( tr("左插入"), this, SLOT(columnInsertLeft()) );
+            menuColumn->addAction( tr("右插入"), this, SLOT(columnInsertRight()) );
+            menuColumn->addAction( tr("删除"), this, SLOT(columnDelete()) );
+
+    menuCell = new QMenu(tr("单元格"));
+            menuCell->addAction( tr("合并"), this, SLOT(cellMerge()) );
+            menuCell->addAction( tr("拆分(Does not work yet!)"), this, SLOT(cellSplit()) );
+
+    connect(tablePropertyEdit, SIGNAL(createTable(int, int, QTextTableFormat)), this, SLOT(tableInsert(int, int, QTextTableFormat)));
+    connect(tablePropertyEdit, SIGNAL(updateTable(int, int, QTextTableFormat)), this, SLOT(tableUpdate(int, int, QTextTableFormat)));
 }
 
 void TextEdit::setupTextActions()
@@ -964,9 +1006,18 @@ void TextEdit::showInit()
         else
             mode = MLINE_MODE;
 
-        int lineNum;
-        QImage image = getTextImage(area->width(), textEdit->toHtml(), &lineNum, linePosi);
-        int pageNum = getTextPageNum(mode, MOVE_NORMAL, image.height(), area->width(), area->height(), lineNum, linePosi, pagePosi);
+        int pageNum;
+        if(editMode EQ 0)
+        {
+            int lineNum;
+            QImage image = getTextImage(area->width(), textEdit->toHtml(), &lineNum, linePosi);
+            pageNum = getTextPageNum(mode, MOVE_NORMAL, image.height(), area->width(), area->height(), lineNum, linePosi, pagePosi);
+        }
+        else
+        {
+            getTableImage(area->width(), area->height(), textEdit->toHtml(), &pageNum);
+
+        }
         //int pageNum = getTextImagePageNum(mode,area->width(),area->height(),textEdit->toHtml(), linePosi);
         spinPage->setMinimum(0);
 
@@ -976,7 +1027,7 @@ void TextEdit::showInit()
         this->textColor();
 
         show();
-        setWindowTitle("");
+        setWindowTitle("ssss");
     }
 }
 
@@ -999,18 +1050,26 @@ void TextEdit::edit()
   area->moveFlag = checkSLineMoveLeftContinuous(str);
 
   int lineNum,pageNum;
-  if(area->moveFlag != MOVE_LEFT_CONTINUOUS) //不是连续左移
+  if(editMode EQ 0) //文本编辑方式
   {
-      QImage image = getTextImage(area->width(), area->picStr, &lineNum, linePosi);
-      pageNum = getTextPageNum(area->smLineFlag, area->moveFlag, image.height(), area->width(), area->height(), lineNum, linePosi, pagePosi);
-      //int pageNum = getTextImagePageNum(area->smLineFlag, area->width(),area->height(),area->picStr, linePosi);
+      if(area->moveFlag != MOVE_LEFT_CONTINUOUS) //不是连续左移
+      {
+          QImage image = getTextImage(area->width(), area->picStr, &lineNum, linePosi);
+          pageNum = getTextPageNum(area->smLineFlag, area->moveFlag, image.height(), area->width(), area->height(), lineNum, linePosi, pagePosi);
+          //int pageNum = getTextImagePageNum(area->smLineFlag, area->width(),area->height(),area->picStr, linePosi);
 
 
+      }
+      else //连续左移
+      {
+          pageNum = getSLineTextPageNum(area->picStr, area->width());
+        //getSLineTextImage(area->picStr, area->width(),area->height());
+
+      }
   }
-  else //连续左移
+  else //表格编辑方式
   {
-      pageNum = getSLineTextPageNum(area->picStr, area->width());
-    //getSLineTextImage(area->picStr, area->width(),area->height());
+    getTableImage(area->width(), area->height(), area->picStr, &pageNum);
 
   }
 
@@ -1085,17 +1144,30 @@ void TextEdit::setSettingsToWidget(QString str)
     connect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));
 
     disconnect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));
-    if(checkStrType(str) EQ PIC_STEXT_PROPERTY)
+    int type = checkStrType(str) ;
+    if(type EQ PIC_STEXT_PROPERTY)
     {
       smLineCombo->setCurrentIndex(0);
       smLineCombo->setEnabled(false);
+      menuTable->setEnabled(false);
+      editMode = 0;
     }
-    else
+    else if(type EQ PIC_MTEXT_PROPERTY)
     {
-      //smLineCombo->setSettingsToWidget(str);
       smLineCombo->setCurrentIndex(1);
       smLineCombo->setEnabled(true);
+
+      menuTable->setEnabled(false);
+      editMode = 0;
     }
+    else if(type EQ PIC_TABLE_PROPERTY)
+    {
+      smLineCombo->setCurrentIndex(1);
+      smLineCombo->setEnabled(false);
+      menuTable->setEnabled(true);
+      editMode = 1;
+    }
+
     connect(smLineCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edit()));
 
     //colorCombo->setCurrentIndex(color);
@@ -1201,6 +1273,78 @@ QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[])
         *pLineNum = 0;
     //image.save("d:\\Image.png");
     return image;
+}
+
+QImage getTableImage(int w, int h, QString str, int *pPageNum)
+{
+    QTextEdit edit;
+    //QTextLayout *layout = 0;
+
+    edit.setLineWrapMode(QTextEdit::FixedPixelWidth);
+    edit.setLineWrapColumnOrWidth(w + TEXT_LEFT_BORDER_WIDTH + TEXT_RIGHT_BORDER_WIDTH);
+    edit.setHtml(str);
+
+    QSize size = edit.document()->documentLayout()->documentSize().toSize();
+    edit.resize(size.width(), size.height());
+
+    QPalette *palette = new QPalette(QPalette::Base,QColor(Qt::black));
+    edit.setPalette(*palette);
+
+    edit.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    edit.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    QImage image(edit.width(), edit.height(),QImage::Format_RGB32);
+    edit.render(&image);
+
+    if(h > 0)
+    {
+      if((image.height() % h) EQ 0)
+        *pPageNum = image.height() / h;
+      else
+        *pPageNum = image.height() / h + 1;
+    }
+    else
+      *pPageNum = 0;
+
+    image = image.copy(0, 0, w, image.height());
+
+    return image;
+    /*
+    //每个Block
+    qreal blockPosi = 0;
+    int lineNum = 0;
+
+    //遍历每个段落，得到每行的起始位置和行数
+    for(int i = 0; i < edit.document()->blockCount(); i ++)
+    {
+       layout = edit.document()->findBlockByNumber(i).layout();
+       blockPosi = (layout->position().y());
+       for(int j = 0; j < layout->lineCount(); j ++)
+       {
+           linePosi[lineNum++] = blockPosi + (layout->lineAt(j).position().y()) + LINE_POSI_ADJ;
+           //linePosi[lineNum]+=20; //--!!!此处如果不+1可能导致图像上行的数据进入本行，本行的最后一行数据进入下行
+       }
+    }
+
+    if(layout != 0)
+    {
+        linePosi[lineNum] = (int)(layout->position().y() + layout->boundingRect().height());
+        linePosi[lineNum]+=LINE_POSI_ADJ;//--!!!此处如果不+1可能导致图像上行的数据进入本行，本行的最后一行数据进入下行
+        *pLineNum = lineNum;
+    }
+    else
+        *pLineNum = 0;
+    //image.save("d:\\Image.png");
+    return image;
+    */
+}
+
+QImage getTablePageImage(QImage &image, int w, int h, int page)
+{
+  QImage reImage;
+
+  reImage = image.copy(0, page*h, w, h);
+  return reImage;
 }
 
 //获取页数
@@ -1492,6 +1636,204 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
 
     return image;
 }
+
+//-------------------------------------------------
+
+void TextEdit::tableNew()
+{
+    tablePropertyEdit->setProperties(2, 2, QTextTableFormat(), true);
+    tablePropertyEdit->show();
+}
+
+
+//-------------------------------------------------
+void TextEdit::tableInsert(int rows, int columns, QTextTableFormat format)
+{
+    QTextCursor cursor = textEdit->textCursor();
+    QTextTable *table = cursor.insertTable(rows, columns);
+    table->setFormat(format);
+}
+
+//-------------------------------------------------
+/*
+void TextEdit::tableProperties()
+{
+    QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        tableprop->setProperties(table->rows(), table->columns(), table->format(), false);
+    tableprop->show();
+}
+*/
+
+//-------------------------------------------------
+void TextEdit::tableUpdate(int rows, int colums, QTextTableFormat tableFormat)
+{
+    QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        table->resize(rows, colums);
+    table->setFormat(tableFormat);
+}
+//-------------------------------------------------
+void TextEdit::tableDelete()
+{
+        QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        table->removeRows(0, table->rows());
+}
+
+//-------------------------------------------------
+void TextEdit::rowInsertAbove()
+{
+    QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        QTextTableCell cell = table->cellAt(cursor);
+        table->insertRows(cell.row(), 1);
+}
+
+//-------------------------------------------------
+void TextEdit::rowInsertBelow()
+{
+    QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        QTextTableCell cell = table->cellAt(cursor);
+        table->insertRows(cell.row()+1, 1);
+}
+
+//-------------------------------------------------
+void TextEdit::rowDelete()
+{
+        QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        QTextTableCell cell = table->cellAt(cursor);
+        table->removeRows(cell.row(), 1);
+}
+
+//-------------------------------------------------
+void TextEdit::columnInsertLeft()
+{
+    QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        QTextTableCell cell = table->cellAt(cursor);
+        table->insertColumns(cell.column(), 1);
+}
+
+//-------------------------------------------------
+void TextEdit::columnInsertRight()
+{
+    QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        QTextTableCell cell = table->cellAt(cursor);
+        table->insertColumns(cell.column()+1, 1);
+}
+
+//-------------------------------------------------
+void TextEdit::columnDelete()
+{
+        QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        QTextTableCell cell = table->cellAt(cursor);
+        table->removeColumns(cell.column(), 1);
+}
+
+//-------------------------------------------------
+void TextEdit::cellMerge()
+{
+        QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        table->mergeCells(cursor);
+}
+//-------------------------------------------------
+/*
+void TextEdit::cellSplit()
+{
+        cellsplit->show();
+}
+
+//-------------------------------------------------
+void TextEdit::cellSplit(int rows, int columns)
+{
+        QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        QTextTableCell cell = table->cellAt(cursor);
+        Config::configuration()->toPrjLog(3,"Cell Split: cell.row()="+QString::number(cell.row())+", cell.column()="+QString::number(cell.column())+", rows="+QString::number(rows)+", columns="+QString::number(columns));
+        table->splitCell(cell.row(), cell.column(), rows, columns);
+}
+*/
+void TextEdit::setupTableMenu()
+{
+        bool state = false;
+    QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        if ( table != 0) state = true;
+
+        actionTableProperty->setEnabled(state);
+        actionInsertRowAbove->setEnabled(state);
+        actionInsertRowBelow->setEnabled(state);
+        actionInsertColumnLeft->setEnabled(state);
+        actionInsertColumnRight->setEnabled(state);
+        menuDelete->setEnabled(state);
+}
+
+void TextEdit::tableProperties()
+{
+    QTextCursor cursor = textEdit->textCursor();
+        QTextTable *table = cursor.currentTable();
+        tablePropertyEdit->setProperties(table->rows(), table->columns(), table->format(), false);
+    tablePropertyEdit->show();
+}
+/*
+void TextEdit::setupPopupMenu(QMenu *m)
+{
+    m->addMenu(menuSign);
+        m->addSeparator();
+    m->addAction(ui.actionNewWindow);
+    m->addAction(ui.actionOpenPage);
+    m->addAction(ui.actionClosePage);
+    m->addSeparator();
+//    m->addAction(ui.actionZoomIn);
+//    m->addAction(ui.actionZoomOut);
+        m->addAction(ui.actionViewSource);
+    m->addSeparator();
+    m->addAction(ui.actionCopy);
+    m->addAction(ui.actionPaste);
+    m->addAction(ui.actionCut);
+    m->addSeparator();
+    m->addAction(ui.actionEditFind);
+}
+*/
+void CtextEdit::contextMenuEvent(QContextMenuEvent *e)
+{
+    QMenu *m = new QMenu(0);
+    /*
+    if (hasAnchorAt(e->pos())) {
+        m->addAction( tr("Open Link in New Window\tShift+LMB"), this, SLOT(openLinkInNewWindow()) );
+        m->addAction( tr("Open Link in New Tab\tMMB"), this, SLOT(openLinkInNewPage()) );
+        m->addAction( tr("Link properties..."), this, SLOT(showLinkProperties()) );
+    }else{
+        if ( textCursor().hasSelection() )
+                m->addAction( tr("Create link..."), this, SLOT(showLinkProperties()) );
+    }
+
+    m->addSeparator();*/
+    if (((TextEdit *)parent())->editMode > 0 && textCursor().currentTable() ){
+        m->addAction( tr("表格属性"), (TextEdit *)parent(), SLOT(tableProperties()) );
+        m->addMenu(((TextEdit *)parent())->menuTable0);
+        m->addMenu(((TextEdit *)parent())->menuRow);
+        m->addMenu(((TextEdit *)parent())->menuColumn);
+        m->addMenu(((TextEdit *)parent())->menuCell);
+        m->addSeparator();
+        }
+    m->addSeparator();
+    m->addAction(((TextEdit *)parent())->actionUndo);
+    m->addAction(((TextEdit *)parent())->actionRedo);
+    m->addAction(((TextEdit *)parent())->actionCopy);
+    m->addAction(((TextEdit *)parent())->actionPaste);
+    m->addAction(((TextEdit *)parent())->actionCut);
+    m->addSeparator();
+    m->exec(e->globalPos());
+    delete m;
+}
+
 /*
 INT16U getSLineTextPageNum(QString str, INT16U width)
 {

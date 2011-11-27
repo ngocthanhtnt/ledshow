@@ -87,7 +87,8 @@ INT8U getStackedWidgetIndex(INT8U type)
     if(type < 12)
         return type;
     else if(type EQ PIC_MTEXT_PROPERTY ||\
-            type EQ PIC_STEXT_PROPERTY)
+            type EQ PIC_STEXT_PROPERTY ||\
+            type EQ PIC_TABLE_PROPERTY)
         return 0x03;
     else if(type EQ PIC_FLASH_PROPERTY)
         return 0x04;
@@ -138,7 +139,7 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     }
     else if(type == AREA_PROPERTY)
         area = areaProperty->area;//->setSettingsToWidget(str);
-    else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY)
+    else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY || type == PIC_TABLE_PROPERTY)
     {
         //picProperty->setSettingsToWidget(str);
         area = picProperty->area;//->setSettingsToWidget(str);
@@ -246,7 +247,7 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
         areaProperty->setSettingsToWidget(str);
         areaProperty->area->setSettingsToWidget(str);
     }
-    else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY)
+    else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY || type == PIC_TABLE_PROPERTY)
     {
         picProperty->setSettingsToWidget(str);
         picProperty->area->setSettingsToWidget(pstr);
@@ -331,7 +332,7 @@ void Cproperty::getSettingsFromWidget(QTreeWidgetItem *item)
         picProperty->getSettingsFromWidget(str);
         picProperty->area->getSettingsFromWidget(pstr);
     }
-    else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY)
+    else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY || type == PIC_TABLE_PROPERTY)
     {
         picProperty->getSettingsFromWidget(str);
         picProperty->area->getSettingsFromWidget(pstr);
