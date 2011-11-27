@@ -374,7 +374,7 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     {
         updateClockShowArea(area);
     }
-    else if(type EQ PIC_STEXT_PROPERTY || type EQ PIC_MTEXT_PROPERTY)
+    else if(type EQ PIC_STEXT_PROPERTY || type EQ PIC_MTEXT_PROPERTY || type EQ PIC_TABLE_PROPERTY)
     {
         updatePicShowArea(area);
     }
@@ -1276,20 +1276,31 @@ void CshowArea::paintEvent(QPaintEvent *)
             int pageNum = 0;
 
             QImage image;
-            if(moveFlag != MOVE_LEFT_CONTINUOUS)
+
+            if(editMode EQ 0)
             {
-                image = getTextImage(Width, picStr, &lineNum, linePosi);
-                pageNum = getTextPageNum(smLineFlag, moveFlag, image.height(), Width, Height, lineNum, linePosi, pagePosi);
-                if(page >= pageNum)
-                  page = pageNum - 1;
-                imageBk = getTextPageImage(smLineFlag, image, Width, Height, page, pagePosi);
+                if(moveFlag != MOVE_LEFT_CONTINUOUS)
+                {
+                    image = getTextImage(Width, picStr, &lineNum, linePosi);
+                    pageNum = getTextPageNum(smLineFlag, moveFlag, image.height(), Width, Height, lineNum, linePosi, pagePosi);
+                    if(page >= pageNum)
+                      page = pageNum - 1;
+                    imageBk = getTextPageImage(smLineFlag, image, Width, Height, page, pagePosi);
+                }
+                else
+                {
+                    pageNum = getSLineTextPageNum(picStr, Width);
+                    if(page >= pageNum)
+                      page = pageNum - 1;
+                    imageBk = getSLineTextImage(picStr, Width,Height,page);
+                }
             }
-            else
+            else //表格编辑方式
             {
-                pageNum = getSLineTextPageNum(picStr, Width);
-                if(page >= pageNum)
-                  page = pageNum - 1;
-                imageBk = getSLineTextImage(picStr, Width,Height,page);
+               image = getTableImage(Width, Height, picStr, &pageNum);
+               if(page >= pageNum)
+                 page = pageNum - 1;
+               imageBk = getTablePageImage(image, Width, Height, page);
             }
             //getTextPageNum(area->smLineFlag, area->width(), area->height(), lineNum, linePosi, pagePosi);
 

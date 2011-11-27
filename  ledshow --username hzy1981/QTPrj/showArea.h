@@ -82,6 +82,7 @@ public:
     QString picStr; //显示的文本
     bool smLineFlag; //单多行标志
     int moveFlag; //连续左移标志
+    int editMode; //文本方式或者表格方式
     int page;  //显示的页号
     //--------------------
     S_Screen_Para screenPara; //屏幕参数

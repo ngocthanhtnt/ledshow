@@ -61,24 +61,62 @@ QT_FORWARD_DECLARE_CLASS(QTextEdit)
 QT_FORWARD_DECLARE_CLASS(QTextCharFormat)
 QT_FORWARD_DECLARE_CLASS(QMenu)
 
+class CtextEdit : public QTextEdit
+{
+    Q_OBJECT
+public:
+    CtextEdit(QWidget *parent = 0);
+protected:
+    virtual void contextMenuEvent(QContextMenuEvent *e);
+};
+
 class TextEdit : public QMainWindow
 {
     Q_OBJECT
 
 public:
+    int editMode; //编辑模式，0表示文本，1表示表格
+
+    QAction *actionUndo,
+    *actionRedo,
+    *actionCut,
+    *actionCopy,
+    *actionPaste;
+
+    QMenu *menuTable0;
+    QMenu *menuRow;
+    QMenu *menuColumn;
+    QMenu *menuCell;
+
     void screenCardParaChangeProc();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
-    TextEdit(QWidget *parent = 0);
+    TextEdit(QWidget *parent = 0, int mode = 0);
     QSpinBox *spinPage;
     QPalette *palette;
     QTextEdit *getEdit();
+public slots:
+    void tableNew();
+    void tableInsert(int rows, int columns, QTextTableFormat format);
+    void tableUpdate(int rows, int columns, QTextTableFormat tableFormat);
+
+    void setupTableMenu();
+    void tableProperties();
+    void tableDelete();
+    void rowInsertAbove();
+    void rowInsertBelow();
+    void rowDelete();
+    void columnInsertLeft();
+    void columnInsertRight();
+    void columnDelete();
+    void cellMerge();
+    //void cellSplit();
+    //void cellSplit(int rows, int columns);
 protected:
     virtual void closeEvent(QCloseEvent *e);
     virtual void showEvent(QShowEvent * event);
+    //virtual void contextMenuEvent(QContextMenuEvent *e);
 private:
-    //int linePosi[MAX_LINE_NUM];
-
     void setupFileActions();
     void setupEditActions();
     void setupTextActions();
@@ -115,6 +153,7 @@ private slots:
 
     void showInit();
     void edit();
+
 private:
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
     void fontChanged(const QFont &f);
@@ -130,11 +169,7 @@ private:
         *actionAlignCenter,
         *actionAlignRight,
         *actionAlignJustify,
-        *actionUndo,
-        *actionRedo,
-        *actionCut,
-        *actionCopy,
-        *actionPaste,
+
 
         *actionInsertTable, //插入表格
         *actionInsertRowAbove,
@@ -149,10 +184,18 @@ private:
         *actionDeleteColumn,
         *actionTableProperty;
 
+        QMenu *menuTable;
+        QMenu *menuInsert;
+        QMenu *menuDelete;
+
+
+
     QComboBox *comboStyle;
     QFontComboBox *comboFont;
     QComboBox *comboSize;
     CcolorCombo *colorCombo;
+
+
     CsmLineCombo *smLineCombo; //单行字幕或多行文本
 
     CtablePropertyEdit *tablePropertyEdit;
@@ -160,11 +203,13 @@ private:
 
     QToolBar *tb;
     QString fileName;
-    QTextEdit *textEdit;
+    CtextEdit *textEdit;
     QTextTableFormat tableFormat;
 };
 
 QImage getTextImage(int w, QString str, int *pLineNum, int linePosi[]);
+QImage getTableImage(int w, int h, QString str, int *pPageNum);
+QImage getTablePageImage(QImage &image, int w, int h, int page);
 int getTextPageNum(int mode ,int moveFlag, int imageHeight, int w, int h, int lineNum, int linePosi[], int pagePosi[]);
 QImage getTextPageImage(int mode, QImage &image, int w, int h, int page, int pagePosi[]);
 QImage getSLineTextImage(QString str, int w, int h, int page);

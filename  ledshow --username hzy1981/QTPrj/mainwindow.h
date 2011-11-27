@@ -81,6 +81,7 @@ private:
     QAction *actionArea;
     QAction *actionSText;
     QAction *actionMText;
+    QAction *actionTable;
     QAction *actionTemp;
     QAction *actionHumidi;
     QAction *actionFlash;

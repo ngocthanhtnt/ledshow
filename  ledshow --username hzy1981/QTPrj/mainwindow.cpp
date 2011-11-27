@@ -147,6 +147,8 @@ QIcon getTypeIcon(INT8U type)
      icon = QIcon::fromTheme(QObject::tr("字幕"), QIcon(rsrcPath1 + QObject::tr("/字幕.png")));
   else if(type EQ PIC_MTEXT_PROPERTY)
      icon = QIcon::fromTheme(QObject::tr("文本"), QIcon(rsrcPath1 + QObject::tr("/图文.png")));
+  else if(type EQ PIC_TABLE_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("表格"), QIcon(rsrcPath1 + QObject::tr("/表格.png")));
   else if(type EQ PIC_FLASH_PROPERTY)
      icon = QIcon::fromTheme(QObject::tr("动画"), QIcon(rsrcPath1 + QObject::tr("/动画.png")));
   else if(type EQ CLOCK_PROPERTY)
@@ -237,6 +239,14 @@ void MainWindow::setupEditActions()
     //a->setShortcut(QKeySequence::Save);
     a->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newPic())); //新建节目
+    tb->addAction(a);
+    menu->addAction(a);
+
+    QIcon tableIcon = getTypeIcon(PIC_TABLE_PROPERTY);//QIcon::fromTheme(tr("文本"), QIcon(rsrcPath1 + tr("/图文22.png")));
+    actionTable = a = new QAction(tableIcon, tr("表格"), this);
+    //a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Pic_Show_En());
+    connect(a, SIGNAL(triggered()), progManage, SLOT(newTable())); //新建节目
     tb->addAction(a);
     menu->addAction(a);
 
@@ -335,6 +345,7 @@ void MainWindow::actionEnProc(int Type)
     actionArea->setEnabled(false);
     actionSText->setEnabled(false);
     actionMText->setEnabled(false);
+    actionTable->setEnabled(false);
     actionTemp->setEnabled(false);
     actionHumidi->setEnabled(false);
     actionFlash->setEnabled(false);
@@ -366,6 +377,7 @@ void MainWindow::actionEnProc(int Type)
       actionArea->setEnabled(false);
       actionSText->setEnabled(false);
       actionMText->setEnabled(false);
+      actionTable->setEnabled(false);
       actionTemp->setEnabled(false);
       actionHumidi->setEnabled(false);
       actionFlash->setEnabled(false);
@@ -395,6 +407,7 @@ void MainWindow::actionEnProc(int Type)
       actionArea->setEnabled(true);
       actionSText->setEnabled(false);
       actionMText->setEnabled(false);
+      actionTable->setEnabled(false);
       actionTemp->setEnabled(false);
       actionHumidi->setEnabled(false);
       actionFlash->setEnabled(false);
@@ -424,6 +437,7 @@ void MainWindow::actionEnProc(int Type)
       actionArea->setEnabled(true);
       actionSText->setEnabled(true);
       actionMText->setEnabled(true);
+      actionTable->setEnabled(true);
       actionTemp->setEnabled(true);
       actionHumidi->setEnabled(true);
       actionFlash->setEnabled(true);
@@ -453,6 +467,7 @@ void MainWindow::actionEnProc(int Type)
       actionArea->setEnabled(true);
       actionSText->setEnabled(true);
       actionMText->setEnabled(true);
+      actionTable->setEnabled(true);
       actionTemp->setEnabled(true);
       actionHumidi->setEnabled(true);
       actionFlash->setEnabled(true);
