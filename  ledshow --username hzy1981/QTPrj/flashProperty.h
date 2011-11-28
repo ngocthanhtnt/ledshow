@@ -38,6 +38,7 @@ private:
     QLineEdit *stayTimeEdit;
     QLabel *speedUnitLabel; //速度单位
 
+    CimageSize *imageSize;
     CborderEdit *borderEdit;
 public slots:
     void openFlashFile();

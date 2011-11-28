@@ -37,6 +37,7 @@
 #define PIC_FLASH_PROPERTY  0x31 //动画
 #define PIC_MTEXT_PROPERTY  0x32
 #define PIC_STEXT_PROPERTY  0x33
+#define PIC_IMAGE_PROPERTY  0x34
 //#define PIC_TABLE_PROPERTY  0x34
 
 #define SUB_INDEX_EN 0
@@ -61,6 +62,7 @@ public slots:
     void newPic(); //新图文
     void newTable(); //新表格
     void newFlash(); //新动画
+    void newImage(); //新图片
     void newTime(); //新日期
     void newTimer(); //新计时
     void newClock(); //新表盘

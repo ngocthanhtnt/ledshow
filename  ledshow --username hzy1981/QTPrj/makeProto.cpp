@@ -551,7 +551,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         {
             for(int i = 0; i < count; i += count / filePara.Pic_Para.SNum)
             {
-              getFlashPageShowData(fileStr, i, &protoShowData, 0, 0, 0, width, height);
+              getFlashPageShowData(fileStr, i, &protoShowData, 0, borderHeight, borderHeight, width, height);
 
               tmpLen = GET_TEXT_LEN(width, height);
               tmpLen = tmpLen * Get_Screen_Color_Num();
@@ -577,6 +577,29 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para) - CHK_BYTE_LEN); //前一个字节是头，不拷贝
 
     }
+  else if(type EQ PIC_IMAGE_PROPERTY)
+    {
+      getImageParaFromSettings(fileStr, filePara);
+      filePara.Pic_Para.Flag = SHOW_PIC;
+
+      //int count = getFlashFrameCount(fileStr);
+      //filePara.Pic_Para.SNum = count;
+
+      len = sizeof(S_Pic_Para) - CHK_BYTE_LEN;
+
+
+        getImagePageShowData(fileStr, 0, &protoShowData, 0, borderHeight, borderHeight, width, height);
+
+        tmpLen = GET_TEXT_LEN(width, height);
+        tmpLen = tmpLen * Get_Screen_Color_Num();
+
+        memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+        len += tmpLen;
+
+      filePara.Pic_Para.SNum = 1;
+      memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para) - CHK_BYTE_LEN); //前一个字节是头，不拷贝
+
+  }
 
     restoreScreenPara(screenParaBak);
     restoreProgPara(progParaBak);

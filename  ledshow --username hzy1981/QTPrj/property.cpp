@@ -49,22 +49,25 @@ Cproperty::Cproperty(QWidget *parent):QDockWidget(parent)
     stackedWidget->addWidget(flashProperty);
 
     //5
+    imageProperty = new CimageProperty(stackedWidget);
+    stackedWidget->addWidget(imageProperty);
+    //6
     clockProperty = new CclockProperty(stackedWidget);
     stackedWidget->addWidget(clockProperty);
 
-    //6
+    //7
     timeProperty = new CtimeProperty(stackedWidget);
     stackedWidget->addWidget(timeProperty);
 
-    //7
+    //8
     timerProperty = new CtimerProperty(stackedWidget);
     stackedWidget->addWidget(timerProperty);
 
-    //8
+    //9
     tempProperty = new CtempProperty(stackedWidget);
     stackedWidget->addWidget(tempProperty);
 
-    //9
+    //10
     lunProperty = new ClunProperty(stackedWidget);
     stackedWidget->addWidget(lunProperty);
     setWidget(stackedWidget);
@@ -92,6 +95,8 @@ INT8U getStackedWidgetIndex(INT8U type)
         return 0x03;
     else if(type EQ PIC_FLASH_PROPERTY)
         return 0x04;
+    else if(type EQ PIC_IMAGE_PROPERTY)
+        return 0x05;
     else
     {
         ASSERT_FAILED();
@@ -148,6 +153,10 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     {
         //flashProperty->setSettingsToWidget(str);
         area = flashProperty->area;//->setSettingsToWidget(str);
+    }
+    else if(type == PIC_IMAGE_PROPERTY)
+    {
+        area = imageProperty->area;
     }
     else if(type == CLOCK_PROPERTY)
     {
@@ -257,6 +266,11 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
         flashProperty->setSettingsToWidget(str);
         flashProperty->area->setSettingsToWidget(pstr);
     }
+    else if(type == PIC_IMAGE_PROPERTY)
+    {
+        imageProperty->setSettingsToWidget(str);
+        imageProperty->area->setSettingsToWidget(pstr);
+    }
     else if(type == CLOCK_PROPERTY)
     {
         clockProperty->setSettingsToWidget(str);
@@ -341,6 +355,11 @@ void Cproperty::getSettingsFromWidget(QTreeWidgetItem *item)
     {
         flashProperty->getSettingsFromWidget(str);
         flashProperty->area->getSettingsFromWidget(pstr);
+    }
+    else if(type == PIC_IMAGE_PROPERTY)
+    {
+        imageProperty->getSettingsFromWidget(str);
+        imageProperty->area->getSettingsFromWidget(pstr);
     }
     else if(type == CLOCK_PROPERTY)
     {

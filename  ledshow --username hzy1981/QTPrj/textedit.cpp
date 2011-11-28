@@ -1027,7 +1027,7 @@ void TextEdit::showInit()
         this->textColor();
 
         show();
-        setWindowTitle("ssss");
+        setWindowTitle(tr("±à¼­Æ÷"));
     }
 }
 
@@ -1642,6 +1642,7 @@ QImage getSLineTextImage(QString str, int w, int h, int page)
 void TextEdit::tableNew()
 {
     tablePropertyEdit->setProperties(2, 2, QTextTableFormat(), true);
+    tablePropertyEdit->setModal(true);
     tablePropertyEdit->show();
 }
 
@@ -1779,6 +1780,7 @@ void TextEdit::tableProperties()
     QTextCursor cursor = textEdit->textCursor();
         QTextTable *table = cursor.currentTable();
         tablePropertyEdit->setProperties(table->rows(), table->columns(), table->format(), false);
+    tablePropertyEdit->setModal(true);
     tablePropertyEdit->show();
 }
 /*

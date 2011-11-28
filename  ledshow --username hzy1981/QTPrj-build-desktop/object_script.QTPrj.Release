@@ -44,6 +44,7 @@ INPUT(
 ./release\ZK.o
 ./release\Communication.o
 ./release\tablePropertyEdit.o
+./release\imageProperty.o
 ./release\moc_mainwindow.o
 ./release\moc_showArea.o
 ./release\moc_progManage.o
@@ -65,5 +66,6 @@ INPUT(
 ./release\moc_noiseProperty.o
 ./release\moc_Communication.o
 ./release\moc_tablePropertyEdit.o
+./release\moc_imageProperty.o
 ./release\qrc_textedit.o
 );

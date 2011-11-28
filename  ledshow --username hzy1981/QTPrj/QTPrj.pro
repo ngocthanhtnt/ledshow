@@ -54,7 +54,8 @@ SOURCES += main.cpp\
     ../STM32/Usr/app/Border_Show.cpp \
     ../STM32/Usr/app/ZK.cpp \
     Communication.cpp \
-    tablePropertyEdit.cpp
+    tablePropertyEdit.cpp \
+    imageProperty.cpp
 
 HEADERS  += mainwindow.h \
     showArea.h \
@@ -143,7 +144,8 @@ HEADERS  += mainwindow.h \
     ../STM32/Usr/app/ZK.h \
     ../STM32/Usr/app/OS_Port.h \
     Communication.h \
-    tablePropertyEdit.h
+    tablePropertyEdit.h \
+    imageProperty.h
 
 RESOURCES += \
     textedit.qrc

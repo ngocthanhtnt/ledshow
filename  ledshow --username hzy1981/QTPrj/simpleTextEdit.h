@@ -301,6 +301,21 @@ public:
 
 };
 
+class CimageSize:public QGroupBox
+{
+    Q_OBJECT
+  private:
+    QSpinBox *widthEdit;
+    QSpinBox *heighEdit;
+signals:
+    void editSignal();
+public:
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CimageSize(QWidget *parent =0);
+    ~CimageSize();
+};
+
 void getBorderParaFromeSettings(QString str, U_File_Para &para);
 void getShowModeParaFromSettings(QString str, U_File_Para &para);
 QImage getLineTextImage(QString str);

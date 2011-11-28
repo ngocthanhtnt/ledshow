@@ -84,6 +84,9 @@ public:
     int moveFlag; //连续左移标志
     int editMode; //文本方式或者表格方式
     int page;  //显示的页号
+
+    int xProportion;
+    int yProportion;
     //--------------------
     S_Screen_Para screenPara; //屏幕参数
     S_Prog_Para progPara; //节目参数

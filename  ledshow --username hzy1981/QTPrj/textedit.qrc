@@ -57,5 +57,6 @@
         <file>images/win1/发送.png</file>
         <file>images/win1/校时.png</file>
         <file>images/win1/节目.png</file>
+        <file>images/win1/图片.png</file>
     </qresource>
 </RCC>
