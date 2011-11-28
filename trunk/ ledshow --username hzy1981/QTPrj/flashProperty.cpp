@@ -108,6 +108,9 @@ CflashProperty::CflashProperty(QWidget *parent):QWidget(parent)
    vLayout = new QVBoxLayout(this);
    vLayout->addWidget(groupBox);
 
+   imageSize = new CimageSize(this);
+   vLayout->addWidget(imageSize);
+
    hLayout->addLayout(vLayout);
 
    borderEdit = new CborderEdit(this);
@@ -208,6 +211,7 @@ void updateFlashShowArea(CshowArea *area)
     //CshowArea *area;
     QString str;
     QTreeWidgetItem *item;
+    int x,y;
 
     if(area != (CshowArea *)0) //
     {
@@ -218,6 +222,12 @@ void updateFlashShowArea(CshowArea *area)
 
         settings.beginGroup(str);
         QMovie *movie = new QMovie(settings.value("fileName").toString());
+
+        settings.beginGroup("imageProportion");
+        area->xProportion = settings.value("x").toInt();
+        area->yProportion = settings.value("y").toInt();
+        settings.endGroup();
+
         settings.endGroup();
         movie->setCacheMode(QMovie::CacheAll);
         //totalFrameNumEdit->setText(QString::number(movie->frameCount()));
@@ -226,7 +236,7 @@ void updateFlashShowArea(CshowArea *area)
             ASSERT_FAILED();
         }
 
-        area->imageBk = movie->currentImage();
+        area->imageBk = movie->currentImage();//.scaled(area->width()*x/100, area->height()*y/100);
         //area->imageBk.save("d:\\flash.png");
         area->updateFlag = true;
         //area->imageBk = getTextEditImage(MLINE_MODE, area->width(), area->height(), str, 0);
@@ -250,6 +260,8 @@ void CflashProperty::connectSignal()
     connect(openButton, SIGNAL(clicked()), this, SLOT(openFlashFile()));
     connect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
 
+    connect(imageSize, SIGNAL(editSignal()), this, SLOT(edited()));
+
 }
 
 void CflashProperty::disconnectSignal()
@@ -259,6 +271,8 @@ void CflashProperty::disconnectSignal()
     disconnect(stayTimeEdit, SIGNAL(textEdited(const QString &)),this, SLOT(edited()));
     disconnect(openButton, SIGNAL(clicked()), this, SLOT(openFlashFile()));
     disconnect(borderEdit, SIGNAL(editSignal()), this, SLOT(edited()));
+
+    disconnect(imageSize, SIGNAL(editSignal()), this, SLOT(edited()));
 }
 
 void CflashProperty::getSettingsFromWidget(QString str)
@@ -271,6 +285,7 @@ void CflashProperty::getSettingsFromWidget(QString str)
 
   nameEdit->getSettingsFromWidget(str);
   borderEdit->getSettingsFromWidget(str);
+  imageSize->getSettingsFromWidget(str);
 }
 
 void CflashProperty::setSettingsToWidget(QString str)
@@ -294,7 +309,7 @@ void CflashProperty::setSettingsToWidget(QString str)
 
     nameEdit->setSettingsToWidget(str);
     borderEdit->setSettingsToWidget(str);
-
+    imageSize->setSettingsToWidget(str);
     connectSignal();
 }
 
@@ -354,16 +369,21 @@ QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT8U Area_No, INT16U x,
 void getFlashPageShowData(QString str, INT8U page, S_Show_Data *pDst, INT8U Area_No, INT16U x, INT16U y, INT16U width, INT16U height)
 {
     QMovie movie;
+    int x0,y0;
 
     settings.beginGroup(str);
     movie.setFileName(settings.value("fileName").toString());
+    settings.beginGroup("imageProportion");
+    x0 = settings.value("x").toInt();
+    y0 = settings.value("y").toInt();
+    settings.endGroup();
     settings.endGroup();
     movie.setCacheMode(QMovie::CacheAll);
     //totalFrameNumEdit->setText(QString::number(movie->frameCount()));
     movie.jumpToFrame(page);
 
-    QImage image = movie.currentImage().scaled(width,height);
-    getFlashShowData(image, pDst,Area_No, x, y);
+    QImage image = movie.currentImage().scaled(width*x0/100,height*y0/100);
+    getFlashShowData(image, pDst,Area_No, x + (width - image.width()) / 2, y + (height - image.height())/ 2);
 }
 
 int getFlashFrameCount(QString str)

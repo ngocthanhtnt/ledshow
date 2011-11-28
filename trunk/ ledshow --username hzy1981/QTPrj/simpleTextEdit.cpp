@@ -1647,3 +1647,74 @@ void getBorderParaFromeSettings(QString str, U_File_Para &para)
     settings.endGroup();
     settings.endGroup();
 }
+
+
+CimageSize::CimageSize(QWidget *parent):QGroupBox(parent)
+{
+    QLabel *widthLabel,*heighLabel;
+    QLabel *widthLabel0, *heighLabel0;
+    QHBoxLayout *hLayout;
+
+    hLayout = new QHBoxLayout(this);
+    widthLabel = new QLabel(tr("横向比例"),this);
+    heighLabel = new QLabel(tr("纵向比例"),this);
+    widthLabel0 = new QLabel("%",this);
+    heighLabel0 = new QLabel("%", this);
+
+   widthEdit = new QSpinBox(this);
+   widthEdit->setMinimum(10);
+   widthEdit->setMaximum(100);
+   heighEdit = new QSpinBox(this);
+   heighEdit->setMinimum(10);
+   heighEdit->setMaximum(100);
+
+   hLayout->addWidget(widthLabel);
+   hLayout->addWidget(widthEdit);
+   hLayout->addWidget(widthLabel0);
+
+   hLayout->addWidget(heighLabel);
+   hLayout->addWidget(heighEdit);
+   hLayout->addWidget(heighLabel0);
+
+   connect(widthEdit, SIGNAL(valueChanged(int)),this, SIGNAL(editSignal()));
+   connect(heighEdit, SIGNAL(valueChanged(int)), this, SIGNAL(editSignal()));
+
+   setLayout(hLayout);
+   setTitle(tr("显示比例"));
+
+}
+
+void CimageSize::getSettingsFromWidget(QString str)
+{
+  settings.beginGroup(str);
+  settings.beginGroup("imageProportion");
+  settings.setValue("x", widthEdit->value());
+  settings.setValue("y", heighEdit->value());
+  settings.endGroup();
+  settings.endGroup();
+}
+
+void CimageSize::setSettingsToWidget(QString str)
+{
+    settings.beginGroup(str);
+    settings.beginGroup("imageProportion");
+    int setFlag = settings.value("setFlag").toInt();
+    if(setFlag == 0)
+    {
+      //名字
+      settings.setValue("setFlag", 1);
+      settings.setValue("x", 100);
+      settings.setValue("y", 100);
+    }
+
+    widthEdit->setValue(settings.value("x").toInt());
+    heighEdit->setValue(settings.value("y").toInt());
+    //settings.setValue("y", heighEdit->value());
+    settings.endGroup();
+    settings.endGroup();
+}
+
+CimageSize::~CimageSize()
+{
+
+}

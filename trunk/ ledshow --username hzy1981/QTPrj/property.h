@@ -9,6 +9,7 @@
 #include "picProperty.h"
 #include "clockProperty.h"
 #include "flashProperty.h"
+#include "imageProperty.h"
 #include "timeProperty.h"
 #include "tempProperty.h"
 #include "lunProperty.h"
@@ -34,6 +35,7 @@ private:
 
     CclockProperty *clockProperty; //表盘
     CflashProperty *flashProperty; //flash动画
+    CimageProperty *imageProperty; //图片
     CtempProperty *tempProperty; //温度
     ClunProperty *lunProperty; //农历
     ChumidityProperty *humidityProperty;

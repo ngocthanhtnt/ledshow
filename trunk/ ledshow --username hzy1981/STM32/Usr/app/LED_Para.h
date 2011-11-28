@@ -32,6 +32,7 @@
 #define SHOW_HUMIDITY 0x07
 #define SHOW_NOISE    0x08
 #define SHOW_FLASH 0x09 //¶¯»­
+#define SHOW_IMAGE 0x0A //Í¼Æ¬
 
 //#define MAX_FILE_NAME_SIZE 20
 

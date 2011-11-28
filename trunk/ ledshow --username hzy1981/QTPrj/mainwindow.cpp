@@ -151,6 +151,8 @@ QIcon getTypeIcon(INT8U type)
      icon = QIcon::fromTheme(QObject::tr("表格"), QIcon(rsrcPath1 + QObject::tr("/表格.png")));
   else if(type EQ PIC_FLASH_PROPERTY)
      icon = QIcon::fromTheme(QObject::tr("动画"), QIcon(rsrcPath1 + QObject::tr("/动画.png")));
+  else if(type EQ PIC_IMAGE_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("图片"), QIcon(rsrcPath1 + QObject::tr("/图片.png")));
   else if(type EQ CLOCK_PROPERTY)
      icon = QIcon::fromTheme(QObject::tr("表盘"), QIcon(rsrcPath1 + QObject::tr("/表盘.png")));
   else if(type EQ TIME_PROPERTY)
@@ -258,6 +260,14 @@ void MainWindow::setupEditActions()
     tb->addAction(a);
     menu->addAction(a);
 
+    QIcon imageIcon = getTypeIcon(PIC_IMAGE_PROPERTY);//QIcon::fromTheme(tr("动画"), QIcon(rsrcPath1 + tr("/动画.ico")));
+    actionImage = a = new QAction(imageIcon, tr("图片"), this);
+    //a->setShortcut(QKeySequence::Save);
+    a->setEnabled((bool)Get_Pic_Show_En());
+    connect(a, SIGNAL(triggered()), progManage, SLOT(newImage()));
+    tb->addAction(a);
+    menu->addAction(a);
+
     QIcon clockIcon = getTypeIcon(CLOCK_PROPERTY);//QIcon::fromTheme(tr("表盘"), QIcon(rsrcPath1 + tr("/表盘.ico")));
     actionClock = a = new QAction(clockIcon, tr("表盘"), this);
     //a->setShortcut(QKeySequence::Save);
@@ -349,6 +359,7 @@ void MainWindow::actionEnProc(int Type)
     actionTemp->setEnabled(false);
     actionHumidi->setEnabled(false);
     actionFlash->setEnabled(false);
+    actionImage->setEnabled(false);
     actionClock->setEnabled(false);
     actionTime->setEnabled(false);
     actionNoise->setEnabled(false);
@@ -381,6 +392,7 @@ void MainWindow::actionEnProc(int Type)
       actionTemp->setEnabled(false);
       actionHumidi->setEnabled(false);
       actionFlash->setEnabled(false);
+      actionImage->setEnabled(false);
       actionClock->setEnabled(false);
       actionTime->setEnabled(false);
       actionNoise->setEnabled(false);
@@ -411,6 +423,7 @@ void MainWindow::actionEnProc(int Type)
       actionTemp->setEnabled(false);
       actionHumidi->setEnabled(false);
       actionFlash->setEnabled(false);
+      actionImage->setEnabled(false);
       actionClock->setEnabled(false);
       actionTime->setEnabled(false);
       actionNoise->setEnabled(false);
@@ -441,6 +454,7 @@ void MainWindow::actionEnProc(int Type)
       actionTemp->setEnabled(true);
       actionHumidi->setEnabled(true);
       actionFlash->setEnabled(true);
+      actionImage->setEnabled(true);
       actionClock->setEnabled(true);
       actionTime->setEnabled(true);
       actionNoise->setEnabled(true);
@@ -471,6 +485,7 @@ void MainWindow::actionEnProc(int Type)
       actionTemp->setEnabled(true);
       actionHumidi->setEnabled(true);
       actionFlash->setEnabled(true);
+      actionImage->setEnabled(true);
       actionClock->setEnabled(true);
       actionTime->setEnabled(true);
       actionNoise->setEnabled(true);

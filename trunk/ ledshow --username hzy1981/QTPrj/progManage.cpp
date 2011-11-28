@@ -167,6 +167,8 @@ QString getTypeString(int type)
         Qstr = QObject::tr("表格");
     else if(type == PIC_FLASH_PROPERTY)
         Qstr = QObject::tr("动画");
+    else if(type == PIC_IMAGE_PROPERTY)
+        Qstr = QObject::tr("图片");
     else if(type == CLOCK_PROPERTY)
         Qstr = QObject::tr("表盘");
     else if(type == TIME_PROPERTY)
@@ -695,6 +697,11 @@ void CprogManage::newTable()//新表格
 void CprogManage::newFlash() //新动画
 {
   newFile(PIC_PROPERTY,PIC_FLASH_PROPERTY);
+}
+
+void CprogManage::newImage() //图片
+{
+  newFile(PIC_PROPERTY,PIC_IMAGE_PROPERTY);
 }
 
 void CprogManage::newTime() //新日期

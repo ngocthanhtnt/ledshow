@@ -394,6 +394,10 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     {
         updateFlashShowArea(area);
     }
+    else if(type EQ PIC_IMAGE_PROPERTY)
+    {
+        updateImageShowArea(area);
+    }
     else if(type EQ TEMP_PROPERTY)
     {
         updateTempShowArea(area);
@@ -1403,9 +1407,19 @@ void CshowArea::paintEvent(QPaintEvent *)
         else if(filePara.Temp_Para.Flag == SHOW_FLASH) //显示动画
         {
             P0.X = P0.Y = 0;
-            QImage image = imageBk.scaled(Width,Height);//size());
-            getFlashShowData(image, &Show_Data, Area_No, P0.X + borderHeight, P0.Y + borderHeight);
+            QImage image = imageBk.scaled(Width*xProportion/100,Height*yProportion/100);//size());
+            getFlashShowData(image, &Show_Data, Area_No, \
+                             P0.X + borderHeight + (Width - image.width()) / 2,\
+                             P0.Y + borderHeight + (Height - image.height()) / 2);
             //Update_Lun_Data(Area_No);
+        }
+        else if(filePara.Temp_Para.Flag == SHOW_IMAGE) //显示图片
+        {
+            P0.X = P0.Y = 0;
+            QImage image = imageBk.scaled(Width*xProportion/100,Height*yProportion/100);//size());
+            getImageShowData(image, &Show_Data, Area_No, \
+                             P0.X + borderHeight + (Width - image.width()) / 2,\
+                             P0.Y + borderHeight + (Height - image.height()) / 2);
         }
         else if(filePara.Temp_Para.Flag == SHOW_TEMP) //显示温度
         {

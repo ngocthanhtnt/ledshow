@@ -85,6 +85,7 @@ private:
     QAction *actionTemp;
     QAction *actionHumidi;
     QAction *actionFlash;
+    QAction *actionImage;
     QAction *actionClock;
     QAction *actionTime;
     QAction *actionNoise;
