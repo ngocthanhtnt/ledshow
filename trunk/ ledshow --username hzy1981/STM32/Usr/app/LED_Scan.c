@@ -792,7 +792,8 @@ void LED_Scan_One_Row(void)
 	    //pDst = &Scan_Data1[0][0];
  
 #if MAX_SCAN_BLOCK_NUM EQ 4//A型卡最多4条扫描线
-      transpose8(&Scan_Data[0][0], pDst/*, Direct*/);	//R1-R4,G1-G4
+/*
+      transpose8(&Scan_Data[0][0], pDst);	//R1-R4,G1-G4
 
 	  Temp = (GPIOB->ODR & 0xFF00) ;
 	  for(j = 0; j < 8; j ++)
@@ -801,7 +802,7 @@ void LED_Scan_One_Row(void)
 	    SET_CLK_LOW();
         GPIOB->ODR = Temp | Scan_Data[0][j]; //输出R1-R4,G1-G4
 		SET_CLK_HIGH();
-	   }
+	   } */
 #elif MAX_SCAN_BLOCK_NUM EQ 8
 ;
 #elif MAX_SCAN_BLOCK_NUM EQ 16

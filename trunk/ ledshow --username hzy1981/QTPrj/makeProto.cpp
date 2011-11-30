@@ -543,6 +543,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         int count = getFlashFrameCount(fileStr);
         //filePara.Pic_Para.SNum = count;
 
+        memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
         len = sizeof(S_Pic_Para) - CHK_BYTE_LEN;
 
         INT16U num = 0;
@@ -587,7 +588,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
       len = sizeof(S_Pic_Para) - CHK_BYTE_LEN;
 
-
+      memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
         getImagePageShowData(fileStr, 0, &protoShowData, 0, borderHeight, borderHeight, width, height);
 
         tmpLen = GET_TEXT_LEN(width, height);

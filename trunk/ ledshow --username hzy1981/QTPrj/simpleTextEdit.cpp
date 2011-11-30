@@ -1551,7 +1551,7 @@ CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
 
     styleCombo->setIconSize(QSize(48,8));
 
-    int num = Get_Simple_Border_Data_Num();
+    int num = Get_Simple_Border_Num(0);
     for(int i = 0; i < num; i ++)
      {
         QPixmap borderPixmap;
@@ -1559,7 +1559,7 @@ CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
         borderImage = getBorderImage(1, i, QColor(Qt::red));
         borderImage = borderImage.scaled(borderImage.width()*10, borderImage.height()*20);
         borderPixmap.convertFromImage(borderImage);
-        styleCombo->addItem(QIcon(borderPixmap), QString("%1").arg(Simple_Border_Data[i].Height));
+        styleCombo->addItem(QIcon(borderPixmap), QString("%1").arg(Get_Simple_Border_Height(i)));
 
     }
 

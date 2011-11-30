@@ -1407,7 +1407,8 @@ void CshowArea::paintEvent(QPaintEvent *)
         else if(filePara.Temp_Para.Flag == SHOW_FLASH) //ÏÔÊ¾¶¯»­
         {
             P0.X = P0.Y = 0;
-            QImage image = imageBk.scaled(Width*xProportion/100,Height*yProportion/100);//size());
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+            QImage image = imageBk.scaled(Width*xProportion/100,Height*yProportion/100);//size());            
             getFlashShowData(image, &Show_Data, Area_No, \
                              P0.X + borderHeight + (Width - image.width()) / 2,\
                              P0.Y + borderHeight + (Height - image.height()) / 2);
@@ -1416,6 +1417,7 @@ void CshowArea::paintEvent(QPaintEvent *)
         else if(filePara.Temp_Para.Flag == SHOW_IMAGE) //ÏÔÊ¾Í¼Æ¬
         {
             P0.X = P0.Y = 0;
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
             QImage image = imageBk.scaled(Width*xProportion/100,Height*yProportion/100);//size());
             getImageShowData(image, &Show_Data, Area_No, \
                              P0.X + borderHeight + (Width - image.width()) / 2,\
@@ -1477,10 +1479,12 @@ void CshowArea::paintEvent(QPaintEvent *)
         {
             //filePara.Pic_Para.Border_Mode = 0; //¾²Ì¬
             //INT8U Border_Mode = 0;//filePara.Pic_Para.Border_Mode;
-            INT8U Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
-            INT16U Border_Width = Simple_Border_Data[Type].Width;//Get_Area_Border_Width(Area_No);
-            INT16U Border_Height = Simple_Border_Data[Type].Height;//Get_Area_Border_Height(Area_No);
-            INT8U *pBorder_Data = (INT8U *)Simple_Border_Data[Type].Data;
+            //INT8U Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
+
+            S_Simple_Border_Data *p = Get_Simple_Border_Info(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
+            INT16U Border_Width = p->Width;//Get_Area_Border_Width(Area_No);
+            INT16U Border_Height = p->Height;//Get_Area_Border_Height(Area_No);
+            INT8U *pBorder_Data =(INT8U *)(p->Data);
 
             Draw_Border(&Show_Data, 0, pBorder_Data, \
                         Border_Width, Border_Height, 0);

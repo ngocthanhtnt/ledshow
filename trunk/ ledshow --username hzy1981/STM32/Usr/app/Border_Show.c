@@ -3,36 +3,86 @@
 
 #if BORDER_SHOW_EN > 0
 
-const S_Simple_Border_Data Simple_Border_Data[] =
+const INT8U B0Data0[] = {0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF};
+const INT8U B0Data1[] = {0xFF, 0xFF,0xFF, 0x00, 0x00, 0x00};
+const INT8U B0Data2[] = {0x0F, 0x0F,0x0F, 0x0F, 0x0F, 0x0F};
+const INT8U B0Data3[] = {0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF,\
+                         0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF};
+const INT8U B0Data4[] = {0xFF, 0xFF,0xFF, 0x00, 0x00, 0x00,\
+                         0xFF, 0xFF,0xFF, 0x00, 0x00, 0x00};
+const INT8U B0Data5[] = {0x0F, 0x0F,0x0F, 0x0F, 0x0F, 0x0F,\
+                         0x0F, 0x0F,0x0F, 0x0F, 0x0F, 0x0F};
+//const INT8U B0Data6[] = {0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF};
+
+const S_Simple_Border_Data Simple_Border_Data0[] =
 {
-    {48, 1,  {0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF}},
-    {48, 1,  {0xFF, 0xFF,0xFF, 0x00, 0x00, 0x00}},
-    {48, 1,  {0x0F, 0x0F,0x0F, 0x0F, 0x0F, 0x0F}},
-    {48, 2,  {0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF,
-              0xFF, 0xFF,0xFF, 0xFF, 0xFF, 0xFF}},
-    {48, 2,  {0xFF, 0xFF,0xFF, 0x00, 0x00, 0x00,
-              0xFF, 0xFF,0xFF, 0x00, 0x00, 0x00}},
-    {48, 2,  {0x0F, 0x0F,0x0F, 0x0F, 0x0F, 0x0F,
-              0x0F, 0x0F,0x0F, 0x0F, 0x0F, 0x0F}}
+    {48, 1,  B0Data0},
+    {48, 1,  B0Data1},
+    {48, 1,  B0Data2},
+    {48, 2,  B0Data3},
+    {48, 2,  B0Data4},
+    {48, 2,  B0Data5}
 
 };
 
+const S_Simple_Border_Data Simple_Border_Data1[] =
+{
+    {48, 1,  B0Data0},
+    {48, 1,  B0Data1},
+    {48, 1,  B0Data2},
+    {48, 2,  B0Data3},
+    {48, 2,  B0Data4},
+    {48, 2,  B0Data5}
+};
 //const INT8U Bit_Mask[9] = {0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF};
 
-INT8U Get_Simple_Border_Data_Num(void)
+//»ñÈ¡±ß¿òÊýÁ¿
+INT8U Get_Simple_Border_Num(INT8U Type)
 {
-    return S_NUM(Simple_Border_Data);
+    if(Type EQ 0)
+        return S_NUM(Simple_Border_Data0);
+    else
+        return S_NUM(Simple_Border_Data1);
 }
 
-INT8U Get_Simple_Border_Height(INT8U Type)
+S_Simple_Border_Data *Get_Simple_Border_Info(INT8U Index)
 {
-  if(Type >= S_NUM(Simple_Border_Data))
-    {
-      Type = 0;
-      ASSERT_FAILED();
-  }
+  INT8U Type;
 
-  return Simple_Border_Data[Type].Height;
+  Type = Index >> 7;
+
+  Index = Index & 0x7F;
+
+  if(Type EQ 0)
+  {
+      if(Index >= S_NUM(Simple_Border_Data0))
+          Index = 0;
+
+      return (S_Simple_Border_Data *)&Simple_Border_Data0[Index];
+  }
+  else
+  {
+      if(Index >= S_NUM(Simple_Border_Data1))
+          Index = 0;
+
+      return (S_Simple_Border_Data *)&Simple_Border_Data1[Index];
+  }
+}
+
+INT8U Get_Simple_Border_Width(INT8U Index)
+{
+    S_Simple_Border_Data *p;
+
+    p = Get_Simple_Border_Info(Index);
+    return p->Width;
+}
+
+INT8U Get_Simple_Border_Height(INT8U Index)
+{
+  S_Simple_Border_Data *p;
+
+  p = Get_Simple_Border_Info(Index);
+  return p->Height;
 }
 
 //»ñÈ¡±ß¿òÊý¾Ý
@@ -40,6 +90,7 @@ INT8U Get_Simple_Border_Height(INT8U Type)
 INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y) //»ñÈ¡Ò»¸öÇøÓòÄÚÒ»¸öµãµÄÊý¾Ý
 {
     INT8U Type,Data,Color,Index;
+    //S_Simple_Border_Data *p;
 
     if(Area_No EQ MAX_AREA_NUM)
       return Get_Buf_Point_Data(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data), Screen_Para.Base_Para.Color, Prog_Para.Border_Width, X, Y);
@@ -48,18 +99,30 @@ INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y) //»ñÈ¡Ò»¸öÇøÓòÄÚÒ
 
       Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
 
-      Index = GET_POINT_INDEX(Simple_Border_Data[Type].Width,X,Y);
-      //return Get_Buf_Point_Data((INT8U *)Simple_Border_Data[Type].Data, sizeof(Simple_Border_Data[Type].Data),
-                                //Prog_Status.File_Para[Area_No].Pic_Para.Border_Color, Simple_Border_Data[Type].Width, X, Y);
+      if((Type >> 7) EQ 0)
+      {
+          if(Type >= S_NUM(Simple_Border_Data0))
+             Type = 0;
 
-      Data = Get_Buf_Bit((INT8U *)Simple_Border_Data[Type].Data, sizeof(Simple_Border_Data[Type].Data),Index);
-      Color = Prog_Status.File_Para[Area_No].Pic_Para.Border_Color;
-      if(Color <= 0x01)
-          return Data;
-      else if(Color EQ 0x02)
-          return Data<<1;
+          Index = GET_POINT_INDEX(Simple_Border_Data0[Type].Width,X,Y);
+
+          Data = Get_Buf_Bit((INT8U *)Simple_Border_Data0[Type].Data, MAX_SBORDER_DATA_LEN,Index); //±ß¿òÊý¾Ý×î´óÒ»°ã²»³¬¹ýMAX_SBORDER_DATA_LEN×Ö½Ú
+          Color = Prog_Status.File_Para[Area_No].Pic_Para.Border_Color;
+          if(Color <= 0x01)
+              return Data;
+          else if(Color EQ 0x02)
+              return Data<<1;
+          else
+              return (Data <<1) + Data;
+      }
       else
-          return (Data <<1) + Data;
+      {
+         Type = Type & 0x7F;
+
+         if(Type >= S_NUM(Simple_Border_Data1))
+            Type = 0;
+         //--´ýÍê³É
+      }
     }
 }
 
@@ -219,15 +282,20 @@ void Clr_Border(S_Show_Data *pDst, INT8U Area_No, INT8U Width, INT8U Height)
 //»ñÈ¡Ä³¸ö·ÖÇøµÄ¿í¶È
 INT8U Get_Area_Border_Width(INT8U Area_No)
 {
-    INT8U Type;
+    //INT8U Type;
 
   if(Area_No EQ MAX_AREA_NUM)
     return Prog_Para.Border_Width;
   else
   {
-      Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
-      return Simple_Border_Data[Type].Width;
-    //return 0;
+      if(1)//Prog_Status.File_Para[Area_No].Pic_Para.Border_Check > 0)
+      {
+        return Get_Simple_Border_Width(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
+      }
+      else
+      {
+          return 0;
+      }
   }
 }
 
@@ -242,10 +310,7 @@ INT8U Get_Area_Border_Height(INT8U Area_No)
   {
       if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check > 0)
       {
-        Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
-        if(Type >= S_NUM(Simple_Border_Data))
-            Type = 0;
-        return Simple_Border_Data[Type].Height;
+        return Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
       }
       else
       {
@@ -294,6 +359,7 @@ void Update_Border_Data(INT8U Area_No)
 {
   INT32U Max_Step;//, Size;
   static S_Int8U InitFlag = {CHK_BYTE, 0, CHK_BYTE};
+  S_Simple_Border_Data *p;
   INT8U i;
 
   //»¹ÔÚÒÆ¶¯×´Ì¬
@@ -307,8 +373,9 @@ void Update_Border_Data(INT8U Area_No)
   INT8U Type;
 
   if(Prog_Status.Play_Status.New_Prog_Flag ||\
-     Prog_Status.Area_Status[Area_No].New_File_Flag ||\
-     Prog_Status.Area_Status[Area_No].New_SCN_Flag) //¸Ã½ÚÄ¿»ò¸Ã·ÖÇø»¹Ã»ÓÐ½øÈë²¥·Å×´Ì¬?
+     (Area_No < MAX_AREA_NUM &&\
+     (Prog_Status.Area_Status[Area_No].New_File_Flag ||\
+      Prog_Status.Area_Status[Area_No].New_SCN_Flag))) //¸Ã½ÚÄ¿»ò¸Ã·ÖÇø»¹Ã»ÓÐ½øÈë²¥·Å×´Ì¬?
     return;
 
   //µÚÒ»´Î½øÈë¸Ãº¯Êý£¬³õÊ¼»¯Ïà¹Øº¯ÊýÍ·Î²
@@ -374,8 +441,8 @@ void Update_Border_Data(INT8U Area_No)
       Border_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Border_Mode;
       Border_Width = Get_Area_Border_Width(Area_No);
       Border_Height = Get_Area_Border_Height(Area_No);
-      Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
-      pBorder_Data = (INT8U *)Simple_Border_Data[Type].Data;
+      p = Get_Simple_Border_Info(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
+      pBorder_Data = (INT8U *)(p->Data);
 //#endif
 /*
       Step_Time = 10;//Prog_Status.File_Para[Area_No].Pic_Para.Border_StayTime;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMmsµÄµÄÒ»¸öËÙ¶È²½½ø
