@@ -178,7 +178,7 @@ void MainWindow::setupEditActions()
     tb->setWindowTitle(tr("File Actions"));
     addToolBar(tb);
 
-    QMenu *menu = new QMenu(tr("增加"), this);
+    QMenu *menu = new QMenu(tr("添加"), this);
     menuBar()->addMenu(menu);
 
     QAction *a;
@@ -1213,6 +1213,7 @@ void MainWindow::previewProc()
   stepTimer += QT_MOVE_STEP_TIMER;
 
   Get_Cur_Time();
+  Pub_Timer.Ms = msCounts;
   Pub_Timer.Ms100 = msCounts / 100;
   Pub_Timer.Sec = Cur_Time.Time[T_SEC]; //定时器更新
 

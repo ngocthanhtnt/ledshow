@@ -917,7 +917,7 @@ void Update_Pic_Data(INT8U Area_No)
 		}
 		else
 		{
-	      Prog_Status.Area_Status[Area_No].Stay_Time = (Pub_Timer.Ms100 - Prog_Status.Area_Status[Area_No].Bak_Ms100)*100;
+              Prog_Status.Area_Status[Area_No].Stay_Time = 1 + (Pub_Timer.Ms100 - Prog_Status.Area_Status[Area_No].Bak_Ms100)*100;
 		  if(Prog_Status.Area_Status[Area_No].Stay_Time >= Stay_Time)
 		  {
 		    Prog_Status.Area_Status[Area_No].Step_Timer = 0;

@@ -54,6 +54,7 @@ QImage getBorderImage(int type, int index, QColor color)
 {
 
    int i,j;
+   S_Simple_Border_Data *p;
 /*
    if(index >= sizeof(Border_Data)/sizeof(Border_Data[0]))
    {
@@ -78,12 +79,14 @@ QImage getBorderImage(int type, int index, QColor color)
     }
    else
    {
-       QImage border(Simple_Border_Data[index].Width, Simple_Border_Data[index].Height, QImage::Format_RGB32);
+       p = Get_Simple_Border_Info(index);
+
+       QImage border(p->Width, p->Height, QImage::Format_RGB32);
        border.fill(Qt::black);
        for(i = 0; i < border.width(); i ++)
            for(j = 0; j <border.height(); j++)
            {
-             if(Get_Rect_Buf_Bit((INT8U *)Simple_Border_Data[index].Data, sizeof(Simple_Border_Data[index].Data), Simple_Border_Data[index].Width, i, j) > 0)
+             if(Get_Rect_Buf_Bit((INT8U *)(p->Data), MAX_SBORDER_DATA_LEN, p->Width, i, j) > 0)
                  border.setPixel(i, j, color.rgb());
        }
 

@@ -3999,7 +3999,11 @@ void Move_Horizontal_Window(INT8U Area_No)
   //INT32U Step;
 
   Width = WIN_LEAF_WIDTH;
-  Num = Prog_Para.Area[Area_No].X_Len / Width;
+  if(Prog_Para.Area[Area_No].X_Len % Width EQ 0)
+    Num = Prog_Para.Area[Area_No].X_Len / Width;
+  else
+    Num = Prog_Para.Area[Area_No].X_Len / Width + 1;
+
   if(Num EQ 0)
       Num = 1;
 
@@ -4021,7 +4025,11 @@ void Move_Vertical_Window(INT8U Area_No)
     //INT32U Step;
 
     Width = WIN_LEAF_WIDTH;
-    Num = Prog_Para.Area[Area_No].Y_Len / Width;
+    if(Prog_Para.Area[Area_No].Y_Len % Width EQ 0)
+      Num = Prog_Para.Area[Area_No].Y_Len / Width;
+    else
+      Num = Prog_Para.Area[Area_No].Y_Len / Width + 1;
+
     if(Num EQ 0)
         Num = 1;
 
