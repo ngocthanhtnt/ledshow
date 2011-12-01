@@ -2926,7 +2926,7 @@ void Move_Left_Right_Reel_Open(INT8U Area_No)
         }
         else
         {
-          //Point[1].X = 0;
+          Point[1].X = 0;
           Len = Point[0].X;// - Point[1].X;
         }
         Point[1].Y = 0;
@@ -2954,6 +2954,7 @@ void Move_Left_Right_Reel_Open(INT8U Area_No)
         Point[1].Y = 0;
         Fill_Rect(&Show_Data, Area_No, &Point[1], Len, Prog_Para.Area[Area_No].Y_Len, 1);
     }
+
     //---------------------
 }
 

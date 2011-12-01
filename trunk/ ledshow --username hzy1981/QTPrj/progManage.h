@@ -25,13 +25,13 @@
 #define PROG_PROPERTY   0x01
 #define AREA_PROPERTY   0x02
 #define PIC_PROPERTY    0x03 //图片
-#define CLOCK_PROPERTY  0x05 //表盘
-#define TIME_PROPERTY   0x06 //日期时间
-#define TIMER_PROPERTY  0x07 //定时
-#define TEMP_PROPERTY   0x08 //温度
-#define LUN_PROPERTY    0x09    //农历
-#define HUMIDITY_PROPERTY 0x0A //湿度
-#define NOISE_PROPERTY 0x0B //噪音
+#define CLOCK_PROPERTY  0x06 //表盘
+#define TIME_PROPERTY   0x07 //日期时间
+#define TIMER_PROPERTY  0x08 //定时
+#define TEMP_PROPERTY   0x09 //温度
+#define LUN_PROPERTY    0x0a    //农历
+#define HUMIDITY_PROPERTY 0x0b //湿度
+#define NOISE_PROPERTY 0x0c //噪音
 
 #define PIC_TABLE_PROPERTY  0x30
 #define PIC_FLASH_PROPERTY  0x31 //动画

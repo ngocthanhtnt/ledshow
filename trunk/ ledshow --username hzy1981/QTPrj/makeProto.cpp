@@ -315,14 +315,15 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
           memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
           //Set_Area_Border_Out(0);
 
-          Screen_Para.Base_Para.Width -=  2*borderHeight; //getTextShowData函数需要使用到屏幕宽度，高度等，因此需要重置改参数
-          Screen_Para.Base_Para.Height -= 2*borderHeight;
+          //Screen_Para.Base_Para.Width -=  2*borderHeight; //getTextShowData函数需要使用到屏幕宽度，高度等，因此需要重置改参数
+          //Screen_Para.Base_Para.Height -= 2*borderHeight;
 
+          resetShowPara(width, height, Screen_Para.Base_Para.Color);
           //imageBk.save("d:\\mkprotoimag.png");
           getTextShowData(imageBk, &protoShowData, 0, 0);
 
-          Screen_Para.Base_Para.Width +=  2*borderHeight;
-          Screen_Para.Base_Para.Height += 2*borderHeight;
+          //Screen_Para.Base_Para.Width +=  2*borderHeight;
+          //Screen_Para.Base_Para.Height += 2*borderHeight;
 /*
           if(height % 8 EQ 0)
              tmpLen = width * height/ 8;
@@ -341,7 +342,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
           len += tmpLen;
       }
     }
-    else if(type EQ CLOCK_PROPERTY)
+    else if(type EQ CLOCK_PROPERTY) //时钟
     {
         getClockParaFromSettings(fileStr, filePara);
         QImage image = getLineTextImage(fileStr);
@@ -368,7 +369,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         memcpy(buf + len, protoShowData.Color_Data, tmpLen);
         len +=tmpLen;
     }
-    else if(type EQ LUN_PROPERTY)
+    else if(type EQ LUN_PROPERTY) //农历
     {
         getLunParaFromSettings(fileStr, filePara);
         QImage image = getLineTextImage(fileStr);
@@ -397,7 +398,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         len +=tmpLen;
 
     }
-    else if(type EQ TIME_PROPERTY)
+    else if(type EQ TIME_PROPERTY) //时间
     {
         getTimeParaFromSettings(fileStr, filePara);
         QImage image = getLineTextImage(fileStr);
@@ -424,7 +425,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         memcpy(buf + len, protoShowData.Color_Data, tmpLen);
         len +=tmpLen;
     }
-    else if(type EQ TEMP_PROPERTY)
+    else if(type EQ TEMP_PROPERTY) //温度
     {
         getTempParaFromSettings(fileStr, filePara);
         QImage image = getLineTextImage(fileStr);
@@ -452,7 +453,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         len +=tmpLen;
 
     }
-    else if(type EQ HUMIDITY_PROPERTY)
+    else if(type EQ HUMIDITY_PROPERTY) //湿度
     {
         getHumidityParaFromSettings(fileStr, filePara);
         QImage image = getLineTextImage(fileStr);
@@ -480,7 +481,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         len +=tmpLen;
 
     }
-    else if(type EQ NOISE_PROPERTY)
+    else if(type EQ NOISE_PROPERTY) //噪音
     {
         getNoiseParaFromSettings(fileStr, filePara);
         QImage image = getLineTextImage(fileStr);
@@ -508,7 +509,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         len +=tmpLen;
 
     }
-    else if(type EQ TIMER_PROPERTY)
+    else if(type EQ TIMER_PROPERTY) //计时
     {
         getTimerParaFromSettings(fileStr, filePara);
         QImage image = getLineTextImage(fileStr);
@@ -535,7 +536,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         memcpy(buf + len, protoShowData.Color_Data, tmpLen);
         len +=tmpLen;
     }
-    else if(type EQ PIC_FLASH_PROPERTY)
+    else if(type EQ PIC_FLASH_PROPERTY)//动画
     {
         getFlashParaFromSettings(fileStr, filePara);
         filePara.Pic_Para.Flag = SHOW_PIC;
@@ -552,8 +553,14 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         {
             for(int i = 0; i < count; i += count / filePara.Pic_Para.SNum)
             {
-              getFlashPageShowData(fileStr, i, &protoShowData, 0, borderHeight, borderHeight, width, height);
+            //Screen_Para.Base_Para.Width -=  2*borderHeight; //getTextShowData函数需要使用到屏幕宽度，高度等，因此需要重置改参数
+            //Screen_Para.Base_Para.Height -= 2*borderHeight;
 
+            resetShowPara(width, height, Screen_Para.Base_Para.Color);
+            getFlashPageShowData(fileStr, i, &protoShowData, 0, borderHeight, borderHeight, width, height);
+
+              //Screen_Para.Base_Para.Width +=  2*borderHeight; //getTextShowData函数需要使用到屏幕宽度，高度等，因此需要重置改参数
+              //Screen_Para.Base_Para.Height += 2*borderHeight;
               tmpLen = GET_TEXT_LEN(width, height);
               tmpLen = tmpLen * Get_Screen_Color_Num();
               if(len + tmpLen >= bufLen)
@@ -578,7 +585,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para) - CHK_BYTE_LEN); //前一个字节是头，不拷贝
 
     }
-  else if(type EQ PIC_IMAGE_PROPERTY)
+  else if(type EQ PIC_IMAGE_PROPERTY) //图片
     {
       getImageParaFromSettings(fileStr, filePara);
       filePara.Pic_Para.Flag = SHOW_PIC;
@@ -589,13 +596,20 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
       len = sizeof(S_Pic_Para) - CHK_BYTE_LEN;
 
       memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
-        getImagePageShowData(fileStr, 0, &protoShowData, 0, borderHeight, borderHeight, width, height);
 
-        tmpLen = GET_TEXT_LEN(width, height);
-        tmpLen = tmpLen * Get_Screen_Color_Num();
+      //Screen_Para.Base_Para.Width -=  2*borderHeight; //getTextShowData函数需要使用到屏幕宽度，高度等，因此需要重置改参数
+      //Screen_Para.Base_Para.Height -= 2*borderHeight;
 
-        memcpy(buf + len, protoShowData.Color_Data, tmpLen);
-        len += tmpLen;
+    resetShowPara(width, height, Screen_Para.Base_Para.Color);
+    getImagePageShowData(fileStr, 0, &protoShowData, 0, 0, 0, width, height);
+
+    //Screen_Para.Base_Para.Width +=  2*borderHeight;
+    //Screen_Para.Base_Para.Height += 2*borderHeight;
+    tmpLen = GET_TEXT_LEN(width, height);
+    tmpLen = tmpLen * Get_Screen_Color_Num();
+
+    memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+    len += tmpLen;
 
       filePara.Pic_Para.SNum = 1;
       memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para) - CHK_BYTE_LEN); //前一个字节是头，不拷贝

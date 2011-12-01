@@ -110,6 +110,8 @@ public slots:
     void columnInsertRight();
     void columnDelete();
     void cellMerge();
+
+    void edit();
     //void cellSplit();
     //void cellSplit(int rows, int columns);
 protected:
@@ -152,7 +154,7 @@ private slots:
     void printPreview(QPrinter *);
 
     void showInit();
-    void edit();
+
 
 private:
     void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
