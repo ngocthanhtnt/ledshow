@@ -174,7 +174,7 @@ QString getTypeString(int type)
     else if(type == TIME_PROPERTY)
         Qstr = QObject::tr("时间");
     else if(type == TIMER_PROPERTY)
-        Qstr = QObject::tr("定时");
+        Qstr = QObject::tr("计时");
     else if(type == TEMP_PROPERTY)
         Qstr = QObject::tr("温度");
     else if(type == LUN_PROPERTY)

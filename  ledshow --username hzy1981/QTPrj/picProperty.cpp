@@ -219,6 +219,11 @@ void CpicProperty::setSettingsToWidget(QString str)
 
     //pageBox->setValue(edit->spinPage->value());
     connectSignal();
+
+    pageBox->setMaximum(999);
+    pageBox->setValue(edit->spinPage->value());
+
+    //edit->edit();
 }
 
 int checkSLineMoveLeftContinuous(QString str)//Check_SLine_Move_Left_Continuous(QString str)

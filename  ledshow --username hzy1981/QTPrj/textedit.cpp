@@ -387,6 +387,7 @@ void TextEdit::setupTableActions()
 
     connect(menuTable, SIGNAL(aboutToShow()), this, SLOT(setupTableMenu()));
     connect(actionInsertTable, SIGNAL(triggered()), this, SLOT(tableNew()));
+    connect(actionTableProperty, SIGNAL(triggered()),this,SLOT(tableProperties()));
     /*
     connect(mw->ui.actionTableProperty, SIGNAL(triggered()), this, SLOT(tableProperties()));
     connect(mw->ui.actionDeleteTable, SIGNAL(triggered()), this, SLOT(tableDelete()));
@@ -1140,6 +1141,7 @@ void TextEdit::setSettingsToWidget(QString str)
     connect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
 
     disconnect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));
+    spinPage->setMaximum(999);
     spinPage->setValue(page);
     connect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));
 

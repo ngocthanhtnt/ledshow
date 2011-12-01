@@ -87,7 +87,7 @@ Cproperty::Cproperty(QWidget *parent):QDockWidget(parent)
 
 INT8U getStackedWidgetIndex(INT8U type)
 {
-    if(type < 12)
+    if(type < 13)
         return type;
     else if(type EQ PIC_MTEXT_PROPERTY ||\
             type EQ PIC_STEXT_PROPERTY ||\

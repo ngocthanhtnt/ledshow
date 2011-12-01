@@ -169,6 +169,9 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
       Copy_Filled_Rect(pDst, Area_No,&P0, Width, Height, pDst, &P1, 0);
    }
 
+   //左右边框
+   if(Width > Area_Height) //不应超过高度
+       Width = Area_Height;
 
    for(i = 0; i < Width; i ++)
      for(j = 0; j < Height; j ++)
