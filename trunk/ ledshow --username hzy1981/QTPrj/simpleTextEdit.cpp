@@ -317,11 +317,37 @@ void CshowModeEdit::inModeChanged()
       //outModeCombo->setCurrentIndex(2);
       outModeCombo->setEnabled(true);
     }
+/*
+    if(inModeCombo->currentIndex() EQ 1)
+    {
+        inSpeedEdit->setCurrentIndex(0);
+        inSpeedEdit->setEnabled(false);//setEditable(false);
+    }
+    else
+    {
+        inSpeedEdit->setEnabled(true);
+    }
+    */
+}
+
+void CshowModeEdit::outModeChanged()
+{/*
+    if(outModeCombo->currentIndex() EQ 2)
+    {
+        outSpeedEdit->setCurrentIndex(0);
+        outSpeedEdit->setEnabled(false);//setEditable(false);
+    }
+    else
+    {
+        outSpeedEdit->setEnabled(true);
+    }
+    */
 }
 
 void CshowModeEdit::connectSignal()
 {
     connect(inModeCombo, SIGNAL(currentIndexChanged(int)),this, SLOT(inModeChanged()));
+    connect(outModeCombo, SIGNAL(currentIndexChanged(int)),this,SLOT(outModeChanged()));
     connect(inModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     connect(outModeCombo, SIGNAL(indexChangeSignal()),this,SIGNAL(edited()));
     connect(inSpeedEdit, SIGNAL(currentIndexChanged(int)),this,SIGNAL(edited()));

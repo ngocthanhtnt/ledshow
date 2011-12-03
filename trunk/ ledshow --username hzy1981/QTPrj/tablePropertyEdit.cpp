@@ -39,6 +39,8 @@ CtablePropertyEdit::CtablePropertyEdit(QWidget *parent)
   colsEdit = new QSpinBox(this);
   widthEdit = new QSpinBox(this);
 
+  widthEdit->setMaximum(9999);
+
   hLayout->addWidget(rowsLabel);
   hLayout->addWidget(rowsEdit);
   hLayout->addWidget(colsLabel);
@@ -71,17 +73,17 @@ CtablePropertyEdit::CtablePropertyEdit(QWidget *parent)
   borderColor = new CcolorCombo(this);
   borderStyle = new QComboBox(this);
 
-  borderStyle->addItem("None");
-  borderStyle->addItem("Dotted");
-  borderStyle->addItem("Dashed");
-  borderStyle->addItem("Solid");
-  borderStyle->addItem("Double");
-  borderStyle->addItem("DotDash");
-  borderStyle->addItem("DotDotDash");
-  borderStyle->addItem("Groove");
-  borderStyle->addItem("Ridge");
-  borderStyle->addItem("Inset");
-  borderStyle->addItem("Outset");
+  borderStyle->addItem(tr("无边框"));
+  borderStyle->addItem(tr("点状"));
+  borderStyle->addItem(tr("虚线"));
+  borderStyle->addItem(tr("实线"));
+  borderStyle->addItem(tr("双实线"));
+  borderStyle->addItem(tr("点虚线"));
+  borderStyle->addItem(tr("点点虚线"));
+  //borderStyle->addItem("Groove");
+  //borderStyle->addItem("Ridge");
+  //borderStyle->addItem("Inset");
+  //borderStyle->addItem("Outset");
 
   hLayout->addWidget(borderWidthLabel);
   hLayout->addWidget(borderWidth);
