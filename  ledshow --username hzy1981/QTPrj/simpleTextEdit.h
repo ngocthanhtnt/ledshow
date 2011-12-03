@@ -45,6 +45,7 @@ signals:
     void edited();
 public slots:
     void inModeChanged();
+    void outModeChanged();
 private:
     QLabel *inModeLabel; //引入模式
     QLabel *outModeLabel; //退出模式
