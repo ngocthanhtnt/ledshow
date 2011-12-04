@@ -211,7 +211,7 @@ void updateFlashShowArea(CshowArea *area)
     //CshowArea *area;
     QString str;
     QTreeWidgetItem *item;
-    int x,y;
+    //int x,y;
 
     if(area != (CshowArea *)0) //
     {

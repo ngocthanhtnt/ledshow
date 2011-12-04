@@ -2,7 +2,7 @@
 #include "Includes.h"
 
 #if BORDER_SHOW_EN > 0
-
+/*
 const INT8U B0Data0[] = {0xFF, 0xFF,0xFF, 0xFF, 0xFF};//, 0xFF};
 const INT8U B0Data1[] = {0xFF, 0xFF,0xF0, 0x00, 0x00};//, 0x00};
 const INT8U B0Data2[] = {0x0F, 0x0F,0x0F, 0x0F, 0x0F};//, 0x0F};
@@ -90,61 +90,32 @@ INT8U Get_Simple_Border_Height(INT8U Index)
   p = Get_Simple_Border_Info(Index);
   return p->Height;
 }
+*/
 
 //获取边框数据
 //X\Y表示在边框数据块内的索引
-INT8U Get_Border_Point_Data(INT8U Area_No, INT16U X, INT16U Y) //获取一个区域内一个点的数据
+INT8U Get_Border_Point_Data(INT8U *pData, INT8U Area_No, INT16U X, INT16U Y) //获取一个区域内一个点的数据
 {
-    INT8U Type,Data,Color,Index;
-    //S_Simple_Border_Data *p;
-
     if(Area_No EQ MAX_AREA_NUM)
-      return Get_Buf_Point_Data(Prog_Para.Border_Data, sizeof(Prog_Para.Border_Data), Screen_Para.Base_Para.Color, Prog_Para.Border_Width, X, Y);
+      return Get_Buf_Point_Data(pData, BORDER_DATA_LEN, Screen_Para.Base_Para.Color, Prog_Para.Border_Width, X, Y);
     else
     {
-
-      Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
-
-      if((Type >> 7) EQ 0)
-      {
-          if(Type >= S_NUM(Simple_Border_Data0))
-             Type = 0;
-
-          Index = GET_POINT_INDEX(Simple_Border_Data0[Type].Width,X,Y);
-
-          Data = Get_Buf_Bit((INT8U *)Simple_Border_Data0[Type].Data, MAX_SBORDER_DATA_LEN,Index); //边框数据最大一般不超过MAX_SBORDER_DATA_LEN字节
-          Color = Prog_Status.File_Para[Area_No].Pic_Para.Border_Color;
-          if(Color <= 0x01)
-              return Data;
-          else if(Color EQ 0x02)
-              return Data<<1;
-          else
-              return (Data <<1) + Data;
-      }
-      else
-      {
-         Type = Type & 0x7F;
-
-         if(Type >= S_NUM(Simple_Border_Data1))
-            Type = 0;
-         //--待完成
-      }
+      return Get_Buf_Point_Data(pData, BORDER_DATA_LEN, Screen_Para.Base_Para.Color, Prog_Status.File_Para[Area_No].Pic_Para.Border_Width, X, Y);
     }
 }
 
-void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, INT8U Height,  INT32U Step)
+void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT32U Step, INT8U Flag)
 {
    INT8U Re;
    INT16U i,j,Len;
    INT16U Area_Width, Area_Height;
+   INT8U Width, Height;
    S_Point P0,P1;
-   //INT8U Color;
-   //S_Show_Data *pShow_Data;
-   //INT16U Temp;
 
    Area_Width = Get_Area_Width(Area_No); //分区的宽度和高度
    Area_Height = Get_Area_Height(Area_No);
    Width = Get_Area_Border_Width(Area_No);
+   Height = Get_Area_Border_Height(Area_No);
 
    //在Pub_Buf中建立一个Show_Data,用于复制数据
    //pShow_Data = (S_Show_Data *) &_Pub_Buf;
@@ -153,26 +124,29 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
    for(i = 0; i < Width; i ++)
      for(j = 0; j < Height; j ++)
      {
-       Re = Get_Border_Point_Data(Area_No, (i + Step) % Width, j);
+       Re = Get_Border_Point_Data(pData, Area_No, i/*(i + Step) % Width*/, j);
        Set_Area_Point_Data(pDst, Area_No, i, j, Re); //上边框
        Set_Area_Point_Data(pDst, Area_No, Width - 1 - i, Area_Height-1 - j, Re); //下边框
      }
 
-   P0.X = 0;
-   P0.Y = 0;
-
-   P1.X = 0;
-   P1.Y = 0;
-   while(P1.X < Area_Width)
+   if(Flag)
    {
-      P1.X = P1.X + Width;
-      P0.Y = 0;
-      P1.Y = 0;
-      Copy_Filled_Rect(pDst, Area_No,&P0, Width, Height, pDst, &P1, 0);
+       P0.X = 0;
+       P0.Y = 0;
 
-      P0.Y = Area_Height - Height;
-      P1.Y = Area_Height - Height;
-      Copy_Filled_Rect(pDst, Area_No,&P0, Width, Height, pDst, &P1, 0);
+       P1.X = 0;
+       P1.Y = 0;
+       while(P1.X < Area_Width)
+       {
+          P1.X = P1.X + Width;
+          P0.Y = 0;
+          P1.Y = 0;
+          Copy_Filled_Rect(pDst, Area_No,&P0, Width, Height, pDst, &P1, 0);
+
+          P0.Y = Area_Height - Height;
+          P1.Y = Area_Height - Height;
+          Copy_Filled_Rect(pDst, Area_No,&P0, Width, Height, pDst, &P1, 0);
+       }
    }
 
    //左右边框
@@ -182,94 +156,133 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, IN
    for(i = 0; i < Width; i ++)
      for(j = 0; j < Height; j ++)
      {
-       Re = Get_Border_Point_Data(Area_No, (i + Step) % Width, j);
-       Set_Area_Point_Data(pDst, Area_No, j, Width -1 - i, Re); //左边框
-       Set_Area_Point_Data(pDst, Area_No, Area_Width - 1 - j, i, Re); //右边框
+       Re = Get_Border_Point_Data(pData, Area_No, i, j);
+       Set_Area_Point_Data(pDst, Area_No, j, Height + i, Re); //左边框
+       Set_Area_Point_Data(pDst, Area_No, Area_Width - 1 - j, Height + Width -1 - i, Re); //右边框
      }
 
-   P0.X = 0;
-   P0.Y = 0;
-
-   P1.X = 0;
-   P1.Y = Width;
-   while((INT32S)P1.Y < (INT32S)(Area_Height - Height))
+   if(Flag)
    {
-      if(P1.Y + Width >= (INT32S)(Area_Height - Height))
-          Len = Area_Height - Height - P1.Y;
-      else
-          Len = Width;
+       P0.X = 0;
+       P0.Y = Height;
 
-      P0.X = 0;
-      P1.X = 0;
-      Copy_Filled_Rect(pDst, Area_No,&P0,Height, Len,  pDst, &P1, 0);
+       P1.X = 0;
+       P1.Y = Width + Height;
+       while((INT32S)P1.Y < (INT32S)(Area_Height - Height))
+       {
+          if(P1.Y + Width >= (INT32S)(Area_Height - Height))
+              Len = Area_Height - Height - P1.Y;
+          else
+              Len = Width;
 
-      P0.X = Area_Width - Height;
-      P1.X = Area_Width - Height;
-      Copy_Filled_Rect(pDst, Area_No,&P0,Height, Len, pDst, &P1, 0);
+          P0.X = 0;
+          P1.X = 0;
+          Copy_Filled_Rect(pDst, Area_No,&P0,Height, Len,  pDst, &P1, 0);
 
-      P1.Y = P1.Y + Len;
-   }
+          P0.X = Area_Width - Height;
+          P1.X = Area_Width - Height;
+          Copy_Filled_Rect(pDst, Area_No,&P0,Height, Len, pDst, &P1, 0);
+
+          P1.Y = P1.Y + Len;
+       }
+    }
 }
-/*
-//绘制边框
-//pDst表示目标绘制区
-//Area_No表示目标分区
-//Width表示边框单元图像的宽度
-//Height表示边框单元图像的高度
-//pData表示数据
-//Step表示显示步进
-void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, INT8U Height,  INT32U Step)
+
+void Copy_Border(INT8U Area_No, INT32U Step)
 {
-   INT8U Re;
-   INT16U i,j;
-   INT16U Area_Width, Area_Height, Border_Width;
-   INT16U Temp;
-  
-   Area_Width = Get_Area_Width(Area_No); //分区的宽度和高度
-   Area_Height = Get_Area_Height(Area_No);
-   Border_Width = Get_Area_Border_Width(Area_No);
+    INT8U Re;
+    INT16U i,j,Len;
+    INT16U Area_Width, Area_Height;
+    INT8U Width, Height;
+    S_Point P0,P1;
+    //INT8U Color;
+    S_Show_Data *pDst;
+    //INT16U Temp;
 
-   //边框长宽是否合理
-   if(Width*Height > MAX_BORDER_POINTS || Width EQ 0 || Height EQ 0 || Border_Width EQ 0)
-   {
-       ASSERT_FAILED();
-       return;
-   }
+    //Step = 0;
+    pDst = &Show_Data;
+    Area_Width = Get_Area_Width(Area_No); //分区的宽度和高度
+    Area_Height = Get_Area_Height(Area_No);
+    Width = Get_Area_Border_Width(Area_No);
+    Height = Get_Area_Border_Height(Area_No);
 
-   //上下边框
-   for(i = 0; i < Area_Width; i ++)
-     for(j = 0; j < Height; j ++)
-     {
-       Re = Get_Border_Point_Data(Area_No, (i + Step) % Border_Width, j);
-       Set_Area_Point_Data(pDst, Area_No, i, j, Re); //上边框
-       Set_Area_Point_Data(pDst, Area_No, Area_Width-1 - i, Area_Height-1 - j, Re); //下边框
-     }
-  
-   //左右边框
-   if(Area_Height > Height)
-       Temp = Area_Height - Height;
-   else
-       Temp = 0;
+    //在Pub_Buf中建立一个Show_Data,用于复制数据
+    //pShow_Data = (S_Show_Data *) &_Pub_Buf;
 
-   for(i = Height; i < Temp; i ++)
-     for(j = 0; j < Height; j ++)
-     {
-       Re = Get_Border_Point_Data(Area_No, (i + Area_Width + Step) % Border_Width, j);
-       Set_Area_Point_Data(pDst, Area_No, j, Area_Height - 1 - i, Re); //左边框
-       Set_Area_Point_Data(pDst, Area_No, Area_Width-1 -j, i, Re); //右边框
-     }   
+    //上下边框
+    for(i = 0; i < Width; i ++)
+      for(j = 0; j < Height; j ++)
+      {
+        Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, (i + Step) % Width, j);
+        Set_Area_Point_Data(pDst, Area_No, i, j, Re); //上边框
+        Set_Area_Point_Data(pDst, Area_No, Width - 1 - i, Area_Height-1 - j, Re); //下边框
+      }
+
+    P0.X = 0;
+    P0.Y = 0;
+
+    P1.X = 0;
+    P1.Y = 0;
+    while(P1.X < Area_Width)
+    {
+       P1.X = P1.X + Width;
+       P0.Y = 0;
+       P1.Y = 0;
+       Copy_Filled_Rect(pDst, Area_No,&P0, Width, Height, pDst, &P1, 0);
+
+       P0.Y = Area_Height - Height;
+       P1.Y = Area_Height - Height;
+       Copy_Filled_Rect(pDst, Area_No,&P0, Width, Height, pDst, &P1, 0);
+    }
+
+    //左右边框
+    if(Width > Area_Height) //不应超过高度
+        Width = Area_Height;
+
+    for(i = 0; i < Width; i ++)
+      for(j = 0; j < Height; j ++)
+      {
+        Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, (i + Step) % Width, j);
+        Set_Area_Point_Data(pDst, Area_No, j,Height + Width -1 - i, Re); //左边框
+        Set_Area_Point_Data(pDst, Area_No, Area_Width - 1 - j,Height + i, Re); //右边框
+      }
+
+    P0.X = 0;
+    P0.Y = Height;
+
+    P1.X = 0;
+    P1.Y = Width + Height;
+    while((INT32S)P1.Y < (INT32S)(Area_Height - Height))
+    {
+       if(P1.Y + Width >= (INT32S)(Area_Height - Height))
+           Len = Area_Height - Height - P1.Y;
+       else
+           Len = Width;
+
+       P0.X = 0;
+       P1.X = 0;
+       Copy_Filled_Rect(pDst, Area_No,&P0,Height, Len,  pDst, &P1, 0);
+
+       P0.X = Area_Width - Height;
+       P1.X = Area_Width - Height;
+       Copy_Filled_Rect(pDst, Area_No,&P0,Height, Len, pDst, &P1, 0);
+
+       P1.Y = P1.Y + Len;
+    }
 }
-*/
 
 //清除边界--闪烁时调用
-void Clr_Border(S_Show_Data *pDst, INT8U Area_No, INT8U Width, INT8U Height)
+void Clr_Border(S_Show_Data *pDst, INT8U Area_No)
 {
 
     INT16U Area_Width, Area_Height;//, Border_Width, Border_Height;
+    INT8U Width, Height;
     S_Point P0;
 
     Area_Width = Get_Area_Width(Area_No); //分区的宽度和高度
     Area_Height = Get_Area_Height(Area_No);
+    Width = Get_Area_Border_Width(Area_No);
+    Height = Get_Area_Border_Height(Area_No);
     //Border_Width = Get_Area_Border_Width(Area_No);
     //Border_Height = Get_Area_Border_Height(Area_No);
 
@@ -291,41 +304,20 @@ void Clr_Border(S_Show_Data *pDst, INT8U Area_No, INT8U Width, INT8U Height)
 //获取某个分区的宽度
 INT8U Get_Area_Border_Width(INT8U Area_No)
 {
-    //INT8U Type;
-
   if(Area_No EQ MAX_AREA_NUM)
     return Prog_Para.Border_Width;
   else
-  {
-      if(1)//Prog_Status.File_Para[Area_No].Pic_Para.Border_Check > 0)
-      {
-        return Get_Simple_Border_Width(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
-      }
-      else
-      {
-          return 0;
-      }
-  }
+    return Prog_Status.File_Para[Area_No].Pic_Para.Border_Width;
 }
 
 //获取某个分区的高度
 INT8U Get_Area_Border_Height(INT8U Area_No)
 {
-     INT8U Type;
-
   if(Area_No >= MAX_AREA_NUM)
     return Prog_Para.Border_Height;
   else
   {
-      if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check > 0)
-      {
-        return Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
-      }
-      else
-      {
-          return 0;
-      }
-    //return 0;
+      return Prog_Status.File_Para[Area_No].Pic_Para.Border_Height;
   }
 }
 
@@ -368,7 +360,7 @@ void Update_Border_Data(INT8U Area_No)
 {
   INT32U Max_Step;//, Size;
   static S_Int8U InitFlag = {CHK_BYTE, 0, CHK_BYTE};
-  S_Simple_Border_Data *p;
+  //S_Simple_Border_Data *p;
   INT8U i;
 
   //还在移动状态
@@ -377,9 +369,9 @@ void Update_Border_Data(INT8U Area_No)
     
   INT16U Step_Time = 0; //步进时间
   INT8U Border_Width,Border_Height;
-  INT8U *pBorder_Data;
+  //INT8U *pBorder_Data;
   INT8U Border_Mode;
-  INT8U Type;
+  //INT8U Type;
 
   if(Prog_Status.Play_Status.New_Prog_Flag ||\
      (Area_No < MAX_AREA_NUM &&\
@@ -408,11 +400,7 @@ void Update_Border_Data(INT8U Area_No)
       Step_Time = (INT16U)(Prog_Para.Border_Speed + 1)*MOVE_STEP_PERIOD;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
       Prog_Status.Border_Status[Area_No].Timer += MOVE_STEP_PERIOD;
       Max_Step = 0xFFFFFFFF;//Screen_Para.Base_Para.Width + Screen_Para.Base_Para.Height;
-      //Timer[Area_No].Var += MOVE_STEP_PERIOD;
       Border_Mode = Prog_Para.Border_Mode;
-      Border_Width = Get_Area_Border_Width(Area_No);
-      Border_Height = Get_Area_Border_Height(Area_No);
-      pBorder_Data = Prog_Para.Border_Data;
   }
   else
   {
@@ -424,50 +412,18 @@ void Update_Border_Data(INT8U Area_No)
 
       if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check EQ 0)
           return;
-/*
-      if(Prog_Status.Area_Status[Area_No].New_File_Flag > 0 ||\
-	     Prog_Status.Area_Status[Area_No].New_SCN_Flag > 0)
-          return;
-		  */
-/*
-      if(Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 2 &&
-         Prog_Status.File_Para[Area_No].Pic_Para.In_Mode <= 7)
-      {
-         if(Prog_Status.Area_Status[Area_No].In_Step EQ 0)//新屏幕
-          {
-             Restore_Border_Data(Area_No);
-             return;
-         }
 
-      }
-*/
       TRACE();
-//#if 0
+
       Step_Time = (INT16U)(Prog_Status.File_Para[Area_No].Pic_Para.Border_Speed + 1)*MOVE_STEP_PERIOD;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
       Prog_Status.Border_Status[Area_No].Timer += MOVE_STEP_PERIOD;
-      Max_Step = 0xFFFFFFFF;//Prog_Para.Area[Area_No].X_Len + Prog_Para.Area[Area_No].Y_Len;//Screen_Para.Base_Para.Width + Screen_Para.Base_Para.Height;
-      //Timer[Area_No].Var += MOVE_STEP_PERIOD;
+      Max_Step = 0xFFFFFFFF;
       Border_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Border_Mode;
-      Border_Width = Get_Area_Border_Width(Area_No);
-      Border_Height = Get_Area_Border_Height(Area_No);
-      p = Get_Simple_Border_Info(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
-      pBorder_Data = (INT8U *)(p->Data);
-//#endif
-/*
-      Step_Time = 10;//Prog_Status.File_Para[Area_No].Pic_Para.Border_StayTime;//(Prog_Para.Border_Speed+ 1)*MAX_STEP_NUM; //MAX_STEP_NUMms的的一个速度步进
-      Prog_Status.Border_Status[Area_No].Timer += MOVE_STEP_PERIOD;
-      Timer[Area_No].Var += MOVE_STEP_PERIOD;
 
-      Border_Width =  Get_Area_Border_Width(Area_No);
-      Border_Height = Get_Area_Border_Height(Area_No);
+  }
 
-      INT8U Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
-      pBorder_Data = (INT8U *)Simple_Border_Data[Type].Data;
-      //pBorder_Data = Prog_Para.Border_Data;
-*/
-}
-  //Size = Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * GET_COLOR_NUM(Screen_Para.Base_Para.Color)/8;
-  //MOVE_STEP = Calc_Move_Step();//Size / 8192 + 1;
+  Border_Width = Get_Area_Border_Width(Area_No);
+  Border_Height = Get_Area_Border_Height(Area_No);
 
   if(Prog_Status.Border_Status[Area_No].Timer >= Step_Time)
   {
@@ -476,11 +432,7 @@ void Update_Border_Data(INT8U Area_No)
 	if(Prog_Status.Border_Status[Area_No].Step + MOVE_STEP + Border_Width >= Max_Step)
 	  Prog_Status.Border_Status[Area_No].Step = 0;//Max_Step - Prog_Status.Border_Status[Area_No].Step;
     
-	//if(Prog_Status.Border_Status[Area_No].Step < Max_Step)
       Prog_Status.Border_Status[Area_No].Step += MOVE_STEP;
-
-    //if(Prog_Status.Border_Status[Area_No].Step >= Max_Step)
-     //Prog_Status.Border_Status[Area_No].Step = Prog_Status.Border_Status[Area_No].Step % Max_Step;
 
 
     Timer[Area_No].Var ++;
@@ -493,42 +445,36 @@ void Update_Border_Data(INT8U Area_No)
 
     if(Border_Mode EQ BORDER_STATIC) //静态
     {
-      Draw_Border(&Show_Data, Area_No, pBorder_Data, \
-                  Border_Width,  Border_Height, 0);
+      Copy_Border(Area_No, 0);
     }
     else if(Border_Mode EQ BORDER_FLASH) //闪烁
     {
       if(Flag[Area_No].Var EQ 0)
-        Draw_Border(&Show_Data, Area_No, pBorder_Data, \
-                    Border_Width, Border_Height, 0);
+        Copy_Border(Area_No, 0);
       else
-        Clr_Border(&Show_Data, Area_No, Border_Width, Border_Height);
+        Clr_Border(&Show_Data, Area_No);
     }
     else if(Border_Mode EQ BORDER_CLKWS) //顺时针
     {
-      Draw_Border(&Show_Data, Area_No, pBorder_Data, \
-                  Border_Width, Border_Height, Max_Step - Border_Width - Prog_Status.Border_Status[Area_No].Step);
+      Copy_Border(Area_No, Max_Step - Border_Width - Prog_Status.Border_Status[Area_No].Step);
     }
     else if(Border_Mode EQ BORDER_CCLKWS) //逆时针
     {
-      Draw_Border(&Show_Data, Area_No, pBorder_Data, \
-                  Border_Width, Border_Height, Prog_Status.Border_Status[Area_No].Step);
+      Copy_Border(Area_No, Prog_Status.Border_Status[Area_No].Step);
     }
     else if(Border_Mode EQ BORDER_CLKWS_FLASH) //顺时针闪烁
     {
       if(Flag[Area_No].Var EQ 0)
-        Draw_Border(&Show_Data, Area_No, pBorder_Data, \
-                    Border_Width, Border_Height, Max_Step - Border_Width - Prog_Status.Border_Status[Area_No].Step);
+        Copy_Border(Area_No, Max_Step - Border_Width - Prog_Status.Border_Status[Area_No].Step);
       else
-        Clr_Border(&Show_Data, Area_No, Border_Width, Border_Height);      
+        Clr_Border(&Show_Data, Area_No);
     }
     else if(Border_Mode EQ BORDER_CCLKWS_FLASH) //逆时针闪烁
     {
       if(Flag[Area_No].Var EQ 0)
-        Draw_Border(&Show_Data, Area_No, pBorder_Data, \
-                    Border_Width, Border_Height, Prog_Status.Border_Status[Area_No].Step);
+        Copy_Border(Area_No, Prog_Status.Border_Status[Area_No].Step);
       else
-        Clr_Border(&Show_Data, Area_No, Border_Width, Border_Height);        
+        Clr_Border(&Show_Data, Area_No);
     }
    }
       

@@ -19,6 +19,157 @@ extern MainWindow *w;
 extern QSettings settings;
 
 #define TIME_EDIT_WIDTH 80
+
+
+//定义边框数据
+const S_Border_Data Border_Data[] =
+{
+    {40,1,{0xFF,0xFF,0xFF,0xFF,0xFF}},
+    /*--  每五个点一个单元  --*/
+    /*--  宽度x高度=40x8  --*/
+    {40,1,{0xE0,0x83,0x0F,0x3E,0xF8}},
+    /*--  每10个点一个单元  --*/
+    /*--  宽度x高度=40x8  --*/
+    {40,1,{0x00,0xFC,0x0F,0xC0,0xFF}},
+
+    /*--    --*/
+    /*--  宽度x高度=40x8  --*/
+    {40,2,{0x00,0xFC,0x0F,0xC0,0xFF,
+           0x00,0xFC,0x0F,0xC0,0xFF}},
+
+    /*--  调入了一幅图像：这是您新建的图像  --*/
+    /*--  宽度x高度=40x8  --*/
+    {40,2,{0xFF,0xFF,0xFF,0xFF,0xFF,
+           0x00,0xFC,0x0F,0xC0,0xFF}},
+
+    /*--  调入了一幅图像：这是您新建的图像  --*/
+    /*--  宽度x高度=40x8  --*/
+    {40,2,{0x00,0xFC,0x0F,0xC0,0xFF,
+           0xFF,0xFF,0xFF,0xFF,0xFF}},
+
+    {40,3,{0x00,0xFC,0x0F,0xC0,0xFF,
+           0xFF,0xFF,0xFF,0xFF,0xFF,
+           0x00,0xFC,0x0F,0xC0,0xFF}},
+
+    {40,3,{0xE0,0x83,0x0F,0x3E,0xF8,
+           0xFF,0xFF,0xFF,0xFF,0xFF,
+           0xE0,0x83,0x0F,0x3E,0xF8}},
+    //箭头
+    {40,3,{0x00,0x00,0x02,0x00,0x20,
+           0xFF,0xFF,0xF7,0xFF,0x7F,
+           0x00,0x00,0x02,0x00,0x20}},
+
+    {40,3,{0x80,0x00,0x02,0x08,0x20,
+           0xFF,0xFD,0xF7,0xDF,0x7F,
+           0x80,0x00,0x02,0x08,0x20}},
+};
+
+int getBorderWidth(int index)
+{
+    if(index >= S_NUM(Border_Data))
+        index = 0;
+    return Border_Data[index].Width;
+}
+
+int getBorderHeight(int index)
+{
+    if(index >= S_NUM(Border_Data))
+        index = 0;
+    return Border_Data[index].Height;
+}
+
+//获取边框数据
+void getBorderData(QString str, INT8U Dst[], INT16U DstLen)
+{
+    bool check;
+    INT8U Re;
+    int width,height;
+
+    memset(Dst, 0x00, BORDER_DATA_LEN);
+    settings.beginGroup(str);
+    settings.beginGroup("borderPara");
+    check = settings.value("borderCheck").toBool();
+
+    int style = settings.value("borderStyle").toInt();
+    INT8U color = settings.value("borderColor").toInt();
+
+    settings.endGroup();
+    settings.endGroup();
+
+    if(style >= S_NUM(Border_Data))
+        style = 0;
+
+    if(check)
+    {
+       width = Border_Data[style].Width;
+       height = Border_Data[style].Height;
+
+       for(int i = 0; i < width; i ++)
+           for(int j = 0; j < height; j++)
+           {
+          //Re = Get_Buf_Point_Data((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data), color, Border_Data[index].Width, i, j);
+           Re = Get_Rect_Buf_Bit((INT8U *)Border_Data[style].Data, sizeof(Border_Data[style].Data),\
+                            width, i, j);
+           if(color < 2)
+             Re = (Re << color);
+           else
+             Re = (Re << 1) + Re;
+           Set_Buf_Point_Data((INT8U *)Dst, DstLen, Screen_Para.Base_Para.Color, width, i, j, Re);
+        }
+
+    }
+}
+
+QImage getBorderImage(int type, int index, QColor color)
+{
+
+   int i,j;
+   S_Simple_Border_Data *p;
+/*
+   if(index >= sizeof(Border_Data)/sizeof(Border_Data[0]))
+   {
+       ASSERT_FAILED();
+       return QImage(0,0);
+   }
+*/
+   if(index >= S_NUM(Border_Data))
+       index = 0;
+
+   //if(type EQ 0)
+   {
+       QImage border(Border_Data[index].Width, Border_Data[index].Height, QImage::Format_RGB32);
+       border.fill(Qt::black);
+       for(i = 0; i < border.width(); i ++)
+           for(j = 0; j <border.height(); j++)
+           {
+             if(Get_Rect_Buf_Bit((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data), Border_Data[index].Width, i, j) > 0)
+                 border.setPixel(i, j, color.rgb());
+       }
+
+       return border;
+    }
+   /*
+   else
+   {
+       p = Get_Simple_Border_Info(index);
+
+       QImage border(p->Width, p->Height, QImage::Format_RGB32);
+       border.fill(Qt::black);
+       for(i = 0; i < border.width(); i ++)
+           for(j = 0; j <border.height(); j++)
+           {
+             if(Get_Rect_Buf_Bit((INT8U *)(p->Data), MAX_SBORDER_DATA_LEN, p->Width, i, j) > 0)
+                 border.setPixel(i, j, color.rgb());
+       }
+
+       return border;
+   }
+   */
+
+   //border = border.scaled(border.width(), border.height());
+   //border.save("d:\\border.png");
+
+}
 /*
 const S_Mode_Func Mode_Func[]=
 {
@@ -1541,9 +1692,10 @@ CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
 {
     QGridLayout *gridLayout;
 
+    //魔幻边框选择
     gridLayout = new QGridLayout(this);
-    setTitle(tr("边框选择"));
-    //borderCheck = new QCheckBox(tr("启用流水边框"), this);
+    //borderGroup = new QGroupBox(tr("魔幻边框选择"), this);
+    //borderCheck = new QCheckBox(tr("启用魔幻边框"), this);
     //stepLabel = new QLabel(tr("步长"), this);
     //pointsLabel = new QLabel(tr("点数"), this);
     styleLabel = new QLabel(tr("样式"), this);
@@ -1555,7 +1707,34 @@ CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
     colorCombo = new CcolorCombo(this);
     styleCombo = new QComboBox(this);
     modeCombo = new QComboBox(this);//CmodeCombo(this);
+    //gridLayout -> addWidget(borderCheck, 0, 0, 1, 2);
+    //gridLayout -> addWidget(stepLabel, 1, 0);
+    //gridLayout -> addWidget(stepCombo, 1, 1);
+    //gridLayout -> addWidget(pointsLabel, 1, 2);
+    gridLayout -> addWidget(styleLabel, 0, 0);
+    gridLayout -> addWidget(styleCombo, 0, 1);
+     gridLayout -> addWidget(colorCombo, 0, 2);
+    gridLayout -> addWidget(modeLabel, 1, 0);
+    gridLayout -> addWidget(modeCombo, 1, 1, 1, 2);
+    gridLayout -> addWidget(speedLabel, 2, 0);
+    gridLayout -> addWidget(speedCombo, 2, 1);
+    gridLayout -> addWidget(usLabel, 2, 2);
+    this -> setLayout(gridLayout);
+    this->setCheckable(true);
+    this->setTitle(tr("魔幻边框"));
 
+    styleCombo->setIconSize(QSize(40,8));
+
+    for(unsigned int i = 0; i < S_NUM(Border_Data); i ++)
+     {
+        QPixmap borderPixmap;
+        QImage borderImage;
+        borderImage = getBorderImage(0, i, QColor(Qt::red));
+        borderImage = borderImage.scaled(borderImage.width()*10, borderImage.height()*20);
+        borderPixmap.convertFromImage(borderImage);
+        styleCombo->addItem(QIcon(borderPixmap), QString("%1").arg(Border_Data[i].Height));
+
+    }
 
     modeCombo->addItem(tr("静态"));
     modeCombo->addItem(tr("闪烁"));
@@ -1563,6 +1742,7 @@ CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
     modeCombo->addItem(tr("逆时钟移动"));
     modeCombo->addItem(tr("顺时钟闪烁移动"));
     modeCombo->addItem(tr("逆时钟闪烁移动"));
+
 
     speedCombo->addItem(tr("1最快"));
     speedCombo->addItem(tr("2"));
@@ -1575,31 +1755,6 @@ CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
     speedCombo->addItem(tr("9"));
     speedCombo->addItem(tr("10最慢"));
 
-    styleCombo->setIconSize(QSize(48,8));
-
-    int num = Get_Simple_Border_Num(0);
-    for(int i = 0; i < num; i ++)
-     {
-        QPixmap borderPixmap;
-        QImage borderImage;
-        borderImage = getBorderImage(1, i, QColor(Qt::red));
-        borderImage = borderImage.scaled(borderImage.width()*10, borderImage.height()*20);
-        borderPixmap.convertFromImage(borderImage);
-        styleCombo->addItem(QIcon(borderPixmap), QString("%1").arg(Get_Simple_Border_Height(i)));
-
-    }
-
-    gridLayout -> addWidget(styleLabel, 0, 0);
-    gridLayout -> addWidget(styleCombo, 0, 1);
-     gridLayout -> addWidget(colorCombo, 0, 2);
-    gridLayout -> addWidget(modeLabel, 1, 0);
-    gridLayout -> addWidget(modeCombo, 1, 1,1,2);
-    gridLayout -> addWidget(speedLabel, 2, 0);
-    gridLayout -> addWidget(speedCombo, 2, 1);
-    gridLayout -> addWidget(usLabel, 2, 2);
-
-    this->setCheckable(true);
-    this -> setLayout(gridLayout);
 
     connect(this, SIGNAL(clicked(bool)),this,SIGNAL(editSignal()));
     connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SIGNAL(editSignal()));
@@ -1665,8 +1820,11 @@ void getBorderParaFromeSettings(QString str, U_File_Para &para)
     para.Pic_Para.Border_Speed = (INT8U)settings.value("borderSpeed").toInt();// + 1)*MOVE_STEP_PERIOD;
 
     para.Pic_Para.Border_Check = check;
-    para.Pic_Para.Border_Color = getColorDataFromIndex(color);
+    para.Pic_Para.Border_Color = color;//getColorDataFromIndex(color);
     para.Pic_Para.Border_Type = index;
+
+    para.Pic_Para.Border_Width = getBorderWidth(index);//settings.value("")
+    para.Pic_Para.Border_Height = getBorderHeight(index);
     //para.Pic_Para.Border_Width = Simple_Border_Data[index].Width;
     //para.Pic_Para.Border_Height = Simple_Border_Data[index].Height;
 

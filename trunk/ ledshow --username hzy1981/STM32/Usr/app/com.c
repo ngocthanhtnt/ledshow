@@ -136,7 +136,7 @@ INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen)
 
   Len = FrameLen - F_NDATA_LEN;//Frame[FLEN] + (INT16U)Frame[FLEN + 1]*256;
 
-  if(Len != PROG_PARA_LEN)
+  if(Len < PROG_PARA_LEN)
       ASSERT_FAILED();
 
   Prog_No = *(Frame + FDATA); //节目号
@@ -197,7 +197,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
       }
 
       Para_Len = Get_Show_Para_Len(Type); //参数长度
-      if(Para_Len EQ Len)// 参数长度
+      if(Para_Len <= Len)// || Para_Len + BORDER_DATA_LEN EQ Len)// 参数长度
       {     
         Re =  Write_File_Para(Prog_No, Area_No, File_No, &Frame[FDATA], FILE_PARA_LEN);//写入文件参数
         if(Re > 0)

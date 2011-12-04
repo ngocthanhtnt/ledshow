@@ -57,6 +57,7 @@ private:
     QLabel *playTimeLabel;
 
     //-------------边框选择----------
+/*
     QGroupBox *borderGroup; //边框
     QCheckBox *borderCheck;
 
@@ -67,9 +68,9 @@ private:
     QComboBox *modeCombo;
     CcolorCombo *colorCombo;
 
-    CborderEdit *borderEdit;
     QPixmap borderPixmap[MAX_BORDER_TYPE];
-
+*/
+    CborderEdit *borderEdit;
     //QSrting settingsStr; //当前设置Str
 public slots:
     void allWeekDayCheckProc(int state);
@@ -78,7 +79,7 @@ public slots:
     void timeCheckProc(int state);
     void playTimeCheckProc(int state);
     void playCountCheckProc(int state);
-    void borderCheckProc(int state);
+    //void borderCheckProc(int state);
     void edited();
 public:
     void connectSignal();

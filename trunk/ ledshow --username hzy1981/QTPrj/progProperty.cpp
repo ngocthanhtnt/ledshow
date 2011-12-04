@@ -8,95 +8,6 @@
 extern MainWindow *w;
 extern QSettings settings;
 
-//定义边框数据
-const S_Border_Data Border_Data[] =
-{
-    /*--  每五个点一个单元  --*/
-    /*--  宽度x高度=40x8  --*/
-    {40,1,{0xE0,0x83,0x0F,0x3E,0xF8}},
-    /*--  每10个点一个单元  --*/
-    /*--  宽度x高度=40x8  --*/
-    {40,1,{0x00,0xFC,0x0F,0xC0,0xFF}},
-
-    /*--    --*/
-    /*--  宽度x高度=40x8  --*/
-    {40,2,{0x00,0xFC,0x0F,0xC0,0xFF,
-           0x00,0xFC,0x0F,0xC0,0xFF}},
-
-    /*--  调入了一幅图像：这是您新建的图像  --*/
-    /*--  宽度x高度=40x8  --*/
-    {40,2,{0xFF,0xFF,0xFF,0xFF,0xFF,
-           0x00,0xFC,0x0F,0xC0,0xFF}},
-
-    /*--  调入了一幅图像：这是您新建的图像  --*/
-    /*--  宽度x高度=40x8  --*/
-    {40,2,{0x00,0xFC,0x0F,0xC0,0xFF,
-           0xFF,0xFF,0xFF,0xFF,0xFF}},
-
-    {40,3,{0x00,0xFC,0x0F,0xC0,0xFF,
-           0xFF,0xFF,0xFF,0xFF,0xFF,
-           0x00,0xFC,0x0F,0xC0,0xFF}},
-
-    {40,3,{0xE0,0x83,0x0F,0x3E,0xF8,
-           0xFF,0xFF,0xFF,0xFF,0xFF,
-           0xE0,0x83,0x0F,0x3E,0xF8}},
-    //箭头
-    {40,3,{0x00,0x00,0x02,0x00,0x20,
-           0xFF,0xFF,0xF7,0xFF,0x7F,
-           0x00,0x00,0x02,0x00,0x20}},
-
-    {40,3,{0x80,0x00,0x02,0x08,0x20,
-           0xFF,0xFD,0xF7,0xDF,0x7F,
-           0x80,0x00,0x02,0x08,0x20}},
-};
-
-QImage getBorderImage(int type, int index, QColor color)
-{
-
-   int i,j;
-   S_Simple_Border_Data *p;
-/*
-   if(index >= sizeof(Border_Data)/sizeof(Border_Data[0]))
-   {
-       ASSERT_FAILED();
-       return QImage(0,0);
-   }
-*/
-
-
-   if(type EQ 0)
-   {
-       QImage border(Border_Data[index].Width, Border_Data[index].Height, QImage::Format_RGB32);
-       border.fill(Qt::black);
-       for(i = 0; i < border.width(); i ++)
-           for(j = 0; j <border.height(); j++)
-           {
-             if(Get_Rect_Buf_Bit((INT8U *)Border_Data[index].Data, sizeof(Border_Data[index].Data), Border_Data[index].Width, i, j) > 0)
-                 border.setPixel(i, j, color.rgb());
-       }
-
-       return border;
-    }
-   else
-   {
-       p = Get_Simple_Border_Info(index);
-
-       QImage border(p->Width, p->Height, QImage::Format_RGB32);
-       border.fill(Qt::black);
-       for(i = 0; i < border.width(); i ++)
-           for(j = 0; j <border.height(); j++)
-           {
-             if(Get_Rect_Buf_Bit((INT8U *)(p->Data), MAX_SBORDER_DATA_LEN, p->Width, i, j) > 0)
-                 border.setPixel(i, j, color.rgb());
-       }
-
-       return border;
-   }
-
-   //border = border.scaled(border.width(), border.height());
-   //border.save("d:\\border.png");
-
-}
 
 //节目属性编辑
 CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
@@ -230,7 +141,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     vLayout->addWidget(playTimeGroup);
     hLayout->addLayout(vLayout);
     //mainLayout -> addWidget(playTimeGroup, 1, 1);
-
+/*
 
     //魔幻边框选择
     gridLayout = new QGridLayout(this);
@@ -262,34 +173,17 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     borderGroup -> setLayout(gridLayout);
     //mainLayout -> addWidget(borderGroup, 1, 2);
     vLayout = new QVBoxLayout(this);
-    vLayout->addWidget(borderGroup);
-    hLayout->addLayout(vLayout);
+    */
+    borderEdit = new CborderEdit(this);
+    //vLayout->addWidget(borderEdit);
+    hLayout->addWidget(borderEdit);
 
     hLayout->addStretch(10);
     setLayout(hLayout);
 
-  //-----------------------------------------------------
-  /*
-   styleCombo->addItem(tr("1点顺时钟"));
-   styleCombo->addItem(tr("2点顺时钟"));
-   styleCombo->addItem(tr("3点顺时钟"));
-   styleCombo->addItem(tr("4点顺时钟"));
-   styleCombo->addItem(tr("5点顺时钟"));
-   styleCombo->addItem(tr("6点顺时钟"));
-   styleCombo->addItem(tr("7点顺时钟"));
-   styleCombo->addItem(tr("8点顺时钟"));
-
-   styleCombo->addItem(tr("1点逆时钟"));
-   styleCombo->addItem(tr("2点逆时钟"));
-   styleCombo->addItem(tr("3点逆时钟"));
-   styleCombo->addItem(tr("4点逆时钟"));
-   styleCombo->addItem(tr("5点逆时钟"));
-   styleCombo->addItem(tr("6点逆时钟"));
-   styleCombo->addItem(tr("7点逆时钟"));
-   styleCombo->addItem(tr("8点逆时钟"));
-  */
 
 
+/*
    styleCombo->setIconSize(QSize(40,8));
 
    for(unsigned int i = 0; i < S_NUM(Border_Data); i ++)
@@ -309,7 +203,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    modeCombo->addItem(tr("逆时钟移动"));
    modeCombo->addItem(tr("顺时钟闪烁移动"));
    modeCombo->addItem(tr("逆时钟闪烁移动"));
-
+*/
    //modeCombo->addItem(tr("红色"));
    //modeCombo->addItem(tr("绿色"));
    //modeCombo->addItem(tr("黄色"));
@@ -324,17 +218,9 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    playTimeCheckProc((int)playTimeCheck->checkState());
    playCountCheckProc((int)playCountCheck->checkState());
    //边框选择
+   /*
    borderCheckProc((int)borderCheck->checkState());
-/*
-   stepCombo->addItem(tr("1"));
-   stepCombo->addItem(tr("2"));
-   stepCombo->addItem(tr("3"));
-   stepCombo->addItem(tr("4"));
-   stepCombo->addItem(tr("5"));
-   stepCombo->addItem(tr("6"));
-   stepCombo->addItem(tr("7"));
-   stepCombo->addItem(tr("8"));
-*/
+
    speedCombo->addItem(tr("1最快"));
    speedCombo->addItem(tr("2"));
    speedCombo->addItem(tr("3"));
@@ -345,7 +231,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
    speedCombo->addItem(tr("8"));
    speedCombo->addItem(tr("9"));
    speedCombo->addItem(tr("10最慢"));
-
+*/
    //connect(weekCheck[7], SIGNAL(stateChanged(int)),this,SLOT(allWeekDayCheckProc(int)));
    connectSignal();
 }
@@ -406,7 +292,7 @@ void CprogProperty::connectSignal()
     connect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
     connect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
     connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
-    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+    //connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 
     //---
     connect(startDateEdit, SIGNAL(dateChanged(QDate)),this,SLOT(edited()));
@@ -429,15 +315,15 @@ void CprogProperty::connectSignal()
     connect(playTimeEdit, SIGNAL(valueChanged(int)),this,SLOT(edited()));
     connect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     connect(playCountEdit, SIGNAL(valueChanged(int)),this,SLOT(edited()));
-    connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
-
+   // connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+/*
     connect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     connect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     connect(colorCombo,SIGNAL(indexChangeSignal()), this, SLOT(edited()));
     connect(speedCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     connect(modeCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-
-    //connect(borderEdit,SIGNAL(editSignal()),  this, SLOT(edited()));
+*/
+    connect(borderEdit,SIGNAL(editSignal()),  this, SLOT(edited()));
 }
 
 void CprogProperty::disconnectSignal()
@@ -447,7 +333,7 @@ void CprogProperty::disconnectSignal()
     disconnect(timeCheck, SIGNAL(stateChanged(int)),this,SLOT(timeCheckProc(int)));
     disconnect(playTimeCheck, SIGNAL(stateChanged(int)),this,SLOT(playTimeCheckProc(int)));
     disconnect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(playCountCheckProc(int)));
-    disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
+   // disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(borderCheckProc(int)));
 
     //---
     disconnect(startDateEdit, SIGNAL(dateChanged(QDate)),this,SLOT(edited()));
@@ -470,15 +356,15 @@ void CprogProperty::disconnectSignal()
     disconnect(playTimeEdit, SIGNAL(valueChanged(int)),this,SLOT(edited()));
     disconnect(playCountCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     disconnect(playCountEdit, SIGNAL(valueChanged(int)),this,SLOT(edited()));
-    disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
-
+    //disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
+/*
     disconnect(borderCheck, SIGNAL(stateChanged(int)),this,SLOT(edited()));
     disconnect(styleCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     disconnect(colorCombo,SIGNAL(indexChangeSignal()), this, SLOT(edited()));
     disconnect(speedCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
     disconnect(modeCombo,SIGNAL(currentIndexChanged(int)), this, SLOT(edited()));
-
-    //disconnect(borderEdit,SIGNAL(editSignal()),  this, SLOT(edited()));
+*/
+    disconnect(borderEdit,SIGNAL(editSignal()),  this, SLOT(edited()));
 
 }
 
@@ -566,19 +452,19 @@ void CprogProperty::setSettingsToWidget(QString str)
     playCountEdit->setValue(tmp);//setText(QString::number(tmp));
     //playCountEdit->setFixedWidth(50);
     //边框选择
-    borderCheck->setChecked(settings.value("borderCheck").toBool());
+    //borderCheck->setChecked(settings.value("borderCheck").toBool());
     //stepCombo->setText(QString::number(settings.value("width").toInt()));
     //stepCombo->setCurrentIndex(settings.value("borderStep").toInt());
 
     //stepCombo->addItem(tr("2"));
-
+/*
     speedCombo->setCurrentIndex(settings.value("borderSpeed").toInt());
 
 
     styleCombo->setCurrentIndex(settings.value("borderStyle").toInt());
     colorCombo->setCurrentIndex(settings.value("borderColor").toInt());
     modeCombo->setCurrentIndex(settings.value("borderMode").toInt());
-
+*/
     settings.endGroup();
 
     connectSignal();
@@ -593,10 +479,10 @@ void CprogProperty::setSettingsToWidget(QString str)
     playTimeCheckProc((int)playTimeCheck->checkState());
     playCountCheckProc((int)playCountCheck->checkState());
     //边框选择
-    borderCheckProc((int)borderCheck->checkState());
+    //borderCheckProc((int)borderCheck->checkState());
 
     nameEdit->setSettingsToWidget(str);
-    //borderEdit->setSettingsToWidget(str);
+    borderEdit->setSettingsToWidget(str);
 }
 
 //从Widget获取配置到settings中,str为Settings的group
@@ -661,6 +547,7 @@ void CprogProperty::getSettingsFromWidget(QString str)
     //settings.setValue("playCountCheck", QVariant(playCountCheck->checkState()));
     settings.setValue("playCount", QVariant(playCountEdit->value()));
       //边框选择
+    /*
       //borderCheck->setChecked(settings.value("boderCheck").toBool());
     settings.setValue("borderCheck", QVariant(borderCheck->checkState()));
     //stepCombo->setText(settings.value("width").toString());
@@ -672,12 +559,13 @@ void CprogProperty::getSettingsFromWidget(QString str)
     //modeCombo->setCurrentIndex(settings.value("borderColor").toInt());
     settings.setValue("borderColor", QVariant(colorCombo->currentIndex()));
     settings.setValue("borderMode", QVariant(modeCombo->currentIndex()));
-   }
+   */
+}
 
     settings.endGroup();
 
     nameEdit->getSettingsFromWidget(str);
-   // borderEdit->getSettingsFromWidget(str);
+    borderEdit->getSettingsFromWidget(str);
 
 }
 
@@ -749,7 +637,7 @@ void CprogProperty::playCountCheckProc(int state)
     if(flag == true)
       playTimeCheck->setChecked(false);
 }
-
+/*
 void CprogProperty::borderCheckProc(int state)
 {
     bool flag;
@@ -762,6 +650,7 @@ void CprogProperty::borderCheckProc(int state)
     modeCombo->setEnabled(flag);
     colorCombo->setEnabled(flag);
 }
+*/
 //属性编辑的SLOT
 void CprogProperty::edited()
 {
@@ -797,6 +686,7 @@ void updateProgShowArea(CscreenArea *area)
         str = area->progItem->data(0,Qt::UserRole).toString();
 
         getProgParaFromSettings(str,area->progPara);
+        getBorderData(str, area->borderData, sizeof(area->borderData));
         //area->imageBk = getLineTextImage(str);
         area->updateFlag = true;
 
@@ -862,8 +752,8 @@ typedef struct
 void getProgParaFromSettings(QString str, S_Prog_Para &para)
 {
   int index;
-  INT8U color,check;
-  INT8U Re;
+  INT8U color, check;
+  //INT8U Re;
 
   memset(&para, 0, sizeof(para));
   color = Screen_Para.Base_Para.Color;//w->screenArea->screenPara.Color;
@@ -933,6 +823,7 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
     para.Counts = 1;//(INT16U)settings.value("playCount").toInt();
   }
 
+  settings.beginGroup("borderPara");
   index = settings.value("borderStyle").toInt();
   color = settings.value("borderColor").toInt();
   check = settings.value("borderCheck").toBool();
@@ -942,9 +833,11 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
   para.Border_Speed = (INT8U)settings.value("borderSpeed").toInt();// + 1)*MOVE_STEP_PERIOD;
 
   para.Border_Check = check;
-  para.Border_Width = Border_Data[index].Width;
-  para.Border_Height = Border_Data[index].Height;
-
+  para.Border_Color = color;
+  para.Border_Width = getBorderWidth(index);//Border_Data[index].Width;
+  para.Border_Height = getBorderHeight(index);//Border_Data[index].Height;
+  settings.endGroup();
+  /*
 
   memset(para.Border_Data, 0, sizeof(para.Border_Data));
 
@@ -964,7 +857,7 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
        }
   //memcpy(para.Border_Data, Border_Data[index].Data, sizeof(Border_Data[index].Data));
   }
-
+*/
   settings.endGroup();
 
   //settings.beginGroup(str + "/area");
@@ -998,5 +891,10 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
 
   SET_HT(para);
   SET_SUM(para);
+
+}
+
+void getBorderDataFromeSettings(QString str, INT8U Dst[], INT16U DstLen)
+{
 
 }

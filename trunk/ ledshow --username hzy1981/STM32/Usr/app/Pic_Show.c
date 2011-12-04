@@ -681,7 +681,7 @@ void Set_Area_Border_Out(INT8U Area_No)
 
   if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check)
     {
-      Border_Height = Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
+      Border_Height = Get_Area_Border_Height(Area_No);//Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
       Prog_Para.Area[Area_No].X +=Border_Height;
       Prog_Para.Area[Area_No].Y +=Border_Height;
       Prog_Para.Area[Area_No].X_Len -=2*Border_Height;
@@ -695,7 +695,7 @@ void Set_Area_Border_In(INT8U Area_No)
 
     if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check)
       {
-        Border_Height = Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
+        Border_Height = Get_Area_Border_Height(Area_No);//Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
         Prog_Para.Area[Area_No].X -=Border_Height;
         Prog_Para.Area[Area_No].Y -=Border_Height;
         Prog_Para.Area[Area_No].X_Len +=2*Border_Height;
@@ -941,7 +941,9 @@ void Update_Pic_Data(INT8U Area_No)
            if(!(Prog_Status.Area_Status[Area_No].In_Mode >=1 &&\
               Prog_Status.Area_Status[Area_No].In_Mode <= 6)) //不是连续左移、连续右移
            {
+             Set_Area_Border_Out(Area_No);
              Clear_Area_Data(&Show_Data_Bak, Area_No);
+             Set_Area_Border_In(Area_No);
            }
            else
            {

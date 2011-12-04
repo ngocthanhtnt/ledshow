@@ -275,6 +275,7 @@ typedef struct
   S_Area Area[MAX_AREA_NUM]; //区域定义
   
   INT8U Border_Check; //是否显示边框
+  INT8U Border_Color;
   INT8U Border_Mode;  //边框模式
   INT8U Border_Speed;
 
@@ -282,7 +283,7 @@ typedef struct
   INT8U Border_Height;  //边框高度
   INT8U Temp;   //备用
 //#if BORDER_SHOW_EN > 0  
-  INT8U Border_Data[2*MAX_BORDER_POINTS/8]; //边框数据
+  //INT8U Border_Data[2*MAX_BORDER_POINTS/8]; //边框数据
 //#endif  
   INT8U CS[CS_BYTES];
   
@@ -324,6 +325,8 @@ typedef struct
   INT8U Border_Color; \
   INT8U Border_Mode; \
   INT8U Border_Speed;\
+  INT8U Border_Width;\
+  INT8U Border_Height;
 
 //图文参数
 typedef struct
@@ -738,10 +741,11 @@ typedef struct
   INT8U Tail;
 }S_Show_Data;
 
+#define BORDER_DATA_LEN 40*2
 #define SCREEN_PARA_LEN (sizeof(S_Screen_Para) -CHK_BYTE_LEN)
-#define PROG_PARA_LEN   (sizeof(S_Prog_Para)-CHK_BYTE_LEN)
+#define PROG_PARA_LEN   (sizeof(S_Prog_Para)-CHK_BYTE_LEN + BORDER_DATA_LEN)
 #define PROG_NUM_LEN    (sizeof(S_Prog_Num)-CHK_BYTE_LEN)
-#define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN)
+#define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN + BORDER_DATA_LEN)
 #define BLOCK_INDEX_LEN (sizeof(S_Prog_Block_Index) - CHK_BYTE_LEN)
 //#define BLOCK_DATA_LEN 249
 #define BLOCK_HEAD_DATA_LEN 9
@@ -782,8 +786,8 @@ EXT INT8U Write_Prog_Num(void);
 EXT INT8U Read_Prog_Num(void);
 EXT INT16U Read_Screen_Para(void);
 EXT INT8U Write_Screen_Para(void);
+EXT INT16U Read_Prog_Para(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen);
 EXT INT16U _Read_Prog_Para(INT8U Prog_No, INT8U *pDst, INT8U *pDst_Start, INT16U DstLen);
-EXT INT16U Read_Prog_Para(INT8U Prog_No, S_Prog_Para *pProg_Para);
 EXT INT8U Write_Prog_Para(INT8U Prog_No, INT8U *pSrc,INT16U SrcLen);
 EXT INT8U Write_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pSrc, INT16U SrcLen);
 EXT INT8U Write_Cur_Block_Index(void *pSrc, INT16U SrcLen);

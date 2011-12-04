@@ -285,6 +285,8 @@ class CborderEdit:public QGroupBox
   Q_OBJECT
 private:
     //QCheckBox *borderCheck;
+    QGroupBox *borderGroup; //±ß¿ò
+    QCheckBox *borderCheck;
 
     QLabel *stepLabel,*styleLabel,*modeLabel,*speedLabel;
     QLabel *pointsLabel,*usLabel;
@@ -292,6 +294,8 @@ private:
     QComboBox *styleCombo;
     QComboBox *modeCombo;
     CcolorCombo *colorCombo;
+
+    //QPixmap borderPixmap[MAX_BORDER_TYPE];
 signals:
     void editSignal();
 public:
@@ -317,6 +321,9 @@ public:
     ~CimageSize();
 };
 
+int getBorderWidth(int index);
+int getBorderHeight(int index);
+void getBorderData(QString str, INT8U Dst[], INT16U DstLen);
 void getBorderParaFromeSettings(QString str, U_File_Para &para);
 void getShowModeParaFromSettings(QString str, U_File_Para &para);
 QImage getLineTextImage(QString str);

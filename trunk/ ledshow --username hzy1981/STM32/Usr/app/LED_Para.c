@@ -452,13 +452,13 @@ INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, v
   INT16U Len;
   
   SDI = SDI_FILE_PARA + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
-  Len = Read_Storage_Data(SDI, pDst, pDst_Start, DstLen); 
+  Len = Read_Storage_Data(SDI, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
   
 #ifdef SDI_FILE_PARA_BK0
   if(Len EQ 0)
   {
     SDI = SDI_FILE_PARA_BK0 + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
-    Len = Read_Storage_Data(SDI, pDst, pDst_Start, DstLen); 
+    Len = Read_Storage_Data(SDI, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
   }
 #endif
   
@@ -466,7 +466,7 @@ INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, v
   if(Len EQ 0)
   {
     SDI = SDI_FILE_PARA_BK1 + (INT16U)Prog_No * MAX_AREA_NUM * MAX_FILE_NUM + (INT16U)Area_No * MAX_FILE_NUM + File_No;   
-    Len = Read_Storage_Data(SDI, pDst, pDst_Start, DstLen); 
+    Len = Read_Storage_Data(SDI, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
   }
 #endif 
 /*
@@ -475,7 +475,11 @@ INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, v
     Len = Get_Storage_Data_Len(SDI_FILE_PARA);
     mem_set(pDst, 0, Len, pDst_Start, DstLen);
   }
-*/  
+*/
+  if(Len > 0)
+  {
+
+  }
   return Len;
 
 }
@@ -734,7 +738,7 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
 
     if(pFile_Para->Pic_Para.Border_Check > 0)
     {
-      Border_Height = Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
+      Border_Height = Get_Area_Border_Height(Area_No);//Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
     }
 
     Screen_Color_Num = Get_Screen_Color_Num();
@@ -938,7 +942,7 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
 
   if(pFile_Para->Pic_Para.Border_Check > 0)
   {
-    Border_Height = Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
+    Border_Height = Get_Area_Border_Height(Area_No);//Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
   }
 
 #if PIC_SHOW_EN 
@@ -1184,19 +1188,26 @@ INT16U _Read_Prog_Para(INT8U Prog_No, INT8U *pDst, INT8U *pDst_Start, INT16U Dst
 //读取节目参数
 //Prog节目号
 //返回值1 表示读取成功。0表示没有这个节目或者读取不成功
-INT16U Read_Prog_Para(INT8U Prog_No, S_Prog_Para *pProg_Para)
+INT16U Read_Prog_Para(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen)
 {
   INT16U Len;
-  
-  Len = _Read_Prog_Para(SDI_PROG_PARA + Prog_No, (INT8U *)&(pProg_Para->Prog_No), (INT8U *)pProg_Para, sizeof(S_Prog_Para));
 
-  if(Len EQ 0)
+  //memset(Pub_Buf, 0, sizeof(Pub_Buf));
+  //Len = _Read_Prog_Para(SDI_PROG_PARA + Prog_No, (INT8U *)&(pProg_Para->Prog_No), (INT8U *)pProg_Para, sizeof(S_Prog_Para));
+  Len = _Read_Prog_Para(SDI_PROG_PARA + Prog_No, (INT8U *)pDst, (INT8U *)pDst_Start, DstLen);
+
+  if(Len > 0)
   {
-    memset(pProg_Para, 0, sizeof(S_Prog_Para));
+
+
+  }
+  else
+  {
+    mem_set(pDst, 0, PROG_PARA_LEN, pDst_Start, DstLen);
   }
 
-  SET_HT((*pProg_Para));
-  SET_SUM((*pProg_Para));
+  //SET_HT((*pProg_Para));
+  //SET_SUM((*pProg_Para));
   return Len;
 }
 
