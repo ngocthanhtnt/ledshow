@@ -52,6 +52,7 @@ void updatePicShowArea(CshowArea *area)
         area->updateFlag = true;
         //area->imageBk = getTextEditImage(MLINE_MODE, area->width(), area->height(), str, 0);
 
+        getBorderData(str, area->borderData, sizeof(area->borderData));
         //qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);
         area->update(); //Ë¢ÐÂÏÔÊ¾
 

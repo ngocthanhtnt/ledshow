@@ -391,7 +391,7 @@ INT8U Chk_File_Play_End(INT8U Area_No)
 INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 {
   INT16U Len;//,SNum;
-  INT16S Len0;
+  INT16S Len0,Len1;
   INT16U X,Y,Width,Height;
   INT8U Re = 1;
   //INT8U File_No;
@@ -489,7 +489,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
         {
             //Prog_Status.Area_Status[Area_No].Restore_Border_Flag = 1;
             //Restore_Border_Data(Area_No);
-            Clr_Border(&Show_Data, Area_No, Get_Area_Border_Width(Area_No), Get_Area_Border_Height(Area_No));
+            Clr_Border(&Show_Data, Area_No);
         }
  
     #if DATA_PREP_EN
@@ -508,9 +508,20 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 
         SET_VAR(Prep_Data.File_Para_Read_Flag[Area_No], DATA_READ);
     #else
-        Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No, \
-                       (void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, \
-                       (void *)&Prog_Status.File_Para[Area_No], sizeof(U_File_Para));
+        Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,\
+                       Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
+
+        if(Len > 0)
+        {
+            Len1 = Get_Show_Para_Len(Pub_Buf[0]);
+            mem_cpy((void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, Pub_Buf, Len1, (void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, sizeof(U_File_Para));
+
+            Clear_Area_Data(&Show_Data_Bak, Area_No);
+            if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check)
+            {
+              Draw_Border(&Show_Data_Bak, Area_No, Pub_Buf + Len1, 0, 0);
+            }
+        }
     #endif
     }
 
@@ -593,7 +604,9 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
       else
 #endif
       {
+          Set_Area_Border_Out(Area_No);
           Clear_Area_Data(&Show_Data_Bak, Area_No);
+          Set_Area_Border_In(Area_No);
 
           Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFFFF;
           SET_SUM(Prog_Status.Area_Status[Area_No]);
@@ -1007,11 +1020,14 @@ void Check_Update_Program_Para(void)
       //SET_HT(Prog_Status.Play_Status);
       SET_SUM(Prog_Status.Play_Status);
 
-      Len = Read_Prog_Para(Prog_Status.Play_Status.Prog_No, &Prog_Para); //重新更新节目参数
-      
+      Len = Read_Prog_Para(Prog_Status.Play_Status.Prog_No, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)); //重新更新节目参数
+      memcpy((INT8U *)&Prog_Para.Head + 1, Pub_Buf, sizeof(Prog_Para) - CHK_BYTE_LEN);
       if(Len > 0 && Check_Prog_Play_Time() > 0)
       {
         TRACE();
+
+        SET_HT(Prog_Para);
+        SET_SUM(Prog_Para);
 
         Prog_No = Prog_Status.Play_Status.Prog_No;
         Prog_Status_Init();//Clr_Prog_Status();换了个新节目，重新设置状态
@@ -1025,6 +1041,11 @@ void Check_Update_Program_Para(void)
           TRACE();
 
           Clr_All_Show_Data();
+
+          //memcpy((INT8U *)&(pProg_Para->Prog_No), Pub_Buf, sizeof(S_Prog_Para) - CHK_BYTE_LEN);
+          //void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, INT8U Height,  INT32U Step)
+          if(Prog_Para.Border_Check)
+          Draw_Border(&Show_Data_Bak, MAX_AREA_NUM, Pub_Buf + sizeof(S_Prog_Para) - CHK_BYTE_LEN, 0,0);
 
           Prog_Status.Play_Status.Last_Prog_No = Prog_No;
           Prog_Status.Play_Status.New_Prog_Flag = 0;

@@ -103,6 +103,7 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
         frameInfo.len = 0;
         type = data[0];
         len = Get_Show_Para_Len(type); //第一帧长度
+        len += BORDER_DATA_LEN;
 
         frameInfo.off = 0;
         if(dataLen > len)
@@ -235,7 +236,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
     if(filePara.Pic_Para.Border_Check > 0)
     {
         //INT8U Type = filePara.Pic_Para.Border_Type;
-        borderHeight = Get_Simple_Border_Height(filePara.Pic_Para.Border_Type);//Simple_Border_Data[Type].Height;//Get_Area_Border_Height(Area_No);
+        borderHeight = filePara.Pic_Para.Border_Height;//Get_Simple_Border_Height(filePara.Pic_Para.Border_Type);//Simple_Border_Data[Type].Height;//Get_Area_Border_Height(Area_No);
 
         width = width - borderHeight*2;
         height = height - borderHeight*2;
@@ -285,9 +286,13 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
               //image = getSLineTextImage(picStr, width,height,page);
           }
       }
+
       getPicParaFromSettings(fileStr, filePara);
       filePara.Pic_Para.SNum = pageNum;
       memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para)); //前一个字节是头，不拷贝
+
+      getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+      len += BORDER_DATA_LEN;
 
       QImage imageBk;
       for(int i = 0; i < pageNum; i ++)
@@ -361,6 +366,9 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         memcpy(buf, (char *)&filePara.Clock_Para.Head + 1, sizeof(S_Clock_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Clock_Para) - CHK_BYTE_LEN;
 
+        getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+        len += BORDER_DATA_LEN;
+
         resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
         getTextShowData(image, &protoShowData, 0, 0);
 
@@ -388,6 +396,9 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
 
         memcpy(buf, (char *)&filePara.Lun_Para.Head + 1, sizeof(S_Lun_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Lun_Para) - CHK_BYTE_LEN;
+
+        getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+        len += BORDER_DATA_LEN;
 
         resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
         getTextShowData(image, &protoShowData, 0, 0);
@@ -417,6 +428,9 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         memcpy(buf, (char *)&filePara.Time_Para.Head + 1, sizeof(S_Time_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Time_Para) - CHK_BYTE_LEN;
 
+        getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+        len += BORDER_DATA_LEN;
+
         resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
         getTextShowData(image, &protoShowData, 0, 0);
 
@@ -443,6 +457,9 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         filePara.Temp_Para.Text_Y = P0.Y + borderHeight;
         memcpy(buf, (char *)&filePara.Temp_Para.Head + 1, sizeof(S_Temp_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Temp_Para) - CHK_BYTE_LEN;
+
+        getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+        len += BORDER_DATA_LEN;
 
         resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
         getTextShowData(image, &protoShowData, 0, 0);
@@ -472,6 +489,9 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         memcpy(buf, (char *)&filePara.Humidity_Para.Head + 1, sizeof(S_Humidity_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Humidity_Para) - CHK_BYTE_LEN;
 
+        getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+        len += BORDER_DATA_LEN;
+
         resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
         getTextShowData(image, &protoShowData, 0, 0);
 
@@ -500,6 +520,9 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         memcpy(buf, (char *)&filePara.Noise_Para.Head + 1, sizeof(S_Noise_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Noise_Para) - CHK_BYTE_LEN;
 
+        getBorderData(fileStr,(INT8U *)buf + len, bufLen); //边框数据
+        len += BORDER_DATA_LEN;
+
         resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
         getTextShowData(image, &protoShowData, 0, 0);
 
@@ -527,6 +550,9 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         filePara.Timer_Para.Text_Y = P0.Y + borderHeight;
         memcpy(buf, (char *)&filePara.Timer_Para.Head + 1, sizeof(S_Timer_Para)); //前一个字节是头，不拷贝
         len = sizeof(S_Timer_Para) - CHK_BYTE_LEN;
+
+        getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+        len += BORDER_DATA_LEN;
 
         resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
         getTextShowData(image, &protoShowData, 0, 0);
@@ -584,6 +610,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         filePara.Pic_Para.SNum = num;
         memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para) - CHK_BYTE_LEN); //前一个字节是头，不拷贝
 
+        getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+        len += BORDER_DATA_LEN;
     }
   else if(type EQ PIC_IMAGE_PROPERTY) //图片
     {
@@ -614,6 +642,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
       filePara.Pic_Para.SNum = 1;
       memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para) - CHK_BYTE_LEN); //前一个字节是头，不拷贝
 
+      getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+      len += BORDER_DATA_LEN;
   }
 
     restoreScreenPara(screenParaBak);
@@ -635,6 +665,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
     S_Screen_Para screenParaBak;
     S_Prog_Para progParaBak;
     S_Card_Para cardParaBak;
+    INT8U data[500];
 
     seq = frameInfo.seq + 1;//= 0xFF;
 
@@ -770,10 +801,20 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
             getProgParaFromSettings(progStr, progPara);
             progPara.Prog_No = i;
             //节目参数帧
+            len = sizeof(progPara) - CHK_BYTE_LEN;
+            memcpy(data, (char *)&progPara.Head + 1, len);
+            getBorderData(progStr, data + len, sizeof(data) - len);
+            len = makeFrame((char *)data, len + BORDER_DATA_LEN,C_PROG_PARA | WR_CMD, seq++, frameBuf);
+            counts++;
+            fwrite(frameBuf, len, 1, file);
+            //节目边框数据
+            /*
+            borderData[0] = i;//节目号
+            len = getBorderData(progStr, borderData + 1, sizeof(borderData));
             len = makeFrame((char *)&progPara.Head + 1, sizeof(progPara) - CHK_BYTE_LEN,C_PROG_PARA | WR_CMD, seq++, frameBuf);
             counts++;
             fwrite(frameBuf, len, 1, file);
-
+*/
             //settings.beginGroup(progStr + "/area/");
             QStringList areaList = getSettingsCheckedSubList(progStr + "/area/");//settings.childGroups();
             //settings.endGroup();

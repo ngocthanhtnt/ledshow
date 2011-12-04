@@ -26,9 +26,13 @@
 #define SDI_PROG_PARA_BK0   0x200 //备份0
 #define SDI_PROG_PARA_BK1   0x300 //备份1
 
-#define SDI_PROG_NUM		0x400 //节目个数
-#define SDI_PROG_NUM_BK0    0x500
-#define SDI_PROG_NUM_BK1	0x600
+#define SDI_PROG_BORDER     0x400
+#define SDI_PROG_BORDER_BK0 0x500
+#define SDI_PROG_BORDER_BK1 0x600
+
+#define SDI_PROG_NUM	    0x700 //节目个数
+#define SDI_PROG_NUM_BK0    0x800
+#define SDI_PROG_NUM_BK1    0x900
 
 #define SDI_PROG_BLOCK_INDEX     0x1000
 #define SDI_PROG_BLOCK_INDEX_BK0 0x2000
@@ -37,7 +41,10 @@
 #define SDI_FILE_PARA     0x4000 //文件参数
 #define SDI_FILE_PARA_BK0 0x6000 //文件参数备份
 
-#define SDI_SHOW_DATA     0x7000 //显示数据
+#define SDI_FILE_BORDER     0x7000
+#define SDI_FILE_BORDER_BK0 0x9000
+
+#define SDI_SHOW_DATA     0xA000 //显示数据
 
 
 

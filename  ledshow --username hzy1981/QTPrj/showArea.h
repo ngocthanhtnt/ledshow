@@ -72,6 +72,9 @@ protected:
     void paintEvent(QPaintEvent *event);
 public:
     bool updateFlag;
+
+    INT8U borderData[BORDER_DATA_LEN*10]; //预留10倍空间
+    S_Show_Data showDataBak;
     S_Show_Data showData;
     int previewFlag; //0表示是正常窗口，1表示是预览窗口
 

@@ -1123,6 +1123,8 @@ void MainWindow::preview(INT8U previewMode)
       return;
   }
 
+  Ram_Init();
+
 #if QT_SIM_EN
   makeProtoFileData(screenStr, SIM_MODE, 0xFFFFFFFF);
 #else
