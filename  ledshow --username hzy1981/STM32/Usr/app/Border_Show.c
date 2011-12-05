@@ -150,8 +150,13 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT32U Step, IN
    }
 
    //左右边框
-   if(Width > Area_Height) //不应超过高度
-       Width = Area_Height;
+   if(Width + Height > Area_Height) //不应超过高度
+   {
+     if(Area_Height > Height)
+       Width = Area_Height - Height;
+     else
+       Width = 0;
+   }
 
    for(i = 0; i < Width; i ++)
      for(j = 0; j < Height; j ++)
@@ -236,8 +241,13 @@ void Copy_Border(INT8U Area_No, INT32U Step)
     }
 
     //左右边框
-    if(Width > Area_Height) //不应超过高度
-        Width = Area_Height;
+    if(Width + Height > Area_Height) //不应超过高度
+    {
+      if(Area_Height > Height)
+        Width = Area_Height - Height;
+      else
+        Width = 0;
+    }
 
     for(i = 0; i < Width; i ++)
       for(j = 0; j < Height; j ++)

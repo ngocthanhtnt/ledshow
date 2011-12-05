@@ -567,11 +567,16 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         getFlashParaFromSettings(fileStr, filePara);
         filePara.Pic_Para.Flag = SHOW_PIC;
 
+        len = sizeof(S_Pic_Para) - CHK_BYTE_LEN;
+
+        getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+        len += BORDER_DATA_LEN;
+
         int count = getFlashFrameCount(fileStr);
         //filePara.Pic_Para.SNum = count;
 
         memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
-        len = sizeof(S_Pic_Para) - CHK_BYTE_LEN;
+
 
         INT16U num = 0;
 
@@ -610,8 +615,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         filePara.Pic_Para.SNum = num;
         memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para) - CHK_BYTE_LEN); //前一个字节是头，不拷贝
 
-        getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
-        len += BORDER_DATA_LEN;
+
     }
   else if(type EQ PIC_IMAGE_PROPERTY) //图片
     {
@@ -622,6 +626,12 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
       //filePara.Pic_Para.SNum = count;
 
       len = sizeof(S_Pic_Para) - CHK_BYTE_LEN;
+
+      filePara.Pic_Para.SNum = 1;
+      memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para) - CHK_BYTE_LEN); //前一个字节是头，不拷贝
+
+      getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+      len += BORDER_DATA_LEN;
 
       memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
 
@@ -639,11 +649,6 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
     memcpy(buf + len, protoShowData.Color_Data, tmpLen);
     len += tmpLen;
 
-      filePara.Pic_Para.SNum = 1;
-      memcpy(buf, (char *)&filePara.Pic_Para.Head + 1, sizeof(S_Pic_Para) - CHK_BYTE_LEN); //前一个字节是头，不拷贝
-
-      getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
-      len += BORDER_DATA_LEN;
   }
 
     restoreScreenPara(screenParaBak);

@@ -239,6 +239,8 @@ void updateFlashShowArea(CshowArea *area)
         area->imageBk = movie->currentImage();//.scaled(area->width()*x/100, area->height()*y/100);
         //area->imageBk.save("d:\\flash.png");
         area->updateFlag = true;
+
+        getBorderData(str, area->borderData, sizeof(area->borderData));
         //area->imageBk = getTextEditImage(MLINE_MODE, area->width(), area->height(), str, 0);
 
         //qDebug("file_para flag = %d", area->File_Para.Temp_Para.Flag);

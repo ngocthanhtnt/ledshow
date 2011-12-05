@@ -348,6 +348,8 @@ void updateClockShowArea(CshowArea *area)
         getClockParaFromSettings(str,area->filePara);
         area->imageBk = getLineTextImage(str);
         area->updateFlag = true;
+
+        getBorderData(str, area->borderData, sizeof(area->borderData));
         //qDebug("file_para flag = %d", area->filePara.Temp_Para.Flag);
         area->update(); //Ë¢ÐÂÏÔÊ¾
 

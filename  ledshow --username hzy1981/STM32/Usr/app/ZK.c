@@ -2324,6 +2324,10 @@ void Show_Char(INT16U Unicode, INT8U Font, INT8U Color, S_Show_Data *pData, INT8
   INT16U i,j,k;
   INT8U Bit,X_Size,Y_Size,Width;
   //S_Point Point;
+  INT16U Area_Width, Area_Height;
+
+  Area_Width = Get_Area_Width(Area_No);
+  Area_Height = Get_Area_Height(Area_No);
 
   for(i=0;i<sizeof(CN_ZK)/sizeof(CN_ZK[0]);i++)
   {
@@ -2337,6 +2341,22 @@ void Show_Char(INT16U Unicode, INT8U Font, INT8U Color, S_Show_Data *pData, INT8
       {
         X_Size=X_Size / 2;
       }//
+
+      if(X + X_Size >= Area_Width)
+      {
+          if(X < Area_Width)
+              X_Size = Area_Width - X;
+          else
+              X_Size = 0;
+      }
+
+      if(Y + Y_Size >= Area_Height)
+      {
+          if(Y < Area_Height)
+              Y_Size = Area_Height - Y;
+          else
+              Y_Size = 0;
+      }
 
       for(j=0;j<X_Size;j++)
         for(k=0;k<Y_Size;k++)

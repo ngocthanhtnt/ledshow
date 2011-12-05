@@ -168,6 +168,7 @@ void updateHumidityShowArea(CshowArea *area)
         area->imageBk = getLineTextImage(str);
         area->updateFlag = true;
         //qDebug("file_para flag = %d", area->filePara.Humidity_Para.Flag);
+        getBorderData(str, area->borderData, sizeof(area->borderData));
         area->update(); //Ë¢ÐÂÏÔÊ¾
 
     }
