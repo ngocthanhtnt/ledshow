@@ -168,6 +168,7 @@ void updateNoiseShowArea(CshowArea *area)
         area->imageBk = getLineTextImage(str);
         area->updateFlag = true;
         //qDebug("file_para flag = %d", area->filePara.Noise_Para.Flag);
+        getBorderData(str, area->borderData, sizeof(area->borderData));
         area->update(); //Ë¢ÐÂÏÔÊ¾
 
     }

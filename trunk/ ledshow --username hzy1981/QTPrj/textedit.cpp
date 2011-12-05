@@ -130,15 +130,18 @@ TextEdit::TextEdit(QWidget *parent, int mode)
     setCurrentFileName(QString());
 
     fontChanged(textEdit->font());
-    textEdit->setTextColor(colorCombo->getColor());
-    colorChanged(colorCombo->getColor());
+
+    //textEdit->setTextColor(colorCombo->getColor());
+    //colorChanged(colorCombo->getColor());
 
     alignmentChanged(textEdit->alignment());
 
     //connect(textEdit->document(), SIGNAL(modificationChanged(bool)),
             //actionSave, SLOT(setEnabled(bool)));
+    /*
     connect(textEdit->document(), SIGNAL(modificationChanged(bool)),
             this, SLOT(setWindowModified(bool)));
+    */
     connect(textEdit->document(), SIGNAL(undoAvailable(bool)),
             actionUndo, SLOT(setEnabled(bool)));
     connect(textEdit->document(), SIGNAL(redoAvailable(bool)),
@@ -414,7 +417,7 @@ void TextEdit::setupTableActions()
 
     menuCell = new QMenu(tr("单元格"));
             menuCell->addAction( tr("合并"), this, SLOT(cellMerge()) );
-            menuCell->addAction( tr("拆分(Does not work yet!)"), this, SLOT(cellSplit()) );
+            //menuCell->addAction( tr("拆分(Does not work yet!)"), this, SLOT(cellSplit()) );
 
     connect(tablePropertyEdit, SIGNAL(createTable(int, int, QTextTableFormat)), this, SLOT(tableInsert(int, int, QTextTableFormat)));
     connect(tablePropertyEdit, SIGNAL(updateTable(int, int, QTextTableFormat)), this, SLOT(tableUpdate(int, int, QTextTableFormat)));

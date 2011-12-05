@@ -440,7 +440,7 @@ void Set_Area_Point_Data(S_Show_Data *pDst_Buf, INT8U Area_No, INT16U X, INT16U 
     if(X >= Prog_Para.Area[Area_No].X_Len ||\
        Y >= Prog_Para.Area[Area_No].Y_Len)
     {
-      ASSERT_FAILED();
+      //ASSERT_FAILED();
       return;
     }
   }
@@ -2538,14 +2538,14 @@ void Move_Left_Up_Cover(INT8U Area_No)
       }
       else
       {
-        Point[0].X = Area_Width;
+        Point[0].X = Area_Width - 1;
         Point[0].Y = Area_Height - Step_Len;
       }
 
       if(Step_Len < Area_Width)
       {
         Point[1].X = Area_Width - Step_Len;
-        Point[1].Y = Area_Height;
+        Point[1].Y = Area_Height - 1;
       }
       else
       {
@@ -2626,13 +2626,13 @@ void Move_Right_Up_Cover(INT8U Area_No)
 
         if(Step_Len >= Area_Width)
         {
-            Point[1].X = Area_Width;
+            Point[1].X = Area_Width - 1;
             Point[1].Y = Area_Width + Area_Height - Step_Len;
         }
         else
         {
             Point[1].X = Step_Len;
-            Point[1].Y = Area_Height;
+            Point[1].Y = Area_Height - 1;
         }
 
         Copy_Line(&Show_Data_Bak, Area_No, &Point[0], &Point[1], &Show_Data, &Point[0]);
@@ -2698,13 +2698,13 @@ void Move_Left_Down_Cover(INT8U Area_No)
     {
         if(Step_Len < Area_Height)
         {
-          Point[0].X = Area_Width;
+          Point[0].X = Area_Width - 1;
           Point[0].Y = Step_Len;
         }
         else//if(Step_Len >= Area_Height)
         {
           Point[0].X = Area_Width + Area_Height - Step_Len;
-          Point[0].Y = Area_Height;
+          Point[0].Y = Area_Height - 1;
         }
 
         if(Step_Len >= Area_Width)
@@ -2786,14 +2786,14 @@ void Move_Right_Down_Cover(INT8U Area_No)
         }
         else//if(Step_Len >= Area_Height)
         {
-          Point[0].X = Area_Width;
+          Point[0].X = Area_Width - 1;
           Point[0].Y = Step_Len - Area_Width;
         }
 
         if(Step_Len >= Area_Height)
         {
             Point[1].X = Step_Len - Area_Height;//Area_Width - 1;
-            Point[1].Y = Area_Height;
+            Point[1].Y = Area_Height - 1;
         }
         else
         {

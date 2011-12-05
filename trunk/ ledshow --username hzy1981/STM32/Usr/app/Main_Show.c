@@ -595,7 +595,6 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 #if 0
       if(Prog_Status.Area_Status[Area_No].Last_SCN_No EQ Prog_Status.Area_Status[Area_No].SCN_No &&\
          CHK_HT(Prog_Status.Area_Status[Area_No]) &&\
-         CHK_SUM(Prog_Status.Area_Status[Area_No]) &&\
          Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag) EQ 0)
       {
          debug("the same as last SCN ,no update");

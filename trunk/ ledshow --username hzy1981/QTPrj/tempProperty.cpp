@@ -167,6 +167,7 @@ void updateTempShowArea(CshowArea *area)
         area->imageBk = getLineTextImage(str);
         area->updateFlag = true;
         //qDebug("file_para flag = %d", area->filePara.Temp_Para.Flag);
+        getBorderData(str, area->borderData, sizeof(area->borderData));
         area->update(); //Ë¢ÐÂÏÔÊ¾
 
     }
