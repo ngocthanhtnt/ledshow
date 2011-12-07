@@ -2551,8 +2551,6 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
     settings.endGroup();
     settings.endGroup();
 
-    colorNum = color + 1; //颜色个数
-
     if(card != cardCombo->currentIndex()) //板卡类型发生了变化
     {
        mainObj->emitScreenChangeSignal();
@@ -2569,6 +2567,8 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
 
     int index = getScreenIndex(str);
     QString screenName = QString::number(index) + QObject::tr("号屏幕");
+
+    colorNum = colorCombo->currentIndex() + 1;
 
     if(!(widthEdit->value() > 0 &&\
          heightEdit->value() > 0 &&\
@@ -2619,6 +2619,8 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
         }
         //w->screenArea->screenItem->removeChild(w->screenArea->screenItem->child(i));
         //w->progManage->settingsInit();
+        memset(w->screenArea->showData.Color_Data, 0, sizeof(w->screenArea->showData.Color_Data));//清显示数据
+        memset(&w->screenArea->progPara, 0, sizeof(w->screenArea->progPara));
         mainObj->emitScreenChangeSignal();
     }
 
