@@ -830,6 +830,15 @@ void CprogManage::newFile(int fileType, int subType)
 
     //w->progManage->clickItem(item, 0);
     w->progManage->treeWidget->setCurrentItem(item);
+
+    //新建表格
+    if(fileType EQ PIC_PROPERTY && subType EQ PIC_TABLE_PROPERTY)
+    {
+      //w->progManage->clickItem();
+      w->property->picProperty->edit->showInit();
+      //w->property->picProperty->edit->edit();
+      w->property->picProperty->edit->tableNew();
+    }
     /*
     updateItemSubIndex(item);
     updateTextHead(item->parent());

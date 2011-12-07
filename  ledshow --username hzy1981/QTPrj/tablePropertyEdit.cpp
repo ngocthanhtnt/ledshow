@@ -234,7 +234,7 @@ void CtablePropertyEdit::setProperties(int rows, int colums, QTextTableFormat ta
             //colorBorder = tFormat.borderBrush().color();
             //ui.PBBorderColor->setStyleSheet("background-color: " + colorBorder.name() +";");
             this->borderColor->setColor(QColor(Qt::red));
-            borderStyle->setCurrentIndex(1);
+            borderStyle->setCurrentIndex(3); //ÊµÏß±ß¿ò
             marginBetweenCells->setValue(1);
             marginInCells->setValue(1);
 

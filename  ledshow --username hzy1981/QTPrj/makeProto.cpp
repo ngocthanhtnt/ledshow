@@ -1,7 +1,10 @@
 #define MAKE_PROTO_C
 #include "..\Stm32\usr\app\includes.h"
 #include "makeProto.h"
+#include <QString>
+#include <QObject>
 #include <QSettings>
+#include <QMessageBox>
 #include <QImage>
 #include "screenProperty.h"
 #include "mainwindow.h"
@@ -657,6 +660,78 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
     return len;
 }
 
+//判断两个矩形是否有相交
+bool  clashed(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2)
+{
+//判断两个方块是否碰撞
+    if((x1   <   x2)   &&   ((x2   -   x1)   >=   w1))
+                return   false;
+    if((x1   >   x2)   &&   ((x1   -   x2)   >=   w2))
+                return   false;
+    if((y1   <   y2)   &&   ((y2   -   y1)   >=   h1))
+                return   false;
+    if((y1   >   y2)   &&   ((y1   -   y2) >=   h2))
+              return   false;
+  return   true;
+}
+
+
+QString Chk_Prog_Border_Para(int progNo, S_Prog_Para &progPara, S_Screen_Para &screenPara)
+{
+    int i,j;
+    INT8U Re = 1;
+    QString reStr;
+    reStr = QString(QObject::tr("节目")) + QString::number(progNo + 1);
+
+    if(progPara.Border_Check > 0)
+    {
+      for(i = 0; i < progPara.Area_Num; i ++)
+          if(progPara.Area[i].X < progPara.Border_Height ||\
+             progPara.Area[i].Y < progPara.Border_Height ||\
+             progPara.Area[i].X + progPara.Area[i].X_Len + progPara.Border_Height >= screenPara.Base_Para.Width  ||\
+             progPara.Area[i].Y + progPara.Area[i].Y_Len + progPara.Border_Height >= screenPara.Base_Para.Height)
+          {
+              reStr += QString(QObject::tr("第")) + QString::number(i + 1) + QString(QObject::tr("分区")) + QString(QObject::tr("与节目边框有重叠，"));
+              Re = 0;
+          }
+  }
+
+    for(i = 0; i < progPara.Area_Num; i ++)
+    {
+        for(j = i + 1; j < progPara.Area_Num; j ++)
+        {
+          //if(i EQ j)
+             // continue;
+
+          if(clashed(progPara.Area[i].X, progPara.Area[i].Y, progPara.Area[i].X_Len, progPara.Area[i].Y_Len,\
+                     progPara.Area[j].X, progPara.Area[j].Y, progPara.Area[j].X_Len, progPara.Area[j].Y_Len))
+          {
+              reStr += QString(QObject::tr("第")) + QString::number(i + 1) + QString(QObject::tr("分区与第")) +\
+                      QString::number(j + 1) + QString(QObject::tr("分区显示区域有重叠，"));
+              Re = 0;
+          }
+              /*
+          if((progPara.Area[i].X >= progPara.Area[j].X && \
+              progPara.Area[i].X < progPara.Area[j].X + progPara.Area[j].X_Len) &&\
+             (progPara.Area[i].Y >= progPara.Area[j].Y && \
+              progPara.Area[i].Y < progPara.Area[j].Y + progPara.Area[j].Y_Len))
+              return QString(QObject::tr("节目")) + QString::number(progNo + 1) +\
+                      QString(QObject::tr("第")) + QString::number(i + 1) + QString(QObject::tr("分区与第")) +\
+                      QString::number(j + 1) + QString(QObject::tr("分区显示区域有重叠，可能导致显示不正确！"));
+*/
+         // if(abs(2*progPara.Area[i].X + progPara.Area[i].X_Len-2*progPara.Area[j].X - progPara.Area[j].X_Len)
+        }
+    }
+
+    if(Re)
+        return "";
+    else
+    {
+        reStr += QString(QObject::tr("可能导致显示不正确！"));
+        return reStr;
+    }
+}
+
 //生成协议数据到fileName
 INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[], int bufLen)
 {
@@ -805,6 +880,15 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
             //获取节目参数
             getProgParaFromSettings(progStr, progPara);
             progPara.Prog_No = i;
+
+            QString reStr = Chk_Prog_Border_Para(i, progPara, Screen_Para);
+            if(reStr != "")
+            {
+                QMessageBox::information(w, QObject::tr("提示"),
+                                         reStr ,QObject::tr("确定"));
+                //return 0;
+            }
+
             //节目参数帧
             len = sizeof(progPara) - CHK_BYTE_LEN;
             memcpy(data, (char *)&progPara.Head + 1, len);
@@ -893,24 +977,33 @@ INT8U makeProtoBufData(QString screenStr, int mode, INT8U cmd , char buf[], int 
     {
        counts = _makeProtoData(PREVIEW_PROTO_FILE, screenStr, 0, frameBuf, len); //生成协议数据到
 
-       w->comStatus->setTotalFrameCounts(counts);
-       w->comStatus->setComMode(mode);
-       w->comStatus->sendProtoFile(PREVIEW_PROTO_FILE);
+       if(counts > 0)
+       {
+           w->comStatus->setTotalFrameCounts(counts);
+           w->comStatus->setComMode(mode);
+           w->comStatus->sendProtoFile(PREVIEW_PROTO_FILE);
+       }
     }
     else if(mode EQ UDISK_MODE)
     {
        //直接生成到U盘中文件名为 屏幕Addr.dat
-        _makeProtoData(UDISK_PROTO_FILE, screenStr, 0, frameBuf, len); //生成协议数据到
-        w->comStatus->setComMode(mode);
-        w->comStatus->getUDiskParaFromSettings(screenStr); //获取屏幕地址--生成文件时需要
-        w->comStatus->sendProtoFile(UDISK_PROTO_FILE);
+        counts = _makeProtoData(UDISK_PROTO_FILE, screenStr, 0, frameBuf, len); //生成协议数据到
+        if(counts > 0)
+        {
+          w->comStatus->setComMode(mode);
+          w->comStatus->getUDiskParaFromSettings(screenStr); //获取屏幕地址--生成文件时需要
+          w->comStatus->sendProtoFile(UDISK_PROTO_FILE);
+        }
     }
     else //if(mode EQ COM_MODE) //串口方式
     {
         counts = _makeProtoData(COM_PROTO_FILE, screenStr, 0, frameBuf, len);  //生成协议数据到
-        w->comStatus->setTotalFrameCounts(counts);
-        w->comStatus->getCOMParaFromSettings(screenStr); //获取通信参数--具体的通信方式在通信参数中定义
-        w->comStatus->sendProtoFile(COM_PROTO_FILE);
+        if(counts)
+        {
+          w->comStatus->setTotalFrameCounts(counts);
+          w->comStatus->getCOMParaFromSettings(screenStr); //获取通信参数--具体的通信方式在通信参数中定义
+          w->comStatus->sendProtoFile(COM_PROTO_FILE);
+        }
     }
 
     return 1;
@@ -925,32 +1018,44 @@ INT8U makeProtoFileData(QString screenStr, int mode, int flag)
     {
        counts = _makeProtoData(PREVIEW_PROTO_FILE, screenStr, flag, (char *)0, 0); //生成协议数据到
 
-       w->comStatus->setTotalFrameCounts(counts);
-       w->comStatus->setComMode(mode);
-       w->comStatus->sendProtoFile(PREVIEW_PROTO_FILE);
+       if(counts > 0)
+       {
+         w->comStatus->setTotalFrameCounts(counts);
+         w->comStatus->setComMode(mode);
+         w->comStatus->sendProtoFile(PREVIEW_PROTO_FILE);
+       }
     }
     else  if(mode EQ SIM_MODE)
     {
         counts = _makeProtoData(SIM_PROTO_FILE, screenStr, flag, (char *)0, 0); //生成协议数据到
 
-        w->comStatus->setTotalFrameCounts(counts);
-        w->comStatus->setComMode(mode);
-        w->comStatus->sendProtoFile(SIM_PROTO_FILE);
+        if(counts > 0)
+        {
+          w->comStatus->setTotalFrameCounts(counts);
+          w->comStatus->setComMode(mode);
+          w->comStatus->sendProtoFile(SIM_PROTO_FILE);
+        }
     }
     else if(mode EQ UDISK_MODE)
     {
         //直接生成到U盘中文件名为 屏幕Addr.dat
-         _makeProtoData(UDISK_PROTO_FILE, screenStr, flag, (char *)0, 0); //生成协议数据到
-         w->comStatus->setComMode(mode);
-         w->comStatus->getUDiskParaFromSettings(screenStr); //获取屏幕地址--生成文件时需要
-         w->comStatus->sendProtoFile(UDISK_PROTO_FILE);
-    }
+         counts = _makeProtoData(UDISK_PROTO_FILE, screenStr, flag, (char *)0, 0); //生成协议数据到
+         if(counts > 0)
+         {
+           w->comStatus->setComMode(mode);
+           w->comStatus->getUDiskParaFromSettings(screenStr); //获取屏幕地址--生成文件时需要
+           w->comStatus->sendProtoFile(UDISK_PROTO_FILE);
+         }
+     }
     else //if(mode EQ COM_MODE) //串口方式
     {
         counts = _makeProtoData(COM_PROTO_FILE, screenStr, flag, (char *)0, 0);  //生成协议数据到
-        w->comStatus->setTotalFrameCounts(counts);
-        w->comStatus->getCOMParaFromSettings(screenStr); //获取通信参数
-        w->comStatus->sendProtoFile(COM_PROTO_FILE);
+        if(counts > 0)
+        {
+          w->comStatus->setTotalFrameCounts(counts);
+          w->comStatus->getCOMParaFromSettings(screenStr); //获取通信参数
+          w->comStatus->sendProtoFile(COM_PROTO_FILE);
+        }
     }
 
     return 1;

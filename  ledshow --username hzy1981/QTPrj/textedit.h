@@ -88,6 +88,8 @@ public:
     QMenu *menuColumn;
     QMenu *menuCell;
 
+    CtablePropertyEdit *tablePropertyEdit;
+
     void screenCardParaChangeProc();
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
@@ -126,7 +128,8 @@ private:
     bool load(const QString &f);
     bool maybeSave();
     void setCurrentFileName(const QString &fileName);
-
+public slots:
+        void showInit();
 private slots:
     void fileNew();
     void fileOpen();
@@ -152,8 +155,6 @@ private slots:
     void clipboardDataChanged();
     void about();
     void printPreview(QPrinter *);
-
-    void showInit();
 
 
 private:
@@ -200,7 +201,6 @@ private:
 
     CsmLineCombo *smLineCombo; //单行字幕或多行文本
 
-    CtablePropertyEdit *tablePropertyEdit;
     QSpinBox *spinLineDis; //行距
 
     QToolBar *tb;
