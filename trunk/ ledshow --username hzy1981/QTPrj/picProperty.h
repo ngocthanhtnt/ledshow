@@ -31,7 +31,6 @@ private:
 
     QGroupBox *textGroup;
     QLabel *textLabel;  //文本
-    QTextEdit *textEdit; //显示文本
 
 /*
     QGroupBox *paraGroup;
@@ -45,7 +44,7 @@ private:
 */
     CshowModeEdit *showModeEdit;
     CborderEdit *borderEdit;
-    TextEdit *edit;
+
 public slots:
     void showModeEdited();
     void editSlot();
@@ -53,6 +52,8 @@ public slots:
 public:
     Carea *area;
     CnameEdit *nameEdit;
+    //QTextEdit *textEdit; //显示文本
+    TextEdit *edit;
     void screenCardParaChangeProc();
     void connectSignal();
     void disconnectSignal();
