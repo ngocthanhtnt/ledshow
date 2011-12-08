@@ -286,12 +286,12 @@ void Clr_Border(S_Show_Data *pDst, INT8U Area_No)
 {
 
     INT16U Area_Width, Area_Height;//, Border_Width, Border_Height;
-    INT8U Width, Height;
+    INT8U  Height;
     S_Point P0;
 
     Area_Width = Get_Area_Width(Area_No); //分区的宽度和高度
     Area_Height = Get_Area_Height(Area_No);
-    Width = Get_Area_Border_Width(Area_No);
+    //Width = Get_Area_Border_Width(Area_No);
     Height = Get_Area_Border_Height(Area_No);
     //Border_Width = Get_Area_Border_Width(Area_No);
     //Border_Height = Get_Area_Border_Height(Area_No);
@@ -378,7 +378,7 @@ void Update_Border_Data(INT8U Area_No)
   static S_Int8U Flag[MAX_AREA_NUM + 1];// = {CHK_BYTE, 0, CHK_BYTE};
     
   INT16U Step_Time = 0; //步进时间
-  INT8U Border_Width,Border_Height;
+  INT8U Border_Width;//,Border_Height;
   //INT8U *pBorder_Data;
   INT8U Border_Mode;
   //INT8U Type;
@@ -433,7 +433,7 @@ void Update_Border_Data(INT8U Area_No)
   }
 
   Border_Width = Get_Area_Border_Width(Area_No);
-  Border_Height = Get_Area_Border_Height(Area_No);
+  //Border_Height = Get_Area_Border_Height(Area_No);
 
   if(Prog_Status.Border_Status[Area_No].Timer >= Step_Time)
   {

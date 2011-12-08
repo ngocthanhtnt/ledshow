@@ -385,6 +385,7 @@ void NVIC_Configuration(void)
 //INT16U SPI2_DMA_Data[] = {0x0204, 0x0810, 0x2040, 0x81FF};
 INT16U SPI2_DMA_Data[] = {0x0101, 0x0101, 0x0101, 0x0101};
 //DMA初始化。
+#if MAX_SCAN_BLOCK_NUM EQ 16
 void DMA_Configuration(void)
 {
   DMA_InitTypeDef DMA_InitStructure;
@@ -448,6 +449,49 @@ void DMA_Configuration(void)
   /* DMA1 Channel5 enable */
   DMA_Cmd(DMA1_Channel7, ENABLE);
 }
+#elif MAX_SCAN_BLOCK_NUM EQ 4
+ void DMA_Configuration(void)
+{
+  DMA_InitTypeDef DMA_InitStructure;
+
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+
+  DMA_DeInit(DMA1_Channel5);
+
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&SPI2->DR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)SPI2_DMA_Data; //需要发送的Dma数据
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+  DMA_InitStructure.DMA_BufferSize = 4;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;//DMA_PeripheralDataSize_Byte;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_Low;
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+
+  DMA_Init(DMA1_Channel5, &DMA_InitStructure);
+
+  DMA_DeInit(DMA1_Channel7);
+
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOB->ODR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][0]; //绿色数据起始地址
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+  DMA_InitStructure.DMA_BufferSize = 8;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+
+  DMA_Init(DMA1_Channel7, &DMA_InitStructure);
+
+  /* DMA1 Channel5 enable */
+  DMA_Cmd(DMA1_Channel7, ENABLE);
+}
+#endif
 
 //定时器2,输入捕获中断!!两个通道，下降沿捕获！
 void TIM2_Configuration(void)

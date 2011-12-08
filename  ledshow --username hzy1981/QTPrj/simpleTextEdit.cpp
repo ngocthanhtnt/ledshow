@@ -18,7 +18,7 @@
 extern MainWindow *w;
 extern QSettings settings;
 
-#define TIME_EDIT_WIDTH 80
+#define TIME_EDIT_WIDTH 70
 
 
 //定义边框数据
@@ -285,6 +285,7 @@ void CshowModeCombo::setItems()
       disconnect(this, SIGNAL(currentIndexChanged(int)), this, SIGNAL(indexChangeSignal()));
       inModeNum = Card_Para.InMode_Num;
       outModeNum = Card_Para.OutMode_Num;
+      //setFixedWidth(50);
 
       clear();
       if(type EQ 0)
@@ -729,6 +730,8 @@ CdateEdit::CdateEdit(QWidget *parent):QGroupBox(parent)
     dateCombo->addItem(tr("12"));
     dateCombo->addItem(tr("30"));
 
+    dateCombo->setFixedWidth(120);
+
     colorCombo = new CcolorCombo(this);
     sizeCombo = new CsizeCombo(this);
 
@@ -812,6 +815,8 @@ CweekEdit::CweekEdit(QWidget *parent):QGroupBox(parent)
     weekCombo->addItem(tr("Montag"));
     weekCombo->addItem(tr("Lundi"));
     weekCombo->addItem(tr("げつうび"));
+
+    weekCombo->setFixedWidth(120);
 
     colorCombo = new CcolorCombo(this);
     sizeCombo = new CsizeCombo(this);
@@ -1340,7 +1345,7 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
   //editCheck = new QCheckBox(tr("启用背景文字"), this);
 
   //oButton = new QPushButton(tr("打开"),this);
-  int width = 30;
+  int width = 20;
   bButton->setFixedWidth(width);
   iButton->setFixedWidth(width);
   uButton->setFixedWidth(width);
@@ -1352,7 +1357,7 @@ CsimpleTextEdit::CsimpleTextEdit(QWidget *parent):QGroupBox(parent)
 
   QLabel *textLabel = new QLabel(tr("文字"), this);
   lineEdit = new QLineEdit(this);
-  lineEdit->setFixedWidth(100);
+  lineEdit->setFixedWidth(115);
 
   hLayout = new QHBoxLayout(this);
   hLayout -> addWidget(fontLabel);
@@ -1699,9 +1704,10 @@ CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
     //stepLabel = new QLabel(tr("步长"), this);
     //pointsLabel = new QLabel(tr("点数"), this);
     styleLabel = new QLabel(tr("样式"), this);
+    colorLabel = new QLabel(tr("颜色"), this);
     modeLabel = new QLabel(tr("特效"), this);
     speedLabel = new QLabel(tr("速度"), this);
-    usLabel = new QLabel(tr("微秒"), this);
+    //usLabel = new QLabel(tr("微秒"), this);
     //stepCombo = new QComboBox(this);//new QLineEdit(this); //步长
     speedCombo = new QComboBox(this);
     colorCombo = new CcolorCombo(this);
@@ -1713,12 +1719,13 @@ CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
     //gridLayout -> addWidget(pointsLabel, 1, 2);
     gridLayout -> addWidget(styleLabel, 0, 0);
     gridLayout -> addWidget(styleCombo, 0, 1);
-     gridLayout -> addWidget(colorCombo, 0, 2);
-    gridLayout -> addWidget(modeLabel, 1, 0);
-    gridLayout -> addWidget(modeCombo, 1, 1, 1, 2);
-    gridLayout -> addWidget(speedLabel, 2, 0);
-    gridLayout -> addWidget(speedCombo, 2, 1);
-    gridLayout -> addWidget(usLabel, 2, 2);
+    gridLayout -> addWidget(colorLabel, 1, 0);
+    gridLayout -> addWidget(colorCombo, 1, 1);
+    gridLayout -> addWidget(modeLabel, 2, 0);
+    gridLayout -> addWidget(modeCombo, 2, 1, 1, 2);
+    gridLayout -> addWidget(speedLabel, 3, 0);
+    gridLayout -> addWidget(speedCombo, 3, 1);
+    //gridLayout -> addWidget(usLabel, 3, 2);
     this -> setLayout(gridLayout);
     this->setCheckable(true);
     this->setTitle(tr("魔幻边框"));
@@ -1742,7 +1749,7 @@ CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
     modeCombo->addItem(tr("逆时钟移动"));
     modeCombo->addItem(tr("顺时钟闪烁移动"));
     modeCombo->addItem(tr("逆时钟闪烁移动"));
-
+    modeCombo->setFixedWidth(95);
 
     speedCombo->addItem(tr("1最快"));
     speedCombo->addItem(tr("2"));

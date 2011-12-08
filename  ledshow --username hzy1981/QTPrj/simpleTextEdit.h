@@ -288,7 +288,7 @@ private:
     QGroupBox *borderGroup; //±ß¿ò
     QCheckBox *borderCheck;
 
-    QLabel *stepLabel,*styleLabel,*modeLabel,*speedLabel;
+    QLabel *stepLabel,*styleLabel,*modeLabel,*speedLabel,*colorLabel;
     QLabel *pointsLabel,*usLabel;
     QComboBox *stepCombo,*speedCombo;
     QComboBox *styleCombo;

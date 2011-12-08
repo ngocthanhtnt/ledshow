@@ -371,8 +371,8 @@ class CscreenProperty:public QWidget
     Q_OBJECT
     CnameEdit *nameEdit;
     CfacScreenProperty *facProperty;
-    ClightnessProperty *lightnessProperty;
-    CopenCloseProperty *openCloseProperty;
+    //ClightnessProperty *lightnessProperty;
+    //CopenCloseProperty *openCloseProperty;
 signals:
     void editSignal();
 public:
