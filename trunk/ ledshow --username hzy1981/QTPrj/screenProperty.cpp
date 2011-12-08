@@ -417,12 +417,12 @@ CscreenProperty::CscreenProperty(QWidget *parent):QWidget(parent)
     //facParaGroup->setLayout(hLayout);
 
     //hLayout = new QHBoxLayout(this);
-    lightnessProperty = new ClightnessProperty(this);
+    //lightnessProperty = new ClightnessProperty(this);
     //hLayout->addWidget(lightnessProperty);
     //lightnessGroup->setLayout(hLayout);
 
     //hLayout = new QHBoxLayout(this);
-    openCloseProperty = new CopenCloseProperty(this);
+    //openCloseProperty = new CopenCloseProperty(this);
     //hLayout->addWidget(openCloseProperty,0,Qt::AlignTop);
     //openCloseTimeGroup->setLayout(hLayout);
     //lightnessGroup->setLayout(vLayout);
@@ -433,8 +433,8 @@ CscreenProperty::CscreenProperty(QWidget *parent):QWidget(parent)
 
    // tab->addTab(facProperty, tr("工厂参数"));
     //hLayout->addWidget(tab);
-    mainLayout->addWidget(lightnessProperty);
-    mainLayout->addWidget(openCloseProperty);
+    //mainLayout->addWidget(lightnessProperty);
+    //mainLayout->addWidget(openCloseProperty);
     mainLayout->addWidget(facProperty);
     mainLayout->addStretch(10);
 
@@ -454,16 +454,16 @@ CscreenProperty::~CscreenProperty()
 void CscreenProperty::getSettingsFromWidget(QString str)
 {
     nameEdit->getSettingsFromWidget(str);
-    lightnessProperty->getSettingsFromWidget(str);
-    openCloseProperty->getSettingsFromWidget(str);
+    //lightnessProperty->getSettingsFromWidget(str);
+    //openCloseProperty->getSettingsFromWidget(str);
 
 }
 
 void CscreenProperty::setSettingsToWidget(QString str)
 {
     nameEdit->setSettingsToWidget(str);
-    lightnessProperty->setSettingsToWidget(str);
-    openCloseProperty->setSettingsToWidget(str);
+    //lightnessProperty->setSettingsToWidget(str);
+    //openCloseProperty->setSettingsToWidget(str);
     facProperty->setSettingsToWidget(str);
 }
 /*

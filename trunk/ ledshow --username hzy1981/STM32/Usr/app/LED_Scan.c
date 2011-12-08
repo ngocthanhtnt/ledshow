@@ -3,7 +3,7 @@
 
 volatile INT32U test_temp = 0, test_x=0, test_y=0;
 
-#if MAX_SCAN_BLOCK_NUM EQ 16
+#if 1//MAX_SCAN_BLOCK_NUM EQ 16
 //此算法相当牛逼，将i数组中的8个
 void transpose8(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) { 
         unsigned long x, y, t; 
@@ -453,14 +453,11 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 
 }
 #elif SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
+#if MAX_SCAN_BLOCK_NUM EQ 16
 void Get_Scan_Data(INT16U Blocks, INT16U Col)
 {
     INT16U i;
 	INT32S Index;
-	//INT16U Addr;
-	//INT32U Temp;
-	//INT16U Cols;
-	
 
 	Index = Screen_Status.Block0_Index + Screen_Status.ScanRow_X_BlockCols;//Screen_Status.Scan_Row * Screen_Para.Base_Para.Width / 8 * Screen_Status.Color_Num;//Get_Scan_Data_Index(0, Col); //先计算第0个block的对应索引，后面的block都是加一个同样的值
    
@@ -512,6 +509,63 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 //	  Screen_Status.Block0_Index - Screen_Status.Block_Data_Off[Col % Screen_Status.Fold_Size];
   	//Screen_Status.Block0_Index = Screen_Status.Block0_Index + Screen_Status.Block_Data_Off[Col % Screen_Status.Fold_Size]; 
 }
+#elif MAX_SCAN_BLOCK_NUM EQ 4
+void Get_Scan_Data(INT16U Blocks, INT16U Col)
+{
+    INT16U i;
+	INT32S Index;
+
+	Index = Screen_Status.Block0_Index + Screen_Status.ScanRow_X_BlockCols;//Screen_Status.Scan_Row * Screen_Para.Base_Para.Width / 8 * Screen_Status.Color_Num;//Get_Scan_Data_Index(0, Col); //先计算第0个block的对应索引，后面的block都是加一个同样的值
+   
+    if(Screen_Para.Scan_Para.RG_Reverse EQ 1) //红绿反向
+	{
+ 		if(Screen_Status.Color_Num < 2)
+		{
+			for(i = 0; i < Blocks; i ++)
+			{
+				Scan_Data[1][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index];
+				Index += Screen_Status.Block_Bytes;
+			}
+		}
+		else
+		{
+			for(i = 0; i < Blocks; i ++)
+			{
+	     		Scan_Data[1][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index]; 		    
+				Scan_Data[0][i] = Show_Data.Color_Data[Index + 1];//Show_Data.Color_Data[Data_Index];
+				Index += Screen_Status.Block_Bytes;
+			}
+		}
+	}
+	else
+	{
+		if(Screen_Status.Color_Num < 2)
+		{
+			for(i = 0; i < Blocks; i ++)
+			{
+				Scan_Data[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index];
+				Index += Screen_Status.Block_Bytes;
+			}
+		}
+		else
+		{
+			for(i = 0; i < Blocks; i ++)
+			{
+	     		Scan_Data[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index]; 		    
+				Scan_Data[1][i] = Show_Data.Color_Data[Index + 1];//Show_Data.Color_Data[Data_Index];
+				Index += Screen_Status.Block_Bytes;
+			}
+	
+		}
+	}
+
+    //if(Screen_Para.Scan_Para.Direct < 2) //从左边进入，则索引应该转换
+      Screen_Status.Block0_Index += Screen_Status.Block_Data_Off[Col % Screen_Status.Fold_Size];
+//	else
+//	  Screen_Status.Block0_Index - Screen_Status.Block_Data_Off[Col % Screen_Status.Fold_Size];
+  	//Screen_Status.Block0_Index = Screen_Status.Block0_Index + Screen_Status.Block_Data_Off[Col % Screen_Status.Fold_Size]; 
+}
+#endif
 #endif 
   
  //设置块行号
@@ -791,18 +845,12 @@ void LED_Scan_One_Row(void)
 	  //else
 	    //pDst = &Scan_Data1[0][0];
  
-#if MAX_SCAN_BLOCK_NUM EQ 4//A型卡最多4条扫描线
-/*
+#if MAX_SCAN_BLOCK_NUM EQ 4//A型卡最多4条扫描线		   
+       //需要保持GPIOB的高8位数据
+      memset(&Scan_Data1[0][0], (GPIOB->ODR & 0xFF00) >> 8, sizeof(Scan_Data1));
+
       transpose8(&Scan_Data[0][0], pDst);	//R1-R4,G1-G4
 
-	  Temp = (GPIOB->ODR & 0xFF00) ;
-	  for(j = 0; j < 8; j ++)
-	  {
-	    nop();
-	    SET_CLK_LOW();
-        GPIOB->ODR = Temp | Scan_Data[0][j]; //输出R1-R4,G1-G4
-		SET_CLK_HIGH();
-	   } */
 #elif MAX_SCAN_BLOCK_NUM EQ 8
 ;
 #elif MAX_SCAN_BLOCK_NUM EQ 16
@@ -861,7 +909,10 @@ void LED_Scan_One_Row(void)
 	    //Delay_us(1);
 		//for(j = 0; j < 1; j ++)
 		//nop();
-		
+
+#else
+#error "MAX_SCAN_BLOCK_NUM error"
+#endif		
 		while(DMA1_Channel7->CNDTR !=8); 
 
 		//nop(); nop();nop();nop();nop();nop(); 		
@@ -878,9 +929,6 @@ void LED_Scan_One_Row(void)
 		
 	   //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出 
 
-#else
-#error "MAX_SCAN_BLOCK_NUM error"
-#endif
 
    }
 #elif SCAN_DATA_MODE EQ SCAN_SOFT_MODE1

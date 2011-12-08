@@ -53,6 +53,8 @@ void CcolorCombo::setItems()
     if(tmp >= this->count())
         this->setCurrentIndex(0);
 
+    setFixedWidth(40);
+
     connect(this, SIGNAL(currentIndexChanged(int)), this, SIGNAL(indexChangeSignal()));
 
 }
@@ -241,6 +243,8 @@ void CsizeCombo::setItems()
   addItem(tr("16"));
   if(Card_Para.Font_Num > 1)
     addItem(tr("24"));
+
+  setFixedWidth(40);
   connect(this, SIGNAL(currentIndexChanged(int)), this, SIGNAL(indexChangeSignal()));
 
 }

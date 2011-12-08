@@ -40,6 +40,7 @@ CtimeProperty::CtimeProperty(QWidget *parent):QWidget(parent)
     //textGroup = new QGroupBox(tr("¹Ì¶¨ÎÄ±¾"), this);
 
     dateTimeEdit = new CdateTimeEdit(this);
+    //dateTimeEdit->setFixedWidth(50);
     vLayout = new QVBoxLayout(this);
     vLayout->addWidget(dateTimeEdit);
     hLayout->addLayout(vLayout);
@@ -51,8 +52,9 @@ CtimeProperty::CtimeProperty(QWidget *parent):QWidget(parent)
     vLayout ->addWidget(showModeEdit);
 
     borderEdit = new CborderEdit(this);
-    hLayout->addWidget(borderEdit);
+
     hLayout->addLayout(vLayout);
+    hLayout->addWidget(borderEdit);
 /*
     vLayout = new QVBoxLayout(this);
     vLayout ->addWidget(simpleTextEdit);

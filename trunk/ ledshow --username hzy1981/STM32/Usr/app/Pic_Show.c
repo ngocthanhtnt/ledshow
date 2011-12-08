@@ -340,7 +340,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 45
   ,{&Move_Left_Compress_0, H_MODE, 1
 #if QT_EN
-   ,"左压入0"
+   ,"左压入"
 #endif
   }//右下引入
 #endif
@@ -348,7 +348,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 46
   ,{&Move_Right_Compress_0, H_MODE, 1
 #if QT_EN
-   ,"右压入0"
+   ,"右压入"
 #endif
   }//右下引入
 #endif
@@ -356,7 +356,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 47
   ,{&Move_Up_Compress_0, V_MODE, 1
 #if QT_EN
-   ,"上压入0"
+   ,"上压入"
 #endif
   }//右下引入
 #endif
@@ -364,7 +364,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 48
   ,{&Move_Down_Compress_0, V_MODE, 1
 #if QT_EN
-   ,"下压入0"
+   ,"下压入"
 #endif
   }//右下引入
 #endif
