@@ -1328,12 +1328,12 @@ void Ram_Init(void)
   Prog_Status.Play_Status.Last_Prog_No = 0xFF;
   SET_HT(Prog_Status.Play_Status);
   SET_SUM(Prog_Status.Play_Status);
-
+/*
 #if QT_EN EQ 0
   memset(Scan_Data, 0xFF, sizeof(Scan_Data));
   memset(Scan_Data0, 0xFF, sizeof(Scan_Data0));
 #endif
-
+*/
 }
 
 //特效处理函数，定时调用
@@ -1464,7 +1464,7 @@ void Screen_Test(void)
   INT16U i, j;
   S_Point P0,P1;
   INT8U Test_Key_Up_Flag;
-/*
+
    Screen_Para.Base_Para.Width = 64; 
    Screen_Para.Base_Para.Height = 32;
    Screen_Para.Base_Para.Color = 0x03;
@@ -1475,7 +1475,7 @@ void Screen_Test(void)
    Screen_Para.Scan_Para.Cols_Fold = 0x00;//0x02;
    Screen_Para.Scan_Para.Rows = 16;
 
-   //memset((INT8U *)Show_Data.Color_Data, 0x01, sizeof(Show_Data.Color_Data));
+   memset((INT8U *)Show_Data.Color_Data, 0x55, sizeof(Show_Data.Color_Data));
 
    Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
    P0.X = 0;
@@ -1492,12 +1492,12 @@ void Screen_Test(void)
 	   //Set_Area_Point_Data(&Show_Data, 0, 23, 16, 0x01);
 	   //Set_Area_Point_Data(&Show_Data, 0, 24, 16, 0x01);
 
-	 Set_Area_Point_Data(&Show_Data, 0, 32, 17, 0x02);
-	 Set_Area_Point_Data(&Show_Data, 0, 48, 17, 0x03);
+	 //Set_Area_Point_Data(&Show_Data, 0, 32, 17, 0x02);
+	 //Set_Area_Point_Data(&Show_Data, 0, 48, 17, 0x03);
 
    //Copy_Filled_Rect(&Show_Data_Bak, 0, &P0, 1064, 64, &Show_Data, &P1, 0);
    }  
- */
+
  //--------------------
 #if RMDK_SIM_EN EQ 0
   //测试按键按下并且当前没有在工厂状态，则进入屏幕自检
