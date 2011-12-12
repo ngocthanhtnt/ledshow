@@ -453,7 +453,7 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 
 }
 #elif SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
-#if MAX_SCAN_BLOCK_NUM EQ 16
+#if 1//MAX_SCAN_BLOCK_NUM EQ 16
 void Get_Scan_Data(INT16U Blocks, INT16U Col)
 {
     INT16U i;
@@ -826,9 +826,14 @@ void LED_Scan_One_Row(void)
   //Direct = (Screen_Para.Scan_Para.Direct < 2)?0:1; //左入为0，数据反向，右入为1，数据维持
 
   if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
-    memset(Scan_Data1, 0xFF, sizeof(Scan_Data));
+    memset(Scan_Data1, 0xFF, sizeof(Scan_Data1));
   else
-    memset(Scan_Data1, 0x00, sizeof(Scan_Data0));
+    memset(Scan_Data1, 0x00, sizeof(Scan_Data1)); 
+
+#if MAX_SCAN_BLOCK_NUM EQ 4
+  for(i = 0; i < sizeof(Scan_Data1); i += 2)
+    Scan_Data1[0][i+1] = (INT8U)((GPIOB->ODR & 0xFF00) >> 8);
+#endif
 
 #if SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
 
@@ -847,12 +852,18 @@ void LED_Scan_One_Row(void)
  
 #if MAX_SCAN_BLOCK_NUM EQ 4//A型卡最多4条扫描线		   
        //需要保持GPIOB的高8位数据
-      memset(&Scan_Data1[0][0], (GPIOB->ODR & 0xFF00) >> 8, sizeof(Scan_Data1));
+      //memset(&Scan_Data1[0][0], (GPIOB->ODR & 0xFF00) >> 8, sizeof(Scan_Data1));
 
       transpose8(&Scan_Data[0][0], pDst);	//R1-R4,G1-G4
 
 #elif MAX_SCAN_BLOCK_NUM EQ 8
-;
+      memset(&Scan_Data1[0][0], (GPIOB->ODR & 0xFF00) >> 8, sizeof(Scan_Data1));
+
+      transpose8(&Scan_Data[0][0], pDst);	//R1-R8
+
+	  if(Screen_Status.Color_Num > 1)
+	  	transpose8(&Scan_Data[1][0], pDst + 1/*, Direct*/);	//G1-G8
+
 #elif MAX_SCAN_BLOCK_NUM EQ 16
 	    if(Blocks <= 4)
 		   transpose8(&Scan_Data[0][0], pDst/*, Direct*/);	//R1-R4
@@ -916,7 +927,7 @@ void LED_Scan_One_Row(void)
 		while(DMA1_Channel7->CNDTR !=8); 
 
 		//nop(); nop();nop();nop();nop();nop(); 		
-		memcpy(Scan_Data0, Scan_Data1, 2*MAX_SCAN_BLOCK_NUM);
+		memcpy(Scan_Data0, Scan_Data1, sizeof(Scan_Data1));
 	    //GPIOB->BRR = GPIO_Pin_9;
 		DMA1_Channel5->CCR &= (uint16_t)(~DMA_CCR1_EN); //关闭DMA通道
 		DMA1_Channel5->CNDTR = 4;//(uint32_t)pDst;//pDMA_InitStruct->DMA_MemoryBaseAddr;
