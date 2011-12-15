@@ -17,8 +17,8 @@ EXT INT8U Scan_Data0[2][MAX_SCAN_BLOCK_NUM];
 EXT INT8U Scan_Data1[2][MAX_SCAN_BLOCK_NUM];
 #elif MAX_SCAN_BLOCK_NUM == 4
 EXT INT8U Scan_Data[2][MAX_SCAN_BLOCK_NUM];// __attribute__((at(SCAN_DATA_ADDR)));
-EXT INT8U Scan_Data0[2][MAX_SCAN_BLOCK_NUM*2];
-EXT INT8U Scan_Data1[2][MAX_SCAN_BLOCK_NUM*2];
+EXT INT8U Scan_Data0[2][(MAX_SCAN_BLOCK_NUM + 1)*2];
+EXT INT8U Scan_Data1[2][(MAX_SCAN_BLOCK_NUM + 1)*2];
 #endif
 //#pragma pack()
 

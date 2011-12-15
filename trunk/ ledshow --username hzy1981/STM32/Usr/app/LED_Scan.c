@@ -25,7 +25,9 @@ void transpose8(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) {
         t = (x ^ (x >> 7)) & 0x00aa00aa; 
         x = x ^ t ^ (t << 7); 
         t = (y ^ (y >> 7)) & 0x00aa00aa; 
-        y = y ^ t ^ (t << 7); 
+        y = y ^ t ^ (t << 7);
+		 
+		//SPI2->DR = 0xFFFE;
 
 		if(Screen_Para.Scan_Para.Data_Polarity != 1) //数据极性为低
 		{
@@ -50,7 +52,10 @@ void transpose8(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) {
 		  o[10] = x >> 8; 
 		  o[12] = x >> 16; 
 		  //GPIOB->BRR = GPIO_Pin_9;
-		  o[14] = x >> 24;    
+		  o[14] = x >> 24; 
+		  
+		  //----------
+		  o[16] = o[14];   
 		}
 		else
 		{
@@ -62,7 +67,9 @@ void transpose8(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) {
 		  o[10] = y >> 16; 
 		  o[12] = y >> 8; 
 		  //GPIOB->BRR = GPIO_Pin_9;
-		  o[14] = y;		
+		  o[14] = y;
+		  
+		  o[16] = o[14];		
 		} 
 
 }
@@ -834,6 +841,8 @@ void LED_Scan_One_Row(void)
   for(i = 0; i < sizeof(Scan_Data1); i += 2)
     Scan_Data1[0][i+1] = (INT8U)((GPIOB->ODR & 0xFF00) >> 8);
 #endif
+   
+   pDst = &Scan_Data1[0][0];
 
 #if SCAN_DATA_MODE EQ SCAN_SOFT_MODE0
 
@@ -844,9 +853,8 @@ void LED_Scan_One_Row(void)
       //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 	  //GPIOB->BSRR = GPIO_Pin_9;
       Get_Scan_Data(Blocks, i);
-
 	  //if(i & 0x01)
-	    pDst = &Scan_Data1[0][0];
+	    
 	  //else
 	    //pDst = &Scan_Data1[0][0];
  
@@ -923,7 +931,8 @@ void LED_Scan_One_Row(void)
 
 #else
 #error "MAX_SCAN_BLOCK_NUM error"
-#endif		
+#endif
+/*		
 		while(DMA1_Channel7->CNDTR !=8); 
 
 		//nop(); nop();nop();nop();nop();nop(); 		
@@ -935,12 +944,27 @@ void LED_Scan_One_Row(void)
 		//nop();
 		__set_PRIMASK(1); //关总中断 dma传输过程中，中断对dma时序有影响，因此传输过程中关闭
 	    DMA1_Channel5->CCR |= DMA_CCR1_EN; //打开DMA通道
-		
-
-		
+*/
+	   
+       memcpy(Scan_Data0, Scan_Data1, sizeof(Scan_Data1));
+       GPIOB->ODR = *(INT16U *)&Scan_Data0[0][0];
+	   		
+	   __enable_irq();//(0); //开总中断
+	   __disable_irq() ; //关总中断 dma传输过程中，中断对dma时序有影响，因此传输过程中关闭
+	   //if(i EQ Cols)
+	     //SPI2->DR = 0;
+	   //else	 	
+	     SPI2->DR = 0xAAAA;
+/*
 	   //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出 
-
-
+ 		DMA1_Channel7->CCR &= (uint16_t)(~DMA_CCR1_EN); //关闭DMA通道
+		DMA1_Channel7->CNDTR = 8;//(uint32_t)pDst;//pDMA_InitStruct->DMA_MemoryBaseAddr;
+		__set_PRIMASK(0); //开总中断
+		//nop();
+		__set_PRIMASK(1); //关总中断 dma传输过程中，中断对dma时序有影响，因此传输过程中关闭
+	    DMA1_Channel7->CCR |= DMA_CCR1_EN; //打开DMA通道 
+		SPI2->DR = 0x5555;
+  */
    }
 #elif SCAN_DATA_MODE EQ SCAN_SOFT_MODE1
 
@@ -998,8 +1022,9 @@ void LED_Scan_One_Row(void)
 	}
 #endif
 	 //此处是硬件扫描方式代码
-
-  //return;	 
+    Delay_us(5);
+    __enable_irq();
+		 
 	//关闭OE使能
 	Set_OE_Duty_Polarity(0, Screen_Para.Scan_Para.OE_Polarity);
 

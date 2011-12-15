@@ -241,10 +241,10 @@ void Copy_Border(INT8U Area_No, INT32U Step)
     }
 
     //左右边框
-    if(Width + Height > Area_Height) //不应超过高度
+    if(Width + 2*Height > Area_Height) //不应超过高度
     {
-      if(Area_Height > Height)
-        Width = Area_Height - Height;
+      if(Area_Height > 2*Height)
+        Width = Area_Height - 2*Height;
       else
         Width = 0;
     }

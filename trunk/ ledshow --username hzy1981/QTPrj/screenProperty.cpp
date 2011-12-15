@@ -43,7 +43,7 @@ const S_Scan_Mode scanMode[] =
     {200, "1/16扫,右入直行一路带16行数据(P10常用)"},
     {281, "1/16扫,右入直行每64点向下打折一次"},
 //----------1/8扫-------
-    {1000, "1/8扫,左入直行一路带4行数据"},
+    {1000, "1/8扫,左入直行一路带8行数据"},
     {1011, "1/8扫,左入每8点向下打折,打折1次"},
     {1012, "1/8扫,左入每8点向下打折,打折2次"},
   //{1013, "1/8扫,左入每8点向下打折,打折3次"},
@@ -57,7 +57,7 @@ const S_Scan_Mode scanMode[] =
     {1122, "1/8扫,左入每16点向上打折,打折2次"},
   //{1123, "1/8扫,左入每16点向上打折,打折3次"},
     //1-----
-    {1200, "1/8扫,右入直行一路带4行数据"},
+    {1200, "1/8扫,右入直行一路带8行数据"},
     {1211, "1/8扫,右入每8点向下打折,打折1次"},
     {1212, "1/8扫,右入每8点向下打折,打折2次"},
   //{1213, "1/8扫,右入每8点向下打折,打折3次"},
@@ -342,7 +342,21 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     screenPara.Scan_Para.Direct = (scanMode%1000) / 100;
     screenPara.Scan_Para.Cols_Fold = (scanMode %100) / 10;
     screenPara.Scan_Para.Rows_Fold = (scanMode %10);
-    screenPara.Scan_Para.Rows = (scanMode % 10000) / 1000;
+    INT8U Rows = (scanMode % 10000) / 1000;
+
+    if(Rows EQ 0)
+      screenPara.Scan_Para.Rows = 16;
+    else if(Rows EQ 1)
+      screenPara.Scan_Para.Rows = 8;
+    else if(Rows EQ 2)
+      screenPara.Scan_Para.Rows = 4;
+    else if(Rows EQ 3)
+      screenPara.Scan_Para.Rows = 2;
+    else if(Rows EQ 4)
+      screenPara.Scan_Para.Rows = 1;
+    else
+      screenPara.Scan_Para.Rows = 16;
+
     //----------------------
     screenPara.Scan_Para.Screen_Freq = 0; //屏频
     //

@@ -37,7 +37,7 @@ INT32U Get_Area_In_Step_Delay(INT8U Area_No)
       return MOVE_STEP_PERIOD;
 #else
     if(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed > 1)
-      return MOVE_STEP_PERIOD + ((INT32U)Prog_Status.File_Para[Area_No].Pic_Para.In_Speed - 1)* 4 * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+      return MOVE_STEP_PERIOD + ((INT32U)Prog_Status.File_Para[Area_No].Pic_Para.In_Speed - 1)* 2 * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
 #endif
@@ -58,7 +58,7 @@ INT32U Get_Area_Out_Step_Delay(INT8U Area_No)
       return MOVE_STEP_PERIOD;
 #else
     if(Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed > 1)
-      return MOVE_STEP_PERIOD + ((INT32U)Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed - 1) * 4 * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
+      return MOVE_STEP_PERIOD + ((INT32U)Prog_Status.File_Para[Area_No].Pic_Para.Out_Speed - 1) * 2 * MOVE_STEP_PERIOD; //CONVERT_TIME(Prog_Status.File_Para[Area_No].Pic_Para.In_Speed);///(100/MOVE_STEP);
     else
       return MOVE_STEP_PERIOD;
 #endif
@@ -937,7 +937,8 @@ void Check_Update_Program_Para(void)
 
   //if(Prog_Status.Play_Status.Play_Flag EQ 0) //还未进入节目播放状态
   //{
-    if(Prog_Status.Play_Status.New_Prog_Flag)//while(1) //寻找下一个可播放的节目
+    if(Prog_Status.Play_Status.New_Prog_Flag &&
+	   Prog_Num.Num)//while(1) //寻找下一个可播放的节目
     {
       TRACE();
 
@@ -1324,7 +1325,7 @@ void Ram_Init(void)
 
   Prog_Status_Init();
 
-  Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+  Prog_Status.Play_Status.New_Prog_Flag = 0;
   Prog_Status.Play_Status.Last_Prog_No = 0xFF;
   SET_HT(Prog_Status.Play_Status);
   SET_SUM(Prog_Status.Play_Status);
@@ -1464,8 +1465,8 @@ void Screen_Test(void)
   INT16U i, j;
   S_Point P0,P1;
   INT8U Test_Key_Up_Flag;
-
-   Screen_Para.Base_Para.Width = 64; 
+/*
+   Screen_Para.Base_Para.Width = 256; 
    Screen_Para.Base_Para.Height = 32;
    Screen_Para.Base_Para.Color = 0x03;
    Screen_Status.Color_Num = 2;
@@ -1475,7 +1476,7 @@ void Screen_Test(void)
    Screen_Para.Scan_Para.Cols_Fold = 0x00;//0x02;
    Screen_Para.Scan_Para.Rows = 16;
 
-   memset((INT8U *)Show_Data.Color_Data, 0x55, sizeof(Show_Data.Color_Data));
+   memset((INT8U *)Show_Data.Color_Data, 0xFE, sizeof(Show_Data.Color_Data));
 
    Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
    P0.X = 0;
@@ -1497,7 +1498,7 @@ void Screen_Test(void)
 
    //Copy_Filled_Rect(&Show_Data_Bak, 0, &P0, 1064, 64, &Show_Data, &P1, 0);
    }  
-
+ */
  //--------------------
 #if RMDK_SIM_EN EQ 0
   //测试按键按下并且当前没有在工厂状态，则进入屏幕自检
