@@ -272,11 +272,15 @@ void SPI2_Init(void)
   /* SPI1 configuration */
   SPI_InitStructure.SPI_Direction = SPI_Direction_1Line_Tx;
   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+#if 1// MAX_SCAN_BLOCK_NUM == 16
   SPI_InitStructure.SPI_DataSize = SPI_DataSize_16b;//SPI_DataSize_8b;
+#else
+  SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+#endif
   SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
   SPI_InitStructure.SPI_CPHA = SPI_CPHA_2Edge;
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
+  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
   SPI_InitStructure.SPI_CRCPolynomial = 7;
   SPI_Init(SPI2, &SPI_InitStructure);
@@ -383,9 +387,10 @@ void NVIC_Configuration(void)
 //INT8U SPI2_DMA_Data[] = {0x11, 0x11, 0x11, 0x11};
 //INT16U SPI2_DMA_Data[] = {0x0303, 0x0303, 0x0303, 0x0303};
 //INT16U SPI2_DMA_Data[] = {0x0204, 0x0810, 0x2040, 0x81FF};
-INT16U SPI2_DMA_Data[] = {0x0101, 0x0101, 0x0101, 0x0101};
+//INT16U SPI2_DMA_Data[] = {0x0F0F, 0x0F0F, 0x0F0F, 0x0F0F};
 //DMA初始化。
 #if MAX_SCAN_BLOCK_NUM EQ 16
+INT16U SPI2_DMA_Data[] = {0x0101, 0x0101, 0x0101, 0x0101};
 void DMA_Configuration(void)
 {
   DMA_InitTypeDef DMA_InitStructure;
@@ -414,7 +419,7 @@ void DMA_Configuration(void)
   DMA_DeInit(DMA1_Channel1);
 
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOE->ODR;
-  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[1][0]; //红色数据起始地址
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[1][2]; //红色数据起始地址
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
   DMA_InitStructure.DMA_BufferSize = 8;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -433,7 +438,7 @@ void DMA_Configuration(void)
   DMA_DeInit(DMA1_Channel7);
 
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOD->ODR;
-  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][0]; //绿色数据起始地址
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][2]; //绿色数据起始地址
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
   DMA_InitStructure.DMA_BufferSize = 8;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -450,6 +455,10 @@ void DMA_Configuration(void)
   DMA_Cmd(DMA1_Channel7, ENABLE);
 }
 #elif MAX_SCAN_BLOCK_NUM EQ 4
+INT16U SPI2_DMA_Data[] = {0x0303, 0x0303, 0x0303, 0x0303};
+//INT8U SPI2_DMA_Data[] = {0x0
+//INT8U SPI2_DMA_Data[] = {0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x81};
+//INT16U SPI2_DMA_Data[] = {0x0101, 0x0101, 0x0101, 0x0101};
  void DMA_Configuration(void)
 {
   DMA_InitTypeDef DMA_InitStructure;
@@ -475,7 +484,7 @@ void DMA_Configuration(void)
   DMA_DeInit(DMA1_Channel7);
 
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOB->ODR;
-  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][0]; //绿色数据起始地址
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][2]; //绿色数据起始地址
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
   DMA_InitStructure.DMA_BufferSize = 8;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -520,7 +529,7 @@ void TIM2_Configuration(void)
 #endif
 
   TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;// | TIM_Channel_2;
-  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
+  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;//TIM_ICPolarity_Falling;
   TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
   TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
   TIM_ICInitStructure.TIM_ICFilter = 0x0;
@@ -528,7 +537,7 @@ void TIM2_Configuration(void)
   TIM_ICInit(TIM2, &TIM_ICInitStructure);
 
   TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;// | TIM_Channel_2;
-  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Falling;
+  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;//TIM_ICPolarity_Falling;
   TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
   TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
   TIM_ICInitStructure.TIM_ICFilter = 0x0;

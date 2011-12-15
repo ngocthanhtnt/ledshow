@@ -23,7 +23,7 @@
 #if defined(CARD_C)
 #define CARD_NAME "C"  //卡名称
 #else
-#error "card BX name error"
+#error "card CX name error"
 #endif
 
 #define SCAN_SCREEN_PERIOD 100//扫屏周期,单位us

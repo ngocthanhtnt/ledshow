@@ -43,7 +43,7 @@ CimageProperty::CimageProperty(QWidget *parent):QWidget(parent)
     hLayout = new QHBoxLayout(this);
     vLayout = new QVBoxLayout(this);
     //QValidator *inOutTimeValidator = new QIntValidator(0,999,this);
-    QValidator *stayTimeValidator = new QIntValidator(0,999,this);
+    //QValidator *stayTimeValidator = new QIntValidator(0,999,this);
 
     area = new Carea(this);
     nameEdit = new CnameEdit(this);
@@ -146,13 +146,13 @@ void CimageProperty::openImageFile()
     CshowArea *area;
     QTreeWidgetItem *item;
 
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+    QString fileName = QFileDialog::getOpenFileName(this, tr("打开文件"),
                                                     "/home",
                                                     tr("Images (*.png *.bmp *.jpg *.ico)"));
     if(fileName.isEmpty() == false)
     {
         imageSourceEdit->setText(fileName);
-        QMovie *movie = new QMovie(fileName);
+        //QMovie *movie = new QMovie(fileName);
         //totalFrameNumEdit->setText(QString::number(movie->frameCount()));
         //frameNumEdit->setMaximum(movie->frameCount());
 

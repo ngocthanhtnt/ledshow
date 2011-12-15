@@ -152,7 +152,7 @@ void CflashProperty::openFlashFile()
     CshowArea *area;
     QTreeWidgetItem *item;
 
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+    QString fileName = QFileDialog::getOpenFileName(this, tr("打开文件"),
                                                     "/home",
                                                     tr("Images (*.png *.xpm *.jpg *.gif)"));
     if(fileName.isEmpty() == false)

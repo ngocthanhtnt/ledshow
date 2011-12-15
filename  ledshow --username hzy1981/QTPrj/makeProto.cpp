@@ -860,13 +860,6 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
     progNum = progList.size();
     debug("prog num = %d", progNum);
 
-    if(GET_BIT(flag, C_PROG_DATA))
-    {
-      len = makeFrame((char *)&progNum, sizeof(progNum),\
-               C_PROG_NUM | WR_CMD, seq++, frameBuf);
-      counts++;
-      fwrite(frameBuf, len, 1, file);
-    }
 
     //节目数据
     if(GET_BIT(flag, C_PROG_DATA))
@@ -948,6 +941,14 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
                 }
               }
         }
+    }
+
+    if(GET_BIT(flag, C_PROG_DATA))
+    {
+      len = makeFrame((char *)&progNum, sizeof(progNum),\
+               C_PROG_NUM | WR_CMD, seq++, frameBuf);
+      counts++;
+      fwrite(frameBuf, len, 1, file);
     }
 
     free(dataBuf);
