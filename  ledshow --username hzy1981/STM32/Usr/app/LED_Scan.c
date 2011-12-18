@@ -799,7 +799,7 @@ void LED_Scan_One_Row(void)
     return;
 	}
  
-    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+    GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 
 
   if(Screen_Para.Scan_Para.Rows EQ 0)
@@ -830,17 +830,48 @@ void LED_Scan_One_Row(void)
 
   Calc_Block_Data_Addr_Off();
 
-  //Direct = (Screen_Para.Scan_Para.Direct < 2)?0:1; //左入为0，数据反向，右入为1，数据维持
+  memset(Scan_Data, 0, sizeof(Scan_Data));
 
   if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
     memset(Scan_Data1, 0xFF, sizeof(Scan_Data1));
   else
     memset(Scan_Data1, 0x00, sizeof(Scan_Data1)); 
 
-#if MAX_SCAN_BLOCK_NUM EQ 4
+#if MAX_SCAN_BLOCK_NUM EQ 4 //高8位的PB口不是用作数据线输出，因此需要保持原来的数据
   for(i = 0; i < sizeof(Scan_Data1); i += 2)
     Scan_Data1[0][i+1] = (INT8U)((GPIOB->ODR & 0xFF00) >> 8);
 #endif
+
+#if 0//MAX_SCAN_BLOCK_NUM EQ 16
+  if(Screen_Status.Color_Num > 1) //红绿双色
+  {
+    //当使用绿色时，因为要2个DMA必须降低每个的同步的速度,同时打开绿色的DMA信号
+    SPI_Cmd(SPI2, DISABLE);
+	SPI2->CR1 = (SPI2->CR1 & 0xFFC7) | SPI_BaudRatePrescaler_8;
+	SPI_Cmd(SPI2, ENABLE);
+
+	DMA_Cmd(DMA1_Channel1, ENABLE);
+	DMA_Cmd(DMA1_Channel7, ENABLE);
+  }
+  else
+  {
+    //当只有一个颜色时，只启用一个DMA，同时SPI速度可以更快。
+	SPI_Cmd(SPI2, DISABLE);
+	SPI2->CR1 = (SPI2->CR1 & 0xFFC7) | SPI_BaudRatePrescaler_4;
+	SPI_Cmd(SPI2, ENABLE);
+
+    if(Screen_Para.Base_Para.Color & 0x01) //当前使用红色
+	{
+	  DMA_Cmd(DMA1_Channel1, DISABLE);	//关闭绿色DMA
+      GPIOE->ODR = *(INT16U *)&Scan_Data1[0][0];  //直接输出无效数据到绿色数据线
+	}
+	else
+	{
+ 	  DMA_Cmd(DMA1_Channel7, DISABLE);	//关闭红色DMA
+      GPIOD->ODR = *(INT16U *)&Scan_Data1[0][0];  //直接输出无效数据到红色数据线
+	}
+  }
+#endif 
    
    pDst = &Scan_Data1[0][0];
 
@@ -859,52 +890,62 @@ void LED_Scan_One_Row(void)
 	    //pDst = &Scan_Data1[0][0];
  
 #if MAX_SCAN_BLOCK_NUM EQ 4//A型卡最多4条扫描线		   
-       //需要保持GPIOB的高8位数据
-      //memset(&Scan_Data1[0][0], (GPIOB->ODR & 0xFF00) >> 8, sizeof(Scan_Data1));
 
       transpose8(&Scan_Data[0][0], pDst);	//R1-R4,G1-G4
 
 #elif MAX_SCAN_BLOCK_NUM EQ 8
-      memset(&Scan_Data1[0][0], (GPIOB->ODR & 0xFF00) >> 8, sizeof(Scan_Data1));
 
       transpose8(&Scan_Data[0][0], pDst);	//R1-R8
 
 	  if(Screen_Status.Color_Num > 1)
-	  	transpose8(&Scan_Data[1][0], pDst + 1/*, Direct*/);	//G1-G8
+	  	transpose8(&Scan_Data[1][0], pDst + 1);	//G1-G8
 
 #elif MAX_SCAN_BLOCK_NUM EQ 16
+/*
 	    if(Blocks <= 4)
-		   transpose8(&Scan_Data[0][0], pDst/*, Direct*/);	//R1-R4
+		   transpose8(&Scan_Data[0][0], pDst);	//R1-R4
  		else
 		{
-			transpose8(&Scan_Data[0][0], pDst/*, Direct*/);	//R1-R8
+			transpose8(&Scan_Data[0][0], pDst);	//R1-R8
 			if(Blocks > 8)
 			{
 			   if(Blocks <= 12)
-			     transpose8(&Scan_Data[0][8], pDst + 1/*, Direct*/); //R9-R16
+			     transpose8(&Scan_Data[0][8], pDst + 1); //R9-R16
 			   else
-			     transpose8(&Scan_Data[0][8], pDst + 1/*, Direct*/); //R9-R16
+			     transpose8(&Scan_Data[0][8], pDst + 1); //R9-R16
 			}
 		}
 
 		if(Screen_Status.Color_Num > 1)
 		{
 	      if(Blocks <= 4)
-		    transpose8(&Scan_Data[1][0], pDst + MAX_SCAN_BLOCK_NUM/*, Direct*/);	//R1-R8
+		    transpose8(&Scan_Data[1][0], pDst + MAX_SCAN_BLOCK_NUM);	//R1-R8
 		  else
 		  {
-		    transpose8(&Scan_Data[1][0], pDst + MAX_SCAN_BLOCK_NUM/*, Direct*/); //G1-G8
+		    transpose8(&Scan_Data[1][0], pDst + MAX_SCAN_BLOCK_NUM); //G1-G8
   			if(Blocks > 8)
 			{
 			    if(Blocks <= 12)
-				  transpose8(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1/*, Direct*/);	//R1-R8
+				  transpose8(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1);	//R1-R8
 				else
-			      transpose8(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1/*, Direct*/); //R9-R16
+			      transpose8(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1); //R9-R16
 			}
 		  }
 		}
+*/
 
-		
+		transpose8(&Scan_Data[0][0], pDst);	//R1-R8
+		if(Blocks > 8)
+		     transpose8(&Scan_Data[0][8], pDst + 1); //R9-R16
+
+
+		if(Screen_Status.Color_Num > 1)
+		{
+		    transpose8(&Scan_Data[1][0], pDst + MAX_SCAN_BLOCK_NUM); //G1-G8
+  			if(Blocks > 8)
+			      transpose8(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1); //R9-R16
+		}
+	
 		//while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET); //等待上次发送完成
 
 //应该不需要换地址，因为只要DMA速度比数据生成速度快，就不存在追赶上的问题。如果慢就可能发生。新生成的数据覆盖即将输出的数据的问题
@@ -947,14 +988,21 @@ void LED_Scan_One_Row(void)
 */
 	   
        memcpy(Scan_Data0, Scan_Data1, sizeof(Scan_Data1));
+
+       //在上升沿触发数据,因此在第一个上升延前必须将数据准备好,以后的7位数据都是通过DMA设置
+#if MAX_SCAN_BLOCK_NUM EQ 16
+       GPIOD->ODR = *(INT16U *)&Scan_Data0[0][0];
+	   GPIOE->ODR = *(INT16U *)&Scan_Data0[1][0];
+#else 
        GPIOB->ODR = *(INT16U *)&Scan_Data0[0][0];
+#endif
 	   		
-	   __enable_irq();//(0); //开总中断
+	   __enable_irq();//(0); //开总中断--开中断一次让其他更高优先级中断可以运行
 	   __disable_irq() ; //关总中断 dma传输过程中，中断对dma时序有影响，因此传输过程中关闭
 	   //if(i EQ Cols)
 	     //SPI2->DR = 0;
 	   //else	 	
-	     SPI2->DR = 0xAAAA;
+	   SPI2->DR = 0xAAAA;
 /*
 	   //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出 
  		DMA1_Channel7->CCR &= (uint16_t)(~DMA_CCR1_EN); //关闭DMA通道
@@ -1048,7 +1096,7 @@ void LED_Scan_One_Row(void)
     //Set_Clock_Normal_Speed();
 	//_USART_Cmd(USART1, ENABLE); 
 	//USART_Clar
-    //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
+    GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
 	Flag = 0; 
 }
 

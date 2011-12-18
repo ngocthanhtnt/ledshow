@@ -137,13 +137,13 @@ void SysTick_Handler(void)
 {
   //volatile INT32U i = 0;
 
-  SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
-  //GPIO_SetBits(GPIOB,GPIO_Pin_9); //²âÊÔÊä³ö
+  //SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+
   Show_Timer_Proc();
   //Delay_us(5);
 
   //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //²âÊÔÊä³ö
-  SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
+  //SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 }
 
 /******************************************************************************/

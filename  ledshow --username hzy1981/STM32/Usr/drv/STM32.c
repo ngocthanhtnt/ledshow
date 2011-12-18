@@ -90,8 +90,9 @@ void Delay_ms(INT16U nms)
   {
     if(ms != Pub_Timer.Ms)
 	{
+	  ms = Pub_Timer.Ms;
 	  counts ++;
-	  if(counts > nms)
+	  if(counts > nms + 1)
 	   return;
 	}
   }
@@ -419,7 +420,7 @@ void DMA_Configuration(void)
   DMA_DeInit(DMA1_Channel1);
 
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOE->ODR;
-  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[1][2]; //红色数据起始地址
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[1][2]; //绿色数据起始地址
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
   DMA_InitStructure.DMA_BufferSize = 8;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -438,7 +439,7 @@ void DMA_Configuration(void)
   DMA_DeInit(DMA1_Channel7);
 
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOD->ODR;
-  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][2]; //绿色数据起始地址
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][2]; //红色数据起始地址
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
   DMA_InitStructure.DMA_BufferSize = 8;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;

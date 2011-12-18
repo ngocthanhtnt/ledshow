@@ -107,7 +107,7 @@ INT8U Chk_Pic_Continuous_Move(INT8U Area_No)
 //每隔MOVE_STEP_TIMER ms调用该函数,实现移动显示等效果
 void Update_Show_Data(void)
 {
-  INT8U i;
+  static INT8U i = 0;
 
   if(Screen_Status.Time_OC_Flag EQ CLOSE_FLAG ||\
      Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG ||\
@@ -133,7 +133,8 @@ void Update_Show_Data(void)
   }
 */
  
-  for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
+  //for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
+  if(i < Prog_Para.Area_Num && i < MAX_AREA_NUM) 
   {
       if(Screen_Status.Com_Time > 0) //收到一帧，先处理此帧
           return;
@@ -182,6 +183,11 @@ void Update_Show_Data(void)
 #if BORDER_SHOW_EN
       Update_Border_Data(MAX_AREA_NUM); //更新边框数据
 #endif
+
+  i++;
+
+  if(!(i < Prog_Para.Area_Num && i < MAX_AREA_NUM))
+    i = 0;
 
 }
 
@@ -1465,7 +1471,7 @@ void Screen_Test(void)
   INT16U i, j;
   S_Point P0,P1;
   INT8U Test_Key_Up_Flag;
-/*
+
    Screen_Para.Base_Para.Width = 256; 
    Screen_Para.Base_Para.Height = 32;
    Screen_Para.Base_Para.Color = 0x03;
@@ -1476,7 +1482,7 @@ void Screen_Test(void)
    Screen_Para.Scan_Para.Cols_Fold = 0x00;//0x02;
    Screen_Para.Scan_Para.Rows = 16;
 
-   memset((INT8U *)Show_Data.Color_Data, 0xFE, sizeof(Show_Data.Color_Data));
+   memset((INT8U *)Show_Data.Color_Data, 0x55, sizeof(Show_Data.Color_Data));
 
    Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
    P0.X = 0;
@@ -1498,7 +1504,7 @@ void Screen_Test(void)
 
    //Copy_Filled_Rect(&Show_Data_Bak, 0, &P0, 1064, 64, &Show_Data, &P1, 0);
    }  
- */
+
  //--------------------
 #if RMDK_SIM_EN EQ 0
   //测试按键按下并且当前没有在工厂状态，则进入屏幕自检

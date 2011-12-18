@@ -40,31 +40,40 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
    Point.Y += Height/2;
 
    //分点
-   for(Angle = 0; Angle < 360; Angle = Angle + 360/60)
+   if(pClock_Para->Min_Point_Radius)
    {
-     if(Angle % 90 == 0 || Angle % (360/12) == 0) //369点已经绘制过了，跳过
-       continue;
-     //距离中心点的角度是Angle，长度是Radius * 0.9, 该点半径为Hour369_Point_Radius,颜色为 Hour369_Point_Color
-     Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, (INT16S)(Radius * 0.9), \
-         pClock_Para->Min_Point_Radius, pClock_Para->Min_Point_Style, pClock_Para->Min_Point_Color);
+	   for(Angle = 0; Angle < 360; Angle = Angle + 360/60)
+	   {
+	     if(Angle % 90 == 0 || Angle % (360/12) == 0) //369点已经绘制过了，跳过
+	       continue;
+	     //距离中心点的角度是Angle，长度是Radius * 0.9, 该点半径为Hour369_Point_Radius,颜色为 Hour369_Point_Color
+	     Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, (INT16S)(Radius * 0.9), \
+	         pClock_Para->Min_Point_Radius, pClock_Para->Min_Point_Style, pClock_Para->Min_Point_Color);
+	   }
    }
  
    //整点
-   for(Angle = 0; Angle < 360; Angle = Angle + 360/12)
+   if(pClock_Para->Hour_Point_Radius)
    {
-     if(Angle % 90 == 0) //369点已经绘制过了，跳过
-       continue;
-     //距离中心点的角度是Angle，长度是Radius * 0.9, 该点半径为Hour369_Point_Radius,颜色为 Hour369_Point_Color
-     Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, (INT16S)(Radius * 0.9), \
-         pClock_Para->Hour_Point_Radius, pClock_Para->Hour_Point_Style, pClock_Para->Hour_Point_Color);
+	   for(Angle = 0; Angle < 360; Angle = Angle + 360/12)
+	   {
+	     if(Angle % 90 == 0) //369点已经绘制过了，跳过
+	       continue;
+	     //距离中心点的角度是Angle，长度是Radius * 0.9, 该点半径为Hour369_Point_Radius,颜色为 Hour369_Point_Color
+	     Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, (INT16S)(Radius * 0.9), \
+	         pClock_Para->Hour_Point_Radius, pClock_Para->Hour_Point_Style, pClock_Para->Hour_Point_Color);
+	   }
    }
  
    //369点
-   for(Angle = 0; Angle < 360; Angle = Angle + 90)
+   if(pClock_Para->Hour369_Point_Radius)
    {
-     //距离中心点的角度是Angle，长度是Radius * 0.9, 该点半径为Hour369_Point_Radius,颜色为 Hour369_Point_Color
-      Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, Radius * 9 / 10, \
-         pClock_Para->Hour369_Point_Radius, pClock_Para->Hour369_Point_Style, pClock_Para->Hour369_Point_Color);
+	   for(Angle = 0; Angle < 360; Angle = Angle + 90)
+	   {
+	     //距离中心点的角度是Angle，长度是Radius * 0.9, 该点半径为Hour369_Point_Radius,颜色为 Hour369_Point_Color
+	      Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, Radius * 9 / 10, \
+	         pClock_Para->Hour369_Point_Radius, pClock_Para->Hour369_Point_Style, pClock_Para->Hour369_Point_Color);
+	   }
    }
 
    //----------至此0-11点所有的点都已经绘制完成------------
