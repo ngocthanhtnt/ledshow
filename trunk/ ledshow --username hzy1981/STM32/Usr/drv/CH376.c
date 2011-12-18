@@ -61,7 +61,7 @@ u8 mInitCH376Host( void )
  }
  xWriteCH376Cmd( CMD11_SET_USB_MODE );  		/* 设备USB工作模式 */
  xWriteCH376Data( 0x06 );						// 模式代码为0x06,表示切换到已启用的USB主机方式，自动产生SOF包
- mDelayuS( 20 );
+ Delay_us( 50 );
  res = xReadCH376Data( );						// 返回操作状态
  xEndCH376Cmd( );							    // 工作模式设置结束
 
@@ -260,6 +260,7 @@ void	mDelay0_5uS( void )  /* 至少延时0.5uS,根据单片机主频调整 */
  while(i--);
  */
  Delay_us(1);
+
 }
 /*
 void main(void)
