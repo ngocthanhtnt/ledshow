@@ -1472,8 +1472,8 @@ void Screen_Test(void)
   S_Point P0,P1;
   INT8U Test_Key_Up_Flag;
 
-   Screen_Para.Base_Para.Width = 256; 
-   Screen_Para.Base_Para.Height = 32;
+   Screen_Para.Base_Para.Width = 1024; 
+   Screen_Para.Base_Para.Height = 48;
    Screen_Para.Base_Para.Color = 0x03;
    Screen_Status.Color_Num = 2;
 
@@ -1481,6 +1481,9 @@ void Screen_Test(void)
    Screen_Para.Scan_Para.Rows_Fold = 0x00;//0x01;
    Screen_Para.Scan_Para.Cols_Fold = 0x00;//0x02;
    Screen_Para.Scan_Para.Rows = 16;
+   Screen_Para.Scan_Para.Data_Polarity = 0;
+
+   Screen_Status.Time_OC_Flag = 0;
 
    memset((INT8U *)Show_Data.Color_Data, 0x55, sizeof(Show_Data.Color_Data));
 

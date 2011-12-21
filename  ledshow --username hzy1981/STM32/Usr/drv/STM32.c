@@ -602,12 +602,12 @@ void TIM1_Configuration(void)
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); 
 
-	TIM_TimeBaseStructure.TIM_Period = 100 * 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	TIM_TimeBaseStructure.TIM_Period = 1000; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
 
 #if  PCLK2_VALUE ==	HCLK_VALUE   
-	TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE /10000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+	TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE /1000000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 #else
-	TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE * 2 /10000-1); 
+	TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE * 2 /1000000-1); 
 #endif
 
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; 

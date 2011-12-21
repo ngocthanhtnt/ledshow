@@ -177,10 +177,8 @@ extern void LED_Scan_One_Row(void);
 
 void TIM3_IRQHandler(void)   //TIM3中断--用于扫描
 {
-//#if RMDK_SIM_EN
-    //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
-//#endif 
 
+	//GPIOB->BSRR = GPIO_Pin_0;
 	TIM_Cmd(TIM3, DISABLE);
 	
 	if(TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
@@ -190,6 +188,7 @@ void TIM3_IRQHandler(void)   //TIM3中断--用于扫描
 	}
 	
 	TIM_Cmd(TIM3, ENABLE);
+	//GPIOB->BRR = GPIO_Pin_0;
 }
 
 
@@ -197,11 +196,16 @@ void TIM3_IRQHandler(void)   //TIM3中断--用于扫描
 //该中断为100us一次,pwm频率为10k，因此周期100us
 void TIM2_IRQHandler(void)   //TIM3中断--100ms周期
 {
-	if(TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
+    //GPIOB->BSRR = GPIO_Pin_1;
+	//if(TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
+	if((TIM2->SR & TIM_IT_Update))
 	{
-		TIM_ClearITPendingBit(TIM2, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
+		//TIM_ClearITPendingBit(TIM2, TIM_IT_Update  );  //清除TIMx的中断待处理位:TIM 中断源 
+		TIM2->SR = (uint16_t)~TIM_IT_Update;
 		Pub_Timer_Proc();
 	}
+
+	//GPIOB->BRR = GPIO_Pin_1;
 }
 #else
 //该中断为1ms一次
