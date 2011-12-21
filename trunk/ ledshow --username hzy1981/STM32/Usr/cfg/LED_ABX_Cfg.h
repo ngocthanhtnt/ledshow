@@ -20,6 +20,8 @@
 #define PCLK2_DIV RCC_HCLK_Div1 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/8不能超过24M
 
 #define TIM1_EN 0
+#define SCAN_SCREEN_PERIOD 300//扫屏周期,单位us
+
 #elif defined(CARD_B)
 #define HSE_VALUE 12000000 //外部晶振频率
 #define HCLK_VALUE  HSE_VALUE*6
@@ -31,7 +33,9 @@
 #define PCLK1_DIV RCC_HCLK_Div2 //最高APB/2--这是正常运行时速度,这里不能为DIV1，因为定时器使用的分频系数默认PCLK1分频>1
 #define PCLK2_DIV RCC_HCLK_Div1 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/4不能超过24M
 
-#define TIM1_EN 0
+#define TIM1_EN 1
+#define SCAN_SCREEN_PERIOD 100//扫屏周期,单位us
+
 #endif
 //#define H_HCLK_MUL  RCC_PLLMul_9  //高速运行时AHB速度
 //#define H_PCLK1_DIV RCC_HCLK_Div2 //高速运行时APB1速度--确保和正常运行时保持一致，这样就不需要调整各外设的Clock 
@@ -47,7 +51,6 @@
 #error "card AX name error"
 #endif
 
-#define SCAN_SCREEN_PERIOD 100//扫屏周期,单位us
 #define MOVE_STEP_PERIOD 20//5 //移动步进时间,单位为ms
 #define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 

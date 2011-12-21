@@ -8,10 +8,10 @@ volatile INT32U test_temp = 0, test_x=0, test_y=0;
 void transpose8(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) { 
         unsigned long x, y, t; 
 
-        //x = (i[0] << 24) | (i[1] << 16) | (i[2] << 8) | i[3]; 
-        //y = (i[4] << 24) | (i[5] << 16) | (i[6] << 8) | i[7]; 
-        x = (i[7] << 24) | (i[6] << 16) | (i[5] << 8) | i[4]; 
-        y = (i[3] << 24) | (i[2] << 16) | (i[1] << 8) | i[0];
+        //x = (i[7] << 24) | (i[6] << 16) | (i[5] << 8) | i[4]; 
+        //y = (i[3] << 24) | (i[2] << 16) | (i[1] << 8) | i[0];
+		memcpy(&x, &i[4], 4);
+		memcpy(&y, &i[0], 4);
 
         t = (x & 0xf0f0f0f0) | ((y >> 4) & 0x0f0f0f0f); 
         y = ((x << 4) & 0xf0f0f0f0) | (y & 0x0f0f0f0f); 
@@ -55,7 +55,9 @@ void transpose8(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) {
 		  o[14] = x >> 24; 
 		  
 		  //----------
+ #if MAX_SCAN_BLOCK_NUM EQ 4
 		  o[16] = o[14];   
+ #endif
 		}
 		else
 		{
@@ -68,34 +70,36 @@ void transpose8(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) {
 		  o[12] = y >> 8; 
 		  //GPIOB->BRR = GPIO_Pin_9;
 		  o[14] = y;
-		  
-		  o[16] = o[14];		
+
+#if MAX_SCAN_BLOCK_NUM EQ 4 //因为只有R1-R4，G1-G4共8个数据线PB的高8位需要保持原样，因此需要此操作		  
+		  o[16] = o[14];
+#endif		  		
 		} 
 
 }
 
-void transpose4(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) {
+void transpose4(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/)
+{
+        unsigned long x, y, t;
 
-        unsigned long x, y, t; 
+		//memcpy(&x, &i[4], 4);
+		memcpy(&y, &i[0], 4);
 
-        //x = (i[0] << 24) | (i[1] << 16) | (i[2] << 8) | i[3]; 
-        //y = (i[4] << 24) | (i[5] << 16) | (i[6] << 8) | i[7]; 
-        //x = 0;//(i[7] << 24) | (i[6] << 16) | (i[5] << 8) | i[4]; 
-        y = (i[3] << 24) | (i[2] << 16) | (i[1] << 8) | i[0];
+        //t = (x ^ (x >> 7)) & 0x00aa00aa; 
+        //x = x ^ t ^ (t << 7); 
+        t = (y ^ (y >> 7)) & 0x00aa00aa; 
+        y = y ^ t ^ (t << 7);
+
+        //t = (x ^ (x >> 14)) & 0x0000cccc; 
+        //x = x ^ t ^ (t << 14); 
+        t = (y ^ (y >> 14)) & 0x0000cccc; 
+        y = y ^ t ^ (t << 14); 
 
         t = ((y >> 4) & 0x0f0f0f0f); 
         y = (y & 0x0f0f0f0f); 
         x = t; 
 
-        t = (x ^ (x >> 14)) & 0x0000cccc; 
-        x = x ^ t ^ (t << 14); 
-        t = (y ^ (y >> 14)) & 0x0000cccc; 
-        y = y ^ t ^ (t << 14); 
-
-        t = (x ^ (x >> 7)) & 0x00aa00aa; 
-        x = x ^ t ^ (t << 7); 
-        t = (y ^ (y >> 7)) & 0x00aa00aa; 
-        y = y ^ t ^ (t << 7); 
+		//SPI2->DR = 0xFFFE;
 
 		if(Screen_Para.Scan_Para.Data_Polarity != 1) //数据极性为低
 		{
@@ -105,14 +109,38 @@ void transpose4(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) {
 
 		if(Screen_Para.Scan_Para.Direct > 1)
 		{
-          o[0] = y; o[2] = y >> 8; o[4] = y >> 16; o[6] = y >> 24; 
-          o[8] = x; o[10] = x >> 8; o[12] = x >> 16; o[14] = x >> 24; 
+          o[0] = y; 
+		  o[2] = y >> 8; 
+		  o[4] = y >> 16; 
+		  o[6] = y >> 24; 
+          o[8] = x; 
+		  o[10] = x >> 8; 
+		  o[12] = x >> 16; 
+		  //GPIOB->BRR = GPIO_Pin_9;
+		  o[14] = x >> 24; 
+		  
+		  //----------
+#if MAX_SCAN_BLOCK_NUM EQ 4
+		  o[16] = o[14];  
+#endif		   
 		}
 		else
 		{
-          o[0] = x >> 24; o[2] = x >> 16; o[4] = x >> 8; o[6] = x; 
-          o[8] = y >> 24; o[10] = y >> 16; o[12] = y >> 8; o[14] = y;		
-		}
+          o[0] = x >> 24; 
+		  o[2] = x >> 16; 
+		  o[4] = x >> 8; 
+		  o[6] = x; 
+          o[8] = y >> 24; 
+		  o[10] = y >> 16; 
+		  o[12] = y >> 8; 
+		  //GPIOB->BRR = GPIO_Pin_9;
+		  o[14] = y;
+
+#if MAX_SCAN_BLOCK_NUM EQ 4		  
+		  o[16] = o[14];		
+#endif
+		} 
+
 } 
 #else
 //此算法相当牛逼，将i数组中的8个
@@ -799,7 +827,7 @@ void LED_Scan_One_Row(void)
     return;
 	}
  
-    GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+   // GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 
 
   if(Screen_Para.Scan_Para.Rows EQ 0)
@@ -842,7 +870,7 @@ void LED_Scan_One_Row(void)
     Scan_Data1[0][i+1] = (INT8U)((GPIOB->ODR & 0xFF00) >> 8);
 #endif
 
-#if 0//MAX_SCAN_BLOCK_NUM EQ 16
+#if MAX_SCAN_BLOCK_NUM EQ 16
   if(Screen_Status.Color_Num > 1) //红绿双色
   {
     //当使用绿色时，因为要2个DMA必须降低每个的同步的速度,同时打开绿色的DMA信号
@@ -882,35 +910,43 @@ void LED_Scan_One_Row(void)
   for(i = 0; i < Cols ; i ++)
   {
       //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
-	  //GPIOB->BSRR = GPIO_Pin_9;
-      Get_Scan_Data(Blocks, i);
-	  //if(i & 0x01)
-	    
-	  //else
-	    //pDst = &Scan_Data1[0][0];
+	  GPIOB->BSRR = GPIO_Pin_9;
+
+      Get_Scan_Data(Blocks, i); //当Blocks较小时，此函数内应该增加延时，否则后面可能覆盖还没有处理好的数据
  
 #if MAX_SCAN_BLOCK_NUM EQ 4//A型卡最多4条扫描线		   
-
-      transpose8(&Scan_Data[0][0], pDst);	//R1-R4,G1-G4
-
+	
+	  if(Screen_Status.Color_Num < 2)
+	    transpose4(&Scan_Data[0][0], pDst);	//R1-R4,G1-G4
+	  else
+        transpose8(&Scan_Data[0][0], pDst);	//R1-R4,G1-G4
+	 
 #elif MAX_SCAN_BLOCK_NUM EQ 8
 
-      transpose8(&Scan_Data[0][0], pDst);	//R1-R8
+	  if(Blocks <= 4)
+	    transpose4(&Scan_Data[0][0], pDst);	//R1-R8
+      else
+	    transpose8(&Scan_Data[0][0], pDst);	//R1-R8
 
 	  if(Screen_Status.Color_Num > 1)
-	  	transpose8(&Scan_Data[1][0], pDst + 1);	//G1-G8
+	  {
+		if(Blocks <= 4)
+		  transpose4(&Scan_Data[0][0], pDst + 1);	//R1-R8
+		else
+		  transpose8(&Scan_Data[0][0], pDst + 1);	//R1-R8
+	  }
 
 #elif MAX_SCAN_BLOCK_NUM EQ 16
-/*
+
 	    if(Blocks <= 4)
-		   transpose8(&Scan_Data[0][0], pDst);	//R1-R4
+		   transpose4(&Scan_Data[0][0], pDst);	//R1-R4
  		else
 		{
 			transpose8(&Scan_Data[0][0], pDst);	//R1-R8
 			if(Blocks > 8)
 			{
 			   if(Blocks <= 12)
-			     transpose8(&Scan_Data[0][8], pDst + 1); //R9-R16
+			     transpose4(&Scan_Data[0][8], pDst + 1); //R9-R16
 			   else
 			     transpose8(&Scan_Data[0][8], pDst + 1); //R9-R16
 			}
@@ -919,21 +955,21 @@ void LED_Scan_One_Row(void)
 		if(Screen_Status.Color_Num > 1)
 		{
 	      if(Blocks <= 4)
-		    transpose8(&Scan_Data[1][0], pDst + MAX_SCAN_BLOCK_NUM);	//R1-R8
+		    transpose4(&Scan_Data[1][0], pDst + MAX_SCAN_BLOCK_NUM);	//R1-R8
 		  else
 		  {
 		    transpose8(&Scan_Data[1][0], pDst + MAX_SCAN_BLOCK_NUM); //G1-G8
   			if(Blocks > 8)
 			{
 			    if(Blocks <= 12)
-				  transpose8(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1);	//R1-R8
+				  transpose4(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1);	//R1-R8
 				else
 			      transpose8(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1); //R9-R16
 			}
 		  }
 		}
-*/
 
+/*
 		transpose8(&Scan_Data[0][0], pDst);	//R1-R8
 		if(Blocks > 8)
 		     transpose8(&Scan_Data[0][8], pDst + 1); //R9-R16
@@ -945,48 +981,14 @@ void LED_Scan_One_Row(void)
   			if(Blocks > 8)
 			      transpose8(&Scan_Data[1][8], pDst + MAX_SCAN_BLOCK_NUM + 1); //R9-R16
 		}
-	
-		//while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET); //等待上次发送完成
-
-//应该不需要换地址，因为只要DMA速度比数据生成速度快，就不存在追赶上的问题。如果慢就可能发生。新生成的数据覆盖即将输出的数据的问题
-/*
-		DMA1_Channel1->CCR &= (uint16_t)(~DMA_CCR1_EN); //关闭DMA通道
-		DMA1_Channel1->CMAR = (uint32_t)pDst;//pDMA_InitStruct->DMA_MemoryBaseAddr;
-	    DMA1_Channel1->CNDTR = 8;//(uint32_t)pDst;
-		DMA1_Channel1->CCR |= DMA_CCR1_EN; //打开DMA通道
-
- 		DMA1_Channel7->CCR &= (uint16_t)(~DMA_CCR1_EN);
-		DMA1_Channel7->CMAR = (uint32_t)(pDst + MAX_SCAN_BLOCK_NUM);
-		DMA1_Channel7->CNDTR = 8;
-		DMA1_Channel7->CCR |= DMA_CCR1_EN;
-  */
- 
-		//SPI_I2S_SendData(SPI2, 0x24);
-		//DMA_Cmd(DMA1_Channel5, ENABLE);
-		//GPIOD->ODR = 0x5555;
-		//SPI2->DR = 0xAA;
-	
-	    //Delay_us(1);
-		//for(j = 0; j < 1; j ++)
-		//nop();
-
+*/
 #else
 #error "MAX_SCAN_BLOCK_NUM error"
 #endif
-/*		
-		while(DMA1_Channel7->CNDTR !=8); 
+   
+	   while((SPI2->SR & SPI_I2S_FLAG_TXE) EQ (uint16_t)RESET);
+	   GPIOB->BRR = GPIO_Pin_9;
 
-		//nop(); nop();nop();nop();nop();nop(); 		
-		memcpy(Scan_Data0, Scan_Data1, sizeof(Scan_Data1));
-	    //GPIOB->BRR = GPIO_Pin_9;
-		DMA1_Channel5->CCR &= (uint16_t)(~DMA_CCR1_EN); //关闭DMA通道
-		DMA1_Channel5->CNDTR = 4;//(uint32_t)pDst;//pDMA_InitStruct->DMA_MemoryBaseAddr;
-		__set_PRIMASK(0); //开总中断
-		//nop();
-		__set_PRIMASK(1); //关总中断 dma传输过程中，中断对dma时序有影响，因此传输过程中关闭
-	    DMA1_Channel5->CCR |= DMA_CCR1_EN; //打开DMA通道
-*/
-	   
        memcpy(Scan_Data0, Scan_Data1, sizeof(Scan_Data1));
 
        //在上升沿触发数据,因此在第一个上升延前必须将数据准备好,以后的7位数据都是通过DMA设置
@@ -1003,16 +1005,8 @@ void LED_Scan_One_Row(void)
 	     //SPI2->DR = 0;
 	   //else	 	
 	   SPI2->DR = 0xAAAA;
-/*
-	   //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出 
- 		DMA1_Channel7->CCR &= (uint16_t)(~DMA_CCR1_EN); //关闭DMA通道
-		DMA1_Channel7->CNDTR = 8;//(uint32_t)pDst;//pDMA_InitStruct->DMA_MemoryBaseAddr;
-		__set_PRIMASK(0); //开总中断
-		//nop();
-		__set_PRIMASK(1); //关总中断 dma传输过程中，中断对dma时序有影响，因此传输过程中关闭
-	    DMA1_Channel7->CCR |= DMA_CCR1_EN; //打开DMA通道 
-		SPI2->DR = 0x5555;
-  */
+
+       
    }
 #elif SCAN_DATA_MODE EQ SCAN_SOFT_MODE1
 
@@ -1092,11 +1086,8 @@ void LED_Scan_One_Row(void)
 	
 	//重新打开OE
 	Set_OE_Duty_Polarity(Screen_Status.Lightness, Screen_Para.Scan_Para.OE_Polarity);
-	//_USART_Cmd(USART1, DISABLE);
-    //Set_Clock_Normal_Speed();
-	//_USART_Cmd(USART1, ENABLE); 
-	//USART_Clar
-    GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
+
+    //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
 	Flag = 0; 
 }
 
