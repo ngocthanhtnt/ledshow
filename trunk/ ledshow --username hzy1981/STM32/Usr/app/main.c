@@ -98,11 +98,13 @@ int main(void)
     Shell_Proc();
 #endif
 
-    Show_Main_Proc();
-
 #if UDISK_EN
     UDisk_Proc(); //u≈Ã¥¶¿Ì
 #endif
+
+    Show_Main_Proc();
+
+
 #if NET_EN
 	Net_Proc();
 #endif

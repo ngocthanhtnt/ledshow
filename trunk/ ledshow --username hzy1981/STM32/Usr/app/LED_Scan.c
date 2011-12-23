@@ -55,7 +55,7 @@ void transpose8(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) {
 		  o[14] = x >> 24; 
 		  
 		  //----------
- #if MAX_SCAN_BLOCK_NUM EQ 4
+ #if MAX_SCAN_BLOCK_NUM != 16
 		  o[16] = o[14];   
  #endif
 		}
@@ -71,7 +71,7 @@ void transpose8(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/) {
 		  //GPIOB->BRR = GPIO_Pin_9;
 		  o[14] = y;
 
-#if MAX_SCAN_BLOCK_NUM EQ 4 //因为只有R1-R4，G1-G4共8个数据线PB的高8位需要保持原样，因此需要此操作		  
+#if MAX_SCAN_BLOCK_NUM != 16//因为只有R1-R4，G1-G4共8个数据线PB的高8位需要保持原样，因此需要此操作		  
 		  o[16] = o[14];
 #endif		  		
 		} 
@@ -120,7 +120,7 @@ void transpose4(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/)
 		  o[14] = x >> 24; 
 		  
 		  //----------
-#if MAX_SCAN_BLOCK_NUM EQ 4
+#if MAX_SCAN_BLOCK_NUM != 16
 		  o[16] = o[14];  
 #endif		   
 		}
@@ -136,7 +136,7 @@ void transpose4(unsigned char i[8], unsigned char o[]/*, unsigned char flag*/)
 		  //GPIOB->BRR = GPIO_Pin_9;
 		  o[14] = y;
 
-#if MAX_SCAN_BLOCK_NUM EQ 4		  
+#if MAX_SCAN_BLOCK_NUM != 16		  
 		  o[16] = o[14];		
 #endif
 		} 
@@ -870,24 +870,34 @@ void LED_Scan_One_Row(void)
     Scan_Data1[0][i+1] = (INT8U)((GPIOB->ODR & 0xFF00) >> 8);
 #endif
 
-#if MAX_SCAN_BLOCK_NUM EQ 16
-  if(Screen_Status.Color_Num > 1) //红绿双色
-  {
-    //当使用绿色时，因为要2个DMA必须降低每个的同步的速度,同时打开绿色的DMA信号
-    SPI_Cmd(SPI2, DISABLE);
-	SPI2->CR1 = (SPI2->CR1 & 0xFFC7) | SPI_BaudRatePrescaler_8;
-	SPI_Cmd(SPI2, ENABLE);
-
-	DMA_Cmd(DMA1_Channel1, ENABLE);
-	DMA_Cmd(DMA1_Channel7, ENABLE);
-  }
-  else
+#if MAX_SCAN_BLOCK_NUM != 4
+  if(Screen_Status.Color_Num < 2) 
   {
     //当只有一个颜色时，只启用一个DMA，同时SPI速度可以更快。
 	SPI_Cmd(SPI2, DISABLE);
 	SPI2->CR1 = (SPI2->CR1 & 0xFFC7) | SPI_BaudRatePrescaler_4;
 	SPI_Cmd(SPI2, ENABLE);
+  }
+  else	 //红绿双色
+  {
+    //当使用绿色时，因为要2个DMA必须降低每个的同步的速度,同时打开绿色的DMA信号
+    SPI_Cmd(SPI2, DISABLE);
+	SPI2->CR1 = (SPI2->CR1 & 0xFFC7) | SPI_BaudRatePrescaler_8;
+	SPI_Cmd(SPI2, ENABLE);
+  }
+#endif
+    SPI2->DR = 0;
+	//重新设置DMA
+	DMA_Cmd(DMA1_Channel1, DISABLE);
+	DMA_Cmd(DMA1_Channel7, DISABLE);
+	DMA1_Channel1->CNDTR = 8;
+	DMA1_Channel7->CNDTR = 8;
+	DMA_Cmd(DMA1_Channel1, ENABLE);
+	DMA_Cmd(DMA1_Channel7, ENABLE);
 
+#if MAX_SCAN_BLOCK_NUM != 4
+  if(Screen_Status.Color_Num < 2)
+  {
     if(Screen_Para.Base_Para.Color & 0x01) //当前使用红色
 	{
 	  DMA_Cmd(DMA1_Channel1, DISABLE);	//关闭绿色DMA
@@ -910,7 +920,7 @@ void LED_Scan_One_Row(void)
   for(i = 0; i < Cols ; i ++)
   {
       //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
-	  GPIOB->BSRR = GPIO_Pin_9;
+	  //GPIOB->BSRR = GPIO_Pin_9;
 
       Get_Scan_Data(Blocks, i); //当Blocks较小时，此函数内应该增加延时，否则后面可能覆盖还没有处理好的数据
  
@@ -986,15 +996,23 @@ void LED_Scan_One_Row(void)
 #error "MAX_SCAN_BLOCK_NUM error"
 #endif
    
-	   while((SPI2->SR & SPI_I2S_FLAG_TXE) EQ (uint16_t)RESET);
-	   GPIOB->BRR = GPIO_Pin_9;
+	   while((DMA1_Channel7->CNDTR & 0x07) > 1);
+	   //GPIOB->BRR = GPIO_Pin_9;
+ /*
+       if(Screen_Status.Color_Num < 2)
+         memcpy(Scan_Data0, Scan_Data1, sizeof(Scan_Data1) / 2);	 //memcpy复制长度大于32时执行时间明显增长
+	   else	 */
+         memcpy(Scan_Data0, Scan_Data1, sizeof(Scan_Data1));	 //memcpy复制长度大于32时执行时间明显增长
 
-       memcpy(Scan_Data0, Scan_Data1, sizeof(Scan_Data1));
+       //memcpy(Scan_Data0, Scan_Data1, Len);       
 
        //在上升沿触发数据,因此在第一个上升延前必须将数据准备好,以后的7位数据都是通过DMA设置
 #if MAX_SCAN_BLOCK_NUM EQ 16
        GPIOD->ODR = *(INT16U *)&Scan_Data0[0][0];
 	   GPIOE->ODR = *(INT16U *)&Scan_Data0[1][0];
+#elif MAX_SCAN_BLOCK_NUM EQ 8
+       GPIOB->ODR = *(INT16U *)&Scan_Data0[0][0];
+	   GPIOC->ODR = *(INT16U *)&Scan_Data0[1][0]; 
 #else 
        GPIOB->ODR = *(INT16U *)&Scan_Data0[0][0];
 #endif
