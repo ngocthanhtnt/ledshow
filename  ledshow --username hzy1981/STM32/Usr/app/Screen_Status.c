@@ -243,6 +243,7 @@ INT8U Chk_Time(S_Time *pTime)
 void Screen_Time_Proc()
 {
   static S_Int32U Sec = {CHK_BYTE, 0, CHK_BYTE};
+  static S_Int8U Flag = {CHK_BYTE, 0xAA, CHK_BYTE};
   INT32U Diff;
   
   Diff = Pub_Timer.Sec - Sec.Var;
@@ -250,9 +251,9 @@ void Screen_Time_Proc()
   //if(Diff != 0)
   {
      Cur_Time.Time[T_SEC] += Diff;
-	 if(Cur_Time.Time[T_SEC] >= 60 || Sec.Var EQ 0)
+	 if(Cur_Time.Time[T_SEC] >= 60 || Flag.Var EQ 0xAA)
 	 {
-	   //Cur_Time.Time[T_SEC] = 0;
+	   Flag.Var = 0;
 	   Get_Cur_Time();
 	 }
          //Get_Cur_Time();//_Get_Cur_Time(Cur_Time.Time); //获取当前时间
