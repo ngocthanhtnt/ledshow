@@ -356,7 +356,7 @@ INT8U Check_Screen_Base_Para(S_Screen_Base_Para *pPara)
 
   Color_Num = GET_COLOR_NUM(pPara->Color);
 
-  if(pPara -> Height /16 > MAX_SCAN_BLOCK_NUM)
+  if(pPara -> Width % 8 != 0 || pPara -> Height % 8 != 0)
     return 0;
   
   if((pPara -> Height) * (pPara->Width) * Color_Num >  MAX_POINTS * 2)

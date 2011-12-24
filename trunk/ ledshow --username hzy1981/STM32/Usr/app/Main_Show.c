@@ -706,7 +706,8 @@ INT8U Check_Update_Show_Data_Bak(void)
   //INT32U Stay_Time;
   //S_Int8U Sec = {CHK_BYTE, 0xFF, {0},CHK_BYTE};
   
-  if(Prog_Status.Play_Status.RT_Play_Time > 0)
+  if(Prog_Status.Play_Status.RT_Play_Time > 0 ||\
+     Prog_Num.Num EQ 0)
       return 0;
 
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
@@ -901,6 +902,24 @@ void Check_RT_Play_Status()
   }
 }
 
+INT8U Check_Prog_Para()
+{
+  INT8U i;
+
+  if(Prog_Para.Area_Num > MAX_AREA_NUM)
+    return 0;
+
+  for(i = 0; i<Prog_Para.Area_Num; i ++)
+  {
+    if(Prog_Para.Area[i].X >= Screen_Para.Base_Para.Width ||\
+	   Prog_Para.Area[i].X + Prog_Para.Area[i].X_Len > Screen_Para.Base_Para.Width ||\
+	   Prog_Para.Area[i].Y >= Screen_Para.Base_Para.Height ||\
+	   Prog_Para.Area[i].Y + Prog_Para.Area[i].Y_Len > Screen_Para.Base_Para.Height)
+	   return 0; 
+  }
+  return 1;
+}
+
 //检查是否需要更新节目参数
 void Check_Update_Program_Para(void)
 {
@@ -1028,6 +1047,15 @@ void Check_Update_Program_Para(void)
 
       Len = Read_Prog_Para(Prog_Status.Play_Status.Prog_No, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)); //重新更新节目参数
       memcpy((INT8U *)&Prog_Para.Head + 1, Pub_Buf, sizeof(Prog_Para) - CHK_BYTE_LEN);
+	  if(Check_Prog_Para() EQ 0)
+	  {
+	    ASSERT_FAILED();
+	    memset(&Prog_Para, 0, sizeof(Prog_Para));
+	    SET_HT(Prog_Para);
+		SET_SUM(Prog_Para);
+		//Write_Prog_Para();
+	  }
+
       if(Len > 0 && Check_Prog_Play_Time() > 0)
       {
         TRACE();
@@ -1296,6 +1324,8 @@ void Prog_Status_Init(void)
 void Ram_Init(void)
 {
   //INT8U i;
+  memset(&Show_Data, 0x00, sizeof(Show_Data));
+  memset(&Show_Data_Bak, 0, sizeof(Show_Data_Bak));
 
   memset(&Screen_Para, 0, sizeof(Screen_Para));
   memset(&Prog_Num, 0, sizeof(Prog_Num));
@@ -1310,8 +1340,6 @@ void Ram_Init(void)
   memset(&Prep_Data, 0, sizeof(Prep_Data));
 #endif  
 
-  memset(&Show_Data, 0x00, sizeof(Show_Data));
-  memset(&Show_Data_Bak, 0, sizeof(Show_Data_Bak));
   memset(&Cur_Block_Index, 0, sizeof(Cur_Block_Index));
   memset(&Cur_Time, 0, sizeof(Cur_Time));
 
@@ -1475,7 +1503,7 @@ void Screen_Test(void)
 
 #if 0
    Screen_Para.Base_Para.Width = 64; 
-   Screen_Para.Base_Para.Height = 32;
+   Screen_Para.Base_Para.Height = 256;
    Screen_Para.Base_Para.Color = 0x03;
    Screen_Status.Color_Num = 2;
 
@@ -1487,7 +1515,7 @@ void Screen_Test(void)
 
    Screen_Status.Time_OC_Flag = 0;
 
-   memset((INT8U *)Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
+   memset((INT8U *)Show_Data.Color_Data, 0x01, sizeof(Show_Data.Color_Data));
 
    Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
    P0.X = 0;
@@ -1501,7 +1529,7 @@ void Screen_Test(void)
 	 //Set_Area_Point_Data(&Show_Data, 0, 0, 0, 0x01);
 	 //Set_Area_Point_Data(&Show_Data, 0, 63, 0, 0x01);
 	 //for(i = 0; i < 64; i ++)
-	   Set_Area_Point_Data(&Show_Data, 0, 23, 16, 0x01);
+	  // Set_Area_Point_Data(&Show_Data, 0, 23, 16, 0x01);
 	   //Set_Area_Point_Data(&Show_Data, 0, 24, 16, 0x01);
 
 	 //Set_Area_Point_Data(&Show_Data, 0, 32, 17, 0x02);
@@ -1680,7 +1708,9 @@ void Screen_Test(void)
 void Replay_Prog(void)
 {
 	debug("replay prog");
-	
+
+	Para_Init();
+/*	
 	Clr_Show_Data();
 	memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
 
@@ -1699,7 +1729,7 @@ void Replay_Prog(void)
 	
 	Calc_Screen_Color_Num(); //计算屏幕颜色个数
 	Build_Scan_Data_Index(); //重新构建数据索引
-
+*/
 }
 
 //扫描模式的自检
