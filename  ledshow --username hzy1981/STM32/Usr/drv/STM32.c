@@ -132,8 +132,8 @@ void Delay_sec(INT16U sec)
 //发送调试信息一个字节
 void OS_Put_Char(char Data)
 {
-   while (!(USART1->SR & USART_FLAG_TXE));
-   USART1->DR = (Data & (uint16_t)0x01FF);
+   while (!(USART2->SR & USART_FLAG_TXE));
+   USART2->DR = (Data & (uint16_t)0x01FF);
 }
 
 //发送一个字节通信数据
@@ -297,7 +297,7 @@ void SPI2_Init(void)
   SPI_I2S_SendData(SPI2, 0xFF);
   while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
   
-  SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Tx, ENABLE);
+  //SPI_I2S_DMACmd(SPI2, SPI_I2S_DMAReq_Tx, ENABLE);
 }
 
 //SPI1读写一字节数据
@@ -397,7 +397,7 @@ void DMA_Configuration(void)
   DMA_InitTypeDef DMA_InitStructure;
 
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
-
+/*
   DMA_DeInit(DMA1_Channel5);
 
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&SPI2->DR;
@@ -413,11 +413,11 @@ void DMA_Configuration(void)
   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
 
   DMA_Init(DMA1_Channel5, &DMA_InitStructure);
-
+ */
   /* DMA1 Channel1 enable */
   //DMA_Cmd(DMA1_Channel1, ENABLE);
 
-  DMA_DeInit(DMA1_Channel1);
+  DMA_DeInit(DMA1_Channel5);
 
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOE->ODR;
   DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[1][2]; //绿色数据起始地址
@@ -431,10 +431,10 @@ void DMA_Configuration(void)
   DMA_InitStructure.DMA_Priority = DMA_Priority_High;
   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
 
-  DMA_Init(DMA1_Channel1, &DMA_InitStructure);
+  DMA_Init(DMA1_Channel5, &DMA_InitStructure);
 
   /* DMA1 Channel5 enable */
-  DMA_Cmd(DMA1_Channel1, ENABLE);
+  DMA_Cmd(DMA1_Channel5, ENABLE);
 
   DMA_DeInit(DMA1_Channel7);
 
@@ -465,7 +465,7 @@ INT16U SPI2_DMA_Data[] = {0x0303, 0x0303, 0x0303, 0x0303};
   DMA_InitTypeDef DMA_InitStructure;
 
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
-
+/*
   DMA_DeInit(DMA1_Channel5);
 
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&SPI2->DR;
@@ -481,7 +481,7 @@ INT16U SPI2_DMA_Data[] = {0x0303, 0x0303, 0x0303, 0x0303};
   DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
 
   DMA_Init(DMA1_Channel5, &DMA_InitStructure);
-
+ */
   DMA_DeInit(DMA1_Channel7);
 
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOB->ODR;
@@ -529,7 +529,7 @@ void TIM2_Configuration(void)
 		);
 #endif
 
-  TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;// | TIM_Channel_2;
+  TIM_ICInitStructure.TIM_Channel = TIM_Channel_1;// | TIM_Channel_1;
   TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;//TIM_ICPolarity_Falling;
   TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
   TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
@@ -537,7 +537,7 @@ void TIM2_Configuration(void)
 
   TIM_ICInit(TIM2, &TIM_ICInitStructure);
 
-  TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;// | TIM_Channel_2;
+  TIM_ICInitStructure.TIM_Channel = TIM_Channel_2;// | TIM_Channel_2;
   TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;//TIM_ICPolarity_Falling;
   TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
   TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
@@ -549,9 +549,9 @@ void TIM2_Configuration(void)
   TIM_Cmd(TIM2, ENABLE);
 
   /* Enable the CC2 Interrupt Request */
-  TIM_DMACmd(TIM2, TIM_DMA_CC2, ENABLE);
+  TIM_DMACmd(TIM2, TIM_DMA_CC1, ENABLE);
 
-  TIM_DMACmd(TIM2, TIM_DMA_CC3, ENABLE);
+  TIM_DMACmd(TIM2, TIM_DMA_CC2, ENABLE);
 
 }
 
@@ -747,7 +747,7 @@ void UART2_Init(void) //串口2初始化
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	//串口2用作调试信息输出
-	USART_InitStructure.USART_BaudRate            = 4500000;//Get_Com_Baud();
+	USART_InitStructure.USART_BaudRate            = 115200;//Get_Com_Baud();
 	USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits            = USART_StopBits_1;
 	USART_InitStructure.USART_Parity              = USART_Parity_No ;

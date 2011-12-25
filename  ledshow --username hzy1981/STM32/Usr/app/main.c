@@ -64,7 +64,7 @@ int main(void)
   Ram_Init();
   Hardware_Init();
 
-
+  OS_Debug_Print("----------system start----------");
 
   RST_Periph();
 

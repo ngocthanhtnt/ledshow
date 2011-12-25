@@ -888,11 +888,11 @@ void LED_Scan_One_Row(void)
 #endif
     SPI2->DR = 0;
 	//重新设置DMA
-	DMA_Cmd(DMA1_Channel1, DISABLE);
+	DMA_Cmd(DMA1_Channel5, DISABLE);
 	DMA_Cmd(DMA1_Channel7, DISABLE);
-	DMA1_Channel1->CNDTR = 8;
+	DMA1_Channel5->CNDTR = 8;
 	DMA1_Channel7->CNDTR = 8;
-	DMA_Cmd(DMA1_Channel1, ENABLE);
+	DMA_Cmd(DMA1_Channel5, ENABLE);
 	DMA_Cmd(DMA1_Channel7, ENABLE);
 
 #if MAX_SCAN_BLOCK_NUM != 4
@@ -900,7 +900,7 @@ void LED_Scan_One_Row(void)
   {
     if(Screen_Para.Base_Para.Color & 0x01) //当前使用红色
 	{
-	  DMA_Cmd(DMA1_Channel1, DISABLE);	//关闭绿色DMA
+	  DMA_Cmd(DMA1_Channel5, DISABLE);	//关闭绿色DMA
       GPIOE->ODR = *(INT16U *)&Scan_Data1[0][0];  //直接输出无效数据到绿色数据线
 	}
 	else

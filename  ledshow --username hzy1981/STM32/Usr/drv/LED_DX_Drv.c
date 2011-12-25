@@ -28,8 +28,8 @@ void GPIO_Configuration()
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //PC0应该作为上拉输入口,28J60的输入检测  
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-  //PA.1和PA.2为输入口,用于捕获移位脉冲
-  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_1 | GPIO_Pin_2;
+  //PA.0和PA.1为输入口,用于捕获移位脉冲
+  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0 | GPIO_Pin_1;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
@@ -206,8 +206,8 @@ void Hardware_Init(void)
 
   DMA_Configuration();
 
-  //UART2_Init();
-  UART3_Init();
+  UART2_Init();	//用于调试信息输出
+  UART3_Init(); //用于传感器返回信息
 
   Unselect_SPI_Device(); //不选中任何一个SPI设备
 

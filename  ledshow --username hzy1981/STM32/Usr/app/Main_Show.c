@@ -1503,7 +1503,7 @@ void Screen_Test(void)
 
 #if 0
    Screen_Para.Base_Para.Width = 64; 
-   Screen_Para.Base_Para.Height = 256;
+   Screen_Para.Base_Para.Height = 32;
    Screen_Para.Base_Para.Color = 0x03;
    Screen_Status.Color_Num = 2;
 
