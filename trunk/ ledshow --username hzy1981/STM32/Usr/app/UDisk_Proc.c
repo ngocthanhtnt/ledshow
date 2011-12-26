@@ -99,7 +99,7 @@ void UDisk_Proc(void)
 		Delay_ms(200);
 
 		Counts = 0;
- 		while(Counts <= 100)//for ( i = 0; i < 100; i ++ ) {  /* 最长等待时间,100*50mS */
+ 		while(Counts <= 10)//for ( i = 0; i < 100; i ++ ) {  /* 最长等待时间,100*50mS */
 	    {
 			Re = CH376DiskMount( );  /* 初始化磁盘并测试磁盘是否就绪 */
 			if ( Re == USB_INT_SUCCESS ) 
