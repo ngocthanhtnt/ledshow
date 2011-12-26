@@ -1052,6 +1052,10 @@ void MainWindow::setManualClose()
 {
     char Flag;
 
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
     Flag = CLOSE_FLAG;
@@ -1066,6 +1070,9 @@ void MainWindow::setManualClose()
 void MainWindow::setManualOpen()
 {
     char Flag;
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
 
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
@@ -1106,6 +1113,11 @@ void MainWindow::preview(INT8U previewMode)
 {
   QString screenStr;//progStr;
   INT8U Screen_No;
+
+
+  if(w->comStatus->comThread->isRunning())//当前线程还在运行
+      return;
+
   //生成仿真文件
   Mem_Open();
 

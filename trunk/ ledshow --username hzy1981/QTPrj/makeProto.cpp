@@ -225,6 +225,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
     saveProgPara(progParaBak);
 
     memset(&filePara, 0, sizeof(filePara));
+    memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
 
     //重置参数--
     resetShowPara(width, height, Screen_Para.Base_Para.Color);
@@ -320,7 +321,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
           }
 
            //转换图形数据到protoShowData中
-          memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
+          //memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
           //Set_Area_Border_Out(0);
 
           //Screen_Para.Base_Para.Width -=  2*borderHeight; //getTextShowData函数需要使用到屏幕宽度，高度等，因此需要重置改参数
@@ -384,6 +385,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
     {
         getLunParaFromSettings(fileStr, filePara);
         QImage image = getLineTextImage(fileStr);
+
+        //image.save("d:\\time.png");
         QSize size = image.size();
 
         filePara.Lun_Para.Text_Width = size.width();
@@ -578,7 +581,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
         int count = getFlashFrameCount(fileStr);
         //filePara.Pic_Para.SNum = count;
 
-        memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
+        //memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
 
 
         INT16U num = 0;
@@ -636,7 +639,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
       getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
       len += BORDER_DATA_LEN;
 
-      memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
+      //memset(protoShowData.Color_Data, 0, sizeof(protoShowData.Color_Data));
 
       //Screen_Para.Base_Para.Width -=  2*borderHeight; //getTextShowData函数需要使用到屏幕宽度，高度等，因此需要重置改参数
       //Screen_Para.Base_Para.Height -= 2*borderHeight;
