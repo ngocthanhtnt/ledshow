@@ -919,6 +919,9 @@ void sendLightnessPara()//S_COM_Status &COM_Status)
     //S_Card_Para cardPara;
     //int len;
 
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
     QString str = w->screenArea->getCurrentScreenStr();
 
     //getScreenCardParaFromSettings(str, screenPara, cardPara); //
@@ -931,7 +934,6 @@ void sendLightnessPara()//S_COM_Status &COM_Status)
     else
       sendProtoData(frameBuf, len);
 */
-
     int flag = 0;
     SET_BIT(flag, C_SCREEN_LIGNTNESS);
     if(QT_SIM_EN)
@@ -949,6 +951,9 @@ void ClightnessDialog::sendPara()
     //S_Card_Para cardPara;
     INT8U temp[100];
     int len;
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
 
     QString str = w->screenArea->getCurrentScreenStr();
 
@@ -979,6 +984,9 @@ void ClightnessDialog::udiskPara()
     //S_Card_Para cardPara;
     //INT8U temp[100];
     //int len;
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
 
     QString str = w->screenArea->getCurrentScreenStr();
 
@@ -1046,6 +1054,10 @@ void sendOpenClosePara()
    S_Card_Para cardPara;
    //int len;
 
+
+   if(w->comStatus->comThread->isRunning())//当前线程还在运行
+       return;
+
    QString str = w->screenArea->getCurrentScreenStr();
 
    getScreenCardParaFromSettings(str, screenPara, cardPara); //
@@ -1054,7 +1066,6 @@ void sendOpenClosePara()
    /*
    len = makeFrame((char *)&screenPara.OC_Time, sizeof(screenPara.OC_Time),\
               C_SCREEN_OC_TIME, 0, frameBuf);*/
-
    int flag = 0;
    SET_BIT(flag, C_SCREEN_OC_TIME);
    if(QT_SIM_EN)
@@ -1070,6 +1081,10 @@ void CopenCloseDialog::sendPara()
     S_Card_Para cardPara;
     int len;
     INT8U temp[100];
+
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
 
     QString str = w->screenArea->getCurrentScreenStr();
 
@@ -1108,6 +1123,9 @@ void CopenCloseDialog::udiskPara()
     //int len;
 
     QString str = w->screenArea->getCurrentScreenStr();
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
 
     getScreenCardParaFromSettings(str, screenPara, cardPara); //
 
@@ -1222,6 +1240,9 @@ void CadjTimeDialog::sendData()
     INT8U Temp[20];
     int len;
 
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
     TimeBuf[T_YEAR] = dateTime.date().year() - 2000;
     TimeBuf[T_MONTH] = dateTime.date().month();
     TimeBuf[T_DATE] = dateTime.date().day();
@@ -1265,6 +1286,9 @@ void CadjTimeDialog::udiskData()
     INT8U TimeBuf[10];
     //INT8U Temp[20];
     //int len;
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
 
     TimeBuf[T_YEAR] = dateTime.date().year() - 2000;
     TimeBuf[T_MONTH] = dateTime.date().month();
@@ -1449,6 +1473,9 @@ void CsendDataDialog::sendData()
     SET_BIT(flag, C_PROG_PARA);
     SET_BIT(flag, C_PROG_DATA);
 
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
     if(QT_SIM_EN)
       makeProtoFileData(str, SIM_MODE, flag);
     else
@@ -1474,6 +1501,10 @@ void CsendDataDialog::uDiskData()
     //INT8U temp[100];
     //int len;
     int flag = 0;
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
     QString str = w->screenArea->getCurrentScreenStr();
 
     if(lightnessCheck->isChecked())
@@ -2438,6 +2469,9 @@ void CfacScreenProperty::readParaProc()
 
     QString screenParaStr;
 
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
     //读取版本号
@@ -2681,6 +2715,9 @@ void CfacScreenProperty::setTestProc()
     //int len;
     QString screenStr;
     //char frameBuf[BLOCK_DATA_LEN + 20];
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
 
     if(this->selfTestButton->text() EQ tr("自动检测"))
     {

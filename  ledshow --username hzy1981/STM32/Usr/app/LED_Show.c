@@ -1285,6 +1285,9 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
     INT16U Len, Diff,i,j,Mask,X0,X1,Y0,Y1,Width,Height;//,Y1;
     INT8U *pSrc, *pDst, Data, Color_Num;
 
+    if(X_Len EQ 0 || Y_Len EQ 0)
+        return;
+
     //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
 ///-----------判断参数的正确性---------------
     X0 = pPoint0->X; //源数据在整体屏幕中的起始位置
@@ -1340,7 +1343,10 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
     if(X_Len > (8 - (X1 % 8)) + (((X1 + X_Len - 1) % 8) + 1))
         Len = (X_Len - (8 - (X1 % 8)) - (((X1 + X_Len - 1) % 8) + 1))/8; //每行的字节数，除去头和尾的字节,头和尾需要特殊处理
     else
+    {
       Len = 0;
+      //return;
+    }
     //X0 = Prog_Para.Area[Area_No].X + pPoint0->X; //源数据在整体屏幕中的起始位置
     //Y0 = Prog_Para.Area[Area_No].Y + pPoint0->Y;
 
@@ -1924,6 +1930,9 @@ void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_
     INT16U Len, i,j,Mask,X0,X1,Y0,Width,Height;//,Y1;
     INT8U *pDst;
 
+    if(X_Len EQ 0 || Y_Len EQ 0)
+        return;
+
         //GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
     ///-----------判断参数的正确性---------------
         X0 = pPoint0->X; //源数据在整体屏幕中的起始位置
@@ -1963,8 +1972,10 @@ void Fill_Rect(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, INT16U X_
     if(X_Len > (8 - (X1 % 8)) + (((X1 + X_Len - 1) % 8) + 1))
       Len = (X_Len - (8 - (X1 % 8)) - (((X1 + X_Len - 1) % 8) + 1))/8; //每行的字节数，除去头和尾的字节,头和尾需要特殊处理
     else
+    {
       Len = 0;
-
+      //return;
+    }
     //目标是Show_Data，则需要特殊处理
     Width = Screen_Status.Color_Num;//GET_COLOR_NUM(Screen_Para.Base_Para.Color);
     //qDebug("len = %d",Len);
