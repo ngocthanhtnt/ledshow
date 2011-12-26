@@ -99,7 +99,7 @@ int main(void)
 #endif
 
 #if UDISK_EN
-    //UDisk_Proc(); //u盘处理
+    UDisk_Proc(); //u盘处理
 #endif
 
     Show_Main_Proc();
