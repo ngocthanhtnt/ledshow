@@ -35,7 +35,7 @@
 #define FONT_NUM 1 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
-#define MAX_POINTS (1280*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
+#define MAX_POINTS (700*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  4000 //最大存储块数
 #define MAX_SCAN_BLOCK_NUM 16 //最大扫描块
 #define MAX_SCAN_WIDTH 2056 //最大扫描宽度
@@ -58,6 +58,7 @@
 //#define USE_NOR_FLASH //并行NORFlash
 
 #define UDISK_EN  1//u盘使能
+#define CHIP_USB_HOST //定义表示使用片上USB HOST接口
 #define NET_EN	 0//网络使能
 #define GPRS_EN  0//GPRS使能
 

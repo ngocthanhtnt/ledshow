@@ -360,6 +360,14 @@ void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
 
+#ifdef CHIP_USB_HOST	
+	NVIC_InitStructure.NVIC_IRQChannel = OTG_FS_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+#endif
+
 #if TIM1_EN
 	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;  //1ms中断
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级0级

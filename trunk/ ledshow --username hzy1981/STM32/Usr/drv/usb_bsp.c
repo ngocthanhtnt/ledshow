@@ -20,9 +20,10 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
+#include "Includes.h"
 #include "usb_bsp.h"
-#include "stm3210c_eval_lcd.h"
-#include "stm32_eval.h"
+//#include "stm3210c_eval_lcd.h"
+//#include "stm32_eval.h"
 
 /** @addtogroup USBH_USER
   * @{
@@ -58,6 +59,7 @@ static void BSP_Delay(uint32_t nTime, uint8_t Unit);
   */
 void BSP_Init(void)
 {
+#if 0
   /* Configure PB9 pin: User Key pin */
   STM_EVAL_PBInit(Button_KEY, Mode_GPIO);
 
@@ -73,6 +75,7 @@ void BSP_Init(void)
 
   /* Set the LCD Text Color */
   LCD_SetTextColor(White);
+#endif
 }
 
 
@@ -84,6 +87,7 @@ void BSP_Init(void)
   */
 void USB_OTG_BSP_Init(void)
 {
+#ifdef STM32F10X_CL
   GPIO_InitTypeDef GPIO_InitStructure;
   EXTI_InitTypeDef EXTI_InitStructure;
 
@@ -92,7 +96,6 @@ void USB_OTG_BSP_Init(void)
 
   /* Enable the USB clock */
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_OTG_FS, ENABLE) ;
-
 
 #ifdef SOF_OUTPUT_ENABLED
   /* To enable SOF pulse out on PAD */
@@ -128,6 +131,7 @@ void USB_OTG_BSP_Init(void)
   EXTI_Init(&EXTI_InitStructure);
 
 #endif
+#endif
 }
 
 /**
@@ -138,7 +142,7 @@ void USB_OTG_BSP_Init(void)
   */
 void USB_OTG_BSP_EnableInterrupt(void)
 {
-
+#ifdef STM32F10X_CL
   NVIC_InitTypeDef NVIC_InitStructure;
   /* Enable USB Interrupt */
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
@@ -148,7 +152,7 @@ void USB_OTG_BSP_EnableInterrupt(void)
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
-
+#if 0
   /* Enable the Overcurrent Interrupt */
   NVIC_InitStructure.NVIC_IRQChannel = HOST_OVRCURR_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
@@ -156,6 +160,8 @@ void USB_OTG_BSP_EnableInterrupt(void)
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 
   NVIC_Init(&NVIC_InitStructure);
+#endif
+#endif
 }
 
 /**
@@ -178,6 +184,7 @@ void USB_OTG_BSP_DriveVBUS(uint8_t state)
   The application uses this field to control power to this port, and the core 
   clears this bit on an overcurrent condition.
   */
+#if 0
   if (0 == state)
   {
     /* DISABLE is needed on output of the Power Switch */
@@ -188,6 +195,7 @@ void USB_OTG_BSP_DriveVBUS(uint8_t state)
     /*ENABLE the Power Switch by driving the Enable LOW */
     GPIO_ResetBits(HOST_POWERSW_PORT, HOST_POWERSW_VBUS);
   }
+#endif
 }
 
 /**

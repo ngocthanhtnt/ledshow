@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_proj.xsd">
 
-  <SchemaVersion>1.0</SchemaVersion>
+  <SchemaVersion>1.1</SchemaVersion>
 
   <Header>### uVision Project, (C) Keil Software</Header>
 
@@ -29,6 +29,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
+          <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -1217,6 +1218,161 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\Led_ABX_Drv.h</FilePath>
             </File>
+            <File>
+              <FileName>usb_bsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\usb_bsp.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_usr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\usbh_usr.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>USB_Core</GroupName>
+          <Files>
+            <File>
+              <FileName>usbh_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_hcs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_hcs.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_ioreq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_ioreq.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_stdreq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_stdreq.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>USB_Driver</GroupName>
+          <Files>
+            <File>
+              <FileName>usb_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_hcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_hcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_hcd_int.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_hcd_int.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>EFSL</GroupName>
+          <Files>
+            <File>
+              <FileName>dir.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\dir.c</FilePath>
+            </File>
+            <File>
+              <FileName>disc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\disc.c</FilePath>
+            </File>
+            <File>
+              <FileName>efs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\efs.c</FilePath>
+            </File>
+            <File>
+              <FileName>extract.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\extract.c</FilePath>
+            </File>
+            <File>
+              <FileName>fat.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\fat.c</FilePath>
+            </File>
+            <File>
+              <FileName>file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\file.c</FilePath>
+            </File>
+            <File>
+              <FileName>fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\fs.c</FilePath>
+            </File>
+            <File>
+              <FileName>ioman.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ioman.c</FilePath>
+            </File>
+            <File>
+              <FileName>ls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ls.c</FilePath>
+            </File>
+            <File>
+              <FileName>mkfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\mkfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>partition.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\partition.c</FilePath>
+            </File>
+            <File>
+              <FileName>plibc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\plibc.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\time.c</FilePath>
+            </File>
+            <File>
+              <FileName>ui.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ui.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MSC</GroupName>
+          <Files>
+            <File>
+              <FileName>usbh_msc_bot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_bot.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_fs_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_fs_interface.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_scsi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_scsi.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -1244,6 +1400,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
+          <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -2432,6 +2589,161 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\Led_ABX_Drv.h</FilePath>
             </File>
+            <File>
+              <FileName>usb_bsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\usb_bsp.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_usr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\usbh_usr.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>USB_Core</GroupName>
+          <Files>
+            <File>
+              <FileName>usbh_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_hcs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_hcs.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_ioreq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_ioreq.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_stdreq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_stdreq.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>USB_Driver</GroupName>
+          <Files>
+            <File>
+              <FileName>usb_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_hcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_hcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_hcd_int.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_hcd_int.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>EFSL</GroupName>
+          <Files>
+            <File>
+              <FileName>dir.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\dir.c</FilePath>
+            </File>
+            <File>
+              <FileName>disc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\disc.c</FilePath>
+            </File>
+            <File>
+              <FileName>efs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\efs.c</FilePath>
+            </File>
+            <File>
+              <FileName>extract.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\extract.c</FilePath>
+            </File>
+            <File>
+              <FileName>fat.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\fat.c</FilePath>
+            </File>
+            <File>
+              <FileName>file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\file.c</FilePath>
+            </File>
+            <File>
+              <FileName>fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\fs.c</FilePath>
+            </File>
+            <File>
+              <FileName>ioman.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ioman.c</FilePath>
+            </File>
+            <File>
+              <FileName>ls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ls.c</FilePath>
+            </File>
+            <File>
+              <FileName>mkfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\mkfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>partition.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\partition.c</FilePath>
+            </File>
+            <File>
+              <FileName>plibc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\plibc.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\time.c</FilePath>
+            </File>
+            <File>
+              <FileName>ui.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ui.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MSC</GroupName>
+          <Files>
+            <File>
+              <FileName>usbh_msc_bot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_bot.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_fs_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_fs_interface.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_scsi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_scsi.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -2442,13 +2754,13 @@
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32F103VC</Device>
+          <Device>STM32F105RB</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <Cpu>IRAM(0x20000000-0x2000BFFF) IROM(0x8000000-0x803FFFF) CLOCK(8000000) CPUTYPE("Cortex-M3")</Cpu>
+          <Cpu>IRAM(0x20000000-0x20007FFF) IROM(0x8000000-0x801FFFF) CLOCK(25000000) CPUTYPE("Cortex-M3")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"STARTUP\ST\STM32F10x.s" ("STM32 Startup Code")</StartupFile>
-          <FlashDriverDll>UL2CM3(-O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_512 -FS08000000 -FL040000)</FlashDriverDll>
-          <DeviceId>4226</DeviceId>
+          <FlashDriverDll>UL2CM3(-O14 -S0 -C0 -N00("ARM Cortex-M3") -D00(1BA00477) -L00(4) -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_CL -FS08000000 -FL020000)</FlashDriverDll>
+          <DeviceId>4884</DeviceId>
           <RegisterFile>stm32f10x_lib.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
@@ -2459,6 +2771,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
+          <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -2529,11 +2842,11 @@
           <SimDllName>SARMCM3.DLL</SimDllName>
           <SimDllArguments></SimDllArguments>
           <SimDlgDll>DARMSTM.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pSTM32F103VC</SimDlgDllArguments>
+          <SimDlgDllArguments>-pSTM32F105RB</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
           <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TARMSTM.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-pSTM32F103VC</TargetDlgDllArguments>
+          <TargetDlgDllArguments>-pSTM32F105RB</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <OPTHX>
@@ -2544,7 +2857,7 @@
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
           <Simulator>
-            <UseSimulator>0</UseSimulator>
+            <UseSimulator>1</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -2555,7 +2868,7 @@
             <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
           </Simulator>
           <Target>
-            <UseTarget>1</UseTarget>
+            <UseTarget>0</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -2565,7 +2878,7 @@
             <RestoreToolbox>1</RestoreToolbox>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>7</TargetSelection>
+          <TargetSelection>5</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -2693,12 +3006,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0xc000</Size>
+                <Size>0x8000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x20000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -2723,7 +3036,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x20000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -2748,7 +3061,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0xc000</Size>
+                <Size>0x8000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -2773,9 +3086,9 @@
             <uThumb>0</uThumb>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_STDPERIPH_DRIVER, STM32F10X_MD,CARD_C</Define>
+              <Define>USE_STDPERIPH_DRIVER, STM32F10X_CL,CARD_C</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\Libraries\CMSIS\CM3\CoreSupport;..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\..\..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\..\Utilities\STM32_EVAL;..\..\..\Utilities\STM32_EVAL\STM32100E_EVAL;..\..\..\Utilities\STM32_EVAL\Common;..\..\..\Usr\app;..\..\..\Usr\cfg;..\..\..\Usr\drv</IncludePath>
+              <IncludePath>..\;..\..\..\Libraries\CMSIS\CM3\CoreSupport;..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\..\..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\..\Utilities\STM32_EVAL;..\..\..\Utilities\STM32_EVAL\STM32100E_EVAL;..\..\..\Utilities\STM32_EVAL\Common;..\..\..\Usr\app;..\..\..\Usr\cfg;..\..\..\Usr\drv;..\..\..\Libraries\STM32_USB_HOST_Driver\inc;..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\inc;..\..\..\Libraries\STM32_USB_HOST_Library\Core\inc;..\..\..\Utilities\Third_Party\efsl\inc;..\..\..\Libraries\STM32_USB_HOST_Library\Class\HID\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -2899,11 +3212,6 @@
               <FileName>startup_stm32f10x_md.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_md.s</FilePath>
-            </File>
-            <File>
-              <FileName>startup_stm32f10x_cl.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_cl.s</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -2938,6 +3246,11 @@
                   </Aads>
                 </FileArmAds>
               </FileOption>
+            </File>
+            <File>
+              <FileName>startup_stm32f10x_cl.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_cl.s</FilePath>
             </File>
             <File>
               <FileName>startup_stm32f10x_hd.s</FileName>
@@ -3613,6 +3926,161 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\Led_ABX_Drv.h</FilePath>
             </File>
+            <File>
+              <FileName>usb_bsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\usb_bsp.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_usr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\usbh_usr.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>USB_Core</GroupName>
+          <Files>
+            <File>
+              <FileName>usbh_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_hcs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_hcs.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_ioreq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_ioreq.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_stdreq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_stdreq.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>USB_Driver</GroupName>
+          <Files>
+            <File>
+              <FileName>usb_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_hcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_hcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_hcd_int.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_hcd_int.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>EFSL</GroupName>
+          <Files>
+            <File>
+              <FileName>dir.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\dir.c</FilePath>
+            </File>
+            <File>
+              <FileName>disc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\disc.c</FilePath>
+            </File>
+            <File>
+              <FileName>efs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\efs.c</FilePath>
+            </File>
+            <File>
+              <FileName>extract.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\extract.c</FilePath>
+            </File>
+            <File>
+              <FileName>fat.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\fat.c</FilePath>
+            </File>
+            <File>
+              <FileName>file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\file.c</FilePath>
+            </File>
+            <File>
+              <FileName>fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\fs.c</FilePath>
+            </File>
+            <File>
+              <FileName>ioman.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ioman.c</FilePath>
+            </File>
+            <File>
+              <FileName>ls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ls.c</FilePath>
+            </File>
+            <File>
+              <FileName>mkfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\mkfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>partition.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\partition.c</FilePath>
+            </File>
+            <File>
+              <FileName>plibc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\plibc.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\time.c</FilePath>
+            </File>
+            <File>
+              <FileName>ui.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ui.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MSC</GroupName>
+          <Files>
+            <File>
+              <FileName>usbh_msc_bot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_bot.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_fs_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_fs_interface.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_scsi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_scsi.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
@@ -3640,6 +4108,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
+          <SFDFile></SFDFile>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -3725,7 +4194,7 @@
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
           <Simulator>
-            <UseSimulator>0</UseSimulator>
+            <UseSimulator>1</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -3736,7 +4205,7 @@
             <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
           </Simulator>
           <Target>
-            <UseTarget>1</UseTarget>
+            <UseTarget>0</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -3746,7 +4215,7 @@
             <RestoreToolbox>1</RestoreToolbox>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>7</TargetSelection>
+          <TargetSelection>5</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -3956,7 +4425,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER, STM32F10X_MD,CARD_D</Define>
               <Undefine></Undefine>
-              <IncludePath>..\;..\..\..\Libraries\CMSIS\CM3\CoreSupport;..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\..\..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\..\Utilities\STM32_EVAL;..\..\..\Utilities\STM32_EVAL\STM32100E_EVAL;..\..\..\Utilities\STM32_EVAL\Common;..\..\..\Usr\app;..\..\..\Usr\cfg;..\..\..\Usr\drv</IncludePath>
+              <IncludePath>..\;..\..\..\Libraries\CMSIS\CM3\CoreSupport;..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\..\..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\..\Utilities\STM32_EVAL;..\..\..\Utilities\STM32_EVAL\STM32100E_EVAL;..\..\..\Utilities\STM32_EVAL\Common;..\..\..\Usr\app;..\..\..\Usr\cfg;..\..\..\Usr\drv;..\..\..\Libraries\STM32_USB_HOST_Driver\inc;..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\inc;..\..\..\Libraries\STM32_USB_HOST_Library\Core\inc;..\..\..\Utilities\Third_Party\efsl\inc;..\..\..\Libraries\STM32_USB_HOST_Library\Class\HID\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -4793,6 +5262,161 @@
               <FileName>Led_ABX_Drv.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\Led_ABX_Drv.h</FilePath>
+            </File>
+            <File>
+              <FileName>usb_bsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\usb_bsp.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_usr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\usbh_usr.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>USB_Core</GroupName>
+          <Files>
+            <File>
+              <FileName>usbh_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_hcs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_hcs.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_ioreq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_ioreq.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_stdreq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Core\src\usbh_stdreq.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>USB_Driver</GroupName>
+          <Files>
+            <File>
+              <FileName>usb_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_hcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_hcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_hcd_int.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Driver\src\usb_hcd_int.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>EFSL</GroupName>
+          <Files>
+            <File>
+              <FileName>dir.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\dir.c</FilePath>
+            </File>
+            <File>
+              <FileName>disc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\disc.c</FilePath>
+            </File>
+            <File>
+              <FileName>efs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\efs.c</FilePath>
+            </File>
+            <File>
+              <FileName>extract.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\extract.c</FilePath>
+            </File>
+            <File>
+              <FileName>fat.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\fat.c</FilePath>
+            </File>
+            <File>
+              <FileName>file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\file.c</FilePath>
+            </File>
+            <File>
+              <FileName>fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\fs.c</FilePath>
+            </File>
+            <File>
+              <FileName>ioman.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ioman.c</FilePath>
+            </File>
+            <File>
+              <FileName>ls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ls.c</FilePath>
+            </File>
+            <File>
+              <FileName>mkfs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\mkfs.c</FilePath>
+            </File>
+            <File>
+              <FileName>partition.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\partition.c</FilePath>
+            </File>
+            <File>
+              <FileName>plibc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\plibc.c</FilePath>
+            </File>
+            <File>
+              <FileName>time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\time.c</FilePath>
+            </File>
+            <File>
+              <FileName>ui.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\Third_Party\efsl\src\ui.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MSC</GroupName>
+          <Files>
+            <File>
+              <FileName>usbh_msc_bot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_bot.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_fs_interface.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_fs_interface.c</FilePath>
+            </File>
+            <File>
+              <FileName>usbh_msc_scsi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_scsi.c</FilePath>
             </File>
           </Files>
         </Group>

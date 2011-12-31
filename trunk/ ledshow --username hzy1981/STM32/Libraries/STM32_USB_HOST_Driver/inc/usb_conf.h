@@ -44,7 +44,7 @@
 #define TXH_NP_FIFOSIZ                         96
 #define TXH_P_FIFOSIZ                          96
 
-#define OVERCURRENT_DET
+//#define OVERCURRENT_DET
 //#define SOF_OUTPUT_ENABLED
 
 

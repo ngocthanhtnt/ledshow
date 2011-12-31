@@ -262,7 +262,11 @@ void Set_Clock_Normal_Speed(void)
 	RCC_PCLK1Config(PCLK1_DIV);   //设置APB1时钟=36 MHz(APB1时钟最大值)
 	RCC_PCLK2Config(PCLK2_DIV);   //设置APB2时钟=72 MHz
 	RCC_PLLCmd(DISABLE); //关闭PLL
+#ifdef STM32F10X_CL
+    RCC_PLLConfig(RCC_PLLSource_PREDIV1, HCLK_MUL);
+#else
 	RCC_PLLConfig(RCC_PLLSource_HSE_Div1, HCLK_MUL); //PLL必须在其激活前完成配置（设置PLL时钟源及倍频系数）
+#endif	
 	RCC_PLLCmd(ENABLE);
 	// Wait till PLL is ready 
 	while(RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET)
