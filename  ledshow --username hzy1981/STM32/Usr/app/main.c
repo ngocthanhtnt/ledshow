@@ -88,6 +88,7 @@ int main(void)
 
   SET_STATUS_LED_ON(); //´ò¿ªLED×´Ì¬µÆ
 
+
   while(1)
   {
     Screen_Test(); //ÆÁÄ»¼ì²â

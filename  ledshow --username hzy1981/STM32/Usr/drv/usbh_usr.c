@@ -22,6 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbh_usr.h"
 
+#define LCD_DisplayStringLine(X,Y) debug("%s", Y);
 /** @addtogroup USBH_USER
   * @{
   */
@@ -107,12 +108,13 @@ static uint8_t MSG_BUFF_SIZE_ERROR3[] = "        ABOUT BUFFER_SIZE VALUES       
   */
 void USBH_USR_IAPInit(void)
 {
+
   /* Set default screen color*/
-  LCD_Clear(Black);
+  //LCD_Clear(Black);
 
   /* Display the application header */
-  LCD_SetBackColor(Blue);
-  LCD_SetTextColor(White);
+  //LCD_SetBackColor(Blue);
+  //LCD_SetTextColor(White);
 
   /* Display LCD message: how to enter IAP mode */
   LCD_DisplayStringLine(Line0, (uint8_t *)MSG_START_IAP);
@@ -132,13 +134,13 @@ void USBH_USR_IAPInit(void)
 void USBH_USR_Init(void)
 {
   /* Set default screen color*/
-  LCD_Clear(Black);
+  //LCD_Clear(Black);
 
   /* Display LCD message: how to enter IAP mode */
   LCD_DisplayStringLine(0, (uint8_t *)MSG_START_IAP);
 
   /* Set back color to black */
-  LCD_SetBackColor(Black);
+  //LCD_SetBackColor(Black);
 }
 
 /**
@@ -163,15 +165,15 @@ void USBH_USR_UnrecoveredError (void)
 {
 
   /* Set default screen color*/
-  LCD_Clear(Black);
+  //LCD_Clear(Black);
 
   /* Display the application header */
-  LCD_SetBackColor(Blue);
-  LCD_SetTextColor(White);
+  //LCD_SetBackColor(Blue);
+  //LCD_SetTextColor(White);
   LCD_DisplayStringLine(0, (uint8_t *)MSG_START_IAP);
 
   /* LCD message device error  */
-  LCD_SetBackColor(Red);
+  //LCD_SetBackColor(Red);
   LCD_DisplayStringLine(20,  (uint8_t *)MSG_UNREC_ERROR);
 }
 
@@ -185,15 +187,15 @@ void USBH_USR_DeviceDisconnected (void)
 {
 
   /* Set default screen color*/
-  LCD_Clear(Black);
+  //LCD_Clear(Black);
 
   /* Display the application header */
-  LCD_SetBackColor(Blue);
-  LCD_SetTextColor(White);
+  //LCD_SetBackColor(Blue);
+  //LCD_SetTextColor(White);
   LCD_DisplayStringLine(0, (uint8_t *)MSG_START_IAP);
 
   /* LCD message device disconnecting */
-  LCD_SetBackColor(Black);
+  //LCD_SetBackColor(Black);
   LCD_DisplayStringLine(80, (uint8_t *)MSG_DEV_DISCONNECTED);
 }
 
@@ -301,6 +303,7 @@ void USBH_USR_SerialNum_String(void *SerialNumString)
   */
 void USBH_USR_IAPMenu(void)
 {
+#if 0
   /* Enumeration complete */
   LCD_DisplayStringLine(120, (uint8_t *)MSG_DEV_ENUMERATED);
 
@@ -317,11 +320,11 @@ void USBH_USR_IAPMenu(void)
          (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_9) == SET));
 
   /* Clear LCD */
-  LCD_Clear(Black);
+  //LCD_Clear(Black);
 
   /* Display the application header */
-  LCD_SetBackColor(Blue);
-  LCD_SetTextColor(White);
+  //LCD_SetBackColor(Blue);
+  //LCD_SetTextColor(White);
   LCD_DisplayStringLine(1, (uint8_t *)MSG_START_IAP);
 
   /* Control BUFFER_SIZE value */
@@ -331,18 +334,18 @@ void USBH_USR_IAPMenu(void)
   LCD_DisplayStringLine(30, (uint8_t *)MSG_IAP_MENU);
 
   /* Display IAP commands */
-  LCD_SetBackColor(Black);
+  //LCD_SetBackColor(Black);
   LCD_DisplayStringLine(40, (uint8_t *)MSG_IAP_UPLOAD);
   LCD_DisplayStringLine(50, (uint8_t *)MSG_IAP_DOWNLOAD);
   LCD_DisplayStringLine(60, (uint8_t *)MSG_IAP_JUMP);
 
   /* Display cursor */
-  LCD_DrawFullRect(50, 200, 10, 8);
-  LCD_SetTextColor(White);
-  LCD_DrawFullRect(60, 200, 10, 8);
-  LCD_SetBackColor(Blue);
-  LCD_DrawFullRect(40, 200, 10, 8);
-  LCD_SetTextColor(White);
+  //LCD_DrawFullRect(50, 200, 10, 8);
+  //LCD_SetTextColor(White);
+  //LCD_DrawFullRect(60, 200, 10, 8);
+  //LCD_SetBackColor(Blue);
+  //LCD_DrawFullRect(40, 200, 10, 8);
+  //LCD_SetTextColor(White);
 
   /* Joystick used to select IAP command */
   joystick_use = IAP_COMMAND_SELECT;
@@ -364,6 +367,7 @@ void USBH_USR_IAPMenu(void)
     LCD_DisplayStringLine(70, (uint8_t *)MSG_RESET);
     while (1);
   }
+#endif
 }
 
 
@@ -376,15 +380,15 @@ void USBH_USR_IAPMenu(void)
 void USBH_USR_DeviceNotSupported(void)
 {
   /* Set default screen color */
-  LCD_Clear(Black);
+  //LCD_Clear(Black);
 
   /* Display the application header */
-  LCD_SetBackColor(Blue);
-  LCD_SetTextColor(White);
+  //LCD_SetBackColor(Blue);
+  //LCD_SetTextColor(White);
   LCD_DisplayStringLine(0, (uint8_t*)MSG_START_IAP);
 
   /* Device not supported */
-  LCD_SetBackColor(Black);
+  //LCD_SetBackColor(Black);
   LCD_DisplayStringLine(40, (uint8_t*)MSG_DEV_NSUPPORTED);
 
   /* 2 seconds delay */
@@ -413,16 +417,16 @@ USBH_USR_Status USBH_USR_UserInput(void)
 void USBH_USR_OverCurrentDetected (void)
 {
   /* Display color on LCD */
-  LCD_Clear(Black);
+  //LCD_Clear(Black);
 
   /* Display the application header */
-  LCD_SetBackColor(Blue);
-  LCD_SetTextColor(White);
+  //LCD_SetBackColor(Blue);
+  //LCD_SetTextColor(White);
   LCD_DisplayStringLine(0, (uint8_t*)MSG_START_IAP);
-  LCD_SetBackColor(Black);
+  //LCD_SetBackColor(Black);
 
   /* Set the LCD Text Color */
-  LCD_SetTextColor(White);
+  //LCD_SetTextColor(White);
   LCD_DisplayStringLine(40, (uint8_t *)MSG_OVERCURRENT);
 
   /* 2 seconds delay */
@@ -450,8 +454,8 @@ int USBH_USR_MSC_Application(void)
       }
 
       /* Set LCD parameters */
-      LCD_SetBackColor(Black);
-      LCD_SetTextColor(White);
+      //LCD_SetBackColor(Black);
+      //LCD_SetTextColor(White);
 
       /* Flash Disk is write protected */
       if (USBH_MSC_Param.MSWriteProtect == DISK_WRITE_PROTECTED)
@@ -506,7 +510,7 @@ uint8_t USBH_USR_DisplayBinaryFlashContents (Download_FileTypeDef* Download_File
   /* Initilize struct */
   USBH_USR_InitDownloadStructure(Download_File);
 
-  USBH_USR_LCDClearPart(80, 100);
+  //USBH_USR_LCDClearPart(80, 100);
 
   /*Reads the dis list*/
   if (ls_openDir(&list, &(efs.myFs), "/") != 0)
@@ -542,10 +546,10 @@ uint8_t USBH_USR_DisplayBinaryFlashContents (Download_FileTypeDef* Download_File
       /* Index of file fixed under LCD */
       Download_FileStruct[index_struct].file_index = lcdLineNo;
       /* Display the file cursor */
-      LCD_DrawFullRect(lcdLineNo, 200, 10, 8);
+      //LCD_DrawFullRect(lcdLineNo, 200, 10, 8);
       /* Set the LCD parameters */
-      LCD_SetBackColor(Black);
-      LCD_SetTextColor(White);
+      //LCD_SetBackColor(Black);
+      //LCD_SetTextColor(White);
       /* increment index file */
       index_struct++;
 
@@ -554,14 +558,14 @@ uint8_t USBH_USR_DisplayBinaryFlashContents (Download_FileTypeDef* Download_File
       {
         lcdLineNo = lcdLineNo + 20;
         /* Configure Tamper botton*/
-        STM_EVAL_PBInit(Button_TAMPER, Mode_GPIO);
+        //STM_EVAL_PBInit(Button_TAMPER, Mode_GPIO);
 
         /* LCD set paramerters */
-        LCD_SetBackColor(Blue);
+        //LCD_SetBackColor(Blue);
         LCD_DisplayStringLine(120, (uint8_t *)MSG_SEL_IMG);
-        LCD_DrawFullRect(130, 200, 10, 8);
-        LCD_SetBackColor(Black);
-        LCD_SetTextColor(White);
+        //LCD_DrawFullRect(130, 200, 10, 8);
+        //LCD_SetBackColor(Black);
+        //LCD_SetTextColor(White);
 
         /* Display LCD message */
         LCD_DisplayStringLine(lcdLineNo, (uint8_t *)MSG_OTHER_BIN);
@@ -597,7 +601,7 @@ uint8_t USBH_USR_DisplayBinaryFlashContents (Download_FileTypeDef* Download_File
         index_struct = 0x00;
 
         /* Clear LCD BIN file names */
-        USBH_USR_LCDClearPart(130, 230);
+        //USBH_USR_LCDClearPart(130, 230);
       }
     }
   }
@@ -606,11 +610,11 @@ uint8_t USBH_USR_DisplayBinaryFlashContents (Download_FileTypeDef* Download_File
   if (index_struct > 0)
   {
     /* Set LCD parameters */
-    LCD_SetBackColor(Blue);
+    //LCD_SetBackColor(Blue);
     LCD_DisplayStringLine(120, (uint8_t *)MSG_SEL_IMG);
-    LCD_DrawFullRect(130, 200, 10, 8);
-    LCD_SetBackColor(Black);
-    LCD_SetTextColor(White);
+    //LCD_DrawFullRect(130, 200, 10, 8);
+    //LCD_SetBackColor(Black);
+    //LCD_SetTextColor(White);
 
     /* control menu selection */
     status = USBH_USR_SelectControlMenu();
@@ -636,6 +640,7 @@ uint8_t USBH_USR_DisplayBinaryFlashContents (Download_FileTypeDef* Download_File
   */
 void USBH_USR_JoystickInterrupt (FunctionalState NewState)
 {
+#if 0
   NVIC_InitTypeDef NVIC_InitStructure;
 
   /* Enable/Disable EXTI Interrupt */
@@ -644,6 +649,7 @@ void USBH_USR_JoystickInterrupt (FunctionalState NewState)
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
   NVIC_InitStructure.NVIC_IRQChannelCmd = NewState;
   NVIC_Init(&NVIC_InitStructure);
+#endif
 }
 
 /**
@@ -669,10 +675,10 @@ void USBH_USR_InitDownloadStructure(Download_FileTypeDef* Download_FileStruct)
   }
 
   lcdLineNo = 120;
-  Seclect_FileCounter = 130;
+  //Seclect_FileCounter = 130;
 }
 /**
-  * @brief  USBH_USR_LCDClearPart
+  * @brief  //USBH_USR_LCDClearPart
   * @param  start: the start line to clear LCD
   * @param  end: the end line to clear LCD
   * @retval None
@@ -730,8 +736,8 @@ void USBH_USR_BufferSizeControl(void)
   if ((BUFFER_SIZE % 4 != 0x00) || (BUFFER_SIZE / 4 > 8192))
   {
     /* Set LCD parameters */
-    LCD_SetBackColor(Black);
-    LCD_SetTextColor(White);
+    //LCD_SetBackColor(Black);
+    //LCD_SetTextColor(White);
 
     /* write LCD message error */
     LCD_DisplayStringLine(70, (uint8_t *)MSG_BUFF_SIZE_ERROR1);

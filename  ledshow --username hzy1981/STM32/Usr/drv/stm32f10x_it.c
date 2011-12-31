@@ -22,6 +22,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
+#include "usb_hcd_int.h"
 #include "includes.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
@@ -146,6 +147,17 @@ void SysTick_Handler(void)
   //SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 }
 
+/**
+  * @brief  OTG_FS_IRQHandler
+  *          This function handles USB-On-The-Go FS global interrupt request.
+  *          requests.
+  * @param  None
+  * @retval None
+  */
+void OTG_FS_IRQHandler(void)
+{
+  USBH_OTG_ISR_Handler(&USB_OTG_FS_dev);
+}
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */

@@ -29,13 +29,13 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "efs.h"
-#include "stm3210c_eval_lcd.h"
+//#include "stm3210c_eval_lcd.h"
 #include "usbh_core.h"
-#include "stm32_eval.h"
+//#include "stm32_eval.h"
 #include <stdio.h>
 #include "usbh_msc_core.h"
 #include "ls.h"
-#include "stm3210c_eval_ioe.h"
+#//include "stm3210c_eval_ioe.h"
 
 /* Exported types ------------------------------------------------------------*/
 typedef struct 
@@ -44,7 +44,7 @@ typedef struct
   uint8_t file_index ;
 }Download_FileTypeDef;
 /* Exported constants --------------------------------------------------------*/
-#define BUFFER_SIZE                      ((uint16_t)4*8192)  /* This value must be equal to 4 * x with x=[1,8192]                                                           see application note for more details */
+#define BUFFER_SIZE                      ((uint16_t)4*512)  /* This value must be equal to 4 * x with x=[1,8192]                                                           see application note for more details */
 /* IAP defines */
 #define IAP_COMMAND_SELECT               ((uint8_t)0xFF)
 #define IAP_DOWNLOAD_SELECT              ((uint8_t)0xF0)
