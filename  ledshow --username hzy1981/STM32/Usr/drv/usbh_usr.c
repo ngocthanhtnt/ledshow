@@ -303,10 +303,10 @@ void USBH_USR_SerialNum_String(void *SerialNumString)
   */
 void USBH_USR_IAPMenu(void)
 {
-#if 0
+
   /* Enumeration complete */
   LCD_DisplayStringLine(120, (uint8_t *)MSG_DEV_ENUMERATED);
-
+#if 0
   /* Display LCD next menu message */
   LCD_DisplayStringLine(180, (uint8_t *)MSG_SEPARATION);
   LCD_DisplayStringLine(200, (uint8_t *)MSG_IAP_NEXT_MENU);
@@ -458,13 +458,14 @@ int USBH_USR_MSC_Application(void)
       //LCD_SetTextColor(White);
 
       /* Flash Disk is write protected */
+	  /*
       if (USBH_MSC_Param.MSWriteProtect == DISK_WRITE_PROTECTED)
       {
         LCD_DisplayStringLine(70, (uint8_t *)MSG_WR_PROTECT);
       }
-
+	  */
       /* Control the select of commands */
-      USBH_USR_SelectControlMenu();
+      //USBH_USR_SelectControlMenu();
 
       /* Go to IAP menu */
       USBH_USR_ApplicationState = USH_USR_IAP;

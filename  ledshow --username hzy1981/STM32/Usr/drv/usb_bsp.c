@@ -206,6 +206,7 @@ void USB_OTG_BSP_DriveVBUS(uint8_t state)
   */
 void  USB_OTG_BSP_ConfigVBUS(void)
 {
+#if 0
   GPIO_InitTypeDef GPIO_InitStructure;
 
 
@@ -220,7 +221,7 @@ void  USB_OTG_BSP_ConfigVBUS(void)
 
   /* By Default, DISABLE is needed on output of the Power Switch */
   GPIO_SetBits(HOST_POWERSW_PORT, HOST_POWERSW_VBUS);
-
+#endif
   USB_OTG_BSP_mDelay(200);   /* Delay is need for stabilising the Vbus Low
       in Reset Condition, when Vbus=1 and Reset-button is pressed by user */
 

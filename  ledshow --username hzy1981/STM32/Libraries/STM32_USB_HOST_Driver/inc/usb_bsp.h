@@ -39,7 +39,7 @@
 /** @defgroup USB_BSP_Exported_Defines
   * @{
   */ 
-#define USE_ACCURATE_TIME
+//#define USE_ACCURATE_TIME
 #define TIM_MSEC_DELAY                     0x01
 #define TIM_USEC_DELAY                     0x02
 #define HOST_OVRCURR_PORT                  GPIOE

@@ -122,6 +122,8 @@ INT8U Chk_UDisk_Processing(void)
 void UDisk_Proc(void)
 {
 #ifdef CHIP_USB_HOST
+	USBH_Process();
+#else
     //static S_Int8U Flag = {CHK_BYTE, 0, CHK_BYTE};
     volatile static INT8U Re;
 	INT8U Counts;
@@ -285,8 +287,7 @@ void UDisk_Proc(void)
 	Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
 UDiskProcEnd:
 	Restore_Show_Area();
-#else
-	USBH_Process();
+
 #endif
 }
 
@@ -298,7 +299,7 @@ void Update_From_UDisk(void)
   INT8U Re;
 
   /* Get the read out protection status */
-  if(ls_openDir(&list, &(efs.myFs), "/") != 0)
+  if(ls_openDir(&list, &(efs.myFs), "/LEDDATA/") != 0)
   {
     /* Clear LCD msg */
     //USBH_USR_LCDClearPart(80, 80);
@@ -308,7 +309,7 @@ void Update_From_UDisk(void)
   }
   else
   {
-    sprintf((char *)buf, "%d.DAT", Screen_Para.COM_Para.Addr);
+    sprintf((char *)buf, "%d.dat", Screen_Para.COM_Para.Addr);
     if (file_fopen(&fileR, &efs.myFs, (char *)buf, 'r') == 0)
 	{
 		if (file_fopen(&fileR, &efs.myFs, (char *)"65535.dat", 'r') == 0)
@@ -382,6 +383,7 @@ UDiskProcEnd:
   */
 void COMMAND_IAPExecuteApplication(void)
 {
+  Update_From_UDisk();
   /* Execute the command switch the command index */
   switch (CMD_index)
   {

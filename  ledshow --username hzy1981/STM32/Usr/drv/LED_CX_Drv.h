@@ -35,10 +35,10 @@
 #define SET_DS1302_CS(x) (x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_8):GPIO_SetBits(GPIOA,GPIO_Pin_8)
 
 //CH376Ñ¡Í¨½Å-PA12
-#define SET_CH376_CS(x)	(x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_12):GPIO_SetBits(GPIOA,GPIO_Pin_12)
+#define SET_CH376_CS(x)	//(x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_12):GPIO_SetBits(GPIOA,GPIO_Pin_12)
 
 //CH376 INTÒý½Å
-#define CHK_CH376_INT() GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_11)
+#define CHK_CH376_INT() 1//GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_11)
 /*
 //ENC28J60_CS½Å
 #define SET_ENC28J60_CS(x) (x == 0)?GPIO_ResetBits(GPIOB,GPIO_Pin_15):GPIO_SetBits(GPIOB,GPIO_Pin_15)
