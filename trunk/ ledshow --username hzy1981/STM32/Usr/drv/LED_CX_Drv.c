@@ -18,15 +18,15 @@ void GPIO_Configuration()
 
   //-------------------IO口初始化-----------------------
   //------------输入口----
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  //GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+  //GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   //PA11为Ch376的输入口
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11; //PA11应该作为上拉输入口,CH376的输入检测  
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  //GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11; //PA11应该作为上拉输入口,CH376的输入检测  
+  //GPIO_Init(GPIOA, &GPIO_InitStructure);
 
   //PC9为28J60的输入口
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //PC0应该作为上拉输入口,28J60的输入检测  
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
+  //GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0; //PC0应该作为上拉输入口,28J60的输入检测  
+  //GPIO_Init(GPIOC, &GPIO_InitStructure);
 
   //PA.1和PA.2为输入口,用于捕获移位脉冲
   GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_1 | GPIO_Pin_2;
@@ -40,7 +40,7 @@ void GPIO_Configuration()
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
   //PA的输出口
-  GPIO_InitStructure.GPIO_Pin = /*GPIO_Pin_0 | */GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14| GPIO_Pin_15;   
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14| GPIO_Pin_15;   
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
  
@@ -50,7 +50,7 @@ void GPIO_Configuration()
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 
   //PC的输出口
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7 |\
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7 |\
                                 GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_15;   
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
@@ -59,8 +59,8 @@ void GPIO_Configuration()
   GPIO_Init(GPIOD, &GPIO_InitStructure);
 
   //PE的输出口
-  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_All;
-  GPIO_Init(GPIOE, &GPIO_InitStructure);
+  //GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_All;
+  //GPIO_Init(GPIOE, &GPIO_InitStructure);
    /*
   SET_R1(1);
   SET_R2(1);
