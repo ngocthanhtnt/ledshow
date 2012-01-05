@@ -299,7 +299,7 @@ void Update_From_UDisk(void)
   INT8U Re;
 
   /* Get the read out protection status */
-  if(ls_openDir(&list, &(efs.myFs), "/LEDDATA/") != 0)
+  if(ls_openDir(&list, &(efs.myFs), "/LEDDATA") != 0)//"/LEDDATA/"
   {
     /* Clear LCD msg */
     //USBH_USR_LCDClearPart(80, 80);
@@ -309,10 +309,10 @@ void Update_From_UDisk(void)
   }
   else
   {
-    sprintf((char *)buf, "%d.dat", Screen_Para.COM_Para.Addr);
-    if (file_fopen(&fileR, &efs.myFs, (char *)buf, 'r') == 0)
+    //sprintf((char *)buf, "0.dat", Screen_Para.COM_Para.Addr);
+    if (file_fopen(&fileR, &efs.myFs, (char *)"0.dat", 'r') != 0)
 	{
-		if (file_fopen(&fileR, &efs.myFs, (char *)"65535.dat", 'r') == 0)
+		if (file_fopen(&fileR, &efs.myFs, (char *)"65535.dat", 'r') != 0)
 		{
 			Set_UDisk_Status(UDISK_NULL);
 			Clr_All_Show_Data();
