@@ -573,6 +573,52 @@ void DMA_Configuration(void)
   /* DMA1 Channel5 enable */
   DMA_Cmd(DMA1_Channel7, ENABLE);
 }
+#elif MAX_SCAN_BLOCK_NUM EQ 8
+INT16U SPI2_DMA_Data[] = {0x0101, 0x0101, 0x0101, 0x0101};
+void DMA_Configuration(void)
+{
+  DMA_InitTypeDef DMA_InitStructure;
+
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+
+  DMA_DeInit(DMA1_Channel5);
+
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOC->ODR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[1][2]; //绿色数据起始地址
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+  DMA_InitStructure.DMA_BufferSize = 8;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+
+  DMA_Init(DMA1_Channel5, &DMA_InitStructure);
+
+  /* DMA1 Channel5 enable */
+  DMA_Cmd(DMA1_Channel5, ENABLE);
+
+  DMA_DeInit(DMA1_Channel7);
+
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&GPIOB->ODR;
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&Scan_Data0[0][2]; //红色数据起始地址
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+  DMA_InitStructure.DMA_BufferSize = 8;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+
+  DMA_Init(DMA1_Channel7, &DMA_InitStructure);
+
+  /* DMA1 Channel5 enable */
+  DMA_Cmd(DMA1_Channel7, ENABLE);
+}
 #elif MAX_SCAN_BLOCK_NUM EQ 4
 INT16U SPI2_DMA_Data[] = {0x0303, 0x0303, 0x0303, 0x0303};
 //INT8U SPI2_DMA_Data[] = {0x0
