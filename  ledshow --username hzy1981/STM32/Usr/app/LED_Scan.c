@@ -872,6 +872,12 @@ void LED_Scan_One_Row(void)
 #if MAX_SCAN_BLOCK_NUM EQ 4 //高8位的PB口不是用作数据线输出，因此需要保持原来的数据
   for(i = 0; i < sizeof(Scan_Data1); i += 2)
     Scan_Data1[0][i+1] = (INT8U)((GPIOB->ODR & 0xFF00) >> 8);
+#elif MAX_SCAN_BLOCK_NUM EQ 8
+  for(i = 0; i < sizeof(Scan_Data1) / 2; i += 2)
+  {
+    Scan_Data1[0][i+1] = (INT8U)((GPIOB->ODR & 0xFF00) >> 8);
+  	Scan_Data1[1][i+1] = (INT8U)((GPIOC->ODR & 0xFF00) >> 8);
+  }
 #endif
 
 #if MAX_SCAN_BLOCK_NUM != 4
@@ -899,7 +905,7 @@ void LED_Scan_One_Row(void)
 	DMA_Cmd(DMA1_Channel5, ENABLE);
 	DMA_Cmd(DMA1_Channel7, ENABLE);
 
-#if MAX_SCAN_BLOCK_NUM != 4
+#if MAX_SCAN_BLOCK_NUM EQ 16
   if(Screen_Status.Color_Num < 2)
   {
     if(Screen_Para.Base_Para.Color & 0x01) //当前使用红色
@@ -913,7 +919,21 @@ void LED_Scan_One_Row(void)
       GPIOD->ODR = *(INT16U *)&Scan_Data1[0][0];  //直接输出无效数据到红色数据线
 	}
   }
-#endif 
+#elif MAX_SCAN_BLOCK_NUM EQ 8 
+  if(Screen_Status.Color_Num < 2)
+  {
+    if(Screen_Para.Base_Para.Color & 0x01) //当前使用红色
+	{
+	  DMA_Cmd(DMA1_Channel5, DISABLE);	//关闭绿色DMA
+      GPIOC->ODR = *(INT16U *)&Scan_Data1[0][0];  //直接输出无效数据到绿色数据线
+	}
+	else
+	{
+ 	  DMA_Cmd(DMA1_Channel7, DISABLE);	//关闭红色DMA
+      GPIOB->ODR = *(INT16U *)&Scan_Data1[0][0];  //直接输出无效数据到红色数据线
+	}
+  }
+#endif
    
    pDst = &Scan_Data1[0][0];
 
@@ -931,23 +951,23 @@ void LED_Scan_One_Row(void)
 #if MAX_SCAN_BLOCK_NUM EQ 4//A型卡最多4条扫描线		   
 	
 	  if(Screen_Status.Color_Num < 2)
-	    transpose4(&Scan_Data[0][0], pDst);	//R1-R4,G1-G4
+	    transpose4(&Scan_Data[0][0], &Scan_Data1[0][0]);	//R1-R4,G1-G4
 	  else
-        transpose8(&Scan_Data[0][0], pDst);	//R1-R4,G1-G4
+        transpose8(&Scan_Data[0][0], &Scan_Data1[0][0]);	//R1-R4,G1-G4
 	 
 #elif MAX_SCAN_BLOCK_NUM EQ 8
 
 	  if(Blocks <= 4)
-	    transpose4(&Scan_Data[0][0], pDst);	//R1-R8
+	    transpose4(&Scan_Data[0][0], &Scan_Data1[0][0]);	//R1-R8
       else
-	    transpose8(&Scan_Data[0][0], pDst);	//R1-R8
+	    transpose8(&Scan_Data[0][0], &Scan_Data1[0][0]);	//R1-R8
 
 	  if(Screen_Status.Color_Num > 1)
 	  {
 		if(Blocks <= 4)
-		  transpose4(&Scan_Data[0][0], pDst + 1);	//R1-R8
+		  transpose4(&Scan_Data[1][0], &Scan_Data1[1][0]);	//R1-R8
 		else
-		  transpose8(&Scan_Data[0][0], pDst + 1);	//R1-R8
+		  transpose8(&Scan_Data[1][0], &Scan_Data1[1][0]);	//R1-R8
 	  }
 
 #elif MAX_SCAN_BLOCK_NUM EQ 16

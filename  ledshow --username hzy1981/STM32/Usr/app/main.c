@@ -91,7 +91,6 @@ int main(void)
 
   while(1)
   {
-  /*
     Screen_Test(); //屏幕检测
 
 	Self_Test(); //硬件自检
@@ -99,11 +98,11 @@ int main(void)
 #if SHELL_EN
     Shell_Proc();
 #endif
-	*/
+	
 #if UDISK_EN
     UDisk_Proc(); //u盘处理
 #endif
-	 /*
+
     Show_Main_Proc();
 
 
@@ -112,7 +111,6 @@ int main(void)
 #endif
 
     Chk_Main_Stack();
-	*/
   }
   
 }

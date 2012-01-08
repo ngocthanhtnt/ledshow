@@ -12,7 +12,7 @@ void GPIO_Configuration()
 
   //AFIO_MAPR = 0x02000000; //释放出三个JTAG的口,做普通IO口线  //释放出三个JTAG的口,做普通IO口线  //释放出三个JTAG的口,做普通IO口线
   
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD | RCC_APB2Periph_GPIOE, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD, ENABLE);
 
   GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 
@@ -29,7 +29,7 @@ void GPIO_Configuration()
   //GPIO_Init(GPIOC, &GPIO_InitStructure);
 
   //PA.1和PA.2为输入口,用于捕获移位脉冲
-  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_1 | GPIO_Pin_2;
+  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0 | GPIO_Pin_1;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
@@ -206,8 +206,8 @@ void Hardware_Init(void)
 
   DMA_Configuration();
 
-  //UART2_Init();
-  UART3_Init();
+  UART2_Init();	//用于调试信息输出
+  //UART3_Init(); //用于传感器返回信息
 
   Unselect_SPI_Device(); //不选中任何一个SPI设备
 
