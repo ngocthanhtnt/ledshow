@@ -154,10 +154,14 @@ void SysTick_Handler(void)
   * @param  None
   * @retval None
   */
+#if UDISK_EN  //u盘使能
+#ifdef CHIP_USB_HOST //定义表示使用片上USB HOST接口
 void OTG_FS_IRQHandler(void)
 {
   USBH_OTG_ISR_Handler(&USB_OTG_FS_dev);
 }
+#endif
+#endif
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */

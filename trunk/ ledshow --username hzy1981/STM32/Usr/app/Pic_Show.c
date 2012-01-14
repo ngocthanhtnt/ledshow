@@ -904,7 +904,7 @@ void Update_Pic_Data(INT8U Area_No)
           Update_XXX_Data(&Show_Data_Bak, Area_No);
           Area_Width = Get_Area_Width(Area_No);
           Area_Height = Get_Area_Height(Area_No);
-          Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Area_Width, Area_Height, &Show_Data, &P0,0);
+          Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Area_Width, Area_Height, &Show_Data, &P0,0); //¸´ÖÆ±³¾°ÎÄ×Ö
           Set_Area_Border_In(Area_No);
         }
 	   }
