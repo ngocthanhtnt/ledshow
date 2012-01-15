@@ -1269,6 +1269,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             getTextShowData(imageBk, &Show_Data_Bak, P0.X + borderHeight, P0.Y + borderHeight);
 
             Set_Area_Border_Out(Area_No);
+            Update_Clock_Point(&Show_Data_Bak, 0);
             Update_Clock_Data(&Show_Data_Bak, 0);
             Set_Area_Border_In(Area_No);
             memcpy(&Show_Data, &Show_Data_Bak, sizeof(Show_Data_Bak));
