@@ -1891,9 +1891,9 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>8</ColumnNumber>
+      <ColumnNumber>26</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>28</TopLine>
+      <TopLine>34</TopLine>
       <CurrentLine>40</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\cfg\LED_CX_Cfg.h</PathWithFileName>
@@ -1933,10 +1933,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>8</ColumnNumber>
+      <ColumnNumber>19</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>83</TopLine>
+      <CurrentLine>89</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\cfg\LED_ABX_Cfg.h</PathWithFileName>
       <FilenameWithoutPath>LED_ABX_Cfg.h</FilenameWithoutPath>
@@ -1982,10 +1982,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>38</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>111</TopLine>
+      <CurrentLine>111</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\app\Clock_Show.c</PathWithFileName>
       <FilenameWithoutPath>Clock_Show.c</FilenameWithoutPath>
@@ -2038,10 +2038,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>23</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>125</TopLine>
-      <CurrentLine>125</CurrentLine>
+      <TopLine>194</TopLine>
+      <CurrentLine>194</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\app\LED_Para.c</PathWithFileName>
       <FilenameWithoutPath>LED_Para.c</FilenameWithoutPath>
@@ -2094,10 +2094,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>9</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>84</TopLine>
-      <CurrentLine>94</CurrentLine>
+      <TopLine>57</TopLine>
+      <CurrentLine>62</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\app\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -2108,10 +2108,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>5</ColumnNumber>
+      <ColumnNumber>13</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1498</TopLine>
-      <CurrentLine>1504</CurrentLine>
+      <TopLine>197</TopLine>
+      <CurrentLine>206</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\app\Main_Show.c</PathWithFileName>
       <FilenameWithoutPath>Main_Show.c</FilenameWithoutPath>
@@ -2180,8 +2180,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>895</TopLine>
+      <CurrentLine>904</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\app\Pic_Show.c</PathWithFileName>
       <FilenameWithoutPath>Pic_Show.c</FilenameWithoutPath>
@@ -2348,8 +2348,8 @@
       <Focus>0</Focus>
       <ColumnNumber>8</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>72</TopLine>
-      <CurrentLine>72</CurrentLine>
+      <TopLine>88</TopLine>
+      <CurrentLine>88</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\app\com.h</PathWithFileName>
       <FilenameWithoutPath>com.h</FilenameWithoutPath>
@@ -2402,10 +2402,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>8</ColumnNumber>
+      <ColumnNumber>18</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>75</TopLine>
+      <CurrentLine>80</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\app\LED_Cfg.h</PathWithFileName>
       <FilenameWithoutPath>LED_Cfg.h</FilenameWithoutPath>
@@ -2416,10 +2416,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>18</ColumnNumber>
+      <ColumnNumber>21</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>280</TopLine>
+      <CurrentLine>286</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\app\LED_Para.h</PathWithFileName>
       <FilenameWithoutPath>LED_Para.h</FilenameWithoutPath>
@@ -2738,10 +2738,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>28</ColumnNumber>
+      <ColumnNumber>10</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\app\LED_Scan.h</PathWithFileName>
       <FilenameWithoutPath>LED_Scan.h</FilenameWithoutPath>
@@ -2997,10 +2997,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>10</ColumnNumber>
+      <ColumnNumber>29</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>46</TopLine>
+      <CurrentLine>52</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\Usr\drv\LED_CX_Drv.h</PathWithFileName>
       <FilenameWithoutPath>LED_CX_Drv.h</FilenameWithoutPath>
@@ -3604,19 +3604,43 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>0</ActiveTab>
+      <ActiveTab>6</ActiveTab>
       <Documents>
         <Doc>
+          <Name>..\..\..\Usr\app\LED_Scan.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>27</TopLine>
+          <CurrentLine>32</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\Usr\app\Screen_Status.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>21</TopLine>
+          <CurrentLine>26</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\Usr\app\Clock_Show.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>111</TopLine>
+          <CurrentLine>111</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>..\..\..\Usr\app\Pic_Show.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>895</TopLine>
+          <CurrentLine>904</CurrentLine>
+        </Doc>
+        <Doc>
           <Name>..\..\..\Usr\app\LED_Para.c</Name>
-          <ColumnNumber>21</ColumnNumber>
-          <TopLine>923</TopLine>
-          <CurrentLine>932</CurrentLine>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>194</TopLine>
+          <CurrentLine>194</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\Usr\app\Main_Show.c</Name>
-          <ColumnNumber>35</ColumnNumber>
-          <TopLine>627</TopLine>
-          <CurrentLine>642</CurrentLine>
+          <ColumnNumber>13</ColumnNumber>
+          <TopLine>197</TopLine>
+          <CurrentLine>206</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_md.s</Name>
@@ -3635,18 +3659,6 @@
           <ColumnNumber>0</ColumnNumber>
           <TopLine>57</TopLine>
           <CurrentLine>62</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\Usr\app\LED_Scan.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>27</TopLine>
-          <CurrentLine>32</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>..\..\..\Usr\app\Screen_Status.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>21</TopLine>
-          <CurrentLine>26</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\Usr\drv\STM32.c</Name>
@@ -3741,8 +3753,8 @@
         <Doc>
           <Name>..\..\..\Usr\app\LED_Scan.h</Name>
           <ColumnNumber>10</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
+          <TopLine>12</TopLine>
+          <CurrentLine>21</CurrentLine>
         </Doc>
         <Doc>
           <Name>..\..\..\Usr\drv\LED_DX_Drv.c</Name>
