@@ -2,6 +2,65 @@
 #include "Includes.h"
 
 #if CLOCK_SHOW_EN
+
+void Show_Clock_Point(S_Show_Data *pDst_Buf, INT8U Area_No, S_Clock_Para *pClock_Para)
+{
+    INT16U Radius;
+    INT16U Width,Height;
+    S_Point Point;
+    INT16S Angle;
+
+    Width = Get_Area_Width(Area_No);
+    Height = Get_Area_Height(Area_No);
+
+    Radius = ((Width < Height)? Width:Height) * 95 /100 / 2; //表盘的半径
+
+    //Get_Area_TopLeft(Area_No, &Point); //分区左上位置
+    Point.X = 0;
+    Point.Y = 0;
+    //分区中心位置
+    Point.X += Width/2;
+    Point.Y += Height/2;
+
+    //分点
+    if(pClock_Para->Min_Point_Radius)
+    {
+            for(Angle = 0; Angle < 360; Angle = Angle + 360/60)
+            {
+              if(Angle % 90 == 0 || Angle % (360/12) == 0) //369点已经绘制过了，跳过
+                continue;
+              //距离中心点的角度是Angle，长度是Radius * 0.9, 该点半径为Hour369_Point_Radius,颜色为 Hour369_Point_Color
+              Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, (INT16S)(Radius * 0.9), \
+                  pClock_Para->Min_Point_Radius, pClock_Para->Min_Point_Style, pClock_Para->Min_Point_Color);
+            }
+    }
+
+    //整点
+    if(pClock_Para->Hour_Point_Radius)
+    {
+            for(Angle = 0; Angle < 360; Angle = Angle + 360/12)
+            {
+              if(Angle % 90 == 0) //369点已经绘制过了，跳过
+                continue;
+              //距离中心点的角度是Angle，长度是Radius * 0.9, 该点半径为Hour369_Point_Radius,颜色为 Hour369_Point_Color
+              Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, (INT16S)(Radius * 0.9), \
+                  pClock_Para->Hour_Point_Radius, pClock_Para->Hour_Point_Style, pClock_Para->Hour_Point_Color);
+            }
+    }
+
+    //369点
+    if(pClock_Para->Hour369_Point_Radius)
+    {
+            for(Angle = 0; Angle < 360; Angle = Angle + 90)
+            {
+              //距离中心点的角度是Angle，长度是Radius * 0.9, 该点半径为Hour369_Point_Radius,颜色为 Hour369_Point_Color
+               Fill_Clock_Point(pDst_Buf, Area_No, &Point, Angle, Radius * 9 / 10, \
+                  pClock_Para->Hour369_Point_Radius, pClock_Para->Hour369_Point_Style, pClock_Para->Hour369_Point_Color);
+            }
+    }
+
+}
+
 //显示一个表盘
 //pDst_Buf目标显示缓冲区
 //Area_No 目标分区
@@ -38,7 +97,7 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
    //分区中心位置
    Point.X += Width/2;
    Point.Y += Height/2;
-
+/*
    //分点
    if(pClock_Para->Min_Point_Radius)
    {
@@ -75,7 +134,7 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
 	         pClock_Para->Hour369_Point_Radius, pClock_Para->Hour369_Point_Style, pClock_Para->Hour369_Point_Color);
 	   }
    }
-
+*/
    //----------至此0-11点所有的点都已经绘制完成------------
    //时钟
    if(pClock_Para->Hour_Line_Width)
@@ -106,6 +165,12 @@ struct tm {
     };
 */
 //mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+//显示表盘的整点、分点、369点等
+void Update_Clock_Point(S_Show_Data *pDst, INT8U Area_No)
+{
+  Show_Clock_Point(pDst, Area_No, (S_Clock_Para *)&Prog_Status.File_Para[Area_No].Clock_Para);
+}
 
 //更新表盘数据
 void Update_Clock_Data(S_Show_Data *pDst, INT8U Area_No)

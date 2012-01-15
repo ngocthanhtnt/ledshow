@@ -978,7 +978,9 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
     Index = Prog_Status.Block_Index.Index[Area_No][File_No];
     Offset = 0;
     X = pFile_Para->Clock_Para.Text_X;
-    Y = pFile_Para->Clock_Para.Text_Y;    
+    Y = pFile_Para->Clock_Para.Text_Y;
+
+    Update_Clock_Point(&Show_Data_Bak, Area_No); //表盘的点也作为背景
   }
 #endif
 #if TIMER_SHOW_EN  

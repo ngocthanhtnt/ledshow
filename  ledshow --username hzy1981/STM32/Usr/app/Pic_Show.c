@@ -907,7 +907,7 @@ void Update_Pic_Data(INT8U Area_No)
           Copy_Filled_Rect(&Show_Data_Bak, Area_No, &P0, Area_Width, Area_Height, &Show_Data, &P0,0); //¸´ÖÆ±³¾°ÎÄ×Ö
           Set_Area_Border_In(Area_No);
         }
-	   }
+       }
 		//Prog_Status.Area_Status[Area_No].Step_Timer += MOVE_STEP_PERIOD;
 
         if(Prog_Status.Area_Status[Area_No].Stay_Time EQ 0)
