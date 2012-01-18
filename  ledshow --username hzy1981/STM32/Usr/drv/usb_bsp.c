@@ -145,7 +145,7 @@ void USB_OTG_BSP_EnableInterrupt(void)
 #ifdef STM32F10X_CL
   NVIC_InitTypeDef NVIC_InitStructure;
   /* Enable USB Interrupt */
-  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+  //NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
 
   NVIC_InitStructure.NVIC_IRQChannel = OTG_FS_IRQn;
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
