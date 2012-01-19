@@ -22,6 +22,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usbh_usr.h"
 
+#define UDISK_INPUT_FLAG 0xAA
+S_Int8U UDisk_Input_Flag = {CHK_BYTE, 0x00, CHK_BYTE};
+
+
 #define LCD_DisplayStringLine(X,Y) debug("%s", Y);
 /** @addtogroup USBH_USER
   * @{
@@ -405,6 +409,7 @@ void USBH_USR_DeviceNotSupported(void)
 USBH_USR_Status USBH_USR_UserInput(void)
 {
   /* callback for Key botton: set by software in this case */
+  UDisk_Input_Flag.Var = UDISK_INPUT_FLAG;
   return USBH_USR_RESP_OK;
 }
 
@@ -441,18 +446,25 @@ void USBH_USR_OverCurrentDetected (void)
   */
 int USBH_USR_MSC_Application(void)
 {
+  if(UDisk_Input_Flag.Var EQ UDISK_INPUT_FLAG)
+  { 
+    Update_From_UDisk();
+  }
+  UDisk_Input_Flag.Var = 0;
+  return 0;
 
+#if 0
   switch (USBH_USR_ApplicationState)
   {
     case USH_USR_FS_INIT:
 
       /* Initialises the EFS lib*/
+	  /*
       if (efs_init(&efs, 0) != 0)
       {
-        /* efs initialisation fails*/
         return(-1);
       }
-
+	  */
       /* Set LCD parameters */
       //LCD_SetBackColor(Black);
       //LCD_SetTextColor(White);
@@ -484,6 +496,7 @@ int USBH_USR_MSC_Application(void)
       break;
   }
   return(0);
+#endif
 }
 
 /**
