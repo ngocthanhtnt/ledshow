@@ -21,6 +21,8 @@
 #include "STM32.h"
 #include "CH376INC.h"
 #include "ch376.h"
+#include "usbh_usr.h"
+#include "usb_bsp.h"
 #include "UDisk_Proc.h"
 #include "DS1302.h"
 #include "FILE_SYS.h"

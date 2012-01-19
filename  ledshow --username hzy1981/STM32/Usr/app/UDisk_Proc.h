@@ -32,7 +32,7 @@ void COMMAND_JUMP(void);
 void COMMAND_DOWNLOAD(void);
 void COMMAND_ProgramFlashMemory(void);
 
-
+EXT void Update_From_UDisk(void);
 EXT void UDisk_Init(void);
 EXT void UDisk_Proc(void); 
 EXT INT8U Chk_UDisk_Processing(void);

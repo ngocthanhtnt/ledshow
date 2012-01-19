@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include "usbh_msc_core.h"
 #include "ls.h"
-#//include "stm3210c_eval_ioe.h"
+//#include "stm3210c_eval_ioe.h"
 
 /* Exported types ------------------------------------------------------------*/
 typedef struct 

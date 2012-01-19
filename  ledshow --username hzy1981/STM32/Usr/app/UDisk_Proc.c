@@ -4,6 +4,7 @@
 
 #define UDISK_RT_PLAY_TIME 3
 
+extern esint8 efs_init(EmbeddedFileSystem * efs,eint8* opts);
 /**
   ******************************************************************************
   * @file    command.c
@@ -298,6 +299,13 @@ void Update_From_UDisk(void)
   INT16U len;
   INT8U Re;
 
+  if (efs_init(&efs, 0) != 0)
+  {
+    debug("fs init error!");
+    /* efs initialisation fails*/
+    return;
+  }
+#if 0
   /* Get the read out protection status */
   if(ls_openDir(&list, &(efs.myFs), "/LEDDATA") != 0)//"/LEDDATA/"
   {
@@ -308,11 +316,12 @@ void Update_From_UDisk(void)
 	return;
   }
   else
+#endif
   {
-    //sprintf((char *)buf, "0.dat", Screen_Para.COM_Para.Addr);
-    if (file_fopen(&fileR, &efs.myFs, (char *)"0.dat", 'r') != 0)
+    sprintf((char *)buf, "/LEDDATA/%d.dat", Screen_Para.COM_Para.Addr);
+    if (file_fopen(&fileR, &efs.myFs, (char *)buf, 'r') != 0)
 	{
-		if (file_fopen(&fileR, &efs.myFs, (char *)"65535.dat", 'r') != 0)
+		if (file_fopen(&fileR, &efs.myFs, (char *)"/LEDDATA/65535.dat", 'r') != 0)
 		{
 			Set_UDisk_Status(UDISK_NULL);
 			Clr_All_Show_Data();
