@@ -318,6 +318,9 @@ void Update_From_UDisk(void)
   else
 #endif
   {
+	Set_RT_Show_Area(0, 0, 32, 16);
+	RT_Play_Status_Enter(UDISK_RT_PLAY_TIME);
+
     sprintf((char *)buf, "/LEDDATA/%d.dat", Screen_Para.COM_Para.Addr);
     if (file_fopen(&fileR, &efs.myFs, (char *)buf, 'r') != 0)
 	{

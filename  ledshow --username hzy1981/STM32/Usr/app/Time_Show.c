@@ -13,7 +13,7 @@ const char * const WeekStr[][7] =
 { "Sun","Mon","Tues","Wed","Thur","Fri","Sat"},
 
 //const char WeekStr3[][12] =
-{"domenica","lunedi\¡¯","martedi\¡¯","mercoledi\¡¯","giovedi\¡¯","venerdi\¡¯","sabato"},
+{"domenica","lunedi\'","martedi\'","mercoledi\'","giovedi\'","venerdi\'","sabato"},
 
 //const char WeekStr4[][12] =
 {"Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"}, //µÂÎÄ
