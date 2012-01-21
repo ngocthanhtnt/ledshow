@@ -65,7 +65,7 @@ void MainWindow::setupFileActions()
 
     QAction *a;
 
-    a = new QAction(tr("新建"), this);
+    a = new QAction(tr("新建工程"), this);
     //a->setPriority(QAction::LowPriority);
     ////a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
@@ -73,7 +73,7 @@ void MainWindow::setupFileActions()
     menu->addAction(a);
 
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
-    a = new QAction(tr("打开"), this);
+    a = new QAction(tr("打开工程"), this);
     //a->setPriority(QAction::LowPriority);
     ////a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
@@ -86,7 +86,7 @@ void MainWindow::setupFileActions()
     //tb->addAction(a);
     menu->addAction(a);
 */
-    a = new QAction(tr("另存为"), this);
+    a = new QAction(tr("工程另存为"), this);
     ////a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     //tb->addAction(a);
@@ -732,7 +732,7 @@ void MainWindow::fileNew()
     if(progManage->treeWidget->topLevelItemCount() > 0)
     {
         int Re =  QMessageBox::warning(w, tr("提示"),
-                                 tr("当前编辑内容将会被清除重建"), tr("保存当前内容再新建"),tr("不保存直接新建"),tr("取消"));
+                                 tr("当前编辑内容将会被清除重建！"), tr("保存当前内容再新建"),tr("不保存直接新建"),tr("取消"));
 
         if(Re EQ 0)
         {
@@ -745,8 +745,8 @@ void MainWindow::fileNew()
         }
     }
 
-
-    for(int i = 0; i < progManage->treeWidget->topLevelItemCount(); i ++)
+    int count = progManage->treeWidget->topLevelItemCount();
+    for(int i = 0; i < count; i ++)
     {
         //QTreeWidgetItem *item = progManage->treeWidget->indexOfTopLevelItem(i);
         progManage->_deleteItem(0);
@@ -764,6 +764,9 @@ void MainWindow::fileNew()
     //progManage->newScreen();
     //progManage->newProg();
     //progManage->newArea();
+    QMessageBox::warning(w, tr("提示"), tr("工程新建成功，请点击菜单\"添加-屏幕\"添加屏幕!"), tr("确定"));
+
+
 }
 
 //打开文件
@@ -775,7 +778,7 @@ void MainWindow::fileOpen()
     if(progManage->treeWidget->topLevelItemCount() > 0)
     {
         int Re =  QMessageBox::warning(w, tr("提示"),
-                                 tr("当前编辑内容将会被清除"), tr("保存当前内容再打开"),tr("不保存直接打开"),tr("取消"));
+                                 tr("当前编辑内容将会被清除！"), tr("保存当前内容再打开"),tr("不保存直接打开"),tr("取消"));
 
         if(Re EQ 0)
         {
@@ -787,6 +790,26 @@ void MainWindow::fileOpen()
             return;
         }
     }
+/*
+    settings.beginGroup("file");
+    oldFileName = settings.value("cfgFile").toString(); //配置文件名
+    settings.endGroup();
+    QFile::remove(oldFileName);
+    if(QFile::copy(PROG_INI_FILE, oldFileName)==false) //保存老的文件
+    {
+        ASSERT_FAILED();
+    }
+*/
+    int count = progManage->treeWidget->topLevelItemCount();
+    for(int i = 0; i < count; i ++)
+    {
+        QTreeWidgetItem *item = progManage->treeWidget->topLevelItem(0);
+        progManage->treeWidget->setCurrentItem(item);
+        progManage->_deleteItem(0);
+
+    }
+
+    settings.clear();//clear(); //清除
 
     newFileName = QFileDialog::getOpenFileName(this, tr("打开配置文件"), ".", tr("配置文件(*.ini)"));
     if(newFileName.length()==0)
@@ -794,27 +817,22 @@ void MainWindow::fileOpen()
         return;
     }
 
-    settings.beginGroup("file");
-    oldFileName = settings.value("cfgFile").toString(); //配置文件名
-    settings.endGroup();
 
-    QFile::remove(oldFileName);
-    if(QFile::copy(PROG_INI_FILE, oldFileName)==false) //保存老的文件
+    QSettings tempSettings(newFileName,QSettings::IniFormat,0);
+    QStringList list = tempSettings.allKeys();
+    int num = list.size();
+
+    for(int i = 0; i < num; i ++)
     {
-        ASSERT_FAILED();
-        //qDebug("file open copy oldFileName error");
+        settings.setValue(list.at(i), tempSettings.value(list.at(i)));
     }
 
-    QFile::remove(PROG_INI_FILE);
-    if(QFile::copy(newFileName, PROG_INI_FILE)==false)
-    {
-        ASSERT_FAILED();
-        //qDebug("file open copy PROG_INI_FILE error");
-    }
 
     settings.beginGroup("file");
     settings.setValue("cfgFile", newFileName);
     settings.endGroup();
+
+    //settings.setPath(QSettings::IniFormat, QSettings::UserScope, PROG_INI_FILE);
 
     progManage->settingsInit();
 }
@@ -1051,7 +1069,8 @@ void MainWindow::setOpenCloseTime()
 void MainWindow::setManualClose()
 {
     char Flag;
-
+    INT8U Temp[100];
+    int len;
 
     if(w->comStatus->comThread->isRunning())//当前线程还在运行
         return;
@@ -1064,12 +1083,28 @@ void MainWindow::setManualClose()
 #else
     makeProtoBufData(screenStr, COM_MODE, C_SCREEN_OC | WR_CMD, &Flag, 1);
 #endif
+
+    bool re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+    if(re EQ true)
+    {
+        QMessageBox::information(w,QObject::tr("提示"),
+                               QObject::tr(SEND_PARA_OK_STR),QObject::tr("确定"));
+        //close(); //校时成功则关闭
+
+    }
+    else
+    {
+        QMessageBox::warning(w, QObject::tr("提示"),
+                               QObject::tr(SEND_PARA_FAIL_STR),QObject::tr("确定"));
+    }
 }
 
 //手动开机
 void MainWindow::setManualOpen()
 {
     char Flag;
+    INT8U Temp[100];
+    int len;
 
     if(w->comStatus->comThread->isRunning())//当前线程还在运行
         return;
@@ -1082,6 +1117,20 @@ void MainWindow::setManualOpen()
 #else
     makeProtoBufData(screenStr, COM_MODE, C_SCREEN_OC | WR_CMD, &Flag, 1);
 #endif
+
+    bool re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+    if(re EQ true)
+    {
+        QMessageBox::information(w,QObject::tr("提示"),
+                               QObject::tr(SEND_PARA_OK_STR),QObject::tr("确定"));
+        //close(); //校时成功则关闭
+
+    }
+    else
+    {
+        QMessageBox::warning(w, QObject::tr("提示"),
+                               QObject::tr(SEND_PARA_FAIL_STR),QObject::tr("确定"));
+    }
 }
 
 void MainWindow::sendDataProc()
@@ -1130,7 +1179,7 @@ void MainWindow::preview(INT8U previewMode)
           QMessageBox::information(w, tr("提示"),
                                tr("请先选择一个预览的节目"),tr("确定"));
       else
-          QMessageBox::information(w, tr("提示"),
+          QMessageBox::warning(w, tr("提示"),
                                    tr("该屏幕下没有节目!"),tr("确定"));
       return;
   }

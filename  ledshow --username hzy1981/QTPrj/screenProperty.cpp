@@ -914,6 +914,8 @@ ClightnessDialog::ClightnessDialog(QWidget *parent):QDialog(parent)
 //发送参数
 void sendLightnessPara()//S_COM_Status &COM_Status)
 {
+    INT8U Temp[100];
+    int len;
     //char frameBuf[BLOCK_DATA_LEN + 20];
     //S_Screen_Para screenPara;
     //S_Card_Para cardPara;
@@ -941,6 +943,20 @@ void sendLightnessPara()//S_COM_Status &COM_Status)
     else
       makeProtoFileData(str, COM_MODE, flag);
 
+
+    bool re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+    if(re EQ true)
+    {
+        QMessageBox::information(w,QObject::tr("提示"),
+                               QObject::tr(SEND_PARA_OK_STR),QObject::tr("确定"));
+        //close(); //校时成功则关闭
+
+    }
+    else
+    {
+        QMessageBox::warning(w, QObject::tr("提示"),
+                               QObject::tr(SEND_PARA_FAIL_STR),QObject::tr("确定"));
+    }
 }
 
 
@@ -967,13 +983,13 @@ void ClightnessDialog::sendPara()
     if(w->comStatus->waitComEnd(temp, sizeof(temp), &len))
     {
         QMessageBox::information(w, tr("提示"),
-                               tr("参数发送成功！"),tr("确定"));
+                               tr(SEND_PARA_OK_STR),tr("确定"));
         close(); //校时成功则关闭
     }
     else
     {
-        QMessageBox::information(w, tr("提示"),
-                               tr("参数发送失败！"),tr("确定"));
+        QMessageBox::warning(w, tr("提示"),
+                               tr(SEND_PARA_FAIL_STR),tr("确定"));
     }
 }
 
@@ -995,12 +1011,18 @@ void ClightnessDialog::udiskPara()
 
     makeProtoFileData(str, UDISK_MODE, flag);
 
-    QMessageBox::information(w, QObject::tr("提示"),
-                            w->comStatus->getComReStr(),QObject::tr("确定"));
-
     //U盘模式下不需要等待waitComEnd，因为没有通信返回数据需要等待
     if(w->comStatus->getComStatus() == COM_OK) //通信成功的情况下关闭
+    {
+        QMessageBox::information(w, QObject::tr("提示"),
+                                w->comStatus->getComReStr(),QObject::tr("确定"));
         close();
+    }
+    else
+    {
+        QMessageBox::warning(w, QObject::tr("提示"),
+                                w->comStatus->getComReStr(),QObject::tr("确定"));
+    }
 }
 
 void ClightnessDialog::getSettingsFromWidget(QString str)
@@ -1105,13 +1127,13 @@ void CopenCloseDialog::sendPara()
     if(w->comStatus->waitComEnd(temp, sizeof(temp), &len))
     {
         QMessageBox::information(w, tr("提示"),
-                               tr("参数发送成功！"),tr("确定"));
+                               tr(SEND_PARA_OK_STR),tr("确定"));
         close(); //校时成功则关闭
     }
     else
     {
-        QMessageBox::information(w, tr("提示"),
-                               tr("参数发送失败！"),tr("确定"));
+        QMessageBox::warning(w, tr("提示"),
+                               tr(SEND_PARA_FAIL_STR),tr("确定"));
     }
 }
 
@@ -1139,12 +1161,18 @@ void CopenCloseDialog::udiskPara()
 
     makeProtoFileData(str, UDISK_MODE, flag);
 
-    QMessageBox::information(w, QObject::tr("提示"),
-                            w->comStatus->getComReStr(),QObject::tr("确定"));
-
     //U盘模式下不需要等待waitComEnd，因为没有通信返回数据需要等待
     if(w->comStatus->getComStatus() == COM_OK) //通信成功的情况下关闭
+    {
+        QMessageBox::information(w, QObject::tr("提示"),
+                                w->comStatus->getComReStr(),QObject::tr("确定"));
         close();
+    }
+    else
+    {
+        QMessageBox::warning(w, QObject::tr("提示"),
+                                w->comStatus->getComReStr(),QObject::tr("确定"));
+    }
 
 }
 
@@ -1266,14 +1294,14 @@ void CadjTimeDialog::sendData()
     if(re EQ true)
     {
         QMessageBox::information(w, tr("提示"),
-                               tr("校时成功！"),tr("确定"));
+                               tr(SEND_PARA_OK_STR),tr("确定"));
         close(); //校时成功则关闭
 
     }
     else
     {
-        QMessageBox::information(w, tr("提示"),
-                               tr("校时失败,请检查通信参数或者通信连路是否正常!"),tr("确定"));
+        QMessageBox::warning(w, tr("提示"),
+                               tr(SEND_PARA_FAIL_STR),tr("确定"));
     }
 
 
@@ -1304,12 +1332,18 @@ void CadjTimeDialog::udiskData()
 
     makeProtoBufData(screenStr, UDISK_MODE, C_SCREEN_TIME | WR_CMD, (char *)TimeBuf, 7);
 
-    QMessageBox::information(w, QObject::tr("提示"),
-                            w->comStatus->getComReStr(),QObject::tr("确定"));
-
     //U盘模式下不需要等待waitComEnd，因为没有通信返回数据需要等待
     if(w->comStatus->getComStatus() == COM_OK) //通信成功的情况下关闭
+    {
+        QMessageBox::information(w, QObject::tr("提示"),
+                                w->comStatus->getComReStr(),QObject::tr("确定"));
         close();
+    }
+    else
+    {
+        QMessageBox::warning(w, QObject::tr("提示"),
+                                w->comStatus->getComReStr(),QObject::tr("确定"));
+    }
 
 }
 
@@ -1485,14 +1519,14 @@ void CsendDataDialog::sendData()
     if(re EQ true)
     {
         QMessageBox::information(w, tr("提示"),
-                               tr("发送数据成功！"),tr("确定"));
+                               tr(SEND_PARA_OK_STR),tr("确定"));
         close(); //校时成功则关闭
 
     }
     else
     {
-        QMessageBox::information(w, tr("提示"),
-                               tr("发送数据失败,请检查通信参数或者通信连路是否正常!"),tr("确定"));
+        QMessageBox::warning(w, tr("提示"),
+                               tr(SEND_PARA_FAIL_STR),tr("确定"));
     }
 }
 
@@ -1520,13 +1554,18 @@ void CsendDataDialog::uDiskData()
 
     makeProtoFileData(str, UDISK_MODE, flag);
 
-    QMessageBox::information(w, QObject::tr("提示"),
-                            w->comStatus->getComReStr(),QObject::tr("确定"));
-
     //U盘模式下不需要等待waitComEnd，因为没有通信返回数据需要等待
     if(w->comStatus->getComStatus() == COM_OK) //通信成功的情况下关闭
+    {
+        QMessageBox::information(w, QObject::tr("提示"),
+                                w->comStatus->getComReStr(),QObject::tr("确定"));
         close();
-
+    }
+    else
+    {
+        QMessageBox::warning(w, QObject::tr("提示"),
+                                w->comStatus->getComReStr(),QObject::tr("确定"));
+    }
 }
 
 void CsendDataDialog::propertyCheckProc()
@@ -1807,7 +1846,7 @@ void CcomTest::autoConnect()
     settings.endGroup();
     settings.endGroup();
 
-    QMessageBox::information(w, tr("提示"),
+    QMessageBox::warning(w, tr("提示"),
                                tr("测试失败!没有找到连接成功的串口"),tr("确定"));
 
 }
@@ -1832,8 +1871,8 @@ void CcomTest::manualConnect()
     }
     else
     {
-        QMessageBox::information(w, tr("提示"),
-                               tr("测试失败!"),tr("确定"));
+        QMessageBox::warning(w, tr("提示"),
+                               tr("测试失败！"),tr("确定"));
     }
 }
 
@@ -2496,7 +2535,7 @@ void CfacScreenProperty::readParaProc()
     {
         if(len != sizeof(S_Screen_Para) - CHK_BYTE_LEN)
         {
-            QMessageBox::information(w, QObject::tr("提示"),
+            QMessageBox::warning(w, QObject::tr("提示"),
                                     QObject::tr("读取参数长度错误！"),QObject::tr("确定"));
            return;
         }
@@ -2623,7 +2662,7 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
          widthEdit->value() % 8 == 0 &&\
          heightEdit->value() % 8 == 0))
     {
-       QMessageBox::information(w, QObject::tr("提示"),
+       QMessageBox::warning(w, QObject::tr("提示"),
                               QObject::tr("屏幕的长宽应必须大于0且为8的倍数，请重新设置！"),QObject::tr("确定"));
        //setSettingsToWidget(str);
        return;
@@ -2631,7 +2670,7 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
 
     if(Card_Para.Max_Points < (unsigned int)(widthEdit->value() * heightEdit->value()*colorNum))
     {
-       QMessageBox::information(w, QObject::tr("提示"),
+       QMessageBox::warning(w, QObject::tr("提示"),
                                 screenName + QObject::tr("超出控制组件") + QObject::tr("最大支持点数：单色") + QString::number(Card_Para.Max_Points) +\
                                                                                    tr("，双色") + QString::number(Card_Para.Max_Points/2) + QObject::tr("，请重新设置!"),QObject::tr("确定"));
 
@@ -2696,13 +2735,13 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
         if(w->comStatus->waitComEnd(temp, sizeof(temp), &len))
         {
           QMessageBox::information(w, tr("提示"),
-                                 tr("参数发送成功！"),tr("确定"));
+                                 tr(SEND_PARA_OK_STR),tr("确定"));
           //this->parentWidget()->close(); //参数设置成功则关闭窗口
         }
         else
         {
-            QMessageBox::information(w, tr("提示"),
-                                   tr("参数发送失败！"),tr("确定"));
+            QMessageBox::warning(w, tr("提示"),
+                                   tr(SEND_PARA_FAIL_STR),tr("确定"));
         }
     }
 
