@@ -125,6 +125,8 @@ INT16U Read_Prog_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen, INT16U Frame_Bu
   Prog_No = *(Frame + FDATA); //节目号
 
   Len = _Read_Prog_Para(Prog_No, Frame + FDATA, Frame, Frame_Buf_Len);
+  if(Len EQ 0)
+    Screen_Status.Com_Err_Flag =  COM_ERR_RD_DATA;
   return Len;
 }
 
@@ -137,7 +139,11 @@ INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen)
   Len = FrameLen - F_NDATA_LEN;//Frame[FLEN] + (INT16U)Frame[FLEN + 1]*256;
 
   if(Len < PROG_PARA_LEN)
+  {
+      Screen_Status.Com_Err_Flag = COM_ERR_PARA_LEN_ERR;
       ASSERT_FAILED();
+	  return 0;
+   }
 
   Prog_No = *(Frame + FDATA); //节目号
   if(Write_Prog_Para(Prog_No, Frame + FDATA, PROG_PARA_LEN))
@@ -152,8 +158,11 @@ INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen)
       Write_Prog_Block_Index();
   }
   else
+  {
+      Screen_Status.Com_Err_Flag = COM_ERR_WR_DATA;
       ASSERT_FAILED();
-  
+	  return 0;
+   }
   return 1;
 }
 
@@ -193,6 +202,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
          File_No >= MAX_FILE_NUM)
       {
         ASSERT_FAILED();
+		Screen_Status.Com_Err_Flag =  COM_ERR_PROGRAM_NUM;
         return 0;
       }
 
@@ -221,12 +231,16 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
           }
           
         }
+		else
+		{
+		  Screen_Status.Com_Err_Flag =  COM_ERR_WR_DATA;
+		}
         
         return Re;
       }
       else
       {
-        
+        Screen_Status.Com_Err_Flag =  COM_ERR_PARA_LEN_ERR;
         ASSERT_FAILED();
         return 0;
       }
@@ -236,6 +250,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
     if(Len + BLOCK_HEAD_DATA_LEN> BLOCK_DATA_LEN)
     {
       ASSERT_FAILED();
+	  Screen_Status.Com_Err_Flag =  COM_ERR_PARA_LEN_ERR;
       return 0;
     }
 
@@ -412,7 +427,7 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 
  	if(Check_Screen_Base_Para(&Base_Para) EQ 0) //基本参数不正确，则恢复以前的参数
 	{
-	  Screen_Status.Com_Err_Flag = COM_ERR_PARA_INVALID;
+	  Screen_Status.Com_Err_Flag = COM_ERR_SCREEN_SIZE;	 //屏幕尺寸错误
 	  return 0;
 	}
 
@@ -447,12 +462,15 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 		return 1;
 	}
 	else
+	{
+	  Screen_Status.Com_Err_Flag = COM_ERR_PROGRAM_NUM; //节目数超
 	  return 0;
+	}
   }
   else
   {
     ASSERT_FAILED();
-	Screen_Status.Com_Err_Flag = COM_ERR_PARA_LEN_ERR;
+	Screen_Status.Com_Err_Flag = COM_ERR_PARA_LEN_ERR;	//参数长度或者控制码错误
     return 0;
   }
 

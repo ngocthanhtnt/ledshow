@@ -88,8 +88,8 @@ void BSP_Init(void)
 void USB_OTG_BSP_Init(void)
 {
 #ifdef STM32F10X_CL
-  GPIO_InitTypeDef GPIO_InitStructure;
-  EXTI_InitTypeDef EXTI_InitStructure;
+  //GPIO_InitTypeDef GPIO_InitStructure;
+  //EXTI_InitTypeDef EXTI_InitStructure;
 
   /* Select USBCLK source */
   RCC_OTGFSCLKConfig(RCC_OTGFSCLKSource_PLLVCO_Div3);
