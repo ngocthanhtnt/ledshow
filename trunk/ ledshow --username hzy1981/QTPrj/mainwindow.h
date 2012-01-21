@@ -39,6 +39,9 @@
 #define COM_PROTO_FILE ".\\data\\comData.dat"
 #define UDISK_DATA_DIR ".\\data\\"
 
+#define SEND_PARA_OK_STR    "数据发送成功"
+#define SEND_PARA_FAIL_STR  "数据发送失败，请检查通信参数是否通信链路是否正确！"
+
 class MainObj:public QObject
 {
   Q_OBJECT

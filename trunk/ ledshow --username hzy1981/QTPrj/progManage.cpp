@@ -1256,10 +1256,13 @@ void CprogManage::settingsInit()
 
     screenGroups = settings.childGroups(); //屏幕列表
     screenSize = screenGroups.size();
+    settings.endGroup();
 
     //对每一个显示屏进行初始化
     for(int m = 0; m < screenSize; m ++)
     {
+        settings.beginGroup("screen");
+
         QTreeWidgetItem *screenItem = new QTreeWidgetItem(treeWidget);
         QIcon icon = getTypeIcon(SCREEN_PROPERTY);
         screenItem->setIcon(0, icon);
@@ -1319,15 +1322,18 @@ void CprogManage::settingsInit()
 
         subWin->setFixedSize(subWin->size());
 */
-        /*CMdiSubWindow * subWin = */
+        /*CMdiSubWindow * subWin = */    
+        settings.endGroup();
+        //screenItem->setData(0, Qt::UserRole, screenStr);
         _newScreen(QString::number(m + 1) + tr("屏幕"), m*50, m*50, screenPara.Base_Para.Width, screenPara.Base_Para.Height, screenPara.Base_Para.Color);
+
 
         w->screenArea->screenItem = screenItem;
         screenItem->setData(0, Qt::UserRole, screenStr);
         screenItem->setCheckState(0, (checkState == true)?(Qt::Checked):(Qt::Unchecked));
         screenItem->setText(0, QString::number(m + 1) + tr("显示屏"));
 
-
+        settings.beginGroup("screen");
         settings.beginGroup(screenGroups.at(m) + "/program");
         progGroups = settings.childGroups(); //节目列表
         progSize = progGroups.size(); //节目个数
@@ -1407,8 +1413,9 @@ void CprogManage::settingsInit()
             settings.endGroup();
         }
         settings.endGroup();
+        settings.endGroup();
     }
-    settings.endGroup();
+    //settings.endGroup();
 
     if(treeWidget->topLevelItemCount()>0)
     {
