@@ -591,7 +591,7 @@ void MainWindow::setupCtrlActions()
     menu->addAction(a);
 
     //QIcon previewIcon = QIcon::fromTheme("Ô¤ÀÀ", QIcon(rsrcPath1 + tr("/Ô¤ÀÀ2222.png")));
-    actionScreenPreiew = a = new QAction(tr("ÕûÌåÔ¤ÀÀ"), this);
+    actionScreenPreiew = a = new QAction(tr("ÆÁÄ»Ô¤ÀÀ"), this);
     a->setPriority(QAction::LowPriority);
     //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(previewScreen()));

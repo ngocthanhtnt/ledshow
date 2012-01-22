@@ -758,6 +758,10 @@ INT8U _Check_Prog_End(void)
      debug("prog %d now not play time, end", Prog_Status.Play_Status.Prog_No);
      return 1;
   }
+
+  if(Prog_Para.Area_Num EQ 0) //没有分区
+      return 1;
+
   //次数模式
   if(Prog_Para.Mode EQ PROG_COUNTS_MODE)
   {
@@ -1359,7 +1363,9 @@ void Ram_Init(void)
 
   Prog_Status_Init();
 
-  Prog_Status.Play_Status.New_Prog_Flag = 0;
+  Prog_Status.Play_Status.Prog_No = 0x00;
+  Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+
   Prog_Status.Play_Status.Last_Prog_No = 0xFF;
   SET_HT(Prog_Status.Play_Status);
   SET_SUM(Prog_Status.Play_Status);

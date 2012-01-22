@@ -1628,7 +1628,7 @@ void resetShowPara(int width, int height, int color)
 {
     Screen_Para.Base_Para.Width = width;//geometry().width();
     Screen_Para.Base_Para.Height = height;//geometry().height();
-    //Screen_Para.Base_Para.Color = color;//0x07;//getColor();---yanse bu bianhua
+    Screen_Para.Base_Para.Color = color;//0x07;//getColor();---yanse bu bianhua
 
     Prog_Para.Area_Num = 1;
     Prog_Para.Area[0].X = 0;
