@@ -1002,7 +1002,14 @@ void TextEdit::showInit()
     {
         //connect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
         textEdit->setLineWrapMode(QTextEdit::FixedPixelWidth);
-        textEdit->setLineWrapColumnOrWidth(area->width() + TEXT_LEFT_BORDER_WIDTH + TEXT_RIGHT_BORDER_WIDTH);
+
+        int borderHeight;
+        if(area->filePara.Pic_Para.Border_Check)
+          borderHeight = area->filePara.Pic_Para.Border_Height;
+        else
+          borderHeight = 0;
+
+        textEdit->setLineWrapColumnOrWidth(area->width() - borderHeight*2 + TEXT_LEFT_BORDER_WIDTH + TEXT_RIGHT_BORDER_WIDTH);
 
         int mode;
         if(smLineCombo->currentIndex() == 0)
