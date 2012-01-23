@@ -81,6 +81,8 @@ CimageProperty::CimageProperty(QWidget *parent):QWidget(parent)
 
    frameNumEdit->setMinimum(1);
    */
+   imageSourceEdit->setFocusPolicy(Qt::NoFocus);
+
    gridLayout = new QGridLayout(this);
    gridLayout->addWidget(imageSourceLabel, 0, 0);
    gridLayout->addWidget(imageSourceEdit, 0, 1,1,5);

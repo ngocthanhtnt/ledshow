@@ -32,6 +32,8 @@ const S_Border_Data Border_Data[] =
     /*--  宽度x高度=40x8  --*/
     {40,1,{0x00,0xFC,0x0F,0xC0,0xFF}},
 
+    {40,2,{0xFF,0xFF,0xFF,0xFF,0xFF,
+           0xFF,0xFF,0xFF,0xFF,0xFF}},
     /*--    --*/
     /*--  宽度x高度=40x8  --*/
     {40,2,{0x00,0xFC,0x0F,0xC0,0xFF,
@@ -124,6 +126,21 @@ const S_Border_Data Border_Data[] =
         0x14,0x50,0x40,0x01,0x05,
         0x22,0x88,0x20,0x82,0x08,
         0x41,0x04,0x11,0x44,0x10}},
+
+{40, 4,{0x18,0x60,0x80,0x01,0x06,
+        0x3C,0xF0,0xC0,0x03,0x0F,
+        0x7E,0xF8,0xE1,0x87,0x1F,
+        0xFF,0xFC,0xF3,0xCF,0x3F}},
+
+{40, 4,{0xFF,0xFF,0xFF,0xFF,0xFF,
+        0xFF,0xFF,0xFF,0xFF,0xFF,
+        0xFF,0x03,0xF0,0x3F,0x00,
+        0xFF,0x03,0xF0,0x3F,0x00}},
+
+{40, 4,{0xFF,0xFF,0xFF,0xFF,0xFF,
+        0x01,0x02,0x10,0x20,0x00,
+        0x01,0x02,0x10,0x20,0x00,
+        0xFF,0x03,0xF0,0x3F,0x00}},
 };
 
 int getBorderWidth(int index)
@@ -146,6 +163,12 @@ void getBorderData(QString str, INT8U Dst[], INT16U DstLen)
     bool check;
     INT8U Re;
     int width,height;
+
+    if(DstLen <  BORDER_DATA_LEN)
+    {
+       ASSERT_FAILED();
+       return;
+    }
 
     memset(Dst, 0x00, BORDER_DATA_LEN);
     settings.beginGroup(str);
@@ -1792,14 +1815,14 @@ CborderEdit::CborderEdit(QWidget *parent):QGroupBox(parent)
     this->setCheckable(true);
     this->setTitle(tr("魔幻边框"));
 
-    styleCombo->setIconSize(QSize(40,8));
+    styleCombo->setIconSize(QSize(55,11));
 
     for(unsigned int i = 0; i < S_NUM(Border_Data); i ++)
      {
         QPixmap borderPixmap;
         QImage borderImage;
         borderImage = getBorderImage(0, i, QColor(Qt::red));
-        borderImage = borderImage.scaled(borderImage.width()*10, borderImage.height()*20);
+        borderImage = borderImage.scaled(borderImage.width()*20, borderImage.height()*40);
         borderPixmap.convertFromImage(borderImage);
         styleCombo->addItem(QIcon(borderPixmap), QString("%1").arg(Border_Data[i].Height));
 

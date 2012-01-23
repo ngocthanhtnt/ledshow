@@ -880,7 +880,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
             QString reStr = Chk_Prog_Border_Para(i, progPara, Screen_Para);
             if(reStr != "")
             {
-                QMessageBox::information(w, QObject::tr("提示"),
+                QMessageBox::warning(w, QObject::tr("提示"),
                                          reStr ,QObject::tr("确定"));
                 //return 0;
             }
