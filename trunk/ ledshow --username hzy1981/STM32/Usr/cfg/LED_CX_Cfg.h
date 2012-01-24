@@ -35,7 +35,7 @@
 #define FONT_NUM 1 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
-#define MAX_POINTS (700*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
+#define MAX_POINTS (744*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  4000 //最大存储块数
 #define MAX_SCAN_BLOCK_NUM 8 //最大扫描块
 #define MAX_SCAN_WIDTH 2056 //最大扫描宽度
@@ -51,8 +51,8 @@
 #define TEMP_SHOW_EN   1 //温度显示使能
 #define TIME_SHOW_EN   1 //时间显示使能
 #define TIMER_SHOW_EN  1 //定时显示使能 
-#define HUMIDITY_SHOW_EN 1 //湿度显示使能
-#define NOISE_SHOW_EN  1 //噪音显示使能
+#define HUMIDITY_SHOW_EN 0 //湿度显示使能
+#define NOISE_SHOW_EN  0 //噪音显示使能
 
 #define USE_SPI_FLASH //串行SPIFlash
 //#define USE_NOR_FLASH //并行NORFlash

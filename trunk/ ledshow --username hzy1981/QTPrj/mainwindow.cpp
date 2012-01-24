@@ -764,7 +764,7 @@ void MainWindow::fileNew()
     //progManage->newScreen();
     //progManage->newProg();
     //progManage->newArea();
-    QMessageBox::warning(w, tr("提示"), tr("工程新建成功，请点击菜单\"添加-屏幕\"添加屏幕!"), tr("确定"));
+    QMessageBox::warning(w, tr("提示"), tr("工程新建成功，请点击菜单\"添加-屏幕\"新建一个屏幕！"), tr("确定"));
 
 
 }
@@ -1161,7 +1161,7 @@ void MainWindow::previewScreen()
 void MainWindow::preview(INT8U previewMode)
 {
   QString screenStr;//progStr;
-  INT8U Screen_No;
+  INT8U Screen_No,re;
 
 
   if(w->comStatus->comThread->isRunning())//当前线程还在运行
@@ -1187,10 +1187,13 @@ void MainWindow::preview(INT8U previewMode)
   Ram_Init();
 
 #if QT_SIM_EN
-  makeProtoFileData(screenStr, SIM_MODE, 0xFFFFFFFF);
+  re = makeProtoFileData(screenStr, SIM_MODE, 0xFFFFFFFF);
 #else
-  makeProtoFileData(screenStr, PREVIEW_MODE, 0xFFFFFFFF);
+  re = makeProtoFileData(screenStr, PREVIEW_MODE, 0xFFFFFFFF);
 #endif
+
+  if(re EQ 0)
+      return;
 
   Preview_Prog_No = screenArea->screenItem->indexOfChild(screenArea->progItem);
   Preview_Mode = previewMode;
