@@ -29,7 +29,7 @@ CtimerProperty::CtimerProperty(QWidget *parent):QWidget(parent)
     //--------------------
     dstTimeGroup = new QGroupBox(tr("目标时间编辑"), this);
     dstTimeLabel = new QLabel(tr("目标时间"), this);
-    styleLabel = new QLabel(tr("样式"), this);
+    styleLabel = new QLabel(tr("显示格式"), this);
     colorLabel = new QLabel(tr("颜色"), this);
     fontSizeLabel = new QLabel(tr("大小"), this);
     dstDateTimeEdit = new QDateTimeEdit(this);
