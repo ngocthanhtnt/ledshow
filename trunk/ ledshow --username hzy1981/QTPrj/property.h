@@ -44,6 +44,8 @@ public:
     Carea *area;
     CareaProperty *areaProperty; //分区属性
     CpicProperty *picProperty;  //图文
+    QWidget *docWidget;
+    QHBoxLayout *hLayout;
 
     void screenCardParaChangeProc();
     void setSettingsToWidget(QTreeWidgetItem *item);
@@ -51,8 +53,9 @@ public:
 
     void updateProperty(QTreeWidgetItem *item);
     void progChangedProc(QString settingsStr);
-
-    QStackedWidget *stackedWidget;
+    void deleteProperty();
+    void createProperty(INT8U Type);
+    //QStackedWidget *stackedWidget;
     Cproperty(QWidget *parent = 0);
     ~Cproperty();
 };

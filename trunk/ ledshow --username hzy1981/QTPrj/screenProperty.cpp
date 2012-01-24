@@ -1390,6 +1390,73 @@ void CadjTimeDialog::setSettingsToWidget(QString str)
 
 }
 
+QStringList getUDiskList()
+{
+    char temp[10];
+    UINT type;
+    QStringList path;
+    //const wchar_t *path;
+
+    temp[0] = 'a';
+    temp[1] = ':';
+    temp[2] = '\\';
+    temp[3] = 0;
+
+    for(char c = 'A'; c < 'Z'; c++)
+    {
+      temp[0] = c;
+
+
+      sprintf(temp, "%c:\\", c);
+      QString udiskString = QString(temp);
+
+      type = GetDriveType((wchar_t *)udiskString.utf16());
+
+      if(type == DRIVE_REMOVABLE)
+      {
+          path << udiskString;
+          //memcpy(pDst, temp, 4);
+          //return path;
+      }
+    }
+
+    return path;
+}
+
+CudiskListDialog::CudiskListDialog(QWidget *parent):QDialog(parent)
+{
+  QVBoxLayout *vLayout = new QVBoxLayout(this);
+
+  udiskCombo = new QComboBox(this);
+  okButton = new QPushButton(tr("确定"),this);
+  udiskCombo->addItems(getUDiskList());
+
+  vLayout->addWidget(udiskCombo);
+  vLayout->addWidget(okButton);
+  setWindowTitle(tr("选择存储的U盘"));
+  setLayout(vLayout);
+
+  connect(okButton, SIGNAL(clicked()), this, SLOT(okButtonSlot()));
+}
+
+void CudiskListDialog::okButtonSlot()
+{
+  this->udiskName = udiskCombo->currentText();
+  close();
+}
+
+void CudiskListDialog::updateUdiskList()
+{
+    udiskCombo->clear();
+    udiskList = getUDiskList();
+  udiskCombo->addItems(udiskList);
+}
+
+CudiskListDialog::~CudiskListDialog()
+{
+
+}
+
 CsendDataDialog::CsendDataDialog(int flag, QWidget *parent):QDialog(parent)
 {
     QVBoxLayout *vLayout = new QVBoxLayout(this);
@@ -1830,7 +1897,7 @@ void CcomTest::autoConnect()
             if(re EQ true)
             {
                 QMessageBox::information(w, tr("提示"),
-                                       tr("测试成功！该参数将被设置为当前通信参数。"),tr("确定"));
+                                       tr("连接成功！该参数将被设置为当前通信参数。"),tr("确定"));
 
                 setSettingsToWidget(screenStr);
 
@@ -1853,7 +1920,7 @@ void CcomTest::autoConnect()
     settings.endGroup();
 
     QMessageBox::warning(w, tr("提示"),
-                               tr("测试失败，没有找到连接成功的串口！"),tr("确定"));
+                               tr("连接失败，没有找到连接成功的串口！"),tr("确定"));
 
 }
 
@@ -1871,14 +1938,14 @@ void CcomTest::manualConnect()
     if(re EQ true)
     {
         QMessageBox::information(w, tr("提示"),
-                               tr("测试成功！"),tr("确定"));
+                               tr("连接成功！"),tr("确定"));
         //close(); //校时成功则关闭
 
     }
     else
     {
         QMessageBox::warning(w, tr("提示"),
-                               tr("测试失败！"),tr("确定"));
+                               tr("连接失败！"),tr("确定"));
     }
 }
 
@@ -2577,7 +2644,9 @@ void CfacScreenProperty::readParaProc()
                          arg(_138Combo->itemText(readScreenPara.Scan_Para._138Check)).\
                          arg(lineOrderCombo->itemText(readScreenPara.Scan_Para.Line_Order));
 
-        readParaEdit->setText(screenParaStr);
+
+
+        importParaButton->setEnabled(true);//可以导入参数了
     }
 
 
@@ -2598,8 +2667,12 @@ void CfacScreenProperty::readParaProc()
 
         screenParaStr += tr("固件版本 ") + QString((char *)rcvBuf) + tr(" ");
     }
+    else
+    {
+      screenParaStr += tr(SEND_PARA_FAIL_STR);
+    }
 
-    importParaButton->setEnabled(true);//可以导入参数了
+    readParaEdit->setText(screenParaStr);
 }
 
 //导入参数处理
@@ -2757,7 +2830,8 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
 void CfacScreenProperty::setTestProc()
 {
     char tmp;
-    //int len;
+    INT8U Temp[100];
+    int len;
     QString screenStr;
     //char frameBuf[BLOCK_DATA_LEN + 20];
 
@@ -2787,6 +2861,17 @@ void CfacScreenProperty::setTestProc()
     else
       makeProtoBufData(screenStr, COM_MODE, C_SELF_TEST | WR_CMD, &tmp, sizeof(tmp));
 
+    if(w->comStatus->waitComEnd(Temp, sizeof(Temp), &len))
+    {
+      QMessageBox::information(w, tr("提示"),
+                             tr(SEND_PARA_OK_STR),tr("确定"));
+      //this->parentWidget()->close(); //参数设置成功则关闭窗口
+    }
+    else
+    {
+        QMessageBox::warning(w, tr("提示"),
+                               tr(SEND_PARA_FAIL_STR),tr("确定"));
+    }
 }
 
 /*
