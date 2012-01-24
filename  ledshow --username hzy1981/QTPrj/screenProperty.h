@@ -77,6 +77,7 @@ public:
     CipInput *ipEdit; //IP地址
     QPushButton *manualConnectButton; //链接按钮
     QPushButton *autoConnectButton; //测试按钮
+    QLabel *comPortInfoLabel;
 
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);

@@ -39,8 +39,9 @@ typedef struct
 
 const S_Scan_Mode scanMode[] =
 {
-    {0, "1/16扫,左入直行一路带16行数据(P10常用)"},
-    {200, "1/16扫,右入直行一路带16行数据(P10常用)"},
+    {200, "1/16扫,右入直行一路带16行数据(室内屏常规)"},
+    {2213, "1/4扫,右入每8点向下打折,打折3次(P10模组常规)"},
+    {0, "1/16扫,左入直行一路带16行数据"},
     {281, "1/16扫,右入直行每64点向下打折一次"},
 //----------1/8扫-------
     {1000, "1/8扫,左入直行一路带8行数据"},
@@ -88,7 +89,6 @@ const S_Scan_Mode scanMode[] =
     {2200, "1/4扫,右入直行一路带4行数据"},
     {2211, "1/4扫,右入每8点向下打折,打折1次"},
     {2212, "1/4扫,右入每8点向下打折,打折2次"},
-    {2213, "1/4扫,右入每8点向下打折,打折3次"},
     {2221, "1/4扫,右入每16点向下打折,打折1次"},
     {2222, "1/4扫,右入每16点向下打折,打折2次"},
     {2223, "1/4扫,右入每16点向下打折,打折3次"},
@@ -1493,6 +1493,7 @@ void CsendDataDialog::sendData()
     INT8U temp[100];
     int len;
     int flag = 0;
+    INT8U Re;
 
     QString str = w->screenArea->getCurrentScreenStr();
 
@@ -1511,22 +1512,25 @@ void CsendDataDialog::sendData()
         return;
 
     if(QT_SIM_EN)
-      makeProtoFileData(str, SIM_MODE, flag);
+      Re = makeProtoFileData(str, SIM_MODE, flag);
     else
-      makeProtoFileData(str, COM_MODE, flag);
+      Re = makeProtoFileData(str, COM_MODE, flag);
 
-    bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
-    if(re EQ true)
+    if(Re)
     {
-        QMessageBox::information(w, tr("提示"),
-                               tr(SEND_PARA_OK_STR),tr("确定"));
-        close(); //校时成功则关闭
+        bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
+        if(re EQ true)
+        {
+            QMessageBox::information(w, tr("提示"),
+                                   tr(SEND_PARA_OK_STR),tr("确定"));
+            close(); //校时成功则关闭
 
-    }
-    else
-    {
-        QMessageBox::warning(w, tr("提示"),
-                               tr(SEND_PARA_FAIL_STR),tr("确定"));
+        }
+        else
+        {
+            QMessageBox::warning(w, tr("提示"),
+                                   tr(SEND_PARA_FAIL_STR),tr("确定"));
+        }
     }
 }
 
@@ -1743,7 +1747,8 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   ipEdit = new CipInput(this);
 
   manualConnectButton = new QPushButton(tr("手动连接"),this);
-  autoConnectButton = new QPushButton(tr("自动测试"),this);
+  autoConnectButton = new QPushButton(tr("自动连接"),this);
+  comPortInfoLabel = new QLabel(tr("使用交叉串口线"));
 
   gridLayout->addWidget(comModeLabel, 0, 0,1,1);
   gridLayout->addWidget(comModeCombo,  0, 1,1,2);
@@ -1755,8 +1760,9 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   gridLayout->addWidget(comBaudCombo, 3, 1,1,2);
   gridLayout->addWidget(ipEditLabel, 4, 0,1,1);
   gridLayout->addWidget(ipEdit, 4,1,1,2);
-  gridLayout->addWidget(manualConnectButton, 5,0,1,3);
-  gridLayout->addWidget(autoConnectButton, 6,0,1,3);
+  gridLayout->addWidget(comPortInfoLabel, 5,0,1,3);
+  gridLayout->addWidget(manualConnectButton, 6,0,1,3);
+  gridLayout->addWidget(autoConnectButton, 7,0,1,3);
 
   setLayout(gridLayout);
   setTitle(tr("通信参数"));
@@ -1847,7 +1853,7 @@ void CcomTest::autoConnect()
     settings.endGroup();
 
     QMessageBox::warning(w, tr("提示"),
-                               tr("测试失败!没有找到连接成功的串口"),tr("确定"));
+                               tr("测试失败，没有找到连接成功的串口！"),tr("确定"));
 
 }
 
@@ -2207,12 +2213,12 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    lineHideCombo->addItem(tr("2"));
    lineHideCombo->addItem(tr("3"));
    lineHideCombo->addItem(tr("4"));
-   lineHideCombo->addItem(tr("5最长"));
-   //lineHideCombo->addItem(tr("6"));
-   //lineHideCombo->addItem(tr("7"));
-   //lineHideCombo->addItem(tr("8"));
-   //lineHideCombo->addItem(tr("9"));
-   //lineHideCombo->addItem(tr("10最长"));
+   lineHideCombo->addItem(tr("5"));
+   lineHideCombo->addItem(tr("6"));
+   lineHideCombo->addItem(tr("7"));
+   lineHideCombo->addItem(tr("8"));
+   lineHideCombo->addItem(tr("9"));
+   lineHideCombo->addItem(tr("10最长"));
 
    dataMirrorCombo = new QComboBox(this);
    dataMirrorCombo->addItem(tr("正常"));
@@ -2761,7 +2767,7 @@ void CfacScreenProperty::setTestProc()
     if(this->selfTestButton->text() EQ tr("自动检测"))
     {
         QMessageBox::information(w, tr("提示"),
-                               tr("进入自动检测状态前请确定已加载正确的屏幕宽度、高度参数到屏幕，进入自检状态后，请观察屏幕左上角的显示内容（3分钟左右），如正常显示4位数字，则该4位数字作为特征码对应的扫描方式就是该屏幕正确的扫描方式，例如显示\"0020\"，对应的扫描方式为 \"0200, 1/16扫,右入直行一路带16行数据(P10常用)\""),tr("确定"));
+                               tr("进入自动检测状态前请确定已加载正确的屏幕宽度、高度参数到屏幕，进入自检状态后，请观察屏幕左上角的显示内容（3分钟左右），如正常显示4位数字，则该4位数字作为特征码对应的扫描方式就是该屏幕正确的扫描方式，例如显示\"0200\"，则该屏幕的扫描方式为 \"0200,1/16扫,右入直行一路带16行数据(P10常用)\""),tr("确定"));
         //this->parentWidget()->close(); //参数设置成功则关闭窗口
       tmp = 0x00; //进入
       this->selfTestButton->setText(tr("退出检测"));

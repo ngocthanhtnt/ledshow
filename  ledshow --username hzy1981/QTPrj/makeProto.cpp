@@ -880,9 +880,10 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
             QString reStr = Chk_Prog_Border_Para(i, progPara, Screen_Para);
             if(reStr != "")
             {
-                QMessageBox::warning(w, QObject::tr("提示"),
-                                         reStr ,QObject::tr("确定"));
-                //return 0;
+                int re = QMessageBox::warning(w, QObject::tr("提示"),
+                                         reStr ,QObject::tr("重新编辑"), QObject::tr("不管了，继续"));
+                if(re EQ 0)
+                    return 0;
             }
 
             //节目参数帧
@@ -1062,6 +1063,6 @@ INT8U makeProtoFileData(QString screenStr, int mode, int flag)
         }
     }
 
-    return 1;
+    return counts > 0?1:0;
 
 }
