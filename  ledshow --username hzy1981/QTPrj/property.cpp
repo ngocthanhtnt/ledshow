@@ -25,9 +25,13 @@ Cproperty::Cproperty(QWidget *parent):QDockWidget(parent)
 {
     //QVBoxLayout *layout;
 
-    stackedWidget = new QStackedWidget(this);
+    docWidget = new QWidget(this);
     setAllowedAreas(Qt::BottomDockWidgetArea);
-
+    hLayout = new QHBoxLayout(this);//docWidget);
+    docWidget->setLayout(hLayout);
+    setWidget(docWidget);
+    setWindowTitle(tr("属性编辑"));
+/*
     //0
     screenProperty = new CscreenProperty(stackedWidget);
     stackedWidget->addWidget(screenProperty);
@@ -81,8 +85,9 @@ Cproperty::Cproperty(QWidget *parent):QDockWidget(parent)
     noiseProperty = new CnoiseProperty(stackedWidget);
     stackedWidget->addWidget(noiseProperty);
     setWidget(stackedWidget);
-
-    this->setFeatures(QDockWidget::NoDockWidgetFeatures);
+*/
+    //setWidget(stackedWidget);
+    //this->setFeatures(QDockWidget::NoDockWidgetFeatures);
 }
 
 INT8U getStackedWidgetIndex(INT8U type)
@@ -113,14 +118,148 @@ INT8U getStackedWidgetIndex(INT8U type)
 #define LUN_PROPERTY 0x08    //农历
      */
 }
-
-//根据item更新当前property的显示
-void Cproperty::updateProperty(QTreeWidgetItem *item)
+void Cproperty::deleteProperty()
 {
-    QString str;
-    int type;
 
-    setSettingsToWidget(item);
+    if(screenProperty != 0)
+    {
+        QList<CscreenProperty*> items = findChildren<CscreenProperty*>(QString());
+         foreach(CscreenProperty*item, items)
+         {
+             delete item;
+         }
+
+        //hLayout->removeItem(hLayout->itemAt(0));
+        screenProperty = 0;
+    }
+
+    if(progProperty != 0)
+    {
+        QList<CprogProperty*> items = findChildren<CprogProperty*>(QString());
+         foreach(CprogProperty*item, items)
+         {
+             delete item;
+         }
+      //delete progProperty;
+      progProperty = 0;
+    }
+
+    if(areaProperty != 0)
+    {
+        QList<CareaProperty*> items = findChildren<CareaProperty*>(QString());
+         foreach(CareaProperty*item, items)
+         {
+             delete item;
+         }
+      areaProperty = 0;
+    }
+
+    if(picProperty != 0)
+    {
+        QList<CpicProperty*> items = findChildren<CpicProperty*>(QString());
+         foreach(CpicProperty*item, items)
+         {
+             delete item;
+         }
+      picProperty = 0;
+    }
+
+    if(flashProperty != 0)
+    {
+        QList<CflashProperty*> items = findChildren<CflashProperty*>(QString());
+         foreach(CflashProperty*item, items)
+         {
+             delete item;
+         }
+      flashProperty = 0;
+    }
+
+    if(imageProperty != 0)
+    {
+        QList<CimageProperty*> items = findChildren<CimageProperty*>(QString());
+         foreach(CimageProperty*item, items)
+         {
+             delete item;
+         }
+      imageProperty = 0;
+    }
+
+    if(clockProperty != 0)
+    {
+        QList<CclockProperty*> items = findChildren<CclockProperty*>(QString());
+         foreach(CclockProperty*item, items)
+         {
+             delete item;
+         }
+      clockProperty = 0;
+    }
+
+    if(timeProperty != 0)
+    {
+        QList<CtimeProperty*> items = findChildren<CtimeProperty*>(QString());
+         foreach(CtimeProperty*item, items)
+         {
+             delete item;
+         }
+      timeProperty = 0;
+    }
+
+    if(timerProperty != 0)
+    {
+        QList<CtimerProperty*> items = findChildren<CtimerProperty*>(QString());
+         foreach(CtimerProperty*item, items)
+         {
+             delete item;
+         }
+      timerProperty = 0;
+    }
+
+    if(tempProperty != 0)
+    {
+        QList<CtempProperty*> items = findChildren<CtempProperty*>(QString());
+         foreach(CtempProperty*item, items)
+         {
+             delete item;
+         }
+      tempProperty = 0;
+    }
+
+    if(lunProperty != 0)
+    {
+        QList<ClunProperty*> items = findChildren<ClunProperty*>(QString());
+         foreach(ClunProperty*item, items)
+         {
+             delete item;
+         }
+      lunProperty = 0;
+    }
+
+    if(humidityProperty != 0)
+    {
+        QList<ChumidityProperty*> items = findChildren<ChumidityProperty*>(QString());
+         foreach(ChumidityProperty*item, items)
+         {
+             delete item;
+         }
+      humidityProperty = 0;
+    }
+
+    if(noiseProperty != 0)
+    {
+        QList<CnoiseProperty*> items = findChildren<CnoiseProperty*>(QString());
+         foreach(CnoiseProperty*item, items)
+         {
+             delete item;
+         }
+      noiseProperty = 0;
+    }
+}
+
+void Cproperty::createProperty(INT8U type)
+{
+    //int type;
+
+    //setSettingsToWidget(item);
 /*
     str = item->data(0, Qt::UserRole).toString();
 
@@ -128,9 +267,100 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     type = settings.value("type").toInt();
     settings.endGroup();
 */
+    //type = checkItemType(item);
+    //int index = getStackedWidgetIndex(type);
+    //stackedWidget->setCurrentIndex(index);
+
+    if(type  == SCREEN_PROPERTY)
+    {
+        screenProperty = new CscreenProperty(this);
+        hLayout->addWidget(screenProperty);
+    }
+    else if(type == PROG_PROPERTY)
+    {
+        progProperty = new CprogProperty(this);
+        hLayout->addWidget(progProperty);
+    }
+    else if(type == AREA_PROPERTY)
+    {
+        areaProperty = new CareaProperty(this);
+        hLayout -> addWidget(areaProperty);
+    }
+    else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY || type == PIC_TABLE_PROPERTY)
+    {
+        picProperty = new CpicProperty(this);
+        hLayout->addWidget(picProperty);
+    }
+    else if(type == PIC_FLASH_PROPERTY)
+    {
+        flashProperty = new CflashProperty(this);
+        hLayout->addWidget(flashProperty);
+    }
+    else if(type == PIC_IMAGE_PROPERTY)
+    {
+        imageProperty = new CimageProperty(this);
+        hLayout->addWidget(imageProperty);
+    }
+    else if(type == CLOCK_PROPERTY)
+    {
+        clockProperty = new CclockProperty(this);
+        hLayout->addWidget(clockProperty);
+    }
+    else if(type == TIME_PROPERTY)
+    {
+        timeProperty = new CtimeProperty(this);
+        hLayout->addWidget(timeProperty);
+    }
+    else if(type == TIMER_PROPERTY)
+    {
+        timerProperty = new CtimerProperty(this);
+        hLayout->addWidget(timerProperty);
+    }
+    else if(type == TEMP_PROPERTY)
+    {
+        tempProperty = new CtempProperty(this);
+        hLayout->addWidget(tempProperty);
+    }
+    else if(type == LUN_PROPERTY)
+    {
+        lunProperty = new ClunProperty(this);
+        hLayout->addWidget(lunProperty);
+    }
+    else if(type == HUMIDITY_PROPERTY)
+    {
+        humidityProperty = new ChumidityProperty(this);
+        hLayout->addWidget(humidityProperty);
+    }
+    else if(type == NOISE_PROPERTY)
+    {
+        noiseProperty = new CnoiseProperty(this);
+        hLayout->addWidget(noiseProperty);
+    }
+    else
+    {
+        //
+        ASSERT_FAILED();
+    }
+}
+
+//根据item更新当前property的显示
+void Cproperty::updateProperty(QTreeWidgetItem *item)
+{
+    QString str;
+    int type;
+
+
+/*
     type = checkItemType(item);
     int index = getStackedWidgetIndex(type);
     stackedWidget->setCurrentIndex(index);
+*/
+
+    deleteProperty();
+
+    type = checkItemType(item);
+    createProperty(type);
+    setSettingsToWidget(item);
 
     if(type  == SCREEN_PROPERTY)
     {

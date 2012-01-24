@@ -543,7 +543,7 @@ void CprogManage::newProg()
 
     QIcon icon = getTypeIcon(PROG_PROPERTY);
     item->setIcon(0,icon);
-    parentItem->addChild(item);
+    //parentItem->addChild(item);
 
     //treeWidget->addTopLevelItem(item);
     //treeWidget->setCurrentItem(item);
@@ -949,7 +949,7 @@ void CprogManage::_deleteItem(int flag)
             parent = curItem->parent();
             curItem->parent()->removeChild(curItem);
             //updateItemSubIndex(curItem);
-            //updateTextHead(parent);
+            updateTextHead(parent);
             for(int i = 0; i < MAX_AREA_NUM; i ++)
                 w->screenArea->setAreaVisible(i, 0);
         }

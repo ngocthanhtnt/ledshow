@@ -97,6 +97,7 @@ public:
         S_ETH_Para ETH_Para;
         S_GPRS_Para GPRS_Para;
 
+        QString uDiskName;
         QString protoFileName;
         QString comReStr; //通信结果字符串
         bool connect(); //连接屏幕
@@ -117,6 +118,7 @@ public slots:
          */
         int comReceive();
 };
+
 
 class CcomStatus:public QDockWidget//QWidget
 {
@@ -145,7 +147,7 @@ public slots:
     void comStart();
     void comShow();
 public:
-    //bool checkComMode();
+    //CudiskListDialog *udiskListDialog;
     void setTotalFrameCounts(int counts);
     void sendProtoFile(QString fileName);
     void getCOMParaFromSettings(QString str); //获取通信参数

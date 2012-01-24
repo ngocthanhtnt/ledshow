@@ -262,6 +262,24 @@ public:
 
 };
 
+class CudiskListDialog:public QDialog
+{
+    Q_OBJECT
+public slots:
+    void okButtonSlot();
+signals:
+    void closeSignal();
+public:
+    QPushButton *okButton;
+    QComboBox *udiskCombo;
+    QStringList udiskList;
+    QString udiskName;
+
+    void updateUdiskList();
+    CudiskListDialog(QWidget *parent=0);
+    ~CudiskListDialog();
+};
+
 //screen Ù–‘¥∞
 class CfacScreenProperty:public QGroupBox
 {

@@ -12,7 +12,7 @@ extern MainWindow *w;
 QString rsrcPath1 =  ":/images/win1";
 QString rsrcPath = ":/images/win";
 
-//节目配置文件
+//节目工程文件
 QSettings settings(PROG_INI_FILE,QSettings::IniFormat,0);
 
 
@@ -690,7 +690,7 @@ void MainWindow::fileSave()
     QString fileName;
 
     settings.beginGroup("");
-    fileName = settings.value("cfgFile").toString(); //配置文件名
+    fileName = settings.value("cfgFile").toString(); //工程文件名
     settings.endGroup();
 
     QFile::copy(PROG_INI_FILE, fileName); //保存老的文件
@@ -703,7 +703,7 @@ void MainWindow::fileSaveAs()
     //QString fileName;
     QString newFileName;
 
-    newFileName = QFileDialog::getSaveFileName(this, tr("保存配置文件"), ".", tr("配置文件(*.ini)"));
+    newFileName = QFileDialog::getSaveFileName(this, tr("保存工程文件"), ".", tr("工程文件(*.ini)"));
     if(newFileName.length()==0)
         return;
 
@@ -721,7 +721,7 @@ void MainWindow::fileSaveAs()
     if(QFile::copy(PROG_INI_FILE, newFileName) == false) //保存老的文件
     {
         QMessageBox::warning(w, tr("提示"),
-                                 tr("配置文件保存失败"), tr("确定"));
+                                 tr("工程文件保存失败"), tr("确定"));
    }
 
 }
@@ -792,7 +792,7 @@ void MainWindow::fileOpen()
     }
 /*
     settings.beginGroup("file");
-    oldFileName = settings.value("cfgFile").toString(); //配置文件名
+    oldFileName = settings.value("cfgFile").toString(); //工程文件名
     settings.endGroup();
     QFile::remove(oldFileName);
     if(QFile::copy(PROG_INI_FILE, oldFileName)==false) //保存老的文件
@@ -811,7 +811,7 @@ void MainWindow::fileOpen()
 
     settings.clear();//clear(); //清除
 
-    newFileName = QFileDialog::getOpenFileName(this, tr("打开配置文件"), ".", tr("配置文件(*.ini)"));
+    newFileName = QFileDialog::getOpenFileName(this, tr("打开工程文件"), ".", tr("工程文件(*.ini)"));
     if(newFileName.length()==0)
     {
         return;

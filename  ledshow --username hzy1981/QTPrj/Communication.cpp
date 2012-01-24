@@ -17,36 +17,6 @@
 extern QSettings settings;
 extern MainWindow *w;
 
-QString getUDiskPath()
-{
-    char temp[10];
-    UINT type;
-    //const wchar_t *path;
-
-    temp[0] = 'a';
-    temp[1] = ':';
-    temp[2] = '\\';
-    temp[3] = 0;
-
-    for(char c = 'A'; c < 'Z'; c++)
-    {
-      temp[0] = c;
-
-
-      sprintf(temp, "%c:\\", c);
-      QString path = QString(temp);
-
-      type = GetDriveType((wchar_t *)path.utf16());
-
-      if(type == DRIVE_REMOVABLE)
-      {
-          //memcpy(pDst, temp, 4);
-          return path;
-      }
-    }
-
-    return "";//d:\\";
-}
 
 
 /*
@@ -153,13 +123,13 @@ bool CcomThread::comRun()
     {
         QDir dataDir;
         QFile file;
-        QString uDiskName;
 
-        QString fileDir = getUDiskPath(); //获取U盘路径
-        uDiskName = fileDir;
+
+        QString fileDir = uDiskName;//getUDiskPath(); //获取U盘路径
+        //uDiskName = fileDir;
         if(fileDir == "") //没有插入U盘
         {
-            comReStr = tr("没有找到移动存储设备,生成U盘数据失败！");
+            comReStr = tr("没有找到U盘,生成U盘数据失败！");
             emit this->comStatusChanged(comReStr);
             status = COM_FAILED; //进入通信状态
             return false;
@@ -190,7 +160,7 @@ bool CcomThread::comRun()
         }
 
         comReStr = tr("数据成功保存到")+uDiskName;
-        status = COM_FAILED; //进入通信状态
+        status = COM_OK; //进入通信状态
 
         return true;
 
@@ -522,6 +492,8 @@ CcomStatus::CcomStatus(QWidget * parent):QDockWidget(tr("通信状态"), parent)
     screenNameEdit = new QLineEdit(widget);
     screenNameEdit->setFocusPolicy(Qt::NoFocus);
 
+    //udiskListDialog = new CudiskListDialog(this);
+
     hLayout->addWidget(nameLabel);
     hLayout->addWidget(screenNameEdit);
     vLayout->addLayout(hLayout);
@@ -639,6 +611,30 @@ void CcomStatus::sendProtoFile(QString fileName)
    {
       if(this->comThread->COM_Mode EQ SIM_MODE)
           this->show();
+      else if(this->comThread->COM_Mode EQ UDISK_MODE)
+      {
+        CudiskListDialog *udiskListDialog = new CudiskListDialog(w);
+
+        udiskListDialog->updateUdiskList();
+
+        int count = udiskListDialog->udiskCombo->count();
+        comThread->uDiskName = "";
+        if(count >= 2) //当超过2个以上的U盘时需要用户选择
+        {
+
+          udiskListDialog->setFixedWidth(180);
+          udiskListDialog->exec();
+
+          comThread->uDiskName = udiskListDialog->udiskName;
+        }
+        else if(count EQ 1) //只有1个U盘
+        {
+          comThread->uDiskName = udiskListDialog->udiskList.at(0).toLocal8Bit().constData();
+        }
+        else
+          comThread->uDiskName = "";
+
+      }
      this->comThread->comRun();
    }
    //emit this->start();
