@@ -548,7 +548,7 @@ ClightnessProperty::ClightnessProperty(QWidget *parent):QGroupBox(parent)
    for(i = 0; i < MAX_LIGHTNESS_TIME; i ++)
    {
      hLayout = new QHBoxLayout(this);
-     timerCheck[i] = new QCheckBox(tr("使用"),this);
+     timerCheck[i] = new QCheckBox(tr("启用"),this);
      timerEdit[i] = new QTimeEdit(this);
 
      timerSlider[i] = new QSlider(Qt::Horizontal,this);
@@ -575,7 +575,7 @@ ClightnessProperty::ClightnessProperty(QWidget *parent):QGroupBox(parent)
 
    this->setLayout(mainLayout);
 
-   setTitle(tr("亮度参数"));
+   setTitle(tr("亮度参数(1级最暗,16级最亮)"));
 
    connect(manualButton, SIGNAL(clicked()),this,SIGNAL(adjModeEditSignal()));
    connect(timerButton, SIGNAL(clicked()),this,SIGNAL(adjModeEditSignal()));
@@ -775,7 +775,7 @@ CopenCloseProperty::CopenCloseProperty(QWidget *parent):QGroupBox(parent)
 
    for(i = 0; i < MAX_OPEN_CLOSE_TIME; i ++)
    {
-     timeCheck[i] = new QCheckBox(tr("使用"),this);
+     timeCheck[i] = new QCheckBox(tr("启用"),this);
      openTimeEdit[i] = new QTimeEdit(this);
      closeTimeEdit[i] = new QTimeEdit(this);
 
@@ -2759,6 +2759,9 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
 
     getSettingsFromWidget(str);
     getScreenCardParaFromSettings(str, Screen_Para, Card_Para);//重新获取屏幕参数和板卡参数
+
+    //刷新当前屏幕的屏幕参数
+    memcpy(&(w->screenArea->screenPara), &Screen_Para, sizeof(Screen_Para));
 
     //宽度、高度、颜色发生了修改则需要清掉所有的节目
     if(width != widthEdit->value() ||\
