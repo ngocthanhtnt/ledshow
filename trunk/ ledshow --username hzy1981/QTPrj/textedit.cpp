@@ -220,7 +220,7 @@ void TextEdit::setupFileActions()
     menu->addAction(a);
 
     a = new QAction(QIcon::fromTheme("document-open", QIcon(rsrcPath + "/fileopen.png")),
-                    tr("导入..."), this);
+                    tr("打开"), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
     tb->addAction(a);
@@ -229,7 +229,7 @@ void TextEdit::setupFileActions()
     menu->addSeparator();
 
     actionSave = a = new QAction(QIcon::fromTheme("document-save", QIcon(rsrcPath + "/filesave.png")),
-                                 tr("导出"), this);
+                                 tr("另存为"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     //a->setEnabled(false);
@@ -433,7 +433,7 @@ void TextEdit::setupTextActions()
     menuBar()->addMenu(menu);
 
     actionTextBold = new QAction(QIcon::fromTheme("format-text-bold", QIcon(rsrcPath + "/textbold.png")),
-                                 tr("黑体"), this);
+                                 tr("加粗"), this);
     actionTextBold->setShortcut(Qt::CTRL + Qt::Key_B);
     actionTextBold->setPriority(QAction::LowPriority);
 	QFont bold;
@@ -445,7 +445,7 @@ void TextEdit::setupTextActions()
     actionTextBold->setCheckable(true);
 
     actionTextItalic = new QAction(QIcon::fromTheme("format-text-italic", QIcon(rsrcPath + "/textitalic.png")),
-                                   tr("斜体"), this);
+                                   tr("倾斜"), this);
     actionTextItalic->setPriority(QAction::LowPriority);
     actionTextItalic->setShortcut(Qt::CTRL + Qt::Key_I);
     QFont italic;
@@ -457,7 +457,7 @@ void TextEdit::setupTextActions()
     actionTextItalic->setCheckable(true);
 
     actionTextUnderline = new QAction(QIcon::fromTheme("format-text-underline", QIcon(rsrcPath + "/textunder.png")),
-                                      tr("下划"), this);
+                                      tr("下划线"), this);
     actionTextUnderline->setShortcut(Qt::CTRL + Qt::Key_U);
     actionTextUnderline->setPriority(QAction::LowPriority);
     QFont underline;
@@ -476,15 +476,15 @@ void TextEdit::setupTextActions()
     // Make sure the alignLeft  is always left of the alignRight
     if (QApplication::isLeftToRight()) {
         actionAlignLeft = new QAction(QIcon::fromTheme("format-justify-left", QIcon(rsrcPath + "/textleft.png")),
-                                      tr("左移"), grp);
+                                      tr("左对齐"), grp);
         actionAlignCenter = new QAction(QIcon::fromTheme("format-justify-center", QIcon(rsrcPath + "/textcenter.png")), tr("居中"), grp);
-        actionAlignRight = new QAction(QIcon::fromTheme("format-justify-right", QIcon(rsrcPath + "/textright.png")), tr("右移"), grp);
+        actionAlignRight = new QAction(QIcon::fromTheme("format-justify-right", QIcon(rsrcPath + "/textright.png")), tr("右对齐"), grp);
     } else {
-        actionAlignRight = new QAction(QIcon::fromTheme("format-justify-right", QIcon(rsrcPath + "/textright.png")), tr("右移"), grp);
+        actionAlignRight = new QAction(QIcon::fromTheme("format-justify-right", QIcon(rsrcPath + "/textright.png")), tr("右对齐"), grp);
         actionAlignCenter = new QAction(QIcon::fromTheme("format-justify-center", QIcon(rsrcPath + "/textcenter.png")), tr("居中"), grp);
-        actionAlignLeft = new QAction(QIcon::fromTheme("format-justify-left", QIcon(rsrcPath + "/textleft.png")), tr("左移"), grp);
+        actionAlignLeft = new QAction(QIcon::fromTheme("format-justify-left", QIcon(rsrcPath + "/textleft.png")), tr("左对齐"), grp);
     }
-    actionAlignJustify = new QAction(QIcon::fromTheme("format-justify-fill", QIcon(rsrcPath + "/textjustify.png")), tr("&Justify"), grp);
+    actionAlignJustify = new QAction(QIcon::fromTheme("format-justify-fill", QIcon(rsrcPath + "/textjustify.png")), tr("两端对齐"), grp);
 
     actionAlignLeft->setShortcut(Qt::CTRL + Qt::Key_L);
     actionAlignLeft->setCheckable(true);
@@ -648,7 +648,19 @@ void TextEdit::setCurrentFileName(const QString &fileName)
 void TextEdit::fileNew()
 {
     //if (maybeSave()) {
+    int Re =  QMessageBox::warning(w, tr("提示"),
+                             tr("当前编辑内容将会被清除重建！"), tr("确定"),tr("取消"));
+
+    if(Re EQ 0)
+    {
         textEdit->clear();
+        //return;
+    }
+    else //if(Re EQ 1)
+    {
+        return;
+    }
+
        // setCurrentFileName(QString());
     //}
 }
