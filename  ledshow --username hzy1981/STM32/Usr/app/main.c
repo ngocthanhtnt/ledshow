@@ -111,6 +111,8 @@ int main(void)
 #endif
 
     Chk_Main_Stack();
+
+    CLR_WDG();
   }
   
 }

@@ -2104,6 +2104,20 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     oePolarityCombo->addItem(tr("高有效"));
     oePolarityCombo->setFixedWidth(WIDTH_0);
 
+    lineHideLabel = new QLabel(tr("行消隐"),this);
+    lineHideCombo = new QComboBox(this);
+
+    lineHideCombo->addItem(tr("1最短"));
+    lineHideCombo->addItem(tr("2"));
+    lineHideCombo->addItem(tr("3"));
+    lineHideCombo->addItem(tr("4"));
+    lineHideCombo->addItem(tr("5"));
+    lineHideCombo->addItem(tr("6"));
+    lineHideCombo->addItem(tr("7"));
+    lineHideCombo->addItem(tr("8"));
+    lineHideCombo->addItem(tr("9"));
+    lineHideCombo->addItem(tr("10最长"));
+
     colorCombo = new QComboBox(this);
     colorCombo->addItem(tr("红色"));
     colorCombo->addItem(tr("红+绿"));
@@ -2152,22 +2166,27 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    gridLayout->addWidget(baudCombo, 0, 3);
 
 
-   gridLayout->addWidget(dataPolarityLabel, 1, 0);
-   gridLayout->addWidget(dataPolarityCombo, 1, 1);
-   /*-----------不需要软件设置OE，直接硬件跳线选择--------
-   gridLayout->addWidget(oePolarityLabel, 1, 2);
-   gridLayout->addWidget(oePolarityCombo, 1, 3);
-   */
+   gridLayout->addWidget(widthLabel, 1, 0);
+   gridLayout->addWidget(widthEdit, 1, 1);
+   gridLayout->addWidget(heightLabel, 1, 2);
+   gridLayout->addWidget(heightEdit, 1, 3);
 
-   gridLayout->addWidget(redGreenRevCheck,1,2,1,2);
+   gridLayout->addWidget(colorLabel, 1, 4);
+   gridLayout->addWidget(colorCombo, 1, 5);
 
-   gridLayout->addWidget(widthLabel, 2, 0);
-   gridLayout->addWidget(widthEdit, 2, 1);
-   gridLayout->addWidget(heightLabel, 2, 2);
-   gridLayout->addWidget(heightEdit, 2, 3);
 
-   gridLayout->addWidget(colorLabel, 2, 4);
-   gridLayout->addWidget(colorCombo, 2, 5);
+   gridLayout->addWidget(dataPolarityLabel, 2, 0);
+   gridLayout->addWidget(dataPolarityCombo, 2, 1);
+   /*-----------不需要软件设置OE，直接硬件跳线选择--------*/
+   gridLayout->addWidget(oePolarityLabel, 2, 2);
+   gridLayout->addWidget(oePolarityCombo, 2, 3);
+
+
+   gridLayout->addWidget(lineHideLabel, 2, 4);
+   gridLayout->addWidget(lineHideCombo,2,5);
+
+   gridLayout->addWidget(redGreenRevCheck,2,6,1,2);
+
 
 
 
@@ -2274,18 +2293,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    freqCombo ->addItem(tr("4"));
    freqCombo ->addItem(tr("5最慢"));
 
-   lineHideCombo = new QComboBox(this);
 
-   lineHideCombo->addItem(tr("1最短"));
-   lineHideCombo->addItem(tr("2"));
-   lineHideCombo->addItem(tr("3"));
-   lineHideCombo->addItem(tr("4"));
-   lineHideCombo->addItem(tr("5"));
-   lineHideCombo->addItem(tr("6"));
-   lineHideCombo->addItem(tr("7"));
-   lineHideCombo->addItem(tr("8"));
-   lineHideCombo->addItem(tr("9"));
-   lineHideCombo->addItem(tr("10最长"));
 
    dataMirrorCombo = new QComboBox(this);
    dataMirrorCombo->addItem(tr("正常"));
@@ -2301,7 +2309,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
 
    gridLayout = new QGridLayout(this);
    freqLabel = new QLabel(tr("时钟频率"),this);
-   lineHideLabel = new QLabel(tr("行消隐"),this);
+
    dataMirrorLabel = new QLabel(tr("数据镜像"),this);
    lineOrderLabel = new QLabel(tr("行顺序"),this);
    _138Label= new QLabel(tr("138译码器"), this);
@@ -2311,8 +2319,6 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    gridLayout->addWidget(freqLabel, 1, 0);
    gridLayout->addWidget(freqCombo, 1, 1);
 
-   gridLayout->addWidget(lineHideLabel, 1, 2);
-   gridLayout->addWidget(lineHideCombo,1,3);
 
    //gridLayout->addWidget(dataMirrorLabel, 2, 0);
    //gridLayout->addWidget(dataMirrorCombo, 2, 1);
@@ -2418,8 +2424,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
    //tabWidget->removeTab(tabWidget->indexOf(readParaGroup));
    //-------------
-   oePolarityLabel->setVisible(false);
-   oePolarityCombo->setVisible(false);
+   //oePolarityLabel->setVisible(false);
+   //oePolarityCombo->setVisible(false);
 
    dataMirrorLabel->setVisible(false);
    dataMirrorCombo->setVisible(false);
@@ -2913,19 +2919,19 @@ void CfacScreenProperty::defParaCheckProc()
   if(defParaCheck->checkState()) //选中
   {
     freqCombo->setCurrentIndex(0);
-    lineHideCombo->setCurrentIndex(0);
+    //lineHideCombo->setCurrentIndex(0);
     dataMirrorCombo->setCurrentIndex(0);
     lineOrderCombo->setCurrentIndex(0);
     _138Combo->setCurrentIndex(0);
 
     freqCombo->setEnabled(false);
-    lineHideCombo->setEnabled(false);
+    //lineHideCombo->setEnabled(false);
     dataMirrorCombo->setEnabled(false);
     lineOrderCombo->setEnabled(false);
     _138Combo->setEnabled(false);
 
     freqLabel->setEnabled(false);
-    lineHideLabel->setEnabled(false);
+    //lineHideLabel->setEnabled(false);
     dataMirrorLabel->setEnabled(false);
     lineOrderLabel->setEnabled(false);
     _138Label->setEnabled(false);
@@ -2933,13 +2939,13 @@ void CfacScreenProperty::defParaCheckProc()
   else
   {
       freqCombo->setEnabled(true);
-      lineHideCombo->setEnabled(true);
+      //lineHideCombo->setEnabled(true);
       dataMirrorCombo->setEnabled(true);
       lineOrderCombo->setEnabled(true);
       _138Combo->setEnabled(true);
 
       freqLabel->setEnabled(true);
-      lineHideLabel->setEnabled(true);
+      //lineHideLabel->setEnabled(true);
       dataMirrorLabel->setEnabled(true);
       lineOrderLabel->setEnabled(true);
       _138Label->setEnabled(true);

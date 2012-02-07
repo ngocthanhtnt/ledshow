@@ -350,23 +350,6 @@ void Build_Scan_Data_Index(void)
  #endif
 }
 
-void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
-{
-  if(Duty > 100)
-  {
-    Duty = 100;
-    ASSERT_FAILED();
-  }
-
-  //TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设
-
-  if(Polarity EQ 0)
-    TIM4->CCR3 = TIM4->ARR * Duty / 100;
-  else
-    TIM4->CCR3 = TIM4->ARR * (100 - Duty) / 100;
-
-  //TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
-}
 
 //获取第Rows行第Index个字节的移动数据对应的在屏幕数据中的坐标
 //Block表示扫描块的块号
@@ -825,6 +808,7 @@ void LED_Scan_One_Row(void)
   if(Screen_Status.Time_OC_Flag EQ CLOSE_FLAG ||\
      Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG ||\
 	 Screen_Status.Com_Time > 0 ||\
+	 Screen_Status.Replay_Flag EQ REPLAY_FLAG ||\
 	 Chk_UDisk_Processing()) //关机状态，不显示,或当前在通信状态也不显示
 	 {
 	 Flag = 0;
