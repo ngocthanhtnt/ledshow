@@ -748,7 +748,8 @@ void MainWindow::fileNew()
     int count = progManage->treeWidget->topLevelItemCount();
     for(int i = 0; i < count; i ++)
     {
-        //QTreeWidgetItem *item = progManage->treeWidget->indexOfTopLevelItem(i);
+        QTreeWidgetItem *item = progManage->treeWidget->topLevelItem(0);
+        progManage->treeWidget->setCurrentItem(item);
         progManage->_deleteItem(0);
 
     }

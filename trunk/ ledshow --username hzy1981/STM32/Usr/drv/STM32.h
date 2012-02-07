@@ -39,6 +39,7 @@
 #define STOP_SHOW_TIMER()  TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设  
 #define START_SHOW_TIMER() TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 
+#define CLR_WDG()  IWDG_ReloadCounter()
 //#define CHK_JP_STATUS1  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_14)
  
 // 把“位带地址＋位序号”转换别名地址宏 
@@ -259,6 +260,7 @@ EXT void SPI1_FLASH_Init(void);
 EXT void SPI1_CH376_Init(void);
 EXT void SPI2_Init(void);
 EXT void Set_Block_OE_En(INT8U Value);
+EXT void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity);
 EXT INT8U Chk_JP_Status(void);
 EXT void UART1_Init(void);
 EXT void UART2_Init(void); //串口2初始化
@@ -266,6 +268,7 @@ EXT void UART3_Init(void);
 EXT void Com_Send_Byte(INT8U Ch, INT8U Data);
 EXT void Unselect_SPI_Device(void);
 EXT void Self_Test(void);
+EXT void IWDG_Init(void);
 EXT INT8U Chk_Test_Key_Down(void);
 EXT INT8U Chk_Test_Key_Up(void);
 EXT void Fac_Status_Self_Test(void);

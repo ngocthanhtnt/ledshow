@@ -2,7 +2,7 @@
 #include "Includes.h"
 
 extern void Set_Clock_Normal_Speed(void);
-extern void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity);
+
 
 void Clr_Watch_Dog(void)
 {
@@ -1025,6 +1025,25 @@ void Set_Block_OE_En(INT8U Value)
    	TIM_Cmd(TIM3, DISABLE);
 }
 
+
+void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
+{
+  if(Duty > 100)
+  {
+    Duty = 100;
+    ASSERT_FAILED();
+  }
+
+  //TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设
+
+  if(Polarity EQ 0)
+    TIM4->CCR3 = TIM4->ARR * Duty / 100;
+  else
+    TIM4->CCR3 = TIM4->ARR * (100 - Duty) / 100;
+
+  //TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
+}
+
 void Unselect_SPI_Device(void)
 {
   SET_FLASH_CS(1); //不选中Flash
@@ -1250,5 +1269,36 @@ void DMA_Configuration(void)
 }
 */
 
+void IWDG_Init(void)
+{
+  RCC_LSICmd(ENABLE);
+  while(RCC_GetFlagStatus(RCC_FLAG_LSIRDY)==RESET);//等待直到LSI稳定
+  
+  if (RCC_GetFlagStatus(RCC_FLAG_IWDGRST) != RESET)
+  {
+    /* Clear reset flags */
+    RCC_ClearFlag();
+  }
+  else
+  {
+
+  }
+  /* IWDG timeout equal to 280 ms (the timeout may varies due to LSI frequency
+     dispersion) */
+  /* Enable write access to IWDG_PR and IWDG_RLR registers */
+  IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
+
+  /* IWDG counter clock: 40KHz(LSI) / 64 = 0.625 KHz, 1.6ms */
+  IWDG_SetPrescaler(IWDG_Prescaler_64);
+
+  /* Set counter reload value to 349, 1.28S */
+  IWDG_SetReload(800);
+
+  /* Reload IWDG counter */
+  IWDG_ReloadCounter();
+
+  /* Enable IWDG (the LSI oscillator will be enabled by hardware) */
+  IWDG_Enable();
+}
 //-------------------------------------
 #endif

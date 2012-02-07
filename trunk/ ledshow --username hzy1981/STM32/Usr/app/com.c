@@ -458,7 +458,7 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 	      Set_Screen_Replay_Flag(); //重播节目标志
 	 
 	    Set_Prog_Num(Data[0]); //重置节目个数
-            Write_Prog_Num();
+            //Write_Prog_Num();
 		return 1;
 	}
 	else
