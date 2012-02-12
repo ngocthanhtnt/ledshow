@@ -1033,7 +1033,7 @@ void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
     Duty = 100;
     ASSERT_FAILED();
   }
-
+ 
   //TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设
 
   if(Polarity EQ 0)
@@ -1042,6 +1042,7 @@ void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
     TIM4->CCR3 = TIM4->ARR * (100 - Duty) / 100;
 
   //TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
+
 }
 
 void Unselect_SPI_Device(void)

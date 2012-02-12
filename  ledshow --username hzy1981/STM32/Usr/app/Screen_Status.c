@@ -156,7 +156,7 @@ void Screen_Lightness_Proc(void)
    else
      Lightness = 100 - Lightness;
    Screen_Status.Lightness = Lightness;
-   //Set_OE_Duty()
+
    Set_OE_Duty_Polarity(Screen_Status.Lightness, Screen_Para.Scan_Para.OE_Polarity);  //…Ë÷√¡¡∂»
 }
 
