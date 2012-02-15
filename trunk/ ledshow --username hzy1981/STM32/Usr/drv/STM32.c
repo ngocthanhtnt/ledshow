@@ -857,7 +857,7 @@ void TIM4_Configuration(void)
 	/* TIM3 enable counter */
 	TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 
-    Set_OE_Duty_Polarity(50, 0);
+    Set_OE_Duty_Polarity(MAX_LIGHTNESS_LEVEL / 2, 0);
 
 }
 
@@ -1028,18 +1028,19 @@ void Set_Block_OE_En(INT8U Value)
 
 void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
 {
-  if(Duty > 100)
+
+  if(Duty >= MAX_LIGHTNESS_LEVEL)
   {
-    Duty = 100;
+    Duty = MAX_LIGHTNESS_LEVEL - 1;
     ASSERT_FAILED();
   }
  
   //TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设
 
-  if(Polarity EQ 0)
-    TIM4->CCR3 = TIM4->ARR * Duty / 100;
+  if(Polarity)
+    TIM4->CCR3 = TIM4->ARR * Duty / (MAX_LIGHTNESS_LEVEL - 1);
   else
-    TIM4->CCR3 = TIM4->ARR * (100 - Duty) / 100;
+    TIM4->CCR3 = TIM4->ARR * (MAX_LIGHTNESS_LEVEL - 1 - Duty) / (MAX_LIGHTNESS_LEVEL - 1);
 
   //TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 
