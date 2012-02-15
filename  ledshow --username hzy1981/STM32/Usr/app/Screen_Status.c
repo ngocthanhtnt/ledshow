@@ -150,11 +150,10 @@ void Screen_Lightness_Proc(void)
    INT8U Lightness;
 
    Lightness = Get_Cur_Time_Lightness(&Cur_Time); 
-   Lightness = 100 * Lightness / (MAX_LIGHTNESS_LEVEL - 1); //转化为百分数
-   if(Lightness >= 100)
-     Lightness = 0;
-   else
-     Lightness = 100 - Lightness;
+   //Lightness = 100 * Lightness / (MAX_LIGHTNESS_LEVEL - 1); //转化为百分数
+   if(Lightness >= MAX_LIGHTNESS_LEVEL)
+     Lightness = MAX_LIGHTNESS_LEVEL - 1;
+
    Screen_Status.Lightness = Lightness;
 
    Set_OE_Duty_Polarity(Screen_Status.Lightness, Screen_Para.Scan_Para.OE_Polarity);  //设置亮度
