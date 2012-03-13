@@ -9,6 +9,8 @@ QT       += core gui
 TARGET = QTPrj
 TEMPLATE = app
 LIBS += libqextserialport
+TRANSLATIONS += zh_CN.ts
+CODECFORTR = gb2312 #or gb2312 #DEFAULTCODEC = gb2312 #CODEC = gb2312
 
 SOURCES += main.cpp\
         mainwindow.cpp \
