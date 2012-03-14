@@ -6,6 +6,9 @@
 #include "..\Stm32\usr\app\Includes.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QDesktopServices>
+#include <QApplication>
+#include <QUrl>
 
 extern MainWindow *w;
 
@@ -631,6 +634,27 @@ void MainWindow::setupToolActions()
     menu->addAction(a);
 }
 
+void MainWindow::setupLanguageActions()
+{
+    //QToolBar *tb = new QToolBar(this);
+    //tb->setWindowTitle(tr("File Actions"));
+    //addToolBar(tb);
+
+    QMenu *menu = new QMenu(tr("语言"), this);
+    menuBar()->addMenu(menu);
+
+    QAction *a;
+
+    //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
+    a = new QAction(tr("简体中文"), this);
+    a->setPriority(QAction::LowPriority);
+    //a->setShortcut(QKeySequence::New);
+    //connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
+    //tb->addAction(a);
+    menu->addAction(a);
+
+}
+
 void MainWindow::setupHelpActions()
 {
     //QToolBar *tb = new QToolBar(this);
@@ -652,7 +676,7 @@ void MainWindow::setupHelpActions()
 
     a = new QAction(tr("帮助"), this);
     //a->setShortcut(QKeySequence::Open);
-    //connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
+    connect(a, SIGNAL(triggered()), this, SLOT(helpFileOpen()));
     //tb->addAction(a);
     menu->addAction(a);
 }
@@ -768,6 +792,17 @@ void MainWindow::fileNew()
     QMessageBox::warning(w, tr("提示"), tr("工程新建成功，请点击菜单\"添加-屏幕\"新建一个屏幕！"), tr("确定"));
 
 
+}
+
+void MainWindow::helpFileOpen() //打开帮助文件
+{
+    QString strUrl=QApplication::applicationDirPath () ;
+    strUrl=QString("file:///%1/mainhelp.chm").arg (strUrl);
+    QUrl qqq(strUrl);
+    QDesktopServices::openUrl(qqq);
+
+
+  //QDesktopServices::openUrl(QUrl("file:///C:/Documents and Settings/All Users/Desktop", QUrl::TolerantMode));
 }
 
 //打开文件
@@ -928,8 +963,9 @@ MainWindow::MainWindow(QWidget *parent)
     //setupViewActions();
     setupEditActions();
     setupCtrlActions();
-    //setupToolActions();
+    setupLanguageActions();
     setupHelpActions();
+
 
 
     /*
