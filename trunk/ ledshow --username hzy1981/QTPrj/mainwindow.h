@@ -63,6 +63,7 @@ private slots:
     void fileSave();
     void fileNew();
     void fileOpen();
+    void helpFileOpen();
     void settingsInit();
     void updateTreeWidget(QMdiSubWindow*);
 private:
@@ -76,7 +77,7 @@ private:
     void setupCtrlActions();
     void setupToolActions();
     void setupHelpActions();
-    //void settingsInit();
+    void setupLanguageActions();
 
     QMenu *ctrlMenu;
     QAction *actionScreen;

@@ -1160,6 +1160,8 @@ void CshowArea::paintEvent(QPaintEvent *)
     saveScreenPara(Screen_Para_Bak);
     saveProgPara(Prog_Para_Bak);
 
+    //screenPara.Base_Para.Color = Screen_Para.Base_Para.Color;//分区的颜色应该和屏幕颜色保持一致.修改屏幕参数时不会刷新分区颜色
+
     resetShowPara(geometry().width(), geometry().height(), screenPara.Base_Para.Color);
     Calc_Screen_Color_Num();
     painter.begin(this);
@@ -1483,8 +1485,8 @@ void CshowArea::paintEvent(QPaintEvent *)
             //INT8U Type = Prog_Status.File_Para[Area_No].Pic_Para.Border_Type;
 
             //S_Simple_Border_Data *p = Get_Simple_Border_Info(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
-            INT16U Border_Width = this->filePara.Pic_Para.Border_Width;//p->Width;//Get_Area_Border_Width(Area_No);
-            INT16U Border_Height = this->filePara.Pic_Para.Border_Height;//Get_Area_Border_Height(Area_No);
+            //INT16U Border_Width = this->filePara.Pic_Para.Border_Width;//p->Width;//Get_Area_Border_Width(Area_No);
+            //INT16U Border_Height = this->filePara.Pic_Para.Border_Height;//Get_Area_Border_Height(Area_No);
             //INT8U *pBorder_Data = ;//(INT8U *)(p->Data);
 
             Draw_Border(&Show_Data, 0, this->borderData,0,1);

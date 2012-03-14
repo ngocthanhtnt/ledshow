@@ -2782,6 +2782,10 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
         //重新修改显示窗口大小
         QMdiSubWindow * subWin =w->mdiArea->currentSubWindow();
         w->screenArea->setFixedSize(widthEdit->value(), heightEdit->value());
+
+        for(int i = 0; i <MAX_AREA_NUM ;i ++)
+          (*(w->screenArea->pArea[i])).screenPara.Base_Para.Color = Screen_Para.Base_Para.Color;
+
         subWin->setFixedSize(subWin->sizeHint());
         //清除所有子项
         QTreeWidgetItem *screenItem = w->screenArea->screenItem;
