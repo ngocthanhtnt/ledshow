@@ -267,7 +267,7 @@ EXT void UART2_Init(void); //´®¿Ú2³õÊ¼»¯
 EXT void UART3_Init(void);
 EXT void Com_Send_Byte(INT8U Ch, INT8U Data);
 EXT void Unselect_SPI_Device(void);
-EXT void Self_Test(void);
+EXT INT16U Self_Test(void);
 EXT void IWDG_Init(void);
 EXT INT8U Chk_Test_Key_Down(void);
 EXT INT8U Chk_Test_Key_Up(void);

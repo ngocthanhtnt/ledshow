@@ -70,7 +70,7 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
    INT16U Radius;
    INT16U Width,Height;
    S_Point Point;
-   INT16S Angle;
+   //INT16S Angle;
 
    //return;
 

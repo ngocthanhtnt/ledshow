@@ -21,6 +21,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbh_usr.h"
+#include "UDisk_Proc.h"
 
 #define UDISK_INPUT_FLAG 0xAA
 S_Int8U UDisk_Input_Flag = {CHK_BYTE, 0x00, CHK_BYTE};
