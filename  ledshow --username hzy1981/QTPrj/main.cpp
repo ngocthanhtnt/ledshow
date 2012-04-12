@@ -5,6 +5,7 @@
 #include <QDir>
 #include "mainwindow.h"
 #include "textedit.h"
+#include<Winbase.h>
 
 MainWindow *w;
 MainObj *mainObj;
@@ -133,6 +134,14 @@ void resetCardtoCardParaFile()
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    if(GetLastError() == ERROR_ALREADY_EXISTS)
+    {
+        QString _title = QObject::tr("Information");
+        QString _Information = QObject::tr("System has been launch!");
+        //QMessageBox::information (NULL, _title, _Information);
+        return 0;
+    }
 
     resetCardtoCardParaFile();
 

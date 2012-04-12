@@ -1146,16 +1146,20 @@ INT8U Chk_Test_Key_Down(void)
 }
 
 //自身硬件的检测
-void Self_Test(void)
+//返回错误代码,0表示没有错误
+//第0位,存储器错误
+//第1位,时钟错误
+//第2位,
+INT16U Self_Test(void)
 {
   INT32U Data = 0x55AA5AA5;
   INT8U Re = 1;
-  INT8U ErrFlag = 0;
+  INT16U ErrFlag = 0;
   S_Time TempTime,TempTime1;
 
    //当前在工厂状态且按下测试键则进入自检状态
   if(!(Chk_Test_Key_Down() && Chk_JP_Status() EQ FAC_STATUS))
-    return;
+    return 0;
 
   debug("-----------系统自检开始---------------");
 #if QT_EN EQ 0
@@ -1207,7 +1211,7 @@ void Self_Test(void)
 	Test_LED_Flash(2, 500);
   }
   //-----------------------------------------
-
+/*
   //---------对485和232的测试---------------
   Screen_Status.Rcv_Posi = 0;
   Com_Send_Byte(CH_COM, 0xA5);
@@ -1226,13 +1230,15 @@ void Self_Test(void)
 	Test_LED_Flash(3, 500);
   }
   //---------------------------------------
-
+*/
   if(Re EQ 0)
 	debug("外围器件自检失败！");
   else
 	debug("外围器件自检成功！");
 
 #endif
+
+  return ErrFlag;
 }
 
  //工厂状态自检
