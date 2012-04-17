@@ -679,8 +679,8 @@ CsmLineCombo::CsmLineCombo(QWidget *parent):QComboBox(parent)
     //editGroup = new QGroupBox(this);
     //smLineCombo = new QComboBox(this);
 
-    addItem(tr("单行字幕"));
-    addItem(tr("多行文本"));
+    addItem(tr("单行显示"));
+    addItem(tr("多行显示"));
 
     //hLayout = new QHBoxLayout(this);
     //hLayout->addWidget(smLineCombo);

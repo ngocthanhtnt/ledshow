@@ -670,7 +670,7 @@ void MainWindow::setupHelpActions()
     a = new QAction(tr("关于"), this);
     a->setPriority(QAction::LowPriority);
     //a->setShortcut(QKeySequence::New);
-    //connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
+    connect(a, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
     //tb->addAction(a);
     menu->addAction(a);
 
@@ -791,6 +791,12 @@ void MainWindow::fileNew()
     //progManage->newArea();
     QMessageBox::warning(w, tr("提示"), tr("工程新建成功，请点击菜单\"添加-屏幕\"新建一个屏幕！"), tr("确定"));
 
+
+}
+
+void MainWindow::showAboutDialog()
+{
+    QMessageBox::information(w, tr("关于"), tr("LED设计师 2012\r\n\r\n\r\n编译时间  ")+QString(__TIME__) + QString(" ") + QString(__DATE__), tr("确定"));
 
 }
 
