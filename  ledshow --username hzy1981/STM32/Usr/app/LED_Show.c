@@ -1352,28 +1352,32 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 
     //X1 = Prog_Para.Area[Area_No].X + pPoint1->X; //目标数据在整体屏幕中的起始位置
     //Y1 = Prog_Para.Area[Area_No].Y + pPoint1->Y;
-
+/*
     if((X0 % 8) > (X1 % 8)) //源数据需要左移
         Diff = (X0 % 8) - (X1 % 8);
     else
         Diff = (X1 % 8) - (X0 % 8);
 
+    //(8 - (X1 % 8))表示起始字节的位数，((X1 + X_Len - 1) % 8) + 1)表示末字节的位数
     if(X_Len > (8 - (X1 % 8)) + (((X1 + X_Len - 1) % 8) + 1))
         Len = (X_Len - (8 - (X1 % 8)) - (((X1 + X_Len - 1) % 8) + 1))/8; //每行的字节数，除去头和尾的字节,头和尾需要特殊处理
     else
       Len = 0;
-
+*/
 	//STOP_SCAN_TIMER();
 	//LED_Scan_One_Row();
     //qDebug("len = %d",Len);
     Color_Num = Screen_Status.Color_Num;
+
+    if(pSrc_Buf != pDst_Buf || (X0 >= X1 && Y0 >= Y1)) //如果是不同显示缓冲间拷贝或者同一缓冲区源在目标右上角，则从左向右，从上向下复制
+    {
     if((X0 % 8) >= (X1 % 8)) //源数据需要左移
     {
         for(i = 0; i < Y_Len; i ++)
         {
 		    //STOP_SCAN_TIMER();
             
-			Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y + i); //源点索引
+            Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y + i); //源点索引
             Index1 = Get_Area_Point_Index(Area_No, pPoint1->X, pPoint1->Y + i); //目标点索引
 
             pSrc = pSrc_Buf->Color_Data + (Index0 >> 3) * Color_Num;
@@ -1512,6 +1516,481 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
 		
         }
     }
+   }
+   else if(X0 <= X1 && Y0 >= Y1) //源在目标左上，则从右向做，从上向下复制
+    {
+       if((X0 % 8) >= (X1 % 8)) //源数据需要左移
+       {
+           for(i = 0; i < Y_Len; i ++)
+           {
+                       //STOP_SCAN_TIMER();
+
+               Index0 = Get_Area_Point_Index(Area_No, pPoint0->X + X_Len - 1, pPoint0->Y + i); //源点索引
+               Index1 = Get_Area_Point_Index(Area_No, pPoint1->X + X_Len - 1, pPoint1->Y + i); //目标点索引
+
+               pSrc = pSrc_Buf->Color_Data + (Index0 >> 3) * Color_Num;
+               pDst = pDst_Buf->Color_Data + (Index1 >> 3) * Color_Num;
+
+               if(((X0 + X_Len - 1) % 8) < ((X1 + X_Len - 1) % 8))
+                 pSrc -= Color_Num;
+
+               //最后一个字节特殊处理
+               //if((X1 + X_Len - 1) /8 > X1 / 8)
+               {
+                   //pDst++;
+                   //pSrc++;
+
+                 //Data = (*pSrc) & Bit_Mask[((X0 + X_Len - 1) & 0x07) + 1];
+                 Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
+                 Data = ((*pSrc) >> (Diff)) + (*(pSrc + Color_Num) << (8 - Diff));
+                 *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
+
+                 if(Color_Num > 1)
+                 {
+                     //pSrc++;
+                     //pDst++;
+
+                     Data = ((*(pSrc + 1)) >> (Diff)) + (*(pSrc + 1 + Color_Num) << (8 - Diff));
+                     *(pDst + 1) = ((*(pDst + 1)) & ~Mask)  + (Data & Mask);
+                 }
+               }
+
+               for(j = 0; j < Len; j ++)
+               {
+                   pDst -= Color_Num;
+                   pSrc -= Color_Num;
+
+                   Data = (*pSrc >> Diff) + (*(pSrc + Color_Num) << (8 - Diff));
+                   *pDst = Data;
+
+
+                   if(Color_Num > 1)
+                   {
+                       //pDst++;
+                       //pSrc++;
+
+                       Data = ((*(pSrc + 1)) >> (Diff)) + (*(pSrc + 1 + Color_Num) << (8 - Diff));
+                       *(pDst + 1) = Data;
+                   }
+               }
+
+               if((X1 + X_Len - 1) /8 > X1 / 8)
+               {
+               pDst -= Color_Num;
+               pSrc -= Color_Num;
+
+               //第一个字节特殊处理
+               Mask = Bit_Mask[X1 & 0x07];
+               if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
+                 Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
+
+               Data = (*pSrc >> Diff) +  (*(pSrc + Color_Num) << (8 - Diff));
+               *pDst = (*pDst & Mask)  + (Data & ~Mask); //保留*pDst的低位
+
+               if(Color_Num > 1)
+               {
+                   //pSrc++;
+                   //pDst++;
+
+                   Data = ((*(pSrc + 1)) >> (Diff)) + (*(pSrc + 1 + Color_Num) << (8 - Diff));
+                   *(pDst + 1) = ((*(pDst + 1)) & ~Mask)  + (Data & Mask);
+               }
+           }
+                           //START_SCAN_TIMER();
+           }
+
+       }
+       else
+       {
+
+           for(i = 0; i < Y_Len; i ++)
+           {
+
+
+               Index0 = Get_Area_Point_Index(Area_No, pPoint0->X + X_Len - 1, pPoint0->Y + i); //源点索引
+               Index1 = Get_Area_Point_Index(Area_No, pPoint1->X + X_Len - 1, pPoint1->Y + i); //目标点索引
+
+               pSrc = pSrc_Buf->Color_Data + (Index0 >> 3) * Color_Num;
+               pDst = pDst_Buf->Color_Data + (Index1 >> 3) * Color_Num;
+
+               if(((X0 + X_Len - 1) % 8) > ((X1 + X_Len - 1) % 8))
+                 pSrc += Color_Num;
+
+               //最后一个字节特殊处理
+               //if((X1 + X_Len - 1) /8 > X1 / 8)
+               {
+                 //pDst++;
+                 //pSrc++;
+
+                 Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
+
+                 Data = ((*(pSrc - Color_Num)) >> (8 -Diff)) + (*pSrc << Diff);
+                 *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
+
+                 if(Color_Num > 1)
+                 {
+                     //pDst++;
+                     //pSrc++;
+
+                     Data = ((*(pSrc + 1 - Color_Num)) >> (8 -Diff)) + (*(pSrc + 1) << Diff);
+                     *(pDst + 1) = ((*(pDst + 1)) & ~Mask)  + (Data & Mask);
+                 }
+               }
+
+               for(j = 0; j < Len; j ++)
+               {
+                   pDst -= Color_Num;
+                   pSrc -= Color_Num;
+
+                   Data =((*(pSrc - Color_Num)) >> (8 - Diff)) + (*pSrc << Diff);
+                   *pDst = Data;
+
+                   if(Color_Num > 1)
+                   {
+                       //pDst++;
+                       //pSrc++;
+
+                      Data =((*(pSrc + 1 - Color_Num)) >> (8 - Diff)) + (*(pSrc + 1) << Diff);
+                      *(pDst + 1) = Data;
+                   }
+               }
+
+               if((X1 + X_Len - 1) /8 > X1 / 8)
+               {
+               pDst -= Color_Num;
+               pSrc -= Color_Num;
+
+               //第一个字节特殊处理
+               Mask = Bit_Mask[X1 & 0x07];
+               if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
+                 Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
+
+               Data = (*pSrc << Diff);
+               *pDst = (*pDst & Mask)  + (Data & ~Mask);
+
+               if(Color_Num > 1)
+               {
+                   //pDst++;
+                   //pSrc++;
+
+                   Data = (*(pSrc + 1) << Diff);
+                   *(pDst + 1) = (*(pDst + 1) & Mask)  + (Data & ~Mask);
+               }
+           }
+           }
+       }
+   }
+   else if(X0 >= X1 && Y0 < Y1) //如果是不同显示缓冲间拷贝或者同一缓冲区源在目标右上角，则从左向右，从上向下复制
+   {
+       if((X0 % 8) >= (X1 % 8)) //源数据需要左移
+       {
+           for(i = 0; i < Y_Len; i ++)
+           {
+                       //STOP_SCAN_TIMER();
+
+               Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y + Y_Len - 1 - i); //源点索引
+               Index1 = Get_Area_Point_Index(Area_No, pPoint1->X, pPoint1->Y + Y_Len - 1 - i); //目标点索引
+
+               pSrc = pSrc_Buf->Color_Data + (Index0 >> 3) * Color_Num;
+               pDst = pDst_Buf->Color_Data + (Index1 >> 3) * Color_Num;
+
+               //第一个字节特殊处理
+               Mask = Bit_Mask[X1 & 0x07];
+               if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
+                 Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
+
+               Data = (*pSrc >> Diff) +  (*(pSrc + Color_Num) << (8 - Diff));
+               *pDst = (*pDst & Mask)  + (Data & ~Mask); //保留*pDst的低位
+
+               if(Color_Num > 1)
+               {
+                   pSrc++;
+                   pDst++;
+
+                   Data = (*pSrc >> Diff) +  (*(pSrc + Color_Num) << (8 - Diff));
+                   *pDst = (*pDst & Mask)  + (Data & ~Mask); //保留*pDst的低位
+               }
+
+               for(j = 0; j < Len; j ++)
+               {
+                   pDst++;
+                   pSrc++;
+
+                   Data = (*pSrc >> Diff) + (*(pSrc + Color_Num) << (8 - Diff));
+                   *pDst = Data;
+
+
+                   if(Color_Num > 1)
+                   {
+                       pDst++;
+                       pSrc++;
+
+                       Data = (*pSrc >> Diff) + (*(pSrc + Color_Num) << (8 - Diff));
+                       *pDst = Data;
+                   }
+               }
+
+               //最后一个字节特殊处理
+               if((X1 + X_Len - 1) /8 > X1 / 8)
+               {
+                   pDst++;
+                   pSrc++;
+
+                 //Data = (*pSrc) & Bit_Mask[((X0 + X_Len - 1) & 0x07) + 1];
+                 Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
+                 Data = ((*pSrc) >> (Diff)) + (*(pSrc + Color_Num) << (8 - Diff));
+                 *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
+
+                 if(Color_Num > 1)
+                 {
+                     pSrc++;
+                     pDst++;
+
+                     Data = ((*pSrc) >> (Diff)) + (*(pSrc + Color_Num) << (8 - Diff));
+                     *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
+                 }
+               }
+
+                           //START_SCAN_TIMER();
+           }
+
+       }
+       else
+       {
+
+           for(i = 0; i < Y_Len; i ++)
+           {
+
+
+               Index0 = Get_Area_Point_Index(Area_No, pPoint0->X, pPoint0->Y + i); //源点索引
+               Index1 = Get_Area_Point_Index(Area_No, pPoint1->X, pPoint1->Y + i); //目标点索引
+
+               pSrc = pSrc_Buf->Color_Data + (Index0 >> 3) * Color_Num;
+               pDst = pDst_Buf->Color_Data + (Index1 >> 3) * Color_Num;
+
+               //第一个字节特殊处理
+               Mask = Bit_Mask[X1 & 0x07];
+               if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
+                 Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
+
+               Data = (*pSrc << Diff);
+               *pDst = (*pDst & Mask)  + (Data & ~Mask);
+
+               if(Color_Num > 1)
+               {
+                   pDst++;
+                   pSrc++;
+
+                   Data = (*pSrc << Diff);
+                   *pDst = (*pDst & Mask)  + (Data & ~Mask);
+               }
+
+               for(j = 0; j < Len; j ++)
+               {
+                   pDst++;
+                   pSrc++;
+
+                   Data =((*(pSrc - Color_Num)) >> (8 - Diff)) + (*pSrc << Diff);
+                   *pDst = Data;
+
+                   if(Color_Num > 1)
+                   {
+                       pDst++;
+                       pSrc++;
+
+                      Data =((*(pSrc - Color_Num)) >> (8 - Diff)) + (*pSrc << Diff);
+                      *pDst = Data;
+                   }
+               }
+
+               //最后一个字节特殊处理
+               if((X1 + X_Len - 1) /8 > X1 / 8)
+               {
+                 pDst++;
+                 pSrc++;
+
+                 Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
+
+                 Data = ((*(pSrc - Color_Num)) >> (8 -Diff)) + (*pSrc << Diff);
+                 *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
+
+                 if(Color_Num > 1)
+                 {
+                     pDst++;
+                     pSrc++;
+
+                     Data = ((*(pSrc - Color_Num)) >> (8 -Diff)) + (*pSrc << Diff);
+                     *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
+                 }
+               }
+
+
+           }
+       }
+      }
+   else if(X0 <= X1 && Y0 < Y1) //源在目标左上，则从右向做，从上向下复制
+    {
+       if((X0 % 8) >= (X1 % 8)) //源数据需要左移
+       {
+           for(i = 0; i < Y_Len; i ++)
+           {
+                       //STOP_SCAN_TIMER();
+
+               Index0 = Get_Area_Point_Index(Area_No, pPoint0->X + X_Len - 1, pPoint0->Y + Y_Len - 1 - i); //源点索引
+               Index1 = Get_Area_Point_Index(Area_No, pPoint1->X + X_Len - 1, pPoint1->Y + Y_Len - 1 - i); //目标点索引
+
+               pSrc = pSrc_Buf->Color_Data + (Index0 >> 3) * Color_Num;
+               pDst = pDst_Buf->Color_Data + (Index1 >> 3) * Color_Num;
+
+               if(((X0 + X_Len - 1) % 8) < ((X1 + X_Len - 1) % 8))
+                 pSrc -= Color_Num;
+
+               //最后一个字节特殊处理
+               //if((X1 + X_Len - 1) /8 > X1 / 8)
+               {
+                   //pDst++;
+                   //pSrc++;
+
+                 //Data = (*pSrc) & Bit_Mask[((X0 + X_Len - 1) & 0x07) + 1];
+                 Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
+                 Data = ((*pSrc) >> (Diff)) + (*(pSrc + Color_Num) << (8 - Diff));
+                 *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
+
+                 if(Color_Num > 1)
+                 {
+                     //pSrc++;
+                     //pDst++;
+
+                     Data = ((*(pSrc + 1)) >> (Diff)) + (*(pSrc + 1 + Color_Num) << (8 - Diff));
+                     *(pDst + 1) = ((*(pDst + 1)) & ~Mask)  + (Data & Mask);
+                 }
+               }
+
+               for(j = 0; j < Len; j ++)
+               {
+                   pDst -= Color_Num;
+                   pSrc -= Color_Num;
+
+                   Data = (*pSrc >> Diff) + (*(pSrc + Color_Num) << (8 - Diff));
+                   *pDst = Data;
+
+
+                   if(Color_Num > 1)
+                   {
+                       //pDst++;
+                       //pSrc++;
+
+                       Data = ((*(pSrc + 1)) >> (Diff)) + (*(pSrc + 1 + Color_Num) << (8 - Diff));
+                       *(pDst + 1) = Data;
+                   }
+               }
+
+               if((X1 + X_Len - 1) /8 > X1 / 8)
+               {
+               pDst -= Color_Num;
+               pSrc -= Color_Num;
+
+               //第一个字节特殊处理
+               Mask = Bit_Mask[X1 & 0x07];
+               if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
+                 Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
+
+               Data = (*pSrc >> Diff) +  (*(pSrc + Color_Num) << (8 - Diff));
+               *pDst = (*pDst & Mask)  + (Data & ~Mask); //保留*pDst的低位
+
+               if(Color_Num > 1)
+               {
+                   //pSrc++;
+                   //pDst++;
+
+                   Data = ((*(pSrc + 1)) >> (Diff)) + (*(pSrc + 1 + Color_Num) << (8 - Diff));
+                   *(pDst + 1) = ((*(pDst + 1)) & ~Mask)  + (Data & Mask);
+               }
+           }
+                           //START_SCAN_TIMER();
+           }
+
+       }
+       else
+       {
+
+           for(i = 0; i < Y_Len; i ++)
+           {
+
+
+               Index0 = Get_Area_Point_Index(Area_No, pPoint0->X + X_Len - 1, pPoint0->Y + i); //源点索引
+               Index1 = Get_Area_Point_Index(Area_No, pPoint1->X + X_Len - 1, pPoint1->Y + i); //目标点索引
+
+               pSrc = pSrc_Buf->Color_Data + (Index0 >> 3) * Color_Num;
+               pDst = pDst_Buf->Color_Data + (Index1 >> 3) * Color_Num;
+
+               if(((X0 + X_Len - 1) % 8) > ((X1 + X_Len - 1) % 8))
+                 pSrc += Color_Num;
+
+               //最后一个字节特殊处理
+               //if((X1 + X_Len - 1) /8 > X1 / 8)
+               {
+                 //pDst++;
+                 //pSrc++;
+
+                 Mask = Bit_Mask[((X1 + X_Len - 1) & 0x07) + 1];
+
+                 Data = ((*(pSrc - Color_Num)) >> (8 -Diff)) + (*pSrc << Diff);
+                 *pDst = ((*pDst) & ~Mask)  + (Data & Mask);
+
+                 if(Color_Num > 1)
+                 {
+                     //pDst++;
+                     //pSrc++;
+
+                     Data = ((*(pSrc + 1 - Color_Num)) >> (8 -Diff)) + (*(pSrc + 1) << Diff);
+                     *(pDst + 1) = ((*(pDst + 1)) & ~Mask)  + (Data & Mask);
+                 }
+               }
+
+               for(j = 0; j < Len; j ++)
+               {
+                   pDst -= Color_Num;
+                   pSrc -= Color_Num;
+
+                   Data =((*(pSrc - Color_Num)) >> (8 - Diff)) + (*pSrc << Diff);
+                   *pDst = Data;
+
+                   if(Color_Num > 1)
+                   {
+                       //pDst++;
+                       //pSrc++;
+
+                      Data =((*(pSrc + 1 - Color_Num)) >> (8 - Diff)) + (*(pSrc + 1) << Diff);
+                      *(pDst + 1) = Data;
+                   }
+               }
+
+               if((X1 + X_Len - 1) /8 > X1 / 8)
+               {
+               pDst -= Color_Num;
+               pSrc -= Color_Num;
+
+               //第一个字节特殊处理
+               Mask = Bit_Mask[X1 & 0x07];
+               if((X1 + X_Len - 1) /8 <= X1 / 8) //如果目标数据在一个字节宽度内，则应该
+                 Mask = Bit_Mask[X1 & 0x07] + (Bit_Mask[7 - ((X1 + X_Len - 1) & 0x07)] << (((X1 + X_Len - 1) & 0x07) + 1));// Data = ((Data << (7 - ((X0 + X_Len -1) % 8))) >> (7 - ((X0 + X_Len -1) % 8))) >> Diff;
+
+               Data = (*pSrc << Diff);
+               *pDst = (*pDst & Mask)  + (Data & ~Mask);
+
+               if(Color_Num > 1)
+               {
+                   //pDst++;
+                   //pSrc++;
+
+                   Data = (*(pSrc + 1) << Diff);
+                   *(pDst + 1) = (*(pDst + 1) & Mask)  + (Data & ~Mask);
+               }
+           }
+           }
+       }
+   }
 	//LED_Scan_One_Row();
 	//START_SCAN_TIMER();
      //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
@@ -2416,7 +2895,7 @@ void Move_Right_Continuous(INT8U Area_No)
   if(Prog_Status.Area_Status[Area_No].Step + MOVE_STEP <= Prog_Status.Area_Status[Area_No].Max_Step)
     Copy_Filled_Rect(&Show_Data, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len - Temp.X, Prog_Para.Area[Area_No].Y_Len,\
                      &Show_Data, &Temp1, REV_FLAG | SCAN_DIS_FLAG);
-    
+
   Move_Right(Area_No);
 }
 

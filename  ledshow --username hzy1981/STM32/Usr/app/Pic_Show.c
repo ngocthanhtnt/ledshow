@@ -23,6 +23,15 @@ const S_Mode_Func In_Mode_Func[]=
 #endif    
   } //连续左移
 #endif
+  /*
+#if IN_SPEC_EFFECT_NUM > 1
+  ,{&Move_Right_Continuous, H_MODE, 1
+#if QT_EN
+   ,"连续右移"
+#endif
+  } //连续右移
+#endif
+  */
 #if IN_SPEC_EFFECT_NUM > 2  
   ,{&Move_Up_Continuous, V_MODE, 1
 #if QT_EN
@@ -30,6 +39,15 @@ const S_Mode_Func In_Mode_Func[]=
 #endif    
   }//连续上移
 #endif
+/*
+#if IN_SPEC_EFFECT_NUM > 1
+  ,{&Move_Down_Continuous, V_MODE, 1
+#if QT_EN
+   ,"连续下移"
+#endif
+  } //连续下移
+#endif
+ */
   //----------------
 #if IN_SPEC_EFFECT_NUM > 3
   ,{&Move_Left_Continuous, H_MODE, 1
