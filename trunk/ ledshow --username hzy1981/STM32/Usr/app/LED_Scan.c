@@ -1111,7 +1111,7 @@ void LED_Scan_One_Row(void)
       Screen_Status.Scan_Row = 0;
 	
 	//重新打开OE
-	Set_OE_Duty_Polarity(Screen_Status.Lightness, Screen_Para.Scan_Para.OE_Polarity);
+	Set_OE_Duty_Polarity(Screen_Status.Lightness + 1, Screen_Para.Scan_Para.OE_Polarity); //等级为0
 
     //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
 	Flag = 0; 
