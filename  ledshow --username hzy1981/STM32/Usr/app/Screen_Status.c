@@ -156,7 +156,7 @@ void Screen_Lightness_Proc(void)
 
    Screen_Status.Lightness = Lightness;
 
-   Set_OE_Duty_Polarity(Screen_Status.Lightness, Screen_Para.Scan_Para.OE_Polarity);  //设置亮度
+   Set_OE_Duty_Polarity(Screen_Status.Lightness + 1, Screen_Para.Scan_Para.OE_Polarity);  //设置亮度, 等级为0时有亮度，因此+1
 }
 
 //开关机控制

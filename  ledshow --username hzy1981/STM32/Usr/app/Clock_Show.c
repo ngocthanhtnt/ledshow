@@ -138,7 +138,7 @@ void Show_Clock(S_Show_Data *pDst_Buf, INT8U Area_No, S_Time *pTime, S_Clock_Par
    //----------至此0-11点所有的点都已经绘制完成------------
    //时钟
    if(pClock_Para->Hour_Line_Width)
-   Fill_Clock_Line(pDst_Buf, Area_No, &Point, 90 - 360 * (pTime->Time[T_HOUR] % 12) / 12, Radius * 8 / 10,\
+   Fill_Clock_Line(pDst_Buf, Area_No, &Point, 90 - (360 * ((pTime->Time[T_HOUR] % 12) * 60 + pTime->Time[T_MIN]) / 720), Radius * 8 / 10,\
                    pClock_Para->Hour_Line_Width, pClock_Para->Hour_Line_Color);
    //分钟
    if(pClock_Para->Min_Line_Width)

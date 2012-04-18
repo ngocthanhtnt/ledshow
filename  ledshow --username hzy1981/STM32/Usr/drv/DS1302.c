@@ -169,7 +169,7 @@ void DS1302_Init(void)
 
   RecByte_1302(RdMulti,8,Temp); //读时间数据
   WrCmd(WrEnDisCmd,WrEnDat);  //写允许 
-
+  Delay_us(1);
   WrCmd(WrCharge, 0x00); //关闭涓流充电
   if((Temp[0] & 0x80 > 0))  //秒数据
   { 

@@ -1029,18 +1029,18 @@ void Set_Block_OE_En(INT8U Value)
 void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity)
 {
 
-  if(Duty >= MAX_LIGHTNESS_LEVEL)
+  if(Duty > MAX_LIGHTNESS_LEVEL)
   {
-    Duty = MAX_LIGHTNESS_LEVEL - 1;
+    Duty = MAX_LIGHTNESS_LEVEL;
     ASSERT_FAILED();
   }
  
   //TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设
 
-  if(Polarity)
-    TIM4->CCR3 = TIM4->ARR * Duty / (MAX_LIGHTNESS_LEVEL - 1);
+  if(Polarity EQ 0)
+    TIM4->CCR3 = TIM4->ARR * Duty / MAX_LIGHTNESS_LEVEL;
   else
-    TIM4->CCR3 = TIM4->ARR * (MAX_LIGHTNESS_LEVEL - 1 - Duty) / (MAX_LIGHTNESS_LEVEL - 1);
+    TIM4->CCR3 = TIM4->ARR * (MAX_LIGHTNESS_LEVEL - Duty) / MAX_LIGHTNESS_LEVEL;
 
   //TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 
