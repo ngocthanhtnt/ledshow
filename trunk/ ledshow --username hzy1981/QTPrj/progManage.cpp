@@ -113,7 +113,7 @@ CprogManage:: CprogManage(QWidget *parent):QDockWidget(tr("节目管理"), parent)
     //      this, SLOT(clickItem(QTreeWidgetItem *, int)));
   setWidget(treeWidget);
 
-  this->setFeatures(QDockWidget::NoDockWidgetFeatures);
+  setFeatures(QDockWidget::NoDockWidgetFeatures);
 
   //previewWin = new QMainWindow(w);
   //previewArea =  new CscreenArea;
