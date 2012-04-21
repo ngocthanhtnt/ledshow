@@ -62,6 +62,9 @@ int main(void)
   __set_MSP((INT32U)(&Main_Stack.Stack[MAIN_STACK_SIZE - 1])); //修改为人工堆栈方式
 
   Ram_Init();
+
+  //IWDG_Init();
+
   Hardware_Init();
 
   OS_Debug_Print("----------system start----------");

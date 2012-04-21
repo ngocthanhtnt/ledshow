@@ -192,8 +192,6 @@ void Set_Block_Latch(INT8U Value)
 
 void Hardware_Init(void)
 {
-  IWDG_Init();
-
   RCC_Configuration();
 
   SysTick_Configuration();

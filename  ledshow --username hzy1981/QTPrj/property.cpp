@@ -31,6 +31,8 @@ Cproperty::Cproperty(QWidget *parent):QDockWidget(parent)
     docWidget->setLayout(hLayout);
     setWidget(docWidget);
     setWindowTitle(tr(" Ù–‘±‡º≠"));
+
+    setFeatures(QDockWidget::NoDockWidgetFeatures);
 /*
     //0
     screenProperty = new CscreenProperty(stackedWidget);
