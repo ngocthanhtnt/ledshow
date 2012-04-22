@@ -58,6 +58,7 @@ void Chk_Main_Stack(void)
   //每分钟打印一次堆栈大小
   if(Sec != Pub_Timer.Sec)
   {
+    Sec = Pub_Timer.Sec;
     Sec_Counts ++;
 	  
     if(Sec_Counts >= 60)
