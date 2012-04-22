@@ -304,6 +304,9 @@ CMdiSubWindow * _newScreen(QString name, int x, int y, INT16U width, INT16U heig
 
     //--------------
     CMdiSubWindow *subWin = new CMdiSubWindow;
+
+    subWin->setWindowIcon(getTypeIcon(SCREEN_PROPERTY));
+
     w->screenArea =  new CscreenArea(subWin, width, height, color);
 
     w->screenArea->screenPara.Base_Para.Width = width;
@@ -314,7 +317,9 @@ CMdiSubWindow * _newScreen(QString name, int x, int y, INT16U width, INT16U heig
         w->screenArea->pArea[i]->screenPara.Base_Para.Color = color;
     //w->screenArea->setGeometry(10,10,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34);
     subWin->setWidget(w->screenArea);
-    subWin->setAttribute(Qt::WA_DeleteOnClose);
+    //subWin->setAttribute(Qt::WA_DeleteOnClose);
+    //subWin->setWindowFlags(Qt::WindowMinimizeButtonHint);
+
     w->mdiArea->addSubWindow(subWin);
     subWin->setWindowTitle(name);
     //subWin->setGeometry(x,y,width,height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
@@ -322,6 +327,9 @@ CMdiSubWindow * _newScreen(QString name, int x, int y, INT16U width, INT16U heig
     subWin->move(x,y);
     //subWin->setFixedSize(subWin->size());
     subWin->setFixedSize(subWin->sizeHint());
+    subWin->setWindowFlags(subWin->windowFlags() &~ (Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint));
+
+    //subWin->setSystemMenu(0); //此调用可以删除弹出菜单，但不知有没有副作用
     subWin->show();
     return subWin;
 }

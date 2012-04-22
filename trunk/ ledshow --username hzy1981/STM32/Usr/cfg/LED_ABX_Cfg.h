@@ -73,15 +73,25 @@
 #define BUILD_SCAN_DATA_INDEX_EN 0 //构建扫描数据索引使能
 #define SCAN_DATA_MODE SCAN_SOFT_MODE0 //0表示软件扫描方式，1表示硬件扫描方式
 
+#define CLOCK_EN       0 //是否有时钟功能
+
+#if CLOCK_EN
+#define CLOCK_SHOW_EN  1 //表盘显示使能
+#define TIME_SHOW_EN   1 //时间显示使能
+#define TIMER_SHOW_EN  1 //定时显示使能
+#define LUN_SHOW_EN    0 //农历显示使能
+#else
+#define CLOCK_SHOW_EN  0 //表盘显示使能
+#define TIME_SHOW_EN   0 //时间显示使能
+#define TIMER_SHOW_EN  0 //定时显示使能
+#define LUN_SHOW_EN    0 //农历显示使能
+#endif 
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
-#define CLOCK_SHOW_EN  1 //表盘显示使能
-#define LUN_SHOW_EN    0 //农历显示使能
 #define TEMP_SHOW_EN   0 //温度显示使能
-#define TIME_SHOW_EN   1 //时间显示使能
-#define TIMER_SHOW_EN  1 //定时显示使能 
 #define HUMIDITY_SHOW_EN 0 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
+#define TEXT_SHOW_EN   0
 
 #define USE_SPI_FLASH //串行SPIFlash
 //#define USE_NOR_FLASH //并行NORFlash

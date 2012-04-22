@@ -753,6 +753,7 @@ void Clr_Prog_Status(void)
 //返回1表示结束了，0表示还没有结束
 INT8U _Check_Prog_End(void)
 {
+#if CLOCK_EN
   if(Check_Prog_Play_Time() EQ 0)
   {
      debug("prog %d now not play time, end", Prog_Status.Play_Status.Prog_No);
@@ -788,6 +789,15 @@ INT8U _Check_Prog_End(void)
     ASSERT_FAILED();
     return 1;
   }
+#else //没有时钟情况下，按次数模式来
+	if(Prog_Status.Play_Status.Counts >= Prog_Para.Counts)
+	{
+	  debug("prog %d play counts %d, end", Prog_Status.Play_Status.Prog_No, Prog_Status.Play_Status.Counts);
+	  return 1;
+	}
+	else
+	  return 0;
+#endif
 }
 
 //检查节目是否播放结束
@@ -812,7 +822,7 @@ return _Check_Prog_End();
 //检查当前时间是否在节目播放允许时间内，是则返回1，否则返回0
 INT8U Check_Prog_Play_Time(void)
 {
-  //INT8U i;//Re = 1;
+#if CLOCK_EN
   INT8U Temp[20];
   memset(Temp, 0xFF, sizeof(Temp));
 
@@ -849,6 +859,9 @@ INT8U Check_Prog_Play_Time(void)
   }
 
   return 1;
+#else
+  return 1;
+#endif
 }
 
 /*
@@ -930,9 +943,9 @@ void Check_Update_Program_Para(void)
   INT8U Re;
   INT8U i,Prog_No;//,Count = 0;
   INT16U Len;
-
+#if CLOCK_EN
   static S_Int8U Min = {CHK_BYTE, 0xFF, CHK_BYTE};
-   
+#endif   
   Re = CHK_HT(Prog_Status);
   if(Re EQ 0)
     ASSERT_FAILED();
@@ -944,13 +957,14 @@ void Check_Update_Program_Para(void)
   {
     TRACE();
 
+#if CLOCK_EN
     if(GET_VAR(Min) != Cur_Time.Time[T_MIN]) //每分钟+1，当前节目的播放时间
     {
       Min.Var = Cur_Time.Time[T_MIN];
       Prog_Status.Play_Status.Time ++;
       SET_SUM(Prog_Status.Play_Status);
     }
-   
+#endif   
     
     //debug("check prog end! counts = %d", Min_Counts);
     if(Check_Prog_End() > 0)//==0表示节目结束
@@ -1253,7 +1267,9 @@ void Check_Show_Data_Para(void)
   Re &= CHK_HT(Cur_Block_Index);
   Re &= CHK_HT(Show_Data);
   Re &= CHK_HT(Show_Data_Bak);
+#if CLOCK_EN
   Re &= CHK_HT(Cur_Time);
+#endif
   if(Re EQ 0)
     ASSERT_FAILED();
 
@@ -1345,7 +1361,7 @@ void Ram_Init(void)
 #endif  
 
   memset(&Cur_Block_Index, 0, sizeof(Cur_Block_Index));
-  memset(&Cur_Time, 0, sizeof(Cur_Time));
+  //memset(&Cur_Time, 0, sizeof(Cur_Time));		//不初始化时钟，因为replay的时候也调用改函数，会导致显示时间为0
 
   SET_HT(Screen_Para);
   SET_HT(Prog_Num);
@@ -1358,7 +1374,9 @@ void Ram_Init(void)
   SET_HT(Show_Data);
   SET_HT(Show_Data_Bak);
   SET_HT(Cur_Block_Index);
+#if CLOCK_EN
   SET_HT(Cur_Time);
+#endif
   SET_HT(Pub_Timer);
 
   Prog_Status_Init();
@@ -1494,11 +1512,13 @@ void Para_Show(void)
   */
 }
 
+#if CLOCK_EN
 void Print_Cur_Time(void)
 {
   debug("cur time: %2d-%2d-%2d %2d:%2d:%2d", Cur_Time.Time[T_YEAR], Cur_Time.Time[T_MONTH], Cur_Time.Time[T_DATE],\
                                              Cur_Time.Time[T_HOUR], Cur_Time.Time[T_MIN], Cur_Time.Time[T_SEC]);
 }
+#endif
 
 //对屏幕进行测试
 void Screen_Test(void)

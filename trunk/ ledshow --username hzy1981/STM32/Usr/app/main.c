@@ -32,13 +32,9 @@ S_Stack Main_Stack = {CHK_BYTE, {0}, 0, CHK_BYTE};
 //检测系统堆栈剩余情况
 void Chk_Main_Stack(void)
 {
+#if CLOCK_EN
   INT16U i = 0;
   static INT8U Min = 0xFF;
-
-  if(CHK_HT(Main_Stack) EQ 0)
-  {
-    ASSERT_FAILED();
-  }
 
   //每分钟打印一次堆栈大小
   if(Min != Cur_Time.Time[T_MIN])
@@ -54,6 +50,37 @@ void Chk_Main_Stack(void)
 
     debug("stack left %d", Main_Stack.Left);
   }
+#else
+  INT16U i = 0;
+  static INT32U Sec = 0;
+  static INT8U Sec_Counts = 0;
+
+  //每分钟打印一次堆栈大小
+  if(Sec != Pub_Timer.Sec)
+  {
+    Sec_Counts ++;
+	  
+    if(Sec_Counts >= 60)
+	{
+	    Sec_Counts = 0;
+
+		while(Main_Stack.Stack[i] EQ 0)
+		{ 
+		i ++;
+		}
+		
+		Main_Stack.Left = i*4;
+	
+	    debug("stack left %d", Main_Stack.Left);
+	}
+  }
+#endif
+  
+  if(CHK_HT(Main_Stack) EQ 0)
+  {
+    ASSERT_FAILED();
+  }
+
 
 }
 
@@ -83,8 +110,9 @@ int main(void)
   Net_Init(); //网络初始化
 #endif
 
+#if CLOCK_EN
   DS1302_Init(); //启动后1s再初始化DS1302，手册要求
-
+#endif
   //Fac_Status_Self_Test(); //自检操作
   
   Para_Show(); //上电参数显示

@@ -776,8 +776,10 @@ EXT S_Prog_Num Prog_Num;
 EXT S_Cur_Block_Index Cur_Block_Index;
 //EXT S_Clock_Para Clock_Para;
 //EXT S_Rcv_Show_Data Rcv_Show_Data;
-
-EXT S_Time Cur_Time; //当前时间 
+#if CLOCK_EN
+EXT S_Time Cur_Time; //当前时间
+#endif
+ 
 EXT INT8U Get_Screen_Color_Num(void);
 EXT void Chk_Baud_Change(INT8U Old_Baud);
 EXT void Clr_All_Show_Data(void);

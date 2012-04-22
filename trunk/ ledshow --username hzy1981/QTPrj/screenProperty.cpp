@@ -926,16 +926,6 @@ void sendLightnessPara()//S_COM_Status &COM_Status)
 
     QString str = w->screenArea->getCurrentScreenStr();
 
-    //getScreenCardParaFromSettings(str, screenPara, cardPara); //
-    //亮度
-    /*
-    len = Make_Frame((INT8U *)&screenPara.Lightness, sizeof(screenPara.Lightness),\
-               (INT8U *)&screenPara.COM_Para.Addr, C_SCREEN_LIGNTNESS, 0, 0, 0, frameBuf);
-    if(QT_SIM_EN)
-      sendProtoData(frameBuf, len); //仿真模式
-    else
-      sendProtoData(frameBuf, len);
-*/
     int flag = 0;
     SET_BIT(flag, C_SCREEN_LIGNTNESS);
     if(QT_SIM_EN)
@@ -949,7 +939,6 @@ void sendLightnessPara()//S_COM_Status &COM_Status)
     {
         QMessageBox::information(w,QObject::tr("提示"),
                                QObject::tr(SEND_PARA_OK_STR),QObject::tr("确定"));
-        //close(); //校时成功则关闭
 
     }
     else
@@ -973,6 +962,8 @@ void ClightnessDialog::sendPara()
 
     QString str = w->screenArea->getCurrentScreenStr();
 
+    this->sendButton->setEnabled(false);
+
     int flag = 0;
     SET_BIT(flag, C_SCREEN_LIGNTNESS);
     if(QT_SIM_EN)
@@ -991,6 +982,8 @@ void ClightnessDialog::sendPara()
         QMessageBox::warning(w, tr("提示"),
                                tr(SEND_PARA_FAIL_STR),tr("确定"));
     }
+
+    this->sendButton->setEnabled(true);
 }
 
 //
@@ -1005,6 +998,8 @@ void ClightnessDialog::udiskPara()
         return;
 
     QString str = w->screenArea->getCurrentScreenStr();
+
+    this->udiskButton->setEnabled(false);
 
     int flag = 0;
     SET_BIT(flag, C_SCREEN_LIGNTNESS);
@@ -1023,6 +1018,8 @@ void ClightnessDialog::udiskPara()
         QMessageBox::warning(w, QObject::tr("提示"),
                                 w->comStatus->getComReStr(),QObject::tr("确定"));
     }
+
+    this->udiskButton->setEnabled(true);
 }
 
 void ClightnessDialog::getSettingsFromWidget(QString str)
@@ -1110,6 +1107,8 @@ void CopenCloseDialog::sendPara()
 
     QString str = w->screenArea->getCurrentScreenStr();
 
+    this->sendButton->setEnabled(false);
+
     getScreenCardParaFromSettings(str, screenPara, cardPara); //
 
     //定时开关机时间
@@ -1135,6 +1134,8 @@ void CopenCloseDialog::sendPara()
         QMessageBox::warning(w, tr("提示"),
                                tr(SEND_PARA_FAIL_STR),tr("确定"));
     }
+
+    this->sendButton->setEnabled(true);
 }
 
 //
@@ -1146,8 +1147,7 @@ void CopenCloseDialog::udiskPara()
 
     QString str = w->screenArea->getCurrentScreenStr();
 
-    if(w->comStatus->comThread->isRunning())//当前线程还在运行
-        return;
+    this->udiskButton->setEnabled(false);
 
     getScreenCardParaFromSettings(str, screenPara, cardPara); //
 
@@ -1173,6 +1173,8 @@ void CopenCloseDialog::udiskPara()
         QMessageBox::warning(w, QObject::tr("提示"),
                                 w->comStatus->getComReStr(),QObject::tr("确定"));
     }
+
+    this->udiskButton->setEnabled(true);
 
 }
 
@@ -1271,6 +1273,8 @@ void CadjTimeDialog::sendData()
     if(w->comStatus->comThread->isRunning())//当前线程还在运行
         return;
 
+    this->sendButton->setEnabled(false);
+
     TimeBuf[T_YEAR] = dateTime.date().year() - 2000;
     TimeBuf[T_MONTH] = dateTime.date().month();
     TimeBuf[T_DATE] = dateTime.date().day();
@@ -1304,7 +1308,7 @@ void CadjTimeDialog::sendData()
                                tr(SEND_PARA_FAIL_STR),tr("确定"));
     }
 
-
+    this->sendButton->setEnabled(true);
 }
 
 //导出校时数据到U盘
@@ -1317,6 +1321,8 @@ void CadjTimeDialog::udiskData()
 
     if(w->comStatus->comThread->isRunning())//当前线程还在运行
         return;
+
+    this->udiskButton->setEnabled(false);
 
     TimeBuf[T_YEAR] = dateTime.date().year() - 2000;
     TimeBuf[T_MONTH] = dateTime.date().month();
@@ -1344,6 +1350,8 @@ void CadjTimeDialog::udiskData()
         QMessageBox::warning(w, QObject::tr("提示"),
                                 w->comStatus->getComReStr(),QObject::tr("确定"));
     }
+
+    this->udiskButton->setEnabled(true);
 
 }
 
@@ -1578,6 +1586,9 @@ void CsendDataDialog::sendData()
     if(w->comStatus->comThread->isRunning())//当前线程还在运行
         return;
 
+    this->sendButton->setEnabled(false);
+
+
     if(QT_SIM_EN)
       Re = makeProtoFileData(str, SIM_MODE, flag);
     else
@@ -1590,7 +1601,7 @@ void CsendDataDialog::sendData()
         {
             QMessageBox::information(w, tr("提示"),
                                    tr(SEND_PARA_OK_STR),tr("确定"));
-            close(); //校时成功则关闭
+            close(); //发送成功则关闭
 
         }
         else
@@ -1598,17 +1609,28 @@ void CsendDataDialog::sendData()
             QMessageBox::warning(w, tr("提示"),
                                    tr(SEND_PARA_FAIL_STR),tr("确定"));
         }
+
+        this->sendButton->setEnabled(true);
     }
+    else
+    {
+         this->sendButton->setEnabled(true);
+         close(); //生成数据没有成功，关闭，一般是节目分区重叠造成
+    }
+
+
 }
 
 void CsendDataDialog::uDiskData()
 {
-    //INT8U temp[100];
-    //int len;
+    INT8U Re;
+
     int flag = 0;
 
     if(w->comStatus->comThread->isRunning())//当前线程还在运行
         return;
+
+    this->udiskButton->setEnabled(false);
 
     QString str = w->screenArea->getCurrentScreenStr();
 
@@ -1623,20 +1645,31 @@ void CsendDataDialog::uDiskData()
     SET_BIT(flag, C_PROG_PARA);
     SET_BIT(flag, C_PROG_DATA);
 
-    makeProtoFileData(str, UDISK_MODE, flag);
+    Re = makeProtoFileData(str, UDISK_MODE, flag);
 
-    //U盘模式下不需要等待waitComEnd，因为没有通信返回数据需要等待
-    if(w->comStatus->getComStatus() == COM_OK) //通信成功的情况下关闭
+    if(Re)
     {
-        QMessageBox::information(w, QObject::tr("提示"),
-                                w->comStatus->getComReStr(),QObject::tr("确定"));
-        close();
+        //U盘模式下不需要等待waitComEnd，因为没有通信返回数据需要等待
+        if(w->comStatus->getComStatus() == COM_OK) //通信成功的情况下关闭
+        {
+            QMessageBox::information(w, QObject::tr("提示"),
+                                    w->comStatus->getComReStr(),QObject::tr("确定"));
+            close();
+        }
+        else
+        {
+            QMessageBox::warning(w, QObject::tr("提示"),
+                                    w->comStatus->getComReStr(),QObject::tr("确定"));
+        }
+
+        this->udiskButton->setEnabled(true);
     }
     else
     {
-        QMessageBox::warning(w, QObject::tr("提示"),
-                                w->comStatus->getComReStr(),QObject::tr("确定"));
+        this->udiskButton->setEnabled(true);
+        close();
     }
+
 }
 
 void CsendDataDialog::propertyCheckProc()
@@ -1867,6 +1900,8 @@ void CcomTest::autoConnect()
 
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
+    this->autoConnectButton->setEnabled(false);
+
     settings.beginGroup(screenStr);
     settings.beginGroup("comTest");
 
@@ -1901,6 +1936,7 @@ void CcomTest::autoConnect()
 
                 setSettingsToWidget(screenStr);
 
+                this->autoConnectButton->setEnabled(true);
                 return;
 
             }
@@ -1922,6 +1958,8 @@ void CcomTest::autoConnect()
     QMessageBox::warning(w, tr("提示"),
                                tr("连接失败，没有找到连接成功的串口！"),tr("确定"));
 
+    this->autoConnectButton->setEnabled(true);
+
 }
 
 //自动连接
@@ -1932,6 +1970,8 @@ void CcomTest::manualConnect()
 
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
+    this->manualConnectButton->setEnabled(false);
+
     makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)temp, 0);
 
     bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
@@ -1939,7 +1979,6 @@ void CcomTest::manualConnect()
     {
         QMessageBox::information(w, tr("提示"),
                                tr("连接成功！"),tr("确定"));
-        //close(); //校时成功则关闭
 
     }
     else
@@ -1947,6 +1986,8 @@ void CcomTest::manualConnect()
         QMessageBox::warning(w, tr("提示"),
                                tr("连接失败！"),tr("确定"));
     }
+
+    this->manualConnectButton->setEnabled(true);
 }
 
 /*
@@ -2590,6 +2631,8 @@ void CfacScreenProperty::readParaProc()
     if(w->comStatus->comThread->isRunning())//当前线程还在运行
         return;
 
+    this->readParaButton->setEnabled(false);
+
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
     //读取版本号
@@ -2616,6 +2659,8 @@ void CfacScreenProperty::readParaProc()
         {
             QMessageBox::warning(w, QObject::tr("提示"),
                                     QObject::tr("读取参数长度错误！"),QObject::tr("确定"));
+
+            this->readParaButton->setEnabled(true);
            return;
         }
 
@@ -2668,6 +2713,7 @@ void CfacScreenProperty::readParaProc()
         if(len != SOFT_VERSION_LEN)
         {
             //读取参数长度错误
+            this->readParaButton->setEnabled(true);
            return;
         }
 
@@ -2679,6 +2725,8 @@ void CfacScreenProperty::readParaProc()
     }
 
     readParaEdit->setText(screenParaStr);
+
+    this->readParaButton->setEnabled(true);
 }
 
 //导入参数处理
@@ -2695,12 +2743,17 @@ void CfacScreenProperty::importParaProc()
 
 void CfacScreenProperty::udiskLoadParaProc()
 {
+  this->udiskLoadButton->setEnabled(false);
   loadParaProc(UDISK_MODE);
+  this->udiskLoadButton->setEnabled(true);
 }
 
 void CfacScreenProperty::comLoadParaProc()
 {
+  this->comLoadButton->setEnabled(false);
   loadParaProc(COM_MODE);
+  this->comLoadButton->setEnabled(true);
+
 }
 
 //加载参数
