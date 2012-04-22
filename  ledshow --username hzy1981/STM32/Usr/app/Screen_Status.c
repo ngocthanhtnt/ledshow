@@ -67,10 +67,12 @@ void Screen_Env_Proc()
 //亮度控制--获取pTime所处时段的亮度
 INT8U Get_Cur_Time_Lightness(S_Time *pTime)
 {
-  INT8U i;
-  INT8U Min = 0xFF,Diff;
   INT8U Lightness;
   
+#if CLOCK_EN  
+  INT8U i;
+  INT8U Min = 0xFF,Diff;  
+
   if(Screen_Para.Lightness.Mode EQ MANUAL_ADJ)
   {
     Lightness = Screen_Para.Lightness.Manual_Lightness;
@@ -99,6 +101,9 @@ INT8U Get_Cur_Time_Lightness(S_Time *pTime)
   {
     Lightness = MAX_LIGHTNESS_LEVEL / 2;
   }
+#else
+  Lightness = Screen_Para.Lightness.Manual_Lightness;
+#endif
   
   if(Lightness >= MAX_LIGHTNESS_LEVEL)
       Lightness = MAX_LIGHTNESS_LEVEL - 1;
@@ -149,7 +154,11 @@ void Screen_Lightness_Proc(void)
 {
    INT8U Lightness;
 
-   Lightness = Get_Cur_Time_Lightness(&Cur_Time); 
+#if CLOCK_EN
+   Lightness = Get_Cur_Time_Lightness(&Cur_Time);
+#else
+   Lightness = Screen_Para.Lightness.Manual_Lightness;
+#endif    
    //Lightness = 100 * Lightness / (MAX_LIGHTNESS_LEVEL - 1); //转化为百分数
    if(Lightness >= MAX_LIGHTNESS_LEVEL)
      Lightness = MAX_LIGHTNESS_LEVEL - 1;
@@ -162,11 +171,14 @@ void Screen_Lightness_Proc(void)
 //开关机控制
 void Screen_Open_Close_Proc(void)
 {
+#if CLOCK_EN
   if(Get_Open_Close_Status(&Cur_Time))
-    Screen_Status.Time_OC_Flag = 0;
+    Screen_Status.Time_OC_Flag = OPEN_FLAG;
   else
     Screen_Status.Time_OC_Flag = CLOSE_FLAG;
-  
+#else
+  Screen_Status.Time_OC_Flag = OPEN_FLAG;  //没有时钟,则直接设置时钟判断为打开
+#endif  
 }
 
 //获取屏幕亮度
@@ -209,6 +221,7 @@ INT8U Get_Screen_Com_Time(void)
    return Screen_Status.Com_Time;
 }
 
+#if CLOCK_EN
 //获取当前时间
 INT8U Get_Cur_Time()
 {
@@ -238,10 +251,11 @@ INT8U Chk_Time(S_Time *pTime)
 
   return 0;
 }
-
+#endif
 //每分钟读取一次实时时钟
 void Screen_Time_Proc()
 {
+#if CLOCK_EN
   static S_Int32U Sec = {CHK_BYTE, 0, CHK_BYTE};
   static S_Int8U Flag = {CHK_BYTE, 0xAA, CHK_BYTE};
   INT32U Diff;
@@ -260,7 +274,7 @@ void Screen_Time_Proc()
    }
 
    Sec.Var = Pub_Timer.Sec;
- 
+#endif 
 }
 
 void Screen_Proc(void)

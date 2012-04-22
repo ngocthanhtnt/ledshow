@@ -1189,12 +1189,12 @@ INT16U Self_Test(void)
   //while(1)
   {
  // DS1302_Init();
-
+#if CLOCK_EN
   Re &= _Get_Cur_Time(TempTime.Time);
   Print_Cur_Time();
   Delay_sec(1);//Delay_sec(2);
   Re &=_Get_Cur_Time(TempTime1.Time);
-
+#endif
   }
  
   if(Re > 0 && TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])

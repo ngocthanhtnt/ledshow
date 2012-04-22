@@ -558,6 +558,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
   }
   else if(Cmd_Code EQ C_SCREEN_TIME) //设置时间
   {
+#if CLOCK_EN
     if(RW_Flag EQ SET_FLAG)
 	{
       mem_cpy(TempTime.Time, Frame + FDATA, sizeof(TempTime.Time), TempTime.Time, sizeof(TempTime.Time));
@@ -580,6 +581,9 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	{
 
 	}
+#else
+    Re = 0;
+#endif
   }
   else if(Cmd_Code EQ C_SOFT_VERSION) //软件版本号码
   {

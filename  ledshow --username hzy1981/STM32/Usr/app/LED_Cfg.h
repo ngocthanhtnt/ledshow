@@ -13,14 +13,16 @@
 //节目特征字
 #define BORDER_SHOW_BIT 0x00
 #define PIC_SHOW_BIT    0x01
-#define CLOCK_SHOW_BIT  0x02
-#define TIME_SHOW_BIT   0x03
-#define TIMER_SHOW_BIT  0x04
-#define LUN_SHOW_BIT    0x05
-#define TEMP_SHOW_BIT   0x06
-#define HUMIDITY_SHOW_BIT 0x07
-#define NOISE_SHOW_BIT  0x08
-#define TEXT_SHOW_BIT   0x09
+#define CLOCK_BIT       0x02
+#define CLOCK_SHOW_BIT  0x03
+#define TIME_SHOW_BIT   0x04
+#define TIMER_SHOW_BIT  0x05
+#define LUN_SHOW_BIT    0x06
+#define TEMP_SHOW_BIT   0x07
+#define HUMIDITY_SHOW_BIT 0x08
+#define NOISE_SHOW_BIT  0x09
+#define TEXT_SHOW_BIT   0x0A
+
 
 #define CS_BYTES 1
 #define ROM_CS_BYTES 2
@@ -80,6 +82,8 @@
 #define MAX_SCAN_BLOCK_NUM 10
 #define SCAN_DATA_MODE SCAN_SOFT_MODE0
 
+#define CLOCK_EN       1 //时钟使能
+
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
 #define CLOCK_SHOW_EN  1 //表盘显示使能
@@ -137,6 +141,7 @@
 //节目特征字
 #define FILE_EN_WORD ((BORDER_SHOW_EN<<BORDER_SHOW_BIT) |\
                        (PIC_SHOW_EN << PIC_SHOW_BIT) |\
+					   (CLOCK_EN<<CLOCK_BIT) |\
                        (CLOCK_SHOW_EN<<CLOCK_SHOW_BIT) |\
                        (TIME_SHOW_EN << TIME_SHOW_BIT) |\
                        (TIMER_SHOW_EN << TIMER_SHOW_BIT) |\

@@ -49,7 +49,7 @@
 #define C_UPDATE    0x1F //¹Ì¼þÉý¼¶
 
 #define CLOSE_FLAG 0x5A
-#define OPEN_FLAG  0xA5
+#define OPEN_FLAG  0x00
 
 /*
 0	0x5A	Ö¡Í·
