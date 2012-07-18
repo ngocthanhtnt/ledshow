@@ -401,6 +401,35 @@ public:
     ~CscreenProperty();
 };
 
+class CupdateFirmwareDialog:public QDialog
+{
+    Q_OBJECT
+
+public slots:
+    void updateFirmware(); //升级版本号
+    void readVersion(); //读取版本号
+    void openFirmwareFile(); //打开固件程序
+    //void uDiskData(); //生成U攀升数据
+//signals:
+    //void closeSignal();
+private:
+    INT8U makeFlag; //生成固件文件标志
+public:
+    QLineEdit *oldVersionEdit; //老的程序版本
+    QLineEdit *newVersionEdit; //新升级的程序版本
+
+    QLineEdit *newFirmPath; //新固件路径
+    QPushButton *openButton; //打开固件文件命令
+    QPushButton *updateButton; //固件升级命令
+    QPushButton *readVersionButton; //读取版本号命令
+
+    QPushButton *makeButton; //生成程序的按钮
+
+    CupdateFirmwareDialog(INT8U flag, QWidget *parent=0);
+    ~CupdateFirmwareDialog();
+
+};
+
 void getComTestParaFromSettings(QString str, S_Screen_Para &screenPara);
 INT8U getCardParaFromSettings(QString cardName, S_Card_Para &cardPara);
 INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara, S_Card_Para &cardPara);

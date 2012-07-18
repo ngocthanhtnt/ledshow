@@ -100,6 +100,7 @@ private:
     QAction *actionPreview;
     QAction *actionScreenPreiew;
     QAction *actionModiScreenPara;
+    QAction *actionUpdateFirmware;
     QAction *actionUDisk;
     QAction *actionSendData;
     QAction *actionAdjTime;
@@ -111,6 +112,7 @@ private:
 
 public slots:
     void modifyScreenPara();
+    void updateFirmware();
     void setLightness();
     void setManualClose();
     void setManualOpen();
@@ -160,14 +162,14 @@ class CinputPSWDialog:public QDialog
 public slots:
     void okClickProc();
 public:
-    bool *verifyRe;
+    INT8U *verifyRe;
     QLineEdit *lineEdit;
 
     QPushButton *okButton;
     QPushButton *cancelButton;
 
     QLabel *reLabel;
-   CinputPSWDialog(bool *re, QWidget *parent);
+   CinputPSWDialog(INT8U *re, QWidget *parent);
    ~CinputPSWDialog();
 };
 
@@ -180,5 +182,5 @@ QMdiSubWindow *getSubWinByIndex(QMdiArea *parentArea, int index);
 int getIndexBySubWin(QMdiArea *parentArea, QMdiSubWindow *subWin);
 QIcon getTypeIcon(INT8U type);
 void traversalControl(const QObjectList& q);
-bool verifyPSW();
+INT8U verifyPSW();
 #endif // MAINWINDOW_H

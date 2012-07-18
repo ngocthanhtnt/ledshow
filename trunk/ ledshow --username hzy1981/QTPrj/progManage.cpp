@@ -342,7 +342,7 @@ void CprogManage::newScreen()
     int i,size;//,type,index;
     int max = 0,tmp;
 
-    if(verifyPSW() EQ false)
+    if(verifyPSW() EQ 0)
         return;
 
     /*
@@ -893,7 +893,7 @@ void CprogManage::_deleteItem(int flag)
     {
         if(flag)
         {
-            if(verifyPSW() EQ false)
+            if(verifyPSW() EQ 0)
                 return;
         }
 

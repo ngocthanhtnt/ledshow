@@ -3075,4 +3075,105 @@ CsetFacPara::~CsetFacPara()
 
 }
 
+//screen属性编辑
+CupdateFirmwareDialog::CupdateFirmwareDialog(INT8U flag, QWidget *parent):QDialog(parent)
+{
 
+    QVBoxLayout *mainLayout;
+    QGroupBox *readVersionGroup;
+    QGroupBox *updateFirmGroup;
+    QGridLayout *gLayout;
+
+    readVersionGroup = new QGroupBox(tr("查询控制器程序"), this);
+    updateFirmGroup = new QGroupBox(tr("升级控制器程序"), this);
+
+    mainLayout = new QVBoxLayout(this);
+
+/*
+    QLineEdit *oldVersionEdit; //老的程序版本
+    QLineEdit *newVersionEdit; //新升级的程序版本
+
+    QLineEdit *newFirmPath; //新固件路径
+    QPushButton *updateButton; //固件升级命令
+    QPushButton *readVersionButton; //读取版本号命令
+ */
+    gLayout = new QGridLayout(readVersionGroup);
+    QLabel *versionLabel = new QLabel(tr("版本号"), readVersionGroup);
+    oldVersionEdit = new QLineEdit(readVersionGroup);
+    readVersionButton = new QPushButton(tr("查询"), this);
+    gLayout->addWidget(versionLabel, 1, 1,1,1);
+    gLayout->addWidget(oldVersionEdit,1,2,1,10);
+    gLayout->addWidget(readVersionButton,1,12,1,1);
+    readVersionGroup->setLayout(gLayout);
+
+    gLayout = new QGridLayout(updateFirmGroup);
+    QLabel *firmNameLabel = new QLabel(tr("程序名"), updateFirmGroup);
+    newFirmPath = new QLineEdit(updateFirmGroup);
+    openButton = new QPushButton(tr("打开"), this);
+    makeButton = new QPushButton(tr("生成"), this);
+
+    QLabel *firmVersionLabel = new QLabel(tr("版本号"), updateFirmGroup);
+    newVersionEdit = new QLineEdit(updateFirmGroup);
+    updateButton = new QPushButton(tr("升级"), updateFirmGroup);
+    gLayout ->addWidget(firmNameLabel, 1,1,1,1);
+    gLayout ->addWidget(newFirmPath, 1,2,1,10);
+    gLayout ->addWidget(openButton, 1,12,1,1);
+    gLayout->addWidget(firmVersionLabel, 2,1,1,1);
+    gLayout->addWidget(newVersionEdit, 2,2,1,10);
+    gLayout->addWidget(updateButton, 2,12,1,1);
+    gLayout->addWidget(makeButton, 3,12,1,1);
+
+    oldVersionEdit->setFocusPolicy(Qt::NoFocus);
+    newVersionEdit->setFocusPolicy(Qt::NoFocus);
+    if(makeFlag EQ 0) //用于生成文件时，版本号是可输入的，用于写入fwb文件中
+      newFirmPath->setFocusPolicy(Qt::NoFocus);
+
+    mainLayout->addWidget(readVersionGroup);
+    mainLayout->addWidget(updateFirmGroup);
+
+    this->setLayout(mainLayout);
+    this->setFixedWidth(500);
+    this->setWindowTitle(tr("固件升级"));
+
+    if(flag EQ 0)
+    {
+      makeButton->setVisible(false);
+      makeFlag = 0;
+    }
+    else
+      makeFlag = 1;
+
+    connect(openButton, SIGNAL(clicked()), this, SLOT(openFirmwareFile()));
+}
+
+void CupdateFirmwareDialog::updateFirmware()
+{
+
+}
+
+void CupdateFirmwareDialog::readVersion()
+{
+
+}
+
+void CupdateFirmwareDialog::openFirmwareFile()
+{
+    QString newFileName;
+
+    if(makeFlag)
+      newFileName = QFileDialog::getOpenFileName(this, tr("打开固件文件"), ".", tr("固件(*.bin)"));
+    else
+      newFileName = QFileDialog::getOpenFileName(this, tr("打开固件文件"), ".", tr("固件(*.fwb)"));
+
+    if(newFileName.length()==0)
+    {
+        return;
+    }
+
+    newFirmPath->setText(newFileName);
+}
+
+CupdateFirmwareDialog::~CupdateFirmwareDialog()
+{
+
+}

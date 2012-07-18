@@ -345,6 +345,7 @@ void MainWindow::actionEnProc(int Type)
     ctrlMenu->setEnabled(false);
     actionPreview->setEnabled(false);
     actionModiScreenPara->setEnabled(false);
+    actionUpdateFirmware->setEnabled(false);
     actionUDisk->setEnabled(false);
     actionSendData->setEnabled(false);
     actionAdjTime->setEnabled(false);
@@ -378,6 +379,7 @@ void MainWindow::actionEnProc(int Type)
       ctrlMenu->setEnabled(true);
       actionPreview->setEnabled(false);
       actionModiScreenPara->setEnabled(true);
+      actionUpdateFirmware->setEnabled(true);
       actionUDisk->setEnabled(true);
       actionSendData->setEnabled(true);
       actionAdjTime->setEnabled(true);
@@ -409,6 +411,7 @@ void MainWindow::actionEnProc(int Type)
       ctrlMenu->setEnabled(true);
       actionPreview->setEnabled(true);
       actionModiScreenPara->setEnabled(true);
+      actionUpdateFirmware->setEnabled(true);
       actionUDisk->setEnabled(true);
       actionSendData->setEnabled(true);
       actionAdjTime->setEnabled(true);
@@ -440,6 +443,7 @@ void MainWindow::actionEnProc(int Type)
       ctrlMenu->setEnabled(true);
       actionPreview->setEnabled(true);
       actionModiScreenPara->setEnabled(true);
+      actionUpdateFirmware->setEnabled(true);
       actionUDisk->setEnabled(true);
       actionSendData->setEnabled(true);
       actionAdjTime->setEnabled(true);
@@ -471,6 +475,7 @@ void MainWindow::actionEnProc(int Type)
       ctrlMenu->setEnabled(true);
       actionPreview->setEnabled(true);
       actionModiScreenPara->setEnabled(true);
+      actionUpdateFirmware->setEnabled(true);
       actionUDisk->setEnabled(true);
       actionSendData->setEnabled(true);
       actionAdjTime->setEnabled(true);
@@ -516,6 +521,14 @@ void MainWindow::setupCtrlActions()
     a->setPriority(QAction::LowPriority);
     //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(modifyScreenPara()));
+    //tb->addAction(a);
+    menu->addAction(a);
+    menu->addSeparator();
+
+    actionUpdateFirmware = a = new QAction(tr("固件升级"), this);
+    a->setPriority(QAction::LowPriority);
+    //a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(updateFirmware()));
     //tb->addAction(a);
     menu->addAction(a);
     menu->addSeparator();
@@ -1056,7 +1069,7 @@ void MainWindow::modifyScreenPara()
 {
   QString str;
 
-  if(verifyPSW() EQ false)
+  if(verifyPSW() EQ 0)
       return;
 
   str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
@@ -1079,6 +1092,24 @@ void MainWindow::modifyScreenPara()
   connect(facScreenProperty->endButton, SIGNAL(clicked()), facParaWin, SLOT(close()));
   facParaWin->exec();
 
+}
+
+//固件升级
+void MainWindow::updateFirmware()
+{
+  INT8U re, flag;
+
+  re = verifyPSW();
+  if(re EQ 0)
+    return;
+
+  if(re EQ 3) //密码在3级才能显示生成文件的按钮,内部使用
+      flag = 1;
+  else
+      flag = 0;
+
+  CupdateFirmwareDialog *updateFirmwareDialog = new CupdateFirmwareDialog(flag, this);
+  updateFirmwareDialog->exec();
 }
 
 //设置亮度
@@ -1360,7 +1391,7 @@ void traversalControl(const QObjectList& q)
     }
 }
 
-CinputPSWDialog::CinputPSWDialog(bool *re, QWidget *parent):QDialog(parent)
+CinputPSWDialog::CinputPSWDialog(INT8U *re, QWidget *parent):QDialog(parent)
 {
     QVBoxLayout *vLayout = new QVBoxLayout(this);
     QHBoxLayout *hLayout = new QHBoxLayout(this);
@@ -1397,15 +1428,25 @@ CinputPSWDialog::CinputPSWDialog(bool *re, QWidget *parent):QDialog(parent)
 
 void CinputPSWDialog::okClickProc()
 {
-   if(lineEdit->text() == "168")
+   if(lineEdit->text() == "888")//1级密码
     {
-       *verifyRe = true;
+       *verifyRe = 1;
       close();
+   }
+   else if(lineEdit->text() == "168")//2级密码
+   {
+       *verifyRe = 2;
+       close();
+   }
+   else if(lineEdit->text() =="112233") //最高级密码
+   {
+       *verifyRe = 3;
+       close();
    }
    else
    {
        reLabel->setText(tr("密码错误!"));
-       *verifyRe = false;
+       *verifyRe = 0;
    }
 }
 
@@ -1415,7 +1456,7 @@ CinputPSWDialog::~CinputPSWDialog()
 }
 
 
-bool verifyPSW()
+INT8U verifyPSW()
 {/*
 
     bool ok;
@@ -1438,7 +1479,7 @@ bool verifyPSW()
         return false;
   */
 
-    bool re;
+    INT8U re;
 
     CinputPSWDialog *pswDialog= new CinputPSWDialog(&re, w);
     pswDialog->exec();
