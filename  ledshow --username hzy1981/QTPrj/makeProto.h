@@ -57,6 +57,7 @@ EXT S_Frame_Info frameInfo;
 //INT8U disconnectScreen();
 
 INT8U sendProtoData(char *pFrame, int len);
+int _makeFrame(char *data, int dataLen, INT16U addr, char cmd0, char cmd1, char seq, INT16U seq0, char *pDst);
 int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst);
 INT8U makeProtoBufData(QString screenStr, int mode, INT8U cmd , char buf[], int bufLen);
 INT8U makeProtoFileData(QString screenStr, int mode, int flag);

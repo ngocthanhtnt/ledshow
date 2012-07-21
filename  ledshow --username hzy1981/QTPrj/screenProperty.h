@@ -409,11 +409,13 @@ public slots:
     void updateFirmware(); //升级版本号
     void readVersion(); //读取版本号
     void openFirmwareFile(); //打开固件程序
+    void makeFirmwareFile(); //从bin文件生成固件文件
     //void uDiskData(); //生成U攀升数据
 //signals:
     //void closeSignal();
 private:
     INT8U makeFlag; //生成固件文件标志
+    INT16U newFirmFrameCounts; //升级固件的帧个数
 public:
     QLineEdit *oldVersionEdit; //老的程序版本
     QLineEdit *newVersionEdit; //新升级的程序版本
@@ -424,6 +426,9 @@ public:
     QPushButton *readVersionButton; //读取版本号命令
 
     QPushButton *makeButton; //生成程序的按钮
+
+    char binFileData[500000];
+    char fwbFileData[500000];
 
     CupdateFirmwareDialog(INT8U flag, QWidget *parent=0);
     ~CupdateFirmwareDialog();
