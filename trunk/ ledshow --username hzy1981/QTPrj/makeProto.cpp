@@ -73,6 +73,34 @@ Bit3->Bit7 备用
 
  */
 
+//生成一条帧，原始函数
+int _makeFrame(char *data, int dataLen, INT16U addr, char cmd0, char cmd1, char seq, INT16U seq0, char *pDst)
+{
+  pDst[0] = FRAME_HEAD;//帧头
+  memcpy(pDst + FADDR, &addr, 2); //地址
+
+  memcpy(pDst + FDATA, data, dataLen);
+
+  //数据域+33
+  //for(int i = 0; i < dataLen; i ++)
+      //pDst[FDATA + i] += 0x33;
+
+  pDst[FSEQ] = seq;
+  memcpy(pDst + FSEQ0, &seq0, sizeof(seq0));
+
+  pDst[FCMD] = cmd0; //两个字节的控制码
+  pDst[FCMD + 1] = cmd1;
+
+  dataLen += F_NDATA_LEN; //数据域 + 非数据域 = 整个帧长
+  memcpy(pDst + FLEN, &dataLen, 2);
+
+  INT16U sum = Sum_2Bytes((INT8U *)pDst, dataLen - 3); //后3个字节是校验和和帧尾
+  memcpy((char *)pDst + dataLen - 3, (char *)&sum, 2);
+  pDst[dataLen - 1] = FRAME_TAIL;
+
+  return dataLen;
+}
+
 //生成一条帧
 //data为数据域,dataLen数据域长度
 //cmd控制码
