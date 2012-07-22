@@ -24,7 +24,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "common.h"
-
+#include "stm32f10x_bkp.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -44,14 +44,17 @@ static void IAP_Init(void);
   */
 int main(void)
 {
+  uint16_t iapFlag0, iapFlag1;
   /* Flash unlock */
   FLASH_Unlock();
 
+  iapFlag0 = BKP_ReadBackupRegister(BKP_DR1);
+  iapFlag1 = BKP_ReadBackupRegister(BKP_DR2);
   /* Initialize Key Button mounted on STM3210X-EVAL board */       
-  STM_EVAL_PBInit(BUTTON_KEY, BUTTON_MODE_GPIO);   
+  //STM_EVAL_PBInit(BUTTON_KEY, BUTTON_MODE_GPIO);   
 
   /* Test if Key push-button on STM3210X-EVAL Board is pressed */
-  if (STM_EVAL_PBGetState(BUTTON_KEY)  == 0x00)
+  if (iapFlag0 == 0xA789 && iapFlag1 == 0x5A23)
   { 
     /* If Key is pressed */
     /* Execute the IAP driver in order to re-program the Flash */
@@ -92,7 +95,28 @@ int main(void)
   */
 void IAP_Init(void)
 {
- USART_InitTypeDef USART_InitStructure;
+ //USART_InitTypeDef USART_InitStructure;
+ uint16_t baud;
+
+	USART_InitTypeDef USART_InitStructure = {0};
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE );
+	
+	//PA10串口1接收
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	
+	//PA9串口1发送
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    baud = BKP_ReadBackupRegister(BKP_DR3);
 
   /* USART resources configuration (Clock, GPIO pins and USART registers) ----*/
   /* USART configured as follow:
@@ -103,14 +127,21 @@ void IAP_Init(void)
         - Hardware flow control disabled (RTS and CTS signals)
         - Receive and transmit enabled
   */
-  USART_InitStructure.USART_BaudRate = 115200;
+  if(baud == 0x01)
+    USART_InitStructure.USART_BaudRate = 9600;
+  else
+    USART_InitStructure.USART_BaudRate = 57600; //一般情况下波特率是57600
+
   USART_InitStructure.USART_WordLength = USART_WordLength_8b;
   USART_InitStructure.USART_StopBits = USART_StopBits_1;
   USART_InitStructure.USART_Parity = USART_Parity_No;
   USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
   USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
-  STM_EVAL_COMInit(COM1, &USART_InitStructure);  
+  //STM_EVAL_COMInit(COM1, &USART_InitStructure);
+	USART_Init(USART1, &USART_InitStructure);
+	//USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+	USART_Cmd(USART1, ENABLE);     
 }
 
 #ifdef USE_FULL_ASSERT

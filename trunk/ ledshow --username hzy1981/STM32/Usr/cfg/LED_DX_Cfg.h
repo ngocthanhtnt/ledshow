@@ -21,7 +21,12 @@
 #define TIM1_EN 1
 //----------------------------------------
 #if defined(CARD_D)
-#define CARD_NAME "D"  //縐靡備
+#if CARD_TYPE == CARD_D0 //
+#define CARD_NAME "D0"  //縐靡備
+#elif CARD_TYPE == CARD_D1
+#define CARD_NAME "D1"  //縐靡備
+#elif CARD_TYPE == CARD_D2
+#define CARD_NAME "D2"  //縐靡備
 #else
 #error "card DX name error"
 #endif

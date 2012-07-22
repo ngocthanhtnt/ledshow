@@ -1277,6 +1277,16 @@ void DMA_Configuration(void)
 }
 */
 
+//备份寄存器初始化
+void BKP_Register_Init(void)
+{
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR | RCC_APB1Periph_BKP, ENABLE); 
+  /* Enable write access to Backup domain */
+  PWR_BackupAccessCmd(ENABLE);
+
+  BKP_ClearFlag();
+}
+
 void IWDG_Init(void)
 {
   RCC_LSICmd(ENABLE);

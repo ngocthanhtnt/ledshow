@@ -407,7 +407,7 @@ class CupdateFirmwareDialog:public QDialog
 
 public slots:
     void updateFirmware(); //升级版本号
-    void readVersion(); //读取版本号
+    bool readVersion(); //读取版本号
     void openFirmwareFile(); //打开固件程序
     void makeFirmwareFile(); //从bin文件生成固件文件
     //void uDiskData(); //生成U攀升数据

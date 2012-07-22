@@ -1,5 +1,7 @@
 #define COM_C
 #include "Includes.h"
+
+const char version[] __attribute__((at(0x8000000 + 1000))) = CARD_NAME " " __TIME__ " " __DATE__ ;
 /*
 0	0x5A	帧头
 1	Len0	帧长度低字节(从帧头到帧尾)
@@ -63,7 +65,8 @@ INT16U Get_Soft_Version(INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
     INT16U Len = 0;
 
     mem_set(pDst, 0, SOFT_VERSION_LEN, pDst_Start, DstLen);
-
+	mem_cpy(pDst, (INT8U *)version, sizeof(version), pDst_Start, DstLen);
+/*
     mem_cpy(pDst + Len, (INT8U *)CARD_NAME, sizeof(CARD_NAME), pDst_Start, DstLen);
     Len += strlen(CARD_NAME);
     pDst[Len++] = ' ';
@@ -75,7 +78,7 @@ INT16U Get_Soft_Version(INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
     mem_cpy(pDst + Len, (INT8U *)__TIME__, sizeof(__TIME__), pDst_Start, DstLen); //日期
     Len += strlen(__TIME__);
     pDst[Len++] = '\0';
-
+*/
     return SOFT_VERSION_LEN;
 }
 
