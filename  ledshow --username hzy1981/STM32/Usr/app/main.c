@@ -85,6 +85,8 @@ void Chk_Main_Stack(void)
 
 }
 
+extern const char version[];
+
 int main(void)
 {
   __set_MSP((INT32U)(&Main_Stack.Stack[MAIN_STACK_SIZE - 1])); //修改为人工堆栈方式
@@ -96,6 +98,7 @@ int main(void)
   Hardware_Init();
 
   OS_Debug_Print("----------system start----------");
+  OS_Debug_Print("----------version: %s----------", version);
 
   RST_Periph();
 

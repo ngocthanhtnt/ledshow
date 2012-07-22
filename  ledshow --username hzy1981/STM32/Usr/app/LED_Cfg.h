@@ -1,11 +1,20 @@
 #ifndef LED_CFG_H
 #define LED_CFG_H
 
-//#define CARD_AX 0x00
-//#define CARD_BX 0x10
-//#define CARD_CX 0x20
-//#define CARD_DX 0x30
-//#define CARD_EX 0x40
+//各种卡预定义
+#define CARD_A0	 0x10 //A0型卡不支持时钟，最简单的卡，其他的卡都一样。
+#define CARD_A1	 0x11
+#define CARD_A2	 0x12
+#define CARD_B0	 0x20
+#define CARD_B1	 0x21
+#define CARD_B2	 0x22
+#define CARD_C0	 0x30
+#define CARD_C1	 0x31
+#define CARD_C2	 0x32
+#define CARD_D0  0x40
+#define CARD_D1	 0x41
+#define CARD_D2	 0x42
+
 #define SCAN_HARD_MODE   0x00//硬件扫描模式
 #define SCAN_SOFT_MODE0	 0x01//软件扫描模式0 --在扫描中断中进行数据转换
 #define SCAN_SOFT_MODE1	 0x02//软件扫描模式1 --在特效中断中进行数据转换
@@ -117,18 +126,22 @@
 
 
 #if defined(CARD_A) || defined(CARD_B)
+#define CARD_TYPE CARD_A0
 #include "LED_ABX_Cfg.h"
 #include "LED_ABX_Drv.h"
 //#elif defined(CARD_BX)
 //#include "LED_BX_Cfg.h"
 //#include "LED_BX_Drv.h"
 #elif defined(CARD_C)
+#define CARD_TYPE CARD_B0
 #include "LED_CX_Cfg.h"
 #include "LED_CX_Drv.h"
 #elif defined(CARD_D)
+#define CARD_TYPE CARD_C0
 #include "LED_DX_Cfg.h"
 #include "LED_DX_Drv.h"
 #elif defined(CARD_E)
+#define CARD_TYPE CARD_E0
 #include "LED_EX_Cfg.h"
 #include "LED_EX_Drv.h"
 #else

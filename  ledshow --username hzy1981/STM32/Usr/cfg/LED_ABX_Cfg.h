@@ -44,11 +44,25 @@
 
 //----------------------------------------
 #if defined(CARD_A)
-#define CARD_NAME "A"  //卡名称
-#elif defined(CARD_B)
-#define CARD_NAME "B"  //卡名称
+#if CARD_TYPE == CARD_A0 //A0型卡是最低端卡，不支持时钟,其他类型卡均支持
+#define CARD_NAME "A0"  //卡名称
+#elif CARD_TYPE == CARD_A1
+#define CARD_NAME "A1"  //卡名称
+#elif CARD_TYPE == CARD_A2
+#define CARD_NAME "A2"  //卡名称
 #else
 #error "card AX name error"
+#endif
+#elif defined(CARD_B)
+#if CARD_TYPE == CARD_B0 //A0型卡是最低端卡，不支持时钟,其他类型卡均支持
+#define CARD_NAME "B0"  //卡名称
+#elif CARD_TYPE == CARD_B1
+#define CARD_NAME "B1"  //卡名称
+#elif CARD_TYPE == CARD_B2
+#define CARD_NAME "B2"  //卡名称
+#else
+#error "card BX name error"
+#endif
 #endif
 
 #define MOVE_STEP_PERIOD 20//5 //移动步进时间,单位为ms
@@ -73,7 +87,11 @@
 #define BUILD_SCAN_DATA_INDEX_EN 0 //构建扫描数据索引使能
 #define SCAN_DATA_MODE SCAN_SOFT_MODE0 //0表示软件扫描方式，1表示硬件扫描方式
 
+#if CARD_TYPE == CARD_A0 //A0型卡是最低端卡，不支持时钟,其他类型卡均支持
 #define CLOCK_EN       0 //是否有时钟功能
+#else
+#define CLOCK_EN       1
+#endif
 
 #if CLOCK_EN
 #define CLOCK_SHOW_EN  1 //表盘显示使能

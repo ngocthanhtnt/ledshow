@@ -3155,16 +3155,25 @@ CupdateFirmwareDialog::CupdateFirmwareDialog(INT8U flag, QWidget *parent):QDialo
     connect(openButton, SIGNAL(clicked()), this, SLOT(openFirmwareFile()));
     connect(makeButton, SIGNAL(clicked()), this, SLOT(makeFirmwareFile()));
     connect(updateButton, SIGNAL(clicked()), this, SLOT(updateFirmware()));
+    connect(readVersionButton, SIGNAL(clicked()), this, SLOT(readVersion()));
 }
 
 void CupdateFirmwareDialog::updateFirmware()
 {
     INT8U Temp[100];
     int len;
+    bool re;
 
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
     this->setEnabled(false);
+
+    if(readVersion() == false) //没有读取到版本号
+    {
+        this->setEnabled(true);
+        return;
+
+    }
 
     if(newFirmFrameCounts > 0)
     {
@@ -3173,7 +3182,7 @@ void CupdateFirmwareDialog::updateFirmware()
       w->comStatus->sendProtoFile(newFirmPath->text());
     }
 
-    bool re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+    re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
     if(re EQ true)
     {
         QMessageBox::information(w, tr("提示"),
@@ -3190,9 +3199,29 @@ void CupdateFirmwareDialog::updateFirmware()
     this->setEnabled(true);
 }
 
-void CupdateFirmwareDialog::readVersion()
+bool CupdateFirmwareDialog::readVersion()
 {
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+    INT8U rcvBuf[500] = {0};
+    bool re;
+    int len;
 
+    //读取前一版本的版本号
+    makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0, 0);
+
+    re = w->comStatus->waitComEnd(rcvBuf, sizeof(rcvBuf), &len);
+    if(re EQ true)
+    {
+       oldVersionEdit->setText(QString((char *)rcvBuf));
+    }
+    else
+    {
+        QMessageBox::warning(w, tr("提示"),
+                               tr("查询控制器版本号失败！"),tr("确定"));
+
+    }
+
+    return re;
 }
 
 void CupdateFirmwareDialog::openFirmwareFile()
@@ -3364,7 +3393,8 @@ void CupdateFirmwareDialog::makeFirmwareFile()
 
       frameLen = _makeFrame(version, VERSION_FRAME_DATA_LEN, 0, C_UPDATE | WR_CMD, 0, 0, 0, fwbFileData);
 
-      fwbFile = fopen("outPut.fwb", "wb+");
+      QString outputFwbFile = newFirmPath->text() + QString(".fwb");
+      fwbFile = fopen(outputFwbFile.toLocal8Bit(), "wb+");
       fseek(fwbFile, 0, SEEK_SET); //前50字节用于记录版本号、校验和等程序信息
 
       fwrite(fwbFileData, fileOff, 1, fwbFile);
