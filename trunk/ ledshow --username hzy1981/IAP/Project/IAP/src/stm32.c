@@ -1,4 +1,8 @@
 #define STM32_C
+#include "stm32.h"
+#include "stm32f10x_bkp.h"
+#include "stm32f10x_pwr.h"
+#include "stm32f10x_iwdg.h"
 #include "LED_Cfg.h"
 
 //extern void Set_Clock_Normal_Speed(void);
@@ -6,7 +10,7 @@
 
 void Clr_Watch_Dog(void)
 {
-
+// IWDG_ReloadCounter();
 }
 
 /** 
@@ -14,7 +18,7 @@ void Clr_Watch_Dog(void)
   * @param  None 
   * @retval None 
   */ 
-#if HSE_VALUE EQ 25000000 //外部晶振频率
+#if HSE_VALUE == 25000000 //外部晶振频率
 void RCC_Configuration(void) 
 { 
  RCC_ClocksTypeDef RCC_ClockFreq; 
@@ -210,5 +214,20 @@ void BKP_Register_Init(void)
 
 }
 
-//-------------------------------------
-#endif
+uint32_t Flash_PagesMask(__IO uint32_t Size)
+{
+  uint32_t pagenumber = 0x0;
+  uint32_t size = Size;
+
+  if ((size % PAGE_SIZE) != 0)
+  {
+    pagenumber = (size / PAGE_SIZE) + 1;
+  }
+  else
+  {
+    pagenumber = size / PAGE_SIZE;
+  }
+  return pagenumber;
+
+}
+

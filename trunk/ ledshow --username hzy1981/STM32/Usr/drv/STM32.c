@@ -1248,6 +1248,7 @@ INT16U Self_Test(void)
 
  }
 
+
 /*
 //用于测试DMA方式
 //--------------------------------------------
@@ -1276,7 +1277,7 @@ void DMA_Configuration(void)
   DMA_Cmd(DMA1_Channel5, ENABLE);
 }
 */
-
+extern void PWR_BackupAccessCmd(FunctionalState NewState);
 //备份寄存器初始化
 void BKP_Register_Init(void)
 {

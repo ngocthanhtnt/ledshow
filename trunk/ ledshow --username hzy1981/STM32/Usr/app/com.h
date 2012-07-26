@@ -41,11 +41,11 @@
 #define C_SCREEN_TIME 0x09 //时间
 #define C_PROG_NUM    0x0A //节目数
 #define C_PROG_PARA  0x0B //节目属性
-#define C_PROG_BORDER 0x0C
-#define C_PROG_DATA  0x0D //显示数据
-#define C_SOFT_VERSION 0x0E //屏幕信息
-#define C_SELF_TEST 0x0F //自动监测
-#define C_ENV_VAR   0x10  //环境变量
+//#define C_PROG_BORDER 0x0C
+#define C_PROG_DATA  0x0C //显示数据
+#define C_SOFT_VERSION 0x0D //屏幕信息
+#define C_SELF_TEST 0x0E //自动监测
+#define C_ENV_VAR   0x0F  //环境变量
 #define C_UPDATE    0x1F //固件升级
 
 #define CLOSE_FLAG 0x5A
