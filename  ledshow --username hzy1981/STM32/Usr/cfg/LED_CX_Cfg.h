@@ -30,6 +30,7 @@
 #else
 #error "card CX name error"
 #endif
+#endif
 
 #define SCAN_SCREEN_PERIOD 100//扫屏周期,单位us
 #define MOVE_STEP_PERIOD 5//5 //移动步进时间,单位为ms

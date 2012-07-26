@@ -62,7 +62,7 @@ INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len)
 //获取版本号
 INT16U Get_Soft_Version(INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
 {
-    INT16U Len = 0;
+    //INT16U Len = 0;
 
     mem_set(pDst, 0, SOFT_VERSION_LEN, pDst_Start, DstLen);
 	mem_cpy(pDst, (INT8U *)version, sizeof(version), pDst_Start, DstLen);
@@ -492,7 +492,9 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf_Len)
 {
   INT8U Cmd_Code,Baud;
+#if CLOCK_EN
   S_Time TempTime;
+#endif
   INT8U Re, Temp;
   INT16U Len = 0;  //应答帧数据长
   INT8U Seq, Seq0;
@@ -636,10 +638,29 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	  {
         Scan_Mode_Test(CMD_TEST);
 	  }
-	  else
+	  else if(Temp EQ 0x01)
 	  {
         Soft_Rest(); //软件复位
 	  }
+#if QT_EN == 0
+	  else if(Temp EQ 0x02) //固件升级--复位进入升级程序
+	  {
+	      BKP_Register_Init();
+
+		  //RCC_AHBPeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);
+		
+		  //BKP_ReadBackupRegister(BKP_DR1);
+		  //BKP_ReadBackupRegister(BKP_DR2);
+		  
+		  BKP_WriteBackupRegister(BKP_DR1, 0xA789);
+		  BKP_WriteBackupRegister(BKP_DR2, 0x5A23);	
+		  
+		  if(Get_Com_Baud() EQ 57600)
+		    BKP_WriteBackupRegister(BKP_DR2, 0x00); 
+		  else
+		    BKP_WriteBackupRegister(BKP_DR2, 0x01); 
+	  } 
+#endif
 	  return Len;
 	}
 

@@ -1,6 +1,7 @@
 #ifndef COM_H
 #define COM_H
 
+#include "LED_Cfg.h"
 #include "stm32f10x.h"
 
 #undef EXT
@@ -14,6 +15,9 @@
 #define FRAME_TAIL 0xAA
 #define COM_BYTE 0x68
 
+#define RD_CMD  0x00
+#define WR_CMD  0x20
+
 #define FHEAD  0x00 //帧头,1
 #define FLEN   0x01 //帧长度,2
 #define FADDR  0x03 //帧地址,2
@@ -22,7 +26,9 @@
 #define FCMD   0x08 //命令码,2
 #define FDATA  0x0A //数据域名
 
-#define ASSERT_FAILED()
+#define F_NDATA_LEN 13 //一条帧内非数据域的长度
+
+#define C_UPDATE    0x1F //固件升级
 
 typedef struct
 {
@@ -36,4 +42,5 @@ typedef struct
 
 EXT S_Rcv_Buf rcvBuf;
 
+EXT void Rcv_Frame_Proc(void);
 #endif

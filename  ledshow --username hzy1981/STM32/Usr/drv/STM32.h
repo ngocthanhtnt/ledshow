@@ -272,5 +272,6 @@ EXT void IWDG_Init(void);
 EXT INT8U Chk_Test_Key_Down(void);
 EXT INT8U Chk_Test_Key_Up(void);
 EXT void Fac_Status_Self_Test(void);
+EXT void BKP_Register_Init(void);
 EXT void DMA_Configuration(void);
 #endif

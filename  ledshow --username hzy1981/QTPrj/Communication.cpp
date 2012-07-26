@@ -112,7 +112,7 @@ bool CcomThread::comRun()
     INT16U len;
     int len0 = 0;
     bool flag = false;
-    char frameBuf[MAX_COM_BUF_LEN + 20];
+    char frameBuf[2000];//[MAX_COM_BUF_LEN + 20];
 
     if(status == COM_ING) //当前在通信过程中,退出
         return false;
@@ -188,6 +188,7 @@ bool CcomThread::comRun()
 
     while((re = fread(frameBuf, FLEN + 2, 1, file)) > 0 && frameBuf[0] EQ FRAME_HEAD)
     {
+      len = 0;
       memcpy(&len, frameBuf + FLEN, 2);
       if(len <= sizeof(frameBuf) && len > FLEN + 2)
       {

@@ -16,6 +16,7 @@
 #define VERSION_FRAME_DATA_LEN 50  //固件升级帧第一帧，版本信息帧数据域长度
 #define VERSION_FRAME_SUM_OFF 30   //版本信息帧中所有帧校验偏移,2字节
 #define VERSION_FRAME_FCOUNTS_OFF 34  //版本信息帧中帧个数偏移,2字节
+#define VERSION_FRAME_BINSIZE_OFF 36  //整个bin文件大小
 
 extern MainWindow *w;
 extern QSettings settings;
@@ -3167,7 +3168,7 @@ void CupdateFirmwareDialog::updateFirmware()
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
     this->setEnabled(false);
-
+/*
     if(readVersion() == false) //没有读取到版本号
     {
         this->setEnabled(true);
@@ -3175,6 +3176,20 @@ void CupdateFirmwareDialog::updateFirmware()
 
     }
 
+    //读取前一版本的版本号
+    INT8U flag = 0x02; //维护标志02表示控制器进入固件升级状态
+    makeProtoBufData(screenStr, COM_MODE, C_SELF_TEST | WR_CMD, (char *)&flag, sizeof(flag));
+
+    re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+    if(re EQ false)
+    {
+        QMessageBox::warning(w, tr("提示"),
+                               tr("固件升级失败，请检查与控制器通信连接是否正常！"),tr("确定"));
+
+        this->setEnabled(true);
+        return;
+    }
+*/
     if(newFirmFrameCounts > 0)
     {
       w->comStatus->setTotalFrameCounts(newFirmFrameCounts);
@@ -3187,7 +3202,7 @@ void CupdateFirmwareDialog::updateFirmware()
     {
         QMessageBox::information(w, tr("提示"),
                                tr("固件升级成功！"),tr("确定"));
-        close(); //校时成功则关闭
+        //close(); //校时成功则关闭--不关闭，可能需要升级很多板
 
     }
     else
@@ -3217,7 +3232,7 @@ bool CupdateFirmwareDialog::readVersion()
     else
     {
         QMessageBox::warning(w, tr("提示"),
-                               tr("查询控制器版本号失败！"),tr("确定"));
+                               tr("查询控制器版本号失败，请检查与控制器通信连接是否正常！"),tr("确定"));
 
     }
 
@@ -3229,6 +3244,7 @@ void CupdateFirmwareDialog::openFirmwareFile()
     QString newFileName;
     FILE *fwbFile;
     int len;
+    //INT16U addr;
 
     if(makeFlag)
     {
@@ -3312,10 +3328,11 @@ void CupdateFirmwareDialog::makeFirmwareFile()
 {
   FILE *binFile,*fwbFile;
   INT8U seq = 0;
+  INT16U addr;
   unsigned int len, frameDataLen, frameLen;
   unsigned int i = 0;
   char frameBuf[FIRMWARE_FRAME_DATA_LEN + 100];
-  char version[VERSION_FRAME_DATA_LEN + 20] = {0};
+  char version[VERSION_FRAME_DATA_LEN + 100] = {0};
   char endFlag = 0;
   INT16U fCounts = 0;
   //char a[] = CON(__DATE__ , __TIME__, __LINE__);
@@ -3332,14 +3349,15 @@ void CupdateFirmwareDialog::makeFirmwareFile()
 
   fseek(binFile, 0, SEEK_END);
 
-  len = ftell(binFile);
+  len = ftell(binFile); //获取文件长度
 
-  fseek(binFile, 0, SEEK_SET);
+  fseek(binFile, 0, SEEK_SET); //定位到文件起始处
   len = fread(binFileData, 1, len, binFile);
   fclose(binFile);
+
   endFlag = 0;
   seq = 1; //第0帧后面生成
-  int fileOff = VERSION_FRAME_DATA_LEN + F_NDATA_LEN;
+  int fileOff = VERSION_FRAME_DATA_LEN + F_NDATA_LEN; //整个版本号帧的长度
 
   if(len) //生成fwb文件
   {
@@ -3352,6 +3370,7 @@ void CupdateFirmwareDialog::makeFirmwareFile()
 
       newVersionEdit->setText(QString(QByteArray(version)));
 
+      addr = 0x9999;
       i = 0;
       while(i < len)
       {
@@ -3366,13 +3385,14 @@ void CupdateFirmwareDialog::makeFirmwareFile()
              endFlag = 0xA5;
           }
 
-          memcpy(frameBuf + FDATA, &i, 2); //前两个字节为偏移
-          memcpy(frameBuf + FDATA + 2, &endFlag, 1); //最有一帧标志,0xA5
-          memcpy(frameBuf + FDATA + 3, binFileData + i, frameDataLen); //为真正数据
+          //memcpy(frameBuf + FDATA, &len, 4); //文件长度，4字节
+          memcpy(frameBuf + FDATA, &i, 4); //内部偏移，4字节
+          memcpy(frameBuf + FDATA + 4, &endFlag, 1); //最有一帧标志,0xA5
+          memcpy(frameBuf + FDATA + 5, binFileData + i, frameDataLen); //为真正数据
           //生成CRC校验
-          OS_Set_Sum(frameBuf, frameDataLen + 3, frameBuf + frameDataLen + 3, 2, frameBuf, sizeof(frameBuf));
+          OS_Set_Sum(frameBuf + FDATA, frameDataLen + 5, frameBuf + FDATA + frameDataLen + 5, 2, frameBuf, sizeof(frameBuf));
 
-          frameLen = _makeFrame(frameBuf + FDATA, frameDataLen + 5, 0, C_UPDATE | WR_CMD, 0, 0, seq++, frameBuf);
+          frameLen = _makeFrame(frameBuf + FDATA, frameDataLen + 7, addr, C_UPDATE | WR_CMD, 0, 0, seq++, frameBuf);
           i += frameDataLen;
 
           //fwrite(frameBuf, 1, frameLen, fwbFile);
@@ -3383,15 +3403,19 @@ void CupdateFirmwareDialog::makeFirmwareFile()
           fCounts++;
       }
 
-      //第一帧只用于发送版本信息以及整体校验
+      //第一帧只用于发送版本信息以及整体校验,以及整个bin文件长度
       //将整个fwb文件(不包含第一帧，因为此时第一帧还没生成)的校验写入第一帧中, 数据域的第30个字节中
       OS_Set_Sum(fwbFileData + VERSION_FRAME_DATA_LEN + F_NDATA_LEN, fileOff - VERSION_FRAME_DATA_LEN - F_NDATA_LEN,  version + VERSION_FRAME_SUM_OFF, 4, version, sizeof(version)); //将版本号记录到version中
 
+      //总的帧数
+      fCounts ++; //增加帧个数
+      memcpy(version + VERSION_FRAME_FCOUNTS_OFF, &fCounts, 2);
+      memcpy(version + VERSION_FRAME_BINSIZE_OFF, &len, 4); //4个字节的bin文件长度
+
       //将第一帧本身的校验写入数据域的组后两个字节
       OS_Set_Sum(version, VERSION_FRAME_DATA_LEN - 2, version + VERSION_FRAME_DATA_LEN - 2, 2, version, sizeof(version));
-      memcpy(version + VERSION_FRAME_FCOUNTS_OFF, &fCounts, 2);
-
-      frameLen = _makeFrame(version, VERSION_FRAME_DATA_LEN, 0, C_UPDATE | WR_CMD, 0, 0, 0, fwbFileData);
+      //生成第一帧
+      frameLen = _makeFrame(version, VERSION_FRAME_DATA_LEN, addr, C_UPDATE | WR_CMD, 0, 0, 0, fwbFileData);
 
       QString outputFwbFile = newFirmPath->text() + QString(".fwb");
       fwbFile = fopen(outputFwbFile.toLocal8Bit(), "wb+");

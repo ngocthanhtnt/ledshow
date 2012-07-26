@@ -34,6 +34,8 @@
 #ifndef __STM32F10x_H
 #define __STM32F10x_H
 
+#include "led_cfg.h"
+
 #ifdef __cplusplus
  extern "C" {
 #endif 

@@ -23,14 +23,17 @@
   */
 
 /* Includes ------------------------------------------------------------------*/
-#include "common.h"
+#include "stm32.h"
+#include "com.h"
 #include "stm32f10x_bkp.h"
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-extern pFunction Jump_To_Application;
-extern uint32_t JumpAddress;
+typedef  void (*pFunction)(void);
+
+pFunction Jump_To_Application;
+uint32_t JumpAddress;
 
 /* Private function prototypes -----------------------------------------------*/
 static void IAP_Init(void);
@@ -48,26 +51,22 @@ int main(void)
   /* Flash unlock */
   FLASH_Unlock();
 
+  BKP_Register_Init();
+  //RCC_AHBPeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);
+
   iapFlag0 = BKP_ReadBackupRegister(BKP_DR1);
   iapFlag1 = BKP_ReadBackupRegister(BKP_DR2);
   /* Initialize Key Button mounted on STM3210X-EVAL board */       
   //STM_EVAL_PBInit(BUTTON_KEY, BUTTON_MODE_GPIO);   
 
   /* Test if Key push-button on STM3210X-EVAL Board is pressed */
-  if (iapFlag0 == 0xA789 && iapFlag1 == 0x5A23)
+
+  if(1)// (iapFlag0 == 0xA789 && iapFlag1 == 0x5A23)
   { 
     /* If Key is pressed */
     /* Execute the IAP driver in order to re-program the Flash */
     IAP_Init();
-    SerialPutString("\r\n======================================================================");
-    SerialPutString("\r\n=              (C) COPYRIGHT 2010 STMicroelectronics                 =");
-    SerialPutString("\r\n=                                                                    =");
-    SerialPutString("\r\n=     In-Application Programming Application  (Version 3.3.0)        =");
-    SerialPutString("\r\n=                                                                    =");
-    SerialPutString("\r\n=                                   By MCD Application Team          =");
-    SerialPutString("\r\n======================================================================");
-    SerialPutString("\r\n\r\n");
-    Main_Menu ();
+    Rcv_Frame_Proc();
   }
   /* Keep the user application running */
   else
@@ -100,6 +99,8 @@ void IAP_Init(void)
 
 	USART_InitTypeDef USART_InitStructure = {0};
 	GPIO_InitTypeDef GPIO_InitStructure;
+
+    RCC_Configuration();
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);	
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE );
