@@ -93,7 +93,7 @@ int main(void)
 
   Ram_Init();
 
-  //IWDG_Init();
+  IWDG_Init();
 
   Hardware_Init();
 
@@ -147,7 +147,7 @@ int main(void)
 
     Chk_Main_Stack();
 
-    CLR_WDG();
+    Clr_Watch_Dog();
   }
   
 }

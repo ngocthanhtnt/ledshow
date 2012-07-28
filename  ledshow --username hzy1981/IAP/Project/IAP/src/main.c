@@ -48,8 +48,6 @@ static void IAP_Init(void);
 int main(void)
 {
   uint16_t iapFlag0, iapFlag1;
-  /* Flash unlock */
-  FLASH_Unlock();
 
   BKP_Register_Init();
   //RCC_AHBPeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);
@@ -61,8 +59,11 @@ int main(void)
 
   /* Test if Key push-button on STM3210X-EVAL Board is pressed */
 
-  if(1)// (iapFlag0 == 0xA789 && iapFlag1 == 0x5A23)
+  if(iapFlag0 == 0xA789 && iapFlag1 == 0x5A23)
   { 
+    /* Flash unlock */
+    FLASH_Unlock();
+
     /* If Key is pressed */
     /* Execute the IAP driver in order to re-program the Flash */
     IAP_Init();
@@ -100,6 +101,7 @@ void IAP_Init(void)
 	USART_InitTypeDef USART_InitStructure = {0};
 	GPIO_InitTypeDef GPIO_InitStructure;
 
+	IWDG_Init();
     RCC_Configuration();
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);	

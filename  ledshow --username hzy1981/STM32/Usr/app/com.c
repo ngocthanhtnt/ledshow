@@ -1,7 +1,11 @@
 #define COM_C
 #include "Includes.h"
 
-const char version[] __attribute__((at(0x8000000 + 1000))) = CARD_NAME " " __TIME__ " " __DATE__ ;
+#if QT_EN EQ 0
+const char version[] __attribute__((at(0x8000000 + APP_ADDRESS_OFF + 1000))) = CARD_NAME " " __TIME__ " " __DATE__ ;
+#else
+const char version[] = CARD_NAME " " __TIME__ " " __DATE__ ;
+#endif
 /*
 0	0x5A	帧头
 1	Len0	帧长度低字节(从帧头到帧尾)
@@ -656,9 +660,11 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 		  BKP_WriteBackupRegister(BKP_DR2, 0x5A23);	
 		  
 		  if(Get_Com_Baud() EQ 57600)
-		    BKP_WriteBackupRegister(BKP_DR2, 0x00); 
+		    BKP_WriteBackupRegister(BKP_DR3, 0x00); 
 		  else
-		    BKP_WriteBackupRegister(BKP_DR2, 0x01); 
+		    BKP_WriteBackupRegister(BKP_DR3, 0x01);
+			
+	      Soft_Rest(); //软件复位		 
 	  } 
 #endif
 	  return Len;

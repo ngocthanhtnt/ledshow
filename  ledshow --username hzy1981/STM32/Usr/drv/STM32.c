@@ -6,7 +6,7 @@ extern void Set_Clock_Normal_Speed(void);
 
 void Clr_Watch_Dog(void)
 {
-
+  IWDG_ReloadCounter();
 }
 
 /** 
@@ -191,6 +191,7 @@ void Delay_ms(INT16U nms)
 
   ms = Pub_Timer.Ms;
 
+  Clr_Watch_Dog();
   while(1)
   {
     if(ms != Pub_Timer.Ms)
@@ -212,7 +213,9 @@ void Delay_us(INT32U nus)
   volatile INT32U j; 
    
   i =0;
- 
+
+  Clr_Watch_Dog(); 
+  
   j = 28 * nus * (HCLK_VALUE / 1000000) / 72;
   while(i <= j) 
   {
@@ -237,6 +240,8 @@ void Delay_sec(INT16U sec)
 //发送调试信息一个字节
 void OS_Put_Char(char Data)
 {
+   Clr_Watch_Dog();
+
    while (!(USART2->SR & USART_FLAG_TXE));
    USART2->DR = (Data & (uint16_t)0x01FF);
 }
@@ -244,6 +249,8 @@ void OS_Put_Char(char Data)
 //发送一个字节通信数据
 void Com_Send_Byte(INT8U Ch, INT8U Data)
 {
+  Clr_Watch_Dog();
+  
   if(Ch EQ CH_COM)
   {
      while (!(USART1->SR & USART_FLAG_TXE));
@@ -408,6 +415,7 @@ void SPI2_Init(void)
 //SPI1读写一字节数据
 INT8U SPI1_ReadWrite(INT8U writedat)
 {
+  Clr_Watch_Dog();
    /* Loop while DR register in not emplty */
   while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
 
@@ -424,6 +432,7 @@ INT8U SPI1_ReadWrite(INT8U writedat)
 //SPI2发送接收一个字节
 INT8U SPI2_ReadWrite(INT8U writedat)
 {
+  Clr_Watch_Dog();
    /* Loop while DR register in not emplty */
   while (SPI_I2S_GetFlagStatus(SPI2, SPI_I2S_FLAG_TXE) == RESET);
 
@@ -448,7 +457,7 @@ void NVIC_Configuration(void)
 	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);	//设置优先级分组：先占优先级0位,从优先级4位
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);		//设置优先级分组：先占优先级2位,从优先级2位
 	
-	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);   //向量表位于FLASH
+    NVIC_SetVectorTable(NVIC_VectTab_FLASH, APP_ADDRESS_OFF);	//重新定期中断向量区
 	
 	
     /* Enable the USARTy Interrupt */

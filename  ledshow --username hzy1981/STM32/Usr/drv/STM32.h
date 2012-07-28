@@ -39,7 +39,7 @@
 #define STOP_SHOW_TIMER()  TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设  
 #define START_SHOW_TIMER() TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 
-#define CLR_WDG()  IWDG_ReloadCounter()
+//#define CLR_WDG()  IWDG_ReloadCounter()
 //#define CHK_JP_STATUS1  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_14)
  
 // 把“位带地址＋位序号”转换别名地址宏 
@@ -240,6 +240,7 @@ EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
 EXT void ReInit_Mem_Port(void);
 #endif
 
+EXT void Clr_Watch_Dog(void);
 EXT void RCC_Configuration(void);
 EXT void SysTick_Configuration(void);
 EXT void Delay_ms(INT16U nms);

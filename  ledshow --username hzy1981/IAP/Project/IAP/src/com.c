@@ -1,6 +1,7 @@
 #define COM_C
 #include "com.h"
 #include "stm32.h"
+#include "stm32f10x_bkp.h"
 #include "string.h"
 #include "LED_Cfg.h"
 
@@ -173,6 +174,8 @@ uint8_t Rcv_Byte (uint32_t timeout)
 {
   while (timeout-- > 0)
   {
+      Clr_Watch_Dog();
+
 	  if ( USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
 	  {
 	    if(rcvBuf.posi EQ 0 && (uint8_t)USART1->DR != FRAME_HEAD)
@@ -187,6 +190,42 @@ uint8_t Rcv_Byte (uint32_t timeout)
   }
   return 0;
 }
+/*
+uint8_t Rcv_Frame (void)
+{
+  uint8_t byte;
+  uint16_t len;
+
+  while (1)
+  {
+      Clr_Watch_Dog();
+
+	  if ( USART_GetFlagStatus(USART1, USART_FLAG_RXNE) != RESET)
+	  {
+  	    byte = (uint8_t)USART1->DR;
+
+	    if(rcvBuf.posi EQ 0 && byte != FRAME_HEAD)
+		  continue;
+
+	    if(rcvBuf.posi >= sizeof(rcvBuf.buf))
+		  rcvBuf.posi = 0;
+
+
+	    rcvBuf.buf[rcvBuf.posi ++] = byte;
+
+		if(rcvBuf.posi
+
+		if(rcvBuf.posi >= F_NDATA_LEN && rcvBuf.posi) //收到帧尾
+		{
+		  if(rcvBuf.posi >
+
+		}
+	    return 1;
+	  }
+  }
+  return 0;
+}
+*/
 
 //接收一帧并处理
 void Rcv_Frame_Proc(void)
@@ -196,10 +235,16 @@ void Rcv_Frame_Proc(void)
    uint16_t seq0, len;
    uint32_t size = 0, FlashDestination, off;
    uint8_t *pRamSource;
+   uint32_t waitCounts;
 
   uint32_t EraseCounter = 0x0;
   uint32_t NbrOfPage = 0;
   FLASH_Status FLASHStatus = FLASH_COMPLETE;
+
+  if(BKP_ReadBackupRegister(BKP_DR3) != 0x01) //576600波特了吧
+    waitCounts = HCLK_VALUE	/ 10000;
+  else
+    waitCounts = HCLK_VALUE * 6	/ 10000; //9600
 
   //等待接收第一个字节
   while(1)
@@ -208,11 +253,12 @@ void Rcv_Frame_Proc(void)
     Clr_Watch_Dog();
   
   //收到第一个字节之后，继续接收，直到超时到 
-  while(Rcv_Byte(0x300000) > 0) 
+  while(Rcv_Byte(waitCounts) > 0) 
     Clr_Watch_Dog();
 
   for(i = 0; i < rcvBuf.posi; i ++)
   {
+    Clr_Watch_Dog();
 	if(Check_Frame_Format(rcvBuf.buf + i, rcvBuf.posi - i)) //找到一帧并处理
 	{
 	  memcpy(&seq0, rcvBuf.buf + i + FSEQ0, 2); //seq0帧内序号，1表示时第一帧，此时应该擦除flash
@@ -280,7 +326,13 @@ void Rcv_Frame_Proc(void)
 	Clr_Watch_Dog(); //清狗
 
 	if(endFlag EQ 0xA5)	 //等待看门狗复位
+	{
+	  BKP_WriteBackupRegister(BKP_DR1, 0x00);
+	  BKP_WriteBackupRegister(BKP_DR2, 0x00);
+	  BKP_WriteBackupRegister(BKP_DR3, 0x00);
+
 	  while(1);
+	 }
   }
   }
 
