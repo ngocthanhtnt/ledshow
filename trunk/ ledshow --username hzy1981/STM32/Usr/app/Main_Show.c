@@ -266,6 +266,7 @@ void Clr_Show_Bak_Data(void)
 
 void Clr_Show_Data(void)
 {
+    Clr_Watch_Dog();
   //if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
     //memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
   //else
@@ -274,6 +275,7 @@ void Clr_Show_Data(void)
 
 void Set_Show_Data(void)
 {
+    Clr_Watch_Dog();
  // if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
    // memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data));
   //else
@@ -1655,6 +1657,8 @@ void Screen_Test(void)
 
   while(1)
   {
+    Clr_Watch_Dog();
+
     P0.X = i;
 	P0.Y = 0;
 
@@ -1692,6 +1696,8 @@ void Screen_Test(void)
   Clr_Show_Data();
   while(1)
   {
+    Clr_Watch_Dog();
+
     P0.X = 0;
 	P0.Y = i;
 

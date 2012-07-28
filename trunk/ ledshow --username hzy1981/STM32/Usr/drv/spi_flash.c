@@ -391,6 +391,7 @@ uint8_t SPI_FLASH_ReadByte(void)
 *******************************************************************************/
 uint8_t SPI_FLASH_SendByte(uint8_t byte)
 {
+  Clr_Watch_Dog();
   /* Loop while DR register in not emplty */
   while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
 

@@ -10,7 +10,7 @@
 
 void Clr_Watch_Dog(void)
 {
-// IWDG_ReloadCounter();
+  IWDG_ReloadCounter();
 }
 
 /** 
