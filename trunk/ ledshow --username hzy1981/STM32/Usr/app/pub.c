@@ -162,4 +162,15 @@ void Pub_Timer_Proc(void)
 
 //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //≤‚ ‘ ‰≥ˆ
 }
+
+INT8U _Check_STRUCT_Sum(void *pSrc,INT8U *pCS)
+{  
+  return OS_Check_STRUCT_Sum(pSrc, pCS - (INT8U *)pSrc + CS_BYTES, pCS, CS_BYTES);
+}
+
+void _Set_STRUCT_Sum(void *pSrc,INT8U *pCS)
+{
+  OS_Set_STRUCT_Sum(pSrc, pCS - (INT8U *)pSrc + CS_BYTES, pCS, CS_BYTES);
+  
+}
 #undef PUB_C

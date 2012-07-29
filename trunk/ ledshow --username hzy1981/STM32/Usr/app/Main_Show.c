@@ -1067,6 +1067,8 @@ void Check_Update_Program_Para(void)
 
       Len = Read_Prog_Para(Prog_Status.Play_Status.Prog_No, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)); //重新更新节目参数
       memcpy((INT8U *)&Prog_Para.Head + 1, Pub_Buf, sizeof(Prog_Para) - CHK_BYTE_LEN);
+	  SET_SUM(Prog_Para);
+
 	  if(Check_Prog_Para() EQ 0)
 	  {
 	    ASSERT_FAILED();
@@ -1081,7 +1083,7 @@ void Check_Update_Program_Para(void)
         TRACE();
 
         SET_HT(Prog_Para);
-        SET_SUM(Prog_Para);
+        //SET_SUM(Prog_Para);
 
         Prog_No = Prog_Status.Play_Status.Prog_No;
         Prog_Status_Init();//Clr_Prog_Status();换了个新节目，重新设置状态
@@ -1263,8 +1265,14 @@ void Check_Show_Data_Para(void)
   //INT8U Flag;
 
   Re &= CHK_HT(Screen_Para);
-  Re &= CHK_HT(Prog_Num);  
+  //Re &= CHK_SUM(Screen_Para);
+
+  Re &= CHK_HT(Prog_Num);
+  //Re &= CHK_SUM(Prog_Num);
+    
   Re &= CHK_HT(Prog_Para);
+  //Re &= CHK_SUM(Prog_Para);
+
   Re &= CHK_HT(Prog_Status);
   Re &= CHK_HT(Cur_Block_Index);
   Re &= CHK_HT(Show_Data);

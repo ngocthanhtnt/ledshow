@@ -76,8 +76,9 @@ typedef struct
                                                                                   ASSERT_FAILED();\
                                                                                 }while(0)
  */
-#define SET_SUM OS_SET_STRUCT_SUM
-#define CHK_SUM OS_CHECK_STRUCT_SUM
+#define CHK_SUM(Var) _Check_STRUCT_Sum((void *)&(Var),(OS_INT8U *)((Var).CS))//OS_Check_STRUCT_Sum((void *)&(Var),sizeof(Var),(OS_INT8U *)(Var.CS),sizeof(Var.CS))
+#define SET_SUM(Var) _Set_STRUCT_Sum((void *)&(Var),(OS_INT8U *)((Var).CS))//OS_Set_STRUCT_Sum((void *)&(Var),sizeof(Var),(OS_INT8U *)(Var.CS),sizeof(Var.CS))
+
 #define SET_HT(V) do{V.Head = CHK_BYTE; V.Tail = CHK_BYTE;}while(0)
 #define CHK_HT(V) ((V.Head == CHK_BYTE && V.Tail == CHK_BYTE)?1:0)
 #define GET_VAR(A) A.Var
@@ -118,6 +119,8 @@ EXT float Sqrt(float number);
 EXT INT8U Hex2Bcd_Byte(INT8U Byte);
 EXT INT8U Bcd2Hex_Byte(INT8U Byte);
 EXT void Pub_Timer_Proc(void);
+EXT INT8U _Check_STRUCT_Sum(void *pSrc,INT8U *pCS);
+EXT void _Set_STRUCT_Sum(void *pSrc,INT8U *pCS);
 //外部完成调试信息输出函数
 extern void Put_Char(INT8S Chr);
 #endif

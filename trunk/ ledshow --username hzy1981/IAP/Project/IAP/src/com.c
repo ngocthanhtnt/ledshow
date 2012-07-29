@@ -292,6 +292,9 @@ void Rcv_Frame_Proc(void)
 		  //目标地址
 		  FlashDestination = ApplicationAddress + off;	//目标Flash地址
 		  pRamSource = rcvBuf.buf + i + FDATA + 5;  //编程数据起始地址
+		  //对数据解密
+		  for(j = 0; j < len; j ++)
+		    *(pRamSource + j) = (*(pRamSource + j) - 0x33) ^ 0x55;
 		  
 		  for (j = 0;(j < len) && (FlashDestination <  ApplicationAddress + size);j += 4)
 	      {

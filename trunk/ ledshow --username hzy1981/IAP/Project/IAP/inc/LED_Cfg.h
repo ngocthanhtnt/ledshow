@@ -53,7 +53,7 @@
 
 #define CMD_STRING_SIZE       128
 
-#define ApplicationAddress    0x8003000
+#define ApplicationAddress    0x8002000
 
 #define PAGE_SIZE                         (0x400)    /* 1 Kbyte */
 #define FLASH_SIZE                        (0x20000)  /* 128 KBytes */

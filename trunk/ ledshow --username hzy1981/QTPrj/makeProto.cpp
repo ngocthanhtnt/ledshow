@@ -893,6 +893,8 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
 
 
     //节目数据
+    int progDataFlag = 1; //是否生成了数据
+
     if(GET_BIT(flag, C_PROG_DATA))
     {
         QString progStr,areaStr, fileStr;
@@ -911,7 +913,10 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
                 int re = QMessageBox::warning(w, QObject::tr("提示"),
                                          reStr ,QObject::tr("重新编辑"), QObject::tr("继续"));
                 if(re EQ 0)
-                    return 0;
+                {
+                    progDataFlag = 0;
+                    break;
+                }
             }
 
             //节目参数帧
@@ -975,13 +980,18 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
         }
     }
 
-    if(GET_BIT(flag, C_PROG_DATA))
+    if(progDataFlag > 0)
     {
-      len = makeFrame((char *)&progNum, sizeof(progNum),\
-               C_PROG_NUM | WR_CMD, seq++, frameBuf);
-      counts++;
-      fwrite(frameBuf, len, 1, file);
+        if(GET_BIT(flag, C_PROG_DATA))
+        {
+          len = makeFrame((char *)&progNum, sizeof(progNum),\
+                   C_PROG_NUM | WR_CMD, seq++, frameBuf);
+          counts++;
+          fwrite(frameBuf, len, 1, file);
+        }
     }
+    else
+      counts = 0;
 
     free(dataBuf);
 

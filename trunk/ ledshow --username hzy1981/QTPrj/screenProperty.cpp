@@ -3168,7 +3168,7 @@ void CupdateFirmwareDialog::updateFirmware()
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
     this->setEnabled(false);
-/*
+
     if(readVersion() == false) //没有读取到版本号
     {
         this->setEnabled(true);
@@ -3189,7 +3189,7 @@ void CupdateFirmwareDialog::updateFirmware()
         this->setEnabled(true);
         return;
     }
-*/
+
     if(newFirmFrameCounts > 0)
     {
       w->comStatus->setTotalFrameCounts(newFirmFrameCounts);
@@ -3388,7 +3388,12 @@ void CupdateFirmwareDialog::makeFirmwareFile()
           //memcpy(frameBuf + FDATA, &len, 4); //文件长度，4字节
           memcpy(frameBuf + FDATA, &i, 4); //内部偏移，4字节
           memcpy(frameBuf + FDATA + 4, &endFlag, 1); //最有一帧标志,0xA5
+
           memcpy(frameBuf + FDATA + 5, binFileData + i, frameDataLen); //为真正数据
+          //对数据进行简单加密
+          for(unsigned int j = 0; j < frameDataLen; j ++)
+             frameBuf[FDATA + 5 + j] = (frameBuf[FDATA + 5 + j] ^ 0x55) + 0x33;
+
           //生成CRC校验
           OS_Set_Sum(frameBuf + FDATA, frameDataLen + 5, frameBuf + FDATA + frameDataLen + 5, 2, frameBuf, sizeof(frameBuf));
 
