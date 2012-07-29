@@ -1003,7 +1003,8 @@ void Com_Init(void)
 
 void Soft_Rest(void) //软件复位
 {
-  while(1);
+  Delay_ms(3);
+  *((INT32U *)0xE000ED0C) = 0x05fa0004; //实现系统复位
 }
 
 /*
