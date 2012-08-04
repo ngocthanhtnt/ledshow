@@ -2087,7 +2087,7 @@ INT16U Copy_Show_Data(INT8U *pSrc, INT32U Off, INT16U SrcLen,\
           Mask = Bit_Mask[Bit] + (((INT16U)Bit_Mask[8 - Bit])<<8); //保留左右两端共8位数据，中间填充Data
           if(X0 + 8 > Width) //越界
           {
-              Mask += ((INT16U)Bit_Mask[X0 + 8 - Width]) << (8 + Bit);
+              Mask |= (INT16U)(~((INT16U)Bit_Mask[Width - X0]));// << (8 + Bit);
           }
 
           Data0 = pSrc[(i >> 3) * Screen_Color_Num]; //将数据放入pData指向的内存的Bit位开始，后8位
