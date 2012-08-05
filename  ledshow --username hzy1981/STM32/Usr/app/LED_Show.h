@@ -23,9 +23,6 @@
 #define SLINE_MODE 0x00
 #define MLINE_MODE 0x01
 
-#define GET_LINE_Y(X0,Y0,X1,Y1,X) ((X1 != X0)?(((Y1)-(Y0))*((X)-(X0))/((X1)-(X0)) + (Y0) + 0.5):((Y0) + 0.5))
-#define GET_LINE_X(X0,Y0,X1,Y1,Y) ((Y1 != Y0)?(((X1)-(X0))*((Y)-(Y0))/((Y1)-(Y0)) + (X0) + 0.5):((X0) + 0.5))
-
 #define AREA_ERR 2 //更新显示文件出错
 #define AREA_END 0 //该分区结束
 #define AREA_OK  1 //更新成功

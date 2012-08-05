@@ -17,7 +17,7 @@
 #define BORDER_CLKWS_FLASH  0x04 //顺时针闪烁
 #define BORDER_CCLKWS_FLASH 0x05 //逆时针闪烁
 
-#define MAX_SBORDER_DATA_LEN 120
+//#define MAX_SBORDER_DATA_LEN 120
 
 //简单边框数据处理
 typedef struct

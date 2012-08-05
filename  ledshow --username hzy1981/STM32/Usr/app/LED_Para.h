@@ -741,7 +741,7 @@ typedef struct
   INT8U Tail;
 }S_Show_Data;
 
-#define BORDER_DATA_LEN 40*2
+#define BORDER_DATA_LEN 40*6
 #define SCREEN_PARA_LEN (sizeof(S_Screen_Para) -CHK_BYTE_LEN)
 #define PROG_PARA_LEN   (sizeof(S_Prog_Para)-CHK_BYTE_LEN + BORDER_DATA_LEN)
 #define PROG_NUM_LEN    (sizeof(S_Prog_Num)-CHK_BYTE_LEN)
