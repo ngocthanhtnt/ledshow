@@ -3176,6 +3176,32 @@ void CupdateFirmwareDialog::updateFirmware()
 
     }
 
+    //比较两个版本是否相同
+    int equFlag = 0;
+
+    for(int i = 0; i < oldVersionEdit->text().size() && i < newVersionEdit->text().size(); i ++)
+    {
+      if(oldVersionEdit->text().at(i) == ' ' && newVersionEdit->text().at(i) == ' ') //第一个空格
+      {
+         equFlag = 1;
+         break;
+      }
+      else if(oldVersionEdit->text().at(i) != newVersionEdit->text().at(i))
+      {
+          equFlag = 0;
+          break;
+      }
+    }
+
+    if(equFlag EQ 0)
+    {
+        QMessageBox::warning(w, tr("提示"),
+                               tr("固件和控制器版本不兼容，请选择正确的固件程序升级！"),tr("确定"));
+
+        this->setEnabled(true);
+        return;
+    }
+
     //读取前一版本的版本号
     INT8U flag = 0x02; //维护标志02表示控制器进入固件升级状态
     makeProtoBufData(screenStr, COM_MODE, C_SELF_TEST | WR_CMD, (char *)&flag, sizeof(flag));

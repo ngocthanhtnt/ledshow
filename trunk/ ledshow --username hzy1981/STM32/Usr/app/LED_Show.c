@@ -1,6 +1,9 @@
 #define LED_SHOW_C
 #include "Includes.h"
 
+//或者*100用移位的方式速度更快？未测试
+#define GET_LINE_Y(X0,Y0,X1,Y1,X) ((X1 != X0)?((((100*((Y1)-(Y0))*((X)-(X0)))/((X1)-(X0)) + 100*(Y0)) + 50) / 100):((Y0) + 0.5))
+#define GET_LINE_X(X0,Y0,X1,Y1,Y) ((Y1 != Y0)?((((100*((X1)-(X0))*((Y)-(Y0)))/((Y1)-(Y0)) + 100*(X0)) + 50) / 100):((X0) + 0.5))
 
 #define STRETCH_RATIO 2//拉伸比例
 //#define TENSILE_STEP 10//Tensile
@@ -1285,6 +1288,15 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
     INT16U Len, Diff,i,j,Mask,X0,X1,Y0,Y1,Width,Height;//,Y1;
     INT8U *pSrc, *pDst, Data, Color_Num;
 
+/*
+      for(i = 0; i < X_Len;  i++)
+        for(j = 0; j < Y_Len; j++)
+        {
+          Data = Get_Area_Point_Data(pSrc_Buf, Area_No, pPoint0->X + i, pPoint0->Y + j);
+          Set_Area_Point_Data(pDst_Buf, Area_No, pPoint1->X + i, pPoint1->Y + j, Data);
+        }
+      return;
+*/
     if(X_Len EQ 0 || Y_Len EQ 0)
         return;
 
@@ -1593,7 +1605,7 @@ void Copy_Filled_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, IN
                    //pDst++;
 
                    Data = ((*(pSrc + 1)) >> (Diff)) + (*(pSrc + 1 + Color_Num) << (8 - Diff));
-                   *(pDst + 1) = ((*(pDst + 1)) & ~Mask)  + (Data & Mask);
+                   *(pDst + 1) = ((*(pDst + 1)) & Mask)  + (Data & ~Mask);
                }
            }
                            //START_SCAN_TIMER();
@@ -2684,16 +2696,16 @@ void Fill_Clock_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pCenter, \
                      INT16S Angle, INT16U Len, INT16U Width, INT8U Value)
 {
   S_Point Point0, Point1, Point2;
-  
+
   if(Width EQ 0)
       return;
 
   Get_Angle_Point(pCenter, Angle, Len * 7 / 10, &Point0); //前端的顶点
   Get_Angle_Point(pCenter, Angle - 90, Width, &Point1);
   Get_Angle_Point(pCenter, Angle + 90, Width, &Point2);
-  
+
   Fill_Triangle(pDst_Buf, Area_No, &Point1, &Point2, &Point0, Value);
-  
+
   Get_Angle_Point(pCenter, Angle + 180, Len * 3 / 10, &Point0); //后端的顶点
   //Get_Angle_Point(pCenter, Angle + 180 - 90, Width, &Point1);
   //Get_Angle_Point(pCenter, Angle + 180 + 90, Width, &Point2);

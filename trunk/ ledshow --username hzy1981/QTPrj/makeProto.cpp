@@ -911,7 +911,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
             if(reStr != "")
             {
                 int re = QMessageBox::warning(w, QObject::tr("提示"),
-                                         reStr ,QObject::tr("重新编辑"), QObject::tr("继续"));
+                                         reStr ,QObject::tr("重新修改"), QObject::tr("继续"));
                 if(re EQ 0)
                 {
                     progDataFlag = 0;
