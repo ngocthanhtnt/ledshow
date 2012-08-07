@@ -121,6 +121,9 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT32U Step, IN
    //pShow_Data = (S_Show_Data *) &_Pub_Buf;
 
    //上下边框
+   if(Width > Area_Width) //不应超过高度
+       Width = Area_Width;
+
    for(i = 0; i < Width; i ++)
      for(j = 0; j < Height; j ++)
      {
@@ -215,6 +218,10 @@ void Copy_Border(INT8U Area_No, INT32U Step)
     //pShow_Data = (S_Show_Data *) &_Pub_Buf;
 
     //上下边框
+    if(Width > Area_Width) //不应超过高度
+        Width = Area_Width;
+
+/*
     for(i = 0; i < Width; i ++)
       for(j = 0; j < Height; j ++)
       {
@@ -222,6 +229,31 @@ void Copy_Border(INT8U Area_No, INT32U Step)
         Set_Area_Point_Data(pDst, Area_No, i, j, Re); //上边框
         Set_Area_Point_Data(pDst, Area_No, Width - 1 - i, Area_Height-1 - j, Re); //下边框
       }
+*/
+    //上边框
+    P0.X = Step % Width;
+    P0.Y = 0;
+
+    P1.X = 0;
+    P1.Y = 0;
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No,&P0, Width - P0.X, Height, pDst, &P1, 0);
+
+    P0.X = 0;
+    P1.X = Width - Step % Width;
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No,&P0, Step % Width, Height, pDst, &P1, 0);
+
+    //下边框
+    P0.X = Width - Step % Width;
+    P0.Y = 0;
+
+    P1.X = 0;
+    P1.Y = Area_Height - Height;
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No,&P0, Step % Width, Height, pDst, &P1, 0);
+
+    P0.X = 0;
+    P1.X = Step % Width;
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No,&P0, Width - Step % Width, Height, pDst, &P1, 0);
+    //--------------------------
 
     P0.X = 0;
     P0.Y = 0;
@@ -240,6 +272,7 @@ void Copy_Border(INT8U Area_No, INT32U Step)
        Copy_Filled_Rect(pDst, Area_No,&P0, Width, Height, pDst, &P1, 0);
     }
 
+
     //左右边框
     if(Width + 2*Height > Area_Height) //不应超过高度
     {
@@ -248,7 +281,7 @@ void Copy_Border(INT8U Area_No, INT32U Step)
       else
         Width = 0;
     }
-
+/*
     for(i = 0; i < Width; i ++)
       for(j = 0; j < Height; j ++)
       {
@@ -256,7 +289,33 @@ void Copy_Border(INT8U Area_No, INT32U Step)
         Set_Area_Point_Data(pDst, Area_No, j,Height + Width -1 - i, Re); //左边框
         Set_Area_Point_Data(pDst, Area_No, Area_Width - 1 - j,Height + i, Re); //右边框
       }
+*/
 
+    //左边框的第一个border单元
+    P0.X = 0;
+    P0.Y = Height + Width - Step % Width;
+
+    P1.X = 0;
+    P1.Y = Height;
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No,&P0, Height, Step % Width, pDst, &P1, 0);
+
+    P0.Y = Height;
+    P1.Y = Height + Step % Width;
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No,&P0, Height, Width - Step % Width, pDst, &P1, 0);
+
+    //右边框
+    P0.X = 0;
+    P0.Y = Height + Step % Width;
+
+    P1.X = Area_Width - Height;
+    P1.Y = Height;
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No,&P0, Height, Width - Step % Width, pDst, &P1, 0);
+
+    P0.Y = Height;
+    P1.Y = Height + Width - Step % Width;
+    Copy_Filled_Rect(&Show_Data_Bak, Area_No,&P0, Height, Step % Width, pDst, &P1, 0);
+
+//-------------------
     P0.X = 0;
     P0.Y = Height;
 
