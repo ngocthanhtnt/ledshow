@@ -2080,6 +2080,8 @@ INT16U Copy_Show_Data(INT8U *pSrc, INT32U Off, INT16U SrcLen,\
         Set_Area_Point_Data(pDst, Area_No, X + X0, Y + Y0, Re);
      }
   }
+
+  return i*Screen_Color_Num/8;
 */
   //Diff = X % 8; //整个显示区对于整8的一个偏移
   //Mask = Bit_Mask(X % 8);
@@ -2096,7 +2098,7 @@ INT16U Copy_Show_Data(INT8U *pSrc, INT32U Off, INT16U SrcLen,\
           Bit = Index % 8; //字节内的位偏移
           pData = pDst->Color_Data + (Index >> 3)*Screen_Color_Num; //对应在目标缓冲区中的位置,在字节内的偏移是 Index % 8;
 
-          Mask = Bit_Mask[Bit] + (((INT16U)Bit_Mask[8 - Bit])<<8); //保留左右两端共8位数据，中间填充Data
+          Mask = Bit_Mask[Bit] + (((INT16U)Bit_Mask[8 - Bit])<<(8 + Bit)); //保留左右两端共8位数据，中间填充Data
           if(X0 + 8 > Width) //越界
           {
               Mask |= (INT16U)(~((INT16U)Bit_Mask[Width - X0]));// << (8 + Bit);
