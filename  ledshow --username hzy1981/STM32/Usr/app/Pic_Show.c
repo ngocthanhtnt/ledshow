@@ -162,28 +162,61 @@ const S_Mode_Func In_Mode_Func[]=
 #endif    
   }//ÓÒÏÂ¸²¸Ç
 #endif
+
 #if IN_SPEC_EFFECT_NUM > 19
+  ,{&Move_Left_Up_Cover0, HV_MAX_MODE, 1
+#if QT_EN
+   ,"×óÉÏÖ±½Ç¸²¸Ç"
+#endif
+  }//×óÉÏÖ±½Ç¸²¸Ç
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 29
+  ,{&Move_Right_Up_Cover0, HV_MAX_MODE, 1
+#if QT_EN
+   ,"ÓÒÉÏÖ±½Ç¸²¸Ç"
+#endif
+  }//ÓÒÉÏÖ±½Ç¸²¸Ç
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 21
+  ,{&Move_Left_Down_Cover0, HV_MAX_MODE, 1
+#if QT_EN
+   ,"×óÏÂÖ±½Ç¸²¸Ç"
+#endif
+  }//×óÏÂÖ±½Ç¸²¸Ç
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 22
+  ,{&Move_Right_Down_Cover0, HV_MAX_MODE, 1
+#if QT_EN
+   ,"ÓÒÏÂÖ±½Ç¸²¸Ç"
+#endif
+  }//ÓÒÏÂÖ±½Ç¸²¸Ç
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 23
   ,{&Move_Left_Right_Open, H_MODE, 1
 #if QT_EN
    ,"×óÓÒ¿ªÁ±" 
 #endif    
   } //×óÓÒ¿ªÁ±
 #endif
-#if IN_SPEC_EFFECT_NUM > 20
+#if IN_SPEC_EFFECT_NUM > 24
   ,{&Move_Up_Down_Open, V_MODE, 1
 #if QT_EN
    ,"ÉÏÏÂ¿ªÁ±"
 #endif    
   } //ÉÏÏÂ¿ªÁ±
 #endif
-#if IN_SPEC_EFFECT_NUM > 21
+#if IN_SPEC_EFFECT_NUM > 25
   ,{&Move_Left_Right_Close, H_MODE, 1
 #if QT_EN
    ,"×óÓÒºÏÁ±" 
 #endif    
   } //×óÓÒºÏÁ±
 #endif
-#if IN_SPEC_EFFECT_NUM > 22
+#if IN_SPEC_EFFECT_NUM > 26
   ,{&Move_Up_Down_Close, V_MODE, 1
 #if QT_EN
    ,"ÉÏÏÂºÏÁ±" 
@@ -191,7 +224,7 @@ const S_Mode_Func In_Mode_Func[]=
   } //ÉÏÏÂºÏÁ±
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 23
+#if IN_SPEC_EFFECT_NUM > 27
   ,{&Move_Left_Right_Reel_Open, H_MODE, 1
 #if QT_EN
    ,"×óÓÒ¾íÖá"
@@ -199,7 +232,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 24
+#if IN_SPEC_EFFECT_NUM > 28
   ,{&Move_Up_Down_Reel_Open, V_MODE, 1
 #if QT_EN
    ,"ÉÏÏÂ¾íÖá"
@@ -207,77 +240,77 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 25
+#if IN_SPEC_EFFECT_NUM > 29
   ,{&Move_Spin_CW, HV_ADD_MODE, 1
 #if QT_EN
    ,"Ë³Ê±Õë¸²¸Ç" 
 #endif    
   }//Ë³Ê±Õë
 #endif
-#if IN_SPEC_EFFECT_NUM > 26
+#if IN_SPEC_EFFECT_NUM > 30
   ,{&Move_Spin_CCW, HV_ADD_MODE, 1
 #if QT_EN
    ,"ÄæÊ±Õë¸²¸Ç" 
 #endif    
   }//ÄæÊ±Õë¸²¸Ç
 #endif
-#if IN_SPEC_EFFECT_NUM > 27
+#if IN_SPEC_EFFECT_NUM > 31
   ,{&Move_Up_Snow, V_MODE, SNOW_RATIO
 #if QT_EN
    ,"ÉÏÆ®Ñ©" 
 #endif    
   } //ÉÏÆ®Ñ©
 #endif
-#if IN_SPEC_EFFECT_NUM > 28
+#if IN_SPEC_EFFECT_NUM > 32
   ,{&Move_Down_Snow, V_MODE, SNOW_RATIO
 #if QT_EN
    ,"ÏÂÆ®Ñ©" 
 #endif    
   } //ÏÂÆ®Ñ©
 #endif
-#if IN_SPEC_EFFECT_NUM > 29
+#if IN_SPEC_EFFECT_NUM > 33
   ,{&Move_Flash, FIX_MODE, 100
 #if QT_EN
    ,"ÉÁË¸" 
 #endif    
   } //ÉÁË¸
 #endif
-#if IN_SPEC_EFFECT_NUM > 30
+#if IN_SPEC_EFFECT_NUM > 34
   ,{&Move_Left_Laser, H_MODE, 1
 #if QT_EN
    ,"×óÀØÉä" 
 #endif    
   } //×óÀØÉä
 #endif
-#if IN_SPEC_EFFECT_NUM > 31
+#if IN_SPEC_EFFECT_NUM > 35
   ,{&Move_Right_Laser, H_MODE, 1
 #if QT_EN
    ,"ÓÒÀØÉä" 
 #endif    
   } //ÓÒÀØÉä
 #endif
-#if IN_SPEC_EFFECT_NUM > 32
+#if IN_SPEC_EFFECT_NUM > 36
   ,{&Move_Up_Laser, V_MODE, 1
 #if QT_EN
    ,"ÉÏÀØÉä" 
 #endif    
   } //ÉÏÀØÉä
 #endif
-#if IN_SPEC_EFFECT_NUM > 33
+#if IN_SPEC_EFFECT_NUM > 37
   ,{&Move_Down_Laser, V_MODE, 1
 #if QT_EN
    ,"ÏÂÀØÉä" 
 #endif    
   } //ÏÂÀØÉä
 #endif
-#if IN_SPEC_EFFECT_NUM > 34
+#if IN_SPEC_EFFECT_NUM > 38
   ,{&Move_Left_Tensile, FIX_MODE, 100
 #if QT_EN
    ,"ÓÒÀ­Éì"
 #endif    
   }//ÓÒÀ­Éì
 #endif
-#if IN_SPEC_EFFECT_NUM > 35
+#if IN_SPEC_EFFECT_NUM > 39
   //{&Move_Right_Tensile}//ÓÒÀ­Éì
   ,{&Move_Up_Tensile, FIX_MODE, 100
 #if QT_EN
@@ -285,7 +318,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif    
   }//ÏÂÀ­Éì
 #endif
-#if IN_SPEC_EFFECT_NUM > 36
+#if IN_SPEC_EFFECT_NUM > 40
   //{&Move_Down_Tensile}//ÏÂÀ­Éì
   ,{&Move_Vertical_Tensile, V_MODE, 1
 #if QT_EN
@@ -293,7 +326,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif    
   }//´¹Ö±À­Éì
 #endif
-#if IN_SPEC_EFFECT_NUM > 37
+#if IN_SPEC_EFFECT_NUM > 41
   ,{&Move_Horizontal_Tensile, H_MODE, 1
 #if QT_EN
    ,"Ë®Æ½À­Éì" 
@@ -301,14 +334,14 @@ const S_Mode_Func In_Mode_Func[]=
   }//Ë®Æ½À­Éì
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 38
+#if IN_SPEC_EFFECT_NUM > 42
   ,{&Move_Horizontal_Window, FIX_MODE, 100
 #if QT_EN
    ,"Ë®Æ½°ÙÒ¶´°" 
 #endif    
   }//WIN_LEAF_WIDTH} //Ë®Æ½°ÙÒ¶´°
 #endif
-#if IN_SPEC_EFFECT_NUM > 39
+#if IN_SPEC_EFFECT_NUM > 43
   ,{&Move_Vertical_Window, FIX_MODE, 100
 #if QT_EN
    ,"´¹Ö±°ÙÒ¶´°" 
@@ -316,14 +349,14 @@ const S_Mode_Func In_Mode_Func[]=
   }//WIN_LEAF_WIDTH} //´¹Ö±°ÙÒ¶´°
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 40
+#if IN_SPEC_EFFECT_NUM > 44
   ,{&Move_Fade_In, FIX_MODE, 100
 #if QT_EN
    ,"µ­Èë" 
 #endif    
   }//µ­Èë
 #endif
-#if IN_SPEC_EFFECT_NUM > 41
+#if IN_SPEC_EFFECT_NUM > 45
   ,{&Move_Left_Up_In, HV_SQRT_MODE, 1
 #if QT_EN
    ,"×óÉÏÒÆÈë"
@@ -331,7 +364,7 @@ const S_Mode_Func In_Mode_Func[]=
   }//×óÉÏÒÆÈë
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 42
+#if IN_SPEC_EFFECT_NUM > 46
   ,{&Move_Right_Up_In, HV_SQRT_MODE, 1
 #if QT_EN
    ,"ÓÒÉÏÒÆÈë"
@@ -339,7 +372,7 @@ const S_Mode_Func In_Mode_Func[]=
   }//ÓÒÉÏÒÆÈë
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 43
+#if IN_SPEC_EFFECT_NUM > 47
   ,{&Move_Left_Down_In, HV_SQRT_MODE, 1
 #if QT_EN
    ,"×óÏÂÒÆÈë"
@@ -347,7 +380,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 44
+#if IN_SPEC_EFFECT_NUM > 48
   ,{&Mofe_Right_Down_In, HV_SQRT_MODE, 1
 #if QT_EN
    ,"ÓÒÏÂÒÆÈë"
@@ -355,7 +388,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 45
+#if IN_SPEC_EFFECT_NUM > 49
   ,{&Move_Left_Compress_0, H_MODE, 1
 #if QT_EN
    ,"×óÑ¹Èë"
@@ -363,7 +396,7 @@ const S_Mode_Func In_Mode_Func[]=
   }//ÓÒÏÂÒýÈë
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 46
+#if IN_SPEC_EFFECT_NUM > 50
   ,{&Move_Right_Compress_0, H_MODE, 1
 #if QT_EN
    ,"ÓÒÑ¹Èë"
@@ -371,7 +404,7 @@ const S_Mode_Func In_Mode_Func[]=
   }//ÓÒÏÂÒýÈë
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 47
+#if IN_SPEC_EFFECT_NUM > 51
   ,{&Move_Up_Compress_0, V_MODE, 1
 #if QT_EN
    ,"ÉÏÑ¹Èë"
@@ -379,7 +412,7 @@ const S_Mode_Func In_Mode_Func[]=
   }//ÓÒÏÂÒýÈë
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 48
+#if IN_SPEC_EFFECT_NUM > 52
   ,{&Move_Down_Compress_0, V_MODE, 1
 #if QT_EN
    ,"ÏÂÑ¹Èë"
@@ -388,13 +421,45 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 49
+  ,{&Move_Left_Compress_1, H_MODE, 1
+#if QT_EN
+   ,"×ó·ÖÉ¢Ñ¹Èë"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 50
+  ,{&Move_Right_Compress_1, H_MODE, 1
+#if QT_EN
+   ,"ÓÒ·ÖÉ¢Ñ¹Èë"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 51
+  ,{&Move_Up_Compress_1, V_MODE, 1
+#if QT_EN
+   ,"ÉÏ·ÖÉ¢Ñ¹Èë"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 52
+  ,{&Move_Down_Compress_1, V_MODE, 1
+#if QT_EN
+   ,"ÏÂ·ÖÉ¢Ñ¹Èë"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM >53
   ,{&Move_Left_Compress, FIX_MODE, 100
 #if QT_EN
    ,"Ïò×óÑ¹Ëõ" 
 #endif    
   } //Ïò×óÑ¹Ëõ
 #endif
-#if IN_SPEC_EFFECT_NUM > 50
+#if IN_SPEC_EFFECT_NUM > 54
   ,{&Move_Up_Compress, FIX_MODE, 100
 #if QT_EN
    ,"ÏòÉÏÑ¹Ëõ" 
@@ -402,14 +467,14 @@ const S_Mode_Func In_Mode_Func[]=
   }//ÏòÉÏÑ¹Ëõ
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 51
+#if IN_SPEC_EFFECT_NUM > 55
   ,{&Move_Left_Stretch, H_MODE, 3
 #if QT_EN
    ,"×óÒÆµ¯³ö" 
 #endif    
   } //×óÒÆµ¯³ö
 #endif
-#if IN_SPEC_EFFECT_NUM > 52
+#if IN_SPEC_EFFECT_NUM > 56
   ,{&Move_Up_Stretch, V_MODE, 1
 #if QT_EN
    ,"ÉÏÒÆµ¯³ö" 
@@ -512,28 +577,61 @@ const S_Mode_Func Out_Mode_Func[]=
 #endif
   }//11
 #endif
-#if OUT_SPEC_EFFECT_NUM > 13  
+
+#if OUT_SPEC_EFFECT_NUM > 13
+  ,{&Move_Left_Up_Cover0, HV_MAX_MODE, 1
+#if QT_EN
+   ,"×óÉÏÖ±½Ç¸²¸Ç"
+#endif
+  }//×óÉÏÖ±½Ç¸²¸Ç
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 14
+  ,{&Move_Right_Up_Cover0, HV_MAX_MODE, 1
+#if QT_EN
+   ,"ÓÒÉÏÖ±½Ç¸²¸Ç"
+#endif
+  }//ÓÒÉÏÖ±½Ç¸²¸Ç
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 15
+  ,{&Move_Left_Down_Cover0, HV_MAX_MODE, 1
+#if QT_EN
+   ,"×óÏÂÖ±½Ç¸²¸Ç"
+#endif
+  }//×óÏÂÖ±½Ç¸²¸Ç
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 16
+  ,{&Move_Right_Down_Cover0, HV_MAX_MODE, 1
+#if QT_EN
+   ,"ÓÒÏÂÖ±½Ç¸²¸Ç"
+#endif
+  }//ÓÒÏÂÖ±½Ç¸²¸Ç
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 17
   ,{&Move_Left_Right_Open, H_MODE, 1
 #if QT_EN
    ,"×óÓÒ¿ªÁ±" 
 #endif    
   }//12
 #endif
-#if OUT_SPEC_EFFECT_NUM > 14  
+#if OUT_SPEC_EFFECT_NUM > 18
   ,{&Move_Up_Down_Open, V_MODE, 1
 #if QT_EN
    ,"ÉÏÏÂ¿ªÁ±" 
 #endif    
   }//13
 #endif
-#if OUT_SPEC_EFFECT_NUM > 15
+#if OUT_SPEC_EFFECT_NUM > 19
   ,{&Move_Left_Right_Close, H_MODE, 1
 #if QT_EN
    ,"×óÓÒºÏÁ±" 
 #endif    
   }//14
 #endif
-#if OUT_SPEC_EFFECT_NUM > 16  
+#if OUT_SPEC_EFFECT_NUM > 20
   ,{&Move_Up_Down_Close, V_MODE, 1
 #if QT_EN
    ,"ÉÏÏÂºÏÁ±" 
@@ -541,7 +639,7 @@ const S_Mode_Func Out_Mode_Func[]=
   }//15
 #endif
 
-#if OUT_SPEC_EFFECT_NUM > 17
+#if OUT_SPEC_EFFECT_NUM > 21
   ,{&Move_Left_Right_Reel_Close, H_MODE, 1
 #if QT_EN
    ,"×óÓÒ¾íÖá"
@@ -549,7 +647,7 @@ const S_Mode_Func Out_Mode_Func[]=
   }//12
 #endif
 
-#if OUT_SPEC_EFFECT_NUM > 18
+#if OUT_SPEC_EFFECT_NUM > 22
   ,{&Move_Up_Down_Reel_Close, V_MODE, 1
 #if QT_EN
    ,"ÉÏÏÂ¾íÖá"
@@ -557,21 +655,21 @@ const S_Mode_Func Out_Mode_Func[]=
   }//12
 #endif
 
-#if OUT_SPEC_EFFECT_NUM > 19
+#if OUT_SPEC_EFFECT_NUM > 23
   ,{&Move_Spin_CW, HV_ADD_MODE, 1
 #if QT_EN
    ,"Ë³Ê±Õë¸²¸Ç" 
 #endif    
   }
 #endif
-#if OUT_SPEC_EFFECT_NUM > 20
+#if OUT_SPEC_EFFECT_NUM > 24
   ,{&Move_Spin_CCW, HV_ADD_MODE, 1
 #if QT_EN
    ,"ÄæÊ±Õë¸²¸Ç" 
 #endif    
   }
 #endif
-#if OUT_SPEC_EFFECT_NUM > 21
+#if OUT_SPEC_EFFECT_NUM > 25
   ,{&Move_Fade_In, FIX_MODE, 100
 #if QT_EN
    ,"µ­³ö" 
@@ -632,6 +730,9 @@ INT16U Get_In_Max_Step(INT16U Width, INT16U Height, INT8U In_Mode)
     case FIX_MODE:
         Re = (INT16U)In_Mode_Func[In_Mode].Fac;
         break;
+    case HV_MAX_MODE:
+        Re = (Width > Height?Width:Height)*In_Mode_Func[In_Mode].Fac;
+        break;
     default:
         Re = 100;
         break;
@@ -667,6 +768,9 @@ INT16U Get_Out_Max_Step(INT16U Width, INT16U Height, INT8U Out_Mode)
         break;
     case FIX_MODE:
         Re = Out_Mode_Func[Out_Mode].Fac;
+        break;
+    case HV_MAX_MODE:
+        Re = (Width > Height?Width:Height)*Out_Mode_Func[Out_Mode].Fac;
         break;
     default:
         Re = 100;

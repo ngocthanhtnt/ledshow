@@ -139,7 +139,7 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT32U Step, IN
 
        P1.X = 0;
        P1.Y = 0;
-       while(P1.X < Area_Width)
+       while(P1.X + Width < Area_Width)
        {
           P1.X = P1.X + Width;
           P0.Y = 0;
@@ -260,7 +260,7 @@ void Copy_Border(INT8U Area_No, INT32U Step)
 
     P1.X = 0;
     P1.Y = 0;
-    while(P1.X < Area_Width)
+    while(P1.X + Width < Area_Width)
     {
        P1.X = P1.X + Width;
        P0.Y = 0;
