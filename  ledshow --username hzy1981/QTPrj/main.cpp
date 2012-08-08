@@ -86,8 +86,8 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 256);
   cardIniFile.setValue("FontNum", 1);
-  cardIniFile.setValue("inModeNum", 61);
-  cardIniFile.setValue("outModeNum", 20);
+  cardIniFile.setValue("inModeNum", 64);
+  cardIniFile.setValue("outModeNum", 28);
   cardIniFile.setValue("romSize", 2048);
   cardIniFile.setValue("fileEnWord", 0xFF);
   cardIniFile.setValue("comMode", COM_RS232 | COM_RS485 | COM_UDISK);

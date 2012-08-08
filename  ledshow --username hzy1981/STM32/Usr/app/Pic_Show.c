@@ -420,7 +420,7 @@ const S_Mode_Func In_Mode_Func[]=
   }//右下引入
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 49
+#if IN_SPEC_EFFECT_NUM > 53
   ,{&Move_Left_Compress_1, H_MODE, 1
 #if QT_EN
    ,"左分散压入"
@@ -428,7 +428,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 50
+#if IN_SPEC_EFFECT_NUM > 54
   ,{&Move_Right_Compress_1, H_MODE, 1
 #if QT_EN
    ,"右分散压入"
@@ -436,7 +436,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 51
+#if IN_SPEC_EFFECT_NUM > 55
   ,{&Move_Up_Compress_1, V_MODE, 1
 #if QT_EN
    ,"上分散压入"
@@ -444,7 +444,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 52
+#if IN_SPEC_EFFECT_NUM > 56
   ,{&Move_Down_Compress_1, V_MODE, 1
 #if QT_EN
    ,"下分散压入"
@@ -452,14 +452,14 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM >53
+#if IN_SPEC_EFFECT_NUM >57
   ,{&Move_Left_Compress, FIX_MODE, 100
 #if QT_EN
    ,"向左压缩" 
 #endif    
   } //向左压缩
 #endif
-#if IN_SPEC_EFFECT_NUM > 54
+#if IN_SPEC_EFFECT_NUM > 58
   ,{&Move_Up_Compress, FIX_MODE, 100
 #if QT_EN
    ,"向上压缩" 
@@ -467,18 +467,43 @@ const S_Mode_Func In_Mode_Func[]=
   }//向上压缩
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 55
-  ,{&Move_Left_Stretch, H_MODE, 3
+#if IN_SPEC_EFFECT_NUM > 59
+  ,{&Move_Left_Stretch, H_MODE, 1
 #if QT_EN
    ,"左移弹出" 
 #endif    
   } //左移弹出
 #endif
-#if IN_SPEC_EFFECT_NUM > 56
+
+#if IN_SPEC_EFFECT_NUM > 60
   ,{&Move_Up_Stretch, V_MODE, 1
 #if QT_EN
    ,"上移弹出" 
 #endif    
+  } //上移弹出
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 61
+  ,{&Move_Jump_Stretch, V_MODE, 1
+#if QT_EN
+   ,"翻腾弹出"
+#endif
+  } //上移弹出
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 62
+  ,{&Move_Diamond_0, HV_ADD_MODE, 0.5
+#if QT_EN
+   ,"菱形展开"
+#endif
+  } //上移弹出
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 63
+  ,{&Move_Diamond, HV_ADD_MODE, 0.5
+#if QT_EN
+   ,"菱形收缩"
+#endif
   } //上移弹出
 #endif
 };
@@ -669,12 +694,29 @@ const S_Mode_Func Out_Mode_Func[]=
 #endif    
   }
 #endif
+
 #if OUT_SPEC_EFFECT_NUM > 25
   ,{&Move_Fade_In, FIX_MODE, 100
 #if QT_EN
    ,"淡出" 
-#endif    
-  }//淡入
+#endif
+   }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 26
+  ,{&Move_Diamond_0, HV_ADD_MODE, 0.5
+#if QT_EN
+   ,"菱形展开"
+#endif
+   }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 27
+  ,{&Move_Diamond, HV_ADD_MODE, 0.5
+#if QT_EN
+   ,"菱形收缩"
+#endif
+  }
 #endif
 
 };

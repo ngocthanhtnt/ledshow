@@ -390,6 +390,7 @@ EXT void Move_Left_Stretch(INT8U Area_No);
 EXT void Move_Right_Stretch(INT8U Area_No);
 EXT void Move_Up_Stretch(INT8U Area_No);
 EXT void Move_Down_Stretch(INT8U Area_No);
+EXT void Move_Jump_Stretch(INT8U Area_No);
 EXT void Move_Horizontal_Window(INT8U Area_No);
 EXT void Move_Vertical_Window(INT8U Area_No);
 EXT void Move_Left_Compress(INT8U Area_No);
@@ -409,6 +410,8 @@ EXT void Move_Left_Compress_1(INT8U Area_No);
 EXT void Move_Right_Compress_1(INT8U Area_No);
 EXT void Move_Up_Compress_1(INT8U Area_No);
 EXT void Move_Down_Compress_1(INT8U Area_No);
+EXT void Move_Diamond(INT8U Area_No);
+EXT void Move_Diamond_0(INT8U Area_No);
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
 
 EXT void vsPrintf(char Buf[], CONST INT8S *format, va_list ap);
