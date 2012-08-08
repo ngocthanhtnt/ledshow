@@ -4190,27 +4190,33 @@ INT16U Get_TENSILE_STEP(INT16U Len)
 }
 
 //复制横向的压缩窗口
-void Copy_Compresssion_H_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
+INT16U Copy_Compresssion_H_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
                               S_Show_Data *pDst, S_Point *pPoint1, INT16U Ratio, INT8U Direct)
 {
 
     INT16U i;//, j;
     S_Point P0, P1,P2;
-    INT16U TENSILE_STEP;
+    INT16U TENSILE_STEP,Temp,Temp0,Temp1,X0;
     //INT16U Temp;
 
     if(Ratio EQ 0)
-        return;
+        return 0;
 
     TENSILE_STEP = Get_TENSILE_STEP(Prog_Para.Area[Area_No].X_Len);//Prog_Para.Area[Area_No].X_Len);
 
     Ratio = TENSILE_STEP * Ratio / Prog_Status.Area_Status[Area_No].Max_Step;//100;//每10个里点亮几个;
 
+    X0 = 0;
     if(Direct EQ 0)
     {
+        Temp0 = (TENSILE_STEP - Ratio) / 2;
+        Temp1 = (TENSILE_STEP + Ratio) / 2;
+
         for(i = 0; i < X_Len; i ++)
         {
-          if((i % TENSILE_STEP) < Ratio)
+            Temp = i %  TENSILE_STEP;
+
+          if(Temp >= Temp0 && Temp <= Temp1)
           {
               P0.X = pPoint0->X + i;
               P0.Y = pPoint0->Y;
@@ -4218,7 +4224,7 @@ void Copy_Compresssion_H_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0
               P1.X = pPoint0->X + i;
               P1.Y = pPoint0->Y + Y_Len - 1;
 
-              P2.X = pPoint1->X + (i / TENSILE_STEP)*Ratio + (i % TENSILE_STEP);
+              P2.X = pPoint1->X + X0++;//(i / TENSILE_STEP)*Ratio + (i % TENSILE_STEP);
               P2.Y = pPoint1->Y;
               Copy_Line(pSrc, Area_No, &P0, &P1, pDst, &P2);
            }
@@ -4229,7 +4235,11 @@ void Copy_Compresssion_H_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0
         //Clear_Area_Data(pDst, Area_No);
         for(i = 0; i < X_Len; i ++)
         {
-          if(((X_Len - 1- i) % TENSILE_STEP) < Ratio)
+            Temp = ((X_Len - 1- i) % TENSILE_STEP);
+            Temp0 = (TENSILE_STEP - Ratio) / 2;
+            Temp1 = (TENSILE_STEP + Ratio) / 2;
+
+          if(Temp >= Temp0 && Temp <= Temp1)
           {
               P0.X = pPoint0->X + (X_Len - 1- i);
               P0.Y = pPoint0->Y;
@@ -4237,46 +4247,77 @@ void Copy_Compresssion_H_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0
               P1.X = pPoint0->X + (X_Len - 1- i);
               P1.Y = pPoint0->Y + Y_Len - 1;
 
-              P2.X = pPoint1->X + X_Len - ((i / TENSILE_STEP)*Ratio + (i % TENSILE_STEP));
+              P2.X = pPoint1->X + X_Len - 1- X0++;//((i / TENSILE_STEP)*Ratio + (i % TENSILE_STEP));
               P2.Y = pPoint1->Y;
               Copy_Line(pSrc, Area_No, &P0, &P1, pDst, &P2);
            }
          }
    }
+
+    return X0;
 }
 
 //复制纵向的压缩窗口
-void Copy_Compresssion_V_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
+INT16U Copy_Compresssion_V_Rect(S_Show_Data *pSrc, INT8U Area_No, S_Point *pPoint0, INT16U X_Len, INT16U Y_Len, \
                               S_Show_Data *pDst, S_Point *pPoint1, INT16U Ratio, INT8U Direct)
 {
-    INT16U i;
+    INT16U i,Y0;
     S_Point P0, P1,P2;
-    INT16U TENSILE_STEP;
+    INT16U TENSILE_STEP,Temp,Temp0,Temp1;
 
     if(Ratio EQ 0)
-        return;
+        return 0;
 
     TENSILE_STEP = Get_TENSILE_STEP(Prog_Para.Area[Area_No].Y_Len);
 
     Ratio = Ratio * TENSILE_STEP / (Prog_Status.Area_Status[Area_No].Max_Step);//100;//每10个里点亮几个;
+
+    Temp0 = (TENSILE_STEP - Ratio) / 2;
+    Temp1 = (TENSILE_STEP + Ratio) / 2;
+
+    Y0 = 0;
     for(i = 0; i < Y_Len; i ++)
         //for(j = 0; j < Y_Len; j ++)
         {
-        if((Direct EQ 0 && (i % TENSILE_STEP) < Ratio) ||\
-           (Direct EQ 1 && (i % TENSILE_STEP) >= (TENSILE_STEP - Ratio)))
+
+        Temp = i %  TENSILE_STEP;
+
+
+        if(Direct EQ 0)
         {
+            if(Temp >= Temp0 && Temp <= Temp1)
+            {
               P0.X = pPoint0->X;// + i;
               P0.Y = pPoint0->Y + i;
 
               P1.X = pPoint0->X + X_Len - 1;
-              P1.Y = pPoint0->Y + i;
+              P1.Y = P0.Y;
 
               P2.X = pPoint1->X;
-              P2.Y = pPoint1->Y + (i / TENSILE_STEP)*Ratio + (i % TENSILE_STEP);
+              P2.Y = pPoint1->Y + Y0++;//(i / TENSILE_STEP)*Ratio + (i % TENSILE_STEP);
 
               Copy_Line(pSrc, Area_No, &P0, &P1, pDst, &P2);
           }
+        }
+        else
+        {
+            if(Temp >= Temp0 && Temp <= Temp1)
+            {
+              P0.X = pPoint0->X;// + i;
+              P0.Y = pPoint0->Y + Y_Len - 1 - i;
+
+              P1.X = pPoint0->X + X_Len - 1;
+              P1.Y = P0.Y;
+
+              P2.X = pPoint1->X;
+              P2.Y = pPoint1->Y + Y_Len - 1 - Y0++;//(i / TENSILE_STEP)*Ratio + (i % TENSILE_STEP);
+
+              Copy_Line(pSrc, Area_No, &P0, &P1, pDst, &P2);
+          }
+        }
     }
+
+    return Y0;
 }
 
 //左拉伸
@@ -4575,12 +4616,14 @@ void Move_Left_Stretch(INT8U Area_No)
    }
    else if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step*2 / 3)
    {
-       Clear_Area_Data(&Show_Data, Area_No);
+
        Temp.X = 0;
        Temp.Y = 0;
        Step = (Prog_Status.Area_Status[Area_No].Max_Step - (Prog_Status.Area_Status[Area_No].Step  * 3- Prog_Status.Area_Status[Area_No].Max_Step));
-       Copy_Compresssion_H_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
+       Temp.X = Copy_Compresssion_H_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
                                 &Show_Data, &Temp, Step, 0);
+
+       Fill_Rect(&Show_Data, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len - Temp.X, Prog_Para.Area[Area_No].Y_Len, 0);
 
    }
    else
@@ -4623,12 +4666,14 @@ void Move_Up_Stretch(INT8U Area_No)
    }
    else if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step*2 / 3)
    {
-       Clear_Area_Data(&Show_Data, Area_No);
+       //Clear_Area_Data(&Show_Data, Area_No);
        Temp.X = 0;
        Temp.Y = 0;
        Step = (Prog_Status.Area_Status[Area_No].Max_Step - (Prog_Status.Area_Status[Area_No].Step*3 - Prog_Status.Area_Status[Area_No].Max_Step));
-       Copy_Compresssion_V_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
+       Temp.Y = Copy_Compresssion_V_Rect(&Show_Data_Bak, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len,\
                                 &Show_Data, &Temp, Step, 0);
+
+       Fill_Rect(&Show_Data, Area_No, &Temp, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len - Temp.Y, 0);
 
    }
    else
@@ -4642,6 +4687,122 @@ void Move_Up_Stretch(INT8U Area_No)
    }
 }
 
+//翻腾弹出
+void Move_Jump_Stretch(INT8U Area_No)
+{
+  S_Point P0,P1,P2;
+  INT16U Area_Width, Area_Height,Step,Max_Step,TENSILE_STEP,Y0,Ratio,i;
+  INT8U Step_Flag;
+  INT16U Temp,Temp0,Temp1;
+
+  Area_Height = Get_Area_Height(Area_No);
+  Area_Width = Get_Area_Width(Area_No);
+
+  Step = Prog_Status.Area_Status[Area_No].Step;
+  Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
+
+  if(Step <= Max_Step / 3)
+  {
+    Max_Step = Max_Step / 3;
+
+    Step_Flag = 0;
+  }
+  else if(Step <= Max_Step * 2 / 3)
+  {
+    Step = Step - Max_Step / 3;
+    Max_Step = Max_Step / 3;
+
+    Step_Flag = 1;
+  }
+  else if(Step <= Max_Step)
+  {
+    Step = Step - Max_Step * 2 / 3;
+    Max_Step = Max_Step / 3;
+
+    Step_Flag = 2;
+  }
+
+  TENSILE_STEP = Get_TENSILE_STEP(Area_Height / 2);//Prog_Para.Area[Area_No].X_Len);
+
+  if(Step_Flag EQ 0 || Step_Flag EQ 2)
+    Ratio = TENSILE_STEP * Step / Max_Step;//8;//每8个里点亮几个;
+  else if(Step_Flag EQ 1)
+    Ratio = TENSILE_STEP * (Max_Step - Step) / Max_Step;//8;//每8个里点亮几个;
+
+  Y0 = 0;
+  P0.X = 0;
+  P1.X = Area_Width - 1;
+  P2.X = 0;
+  for(i = 0; i < Area_Height / 2; i ++)
+  {
+     Temp = i %  TENSILE_STEP;
+     Temp0 = (TENSILE_STEP - Ratio) / 2;
+     Temp1 = (TENSILE_STEP + Ratio) / 2;
+
+     if(Temp >= Temp0 && Temp <= Temp1) //第一阶段
+     {
+         if(Step_Flag < 2)
+         {
+             P0.Y = Area_Height / 2 + i;
+             P1.Y = Area_Height / 2 + i;
+             P2.Y = Area_Height / 2 - Y0;
+         }
+         else
+         {
+             P0.Y = Area_Height / 2 + i;
+             P1.Y = Area_Height / 2 + i;
+             P2.Y = Area_Height / 2 + Y0;
+         }
+
+         Copy_Line(&Show_Data_Bak, Area_No, &P0, &P1, &Show_Data, &P2);
+
+         if(Step_Flag < 2)
+         {
+             P0.Y = Area_Height / 2 - i;
+             P1.Y = Area_Height / 2 - i;
+             P2.Y = Area_Height / 2 + Y0;
+         }
+         else
+         {
+             P0.Y = Area_Height / 2 - i;
+             P1.Y = Area_Height / 2 - i;
+             P2.Y = Area_Height / 2 - Y0;
+         }
+         Copy_Line(&Show_Data_Bak, Area_No, &P0, &P1, &Show_Data, &P2);
+
+         Y0 ++;
+
+     }
+   }
+
+
+
+    //Copy_Line(&Show_Data_Bak, Area_No, &P0, &P1, &Show_Data, &P2);
+  //}
+
+  //Y0 = P2.Y;
+  if(P2.Y < Area_Height / 2)
+  {
+      P0.X = 0;
+      P0.Y = 0;
+      Fill_Rect(&Show_Data, Area_No, &P0, Area_Width, P2.Y, 0);
+
+      P0.X = 0;
+      P0.Y = Area_Height - P2.Y;
+      Fill_Rect(&Show_Data, Area_No, &P0, Area_Width, P2.Y, 0);
+  }
+  else
+  {
+      P0.X = 0;
+      P0.Y = 0;
+      Fill_Rect(&Show_Data, Area_No, &P0, Area_Width, Area_Height - P2.Y, 0);
+
+      P0.X = 0;
+      P0.Y = P2.Y;
+      Fill_Rect(&Show_Data, Area_No, &P0, Area_Width, Area_Height - P2.Y, 0);
+  }
+}
+
 void Move_Down_Stretch(INT8U Area_No)
 {
 
@@ -4650,6 +4811,111 @@ void Move_Down_Stretch(INT8U Area_No)
 void Move_Up_Left(INT8U Area_No)
 {
 
+}
+
+//菱形收缩
+void Move_Diamond(INT8U Area_No)
+{
+    S_Point P[4];
+    INT16U Step,Max_Step;
+
+    Step = Prog_Status.Area_Status[Area_No].Step;
+    Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
+
+    if(Step < Prog_Para.Area[Area_No].Y_Len / 2)
+    {
+        P[0].X = 0;//Step;//Prog_Para.Area[Area_No].X_Len / 2 - Step;
+        P[0].Y = Step;//Prog_Para.Area[Area_No].Y_Len / 2;
+
+        P[2].X = Prog_Para.Area[Area_No].X_Len - 1;
+        P[2].Y = Step;//P[0].Y;
+    }
+    else
+    {
+        P[0].X = Step - Prog_Para.Area[Area_No].Y_Len / 2;//Prog_Para.Area[Area_No].X_Len / 2 - Step;
+        P[0].Y = Prog_Para.Area[Area_No].Y_Len / 2;//Prog_Para.Area[Area_No].Y_Len / 2 - (Step - Prog_Para.Area[Area_No].X_Len / 2);
+
+        P[2].X = Prog_Para.Area[Area_No].X_Len - 1 - P[0].X;//Prog_Para.Area[Area_No].X_Len - 1;
+        P[2].Y = P[0].Y;
+    }
+
+    if(Step < Prog_Para.Area[Area_No].X_Len / 2)
+    {
+        P[1].Y = 0;//Prog_Para.Area[Area_No].Y_Len / 2 - Step;
+        P[1].X = Step;//Prog_Para.Area[Area_No].X_Len / 2;
+
+        P[3].Y = Prog_Para.Area[Area_No].Y_Len - 1;//Prog_Para.Area[Area_No].Y_Len / 2 + Step;
+        P[3].X = Prog_Para.Area[Area_No].X_Len - 1 - P[1].X;
+    }
+    else
+    {
+        P[1].X = Prog_Para.Area[Area_No].X_Len / 2;//Prog_Para.Area[Area_No].X_Len / 2 - (Step - Prog_Para.Area[Area_No].Y_Len / 2);
+        P[1].Y = Step - Prog_Para.Area[Area_No].X_Len / 2;//Prog_Para.Area[Area_No].X_Len / 2 - Step;
+
+        P[3].X = P[1].X;//Prog_Para.Area[Area_No].X_Len - 1 - P[1].X;
+        P[3].Y = Prog_Para.Area[Area_No].Y_Len - 1 - P[1].Y;//Prog_Para.Area[Area_No].Y_Len - 1;
+
+    }
+
+    Copy_Line(&Show_Data_Bak, Area_No, &P[0], &P[1], &Show_Data, &P[0]);
+    P[1].X = Prog_Para.Area[Area_No].X_Len - 1 - P[1].X;
+    Copy_Line(&Show_Data_Bak, Area_No, &P[1], &P[2], &Show_Data, &P[1]);
+    P[2].Y = Prog_Para.Area[Area_No].Y_Len - 1 - P[2].Y;
+    Copy_Line(&Show_Data_Bak, Area_No, &P[2], &P[3], &Show_Data, &P[2]);
+    P[3].X = Prog_Para.Area[Area_No].X_Len - 1 - P[3].X;
+    P[0].Y = Prog_Para.Area[Area_No].Y_Len - 1 - P[0].Y;
+    Copy_Line(&Show_Data_Bak, Area_No, &P[3], &P[0], &Show_Data, &P[3]);
+}
+
+//菱形展开
+void Move_Diamond_0(INT8U Area_No)
+{
+    S_Point P[4];
+    INT16U Step,Max_Step;
+
+    Step = Prog_Status.Area_Status[Area_No].Step;
+    Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
+
+    if(Step < Prog_Para.Area[Area_No].X_Len / 2)
+    {
+        P[0].X = Prog_Para.Area[Area_No].X_Len / 2 - Step;
+        P[2].X = Prog_Para.Area[Area_No].X_Len / 2 + Step;
+
+        P[0].Y = Prog_Para.Area[Area_No].Y_Len / 2;
+        P[2].Y = P[0].Y;
+    }
+    else
+    {
+        P[0].X = 0;//Prog_Para.Area[Area_No].X_Len / 2 - Step;
+        P[2].X = Prog_Para.Area[Area_No].X_Len - 1;
+        P[0].Y = Prog_Para.Area[Area_No].Y_Len / 2 - (Step - Prog_Para.Area[Area_No].X_Len / 2);
+        P[2].Y = P[0].Y;
+    }
+
+    if(Step < Prog_Para.Area[Area_No].Y_Len / 2)
+    {
+        P[1].Y = Prog_Para.Area[Area_No].Y_Len / 2 - Step;
+        P[3].Y = Prog_Para.Area[Area_No].Y_Len / 2 + Step;
+
+        P[1].X = Prog_Para.Area[Area_No].X_Len / 2;
+        P[3].X = P[1].X;
+    }
+    else
+    {
+        P[1].Y = 0;//Prog_Para.Area[Area_No].X_Len / 2 - Step;
+        P[3].Y = Prog_Para.Area[Area_No].Y_Len - 1;
+        P[1].X = Prog_Para.Area[Area_No].X_Len / 2 - (Step - Prog_Para.Area[Area_No].Y_Len / 2);
+        P[3].X = Prog_Para.Area[Area_No].X_Len - 1 - P[1].X;
+    }
+
+    Copy_Line(&Show_Data_Bak, Area_No, &P[0], &P[1], &Show_Data, &P[0]);
+    P[1].X = Prog_Para.Area[Area_No].X_Len - 1 - P[1].X;
+    Copy_Line(&Show_Data_Bak, Area_No, &P[1], &P[2], &Show_Data, &P[1]);
+    P[2].Y = Prog_Para.Area[Area_No].Y_Len - 1 - P[2].Y;
+    Copy_Line(&Show_Data_Bak, Area_No, &P[2], &P[3], &Show_Data, &P[2]);
+    P[3].X = Prog_Para.Area[Area_No].X_Len - 1 - P[3].X;
+    P[0].Y = Prog_Para.Area[Area_No].Y_Len - 1 - P[0].Y;
+    Copy_Line(&Show_Data_Bak, Area_No, &P[3], &P[0], &Show_Data, &P[3]);
 }
 
 //水平百叶窗
