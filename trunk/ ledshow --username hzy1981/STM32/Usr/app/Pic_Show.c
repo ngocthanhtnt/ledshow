@@ -506,6 +506,54 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
   } //上移弹出
 #endif
+
+#if IN_SPEC_EFFECT_NUM > 64
+  ,{&Move_Up_Sector, HHV_ADD_MODE, 1
+#if QT_EN
+   ,"上扇形展开"
+#endif
+  } //上移弹出
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 65
+  ,{&Move_Down_Sector, HHV_ADD_MODE, 1
+#if QT_EN
+   ,"下扇形展开"
+#endif
+  } //上移弹出
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 66
+  ,{&Move_Left_Up_SpotLignt, TVH_ADD_MODE, 1
+#if QT_EN
+   ,"左上射灯"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 67
+  ,{&Move_Right_Up_SpotLignt, TVH_ADD_MODE, 1
+#if QT_EN
+   ,"右上射灯"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 68
+  ,{&Move_Left_Down_SpotLignt, THV_ADD_MODE, 1
+#if QT_EN
+   ,"左下射灯"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 69
+  ,{&Move_Right_Down_SpotLignt, THV_ADD_MODE, 1
+#if QT_EN
+   ,"右下射灯"
+#endif
+   }
+#endif
 };
 
 //数据移出方式
@@ -719,6 +767,53 @@ const S_Mode_Func Out_Mode_Func[]=
   }
 #endif
 
+#if OUT_SPEC_EFFECT_NUM > 28
+  ,{&Move_Up_Sector, HHV_ADD_MODE, 1
+#if QT_EN
+   ,"上扇形展开"
+#endif
+  } //上移弹出
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 29
+  ,{&Move_Down_Sector, HHV_ADD_MODE, 1
+#if QT_EN
+   ,"下扇形展开"
+#endif
+  } //上移弹出
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 29
+  ,{&Move_Left_Up_SpotLignt, TVH_ADD_MODE, 1
+#if QT_EN
+   ,"左上射灯"
+#endif
+  }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 30
+  ,{&Move_Right_Up_SpotLignt, TVH_ADD_MODE, 1
+#if QT_EN
+   ,"右上射灯"
+#endif
+  }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 31
+  ,{&Move_Left_Down_SpotLignt, THV_ADD_MODE, 1
+#if QT_EN
+   ,"左下射灯"
+#endif
+  }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 32
+  ,{&Move_Right_Down_SpotLignt, THV_ADD_MODE, 1
+#if QT_EN
+   ,"右下射灯"
+#endif
+  }
+#endif
 };
 
 void Calc_Screen_Color_Num(void)
@@ -764,7 +859,10 @@ INT16U Get_In_Max_Step(INT16U Width, INT16U Height, INT8U In_Mode)
         Re = (INT16U)(Height*In_Mode_Func[In_Mode].Fac);
         break;
     case HV_ADD_MODE:
-        Re = (INT16U)((Width + Height)*In_Mode_Func[In_Mode].Fac);
+        if(In_Mode_Func[In_Mode].Fac EQ 0.5)
+          Re = (INT16U)((Width + Height + 1) / 2); //避免奇数少计一个
+        else
+          Re = (INT16U)((Width + Height)*In_Mode_Func[In_Mode].Fac);
         break;
     case HV_SQRT_MODE:
         Re = (INT16U)(Sqrt(Width*Width + Height*Height)*In_Mode_Func[In_Mode].Fac);
@@ -774,6 +872,15 @@ INT16U Get_In_Max_Step(INT16U Width, INT16U Height, INT8U In_Mode)
         break;
     case HV_MAX_MODE:
         Re = (Width > Height?Width:Height)*In_Mode_Func[In_Mode].Fac;
+        break;
+    case HHV_ADD_MODE:
+        Re = (Width + 1) / 2 + Height;
+        break;
+    case THV_ADD_MODE:
+        Re = Width * 2 + Height;
+        break;
+    case TVH_ADD_MODE:
+        Re = Height * 2 + Width;
         break;
     default:
         Re = 100;
@@ -813,6 +920,15 @@ INT16U Get_Out_Max_Step(INT16U Width, INT16U Height, INT8U Out_Mode)
         break;
     case HV_MAX_MODE:
         Re = (Width > Height?Width:Height)*Out_Mode_Func[Out_Mode].Fac;
+        break;
+    case HHV_ADD_MODE:
+        Re = (Width + 1) / 2 + Height;
+        break;
+    case THV_ADD_MODE:
+        Re = Width * 2 + Height;
+        break;
+    case TVH_ADD_MODE:
+        Re = Height * 2 + Width;
         break;
     default:
         Re = 100;
