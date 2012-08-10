@@ -68,17 +68,18 @@
 #define MOVE_STEP_PERIOD 20//5 //移动步进时间,单位为ms
 #define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 
-#define IN_SPEC_EFFECT_NUM 53 //进入特效个数
-#define OUT_SPEC_EFFECT_NUM 22 //退出特效个数
-#define FONT_NUM 1 //内嵌字体个数
+#define IN_SPEC_EFFECT_NUM 70 //进入特效个数
+#define OUT_SPEC_EFFECT_NUM 34 //退出特效个数
 
 //----根据不同的屏幕和硬件配置下列项目
 #ifdef CARD_A
 #define MAX_POINTS (192*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  2000 //最大存储块数
+#define FONT_NUM 1 //内嵌字体个数
 #elif defined(CARD_B)
 #define MAX_POINTS (512*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  4000 //最大存储块数
+#define FONT_NUM 2 //内嵌字体个数
 #endif
 
 #define MAX_SCAN_BLOCK_NUM 4 //最大扫描块
@@ -97,13 +98,14 @@
 #define CLOCK_SHOW_EN  1 //表盘显示使能
 #define TIME_SHOW_EN   1 //时间显示使能
 #define TIMER_SHOW_EN  1 //定时显示使能
-#define LUN_SHOW_EN    0 //农历显示使能
+#define LUN_SHOW_EN    1 //农历显示使能
 #else
 #define CLOCK_SHOW_EN  0 //表盘显示使能
 #define TIME_SHOW_EN   0 //时间显示使能
 #define TIMER_SHOW_EN  0 //定时显示使能
 #define LUN_SHOW_EN    0 //农历显示使能
-#endif 
+#endif
+ 
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
 #define TEMP_SHOW_EN   0 //温度显示使能

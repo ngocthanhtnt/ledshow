@@ -418,8 +418,16 @@ EXT void Move_Left_Up_SpotLignt(INT8U Area_No);
 EXT void Move_Right_Up_SpotLignt(INT8U Area_No);
 EXT void Move_Left_Down_SpotLignt(INT8U Area_No);
 EXT void Move_Right_Down_SpotLignt(INT8U Area_No);
-
-
+EXT void Move_Rect_Open(INT8U Area_No);
+EXT void Move_Rect_Close(INT8U Area_No);
+EXT void Move_Left_Right_Cross_Open(INT8U Area_No);
+EXT void Move_Up_Down_Cross_Open(INT8U Area_No);
+EXT void Move_LR_Mid_Overflow(INT8U Area_No);
+EXT void Move_UD_Mid_Overflow(INT8U Area_No);
+EXT void Move_Spin_CW_Windmill(INT8U Area_No);
+EXT void Move_Spin_CCW_Windmill(INT8U Area_No);
+EXT void Move_Down_Sector_Merge(INT8U Area_No);
+EXT void Move_Up_Sector_Merge(INT8U Area_No);
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
 
 EXT void vsPrintf(char Buf[], CONST INT8S *format, va_list ap);
