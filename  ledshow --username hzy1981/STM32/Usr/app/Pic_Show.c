@@ -304,7 +304,7 @@ const S_Mode_Func In_Mode_Func[]=
   } //下镭射
 #endif
 #if IN_SPEC_EFFECT_NUM > 38
-  ,{&Move_Left_Tensile, FIX_MODE, 100
+  ,{&Move_Left_Tensile, H_MODE, 0.5
 #if QT_EN
    ,"右拉伸"
 #endif    
@@ -312,7 +312,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 #if IN_SPEC_EFFECT_NUM > 39
   //{&Move_Right_Tensile}//右拉伸
-  ,{&Move_Up_Tensile, FIX_MODE, 100
+  ,{&Move_Up_Tensile, V_MODE, 0.5
 #if QT_EN
    ,"下拉伸"
 #endif    
@@ -320,14 +320,14 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 #if IN_SPEC_EFFECT_NUM > 40
   //{&Move_Down_Tensile}//下拉伸
-  ,{&Move_Vertical_Tensile, V_MODE, 1
+  ,{&Move_Vertical_Tensile, V_MODE, 0.5
 #if QT_EN
    ,"垂直拉伸" 
 #endif    
   }//垂直拉伸
 #endif
 #if IN_SPEC_EFFECT_NUM > 41
-  ,{&Move_Horizontal_Tensile, H_MODE, 1
+  ,{&Move_Horizontal_Tensile, H_MODE, 0.5
 #if QT_EN
    ,"水平拉伸" 
 #endif    
@@ -551,6 +551,86 @@ const S_Mode_Func In_Mode_Func[]=
   ,{&Move_Right_Down_SpotLignt, THV_ADD_MODE, 1
 #if QT_EN
    ,"右下射灯"
+#endif
+   }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 70
+  ,{&Move_Rect_Open, HV_SQRT_MODE, 0.5
+#if QT_EN
+   ,"矩形展开"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 71
+  ,{&Move_Rect_Close, HV_SQRT_MODE, 0.5
+#if QT_EN
+   ,"矩形收缩"
+#endif
+   }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 72
+  ,{&Move_Left_Right_Cross_Open, H_MODE, 0.5
+#if QT_EN
+   ,"左右交叉拉幕"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 73
+  ,{&Move_Up_Down_Cross_Open, V_MODE, 0.5
+#if QT_EN
+   ,"上下交叉拉幕"
+#endif
+   }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 74
+  ,{&Move_LR_Mid_Overflow, H_MODE, 0.5
+#if QT_EN
+   ,"左右中间溢出"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 75
+  ,{&Move_UD_Mid_Overflow, V_MODE, 0.5
+#if QT_EN
+   ,"上下中间溢出"
+#endif
+   }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 76
+  ,{&Move_Spin_CW_Windmill, HV_ADD_MODE, 0.5
+#if QT_EN
+   ,"顺时针风车"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 77
+  ,{&Move_Spin_CCW_Windmill, HV_ADD_MODE, 0.5
+#if QT_EN
+   ,"逆时针风车"
+#endif
+   }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 78
+  ,{&Move_Up_Sector_Merge, HHV_ADD_MODE, 1
+#if QT_EN
+   ,"上扇形合并"
+#endif
+  }
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 79
+  ,{&Move_Down_Sector_Merge, HHV_ADD_MODE, 1
+#if QT_EN
+   ,"下扇形合并"
 #endif
    }
 #endif
@@ -783,7 +863,7 @@ const S_Mode_Func Out_Mode_Func[]=
   } //上移弹出
 #endif
 
-#if OUT_SPEC_EFFECT_NUM > 29
+#if OUT_SPEC_EFFECT_NUM > 30
   ,{&Move_Left_Up_SpotLignt, TVH_ADD_MODE, 1
 #if QT_EN
    ,"左上射灯"
@@ -791,7 +871,7 @@ const S_Mode_Func Out_Mode_Func[]=
   }
 #endif
 
-#if OUT_SPEC_EFFECT_NUM > 30
+#if OUT_SPEC_EFFECT_NUM > 31
   ,{&Move_Right_Up_SpotLignt, TVH_ADD_MODE, 1
 #if QT_EN
    ,"右上射灯"
@@ -799,7 +879,7 @@ const S_Mode_Func Out_Mode_Func[]=
   }
 #endif
 
-#if OUT_SPEC_EFFECT_NUM > 31
+#if OUT_SPEC_EFFECT_NUM > 32
   ,{&Move_Left_Down_SpotLignt, THV_ADD_MODE, 1
 #if QT_EN
    ,"左下射灯"
@@ -807,13 +887,78 @@ const S_Mode_Func Out_Mode_Func[]=
   }
 #endif
 
-#if OUT_SPEC_EFFECT_NUM > 32
+#if OUT_SPEC_EFFECT_NUM > 33
   ,{&Move_Right_Down_SpotLignt, THV_ADD_MODE, 1
 #if QT_EN
    ,"右下射灯"
 #endif
   }
 #endif
+
+#if OUT_SPEC_EFFECT_NUM > 34
+  ,{&Move_Rect_Open, HV_SQRT_MODE, 0.5
+#if QT_EN
+   ,"矩形展开"
+#endif
+  }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 35
+  ,{&Move_Rect_Close, HV_SQRT_MODE, 0.5
+#if QT_EN
+   ,"矩形收缩"
+#endif
+   }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 36
+  ,{&Move_Left_Right_Cross_Open, H_MODE, 0.5
+#if QT_EN
+   ,"左右交叉拉幕"
+#endif
+  }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 37
+  ,{&Move_Up_Down_Cross_Open, V_MODE, 0.5
+#if QT_EN
+   ,"上下交叉拉幕"
+#endif
+   }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 38
+  ,{&Move_Spin_CW_Windmill, HV_ADD_MODE, 0.5
+#if QT_EN
+   ,"顺时针风车"
+#endif
+  }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 39
+  ,{&Move_Spin_CCW_Windmill, HV_ADD_MODE, 0.5
+#if QT_EN
+   ,"逆时针风车"
+#endif
+   }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 40
+  ,{&Move_Up_Sector_Merge, HHV_ADD_MODE, 1
+#if QT_EN
+   ,"上扇形合并"
+#endif
+  }
+#endif
+
+#if OUT_SPEC_EFFECT_NUM > 41
+  ,{&Move_Down_Sector_Merge, HHV_ADD_MODE, 1
+#if QT_EN
+   ,"下扇形合并"
+#endif
+   }
+#endif
+
 };
 
 void Calc_Screen_Color_Num(void)
@@ -840,41 +985,39 @@ void Calc_Screen_Color_Num(void)
   */ 
 }
 
-INT16U Get_In_Max_Step(INT16U Width, INT16U Height, INT8U In_Mode)
+INT16U Get_Max_Step(INT16U Width, INT16U Height, const S_Mode_Func *pMode)
 {
-    INT16U Re;
-
+    float Re = 0;
+    INT16U Re0 = 0;
+/*
     if(In_Mode >= S_NUM(In_Mode_Func))
     {
        ASSERT_FAILED();
        In_Mode = 0;
     }
-
-    switch(In_Mode_Func[In_Mode].Step_Mode)
+*/
+    switch(pMode -> Step_Mode)
     {
     case H_MODE:
-        Re = (INT16U)(Width*In_Mode_Func[In_Mode].Fac);
+        Re = (Width*(pMode -> Fac));
         break;
     case V_MODE:
-        Re = (INT16U)(Height*In_Mode_Func[In_Mode].Fac);
+        Re = (Height*(pMode -> Fac));
         break;
     case HV_ADD_MODE:
-        if(In_Mode_Func[In_Mode].Fac EQ 0.5)
-          Re = (INT16U)((Width + Height + 1) / 2); //避免奇数少计一个
-        else
-          Re = (INT16U)((Width + Height)*In_Mode_Func[In_Mode].Fac);
+        Re = ((Width + Height)*(pMode -> Fac));
         break;
     case HV_SQRT_MODE:
-        Re = (INT16U)(Sqrt(Width*Width + Height*Height)*In_Mode_Func[In_Mode].Fac);
+        Re = (Sqrt(Width*Width + Height*Height)*(pMode -> Fac));
         break;
     case FIX_MODE:
-        Re = (INT16U)In_Mode_Func[In_Mode].Fac;
+        Re = pMode -> Fac;
         break;
     case HV_MAX_MODE:
-        Re = (Width > Height?Width:Height)*In_Mode_Func[In_Mode].Fac;
+        Re = (Width > Height?Width:Height)*(pMode -> Fac);
         break;
     case HHV_ADD_MODE:
-        Re = (Width + 1) / 2 + Height;
+        Re = (float)Width / 2 + Height;
         break;
     case THV_ADD_MODE:
         Re = Width * 2 + Height;
@@ -887,7 +1030,12 @@ INT16U Get_In_Max_Step(INT16U Width, INT16U Height, INT8U In_Mode)
         break;
     }
 
-    return Re;
+    Re0 = (INT16U)(Re * 10);
+
+    if(Re0 % 10)
+      return (Re0 + 10) / 10;
+    else
+      return Re0 / 10;
 
 }
 
@@ -997,7 +1145,7 @@ void Calc_Show_Mode_Step(INT8U Area_No)
 
     Prog_Status.Area_Status[Area_No].In_Mode = In_Mode;
     Set_Area_Border_Out(Area_No);
-    Prog_Status.Area_Status[Area_No].In_Max_Step = Get_In_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, In_Mode);
+    Prog_Status.Area_Status[Area_No].In_Max_Step = Get_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, &In_Mode_Func[In_Mode]);
     Set_Area_Border_In(Area_No);
 
     Out_Mode = Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode;
@@ -1014,7 +1162,7 @@ void Calc_Show_Mode_Step(INT8U Area_No)
 
         Set_Area_Border_Out(Area_No);
     if(Out_Mode >= 1)
-      Prog_Status.Area_Status[Area_No].Out_Max_Step = Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, Out_Mode - 1);
+      Prog_Status.Area_Status[Area_No].Out_Max_Step = Get_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, &Out_Mode_Func[Out_Mode - 1]);
     else //不清屏
       Prog_Status.Area_Status[Area_No].Out_Max_Step = 100;//Get_Out_Max_Step(Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len, Out_Mode - 1);
     Set_Area_Border_In(Area_No);

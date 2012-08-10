@@ -7,7 +7,7 @@
 
 #define IN_SPEC_EFFECT_NUM 10 //进入特效个数
 #define OUT_SPEC_EFFECT_NUM 10 //退出特效个数
-#define FONT_NUM 1 //内嵌字体个数
+#define FONT_NUM 2 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
 #define MAX_POINTS (1024*75L) //最大点数--此处是三色屏的最大点数！单色屏的点数在此基础上*3
