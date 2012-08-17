@@ -414,6 +414,8 @@ EXT void Move_Diamond(INT8U Area_No);
 EXT void Move_Diamond_0(INT8U Area_No);
 EXT void Move_Up_Sector(INT8U Area_No);
 EXT void Move_Down_Sector(INT8U Area_No);
+EXT void Move_Left_Sector(INT8U Area_No);
+EXT void Move_Right_Sector(INT8U Area_No);
 EXT void Move_Left_Up_SpotLignt(INT8U Area_No);
 EXT void Move_Right_Up_SpotLignt(INT8U Area_No);
 EXT void Move_Left_Down_SpotLignt(INT8U Area_No);
@@ -426,8 +428,15 @@ EXT void Move_LR_Mid_Overflow(INT8U Area_No);
 EXT void Move_UD_Mid_Overflow(INT8U Area_No);
 EXT void Move_Spin_CW_Windmill(INT8U Area_No);
 EXT void Move_Spin_CCW_Windmill(INT8U Area_No);
-EXT void Move_Down_Sector_Merge(INT8U Area_No);
 EXT void Move_Up_Sector_Merge(INT8U Area_No);
+EXT void Move_Down_Sector_Merge(INT8U Area_No);
+EXT void Move_Left_Sector_Merge(INT8U Area_No);
+EXT void Move_Right_Sector_Merge(INT8U Area_No);
+EXT void Move_LR_Mid_In(INT8U Area_No);
+EXT void Move_UD_Mid_In(INT8U Area_No);
+
+EXT void Move_LR_Mid_Out(INT8U Area_No);
+EXT void Move_UD_Mid_Out(INT8U Area_No);
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
 
 EXT void vsPrintf(char Buf[], CONST INT8S *format, va_list ap);
