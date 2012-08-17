@@ -18,7 +18,7 @@
 extern MainWindow *w;
 extern QSettings settings;
 
-#define TIME_EDIT_WIDTH 70
+#define TIME_EDIT_WIDTH 100
 
 
 //定义边框数据

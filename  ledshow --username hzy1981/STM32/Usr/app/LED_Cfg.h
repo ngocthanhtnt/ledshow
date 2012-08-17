@@ -81,8 +81,8 @@
 #define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
  
 
-#define IN_SPEC_EFFECT_NUM 80 //进入特效个数
-#define OUT_SPEC_EFFECT_NUM 42 //退出特效个数
+#define IN_SPEC_EFFECT_NUM 86 //进入特效个数
+#define OUT_SPEC_EFFECT_NUM 48 //退出特效个数
 #define FONT_NUM 2 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
@@ -128,7 +128,7 @@
 
 
 #if defined(CARD_A) || defined(CARD_B)
-#define CARD_TYPE CARD_A0
+#define CARD_TYPE CARD_B0
 #include "LED_ABX_Cfg.h"
 #include "LED_ABX_Drv.h"
 //#elif defined(CARD_BX)

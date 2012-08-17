@@ -19,8 +19,9 @@
 #define HV_SQRT_MODE 0x04 //开方,对角
 #define HV_MAX_MODE  0x05 //横向或纵向最大值
 #define HHV_ADD_MODE 0x06 //
-#define TVH_ADD_MODE 0x07
-#define THV_ADD_MODE 0x08
+#define HVH_ADD_MODE 0x07
+#define TVH_ADD_MODE 0x08
+#define THV_ADD_MODE 0x09
 
 typedef struct
 {
