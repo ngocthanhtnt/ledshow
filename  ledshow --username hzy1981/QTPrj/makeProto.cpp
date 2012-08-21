@@ -880,6 +880,15 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
         fwrite(frameBuf, len, 1, file);
     }
 
+    //锁定时间
+    if(GET_BIT(flag, C_VALID_DATE))
+    {
+        len = makeFrame((char *)&Screen_Para.Valid_Date, sizeof(Screen_Para.Valid_Date),\
+                   C_VALID_DATE | WR_CMD, seq++, frameBuf);
+        counts++;
+        fwrite(frameBuf, len, 1, file);
+    }
+
     //节目数
 
     //settings.beginGroup(screenStr + "/program/");

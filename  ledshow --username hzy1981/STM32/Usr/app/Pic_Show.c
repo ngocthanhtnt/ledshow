@@ -455,14 +455,14 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM >57
   ,{&Move_Left_Compress, FIX_MODE, 100
 #if QT_EN
-   ,"向左压缩" 
+   ,"向左比例压缩"
 #endif    
   } //向左压缩
 #endif
 #if IN_SPEC_EFFECT_NUM > 58
   ,{&Move_Up_Compress, FIX_MODE, 100
 #if QT_EN
-   ,"向上压缩" 
+   ,"向上比例压缩"
 #endif    
   }//向上压缩
 #endif

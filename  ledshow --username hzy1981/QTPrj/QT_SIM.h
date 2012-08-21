@@ -91,6 +91,8 @@ EXT void Mem_Close();
 EXT INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen);
 EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
 EXT INT16S Get_Cur_Temp();
+EXT INT16S GetInterTemperature();
 EXT void Build_Scan_Data_Index();
+EXT INT8U Self_Test();
 #endif
 #endif

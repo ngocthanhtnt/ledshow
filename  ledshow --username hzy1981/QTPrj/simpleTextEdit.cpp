@@ -1994,3 +1994,4 @@ CimageSize::~CimageSize()
 {
 
 }
+

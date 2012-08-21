@@ -3,12 +3,14 @@
 
 #include <QLabel>
 #include <QLineEdit>
+#include <QDateEdit>
 #include <QComboBox>
 #include <QPushButton>
 #include <QFontComboBox>
 #include <QCheckBox>
 #include <QGroupBox>
 #include <QSpinBox>
+#include <QDialog>
 #include "colorCombo.h"
 #include "progManage.h"
 #include "..\Stm32\usr\app\Includes.h"
