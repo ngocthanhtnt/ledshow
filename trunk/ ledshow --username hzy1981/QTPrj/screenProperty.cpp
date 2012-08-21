@@ -395,6 +395,20 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
 
     settings.endGroup();
 
+    //锁定时间
+    settings.beginGroup("validTime");
+
+    if(settings.value("validTimeFlag").toBool())
+        screenPara.Valid_Date.Invalid_Date_Flag = INVALID_DATE_FLAG;
+    else
+        screenPara.Valid_Date.Invalid_Date_Flag = 0;
+
+    screenPara.Valid_Date.Time[0] = (INT8U)settings.value("date").toInt();
+    screenPara.Valid_Date.Time[1] = (INT8U)settings.value("month").toInt();
+    screenPara.Valid_Date.Time[2] = (INT8U)settings.value("year").toInt();
+
+    settings.endGroup();
+
 
     settings.endGroup();
 
@@ -3459,6 +3473,185 @@ void CupdateFirmwareDialog::makeFirmwareFile()
 }
 
 CupdateFirmwareDialog::~CupdateFirmwareDialog()
+{
+
+}
+
+
+CInvalidDateDialog::CInvalidDateDialog(QWidget *parent):QDialog(parent)
+{
+  QHBoxLayout *hLayout;
+  QGridLayout *gLayout;
+
+  invalidDateGroup = new QGroupBox(this);
+  invalidDateGroup->setTitle(tr("启用锁定时间限制"));
+  invalidDateGroup->setCheckable(true);
+
+  invalidDateEdit = new QDateEdit(this);
+  hLayout = new QHBoxLayout(invalidDateGroup);
+  hLayout->addWidget(invalidDateEdit);
+  invalidDateGroup->setLayout(hLayout);
+
+  sendButton = new QPushButton(tr("发送参数"),this);
+  udiskButton = new QPushButton(tr("导出U盘参数"), this);
+
+  gLayout = new QGridLayout(this);
+  gLayout->addWidget(invalidDateGroup, 0, 0, 1, 2);
+  gLayout->addWidget(sendButton,1,0,1,1);
+  gLayout->addWidget(udiskButton, 1,1,1,1);
+
+  this->setLayout(gLayout);
+  this->setWindowTitle(tr("屏幕锁定时间设置"));
+
+  QString str = w->screenArea->getCurrentScreenStr();
+  setSettingsToWidget(str);
+
+  connect(sendButton, SIGNAL(clicked()), this, SLOT(sendPara()));
+  connect(udiskButton, SIGNAL(clicked()), this, SLOT(udiskPara()));
+
+  connect(invalidDateGroup, SIGNAL(clicked()), this, SLOT(editSlot()));
+  connect(invalidDateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(editSlot()));
+}
+
+void CInvalidDateDialog::sendPara()
+{
+    //char frameBuf[BLOCK_DATA_LEN + 20];
+    //S_Screen_Para screenPara;
+    //S_Card_Para cardPara;
+    INT8U temp[100];
+    int len;
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
+    QString str = w->screenArea->getCurrentScreenStr();
+
+    this->sendButton->setEnabled(false);
+
+    int flag = 0;
+    SET_BIT(flag, C_VALID_DATE);
+    if(QT_SIM_EN)
+      makeProtoFileData(str, SIM_MODE, flag);
+    else
+      makeProtoFileData(str, COM_MODE, flag);
+
+    if(w->comStatus->waitComEnd(temp, sizeof(temp), &len))
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr(SEND_PARA_OK_STR),tr("确定"));
+        close(); //校时成功则关闭
+    }
+    else
+    {
+        QMessageBox::warning(w, tr("提示"),
+                               tr(SEND_PARA_FAIL_STR),tr("确定"));
+    }
+
+    this->sendButton->setEnabled(true);
+}
+/*
+//锁定时间
+settings.beginGroup("validTime");
+
+if(settings.value("validTimeFlag").toBool())
+    screenPara.Valid_Date.Invalid_Date_Flag = INVALID_DATE_FLAG;
+else
+    screenPara.Valid_Date.Invalid_Date_Flag = 0;
+
+screenPara.Valid_Date.Time[0] = (INT8U)settings.value("date").toInt();
+screenPara.Valid_Date.Time[1] = (INT8U)settings.value("month").toInt();
+screenPara.Valid_Date.Time[2] = (INT8U)settings.value("year").toInt();
+
+settings.endGroup();
+*/
+void CInvalidDateDialog::getSettingsFromWidget(QString str)
+{
+  settings.beginGroup(str);
+  settings.beginGroup("validTime");
+
+  settings.setValue("validTimeFlag", invalidDateGroup->isChecked());
+
+  settings.setValue("date", invalidDateEdit->date().day());
+  settings.setValue("month", invalidDateEdit->date().month());
+  settings.setValue("year", invalidDateEdit->date().year());
+  //debug("get year = %d", invalidDateEdit->date().year());
+  settings.endGroup();
+  settings.endGroup();
+}
+
+void CInvalidDateDialog::setSettingsToWidget(QString str)
+{
+    int year,month,day;
+    QDate date;
+
+    disconnect(invalidDateGroup, SIGNAL(clicked()), this, SLOT(editSlot()));
+    disconnect(invalidDateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(editSlot()));
+
+    settings.beginGroup(str);
+    settings.beginGroup("validTime");
+
+    //settings.setValue("validTimeFlag", invalidDateGroup->isChecked());
+    invalidDateGroup->setChecked(settings.value("validTimeFlag").toBool());
+
+    year = settings.value("year").toInt();
+    month = settings.value("month").toInt();
+    day = settings.value("date").toInt();
+    date.setDate(year, month, day);
+
+    invalidDateEdit->setDate(date);
+    //debug("set year = %d", settings.value("year").toInt());
+    settings.endGroup();
+    settings.endGroup();
+
+    connect(invalidDateGroup, SIGNAL(clicked()), this, SLOT(editSlot()));
+    connect(invalidDateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(editSlot()));
+}
+
+void CInvalidDateDialog::editSlot()
+{
+    QString screenStr;
+
+    screenStr = w->screenArea->getCurrentScreenStr();
+
+    getSettingsFromWidget(screenStr);
+}
+
+void CInvalidDateDialog::udiskPara()
+{
+    //S_Screen_Para screenPara;
+    //S_Card_Para cardPara;
+    //INT8U temp[100];
+    //int len;
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
+    QString str = w->screenArea->getCurrentScreenStr();
+
+    this->udiskButton->setEnabled(false);
+
+    int flag = 0;
+    SET_BIT(flag, C_VALID_DATE);
+
+    makeProtoFileData(str, UDISK_MODE, flag);
+
+    //U盘模式下不需要等待waitComEnd，因为没有通信返回数据需要等待
+    if(w->comStatus->getComStatus() == COM_OK) //通信成功的情况下关闭
+    {
+        QMessageBox::information(w, QObject::tr("提示"),
+                                w->comStatus->getComReStr(),QObject::tr("确定"));
+        close();
+    }
+    else
+    {
+        QMessageBox::warning(w, QObject::tr("提示"),
+                                w->comStatus->getComReStr(),QObject::tr("确定"));
+    }
+
+    this->udiskButton->setEnabled(true);
+}
+
+CInvalidDateDialog::~CInvalidDateDialog()
 {
 
 }

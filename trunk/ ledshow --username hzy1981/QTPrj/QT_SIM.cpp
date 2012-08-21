@@ -93,6 +93,17 @@ INT16U Get_Cur_Noise()
 {
   return 60;
 }
+
+INT16S GetInterTemperature()
+{
+    return 250;
+}
+
+INT8U Self_Test()
+{
+    return 0;
+}
+
 /*
 //文件打开
 //File_Name表示文件名

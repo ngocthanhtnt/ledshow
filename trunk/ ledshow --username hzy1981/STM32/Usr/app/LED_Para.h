@@ -198,6 +198,8 @@ typedef struct
 
 typedef struct
 {
+    INT32U Invalid_Date_Flag; //有效标志
+
     INT8U Time[3]; //日、月、年 
 }S_Valid_Date;
 

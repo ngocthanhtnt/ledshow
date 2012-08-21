@@ -435,6 +435,25 @@ public:
 
 };
 
+class CInvalidDateDialog:public QDialog
+{
+  Q_OBJECT
+private:
+   QGroupBox *invalidDateGroup;
+   QDateEdit *invalidDateEdit;  //无效日期
+   QPushButton *sendButton; //发送按钮
+   QPushButton *udiskButton; //导出按钮
+public slots:
+    void sendPara(); //发送
+    void udiskPara(); //导出
+    void editSlot();
+public:
+    void getSettingsFromWidget(QString str);
+    void setSettingsToWidget(QString str);
+    CInvalidDateDialog(QWidget *parent =0);
+    ~CInvalidDateDialog();
+};
+
 void getComTestParaFromSettings(QString str, S_Screen_Para &screenPara);
 INT8U getCardParaFromSettings(QString cardName, S_Card_Para &cardPara);
 INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara, S_Card_Para &cardPara);

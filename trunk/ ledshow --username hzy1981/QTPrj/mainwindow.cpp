@@ -1068,29 +1068,39 @@ int getIndexBySubWin(QMdiArea *parentArea, QMdiSubWindow *subWin)
 void MainWindow::modifyScreenPara()
 {
   QString str;
+  INT8U Re;
 
-  if(verifyPSW() EQ 0)
+  Re = verifyPSW();
+  if(Re EQ 0)
       return;
 
   str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
 
-  QDialog *facParaWin = new QDialog(this);
-  QHBoxLayout *hLayout = new QHBoxLayout(facParaWin);
+  if(Re EQ 1 || Re EQ 2)
+  {
+      QDialog *facParaWin = new QDialog(this);
+      QHBoxLayout *hLayout = new QHBoxLayout(facParaWin);
 
-  facParaWin->setWindowTitle(tr("修改屏幕参数"));
-  CfacScreenProperty *facScreenProperty = new CfacScreenProperty(MODI_SCN, facParaWin);
-  CcomTest *comTest = new CcomTest(facParaWin);
+      facParaWin->setWindowTitle(tr("修改屏幕参数"));
+      CfacScreenProperty *facScreenProperty = new CfacScreenProperty(MODI_SCN, facParaWin);
+      CcomTest *comTest = new CcomTest(facParaWin);
 
-  facScreenProperty->setSettingsToWidget(str);
-  comTest->setSettingsToWidget(str);
+      facScreenProperty->setSettingsToWidget(str);
+      comTest->setSettingsToWidget(str);
 
-  hLayout->addWidget(facScreenProperty);
-  hLayout->addWidget(comTest);
+      hLayout->addWidget(facScreenProperty);
+      hLayout->addWidget(comTest);
 
-  facParaWin->setLayout(hLayout);
-  facParaWin->setAttribute(Qt::WA_DeleteOnClose);
-  connect(facScreenProperty->endButton, SIGNAL(clicked()), facParaWin, SLOT(close()));
-  facParaWin->exec();
+      facParaWin->setLayout(hLayout);
+      facParaWin->setAttribute(Qt::WA_DeleteOnClose);
+      connect(facScreenProperty->endButton, SIGNAL(clicked()), facParaWin, SLOT(close()));
+      facParaWin->exec();
+  }
+  else if(Re EQ 3)
+  {
+    CInvalidDateDialog *invalidDateDialog = new CInvalidDateDialog(this);
+    invalidDateDialog->exec();
+  }
 
 }
 
@@ -1103,7 +1113,7 @@ void MainWindow::updateFirmware()
   if(re EQ 0)
     return;
 
-  if(re EQ 3) //密码在3级才能显示生成文件的按钮,内部使用
+  if(re EQ 4) //密码在4级才能显示生成文件的按钮,内部使用
       flag = 1;
   else
       flag = 0;
@@ -1438,9 +1448,14 @@ void CinputPSWDialog::okClickProc()
        *verifyRe = 2;
        close();
    }
-   else if(lineEdit->text() =="112233") //最高级密码
+   else if(lineEdit->text() == "112233")
    {
        *verifyRe = 3;
+       close();
+   }
+   else if(lineEdit->text() =="445566") //最高级密码
+   {
+       *verifyRe = 4;
        close();
    }
    else

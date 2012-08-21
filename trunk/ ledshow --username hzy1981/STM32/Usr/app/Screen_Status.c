@@ -321,6 +321,7 @@ void Screen_Check_Valid_Date() //检查是否在有限显示日期内
 #if CLOCK_EN
   //valid_date为全0或者格式不正确 
   if(CHK_SUM(Screen_Para) EQ 0 || \
+     Screen_Para.Valid_Date.Invalid_Date_Flag != INVALID_DATE_FLAG || \
      Screen_Para.Valid_Date.Time[2] EQ 0 && Screen_Para.Valid_Date.Time[1] EQ 0 || Screen_Para.Valid_Date.Time[0] EQ 0 ||\
      Screen_Para.Valid_Date.Time[1] > 12 || Screen_Para.Valid_Date.Time[0] > 31)
   {
