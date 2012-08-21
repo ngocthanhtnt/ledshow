@@ -53,7 +53,7 @@
 
 //#define CARD_TYPE CARD_AX //A系列板卡针对小条屏，其他针对中大屏
 //QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
-
+#define WDG_EN 0 //看门狗使能，仿真调试时关闭
 
 #define OE_PWM_FREQ 1000 //1KPWM频率
 #define COMPANY_NAME "AS"
@@ -152,7 +152,7 @@
 
 #endif
 
-#define ENV_VAR_EN (TEMP_SHOW_EN | HUMIDITY_SHOW_EN | NOISE_SHOW_EN)
+#define ENV_VAR_EN (HUMIDITY_SHOW_EN | NOISE_SHOW_EN) //外部环境变量的支持,温度因为有内部温度传感器支持，所以不判断
 //节目特征字
 #define FILE_EN_WORD ((BORDER_SHOW_EN<<BORDER_SHOW_BIT) |\
                        (PIC_SHOW_EN << PIC_SHOW_BIT) |\

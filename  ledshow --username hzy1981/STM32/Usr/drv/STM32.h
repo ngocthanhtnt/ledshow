@@ -275,4 +275,6 @@ EXT INT8U Chk_Test_Key_Up(void);
 EXT void Fac_Status_Self_Test(void);
 EXT void BKP_Register_Init(void);
 EXT void DMA_Configuration(void);
+EXT void ADC_configuration(void);
+EXT INT16S GetInterTemperature(void);
 #endif

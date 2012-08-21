@@ -452,6 +452,18 @@ INT8U Write_Storage_Data(STORA_DI SDI, void* pSrc, INT16U SrcLen)
   return 1;
 }
 
+void Check_Storage_Size(void)
+{
+  INT32U Addr;
+
+  Addr = Get_Storage_Data_Len(SDI_TEST_DATA); //获取最后一个数据的地址
+
+  if(Addr + 10 >= DATA_FLASH_SIZE) //如果大于Flash的大小
+  {
+    ASSERT_FAILED();
+    while(1);
+  }
+}
 
 #undef STORAGE_C
 
