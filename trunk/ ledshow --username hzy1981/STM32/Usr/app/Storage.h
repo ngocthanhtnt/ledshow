@@ -1,6 +1,13 @@
 #ifndef STORAGE_H
 #define STORAGE_H
 
+#undef EXT
+#ifdef STORAGE_C
+#define EXT
+#else
+#define EXT extern
+#endif
+
 #define TEST_DATA_LEN 4 //测试数据长度
 
 #define STORA_DI INT16U
@@ -48,11 +55,6 @@
 
 
 
-
-
-
-
-
 typedef struct
 {
     //INT8U MemID;
@@ -72,7 +74,7 @@ typedef struct
 }S_Data_Para_Storage_Info;
 
 
-
+EXT void Check_Storage_Size(void);
 //EXT INT8U Check_SuperPSW_Jump();
 //EXT INT8U Check_Imp_Flag(INT8U Imp_Flag);
 //EXT INT8U Get_Storage_Data_ImpFlag(STORA_DI SDI);

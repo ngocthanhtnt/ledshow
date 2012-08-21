@@ -93,13 +93,17 @@ int main(void)
 
   Ram_Init();
 
+#if WDG_EN
   IWDG_Init();
+#endif
 
   Hardware_Init();
 
   OS_Debug_Print("----------system start----------");
   OS_Debug_Print("----------version: %s----------", version);
 
+  Check_Storage_Size();
+  
   RST_Periph();
 
   Para_Init(); //参数初始化
@@ -128,7 +132,7 @@ int main(void)
   {
     Screen_Test(); //屏幕检测
 
-	Self_Test(); //硬件自检
+	Fac_Status_Self_Test(); //硬件自检
 
 #if SHELL_EN
     Shell_Proc();

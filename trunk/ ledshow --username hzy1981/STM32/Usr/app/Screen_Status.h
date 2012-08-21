@@ -2,7 +2,7 @@
 #define SCREEN_STATUS_H
 
 #undef EXT
-#ifdef LIGHTNESS_C
+#ifdef SCREEN_STATUS_C
 #define EXT
 #else
 #define EXT extern
@@ -16,6 +16,24 @@
 #define AUTO_ADJ    0x02
 
 #define MAX_LIGHTNESS 16 //1-16
+
+
+typedef struct
+{
+  INT8U Head;
+  
+  INT8U Posi;
+  INT8U Counts;
+  INT16S TempData[5];
+
+  INT8U Tail;
+}S_Inter_Temperature;
+
+#ifdef SCREEN_STATUS_C
+EXT S_Inter_Temperature Inter_Temp = {CHK_BYTE, 0, 0, {0}, CHK_BYTE};
+#else
+EXT S_Inter_Temperature Inter_Temp;
+#endif
 
 EXT INT16S Get_Cur_Temp(void);
 EXT INT16U Get_Cur_Humidity(void);

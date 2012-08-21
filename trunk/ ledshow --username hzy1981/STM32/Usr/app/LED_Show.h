@@ -19,6 +19,7 @@
 #define MAX_STEP_NUM 100
 
 #define RT_PLAY_FLAG 0x35
+#define INVALID_DATE_FLAG 0x12345678
 
 #define SLINE_MODE 0x00
 #define MLINE_MODE 0x01
@@ -224,9 +225,11 @@ typedef struct
   INT8U Lightness;
   INT8U Color_Num;
 
-  INT16U Temp;    //当前温度
-  INT16U Humidity; //湿度
-  INT16U Noise; //噪音
+  INT16U Temperature;    //当前温度,单位0.1度
+  INT16U Humidity; //湿度,单位0.1
+  INT16U Noise; //噪音,单位0.1
+
+  INT8U Ext_Temperature_Sec_Counts; //外部温度通信计数器。收到温度后置秒数。程序中减到0后。就采用内部温度传感器
 
   INT8U Time_OC_Flag;	//定时开关机标志
   INT8U Manual_OC_Flag; //手动关机标志
@@ -267,6 +270,8 @@ typedef struct
 
   INT8U Self_Test_Flag;
   INT8U Scan_Mode_Test_Flag;
+
+  INT32U Invalid_Date_Flag;
   INT8U Tail;  
 }S_Screen_Status;
 

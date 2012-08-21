@@ -5,7 +5,7 @@
 //获取当前温度
 INT16S Get_Cur_Temp(void)
 {
-  return Screen_Status.Temp; 
+  return Screen_Status.Temperature; 
 }
 
 //获取当前湿度
@@ -168,6 +168,44 @@ void Screen_Lightness_Proc(void)
    Set_OE_Duty_Polarity(Screen_Status.Lightness + 1, Screen_Para.Scan_Para.OE_Polarity);  //设置亮度, 等级为0时有亮度，因此+1
 }
 
+
+//内部温度传感器的温度处理
+void Screen_Temperature_Proc(void)
+{
+  INT32S TempCumu;
+  INT8U i;
+  static S_Int32U Sec = {CHK_BYTE, 0xFFFFFFFF, CHK_BYTE};
+
+  if(Sec.Var != SEC_TIMER)
+  {
+    Sec.Var = SEC_TIMER;
+
+	if(Screen_Status.Ext_Temperature_Sec_Counts)  //大于0表示通信接收到了外部传感器命令
+	  Screen_Status.Ext_Temperature_Sec_Counts --;
+    else
+	{
+	  if(Inter_Temp.Posi >= S_NUM(Inter_Temp.TempData))
+		Inter_Temp.Posi = 0;
+
+      Inter_Temp.TempData[Inter_Temp.Posi ++] = GetInterTemperature();// 0~17
+
+	  if(Inter_Temp.Counts < S_NUM(Inter_Temp.TempData))
+	    Inter_Temp.Counts ++;
+
+	  TempCumu = 0;
+	  for(i = 0; i < Inter_Temp.Counts; i ++)
+	  {
+	    TempCumu += Inter_Temp.TempData[i];
+	  }
+
+	  Screen_Status.Temperature = TempCumu / Inter_Temp.Counts;
+      debug("temp = %d", Screen_Status.Temperature);
+	}
+  }
+//INT16U GetADCValue(INT8U ADC_Channel)//ADC_Channel_x 0~17
+
+}
+
 //开关机控制
 void Screen_Open_Close_Proc(void)
 {
@@ -277,11 +315,43 @@ void Screen_Time_Proc()
 #endif 
 }
 
+
+void Screen_Check_Valid_Date() //检查是否在有限显示日期内
+{
+#if CLOCK_EN
+  //valid_date为全0或者格式不正确 
+  if(CHK_SUM(Screen_Para) EQ 0 || \
+     Screen_Para.Valid_Date.Time[2] EQ 0 && Screen_Para.Valid_Date.Time[1] EQ 0 || Screen_Para.Valid_Date.Time[0] EQ 0 ||\
+     Screen_Para.Valid_Date.Time[1] > 12 || Screen_Para.Valid_Date.Time[0] > 31)
+  {
+    Screen_Status.Invalid_Date_Flag = 0;
+    return;
+   }
+
+  //当前时间在截止日期后
+  if(Cur_Time.Time[T_YEAR] > Screen_Para.Valid_Date.Time[2] ||\
+    (Cur_Time.Time[T_YEAR] EQ Screen_Para.Valid_Date.Time[2] && Cur_Time.Time[T_MONTH] > Screen_Para.Valid_Date.Time[1]) ||\
+	(Cur_Time.Time[T_YEAR] EQ Screen_Para.Valid_Date.Time[2] && Cur_Time.Time[T_MONTH] EQ Screen_Para.Valid_Date.Time[1] && Cur_Time.Time[T_MONTH] >= Screen_Para.Valid_Date.Time[0]))
+   {
+	 Screen_Status.Invalid_Date_Flag = INVALID_DATE_FLAG;
+
+	 RT_Play_Status_Enter(20);	 //进入实时显示状态,全屏显示XXXXXXXXXX
+	 LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "XXXXXXXXXXXXXXXX");
+   }
+   else
+   {
+     RT_Play_Status_Exit();
+	 Screen_Status.Invalid_Date_Flag = 0;
+   }
+#endif
+}
+
 void Screen_Proc(void)
 {
   Screen_Time_Proc();
   Screen_Lightness_Proc();
+  Screen_Temperature_Proc();
   Screen_Open_Close_Proc();
   Screen_Com_Proc(); //屏幕通信处理
-  //Get_Cur_Time(Cur_Time.Time);
+  Screen_Check_Valid_Date();
 }

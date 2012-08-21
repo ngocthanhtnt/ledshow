@@ -570,21 +570,29 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 #if CLOCK_EN
     if(RW_Flag EQ SET_FLAG)
 	{
-      mem_cpy(TempTime.Time, Frame + FDATA, sizeof(TempTime.Time), TempTime.Time, sizeof(TempTime.Time));
-	  SET_HT(TempTime);
-	  SET_SUM(TempTime);
-	  
-	  if(Chk_Time(&TempTime))
-	  {
-        Re &= Set_Cur_Time(TempTime.Time);
-		if(Re > 0)
-		{
-	   	    mem_cpy(Cur_Time.Time, TempTime.Time, sizeof(TempTime.Time), Cur_Time.Time, sizeof(Cur_Time.Time));
-			SET_SUM(Cur_Time);
-		}
+	  if(Screen_Status.Invalid_Date_Flag EQ INVALID_DATE_FLAG) //已经进入锁定状态，不允许设置事件，否则可以解除锁定
+      {
+		Len = 0;
+		Re = 0;
 	  }
 	  else
-	    Re = 0;
+	  {
+		  mem_cpy(TempTime.Time, Frame + FDATA, sizeof(TempTime.Time), TempTime.Time, sizeof(TempTime.Time));
+		  SET_HT(TempTime);
+		  SET_SUM(TempTime);
+		  
+		  if(Chk_Time(&TempTime))
+		  {
+	        Re &= Set_Cur_Time(TempTime.Time);
+			if(Re > 0)
+			{
+		   	    mem_cpy(Cur_Time.Time, TempTime.Time, sizeof(TempTime.Time), Cur_Time.Time, sizeof(Cur_Time.Time));
+				SET_SUM(Cur_Time);
+			}
+		  }
+		  else
+		    Re = 0;
+		}
 	}
 	else
 	{
@@ -601,6 +609,23 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
         Len = Get_Soft_Version(Frame + FDATA, Frame, Frame_Buf_Len - FDATA);
         Re = 1;
     }
+  }
+  else if(Cmd_Code EQ C_VALID_DATE)	 //运行有效日期，在该日期后就不能正确运行了，全0表示不起作用
+  {
+    if(RW_Flag EQ SET_FLAG)
+	{
+      memcpy(&Screen_Para.Valid_Date, &Frame[FDATA], sizeof(Screen_Para.Valid_Date));
+	  SET_SUM(Screen_Para);
+	  Write_Screen_Para(); //保存屏幕参数
+	  Len = 0;
+	  Re = 1;
+	}
+	else
+	{
+      memcpy(&Frame[FDATA], &Screen_Para.Valid_Date, sizeof(Screen_Para.Valid_Date));
+	  Len = sizeof(Screen_Para.Valid_Date);
+	  Re = 1;
+	}
   }
   else if(Cmd_Code EQ C_SCREEN_OC) //手动开关机
   {
@@ -627,47 +652,57 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	   Re = 1; 
 	}
   }
-  else if(Cmd_Code EQ C_SELF_TEST)
+  else if(Cmd_Code EQ C_SELF_TEST) //控制器维护
   {
     if(RW_Flag EQ SET_FLAG)
 	{
 	  Temp = Frame[FDATA];
-      //先发送应答
-	  Cmd_Code = Cmd_Code | 0x40; //肯定应答
-	  Len = Make_Frame(Frame + FDATA, 0, (INT8U *)&Screen_Para.COM_Para.Addr, Cmd_Code,  0, Seq, Seq0, (char *)Frame);
-	  Send_Frame_Proc(Ch, Frame, Len); //向来数据的通道发送应答数据
-	  //先发送应答
-	  
-      if(Temp EQ 0x00) //进入自检状态
-	  {
-        Scan_Mode_Test(CMD_TEST);
-	  }
-	  else if(Temp EQ 0x01)
-	  {
-        Soft_Rest(); //软件复位
-	  }
-#if QT_EN == 0
-	  else if(Temp EQ 0x02) //固件升级--复位进入升级程序
-	  {
-	      BKP_Register_Init();
 
-		  //RCC_AHBPeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);
-		
-		  //BKP_ReadBackupRegister(BKP_DR1);
-		  //BKP_ReadBackupRegister(BKP_DR2);
+	  if(Temp EQ 0x03) //硬件自检命令
+	  {
+	    Frame[FDATA] = Self_Test();
+	    Len = 1;
+		Re = 1;
+	  }
+	  else
+	  {
+	      //先发送应答
+		  Cmd_Code = Cmd_Code | 0x40; //肯定应答
+		  Len = Make_Frame(Frame + FDATA, 0, (INT8U *)&Screen_Para.COM_Para.Addr, Cmd_Code,  0, Seq, Seq0, (char *)Frame);
+		  Send_Frame_Proc(Ch, Frame, Len); //向来数据的通道发送应答数据
+		  //先发送应答
 		  
-		  BKP_WriteBackupRegister(BKP_DR1, 0xA789);
-		  BKP_WriteBackupRegister(BKP_DR2, 0x5A23);	
-		  
-		  if(Get_Com_Baud() EQ 57600)
-		    BKP_WriteBackupRegister(BKP_DR3, 0x00); 
-		  else
-		    BKP_WriteBackupRegister(BKP_DR3, 0x01);
+	      if(Temp EQ 0x00) //进入自检状态
+		  {
+	        Scan_Mode_Test(CMD_TEST);
+		  }
+		  else if(Temp EQ 0x01)
+		  {
+	        Soft_Rest(); //软件复位
+		  }
+	#if QT_EN == 0
+		  else if(Temp EQ 0x02) //固件升级--复位进入升级程序
+		  {
+		      BKP_Register_Init();
+	
+			  //RCC_AHBPeriphClockCmd(RCC_APB1Periph_BKP, ENABLE);
 			
-	      Soft_Rest(); //软件复位		 
-	  } 
-#endif
-	  return Len;
+			  //BKP_ReadBackupRegister(BKP_DR1);
+			  //BKP_ReadBackupRegister(BKP_DR2);
+			  
+			  BKP_WriteBackupRegister(BKP_DR1, 0xA789);
+			  BKP_WriteBackupRegister(BKP_DR2, 0x5A23);	
+			  
+			  if(Get_Com_Baud() EQ 57600)
+			    BKP_WriteBackupRegister(BKP_DR3, 0x00); 
+			  else
+			    BKP_WriteBackupRegister(BKP_DR3, 0x01);
+				
+		      Soft_Rest(); //软件复位		 
+		  } 
+	#endif
+		  return Len;
+	  }
 	}
 
   }
@@ -677,7 +712,10 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	{
 	  Re = 1;
 	  if(Frame[FDATA] EQ 0x00)
-	    memcpy((void *)&Screen_Status.Temp, Frame + FDATA + 1, sizeof(Screen_Status.Temp));//, (void *)&Screen_Status.Temp, sizeof(Screen_Status.Temp));
+	  {
+	    memcpy((void *)&Screen_Status.Temperature, Frame + FDATA + 1, sizeof(Screen_Status.Temperature));//, (void *)&Screen_Status.Temp, sizeof(Screen_Status.Temp));
+	    Screen_Status.Ext_Temperature_Sec_Counts = 30; //30s还没有收到则采用内部温度传感器
+	  }
 	  else if(Frame[FDATA] EQ 0x01)
 	    memcpy((void *)&Screen_Status.Humidity, Frame + FDATA + 1, sizeof(Screen_Status.Humidity));//, (void *)&Screen_Status.Humidity, sizeof(Screen_Status.Humidity));
 	  else if(Frame[FDATA] EQ 0x02)
@@ -689,7 +727,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	{
 	  Re = 1;
 	  if(Frame[FDATA] EQ 0x00)
-	    memcpy(Frame + FDATA + 1, (void *)&Screen_Status.Temp, sizeof(Screen_Status.Temp));//, &Screen_Status.Temp, sizeof(Screen_Status.Temp));
+	    memcpy(Frame + FDATA + 1, (void *)&Screen_Status.Temperature, sizeof(Screen_Status.Temperature));//, &Screen_Status.Temp, sizeof(Screen_Status.Temp));
 	  else if(Frame[FDATA] EQ 0x01)
 	    memcpy(Frame + FDATA + 1, (void *)&Screen_Status.Humidity, sizeof(Screen_Status.Humidity));
 	  else if(Frame[FDATA] EQ 0x02)

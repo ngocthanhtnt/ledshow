@@ -6,7 +6,9 @@ extern void Set_Clock_Normal_Speed(void);
 
 void Clr_Watch_Dog(void)
 {
+#if WDG_EN
   IWDG_ReloadCounter();
+#endif
 }
 
 /** 
@@ -1167,10 +1169,6 @@ INT16U Self_Test(void)
   INT16U ErrFlag = 0;
   S_Time TempTime,TempTime1;
 
-   //当前在工厂状态且按下测试键则进入自检状态
-  if(!(Chk_Test_Key_Down() && Chk_JP_Status() EQ FAC_STATUS))
-    return 0;
-
   debug("-----------系统自检开始---------------");
 #if QT_EN EQ 0
   //--------对存储器的测试---------------
@@ -1181,16 +1179,16 @@ INT16U Self_Test(void)
 
   if(0x55AA5AA5 EQ Data)
   {
-    debug("SPI Flash 自检成功");
+    debug("SPI Flash 自检成功\r\n");
     Re = Re & 1;
   }
   else
   { 
-    debug("SPI Flash 自检失败"); 
+    debug("SPI Flash 自检失败\r\n"); 
 	Re = 0;
 	ErrFlag	|= 0x01;
 
-	Test_LED_Flash(1, 500);
+	//Test_LED_Flash(1, 500);
   }
   //-----------------------------------------
 
@@ -1209,16 +1207,16 @@ INT16U Self_Test(void)
  
   if(Re > 0 && TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
   {
-    debug("时钟自检成功");
+    debug("时钟自检成功\r\n");
     Re = Re & 1;
   }
   else
   {
-    debug("时钟自检失败"); 
+    debug("时钟自检失败\r\n"); 
 	Re = 0;
 	ErrFlag	|= 0x02;
 
-	Test_LED_Flash(2, 500);
+	//Test_LED_Flash(2, 500);
   }
   //-----------------------------------------
 /*
@@ -1242,9 +1240,9 @@ INT16U Self_Test(void)
   //---------------------------------------
 */
   if(Re EQ 0)
-	debug("外围器件自检失败！");
+	debug("外围器件自检失败！\r\n");
   else
-	debug("外围器件自检成功！");
+	debug("外围器件自检成功！\r\n");
 
 #endif
 
@@ -1252,11 +1250,18 @@ INT16U Self_Test(void)
 }
 
  //工厂状态自检
- void Fac_Status_Self_Test(void)
- {
-  Self_Test(); //自身硬件检测
+void Fac_Status_Self_Test(void)
+{
+  INT8U Re;
 
- }
+    //当前在工厂状态且按下测试键则进入自检状态
+  if(!(Chk_Test_Key_Down() && Chk_JP_Status() EQ FAC_STATUS))
+    return;
+  Re = Self_Test(); //自身硬件检测
+
+  if(Re)
+   Test_LED_Flash(5, 500);
+}
 
 
 /*
@@ -1330,4 +1335,63 @@ void IWDG_Init(void)
   IWDG_Enable();
 }
 //-------------------------------------
+
+void ADC_configuration(void)
+{
+	ADC_InitTypeDef ADC_InitStructure;
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+	ADC_InitStructure.ADC_Mode=ADC_Mode_Independent;//独立模式
+	ADC_InitStructure.ADC_ScanConvMode=DISABLE;//连续多通道模式	
+	ADC_InitStructure.ADC_ContinuousConvMode=DISABLE;//单次转换	
+	ADC_InitStructure.ADC_ExternalTrigConv=ADC_ExternalTrigConv_None;//转换由软件而不是外部触发启动
+	ADC_InitStructure.ADC_DataAlign=ADC_DataAlign_Right;//右对齐
+	ADC_InitStructure.ADC_NbrOfChannel=1;//扫描通道数
+	ADC_Init(ADC1,&ADC_InitStructure);
+	ADC_Cmd(ADC1,ENABLE);//使能或者失能指定的ADC
+
+	ADC_ResetCalibration(ADC1);//重置指定的ADC的校准寄存器
+	while(ADC_GetResetCalibrationStatus(ADC1));//等待校准寄存器初始化
+	ADC_StartCalibration(ADC1);//开始校准
+	while(ADC_GetCalibrationStatus(ADC1));//等待校准完成
+	//ADC_SoftwareStartConvCmd(ADC1,ENABLE);//使能指定的ADC的软件转换启动功能
+	ADC_TempSensorVrefintCmd(ENABLE);
+	/*
+	//上电后进行一次转换。
+	ADC_RegularChannelConfig(ADC1,ADC_Channel_16,1,ADC_SampleTime_239Cycles5);
+	ADC_SoftwareStartConvCmd(ADC1,ENABLE);//使能指定的ADC的软件转换启动功能
+
+	while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);//检查制定ADC标志位置1与否 ADC_FLAG_EOC 转换结束标志位
+	ADC_GetConversionValue(ADC1);
+	//开始下一次转化
+	ADC_RegularChannelConfig(ADC1,ADC_Channel_16,1,ADC_SampleTime_239Cycles5);
+	ADC_SoftwareStartConvCmd(ADC1,ENABLE);//使能指定的ADC的软件转换启动功能
+	*/
+}
+
+INT16S GetInterTemperature(void)//ADC_Channel_x 0~17
+{
+	INT16U adc_value;// VrefintAD;
+	INT16S temp;
+/*
+	ADC_RegularChannelConfig(ADC1,ADC_Channel_17,1,ADC_SampleTime_239Cycles5);
+	ADC_SoftwareStartConvCmd(ADC1,ENABLE);//使能指定的ADC的软件转换启动功能
+	while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);//检查制定ADC标志位置1与否 ADC_FLAG_EOC 转换结束标志位
+	VrefintAD=ADC_GetConversionValue(ADC1);
+	debug("VrefintAD = %d", VrefintAD);
+*/
+    //启动下一次转化
+	ADC_RegularChannelConfig(ADC1,ADC_Channel_16,1,ADC_SampleTime_239Cycles5);
+	ADC_SoftwareStartConvCmd(ADC1,ENABLE);//使能指定的ADC的软件转换启动功能
+
+	while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);//检查制定ADC标志位置1与否 ADC_FLAG_EOC 转换结束标志位
+	adc_value=ADC_GetConversionValue(ADC1);
+	//debug("adc_value = %d", adc_value);
+
+	//temp = (INT16S)(((float)1.43 * 1.2 / VrefintAD / (3.3 / 4096)  - (float)adc_value * 1.2 / VrefintAD) * 1000 / 4.35 + 25);
+	temp = (INT16S)((1.43 - (float)adc_value * 3.3 / 4096) * 1000 / 4.35 + 25);
+
+	return temp * 10; //单位为0.1度
+}
+
 #endif

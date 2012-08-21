@@ -198,7 +198,7 @@ typedef struct
 
 typedef struct
 {
-    INT8U Time[5];
+    INT8U Time[3]; //日、月、年 
 }S_Valid_Date;
 
 //屏幕参数
