@@ -19,8 +19,8 @@
 #define MAX_STEP_NUM 100
 
 #define RT_PLAY_FLAG 0x35
-#define INVALID_DATE_FLAG 0x12345678
-#define VALID_DATE_FLAG   0x87654321
+#define LOCK_DATE_FLAG 0x12345678
+//#define VALID_DATE_FLAG   0x87654321
 
 #define SLINE_MODE 0x00
 #define MLINE_MODE 0x01
@@ -272,7 +272,7 @@ typedef struct
   INT8U Self_Test_Flag;
   INT8U Scan_Mode_Test_Flag;
 
-  INT32U Invalid_Date_Flag;
+  INT32U Lock_Date_Flag;
   INT8U Tail;  
 }S_Screen_Status;
 

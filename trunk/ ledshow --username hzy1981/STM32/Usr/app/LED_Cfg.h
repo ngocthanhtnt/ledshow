@@ -129,12 +129,13 @@
 
 
 #if defined(CARD_A) || defined(CARD_B)
+#ifdef CARD_A
+#define CARD_TYPE CARD_A0
+#elif defined(CARD_B)
 #define CARD_TYPE CARD_B0
+#endif
 #include "LED_ABX_Cfg.h"
 #include "LED_ABX_Drv.h"
-//#elif defined(CARD_BX)
-//#include "LED_BX_Cfg.h"
-//#include "LED_BX_Drv.h"
 #elif defined(CARD_C)
 #define CARD_TYPE CARD_C0
 #include "LED_CX_Cfg.h"

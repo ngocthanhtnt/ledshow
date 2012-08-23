@@ -183,7 +183,10 @@ typedef struct
     INT16U Port; //端口
     INT32U Mac; //Mac地址
     INT32U Mask; //子网掩码
+    INT32U Gate; //网关
     INT8U Mode; //0固定ip方式，1自动获取方式
+
+    INT8U Temp[20]; //保留30字节备用--升级程序时可以和老的兼容
 }S_ETH_Para;
 
 typedef struct
@@ -192,16 +195,18 @@ typedef struct
     //GPRS服务器地址
     INT32U Srv_IP; //服务器IP
     INT16U Srv_Port; //服务器端口
-    INT8U APN[40];
     INT8U Mode; //0唤醒方式，1在线方式
+    INT8U APN[16];
+
+    INT8U Temp[20]; //保留30字节备用--升级程序时可以和老的兼容
 }S_GPRS_Para;
 
 typedef struct
 {
-    INT32U Invalid_Date_Flag; //有效标志
+    INT32U Lock_Date_Flag; //有效标志
 
     INT8U Time[3]; //日、月、年 
-}S_Valid_Date;
+}S_Lock_Date;
 
 //屏幕参数
 //数据级性--正、反
@@ -244,9 +249,11 @@ typedef struct
   //命令2
   S_Screen_Lightness Lightness;//[MAX_LIGHTNESS_TIME]; //强度
 
-  S_Valid_Date Valid_Date; //有效日期--到达改日期后自动关闭--全0表示不启用改参数
+  S_Lock_Date Lock_Date; //有效日期--到达改日期后自动关闭--全0表示不启用改参数
   //命令3
   //INT8U Prog_Num; //节目数
+  INT8U Temp[20]; //备用
+
   INT8U CS[CS_BYTES];
 
   INT8U Tail;

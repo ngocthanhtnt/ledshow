@@ -468,30 +468,6 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 59
-  ,{&Move_Left_Stretch, H_MODE, 1
-#if QT_EN
-   ,"左移弹出" 
-#endif    
-  } //左移弹出
-#endif
-
-#if IN_SPEC_EFFECT_NUM > 60
-  ,{&Move_Up_Stretch, V_MODE, 1
-#if QT_EN
-   ,"上移弹出" 
-#endif    
-  } //上移弹出
-#endif
-
-#if IN_SPEC_EFFECT_NUM > 61
-  ,{&Move_Jump_Stretch, V_MODE, 1
-#if QT_EN
-   ,"翻腾弹出"
-#endif
-  } //上移弹出
-#endif
-
-#if IN_SPEC_EFFECT_NUM > 62
   ,{&Move_Diamond_0, HV_ADD_MODE, 0.5
 #if QT_EN
    ,"菱形展开"
@@ -499,7 +475,7 @@ const S_Mode_Func In_Mode_Func[]=
   } //上移弹出
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 63
+#if IN_SPEC_EFFECT_NUM > 60
   ,{&Move_Diamond, HV_ADD_MODE, 0.5
 #if QT_EN
    ,"菱形收缩"
@@ -507,7 +483,7 @@ const S_Mode_Func In_Mode_Func[]=
   } //上移弹出
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 64
+#if IN_SPEC_EFFECT_NUM > 61
   ,{&Move_Rect_Open, HV_SQRT_MODE, 0.5
 #if QT_EN
    ,"矩形展开"
@@ -515,7 +491,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 65
+#if IN_SPEC_EFFECT_NUM > 62
   ,{&Move_Rect_Close, HV_SQRT_MODE, 0.5
 #if QT_EN
    ,"矩形收缩"
@@ -523,7 +499,7 @@ const S_Mode_Func In_Mode_Func[]=
    }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 66
+#if IN_SPEC_EFFECT_NUM > 63
   ,{&Move_Up_Sector, HHV_ADD_MODE, 1
 #if QT_EN
    ,"上扇形展开"
@@ -531,7 +507,7 @@ const S_Mode_Func In_Mode_Func[]=
   } //上移弹出
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 67
+#if IN_SPEC_EFFECT_NUM > 64
   ,{&Move_Down_Sector, HHV_ADD_MODE, 1
 #if QT_EN
    ,"下扇形展开"
@@ -539,7 +515,7 @@ const S_Mode_Func In_Mode_Func[]=
   } //上移弹出
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 68
+#if IN_SPEC_EFFECT_NUM > 65
   ,{&Move_Up_Sector_Merge, HHV_ADD_MODE, 1
 #if QT_EN
    ,"上扇形合并"
@@ -547,7 +523,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 69
+#if IN_SPEC_EFFECT_NUM > 66
   ,{&Move_Down_Sector_Merge, HHV_ADD_MODE, 1
 #if QT_EN
    ,"下扇形合并"
@@ -555,7 +531,7 @@ const S_Mode_Func In_Mode_Func[]=
    }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 70
+#if IN_SPEC_EFFECT_NUM > 67
   ,{&Move_Left_Sector, HVH_ADD_MODE, 1
 #if QT_EN
    ,"左射线展开"
@@ -563,7 +539,7 @@ const S_Mode_Func In_Mode_Func[]=
   } //上移弹出
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 71
+#if IN_SPEC_EFFECT_NUM > 68
   ,{&Move_Right_Sector, HVH_ADD_MODE, 1
 #if QT_EN
    ,"右射线展开"
@@ -571,7 +547,7 @@ const S_Mode_Func In_Mode_Func[]=
   } //上移弹出
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 72
+#if IN_SPEC_EFFECT_NUM > 69
   ,{&Move_Left_Sector_Merge, HVH_ADD_MODE, 1
 #if QT_EN
    ,"左射线合并"
@@ -579,7 +555,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 73
+#if IN_SPEC_EFFECT_NUM > 70
   ,{&Move_Right_Sector_Merge, HVH_ADD_MODE, 1
 #if QT_EN
    ,"右射线合并"
@@ -587,7 +563,7 @@ const S_Mode_Func In_Mode_Func[]=
    }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 74
+#if IN_SPEC_EFFECT_NUM > 71
   ,{&Move_Left_Up_SpotLignt, TVH_ADD_MODE, 1
 #if QT_EN
    ,"左上射灯"
@@ -595,7 +571,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 75
+#if IN_SPEC_EFFECT_NUM > 72
   ,{&Move_Right_Up_SpotLignt, TVH_ADD_MODE, 1
 #if QT_EN
    ,"右上射灯"
@@ -603,7 +579,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 76
+#if IN_SPEC_EFFECT_NUM > 73
   ,{&Move_Left_Down_SpotLignt, THV_ADD_MODE, 1
 #if QT_EN
    ,"左下射灯"
@@ -611,7 +587,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 77
+#if IN_SPEC_EFFECT_NUM > 74
   ,{&Move_Right_Down_SpotLignt, THV_ADD_MODE, 1
 #if QT_EN
    ,"右下射灯"
@@ -619,7 +595,7 @@ const S_Mode_Func In_Mode_Func[]=
    }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 78
+#if IN_SPEC_EFFECT_NUM > 75
   ,{&Move_Left_Right_Cross_Open, H_MODE, 0.5
 #if QT_EN
    ,"左右交叉拉幕"
@@ -627,7 +603,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 79
+#if IN_SPEC_EFFECT_NUM > 76
   ,{&Move_Up_Down_Cross_Open, V_MODE, 0.5
 #if QT_EN
    ,"上下交叉拉幕"
@@ -635,7 +611,7 @@ const S_Mode_Func In_Mode_Func[]=
    }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 80
+#if IN_SPEC_EFFECT_NUM > 77
   ,{&Move_LR_Mid_Overflow, H_MODE, 0.5
 #if QT_EN
    ,"左右中间溢出"
@@ -643,7 +619,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 81
+#if IN_SPEC_EFFECT_NUM > 78
   ,{&Move_UD_Mid_Overflow, V_MODE, 0.5
 #if QT_EN
    ,"上下中间溢出"
@@ -651,7 +627,7 @@ const S_Mode_Func In_Mode_Func[]=
    }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 82
+#if IN_SPEC_EFFECT_NUM > 79
   ,{&Move_LR_Mid_In, H_MODE, 0.5
 #if QT_EN
    ,"左右移入"
@@ -659,7 +635,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 83
+#if IN_SPEC_EFFECT_NUM > 80
   ,{&Move_UD_Mid_In, V_MODE, 0.5
 #if QT_EN
    ,"上下移入"
@@ -667,7 +643,7 @@ const S_Mode_Func In_Mode_Func[]=
    }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 84
+#if IN_SPEC_EFFECT_NUM > 81
   ,{&Move_Spin_CW_Windmill, HV_ADD_MODE, 0.5
 #if QT_EN
    ,"顺时针风车"
@@ -675,7 +651,7 @@ const S_Mode_Func In_Mode_Func[]=
   }
 #endif
 
-#if IN_SPEC_EFFECT_NUM > 85
+#if IN_SPEC_EFFECT_NUM > 82
   ,{&Move_Spin_CCW_Windmill, HV_ADD_MODE, 0.5
 #if QT_EN
    ,"逆时针风车"
@@ -683,6 +659,29 @@ const S_Mode_Func In_Mode_Func[]=
    }
 #endif
 
+#if IN_SPEC_EFFECT_NUM > 83
+  ,{&Move_Left_Stretch, H_MODE, 1
+#if QT_EN
+   ,"左移弹出" 
+#endif    
+  } //左移弹出
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 84
+  ,{&Move_Up_Stretch, V_MODE, 1
+#if QT_EN
+   ,"上移弹出" 
+#endif    
+  } //上移弹出
+#endif
+
+#if IN_SPEC_EFFECT_NUM > 85
+  ,{&Move_Jump_Stretch, V_MODE, 1
+#if QT_EN
+   ,"翻腾弹出"
+#endif
+  } //上移弹出
+#endif
 };
 
 //数据移出方式

@@ -3022,7 +3022,7 @@ void Move_Right_Cover(INT8U Area_No)
 //左上直角覆盖
 void Move_Left_Up_Cover0(INT8U Area_No)
 {
-    INT16U Area_Width, Area_Height, X,Y;
+    INT16U Area_Width, Area_Height;//, X,Y;
     S_Point Point0,Point1,Point2;
 
     Area_Width = Get_Area_Width(Area_No);
@@ -3053,7 +3053,7 @@ void Move_Left_Up_Cover0(INT8U Area_No)
 //左下直角覆盖
 void Move_Left_Down_Cover0(INT8U Area_No)
 {
-    INT16U Area_Width, Area_Height, X,Y;
+    INT16U Area_Width, Area_Height;//, X,Y;
     S_Point Point0,Point1,Point2;
 
     Area_Width = Get_Area_Width(Area_No);
@@ -3084,7 +3084,7 @@ void Move_Left_Down_Cover0(INT8U Area_No)
 //右上直角覆盖
 void Move_Right_Up_Cover0(INT8U Area_No)
 {
-    INT16U Area_Width, Area_Height, X,Y;
+    INT16U Area_Width, Area_Height;//, X,Y;
     S_Point Point0,Point1,Point2;
 
     Area_Width = Get_Area_Width(Area_No);
@@ -3115,7 +3115,7 @@ void Move_Right_Up_Cover0(INT8U Area_No)
 //右下直角覆盖
 void Move_Right_Down_Cover0(INT8U Area_No)
 {
-    INT16U Area_Width, Area_Height, X,Y;
+    INT16U Area_Width, Area_Height;//, X,Y;
     S_Point Point0,Point1,Point2;
 
     Area_Width = Get_Area_Width(Area_No);
@@ -4963,6 +4963,8 @@ void Move_Jump_Stretch(INT8U Area_No)
   Step = Prog_Status.Area_Status[Area_No].Step;
   Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
 
+  Step = 0;
+
   if(Step <= Max_Step / 3)
   {
     Max_Step = Max_Step / 3;
@@ -4990,6 +4992,11 @@ void Move_Jump_Stretch(INT8U Area_No)
     Ratio = TENSILE_STEP * Step / Max_Step;//8;//每8个里点亮几个;
   else if(Step_Flag EQ 1)
     Ratio = TENSILE_STEP * (Max_Step - Step) / Max_Step;//8;//每8个里点亮几个;
+  else
+  {
+    ASSERT_FAILED();
+	Ratio = TENSILE_STEP * Step / Max_Step;
+  }
 
   Y0 = 0;
   P0.X = 0;
@@ -5079,10 +5086,10 @@ void Move_Up_Left(INT8U Area_No)
 void Move_Diamond(INT8U Area_No)
 {
     S_Point P[4];
-    INT16U Step,Max_Step;
+    INT16U Step;//,Max_Step;
 
     Step = Prog_Status.Area_Status[Area_No].Step;
-    Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
+    //Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
 
     if(Step < Prog_Para.Area[Area_No].Y_Len / 2)
     {
@@ -5133,10 +5140,10 @@ void Move_Diamond(INT8U Area_No)
 void Move_Diamond_0(INT8U Area_No)
 {
     S_Point P[4];
-    INT16U Step,Max_Step;
+    INT16U Step;//,Max_Step;
 
     Step = Prog_Status.Area_Status[Area_No].Step;
-    Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
+    //Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
 
     if(Step < Prog_Para.Area[Area_No].X_Len / 2)
     {
@@ -6079,13 +6086,13 @@ void Move_UD_Mid_In(INT8U Area_No)
 void Move_LR_Mid_Out(INT8U Area_No)
 {
   S_Point P[2];
-  INT16U Step, Max_Step, Len, Area_Width, Area_Height;
+  INT16U Step, Area_Width, Area_Height;
 
   Area_Width = Get_Area_Width(Area_No);
   Area_Height = Get_Area_Height(Area_No);
 
   Step = Prog_Status.Area_Status[Area_No].Step;
-  Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
+  //Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
 
   //Len = (Area_Width * Step) / (2 * Max_Step);
   P[0].X = Step - 1;
@@ -6120,13 +6127,13 @@ void Move_LR_Mid_Out(INT8U Area_No)
 void Move_UD_Mid_Out(INT8U Area_No)
 {
     S_Point P[2];
-    INT16U Step, Max_Step, Len, Area_Width, Area_Height;
+    INT16U Step, Area_Width, Area_Height;
 
     Area_Width = Get_Area_Width(Area_No);
     Area_Height = Get_Area_Height(Area_No);
 
     Step = Prog_Status.Area_Status[Area_No].Step;
-    Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
+    //Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
 
     //Len = (Area_Width * Step) / (2 * Max_Step);
     P[0].X = 0;//Step - 1;
