@@ -316,25 +316,23 @@ void Screen_Time_Proc()
 }
 
 
-void Screen_Check_Valid_Date() //检查是否在有限显示日期内
+void Screen_Check_Lock_Date() //检查是否在有限显示日期内
 {
 #if CLOCK_EN
   //valid_date为全0或者格式不正确 
-  if(CHK_SUM(Screen_Para) EQ 0 || \
-     Screen_Para.Valid_Date.Invalid_Date_Flag != INVALID_DATE_FLAG || \
-     Screen_Para.Valid_Date.Time[2] EQ 0 && Screen_Para.Valid_Date.Time[1] EQ 0 || Screen_Para.Valid_Date.Time[0] EQ 0 ||\
-     Screen_Para.Valid_Date.Time[1] > 12 || Screen_Para.Valid_Date.Time[0] > 31)
+  if(Screen_Para.Lock_Date.Lock_Date_Flag != LOCK_DATE_FLAG || \
+     Screen_Para.Lock_Date.Time[1] > 12 || Screen_Para.Lock_Date.Time[0] > 31)
   {
-    Screen_Status.Invalid_Date_Flag = 0;
+    Screen_Status.Lock_Date_Flag = 0;
     return;
    }
 
   //当前时间在截止日期后
-  if(Cur_Time.Time[T_YEAR] > Screen_Para.Valid_Date.Time[2] ||\
-    (Cur_Time.Time[T_YEAR] EQ Screen_Para.Valid_Date.Time[2] && Cur_Time.Time[T_MONTH] > Screen_Para.Valid_Date.Time[1]) ||\
-	(Cur_Time.Time[T_YEAR] EQ Screen_Para.Valid_Date.Time[2] && Cur_Time.Time[T_MONTH] EQ Screen_Para.Valid_Date.Time[1] && Cur_Time.Time[T_MONTH] >= Screen_Para.Valid_Date.Time[0]))
+  if(Cur_Time.Time[T_YEAR] > Screen_Para.Lock_Date.Time[2] ||\
+    (Cur_Time.Time[T_YEAR] EQ Screen_Para.Lock_Date.Time[2] && Cur_Time.Time[T_MONTH] > Screen_Para.Lock_Date.Time[1]) ||\
+        (Cur_Time.Time[T_YEAR] EQ Screen_Para.Lock_Date.Time[2] && Cur_Time.Time[T_MONTH] EQ Screen_Para.Lock_Date.Time[1] && Cur_Time.Time[T_MONTH] >= Screen_Para.Lock_Date.Time[0]))
    {
-	 Screen_Status.Invalid_Date_Flag = INVALID_DATE_FLAG;
+         Screen_Status.Lock_Date_Flag = LOCK_DATE_FLAG;
 
 	 RT_Play_Status_Enter(20);	 //进入实时显示状态,全屏显示XXXXXXXXXX
 	 LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "XXXXXXXXXXXXXXXX");
@@ -342,7 +340,7 @@ void Screen_Check_Valid_Date() //检查是否在有限显示日期内
    else
    {
      RT_Play_Status_Exit();
-	 Screen_Status.Invalid_Date_Flag = 0;
+         Screen_Status.Lock_Date_Flag = 0;
    }
 #endif
 }
@@ -354,5 +352,5 @@ void Screen_Proc(void)
   Screen_Temperature_Proc();
   Screen_Open_Close_Proc();
   Screen_Com_Proc(); //屏幕通信处理
-  Screen_Check_Valid_Date();
+  Screen_Check_Lock_Date();
 }

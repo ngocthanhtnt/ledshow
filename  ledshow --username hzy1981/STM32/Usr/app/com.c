@@ -570,7 +570,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 #if CLOCK_EN
     if(RW_Flag EQ SET_FLAG)
 	{
-	  if(Screen_Status.Invalid_Date_Flag EQ INVALID_DATE_FLAG) //已经进入锁定状态，不允许设置事件，否则可以解除锁定
+          if(Screen_Status.Lock_Date_Flag EQ LOCK_DATE_FLAG) //已经进入锁定状态，不允许设置事件，否则可以解除锁定
       {
 		Len = 0;
 		Re = 0;
@@ -610,11 +610,11 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
         Re = 1;
     }
   }
-  else if(Cmd_Code EQ C_VALID_DATE)	 //运行有效日期，在该日期后就不能正确运行了，全0表示不起作用
+  else if(Cmd_Code EQ C_LOCK_DATE)	 //运行有效日期，在该日期后就不能正确运行了，全0表示不起作用
   {
     if(RW_Flag EQ SET_FLAG)
 	{
-      memcpy(&Screen_Para.Valid_Date, &Frame[FDATA], sizeof(Screen_Para.Valid_Date));
+      memcpy(&Screen_Para.Lock_Date, &Frame[FDATA], sizeof(Screen_Para.Lock_Date));
 	  SET_SUM(Screen_Para);
 	  Write_Screen_Para(); //保存屏幕参数
 	  Len = 0;
@@ -622,8 +622,8 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	}
 	else
 	{
-      memcpy(&Frame[FDATA], &Screen_Para.Valid_Date, sizeof(Screen_Para.Valid_Date));
-	  Len = sizeof(Screen_Para.Valid_Date);
+      memcpy(&Frame[FDATA], &Screen_Para.Lock_Date, sizeof(Screen_Para.Lock_Date));
+          Len = sizeof(Screen_Para.Lock_Date);
 	  Re = 1;
 	}
   }

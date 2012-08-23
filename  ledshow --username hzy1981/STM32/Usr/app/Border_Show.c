@@ -198,8 +198,8 @@ void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT32U Step, IN
 
 void Copy_Border(INT8U Area_No, INT32U Step)
 {
-    INT8U Re;
-    INT16U i,j,Len;
+    //INT8U Re;
+    INT16U Len;
     INT16U Area_Width, Area_Height;
     INT8U Width, Height;
     S_Point P0,P1;
