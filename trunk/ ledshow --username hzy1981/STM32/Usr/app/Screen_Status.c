@@ -330,17 +330,23 @@ void Screen_Check_Lock_Date() //检查是否在有限显示日期内
   //当前时间在截止日期后
   if(Cur_Time.Time[T_YEAR] > Screen_Para.Lock_Date.Time[2] ||\
     (Cur_Time.Time[T_YEAR] EQ Screen_Para.Lock_Date.Time[2] && Cur_Time.Time[T_MONTH] > Screen_Para.Lock_Date.Time[1]) ||\
-        (Cur_Time.Time[T_YEAR] EQ Screen_Para.Lock_Date.Time[2] && Cur_Time.Time[T_MONTH] EQ Screen_Para.Lock_Date.Time[1] && Cur_Time.Time[T_MONTH] >= Screen_Para.Lock_Date.Time[0]))
+    (Cur_Time.Time[T_YEAR] EQ Screen_Para.Lock_Date.Time[2] && Cur_Time.Time[T_MONTH] EQ Screen_Para.Lock_Date.Time[1] && Cur_Time.Time[T_DATE] >= Screen_Para.Lock_Date.Time[0]))
    {
-         Screen_Status.Lock_Date_Flag = LOCK_DATE_FLAG;
+     Screen_Status.Lock_Date_Flag = LOCK_DATE_FLAG;
 
+     Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+	 
 	 RT_Play_Status_Enter(20);	 //进入实时显示状态,全屏显示XXXXXXXXXX
 	 LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "XXXXXXXXXXXXXXXX");
    }
    else
    {
      RT_Play_Status_Exit();
-         Screen_Status.Lock_Date_Flag = 0;
+	 if(Screen_Status.Lock_Date_Flag EQ LOCK_DATE_FLAG)//退出锁定状态，复位！！！
+     {
+	   Soft_Rest();
+	   //Screen_Status.Lock_Date_Flag = 0;
+	 }
    }
 #endif
 }

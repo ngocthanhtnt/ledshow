@@ -706,6 +706,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	}
 
   }
+#if ENV_VAR_EN
   else if(Cmd_Code EQ C_ENV_VAR)  //环境变量，温度、湿度、噪音等
   {
     if(RW_Flag EQ SET_FLAG)
@@ -739,6 +740,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 
 	return 1;
   }
+#endif
   else
   {
     ASSERT_FAILED();
