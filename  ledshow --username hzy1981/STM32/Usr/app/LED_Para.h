@@ -132,7 +132,9 @@ typedef struct
   INT16U X;
   INT16U Y;
   INT16U X_Len;
-  INT16U Y_Len; 	
+  INT16U Y_Len;
+  
+  INT8U Property; //区域属性备用,0为普通，1为实时显示，备用 	
 }S_Area;
 
 typedef struct
