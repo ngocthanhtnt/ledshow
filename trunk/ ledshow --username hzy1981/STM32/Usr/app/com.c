@@ -209,7 +209,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
          File_No >= MAX_FILE_NUM)
       {
         ASSERT_FAILED();
-		Screen_Status.Com_Err_Flag =  COM_ERR_PROGRAM_NUM;
+        Screen_Status.Com_Err_Flag =  COM_ERR_PROGRAM_NUM;
         return 0;
       }
 
@@ -257,7 +257,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
     if(Len + BLOCK_HEAD_DATA_LEN> BLOCK_DATA_LEN)
     {
       ASSERT_FAILED();
-	  Screen_Status.Com_Err_Flag =  COM_ERR_PARA_LEN_ERR;
+      Screen_Status.Com_Err_Flag =  COM_ERR_PARA_LEN_ERR;
       return 0;
     }
 
@@ -269,6 +269,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
          File_Para_Info.File_No < MAX_FILE_NUM)
       {
         Prog_Status.Play_Status.Prog_No = File_Para_Info.Prog_No;
+        SET_SUM(Prog_Status.Play_Status);
         Prog_Status.Block_Index.Index[File_Para_Info.Area_No][File_Para_Info.File_No] = Cur_Block_Index.Index;
         SET_SUM(Prog_Status.Block_Index);
         Write_Prog_Block_Index();//, Prog_Status.Block_Index.Index, sizeof(Prog_Status.Block_Index.Index));
@@ -315,7 +316,6 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
     Cur_Block_Index.Index ++;
     SET_SUM(Cur_Block_Index);
     Write_Cur_Block_Index(&Cur_Block_Index, sizeof(Cur_Block_Index));
-    
 
     return 1;
   }
@@ -358,6 +358,11 @@ INT16U Read_Screen_Para_Frame_Proc(INT16U Cmd, INT8U *pDst, INT8U *pDst_Start, I
   { 
     mem_cpy(pDst, (INT8U *)&Screen_Para.Lightness, sizeof(Screen_Para.Lightness), pDst_Start, DstLen); //亮度参数
 	return sizeof(Screen_Para.Lightness);
+  }
+  else if(Cmd EQ C_SCREEN_LOCK_DATE)
+  {
+      mem_cpy(pDst, (INT8U *)&Screen_Para.Lock_Date, sizeof(Screen_Para.Lock_Date), pDst_Start, DstLen); //亮度参数
+          return sizeof(Screen_Para.Lock_Date);
   }
   else if(Cmd EQ C_PROG_NUM)
   {
@@ -457,6 +462,8 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
     mem_cpy((INT8U *)&Screen_Para.OC_Time, Data, sizeof(Screen_Para.OC_Time), (INT8U *)&Screen_Para, sizeof(Screen_Para)); //定时开关机时间
   else if(Cmd EQ C_SCREEN_LIGNTNESS && Len >= sizeof(Screen_Para.Lightness))
     mem_cpy((INT8U *)&Screen_Para.Lightness, Data, sizeof(Screen_Para.Lightness), (INT8U *)&Screen_Para, sizeof(Screen_Para)); //亮度参数
+  else if(Cmd EQ C_SCREEN_LOCK_DATE && Len >= sizeof(Screen_Para.Lock_Date))
+    mem_cpy(&Screen_Para.Lock_Date, Data, sizeof(Screen_Para.Lock_Date), (INT8U *)&Screen_Para, sizeof(Screen_Para));
   else if(Cmd EQ C_PROG_NUM && Len>=sizeof(Prog_Num.Num))
   {
     if(Data[0] <= MAX_PROG_NUM)
@@ -528,8 +535,9 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
       Cmd_Code EQ C_SCREEN_LIGNTNESS ||\
       Cmd_Code EQ C_SCREEN_BASE_PARA ||\
       Cmd_Code EQ C_SCAN_PARA ||\
-	  Cmd_Code EQ C_SCREEN_COM_PARA ||\
+      Cmd_Code EQ C_SCREEN_COM_PARA ||\
       Cmd_Code EQ C_PROG_NUM ||\
+      Cmd_Code EQ C_SCREEN_LOCK_DATE ||\
       Cmd_Code EQ C_SCREEN_PARA)
   {
     if(RW_Flag EQ SET_FLAG)
@@ -609,23 +617,6 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
         Len = Get_Soft_Version(Frame + FDATA, Frame, Frame_Buf_Len - FDATA);
         Re = 1;
     }
-  }
-  else if(Cmd_Code EQ C_LOCK_DATE)	 //运行有效日期，在该日期后就不能正确运行了，全0表示不起作用
-  {
-    if(RW_Flag EQ SET_FLAG)
-	{
-      memcpy(&Screen_Para.Lock_Date, &Frame[FDATA], sizeof(Screen_Para.Lock_Date));
-	  SET_SUM(Screen_Para);
-	  Write_Screen_Para(); //保存屏幕参数
-	  Len = 0;
-	  Re = 1;
-	}
-	else
-	{
-      memcpy(&Frame[FDATA], &Screen_Para.Lock_Date, sizeof(Screen_Para.Lock_Date));
-          Len = sizeof(Screen_Para.Lock_Date);
-	  Re = 1;
-	}
   }
   else if(Cmd_Code EQ C_SCREEN_OC) //手动开关机
   {
