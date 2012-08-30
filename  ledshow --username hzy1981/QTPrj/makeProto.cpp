@@ -881,10 +881,10 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
     }
 
     //锁定时间
-    if(GET_BIT(flag, C_VALID_DATE))
+    if(GET_BIT(flag, C_SCREEN_LOCK_DATE))
     {
-        len = makeFrame((char *)&Screen_Para.Valid_Date, sizeof(Screen_Para.Valid_Date),\
-                   C_VALID_DATE | WR_CMD, seq++, frameBuf);
+        len = makeFrame((char *)&Screen_Para.Lock_Date, sizeof(Screen_Para.Lock_Date),\
+                   C_SCREEN_LOCK_DATE | WR_CMD, seq++, frameBuf);
         counts++;
         fwrite(frameBuf, len, 1, file);
     }
@@ -989,6 +989,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
         }
     }
 
+    //发送完节目数据都再发送节目个数。
     if(progDataFlag > 0)
     {
         if(GET_BIT(flag, C_PROG_DATA))

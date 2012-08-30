@@ -4963,8 +4963,6 @@ void Move_Jump_Stretch(INT8U Area_No)
   Step = Prog_Status.Area_Status[Area_No].Step;
   Max_Step = Prog_Status.Area_Status[Area_No].Max_Step;
 
-  Step = 0;
-
   if(Step <= Max_Step / 3)
   {
     Max_Step = Max_Step / 3;
@@ -5186,7 +5184,7 @@ void Move_Diamond_0(INT8U Area_No)
     Copy_Line(&Show_Data_Bak, Area_No, &P[1], &P[2], &Show_Data, &P[1]);
     P[2].Y = Prog_Para.Area[Area_No].Y_Len - 1 - P[2].Y;
     //Draw_Line(&Show_Data, Area_No, &P[2], &P[3], 0x01);
-    //Copy_Line(&Show_Data_Bak, Area_No, &P[2], &P[3], &Show_Data, &P[2]);
+    Copy_Line(&Show_Data_Bak, Area_No, &P[2], &P[3], &Show_Data, &P[2]);
     P[3].X = Prog_Para.Area[Area_No].X_Len - 1 - P[3].X;
     P[0].Y = Prog_Para.Area[Area_No].Y_Len - 1 - P[0].Y;
     //Draw_Line(&Show_Data, Area_No, &P[3], &P[0], 0x01);

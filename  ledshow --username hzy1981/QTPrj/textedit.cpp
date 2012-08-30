@@ -1033,12 +1033,12 @@ void TextEdit::showInit()
         if(editMode EQ 0)
         {
             int lineNum;
-            QImage image = getTextImage(area->width(), textEdit->toHtml(), &lineNum, linePosi);
-            pageNum = getTextPageNum(mode, MOVE_NORMAL, image.height(), area->width(), area->height(), lineNum, linePosi, pagePosi);
+            QImage image = getTextImage(area->width() - borderHeight*2, textEdit->toHtml(), &lineNum, linePosi);
+            pageNum = getTextPageNum(mode, MOVE_NORMAL, image.height(), area->width() - borderHeight*2, area->height() - borderHeight*2, lineNum, linePosi, pagePosi);
         }
         else
         {
-            getTableImage(area->width(), area->height(), textEdit->toHtml(), &pageNum);
+            getTableImage(area->width() - borderHeight*2, area->height() - borderHeight*2, textEdit->toHtml(), &pageNum);
 
         }
         //int pageNum = getTextImagePageNum(mode,area->width(),area->height(),textEdit->toHtml(), linePosi);
@@ -1072,27 +1072,33 @@ void TextEdit::edit()
   area->picStr = textEdit->toHtml();
   area->moveFlag = checkSLineMoveLeftContinuous(str);
 
+  int borderHeight;
+  if(area->filePara.Pic_Para.Border_Check)
+    borderHeight = area->filePara.Pic_Para.Border_Height;
+  else
+    borderHeight = 0;
+
   int lineNum,pageNum;
   if(editMode EQ 0) //文本编辑方式
   {
       if(area->moveFlag != MOVE_LEFT_CONTINUOUS) //不是连续左移
       {
-          QImage image = getTextImage(area->width(), area->picStr, &lineNum, linePosi);
-          pageNum = getTextPageNum(area->smLineFlag, area->moveFlag, image.height(), area->width(), area->height(), lineNum, linePosi, pagePosi);
+          QImage image = getTextImage(area->width() - borderHeight*2, area->picStr, &lineNum, linePosi);
+          pageNum = getTextPageNum(area->smLineFlag, area->moveFlag, image.height(), area->width() - borderHeight*2, area->height() - borderHeight*2, lineNum, linePosi, pagePosi);
           //int pageNum = getTextImagePageNum(area->smLineFlag, area->width(),area->height(),area->picStr, linePosi);
 
 
       }
       else //连续左移
       {
-          pageNum = getSLineTextPageNum(area->picStr, area->width());
+          pageNum = getSLineTextPageNum(area->picStr, area->width() - borderHeight*2);
         //getSLineTextImage(area->picStr, area->width(),area->height());
 
       }
   }
   else //表格编辑方式
   {
-    getTableImage(area->width(), area->height(), area->picStr, &pageNum);
+    getTableImage(area->width() - borderHeight*2, area->height() - borderHeight*2, area->picStr, &pageNum);
 
   }
 

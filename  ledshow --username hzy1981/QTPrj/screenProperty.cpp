@@ -399,13 +399,13 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     settings.beginGroup("validTime");
 
     if(settings.value("validTimeFlag").toBool())
-        screenPara.Valid_Date.Invalid_Date_Flag = INVALID_DATE_FLAG;
+        screenPara.Lock_Date.Lock_Date_Flag = LOCK_DATE_FLAG;
     else
-        screenPara.Valid_Date.Invalid_Date_Flag = 0;
+        screenPara.Lock_Date.Lock_Date_Flag = 0;
 
-    screenPara.Valid_Date.Time[0] = (INT8U)settings.value("date").toInt();
-    screenPara.Valid_Date.Time[1] = (INT8U)settings.value("month").toInt();
-    screenPara.Valid_Date.Time[2] = (INT8U)settings.value("year").toInt();
+    screenPara.Lock_Date.Time[0] = (INT8U)settings.value("date").toInt();
+    screenPara.Lock_Date.Time[1] = (INT8U)settings.value("month").toInt();
+    screenPara.Lock_Date.Time[2] = (INT8U)(settings.value("year").toInt() % 100);
 
     settings.endGroup();
 
@@ -3484,7 +3484,7 @@ CInvalidDateDialog::CInvalidDateDialog(QWidget *parent):QDialog(parent)
   QGridLayout *gLayout;
 
   invalidDateGroup = new QGroupBox(this);
-  invalidDateGroup->setTitle(tr("启用锁定时间限制"));
+  invalidDateGroup->setTitle(tr("启用锁定时间"));
   invalidDateGroup->setCheckable(true);
 
   invalidDateEdit = new QDateEdit(this);
@@ -3529,7 +3529,7 @@ void CInvalidDateDialog::sendPara()
     this->sendButton->setEnabled(false);
 
     int flag = 0;
-    SET_BIT(flag, C_VALID_DATE);
+    SET_BIT(flag, C_SCREEN_LOCK_DATE);
     if(QT_SIM_EN)
       makeProtoFileData(str, SIM_MODE, flag);
     else
@@ -3554,13 +3554,13 @@ void CInvalidDateDialog::sendPara()
 settings.beginGroup("validTime");
 
 if(settings.value("validTimeFlag").toBool())
-    screenPara.Valid_Date.Invalid_Date_Flag = INVALID_DATE_FLAG;
+    screenPara.Lock_Date.Lock_Date_Flag = LOCK_DATE_FLAG;
 else
-    screenPara.Valid_Date.Invalid_Date_Flag = 0;
+    screenPara.Lock_Date.Lock_Date_Flag = 0;
 
-screenPara.Valid_Date.Time[0] = (INT8U)settings.value("date").toInt();
-screenPara.Valid_Date.Time[1] = (INT8U)settings.value("month").toInt();
-screenPara.Valid_Date.Time[2] = (INT8U)settings.value("year").toInt();
+screenPara.Lock_Date.Time[0] = (INT8U)settings.value("date").toInt();
+screenPara.Lock_Date.Time[1] = (INT8U)settings.value("month").toInt();
+screenPara.Lock_Date.Time[2] = (INT8U)settings.value("year").toInt();
 
 settings.endGroup();
 */
@@ -3631,7 +3631,7 @@ void CInvalidDateDialog::udiskPara()
     this->udiskButton->setEnabled(false);
 
     int flag = 0;
-    SET_BIT(flag, C_VALID_DATE);
+    SET_BIT(flag, C_SCREEN_LOCK_DATE);
 
     makeProtoFileData(str, UDISK_MODE, flag);
 

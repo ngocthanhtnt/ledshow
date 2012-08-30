@@ -318,6 +318,10 @@ void Screen_Time_Proc()
 
 void Screen_Check_Lock_Date() //检查是否在有限显示日期内
 {
+#if QT_EN
+  return;
+#endif
+
 #if CLOCK_EN
   //valid_date为全0或者格式不正确 
   if(Screen_Para.Lock_Date.Lock_Date_Flag != LOCK_DATE_FLAG || \
