@@ -29,18 +29,8 @@ int main(int argc, char **argv)
 	QString db_username = settings.value("username").toString();
 	QString db_password = settings.value("password").toString();
 
-	QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-	db.setHostName(db_hostname);
-	db.setDatabaseName(db_database);
-	db.setUserName(db_username);
-	db.setPassword(db_password);
-	
-	if (db.open() == false)
-	{
-		QMessageBox::critical(NULL, QObject::tr("错误"), QObject::tr("MySQL数据库链接错误, 请重新配置数据库参数"), QMessageBox::Ok, QMessageBox::NoButton);	
-		return !EXIT_SUCCESS;
-	}
-	db.exec("SET NAMES 'gbk'");
+
+        //db.exec("SET NAMES 'gbk'");
 	MainWindow mainwindow;
 	mainwindow.show();
 	return app.exec();

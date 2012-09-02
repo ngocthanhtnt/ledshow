@@ -14,15 +14,15 @@ extern MainWindow *w;
 
 void Delay_ms(int ms)
 {
-    QTime dieTime = QTime::currentTime().addMSecs(ms);
-    while( QTime::currentTime() < dieTime )
+    QDateTime dieDateTime = QDateTime::currentDateTime().addMSecs(ms);
+    while( QDateTime::currentDateTime() < dieDateTime )
     QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
 void Delay_sec(int sec)
 {
-    QTime dieTime = QTime::currentTime().addSecs(sec);
-    while( QTime::currentTime() < dieTime )
+    QDateTime dieDateTime = QDateTime::currentDateTime().addSecs(sec);
+    while( QDateTime::currentDateTime() < dieDateTime )
     QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 

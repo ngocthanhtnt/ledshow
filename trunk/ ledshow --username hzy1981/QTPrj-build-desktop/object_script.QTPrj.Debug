@@ -45,6 +45,7 @@ INPUT(
 ./debug\Communication.o
 ./debug\tablePropertyEdit.o
 ./debug\imageProperty.o
+./debug\mmtimer.o
 ./debug\moc_mainwindow.o
 ./debug\moc_showArea.o
 ./debug\moc_progManage.o
@@ -67,5 +68,6 @@ INPUT(
 ./debug\moc_Communication.o
 ./debug\moc_tablePropertyEdit.o
 ./debug\moc_imageProperty.o
+./debug\moc_mmtimer.o
 ./debug\qrc_textedit.o
 );

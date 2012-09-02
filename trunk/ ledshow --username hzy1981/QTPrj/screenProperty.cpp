@@ -280,6 +280,7 @@ INT8U setScreenParaToSettings(QString screenStr, S_Screen_Para &screenPara)
    for(int i=0; i < MAX_LIGHTNESS_TIME; i++)
    {
      settings.setValue("timeCheck" + QString::number(i), screenPara.Lightness.Time_Lightness[i].Flag);
+     settings.setValue("lightness" + QString::number(i), screenPara.Lightness.Time_Lightness[i].Value);
      settings.setValue("startHour" + QString::number(i), screenPara.Lightness.Time_Lightness[i].Start_Hour);
      settings.setValue("startMin" + QString::number(i), screenPara.Lightness.Time_Lightness[i].Start_Min);
    }
@@ -294,7 +295,7 @@ INT8U setScreenParaToSettings(QString screenStr, S_Screen_Para &screenPara)
        settings.setValue("openHour" + QString::number(i), screenPara.OC_Time.Time[i].Open_Hour);
        settings.setValue("openMin" + QString::number(i), screenPara.OC_Time.Time[i].Open_Min);
        settings.setValue("closeHour" + QString::number(i), screenPara.OC_Time.Time[i].Close_Hour);
-       settings.setValue("closeSec" + QString::number(i), screenPara.OC_Time.Time[i].Close_Min);
+       settings.setValue("closeMin" + QString::number(i), screenPara.OC_Time.Time[i].Close_Min);
    }
 
    settings.endGroup();
@@ -376,6 +377,7 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     for(int i=0; i < MAX_LIGHTNESS_TIME; i++)
     {
       screenPara.Lightness.Time_Lightness[i].Flag = settings.value("timeCheck" + QString::number(i)).toInt();
+      screenPara.Lightness.Time_Lightness[i].Value = settings.value("lightness" + QString::number(i)).toInt();
       screenPara.Lightness.Time_Lightness[i].Start_Hour = settings.value("startHour" + QString::number(i)).toInt();
       screenPara.Lightness.Time_Lightness[i].Start_Min = settings.value("startMin" + QString::number(i)).toInt();
     }
@@ -390,7 +392,7 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
         screenPara.OC_Time.Time[i].Open_Hour = settings.value("openHour" + QString::number(i)).toInt();
         screenPara.OC_Time.Time[i].Open_Min = settings.value("openMin" + QString::number(i)).toInt();
         screenPara.OC_Time.Time[i].Close_Hour = settings.value("closeHour" + QString::number(i)).toInt();
-        screenPara.OC_Time.Time[i].Close_Min = settings.value("closeSec" + QString::number(i)).toInt();
+        screenPara.OC_Time.Time[i].Close_Min = settings.value("closeMin" + QString::number(i)).toInt();
     }
 
     settings.endGroup();
@@ -717,7 +719,7 @@ void ClightnessProperty::getSettingsFromWidget(QString str)
      settings.setValue("startHour" + QString::number(i),timerEdit[i]->time().hour());
      settings.setValue("startMin" + QString::number(i), timerEdit[i]->time().minute());
      settings.setValue("startSec" + QString::number(i),timerEdit[i]->time().second());
-     settings.setValue("timerLightness" + QString::number(i), timerSlider[i]->value()/10 - 1);
+     settings.setValue("lightness" + QString::number(i), timerSlider[i]->value()/10 - 1);
   }
 
   settings.setValue("manualLightness", manualSlider->value()/10 - 1);
@@ -757,7 +759,7 @@ void ClightnessProperty::setSettingsToWidget(QString str)
                   settings.value("startMin" + QString::number(i)).toInt(),\
                   settings.value("startSec" + QString::number(i)).toInt());
       timerEdit[i]->setTime(time);
-      timerSlider[i]->setValue((settings.value("timerLightness" + QString::number(i)).toInt() + 1)*10);
+      timerSlider[i]->setValue((settings.value("lightness" + QString::number(i)).toInt() + 1)*10);
       timerLabel[i]->setText(QString::number(timerSlider[i]->value()/10));
     }
 
@@ -791,8 +793,8 @@ CopenCloseProperty::CopenCloseProperty(QWidget *parent):QGroupBox(parent)
    QGridLayout *mainLayout = new QGridLayout(this);
    closeTimeLabel = new QLabel(tr("关闭时间"),this);
    openTimeLabel = new QLabel(tr("开启时间"),this);
-   mainLayout->addWidget(closeTimeLabel,0,1,1,1,Qt::AlignVCenter|Qt::AlignHCenter);
-   mainLayout->addWidget(openTimeLabel,0,3,1,1,Qt::AlignVCenter|Qt::AlignHCenter);
+   mainLayout->addWidget(openTimeLabel,0,1,1,1,Qt::AlignVCenter|Qt::AlignHCenter);
+   mainLayout->addWidget(closeTimeLabel,0,3,1,1,Qt::AlignVCenter|Qt::AlignHCenter);
 
    for(i = 0; i < MAX_OPEN_CLOSE_TIME; i ++)
    {
@@ -1988,6 +1990,58 @@ void CcomTest::manualConnect()
 {
     INT8U temp[100];
     int len;
+    QString oldComPortStr;
+    int oldComMode;
+    int oldComBaud;
+
+    //QStringList portList = getComPortList();
+
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+
+    this->manualConnectButton->setEnabled(false);
+
+    settings.beginGroup(screenStr);
+    settings.beginGroup("comTest");
+
+    oldComMode = settings.value("comMode").toInt(); //老的通信模式
+    oldComBaud = settings.value("baud").toInt(); //老的波特率
+    oldComPortStr = settings.value("comPort").toString(); //保存老的端口
+
+    settings.setValue("comMode", 0); //串口通信方式
+    settings.endGroup();
+    settings.endGroup();
+
+    getSettingsFromWidget(screenStr);
+
+    makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)temp, sizeof(temp));
+
+    bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
+    if(re EQ true)
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("连接成功！该参数将被设置为当前通信参数。"),tr("确定"));
+
+    }
+    else
+    {
+        //恢复之前的通信参数
+        settings.beginGroup(screenStr);
+        settings.beginGroup("comTest");
+
+        settings.setValue("comPort", oldComPortStr);
+        settings.setValue("baud", oldComBaud);
+        settings.setValue("comMode", oldComMode);
+
+        settings.endGroup();
+        settings.endGroup();
+
+        QMessageBox::warning(w, tr("提示"),
+                                   tr("连接失败！"),tr("确定"));
+    }
+    this->manualConnectButton->setEnabled(true);
+/*
+    INT8U temp[100];
+    int len;
 
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
@@ -2009,6 +2063,7 @@ void CcomTest::manualConnect()
     }
 
     this->manualConnectButton->setEnabled(true);
+    */
 }
 
 /*
@@ -3234,21 +3289,24 @@ void CupdateFirmwareDialog::updateFirmware()
     {
       w->comStatus->setTotalFrameCounts(newFirmFrameCounts);
       w->comStatus->getCOMParaFromSettings(screenStr); //获取通信参数
-      w->comStatus->sendProtoFile(newFirmPath->text());
-    }
 
-    re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
-    if(re EQ true)
-    {
+      Delay_ms(500);
+
+      w->comStatus->sendProtoFile(newFirmPath->text());
+
+      re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+      if(re EQ true)
+      {
         QMessageBox::information(w, tr("提示"),
                                tr("固件升级成功！"),tr("确定"));
         //close(); //校时成功则关闭--不关闭，可能需要升级很多板
 
-    }
-    else
-    {
+      }
+      else
+      {
         QMessageBox::warning(w, tr("提示"),
                                tr("固件升级失败，请检查与控制器通信连接是否正常！"),tr("确定"));
+      }
     }
 
     this->setEnabled(true);

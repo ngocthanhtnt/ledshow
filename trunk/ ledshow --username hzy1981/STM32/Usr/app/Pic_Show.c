@@ -391,7 +391,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 49
   ,{&Move_Left_Compress_0, H_MODE, 1
 #if QT_EN
-   ,"左压入"
+   ,"左矢量压入"
 #endif
   }//右下引入
 #endif
@@ -399,7 +399,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 50
   ,{&Move_Right_Compress_0, H_MODE, 1
 #if QT_EN
-   ,"右压入"
+   ,"右矢量压入"
 #endif
   }//右下引入
 #endif
@@ -407,7 +407,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 51
   ,{&Move_Up_Compress_0, V_MODE, 1
 #if QT_EN
-   ,"上压入"
+   ,"上矢量压入"
 #endif
   }//右下引入
 #endif
@@ -415,7 +415,7 @@ const S_Mode_Func In_Mode_Func[]=
 #if IN_SPEC_EFFECT_NUM > 52
   ,{&Move_Down_Compress_0, V_MODE, 1
 #if QT_EN
-   ,"下压入"
+   ,"下矢量压入"
 #endif
   }//右下引入
 #endif
@@ -1235,11 +1235,11 @@ void Calc_Show_Mode_Step(INT8U Area_No)
 //计算每次步进的步进值
 INT16U Calc_Move_Step(void)
 {
-  INT32U Size;
+  //INT32U Size;
 
   return 1;
-  Size = Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * GET_COLOR_NUM(Screen_Para.Base_Para.Color)/8;
-  return Size / 2048 + 1;
+  //Size = Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * GET_COLOR_NUM(Screen_Para.Base_Para.Color)/8;
+  //return Size / 2048 + 1;
 }
 
 void Update_Pic_Data(INT8U Area_No)

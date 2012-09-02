@@ -24,7 +24,7 @@ typedef struct
   
   INT8U Posi;
   INT8U Counts;
-  INT16S TempData[5];
+  INT16S TempData[10];
 
   INT8U Tail;
 }S_Inter_Temperature;

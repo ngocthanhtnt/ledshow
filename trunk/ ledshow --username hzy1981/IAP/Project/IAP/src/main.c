@@ -60,7 +60,7 @@ int main(void)
   /* Test if Key push-button on STM3210X-EVAL Board is pressed */
 
   if(iapFlag0 == 0xA789 && iapFlag1 == 0x5A23)
-  { 
+  {
     /* Flash unlock */
     FLASH_Unlock();
 
