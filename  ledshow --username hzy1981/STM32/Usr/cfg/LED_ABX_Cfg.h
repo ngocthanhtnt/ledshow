@@ -115,7 +115,7 @@
  
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
-#define TEMP_SHOW_EN   0 //温度显示使能
+#define TEMP_SHOW_EN   1 //温度显示使能
 #define HUMIDITY_SHOW_EN 0 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
 #define TEXT_SHOW_EN   0

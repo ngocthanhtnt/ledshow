@@ -38,6 +38,8 @@ private slots:
 	void on_actGoodsEdit_triggered();
 	void on_actGoodsDelete_triggered();
 
+        void on_pushButtonGoodsAdd_clicked();
+
 	void on_actCustomerAdd_triggered();
 	void on_actCustomerEdit_triggered();
 	void on_actCustomerDelete_triggered();

@@ -37,6 +37,20 @@ QStringList getComPortList()
     return strlist;
 }
 
+bool chkComPortExist(QString portName)
+{
+  QStringList portList;
+
+  portList = getComPortList(); //获取串口列表
+  for(int i = 0; i < portList.count(); i ++)
+  {
+      if(portName == portList.at(i))
+          return true;
+  }
+
+  return false;
+}
+
 //等待通信结果,返回正确应答帧返回true,否定返回false, 返回数据域保留在pDst中
 bool CcomStatus::waitComEnd(INT8U *pDst, unsigned int maxLen, int *pDstLen)
 {
@@ -204,7 +218,13 @@ bool CcomThread::comRun()
                 Re = false;
                 break;
               }
-
+/*
+              //进入固件升级状态,发送进入升级状态帧后延时200ms,因为复位和初始化过程中收不到帧，必须等待
+              if(frameBuf[FCMD] EQ C_SELF_TEST && frameBuf[FDATA] EQ (0x02 + 0x33))
+              {
+                this->msleep(200);
+              }
+*/
               len0 += len;
               fseek(file, len0, SEEK_SET);
            }
@@ -266,8 +286,10 @@ bool CcomThread::disConnect()
 {
 
     if(COM_Mode EQ COM_MODE)
-      port->close();
-
+    {
+      if(chkComPortExist(COM_Port) && port->isOpen()) //如果串口突然被拔出，port->close函数会陷入死循环
+        port->close();
+    }
     return true;
 }
 
@@ -282,9 +304,18 @@ bool CcomThread::connect()
 
     if(COM_Mode EQ COM_MODE)
     {
+        if(chkComPortExist(COM_Port) EQ false)
+        {
+            comReStr = tr("该串口不存在！");
+            emit comStatusChanged(comReStr);
+            return false;
+        }
+
         port->setPortName("\\\\.\\"+COM_Port);
 
-        port->close();
+        if(port->isOpen())
+          port->close();
+
         if(port->open(QIODevice::ReadWrite) EQ false)
         {
 
@@ -389,7 +420,7 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
         comReStr = tr("重复发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答...");
 
       emit this->comStatusChanged(comReStr);
-      re = waitComRcv(2); //等待应答
+      re = waitComRcv(5); //等待应答
       if(re > 0)
       {
           frameCounts++;

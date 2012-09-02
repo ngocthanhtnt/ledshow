@@ -3,8 +3,9 @@
 
 SqlQueryModelGoods::SqlQueryModelGoods(QObject *parent):QSqlQueryModel(parent)
 {
-	m_strSql = "SELECT goodsno, goodsname, sellprice, inprice, goodsnum, isservices, manufacturer, goodsid FROM ct_goods "; 
-	m_iGoodsType = -1;
+        //m_strSql = "SELECT goodsno, goodsname, sellprice, inprice, goodsnum, isservices, manufacturer, goodsid FROM ct_goods ";
+        m_strSql = "SELECT * FROM ct_goods";
+        m_iGoodsType = -1;
 	m_strGoodsNo = "";
 	m_strSqlWhere = "";
 }
@@ -80,7 +81,7 @@ void SqlQueryModelGoods::setGoodsNo(QString strGoodsNo)
 
 void SqlQueryModelGoods::setQuery()
 {
-	QSqlQueryModel::setQuery(m_strSql + m_strSqlWhere);
+        QSqlQueryModel::setQuery(m_strSql + m_strSqlWhere);
 }
 
 void SqlQueryModelGoods::sort(int column, Qt::SortOrder order)

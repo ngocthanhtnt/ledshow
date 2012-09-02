@@ -160,7 +160,7 @@ public:
     CcomStatus(QWidget * parent = 0);
 };
 
-//bool waitComEnd(INT8U *pDst, int maxLen, int *pDstLen);
+bool chkComPortExist(QString portName);
 void sleepMs(int ms);
 void sleepSec(int ms);
 bool checkComMode(INT8U COM_Mode);

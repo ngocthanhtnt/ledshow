@@ -771,7 +771,7 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
     S_Prog_Para progPara;
     int len;
     INT16U areaWidth, areaHeight;
-    INT8U seq = 0, progNum, areaNum, fileNum;
+    INT8U seq = 0, progNum, tempProgNum, areaNum, fileNum;
     char frameBuf[MAX_COM_BUF_LEN + 20], *dataBuf;
     S_Screen_Para screenParaBak;
     S_Prog_Para progParaBak;
@@ -910,6 +910,13 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
 
         for(int i = 0; i < progNum; i ++)
         {
+            tempProgNum = i; //发送节目参数前，先发送节目个数，防止节目数据发送不成功节目个数不匹配
+            len = makeFrame((char *)&tempProgNum, sizeof(tempProgNum),\
+                   C_PROG_NUM | WR_CMD, seq++, frameBuf);
+            counts++;
+            fwrite(frameBuf, len, 1, file);
+
+
             //节目字符串
             progStr = screenStr + "/program/" + progList.at(i);
             //获取节目参数
@@ -1000,8 +1007,8 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
           fwrite(frameBuf, len, 1, file);
         }
     }
-    else
-      counts = 0;
+    //else
+      //counts = 0;
 
     free(dataBuf);
 

@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QTextCodec>
 #include <QDir>
+#include <QMessageBox>
 #include "mainwindow.h"
 #include "textedit.h"
 #include<Winbase.h>
@@ -33,8 +34,8 @@ void resetCardtoCardParaFile()
 
   cardIniFile.clear();
 
-  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-A");
-  cardIniFile.setValue("maxPoints", 360*64);
+  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-A0");
+  cardIniFile.setValue("maxPoints", 384*64);
   cardIniFile.setValue("flag", 0); //第0位表示是否支持全彩
   cardIniFile.setValue("maxHeight", 64);
   cardIniFile.setValue("FontNum", 1);
@@ -45,90 +46,65 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("comMode", COM_RS232 | COM_RS485);
   cardIniFile.endGroup();
 
-  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-AU");
-  cardIniFile.setValue("maxPoints", 360*64);
-  cardIniFile.setValue("flag", 0); //第0位表示是否支持全彩
-  cardIniFile.setValue("maxHeight", 64);
-  cardIniFile.setValue("FontNum", 1);
-  cardIniFile.setValue("inModeNum", 53);
-  cardIniFile.setValue("outModeNum", 20);
-  cardIniFile.setValue("romSize", 1024);
-  cardIniFile.setValue("fileEnWord", 0xFFFF);
-  cardIniFile.setValue("comMode", COM_RS232 | COM_RS485);
-  cardIniFile.endGroup();
-
-  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-B");
+  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-B0");
   cardIniFile.setValue("maxPoints", 1024*64);
   cardIniFile.setValue("flag", 0); //第0位表示是否支持全彩
   cardIniFile.setValue("maxHeight", 64);
-  cardIniFile.setValue("FontNum", 1);
-  cardIniFile.setValue("inModeNum", 53);
-  cardIniFile.setValue("outModeNum", 20);
-  cardIniFile.setValue("romSize", 1024);
-  cardIniFile.setValue("fileEnWord", 0xFFFF);
-  cardIniFile.setValue("comMode", COM_RS232 | COM_RS485);
-  cardIniFile.endGroup();
-
-  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-BU");
-  cardIniFile.setValue("maxPoints", 1024*64);
-  cardIniFile.setValue("flag", 0); //第0位表示是否支持全彩
-  cardIniFile.setValue("maxHeight", 64);
-  cardIniFile.setValue("FontNum", 1);
-  cardIniFile.setValue("inModeNum", 53);
-  cardIniFile.setValue("outModeNum", 20);
-  cardIniFile.setValue("romSize", 1024);
+  cardIniFile.setValue("FontNum", 2);
+  cardIniFile.setValue("inModeNum", IN_SPEC_EFFECT_NUM);
+  cardIniFile.setValue("outModeNum", OUT_SPEC_EFFECT_NUM);
+  cardIniFile.setValue("romSize", 2048);
   cardIniFile.setValue("fileEnWord", 0xFFFF);
   cardIniFile.setValue("comMode", COM_RS232 | COM_RS485);
   cardIniFile.endGroup();
 
   cardIniFile.beginGroup(QString(COMPANY_NAME) + "-C");
-  cardIniFile.setValue("maxPoints", 2560*64);
+  cardIniFile.setValue("maxPoints", 1488*64);
   cardIniFile.setValue("flag", 0);
-  cardIniFile.setValue("maxHeight", 256);
+  cardIniFile.setValue("maxHeight", 128);
   cardIniFile.setValue("FontNum", 2);
   cardIniFile.setValue("inModeNum", IN_SPEC_EFFECT_NUM);
   cardIniFile.setValue("outModeNum", OUT_SPEC_EFFECT_NUM);
   cardIniFile.setValue("romSize", 2048);
-  cardIniFile.setValue("fileEnWord", 0xFF);
+  cardIniFile.setValue("fileEnWord", 0xFFFF);
   cardIniFile.setValue("comMode", COM_RS232 | COM_RS485 | COM_UDISK);
   cardIniFile.endGroup();
 
-  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-CU");
+  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-D");
   cardIniFile.setValue("maxPoints", 2560*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 256);
-  cardIniFile.setValue("FontNum", 1);
+  cardIniFile.setValue("FontNum", 2);
   cardIniFile.setValue("inModeNum", 53);
   cardIniFile.setValue("outModeNum", 20);
   cardIniFile.setValue("romSize", 2048);
-  cardIniFile.setValue("fileEnWord", 0xFF);
+  cardIniFile.setValue("fileEnWord", 0xFFFF);
   cardIniFile.setValue("comMode", COM_RS232 | COM_RS485 | COM_UDISK);
   cardIniFile.endGroup();
 
-  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-CE");
+  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-DU");
   cardIniFile.setValue("maxPoints", 2560*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 256);
-  cardIniFile.setValue("FontNum", 1);
+  cardIniFile.setValue("FontNum", 2);
   cardIniFile.setValue("inModeNum", 53);
   cardIniFile.setValue("outModeNum", 20);
   cardIniFile.setValue("romSize", 2048);
-  cardIniFile.setValue("fileEnWord", 0xFF);
+  cardIniFile.setValue("fileEnWord", 0xFFFF);
   cardIniFile.setValue("comMode", COM_RS232 | COM_RS485 | COM_UDISK);
   cardIniFile.endGroup();
 
-  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-CM");
+  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-DM");
   cardIniFile.setValue("maxPoints", 2560*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 256);
-  cardIniFile.setValue("FontNum", 1);
+  cardIniFile.setValue("FontNum", 2);
   cardIniFile.setValue("inModeNum", 53);
   cardIniFile.setValue("outModeNum", 20);
   cardIniFile.setValue("romSize", 2048);
-  cardIniFile.setValue("fileEnWord", 0xFF);
-  cardIniFile.setValue("comMode", COM_RS232 | COM_RS485 | COM_UDISK);
+  cardIniFile.setValue("fileEnWord", 0xFFFF);
+  cardIniFile.setValue("comMode", COM_RS232 | COM_RS485 | COM_UDISK | COM_ETH);
   cardIniFile.endGroup();
-
 }
 
 int main(int argc, char *argv[])
@@ -137,9 +113,9 @@ int main(int argc, char *argv[])
 
     if(GetLastError() == ERROR_ALREADY_EXISTS)
     {
-        QString _title = QObject::tr("Information");
-        QString _Information = QObject::tr("System has been launch!");
-        //QMessageBox::information (NULL, _title, _Information);
+        QString _title = QObject::tr("提醒");
+        QString _Information = QObject::tr("程序已经启动!");
+        QMessageBox::information (NULL, _title, _Information);
         return 0;
     }
 

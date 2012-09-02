@@ -26,6 +26,7 @@
 #include "property.h"
 #include "timerProperty.h"
 #include "Communication.h"
+#include "mmtimer.h"
 
 
 #define CARD_INI_FILE ".\\cfg\\card.ini"     //°å¿¨ÅäÖÃÎÄ¼þ
@@ -139,6 +140,8 @@ public:
     QMainWindow *previewWin;
     CscreenArea *previewArea;
     QTimer *timer;
+    MMTimer *mmtimer;
+
     int timerFlag;
     INT8U previewProgNo;
 

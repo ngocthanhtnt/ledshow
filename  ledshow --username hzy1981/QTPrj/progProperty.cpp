@@ -766,31 +766,31 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
   if(para.Timing[0].Week_Check > 0)
   {
       if(settings.value("w0").toBool())
-        SET_BIT(para.Timing[0].Week_Flag, 0);
-      if(settings.value("w1").toBool())
         SET_BIT(para.Timing[0].Week_Flag, 1);
-      if(settings.value("w2").toBool())
+      if(settings.value("w1").toBool())
         SET_BIT(para.Timing[0].Week_Flag, 2);
-      if(settings.value("w3").toBool())
+      if(settings.value("w2").toBool())
         SET_BIT(para.Timing[0].Week_Flag, 3);
-      if(settings.value("w4").toBool())
+      if(settings.value("w3").toBool())
         SET_BIT(para.Timing[0].Week_Flag, 4);
-      if(settings.value("w5").toBool())
+      if(settings.value("w4").toBool())
         SET_BIT(para.Timing[0].Week_Flag, 5);
-      if(settings.value("w6").toBool())
+      if(settings.value("w5").toBool())
         SET_BIT(para.Timing[0].Week_Flag, 6);
+      if(settings.value("w6").toBool())
+        SET_BIT(para.Timing[0].Week_Flag, 0);
   }
 
   //按日期定时选择
   para.Timing[0].Date_Check = settings.value("dateTimerCheck").toBool();
   if(para.Timing[0].Date_Check > 0)
   {
-      para.Timing[0].Start_Date[0] = (INT8U)settings.value("startYear").toInt();
+      para.Timing[0].Start_Date[0] = (INT8U)settings.value("startYear").toInt() - 2000;
       para.Timing[0].Start_Date[1] = (INT8U)settings.value("startMonth").toInt();
       para.Timing[0].Start_Date[2] = (INT8U)settings.value("startDay").toInt();
 
       //结束年月日
-      para.Timing[0].End_Date[0] = (INT8U)settings.value("endYear").toInt();
+      para.Timing[0].End_Date[0] = (INT8U)settings.value("endYear").toInt() - 2000;
       para.Timing[0].End_Date[1] = (INT8U)settings.value("endMonth").toInt();
       para.Timing[0].End_Date[2] = (INT8U)settings.value("endDay").toInt();
   }

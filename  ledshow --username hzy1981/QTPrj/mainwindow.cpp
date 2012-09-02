@@ -19,7 +19,7 @@ QString rsrcPath = ":/images/win";
 QSettings settings(PROG_INI_FILE,QSettings::IniFormat,0);
 
 
-#define QT_MOVE_STEP_TIMER MOVE_STEP_PERIOD/2 //仿真时定时间隔
+#define QT_MOVE_STEP_TIMER MOVE_STEP_PERIOD //仿真时定时间隔
 
 #if QT_MOVE_STEP_TIMER > MOVE_STEP_PERIOD
 #error "QT_MOVE_STEP_TIMER error"
@@ -1017,6 +1017,8 @@ MainWindow::MainWindow(QWidget *parent)
    timer = new QTimer(this);
    connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
 
+   mmtimer = new MMTimer(QT_MOVE_STEP_TIMER, this);
+   connect(mmtimer, SIGNAL(timeout()), this, SLOT(previewProc()));
 
    setWindowTitle(tr(APP_NAME));
 }
@@ -1323,16 +1325,10 @@ void MainWindow::preview(INT8U previewMode)
   //previewWin->setFixedSize(previewWin->size());
 
 
-  //新建定时器
-
-
-  //关联定时器计满信号和相应的槽函数
-  ///timer->start(QT_MOVE_STEP_TIMER);
   timer->stop();
-
   timer->start(QT_MOVE_STEP_TIMER);
-  //previewProc();
 
+  //mmtimer->start();
 }
 
 void MainWindow::comStatusShow()
@@ -1359,6 +1355,8 @@ void MainWindow::previewProc()
 {
   static INT32U msCounts = 0;
 
+  //mmtimer->stop();
+
   msCounts += QT_MOVE_STEP_TIMER;
   stepTimer += QT_MOVE_STEP_TIMER;
 
@@ -1378,6 +1376,8 @@ void MainWindow::previewProc()
       stepTimer = 0;
       previewTimerProc();
   }
+
+  //mmtimer->start();
 }
 
 void traversalControl(const QObjectList& q)

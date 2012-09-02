@@ -13,7 +13,7 @@
 
 MainWindow::MainWindow(QWidget *parent):QMainWindow(parent)
 {
-	setupUi(this);
+        setupUi(this);
 	resize(800, 600);
 	connect(actionAboutQt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	toolBar->addAction(actionGoods);
@@ -23,7 +23,45 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent)
 	toolBar->addAction(actionAboutSoftware);
 	toolBar->addAction(actionExit);
 
-	db = QSqlDatabase::database();
+        db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName("data.db");
+/*
+        db.setHostName(db_hostname);
+        db.setDatabaseName(db_database);
+        db.setUserName(db_username);
+        db.setPassword(db_password);
+*/
+
+        if (db.open() == false)
+        {
+                QMessageBox::critical(NULL, QObject::tr("错误"), QObject::tr("MySQL数据库链接错误, 请重新配置数据库参数"), QMessageBox::Ok, QMessageBox::NoButton);
+                //return ;
+        }
+        QSqlQuery q(db);
+ /*
+                m_strSqlExec = QString("INSERT INTO ct_goods(goodsno, goodsname, inprice, sellprice, goodsnum, manufacturer, isservices) VALUES('%1', '%2', %3, %4, %5, '%6', %7)")
+                        .arg(lineEditGoodsNo->text())
+                        .arg(lineEditGoodsName->text())
+                        .arg(doubleSpinBoxInPrice->value())
+                        .arg(doubleSpinBoxSellPrice->value())
+                        .arg(spinBoxGoodsNum->value())
+                        .arg(lineEditManufacturer->text())
+                        .arg(comboBoxIsService->currentIndex());
+
+  */
+        q.prepare("CREATE TABLE IF NOT EXISTS ct_goods ("
+                          "goodsno TEXT, "
+                          "goodsname TEXT, "
+                          "inprice REAL, "
+                          "sellprice REAL, "
+                          "goodsnum INTEGER, "
+                          "manufacturer TEXT, "
+                          "goodsid INTEGER, "
+                          "isservices INTEGER)");
+        if(!q.exec()){
+            QMessageBox::critical(NULL, QObject::tr("错误"), QObject::tr("新建表格失败"), QMessageBox::Ok, QMessageBox::NoButton);
+
+        }
 	//=========================================================================
 	queryModelGoods.setQuery();
 
@@ -50,11 +88,10 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent)
 
 	///////////////////////////////////
 	// 这里创建商品表格的右键菜单
-	actGoodsAdd = new QAction(tr("添加商品"), this);
-	connect(actGoodsAdd, SIGNAL(triggered()), this, SLOT(on_actGoodsAdd_triggered())); 
-	connect(pushButtonGoodsAdd, SIGNAL(clicked()), this, SLOT(on_actGoodsAdd_triggered()));
-	
-	
+        actGoodsAdd = new QAction(tr("添加商品"), this);
+        connect(actGoodsAdd, SIGNAL(triggered()), this, SLOT(on_actGoodsAdd_triggered()));
+        connect(pushButtonGoodsAdd, SIGNAL(clicked()), this, SLOT(on_actGoodsAdd_triggered()));
+
 	actGoodsInout= new QAction(tr("商品进退货"), this);
 	connect(actGoodsInout, SIGNAL(triggered()), this, SLOT(on_actGoodsInout_triggered())); 
 	connect(pushButtonGoodsInout, SIGNAL(clicked()), this, SLOT(on_actGoodsInout_triggered()));
@@ -308,7 +345,7 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent)
 	actConsumeGoodsEdit->setVisible(false);
 
 	setConsumeBottomRightLabel(true);
-	setConsumeBottomLeftLabel(true);
+        setConsumeBottomLeftLabel(true);
 }
 
 MainWindow::~MainWindow()
@@ -345,14 +382,21 @@ void MainWindow::on_actGoodsAdd_triggered()
 {
 	if (db.isOpen())
 	{
+                QSqlQuery   sqlQuery(db);
 		GoodsEditDialog goodsEditDialog(this);
 		goodsEditDialog.exec();	
 		if (goodsEditDialog.result() == QDialog::Accepted)
 		{
-			db.exec(goodsEditDialog.strSqlExec());
+                        if(sqlQuery.exec(goodsEditDialog.strSqlExec()) == false)
+                          qDebug("insert failed");
 			queryModelGoods.setQuery();
 		}
 	}
+}
+
+void MainWindow::on_pushButtonGoodsAdd_clicked()
+{
+  on_actGoodsAdd_triggered();
 }
 
 void MainWindow::on_actGoodsInout_triggered()
@@ -375,11 +419,12 @@ void MainWindow::on_actGoodsEdit_triggered()
 	QModelIndex index = tableViewGoods->currentIndex();
 	if (index.isValid())
 	{
+            QSqlQuery   sqlQuery(db);
 		GoodsEditDialog goodsEditDialog(this, queryModelGoods.record(index.row()));
 		goodsEditDialog.exec();	
 		if (goodsEditDialog.result() == QDialog::Accepted)
 		{
-			db.exec(goodsEditDialog.strSqlExec());
+                        sqlQuery.exec(goodsEditDialog.strSqlExec());
 			queryModelGoods.setQuery();
 		}
 	}

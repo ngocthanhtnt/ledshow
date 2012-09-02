@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = bpms
 DESTDIR = ../bin
-CONFIG += release
+CONFIG += debug
 QT += sql
 OBJECTS_DIR = ../tmp
 MOC_DIR = ../tmp

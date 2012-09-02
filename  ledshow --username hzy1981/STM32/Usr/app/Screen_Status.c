@@ -71,7 +71,7 @@ INT8U Get_Cur_Time_Lightness(S_Time *pTime)
   
 #if CLOCK_EN  
   INT8U i;
-  INT8U Min = 0xFF,Diff;  
+  INT16U Min = 0xFFFF,Diff;  
 
   if(Screen_Para.Lightness.Mode EQ MANUAL_ADJ)
   {
@@ -86,7 +86,7 @@ INT8U Get_Cur_Time_Lightness(S_Time *pTime)
         if(Screen_Para.Lightness.Time_Lightness[i].Flag > 0) //启用该时段的亮度控制
         {
           //计算当前时间和该段时间按的时间差
-          Diff = (pTime->Time[T_HOUR] + 24 - Screen_Para.Lightness.Time_Lightness[i].Start_Hour) % 24;
+          Diff = (((INT16U)pTime->Time[T_HOUR])*60 + pTime->Time[T_MIN] + 1440 - (INT16U)Screen_Para.Lightness.Time_Lightness[i].Start_Hour * 60 - Screen_Para.Lightness.Time_Lightness[i].Start_Min) % 1440;
           if(Diff < Min)
           {
             Min = Diff;
@@ -125,18 +125,18 @@ INT8U Get_Open_Close_Status(S_Time *pTime)
     if(Screen_Para.OC_Time.Time[i].Flag > 0)
     {
       Flag = 1;
-      Min0 = Screen_Para.OC_Time.Time[i].Open_Hour*60 + Screen_Para.OC_Time.Time[i].Open_Min;
-      Min1 = Screen_Para.OC_Time.Time[i].Close_Hour*60 + Screen_Para.OC_Time.Time[i].Close_Min;
+      Min0 = (INT16U)Screen_Para.OC_Time.Time[i].Open_Hour*60 + Screen_Para.OC_Time.Time[i].Open_Min;
+      Min1 = (INT16U)Screen_Para.OC_Time.Time[i].Close_Hour*60 + Screen_Para.OC_Time.Time[i].Close_Min;
       Min = pTime->Time[T_HOUR]*60 + pTime->Time[T_MIN];
       
       if(Min0 < Min1)
       {
-        if(Min >= Min0 && Min <= Min1)
+        if(Min >= Min0 && Min < Min1)
           return 1;
       }
       else
       {
-        if(Min >= Min0 || Min <= Min1)
+        if(Min >= Min0 || Min < Min1)
           return 1;
 
       }
@@ -198,8 +198,8 @@ void Screen_Temperature_Proc(void)
 	    TempCumu += Inter_Temp.TempData[i];
 	  }
 
-	  Screen_Status.Temperature = TempCumu / Inter_Temp.Counts;
-      debug("temp = %d", Screen_Status.Temperature);
+	  Screen_Status.Temperature = ((TempCumu / Inter_Temp.Counts) + 5) / 10 * 10 - 150;
+      //debug("temp = %d", Screen_Status.Temperature);
 	}
   }
 //INT16U GetADCValue(INT8U ADC_Channel)//ADC_Channel_x 0~17

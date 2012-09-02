@@ -247,7 +247,7 @@ void Clr_Area_Status(INT8U Area_No)
   memset((void *)&Prog_Status.Area_Status[Area_No], 0, sizeof(Prog_Status.Area_Status[Area_No]));
   SET_HT(Prog_Status.Area_Status[Area_No]);
 }
-/*
+
 void Clr_All_Area_Status()
 {
     INT8U i;
@@ -257,7 +257,7 @@ void Clr_All_Area_Status()
         Clr_Area_Status(i);
     }
 }
-*/
+
 
 void Clr_Show_Bak_Data(void)
 {
@@ -822,8 +822,10 @@ INT8U Check_Prog_End(void)
 INT8U Check_Prog_Play_Time(void)
 {
 #if CLOCK_EN
-  INT8U Temp[20];
-  memset(Temp, 0xFF, sizeof(Temp));
+  //INT8U Temp[20];
+  INT16U Temp1,Temp2,Temp3;
+
+  //memset(Temp, 0xFF, sizeof(Temp));
 
   //按星期定时
   if(Prog_Para.Timing[0].Week_Check > 0)
@@ -836,12 +838,11 @@ INT8U Check_Prog_Play_Time(void)
   //按日期定时
   if(Prog_Para.Timing[0].Date_Check > 0)
   {
-    if(!(Cur_Time.Time[T_YEAR] >= Prog_Para.Timing[0].Start_Date[0] &&\
-        Cur_Time.Time[T_YEAR] <= Prog_Para.Timing[0].End_Date[0] &&\
-        Cur_Time.Time[T_MONTH] >= Prog_Para.Timing[0].Start_Date[1] &&\
-        Cur_Time.Time[T_MONTH] <= Prog_Para.Timing[0].End_Date[1] &&\
-        Cur_Time.Time[T_DATE] >= Prog_Para.Timing[0].Start_Date[2] &&\
-        Cur_Time.Time[T_DATE] <= Prog_Para.Timing[0].End_Date[2]))
+    Temp1 = (INT16U)Cur_Time.Time[T_YEAR]*365 + (INT16U)Cur_Time.Time[T_MONTH] * 31 + Cur_Time.Time[T_DATE];
+	Temp2 = (INT16U)Prog_Para.Timing[0].Start_Date[0] * 365 + (INT16U)Prog_Para.Timing[0].Start_Date[1] * 31 + Prog_Para.Timing[0].Start_Date[2];
+	Temp3 = (INT16U)Prog_Para.Timing[0].End_Date[0] * 365 + (INT16U)Prog_Para.Timing[0].End_Date[1] * 31 + Prog_Para.Timing[0].End_Date[2];
+    
+	if(!(Temp1 >= Temp2 && Temp1 <= Temp3))
       return 0;
 
   }
@@ -849,12 +850,20 @@ INT8U Check_Prog_Play_Time(void)
   //按时间定时
   if(Prog_Para.Timing[0].Time_Check > 0)
   {
-    if(!(Cur_Time.Time[T_HOUR] >= Prog_Para.Timing[0].Start_Time[0] &&\
-        Cur_Time.Time[T_HOUR] <= Prog_Para.Timing[0].End_Time[0] &&\
-        Cur_Time.Time[T_MIN] >= Prog_Para.Timing[0].Start_Time[1] &&\
-        Cur_Time.Time[T_MIN] <= Prog_Para.Timing[0].End_Time[1]))
-      return 0;
+    Temp1 = (INT16U)Cur_Time.Time[T_HOUR]*60 + (INT16U)Cur_Time.Time[T_MIN];
+	Temp2 = (INT16U)Prog_Para.Timing[0].Start_Time[0] * 60 + (INT16U)Prog_Para.Timing[0].Start_Time[1];
+	Temp3 = (INT16U)Prog_Para.Timing[0].End_Time[0] * 60 + (INT16U)Prog_Para.Timing[0].End_Time[1];
 
+    if(Temp2 <= Temp3)
+	{
+	  if(Temp1 < Temp2 || Temp1 >= Temp3)
+	    return 0;
+	}
+	else
+	{
+	  if(Temp1 >= Temp3 && Temp1 < Temp2)
+	    return 0;
+	}
   }
 
   return 1;
@@ -1019,39 +1028,22 @@ void Check_Update_Program_Para(void)
           Prog_Status.Area_Status[i].Counts = 0;
           SET_SUM(Prog_Status.Area_Status[i]);
         }
-            //memset((INT8U *)Prog_Status.Area_Status[i].CS + CS_BYTES, 0, S_OFF(S_Area_Status, Tail) - S_OFF(S_Area_Status, CS) - CS_BYTES);
+        //memset((INT8U *)Prog_Status.Area_Status[i].CS + CS_BYTES, 0, S_OFF(S_Area_Status, Tail) - S_OFF(S_Area_Status, CS) - CS_BYTES);
 
         Prog_Status.Play_Status.Time = 0;
         Prog_Status.Play_Status.Counts = 0;
         Prog_Status.Play_Status.New_Prog_Flag = 0;
         SET_SUM(Prog_Status.Play_Status);
 
-        //---------------------
-        /*
-        Prog_No = Prog_Status.Play_Status.Prog_No;
-        Prog_Status_Init();//Clr_Prog_Status();换了个新节目，重新设置状态
-        Prog_Status.Play_Status.Prog_No = Prog_No;
-
-        INT8U i;
-
-        memset(&Prog_Status, 0, sizeof(Prog_Status));
-        SET_HT(Prog_Status);
-        for(i = 0; i < MAX_AREA_NUM; i ++)
-        {
-          SET_HT(Prog_Status.Area_Status[i]);
-
-          Prog_Status.Area_Status[i].Last_File_No = 0x00;
-          Prog_Status.Area_Status[i].Last_SCN_No = 0x00;
-
-          SET_SUM(Prog_Status.Area_Status[i]);
-        }
-
-        SET_HT(Prog_Status.Play_Status);
-        SET_SUM(Prog_Status.Play_Status);
-
-        SET_SUM(Prog_Status.Play_Status);
-*/
         //Clr_Show_Data();
+		if(Check_Prog_Play_Time() EQ 0)//该节目不在播放时间内,且与前面播放的是同一个节目，说明当前没有可播放节目
+		{
+		  Clr_All_Area_Status();
+		  Clr_Show_Data();
+
+          Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+          SET_SUM(Prog_Status.Play_Status);
+		}
 
         return;
       }

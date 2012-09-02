@@ -9,6 +9,7 @@ QT       += core gui
 TARGET = QTPrj
 TEMPLATE = app
 LIBS += libqextserialport
+LIBS += -lwinmm
 TRANSLATIONS += zh_CN.ts
 CODECFORTR = gb2312 #or gb2312 #DEFAULTCODEC = gb2312 #CODEC = gb2312
 
@@ -57,7 +58,8 @@ SOURCES += main.cpp\
     ../STM32/Usr/app/ZK.cpp \
     Communication.cpp \
     tablePropertyEdit.cpp \
-    imageProperty.cpp
+    imageProperty.cpp \
+    mmtimer.cpp
 
 HEADERS  += mainwindow.h \
     showArea.h \
@@ -147,7 +149,8 @@ HEADERS  += mainwindow.h \
     ../STM32/Usr/app/OS_Port.h \
     Communication.h \
     tablePropertyEdit.h \
-    imageProperty.h
+    imageProperty.h \
+    mmtimer.h
 
 RESOURCES += \
     textedit.qrc
