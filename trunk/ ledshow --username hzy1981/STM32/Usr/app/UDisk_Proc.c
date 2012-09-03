@@ -99,11 +99,14 @@ void Set_UDisk_Status(INT8U Status)
 
 INT8U Chk_UDisk_Processing(void)
 {
+#if UDISK_EN
    if(Screen_Status.UDisk_Flag EQ UDISK_ING) //当前有U盘插入，并且正在处理状态
      return 1;
    else
      return 0;
-
+#else
+   return 0;
+#endif
 	/*
    //当前没有在U盘处理状态中
    if(Query376Interrupt() EQ TRUE)
