@@ -634,10 +634,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	}
 	else
 	{  
-	   if(Screen_Status.Manual_OC_Flag > 0)
-	     Frame[FDATA] = Screen_Status.Manual_OC_Flag;
-	   else
-	     Frame[FDATA] = Screen_Status.Time_OC_Flag;
+       Frame[FDATA] = Screen_Status.Manual_OC_Flag;
 
 	   Len = 1;
 	   Re = 1; 

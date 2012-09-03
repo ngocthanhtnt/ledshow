@@ -72,6 +72,8 @@ typedef struct
   INT8U Screen_Color;
 
   INT8U Time_OC_Flag;
+  INT8U Manual_OC_Flag;
+  INT8U Self_OC_Flag;
   INT8U Tail;
 }S_RT_Show_Para;
 /*

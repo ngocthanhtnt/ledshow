@@ -111,6 +111,7 @@ void Update_Show_Data(void)
 
   if(Screen_Status.Time_OC_Flag EQ CLOSE_FLAG ||\
      Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG ||\
+	 Screen_Status.Self_OC_Flag EQ CLOSE_FLAG ||\
 	 Chk_UDisk_Processing())
     return;
 
@@ -261,7 +262,11 @@ void Clr_All_Area_Status()
 
 void Clr_Show_Bak_Data(void)
 {
-
+    Clr_Watch_Dog();
+  //if(Screen_Para.Scan_Para.Data_Polarity EQ 0)
+    //memset(Show_Data.Color_Data, 0xFF, sizeof(Show_Data.Color_Data));
+  //else
+    memset(Show_Data_Bak.Color_Data, 0x00, sizeof(Show_Data_Bak.Color_Data));
 }
 
 void Clr_Show_Data(void)
@@ -820,12 +825,16 @@ INT8U Check_Prog_End(void)
 //定时信息中，星期的第0位表示星期1，第6位表示星期六
 //检查当前时间是否在节目播放允许时间内，是则返回1，否则返回0
 INT8U Check_Prog_Play_Time(void)
-{
+{   
 #if CLOCK_EN
   //INT8U Temp[20];
   INT16U Temp1,Temp2,Temp3;
 
   //memset(Temp, 0xFF, sizeof(Temp));
+#if QT_EN
+  if(Preview_Mode EQ PREVIEW_PROG) //节目预览情况下，允许播放，但是屏幕预览情况下，需要判断节目时间等
+      return 1;
+#endif
 
   //按星期定时
   if(Prog_Para.Timing[0].Week_Check > 0)
@@ -948,7 +957,7 @@ INT8U Check_Prog_Para()
 //检查是否需要更新节目参数
 void Check_Update_Program_Para(void)
 {
-  INT8U Re;
+  INT8U Re,Prog_Re;
   INT8U i,Prog_No;//,Count = 0;
   INT16U Len;
 #if CLOCK_EN
@@ -1038,8 +1047,8 @@ void Check_Update_Program_Para(void)
         //Clr_Show_Data();
 		if(Check_Prog_Play_Time() EQ 0)//该节目不在播放时间内,且与前面播放的是同一个节目，说明当前没有可播放节目
 		{
-		  Clr_All_Area_Status();
-		  Clr_Show_Data();
+          Screen_Status.Self_OC_Flag = CLOSE_FLAG; //程序自己关闭屏幕，因为唯一一个节目都不允许播放
+		  SET_SUM(Screen_Status);
 
           Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
           SET_SUM(Prog_Status.Play_Status);
@@ -1055,65 +1064,67 @@ void Check_Update_Program_Para(void)
       SET_SUM(Prog_Status.Play_Status);
 
       Len = Read_Prog_Para(Prog_Status.Play_Status.Prog_No, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)); //重新更新节目参数
-      memcpy((INT8U *)&Prog_Para.Head + 1, Pub_Buf, sizeof(Prog_Para) - CHK_BYTE_LEN);
-	  SET_SUM(Prog_Para);
 
-	  if(Check_Prog_Para() EQ 0)
-	  {
-	    ASSERT_FAILED();
-	    memset(&Prog_Para, 0, sizeof(Prog_Para));
-	    SET_HT(Prog_Para);
-		SET_SUM(Prog_Para);
-		//Write_Prog_Para();
-	  }
+	  Prog_Re = 0;
 
-      if(Len > 0 && Check_Prog_Play_Time() > 0)
+      if(Len > 0)
       {
-        TRACE();
-
+		memcpy((INT8U *)&Prog_Para.Head + 1, Pub_Buf, sizeof(Prog_Para) - CHK_BYTE_LEN);
         SET_HT(Prog_Para);
-        //SET_SUM(Prog_Para);
+	    SET_SUM(Prog_Para);
 
-        Prog_No = Prog_Status.Play_Status.Prog_No;
-        Prog_Status_Init();//Clr_Prog_Status();换了个新节目，重新设置状态
-        Prog_Status.Play_Status.Prog_No = Prog_No;
-        SET_SUM(Prog_Status.Play_Status);
-
-        Len = Read_Prog_Block_Index(Prog_Status.Play_Status.Prog_No);//重新读取节目的存储索引
-
-        if(Len > 0)
-        {
-          TRACE();
-
-          Clr_All_Show_Data();
-
-          //memcpy((INT8U *)&(pProg_Para->Prog_No), Pub_Buf, sizeof(S_Prog_Para) - CHK_BYTE_LEN);
-          //void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, INT8U Height,  INT32U Step)
-          if(Prog_Para.Border_Check)
-          Draw_Border(&Show_Data_Bak, MAX_AREA_NUM, Pub_Buf + sizeof(S_Prog_Para) - CHK_BYTE_LEN, 0,0);
-
-          Prog_Status.Play_Status.Last_Prog_No = Prog_No;
-          Prog_Status.Play_Status.New_Prog_Flag = 0;
-          //SET_HT(Prog_Status.Play_Status);
-          SET_SUM(Prog_Status.Play_Status);
-
-          for(i = 0; i < MAX_AREA_NUM; i ++)
-          {
-            Prog_Status.Area_Status[i].New_File_Flag = NEW_FLAG;
-            Prog_Status.Area_Status[i].File_No = 0;
-            Prog_Status.Area_Status[i].SCN_No = 0;
-
-            Prog_Status.Area_Status[i].Last_File_No = 0xFF;
-            Prog_Status.Area_Status[i].Last_SCN_No = 0xFFFF;
-            SET_SUM(Prog_Status.Area_Status[i]);
-          }
-        }
+	    if(Check_Prog_Para() > 0 && Check_Prog_Play_Time() > 0)
+		{
+	        TRACE();
+	
+	        Prog_No = Prog_Status.Play_Status.Prog_No;
+	        Prog_Status_Init();//Clr_Prog_Status();换了个新节目，重新设置状态
+	        Prog_Status.Play_Status.Prog_No = Prog_No;
+	        SET_SUM(Prog_Status.Play_Status);
+	
+	        Len = Read_Prog_Block_Index(Prog_Status.Play_Status.Prog_No);//重新读取节目的存储索引
+	
+	        if(Len > 0)
+	        {
+	          TRACE();
+	
+	          Clr_All_Show_Data();
+	
+	          //memcpy((INT8U *)&(pProg_Para->Prog_No), Pub_Buf, sizeof(S_Prog_Para) - CHK_BYTE_LEN);
+	          //void Draw_Border(S_Show_Data *pDst, INT8U Area_No, INT8U *pData, INT8U Width, INT8U Height,  INT32U Step)
+	          if(Prog_Para.Border_Check)
+	          Draw_Border(&Show_Data_Bak, MAX_AREA_NUM, Pub_Buf + sizeof(S_Prog_Para) - CHK_BYTE_LEN, 0,0);
+	
+	          Prog_Status.Play_Status.Last_Prog_No = Prog_No;
+	          Prog_Status.Play_Status.New_Prog_Flag = 0;
+	          //SET_HT(Prog_Status.Play_Status);
+	          SET_SUM(Prog_Status.Play_Status);
+	
+	          for(i = 0; i < MAX_AREA_NUM; i ++)
+	          {
+	            Prog_Status.Area_Status[i].New_File_Flag = NEW_FLAG;
+	            Prog_Status.Area_Status[i].File_No = 0;
+	            Prog_Status.Area_Status[i].SCN_No = 0;
+	
+	            Prog_Status.Area_Status[i].Last_File_No = 0xFF;
+	            Prog_Status.Area_Status[i].Last_SCN_No = 0xFFFF;
+	            SET_SUM(Prog_Status.Area_Status[i]);
+	          }
+	
+	          Screen_Status.Self_OC_Flag = OPEN_FLAG; //开关播放，防止之前关闭了
+			  SET_SUM(Screen_Status);
+	
+	          Prog_Re = 1;
+	        }
+		}
       }
-      else
+      
+	  if(Prog_Re EQ 0) //没有读取到正确参数,继续读取下一个节目参数
       {
         TRACE();
 
         Prog_Status.Play_Status.New_Prog_Flag = NEW_FLAG;
+		//Prog_Status.Play_Status.Last_Prog_No = 0xFF;
         Prog_Status.Play_Status.Prog_No ++;
         SET_SUM(Prog_Status.Play_Status);
 
@@ -1441,6 +1452,8 @@ void Set_RT_Show_Area(INT16U X, INT16U Y, INT16U Width, INT16U Height)
   RT_Show_Para.X_Len = Prog_Para.Area[0].X_Len;
   RT_Show_Para.Y_Len = Prog_Para.Area[0].Y_Len;	 
   RT_Show_Para.Time_OC_Flag = Screen_Status.Time_OC_Flag;
+  RT_Show_Para.Manual_OC_Flag = Screen_Status.Manual_OC_Flag;
+  RT_Show_Para.Self_OC_Flag	= Screen_Status.Self_OC_Flag;
   //RT_Show_Para.Screen_Width = Screen_Para.Base_Para.Width;
   //RT_Show_Para.Screen_Height = Screen_Para.Base_Para.Height;
   //RT_Show_Para.Screen_Color = Screen_Para.Base_Para.Color;
@@ -1476,6 +1489,8 @@ void Restore_Show_Area(void)
   //Screen_Para.Base_Para.Color = RT_Show_Para.Screen_Color;
   //SET_SUM(Screen_Para);
   Screen_Status.Time_OC_Flag = RT_Show_Para.Time_OC_Flag;
+  Screen_Status.Manual_OC_Flag = RT_Show_Para.Manual_OC_Flag;
+  Screen_Status.Self_OC_Flag = RT_Show_Para.Self_OC_Flag;
 }
 
 
