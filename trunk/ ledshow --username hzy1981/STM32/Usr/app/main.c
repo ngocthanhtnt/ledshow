@@ -127,6 +127,7 @@ int main(void)
 
   SET_STATUS_LED_ON(); //´ò¿ªLED×´Ì¬µÆ
 
+  //Scan_Interface_Test();
 
   while(1)
   {

@@ -1789,10 +1789,10 @@ void Scan_Mode_Test(INT8U Mode)
   //INT8U Direct,ErrFlag = 0;
   //S_Time TempTime,TempTime1;
 
-  if(Screen_Status.Scan_Mode_Test_Flag) //防止重复进入
+  if(Screen_Status.Scan_Mode_Test_Flag EQ 0xA5) //防止重复进入
     return;
 
-  Screen_Status.Scan_Mode_Test_Flag = 1;
+  Screen_Status.Scan_Mode_Test_Flag = 0xA5;
 
   Read_Screen_Para();
  /*
@@ -1828,6 +1828,8 @@ void Scan_Mode_Test(INT8U Mode)
 
   for(m = 0; m < 3; m ++)	//三种常用的扫描方式
   {
+    Clr_Watch_Dog();
+
     if(m EQ 0)
 	  Screen_Para.Scan_Para.Rows = 16;  //1/16扫描
 	else if(m EQ 1)
@@ -1850,6 +1852,8 @@ void Scan_Mode_Test(INT8U Mode)
 
     for(i = 0; i < 4; i ++)	//4个方向
 	{
+	   Clr_Watch_Dog();
+
         Screen_Para.Scan_Para.Direct = i;
 
 		if(i EQ 0x01 || i EQ 0x03) //左下入或者右下入，都不需再测试直行的数据，因为和左上入和右上入直行是一样的。
@@ -1859,6 +1863,8 @@ void Scan_Mode_Test(INT8U Mode)
 
       for(j = tmp; j <= Max_Rows_Fold; j ++)
 	  {
+	    Clr_Watch_Dog();
+
 	    Screen_Para.Scan_Para.Rows_Fold = j;
 
 		if(j EQ 0)
@@ -1886,6 +1892,8 @@ void Scan_Mode_Test(INT8U Mode)
 			
 		    for(n = 0; n < 5; n ++)
 			{
+			  Clr_Watch_Dog();
+
 			  Delay_ms(100);
 			  Screen_Com_Proc();
 #if QT_EN
@@ -1903,6 +1911,64 @@ void Scan_Mode_Test(INT8U Mode)
 
 	 //Restore_Show_Area();
 
+  }
+}
+
+//扫描接口测试
+INT8U Scan_Interface_Test(void) 
+{
+  INT8U i;
+  static INT8U Enter_Flag = 0;
+
+  if(Enter_Flag EQ 0xA5)
+    return 0;
+
+  Enter_Flag = 0xA5;
+ //先设置好实时显示区域和显示数据
+  
+  Screen_Para.Base_Para.Width = 16;
+  Screen_Para.Base_Para.Height = MAX_SCAN_BLOCK_NUM * 16;
+  Screen_Para.Base_Para.Color = 0x03;
+  Screen_Status.Color_Num = 2;
+
+  SET_SUM(Screen_Para);
+   
+  Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+
+  for(i = 0; i < MAX_SCAN_BLOCK_NUM ; i ++)
+    LED_Print(FONT0, 0x03, &Show_Data, 0, 0, i * 16, "%d", i);
+
+  while(1)
+  {
+	RT_Play_Status_Enter(2);
+
+    //08接口的扫描
+	Screen_Para.Scan_Para.Rows = 16;
+	Screen_Para.Scan_Para.Rows_Fold	= 0x00;
+	Screen_Para.Scan_Para.Cols_Fold	= 0x00;
+	Screen_Para.Scan_Para.Direct = 0x02;
+	SET_SUM(Screen_Para);
+
+    for(i = 0; i < 5; i ++)
+	{
+		Delay_ms(100);
+		Screen_Com_Proc();
+		Clr_Watch_Dog();
+	}
+ 
+	//12接口的扫描
+	Screen_Para.Scan_Para.Rows = 4;
+	Screen_Para.Scan_Para.Rows_Fold	= 0x03;
+	Screen_Para.Scan_Para.Cols_Fold	= 0x01;
+	Screen_Para.Scan_Para.Direct = 0x02;
+	SET_SUM(Screen_Para);
+
+    for(i = 0; i < 5; i ++)
+	{
+		Delay_ms(100);
+		Screen_Com_Proc();
+		Clr_Watch_Dog();
+	}
   }
 }
 

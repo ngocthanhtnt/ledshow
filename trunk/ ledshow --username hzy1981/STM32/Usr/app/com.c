@@ -687,6 +687,10 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 			    BKP_WriteBackupRegister(BKP_DR3, 0x01);
 				
 		      Soft_Rest(); //软件复位		 
+		  }
+		  else if(Temp EQ 0x04)	//进入输出接口的测试状态
+		  {
+			 Scan_Interface_Test();
 		  } 
 	#endif
 		  return Len;

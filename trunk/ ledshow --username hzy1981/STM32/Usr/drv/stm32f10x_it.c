@@ -268,6 +268,7 @@ void USART2_IRQHandler(void)	//串口2中断服务程序
 //串口中断3用于接收环境变量数据
 void USART3_IRQHandler(void)	//串口3中断服务程序
 {
+#if ENV_VAR_EN
    u8 Res;
    //STM_EVAL_LEDToggle(LED2);
    if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
@@ -280,5 +281,6 @@ void USART3_IRQHandler(void)	//串口3中断服务程序
     //Com_Rcv_Byte(CH_GPRS, Res);
 	 
 	}
+#endif
 }
 /******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
