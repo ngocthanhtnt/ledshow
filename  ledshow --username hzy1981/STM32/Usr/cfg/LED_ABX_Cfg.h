@@ -75,7 +75,7 @@
 #define FONT_NUM 1 //内嵌字体个数
 #define DATA_FLASH_SIZE 1000000 //dataflash大小
 
-#define IN_SPEC_EFFECT_NUM 59 //进入特效个数
+#define IN_SPEC_EFFECT_NUM 53 //进入特效个数
 #define OUT_SPEC_EFFECT_NUM 26 //退出特效个数
 
 #elif defined(CARD_B)
@@ -101,24 +101,36 @@
 #define CLOCK_EN       1
 #endif
 
+#ifdef CARD_A //A类卡，因为程序空间问题，没有农历显示
 #if CLOCK_EN
 #define CLOCK_SHOW_EN  1 //表盘显示使能
 #define TIME_SHOW_EN   1 //时间显示使能
 #define TIMER_SHOW_EN  1 //定时显示使能
-#define LUN_SHOW_EN    1 //农历显示使能
-#else
+#define LUN_SHOW_EN    0 //农历显示使能
+#else //A0类型卡没有时间
 #define CLOCK_SHOW_EN  0 //表盘显示使能
 #define TIME_SHOW_EN   0 //时间显示使能
 #define TIMER_SHOW_EN  0 //定时显示使能
 #define LUN_SHOW_EN    0 //农历显示使能
 #endif
- 
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
 #define TEMP_SHOW_EN   1 //温度显示使能
 #define HUMIDITY_SHOW_EN 0 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
 #define TEXT_SHOW_EN   0
+#else
+#define BORDER_SHOW_EN 1 //边框显示使能
+#define PIC_SHOW_EN    1 //图文显示使能
+#define CLOCK_SHOW_EN  1 //表盘显示使能
+#define LUN_SHOW_EN    1 //农历显示使能
+#define TEMP_SHOW_EN   1 //温度显示使能
+#define TIME_SHOW_EN   1 //时间显示使能
+#define TIMER_SHOW_EN  1 //定时显示使能 
+#define HUMIDITY_SHOW_EN 0 //湿度显示使能
+#define NOISE_SHOW_EN  0 //噪音显示使能
+#define TEXT_SHOW_EN   0
+#endif
 
 #define USE_SPI_FLASH //串行SPIFlash
 //#define USE_NOR_FLASH //并行NORFlash

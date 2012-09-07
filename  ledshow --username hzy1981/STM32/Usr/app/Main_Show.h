@@ -124,4 +124,5 @@ EXT void Replay_Prog(void);
 EXT void Clr_Show_Data(void);
 EXT void Set_Show_Data(void);
 EXT void Scan_Mode_Test(INT8U Mode);
+EXT INT8U Scan_Interface_Test(void);
 #endif
