@@ -5,7 +5,6 @@
 #define GET_LINE_Y(X0,Y0,X1,Y1,X) ((X1 != X0)?((((100*((Y1)-(Y0))*((X)-(X0)))/((X1)-(X0)) + 100*(Y0)) + 50) / 100):((Y0) + 0.5))
 #define GET_LINE_X(X0,Y0,X1,Y1,Y) ((Y1 != Y0)?((((100*((X1)-(X0))*((Y)-(Y0)))/((Y1)-(Y0)) + 100*(X0)) + 50) / 100):((X0) + 0.5))
 
-#define STRETCH_RATIO 2//拉伸比例
 //#define TENSILE_STEP 10//Tensile
 //#define COMPRESSION_RATIO
 #define REV_FLAG 0x01
@@ -2384,28 +2383,44 @@ void Copy_Filled_Stretch_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPo
 {
     INT16U i,j;//,m,n;
     INT8U Re;
-	S_Point P0;
+    S_Point P0,P1,P2;
 
-    for(i = 0; i < X_Len; i ++)
-      for(j = 0; j < Y_Len; j ++)
+    if(Stretch_X_Fac > 1)
+    {
+      for(i = 0; i < X_Len; i ++)
       {
-        Re = Get_Area_Point_Data(pSrc_Buf, Area_No, pPoint0->X + i, pPoint0->Y + j);
-		
-		P0.X = pPoint1->X + i*Stretch_X_Fac;
-		P0.Y = pPoint1->Y + j*Stretch_Y_Fac;
+          P0.X = pPoint0->X + i;
+          P0.Y = pPoint0->Y;
 
-		Fill_Rect(pDst_Buf, Area_No, &P0, Stretch_X_Fac, Stretch_Y_Fac, Re); 
-		/*
-        for(m = 0; m < Stretch_X_Fac; m ++)
+          P1.X = P0.X;
+          P1.Y = P0.Y + Y_Len - 1;
+
+          for(j = 0; j < Stretch_X_Fac; j ++)
+          {
+            P2.X = pPoint1->X + i*Stretch_X_Fac + j;
+            P2.Y = pPoint1->Y;
+            Copy_Line(pSrc_Buf, Area_No, &P0, &P1, pDst_Buf, &P2);
+          }
+      }
+    }
+    else
+    {
+        for(i = 0; i < Y_Len; i ++)
         {
-            for(n = 0; n < Stretch_Y_Fac; n ++)
+            P0.Y = pPoint0->Y + i;
+            P0.X = pPoint0->X;
+
+            P1.Y = P0.Y;
+            P1.X = P0.X + X_Len - 1;
+
+            for(j = 0; j < Stretch_Y_Fac; j ++)
             {
-             Set_Area_Point_Data(pDst_Buf, Area_No, pPoint1->X + i*Stretch_X_Fac + m, pPoint1->Y + j*Stretch_Y_Fac + n, Re);
+                P2.Y = pPoint1->Y + i * Stretch_Y_Fac + j;
+                P2.X = pPoint1->X;
+              Copy_Line(pSrc_Buf, Area_No, &P0, &P1, pDst_Buf, &P2);
             }
         }
-		*/
     }
-
 
 }
 
@@ -5352,370 +5367,397 @@ void Move_Down_Compress(INT8U Area_No)
 
 }
 
-//左压缩
+//左矢量压入
 void Move_Left_Compress_0(INT8U Area_No)
 {
     S_Point Temp0,Temp1;
-    INT16U Moved_Len, Last_Moved_Len;
+    INT16U Step;//Moved_Len, Last_Moved_Len;
 
+       if(Prog_Status.Area_Status[Area_No].Step  <= Prog_Para.Area[Area_No].X_Len / STRETCH_RATIO)
+       {
+           //已复制的数据左移动
+           Temp0.X = Prog_Para.Area[Area_No].X_Len - (Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO;
+           Temp0.Y = 0;
 
-   if((float)Prog_Status.Area_Status[Area_No].Step / Prog_Status.Area_Status[Area_No].Max_Step <= (float)1/STRETCH_RATIO)
-    {
-       Temp0.X = 0;
-       Temp0.Y = 0;
+           Temp1.X = Prog_Para.Area[Area_No].X_Len - Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO;// + Step +
+           Temp1.Y = 0;
 
-       Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
-       Temp1.X = Prog_Para.Area[Area_No].X_Len - Moved_Len;// + Step +
-       Temp1.Y = 0;
+           Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len - Temp0.X, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp1, 0);
+       }
+       else
+       {
+         Step = Prog_Status.Area_Status[Area_No].Step * STRETCH_RATIO - Prog_Para.Area[Area_No].X_Len;
 
-       Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Moved_Len / STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp1);
-   }
-   else
-   {
- 	   if(Prog_Status.Area_Status[Area_No].Step - MOVE_STEP > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-         Last_Moved_Len = ((Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].X_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-	   else
-	     Last_Moved_Len = 0;
+         Temp0.X = (Step > STRETCH_RATIO)?(Step - STRETCH_RATIO):0;
 
-       Temp0.X = Last_Moved_Len;
-       Temp0.Y = 0;
+         Temp0.Y = 0;
+         Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp0, 0);
 
-	   if(Prog_Status.Area_Status[Area_No].Step > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-         Moved_Len = (Prog_Status.Area_Status[Area_No].Step - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].X_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-	   else
-	     Moved_Len = 0;
+         Temp0.X = Step + STRETCH_RATIO;
+         Temp0.Y = 0;
 
-       Temp1.X = Moved_Len;// + Step +
-       Temp1.Y = 0;
+         Temp1.X = Step;
+         Temp1.Y = 0;
+         Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len - Temp0.X, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp1, 0);
+       }
 
-       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, Moved_Len - Last_Moved_Len,Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp0,0);
+       //剩下的部分复制拉伸数据
+       if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
+       {
+         Temp0.X = (Prog_Status.Area_Status[Area_No].Step - 1);
+         Temp0.Y = 0;
 
-	   if(Prog_Para.Area[Area_No].X_Len > Moved_Len)
-         Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp1, (Prog_Para.Area[Area_No].X_Len - Moved_Len) / STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp1);
-   }
+         //Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+         Temp1.X = Prog_Para.Area[Area_No].X_Len - STRETCH_RATIO;// + Step +
+         Temp1.Y = 0;
+
+         Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, 1, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp1);
+       }
 }
 
-//右压缩
+//右矢量压入
 void Move_Right_Compress_0(INT8U Area_No)
 {
     S_Point Temp0,Temp1;
-    INT16U Moved_Len, Last_Moved_Len;
+    INT16U Step;//Moved_Len, Last_Moved_Len;
 
+       if(Prog_Status.Area_Status[Area_No].Step  <= Prog_Para.Area[Area_No].X_Len / STRETCH_RATIO)
+       {
+           Temp0.X = 0;//(Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO;
+           Temp0.Y = 0;
 
-   if((float)Prog_Status.Area_Status[Area_No].Step / Prog_Status.Area_Status[Area_No].Max_Step <= (float)1/STRETCH_RATIO)
+           Temp1.X = STRETCH_RATIO;// + Step +
+           Temp1.Y = 0;
+
+           Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, (Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp1, 0);
+       }
+       else
+       {
+         Step = Prog_Status.Area_Status[Area_No].Step * STRETCH_RATIO - Prog_Para.Area[Area_No].X_Len;
+
+         Temp0.X = Prog_Para.Area[Area_No].X_Len - Step;//((Step > STRETCH_RATIO)?(Step - STRETCH_RATIO):0);
+         Temp0.Y = 0;
+
+         Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp0, 0);
+
+         if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
+         {
+         Temp0.X = 0;
+         Temp0.Y = 0;
+
+         Temp1.X = STRETCH_RATIO;
+         Temp1.Y = 0;
+         Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len - STRETCH_RATIO - Step, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp1, 0);
+       }
+     }
+
+    //剩下的部分复制拉伸数据
+    if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
     {
-       Moved_Len = Prog_Status.Area_Status[Area_No].Step* Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+     Temp0.X = Prog_Status.Area_Status[Area_No].Max_Step - Prog_Status.Area_Status[Area_No].Step;
+     Temp0.Y = 0;
 
-       Temp0.X = Prog_Para.Area[Area_No].X_Len - Moved_Len;
-       Temp0.Y = 0;
+     //Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+     Temp1.X = 0;//Prog_Para.Area[Area_No].X_Len - STRETCH_RATIO;// + Step +
+     Temp1.Y = 0;
 
-
-       Temp1.X = 0;//Prog_Para.Area[Area_No].X_Len - Moved_Len;// + Step +
-       Temp1.Y = 0;
-
-       Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Moved_Len, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp1);
-   }
-   else
-   {
-       if(Prog_Status.Area_Status[Area_No].Step - MOVE_STEP > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-         Last_Moved_Len = ((Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].X_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-           else
-             Last_Moved_Len = 0;
-
-       if(Prog_Status.Area_Status[Area_No].Step > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-         Moved_Len = (Prog_Status.Area_Status[Area_No].Step - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].X_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-	   else
-	     Moved_Len = 0;
-
-       Temp0.X = Prog_Para.Area[Area_No].X_Len - Moved_Len;
-       Temp0.Y = 0;
-
-       Temp1.X = Prog_Para.Area[Area_No].X_Len - Moved_Len - (Prog_Para.Area[Area_No].X_Len - Moved_Len) / STRETCH_RATIO;// + Step +
-       Temp1.Y = 0;
-
-       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, Moved_Len - Last_Moved_Len,Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp0,0);
-
-       Temp0.X = 0;
-       Temp0.Y = 0;
-
-	   if(Prog_Para.Area[Area_No].X_Len > Moved_Len)
-         Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp1, (Prog_Para.Area[Area_No].X_Len - Moved_Len) / STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp0);
-   }
+     Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, 1, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp1);
+    }
 }
 
-//上压缩
+//上矢量压入
 void Move_Up_Compress_0(INT8U Area_No)
 {
     S_Point Temp0,Temp1;
-    INT16U Moved_Len, Last_Moved_Len;
+    INT16U Step;//Moved_Len, Last_Moved_Len;
 
+       if(Prog_Status.Area_Status[Area_No].Step  <= Prog_Para.Area[Area_No].Y_Len / STRETCH_RATIO)
+       {
+           //已复制的数据左移动
+           Temp0.Y = Prog_Para.Area[Area_No].Y_Len - (Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO;
+           Temp0.X = 0;
 
-   if((float)Prog_Status.Area_Status[Area_No].Step / Prog_Status.Area_Status[Area_No].Max_Step <= (float)1/STRETCH_RATIO)
-    {
-       Temp0.X = 0;
-       Temp0.Y = 0;
+           Temp1.Y = Prog_Para.Area[Area_No].Y_Len - Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO;// + Step +
+           Temp1.X = 0;
 
-       Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].Y_Len / Prog_Status.Area_Status[Area_No].Max_Step;
-       Temp1.X = 0;// + Step +
-       Temp1.Y = Prog_Para.Area[Area_No].Y_Len - Moved_Len;;
-
-       Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Moved_Len / STRETCH_RATIO, 1, STRETCH_RATIO,  &Show_Data, &Temp1);
-   }
-   else
-   {
-       if(Prog_Status.Area_Status[Area_No].Step - MOVE_STEP > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-      Last_Moved_Len = ((Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
+           Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len - Temp0.Y,  &Show_Data, &Temp1, 0);
+       }
        else
-         Last_Moved_Len = 0;
+       {
+         Step = Prog_Status.Area_Status[Area_No].Step * STRETCH_RATIO - Prog_Para.Area[Area_No].Y_Len;
 
-       Temp0.X = 0;
-       Temp0.Y = Last_Moved_Len;
+         Temp0.Y = (Step > STRETCH_RATIO)?(Step - STRETCH_RATIO):0;
 
-	   if(Prog_Status.Area_Status[Area_No].Step > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-         Moved_Len = (Prog_Status.Area_Status[Area_No].Step - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-	   else
-	     Moved_Len = 0;
-		  
-       Temp1.X = 0;// + Step +
-       Temp1.Y = Moved_Len;
+         Temp0.X = 0;
+         Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, STRETCH_RATIO,  &Show_Data, &Temp0, 0);
 
-       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0,Prog_Para.Area[Area_No].X_Len, Moved_Len - Last_Moved_Len, &Show_Data, &Temp0,0);
-	   
-	   if(Prog_Para.Area[Area_No].Y_Len > Moved_Len)
-         Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp1, Prog_Para.Area[Area_No].X_Len, (Prog_Para.Area[Area_No].Y_Len - Moved_Len) / STRETCH_RATIO, 1, STRETCH_RATIO, &Show_Data, &Temp1);
-   }
+         Temp0.Y = Step + STRETCH_RATIO;
+         Temp0.X = 0;
+
+         Temp1.Y = Step;
+         Temp1.X = 0;
+         Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len - Temp0.Y,  &Show_Data, &Temp1, 0);
+       }
+
+       //剩下的部分复制拉伸数据
+       if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
+       {
+         Temp0.Y = (Prog_Status.Area_Status[Area_No].Step - 1);
+         Temp0.X = 0;
+
+         //Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+         Temp1.Y = Prog_Para.Area[Area_No].Y_Len - STRETCH_RATIO;// + Step +
+         Temp1.X = 0;
+
+         Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, 1, 1, STRETCH_RATIO, &Show_Data, &Temp1);
+       }
+
 }
 
-//下压缩
+//下矢量压入
 void Move_Down_Compress_0(INT8U Area_No)
 {
     S_Point Temp0,Temp1;
-    INT16U Moved_Len, Last_Moved_Len;
+    INT16U Step;//Moved_Len, Last_Moved_Len;
 
+       if(Prog_Status.Area_Status[Area_No].Step  <= Prog_Para.Area[Area_No].Y_Len / STRETCH_RATIO)
+       {
+           Temp0.Y = 0;//(Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO;
+           Temp0.X = 0;
 
-   if((float)Prog_Status.Area_Status[Area_No].Step / Prog_Status.Area_Status[Area_No].Max_Step <= (float)1/STRETCH_RATIO)
+           Temp1.Y = STRETCH_RATIO;// + Step +
+           Temp1.X = 0;
+
+           Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, (Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO, &Show_Data, &Temp1, 0);
+       }
+       else
+       {
+         Step = Prog_Status.Area_Status[Area_No].Step * STRETCH_RATIO - Prog_Para.Area[Area_No].Y_Len;
+
+         Temp0.Y = Prog_Para.Area[Area_No].Y_Len - Step;//((Step > STRETCH_RATIO)?(Step - STRETCH_RATIO):0);
+         Temp0.X = 0;
+
+         Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, STRETCH_RATIO,  &Show_Data, &Temp0, 0);
+
+         if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
+         {
+         Temp0.Y = 0;
+         Temp0.X = 0;
+
+         Temp1.Y = STRETCH_RATIO;
+         Temp1.X = 0;
+         Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len - STRETCH_RATIO - Step,  &Show_Data, &Temp1, 0);
+       }
+     }
+
+    //剩下的部分复制拉伸数据
+    if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
     {
-       Moved_Len = Prog_Status.Area_Status[Area_No].Step* Prog_Para.Area[Area_No].Y_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+     Temp0.Y = Prog_Status.Area_Status[Area_No].Max_Step - Prog_Status.Area_Status[Area_No].Step;
+     Temp0.X = 0;
 
-       Temp0.X = 0;//
-       Temp0.Y = Prog_Para.Area[Area_No].Y_Len - Moved_Len;
+     //Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+     Temp1.Y = 0;//Prog_Para.Area[Area_No].X_Len - STRETCH_RATIO;// + Step +
+     Temp1.X = 0;
 
-
-       Temp1.X = 0;//Prog_Para.Area[Area_No].X_Len - Moved_Len;// + Step +
-       Temp1.Y = 0;
-
-       Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Moved_Len,  1, STRETCH_RATIO, &Show_Data, &Temp1);
-   }
-   else
-   {
-       if(Prog_Status.Area_Status[Area_No].Step - MOVE_STEP  > Prog_Status.Area_Status[Area_No].Max_Step / STRETCH_RATIO)
-             Last_Moved_Len = ((Prog_Status.Area_Status[Area_No].Step - MOVE_STEP)  - Prog_Status.Area_Status[Area_No].Max_Step / STRETCH_RATIO) * Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-           else
-             Last_Moved_Len = 0;
-
-       //Moved_Len = (Prog_Status.Area_Status[Area_No].Step - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-       if(Prog_Status.Area_Status[Area_No].Step  > Prog_Status.Area_Status[Area_No].Max_Step / STRETCH_RATIO)
-             Moved_Len = (Prog_Status.Area_Status[Area_No].Step  - Prog_Status.Area_Status[Area_No].Max_Step / STRETCH_RATIO) * Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-	   else
-	     Moved_Len = 0;
-
-       Temp0.X = 0;
-       Temp0.Y = Prog_Para.Area[Area_No].Y_Len - Moved_Len;
-
-       Temp1.X = 0;// + Step +
-       Temp1.Y = Prog_Para.Area[Area_No].Y_Len - Moved_Len - (Prog_Para.Area[Area_No].Y_Len - Moved_Len) / STRETCH_RATIO;
-
-       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Moved_Len - Last_Moved_Len, &Show_Data, &Temp0,0);
-
-       Temp0.X = 0;
-       Temp0.Y = 0;
-	  
-	   if(Prog_Para.Area[Area_No].Y_Len > Moved_Len)
-         Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp1, Prog_Para.Area[Area_No].X_Len, (Prog_Para.Area[Area_No].Y_Len - Moved_Len) / STRETCH_RATIO,  1, STRETCH_RATIO, &Show_Data, &Temp0);
-   }
+     Copy_Filled_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, 1,  1, STRETCH_RATIO, &Show_Data, &Temp1);
+    }
 }
 
-//左压缩
+//左分散压入
 void Move_Left_Compress_1(INT8U Area_No)
 {
     S_Point Temp0,Temp1;
-    INT16U Moved_Len, Last_Moved_Len;
+    INT16U Step;//Moved_Len, Last_Moved_Len;
 
+       if(Prog_Status.Area_Status[Area_No].Step  <= Prog_Para.Area[Area_No].X_Len / STRETCH_RATIO)
+       {
+           //已复制的数据左移动
+           Temp0.X = Prog_Para.Area[Area_No].X_Len - (Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO;
+           Temp0.Y = 0;
 
-   if((float)Prog_Status.Area_Status[Area_No].Step / Prog_Status.Area_Status[Area_No].Max_Step <= (float)1/STRETCH_RATIO)
-    {
-       Temp0.X = 0;
-       Temp0.Y = 0;
+           Temp1.X = Prog_Para.Area[Area_No].X_Len - Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO;// + Step +
+           Temp1.Y = 0;
 
-       Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
-       Temp1.X = Prog_Para.Area[Area_No].X_Len - Moved_Len;// + Step +
-       Temp1.Y = 0;
+           Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len - Temp0.X, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp1, 0);
+       }
+       else
+       {
+         Step = Prog_Status.Area_Status[Area_No].Step * STRETCH_RATIO - Prog_Para.Area[Area_No].X_Len;
 
-       Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Moved_Len / STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp1);
-   }
-   else
-   {
-           if(Prog_Status.Area_Status[Area_No].Step - MOVE_STEP > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-         Last_Moved_Len = ((Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].X_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-           else
-             Last_Moved_Len = 0;
+         Temp0.X = (Step > STRETCH_RATIO)?(Step - STRETCH_RATIO):0;
 
-       Temp0.X = Last_Moved_Len;
-       Temp0.Y = 0;
+         Temp0.Y = 0;
+         Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp0, 0);
 
-           if(Prog_Status.Area_Status[Area_No].Step > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-         Moved_Len = (Prog_Status.Area_Status[Area_No].Step - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].X_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-           else
-             Moved_Len = 0;
+         Temp0.X = Step + STRETCH_RATIO;
+         Temp0.Y = 0;
 
-       Temp1.X = Moved_Len;// + Step +
-       Temp1.Y = 0;
+         Temp1.X = Step;
+         Temp1.Y = 0;
+         Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len - Temp0.X, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp1, 0);
+       }
 
-       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, Moved_Len - Last_Moved_Len,Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp0,0);
+       //剩下的部分复制拉伸数据
+       if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
+       {
+         Temp0.X = (Prog_Status.Area_Status[Area_No].Step - 1);
+         Temp0.Y = 0;
 
-           if(Prog_Para.Area[Area_No].X_Len > Moved_Len)
-         Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp1, (Prog_Para.Area[Area_No].X_Len - Moved_Len) / STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp1);
-   }
+         //Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+         Temp1.X = Prog_Para.Area[Area_No].X_Len - STRETCH_RATIO;// + Step +
+         Temp1.Y = 0;
+
+         Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, 1, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp1);
+       }
 }
 
-//右压缩
+//右分散压入
 void Move_Right_Compress_1(INT8U Area_No)
 {
     S_Point Temp0,Temp1;
-    INT16U Moved_Len, Last_Moved_Len;
+    INT16U Step;//Moved_Len, Last_Moved_Len;
 
+       if(Prog_Status.Area_Status[Area_No].Step  <= Prog_Para.Area[Area_No].X_Len / STRETCH_RATIO)
+       {
+           Temp0.X = 0;//(Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO;
+           Temp0.Y = 0;
 
-   if((float)Prog_Status.Area_Status[Area_No].Step / Prog_Status.Area_Status[Area_No].Max_Step <= (float)1/STRETCH_RATIO)
+           Temp1.X = STRETCH_RATIO;// + Step +
+           Temp1.Y = 0;
+
+           Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, (Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp1, 0);
+       }
+       else
+       {
+         Step = Prog_Status.Area_Status[Area_No].Step * STRETCH_RATIO - Prog_Para.Area[Area_No].X_Len;
+
+         Temp0.X = Prog_Para.Area[Area_No].X_Len - Step;//((Step > STRETCH_RATIO)?(Step - STRETCH_RATIO):0);
+         Temp0.Y = 0;
+
+         Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp0, 0);
+
+         if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
+         {
+         Temp0.X = 0;
+         Temp0.Y = 0;
+
+         Temp1.X = STRETCH_RATIO;
+         Temp1.Y = 0;
+         Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len - STRETCH_RATIO - Step, Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp1, 0);
+       }
+     }
+
+    //剩下的部分复制拉伸数据
+    if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
     {
-       Moved_Len = Prog_Status.Area_Status[Area_No].Step* Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+     Temp0.X = Prog_Status.Area_Status[Area_No].Max_Step - Prog_Status.Area_Status[Area_No].Step;
+     Temp0.Y = 0;
 
-       Temp0.X = Prog_Para.Area[Area_No].X_Len - Moved_Len;
-       Temp0.Y = 0;
+     //Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+     Temp1.X = 0;//Prog_Para.Area[Area_No].X_Len - STRETCH_RATIO;// + Step +
+     Temp1.Y = 0;
 
-
-       Temp1.X = 0;//Prog_Para.Area[Area_No].X_Len - Moved_Len;// + Step +
-       Temp1.Y = 0;
-
-       Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Moved_Len, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp1);
-   }
-   else
-   {
-       if(Prog_Status.Area_Status[Area_No].Step - MOVE_STEP > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-         Last_Moved_Len = ((Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].X_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-           else
-             Last_Moved_Len = 0;
-
-       if(Prog_Status.Area_Status[Area_No].Step > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-         Moved_Len = (Prog_Status.Area_Status[Area_No].Step - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].X_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-           else
-             Moved_Len = 0;
-
-       Temp0.X = Prog_Para.Area[Area_No].X_Len - Moved_Len;
-       Temp0.Y = 0;
-
-       Temp1.X = Prog_Para.Area[Area_No].X_Len - Moved_Len - (Prog_Para.Area[Area_No].X_Len - Moved_Len) / STRETCH_RATIO;// + Step +
-       Temp1.Y = 0;
-
-       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, Moved_Len - Last_Moved_Len,Prog_Para.Area[Area_No].Y_Len, &Show_Data, &Temp0,0);
-
-       Temp0.X = 0;
-       Temp0.Y = 0;
-
-           if(Prog_Para.Area[Area_No].X_Len > Moved_Len)
-         Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp1, (Prog_Para.Area[Area_No].X_Len - Moved_Len) / STRETCH_RATIO, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp0);
-   }
+     Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, 1, Prog_Para.Area[Area_No].Y_Len, STRETCH_RATIO, 1, &Show_Data, &Temp1);
+    }
 }
 
-//上压缩
+//上分散压入
 void Move_Up_Compress_1(INT8U Area_No)
 {
     S_Point Temp0,Temp1;
-    INT16U Moved_Len, Last_Moved_Len;
+    INT16U Step;//Moved_Len, Last_Moved_Len;
 
+       if(Prog_Status.Area_Status[Area_No].Step  <= Prog_Para.Area[Area_No].Y_Len / STRETCH_RATIO)
+       {
+           //已复制的数据左移动
+           Temp0.Y = Prog_Para.Area[Area_No].Y_Len - (Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO;
+           Temp0.X = 0;
 
-   if((float)Prog_Status.Area_Status[Area_No].Step / Prog_Status.Area_Status[Area_No].Max_Step <= (float)1/STRETCH_RATIO)
-    {
-       Temp0.X = 0;
-       Temp0.Y = 0;
+           Temp1.Y = Prog_Para.Area[Area_No].Y_Len - Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO;// + Step +
+           Temp1.X = 0;
 
-       Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].Y_Len / Prog_Status.Area_Status[Area_No].Max_Step;
-       Temp1.X = 0;// + Step +
-       Temp1.Y = Prog_Para.Area[Area_No].Y_Len - Moved_Len;;
-
-       Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Moved_Len / STRETCH_RATIO, 1, STRETCH_RATIO,  &Show_Data, &Temp1);
-   }
-   else
-   {
-       if(Prog_Status.Area_Status[Area_No].Step - MOVE_STEP > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-      Last_Moved_Len = ((Prog_Status.Area_Status[Area_No].Step - MOVE_STEP) - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
+           Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len - Temp0.Y,  &Show_Data, &Temp1, 0);
+       }
        else
-         Last_Moved_Len = 0;
+       {
+         Step = Prog_Status.Area_Status[Area_No].Step * STRETCH_RATIO - Prog_Para.Area[Area_No].Y_Len;
 
-       Temp0.X = 0;
-       Temp0.Y = Last_Moved_Len;
+         Temp0.Y = (Step > STRETCH_RATIO)?(Step - STRETCH_RATIO):0;
 
-           if(Prog_Status.Area_Status[Area_No].Step > Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO)
-         Moved_Len = (Prog_Status.Area_Status[Area_No].Step - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-           else
-             Moved_Len = 0;
+         Temp0.X = 0;
+         Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, STRETCH_RATIO,  &Show_Data, &Temp0, 0);
 
-       Temp1.X = 0;// + Step +
-       Temp1.Y = Moved_Len;
+         Temp0.Y = Step + STRETCH_RATIO;
+         Temp0.X = 0;
 
-       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0,Prog_Para.Area[Area_No].X_Len, Moved_Len - Last_Moved_Len, &Show_Data, &Temp0,0);
+         Temp1.Y = Step;
+         Temp1.X = 0;
+         Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len - Temp0.Y,  &Show_Data, &Temp1, 0);
+       }
 
-           if(Prog_Para.Area[Area_No].Y_Len > Moved_Len)
-         Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp1, Prog_Para.Area[Area_No].X_Len, (Prog_Para.Area[Area_No].Y_Len - Moved_Len) / STRETCH_RATIO, 1, STRETCH_RATIO, &Show_Data, &Temp1);
-   }
+       //剩下的部分复制拉伸数据
+       if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
+       {
+         Temp0.Y = (Prog_Status.Area_Status[Area_No].Step - 1);
+         Temp0.X = 0;
+
+         //Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+         Temp1.Y = Prog_Para.Area[Area_No].Y_Len - STRETCH_RATIO;// + Step +
+         Temp1.X = 0;
+
+         Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, 1, 1, STRETCH_RATIO, &Show_Data, &Temp1);
+       }
 }
 
-//下压缩
+//下分散压入
 void Move_Down_Compress_1(INT8U Area_No)
 {
     S_Point Temp0,Temp1;
-    INT16U Moved_Len, Last_Moved_Len;
+    INT16U Step;//Moved_Len, Last_Moved_Len;
 
+       if(Prog_Status.Area_Status[Area_No].Step  <= Prog_Para.Area[Area_No].Y_Len / STRETCH_RATIO)
+       {
+           Temp0.Y = 0;//(Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO;
+           Temp0.X = 0;
 
-   if((float)Prog_Status.Area_Status[Area_No].Step / Prog_Status.Area_Status[Area_No].Max_Step <= (float)1/STRETCH_RATIO)
+           Temp1.Y = STRETCH_RATIO;// + Step +
+           Temp1.X = 0;
+
+           Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, (Prog_Status.Area_Status[Area_No].Step - 1) * STRETCH_RATIO, &Show_Data, &Temp1, 0);
+       }
+       else
+       {
+         Step = Prog_Status.Area_Status[Area_No].Step * STRETCH_RATIO - Prog_Para.Area[Area_No].Y_Len;
+
+         Temp0.Y = Prog_Para.Area[Area_No].Y_Len - Step;//((Step > STRETCH_RATIO)?(Step - STRETCH_RATIO):0);
+         Temp0.X = 0;
+
+         Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, STRETCH_RATIO,  &Show_Data, &Temp0, 0);
+
+         if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
+         {
+         Temp0.Y = 0;
+         Temp0.X = 0;
+
+         Temp1.Y = STRETCH_RATIO;
+         Temp1.X = 0;
+         Copy_Filled_Rect(&Show_Data, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Prog_Para.Area[Area_No].Y_Len - STRETCH_RATIO - Step,  &Show_Data, &Temp1, 0);
+       }
+     }
+
+    //剩下的部分复制拉伸数据
+    if(Prog_Status.Area_Status[Area_No].Step < Prog_Status.Area_Status[Area_No].Max_Step)
     {
-       Moved_Len = Prog_Status.Area_Status[Area_No].Step* Prog_Para.Area[Area_No].Y_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+     Temp0.Y = Prog_Status.Area_Status[Area_No].Max_Step - Prog_Status.Area_Status[Area_No].Step;
+     Temp0.X = 0;
 
-       Temp0.X = 0;//
-       Temp0.Y = Prog_Para.Area[Area_No].Y_Len - Moved_Len;
+     //Moved_Len = Prog_Status.Area_Status[Area_No].Step*STRETCH_RATIO * Prog_Para.Area[Area_No].X_Len / Prog_Status.Area_Status[Area_No].Max_Step;
+     Temp1.Y = 0;//Prog_Para.Area[Area_No].X_Len - STRETCH_RATIO;// + Step +
+     Temp1.X = 0;
 
-
-       Temp1.X = 0;//Prog_Para.Area[Area_No].X_Len - Moved_Len;// + Step +
-       Temp1.Y = 0;
-
-       Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Moved_Len,  1, STRETCH_RATIO, &Show_Data, &Temp1);
-   }
-   else
-   {
-       if(Prog_Status.Area_Status[Area_No].Step - MOVE_STEP  > Prog_Status.Area_Status[Area_No].Max_Step / STRETCH_RATIO)
-             Last_Moved_Len = ((Prog_Status.Area_Status[Area_No].Step - MOVE_STEP)  - Prog_Status.Area_Status[Area_No].Max_Step / STRETCH_RATIO) * Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-           else
-             Last_Moved_Len = 0;
-
-       //Moved_Len = (Prog_Status.Area_Status[Area_No].Step - Prog_Status.Area_Status[Area_No].Max_Step/STRETCH_RATIO) * Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-       if(Prog_Status.Area_Status[Area_No].Step  > Prog_Status.Area_Status[Area_No].Max_Step / STRETCH_RATIO)
-             Moved_Len = (Prog_Status.Area_Status[Area_No].Step  - Prog_Status.Area_Status[Area_No].Max_Step / STRETCH_RATIO) * Prog_Para.Area[Area_No].Y_Len / (Prog_Status.Area_Status[Area_No].Max_Step*(STRETCH_RATIO - 1)/(STRETCH_RATIO));
-           else
-             Moved_Len = 0;
-
-       Temp0.X = 0;
-       Temp0.Y = Prog_Para.Area[Area_No].Y_Len - Moved_Len;
-
-       Temp1.X = 0;// + Step +
-       Temp1.Y = Prog_Para.Area[Area_No].Y_Len - Moved_Len - (Prog_Para.Area[Area_No].Y_Len - Moved_Len) / STRETCH_RATIO;
-
-       Copy_Filled_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, Moved_Len - Last_Moved_Len, &Show_Data, &Temp0,0);
-
-       Temp0.X = 0;
-       Temp0.Y = 0;
-
-           if(Prog_Para.Area[Area_No].Y_Len > Moved_Len)
-         Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp1, Prog_Para.Area[Area_No].X_Len, (Prog_Para.Area[Area_No].Y_Len - Moved_Len) / STRETCH_RATIO,  1, STRETCH_RATIO, &Show_Data, &Temp0);
-   }
+     Copy_Stretch_Rect(&Show_Data_Bak, Area_No, &Temp0, Prog_Para.Area[Area_No].X_Len, 1,  1, STRETCH_RATIO, &Show_Data, &Temp1);
+    }
 }
 
 //逐点淡入

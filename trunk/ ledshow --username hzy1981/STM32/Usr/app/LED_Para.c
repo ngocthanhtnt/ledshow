@@ -35,20 +35,36 @@ INT8U Get_Show_Para_Len(INT8U Type)
 {
   if(Type EQ SHOW_PIC)
     return sizeof(S_Pic_Para) - CHK_BYTE_LEN;
+#if CLOCK_EN
+#if CLOCK_SHOW_EN
   else if(Type EQ SHOW_CLOCK)
     return sizeof(S_Clock_Para) - CHK_BYTE_LEN;
+#endif
+#if TIME_SHOW_EN
   else if(Type EQ SHOW_TIME)
     return sizeof(S_Time_Para) - CHK_BYTE_LEN;
+#endif
+#if TIMER_SHOW_EN
   else if(Type EQ SHOW_TIMER)
     return sizeof(S_Timer_Para) - CHK_BYTE_LEN;
-  else if(Type EQ SHOW_TEMP)
-    return sizeof(S_Temp_Para) - CHK_BYTE_LEN;
+#endif
+#if LUN_SHOW_EN
   else if(Type EQ SHOW_LUN)
     return sizeof(S_Lun_Para) - CHK_BYTE_LEN;
+#endif
+#endif
+#if TEMP_SHOW_EN
+  else if(Type EQ SHOW_TEMP)
+    return sizeof(S_Temp_Para) - CHK_BYTE_LEN;
+#endif
+#if HUMIDITY_SHOW_EN
   else if(Type EQ SHOW_HUMIDITY)
     return sizeof(S_Humidity_Para) - CHK_BYTE_LEN;
+#endif
+#if NOISE_SHOW_EN
   else if(Type EQ SHOW_NOISE)
     return sizeof(S_Noise_Para) - CHK_BYTE_LEN;
+#endif
   else
   {
     ASSERT_FAILED();

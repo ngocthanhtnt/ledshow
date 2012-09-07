@@ -16,6 +16,8 @@
 #define SNOW_RATIO 4 //飘雪的数据比例
 #define PI 3.1415926535
 
+#define STRETCH_RATIO 2//拉伸比例
+
 #define MAX_STEP_NUM 100
 
 #define RT_PLAY_FLAG 0x35

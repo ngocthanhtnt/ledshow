@@ -406,7 +406,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   INT16U Len;//,SNum;
   INT16S Len0,Len1;
   INT16U X,Y,Width,Height;
-  INT8U Re = 1;
+  INT8U Re = 1, File_Flag = 0;
   //INT8U File_No;
   //INT8U Counts;
 
@@ -482,8 +482,8 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
        Prog_Status.File_Para[Area_No].Pic_Para.Flag != SHOW_NULL &&\
        Chk_File_Para_HT_Sum((U_File_Para *)&Prog_Status.File_Para[Area_No]))
     {
-        debug("the same as last file ,no update");
-       Len = 1;
+        debug("the same as last file");
+       	File_Flag = 1;
     }
     else
     {
@@ -523,22 +523,27 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
     #else
         Len = Read_File_Para(Prog_No, Area_No, Prog_Status.Area_Status[Area_No].File_No,\
                        Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
+    #endif
 
         if(Len > 0)
         {
             Len1 = Get_Show_Para_Len(Pub_Buf[0]);
-            mem_cpy((void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, Pub_Buf, Len1, (void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, sizeof(U_File_Para));
+			if(Len1 > 0)
+			{
+	            mem_cpy((void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, Pub_Buf, Len1, (void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, sizeof(U_File_Para));
+	
+	            Clear_Area_Data(&Show_Data_Bak, Area_No);
+	            if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check)
+	            {
+	              Draw_Border(&Show_Data_Bak, Area_No, Pub_Buf + Len1, 0, 0);
+	            }
 
-            Clear_Area_Data(&Show_Data_Bak, Area_No);
-            if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check)
-            {
-              Draw_Border(&Show_Data_Bak, Area_No, Pub_Buf + Len1, 0, 0);
-            }
+				File_Flag = 1;
+			}
         }
-    #endif
     }
 
-    if(Len EQ 0) //读不出来则继续读下一个文件参数
+    if(File_Flag EQ 0) //读不出来则继续读下一个文件参数
     {
       ASSERT_FAILED();
 

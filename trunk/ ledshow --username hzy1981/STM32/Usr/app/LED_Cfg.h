@@ -68,6 +68,7 @@
 #define MAX_BORDER_POINTS (40*8) //边框数据大小
 //#endif
 
+
 #if QT_EN
 #define ASSERT_EN 1
 #include "QT_SIM.h"
@@ -127,6 +128,7 @@
 */
 #include "STM32.h"
 
+#define ASSERT_EN 1
 
 #if defined(CARD_A) || defined(CARD_B)
 #ifdef CARD_A

@@ -389,7 +389,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 49
-  ,{&Move_Left_Compress_0, H_MODE, 1
+  ,{&Move_Left_Compress_0, H_MODE, 2/STRETCH_RATIO
 #if QT_EN
    ,"左矢量压入"
 #endif
@@ -397,7 +397,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 50
-  ,{&Move_Right_Compress_0, H_MODE, 1
+  ,{&Move_Right_Compress_0, H_MODE, 2/STRETCH_RATIO
 #if QT_EN
    ,"右矢量压入"
 #endif
@@ -405,7 +405,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 51
-  ,{&Move_Up_Compress_0, V_MODE, 1
+  ,{&Move_Up_Compress_0, V_MODE, 2/STRETCH_RATIO
 #if QT_EN
    ,"上矢量压入"
 #endif
@@ -413,7 +413,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 52
-  ,{&Move_Down_Compress_0, V_MODE, 1
+  ,{&Move_Down_Compress_0, V_MODE, 2/STRETCH_RATIO
 #if QT_EN
    ,"下矢量压入"
 #endif
@@ -421,7 +421,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 53
-  ,{&Move_Left_Compress_1, H_MODE, 1
+  ,{&Move_Left_Compress_1, H_MODE, 2/STRETCH_RATIO
 #if QT_EN
    ,"左分散压入"
 #endif
@@ -429,7 +429,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 54
-  ,{&Move_Right_Compress_1, H_MODE, 1
+  ,{&Move_Right_Compress_1, H_MODE, 2/STRETCH_RATIO
 #if QT_EN
    ,"右分散压入"
 #endif
@@ -437,7 +437,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 55
-  ,{&Move_Up_Compress_1, V_MODE, 1
+  ,{&Move_Up_Compress_1, V_MODE, 2/STRETCH_RATIO
 #if QT_EN
    ,"上分散压入"
 #endif
@@ -445,7 +445,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 56
-  ,{&Move_Down_Compress_1, V_MODE, 1
+  ,{&Move_Down_Compress_1, V_MODE, 2/STRETCH_RATIO
 #if QT_EN
    ,"下分散压入"
 #endif
