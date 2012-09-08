@@ -1920,6 +1920,9 @@ INT8U Scan_Interface_Test(void)
   INT8U i;
   static INT8U Enter_Flag = 0;
 
+  if(Screen_Status.Encryption_Err_Flag) //加密数据错误不输出，这样在生产环节防止漏设加密数据
+    return 0;
+
   if(Enter_Flag EQ 0xA5)
     return 0;
 

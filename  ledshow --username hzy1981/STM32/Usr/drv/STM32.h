@@ -2,7 +2,7 @@
 #define STM32_H
 
 //#if QT_EN == 0
-//#include "LED_Cfg.h"
+#include "LED_Cfg.h"
 //#include "BitBandIO.h"
 
 #undef EXT
@@ -25,7 +25,13 @@
 #define SELF_TEST_STATUS 0x01//×Ô¼ì×´Ì¬
 #define FAC_STATUS       0x02//¹¤³§×´Ì¬
 
+#if ASSERT_EN
 #define debug OS_Debug_Print
+#else
+#define debug(...)
+#endif
+
+#define _debug OS_Debug_Print
 
 #define SPI_FLASH_CS_HIGH() SET_FLASH_CS(1)
 #define SPI_FLASH_CS_LOW() SET_FLASH_CS(0)
@@ -251,7 +257,7 @@ EXT void RST_Periph(void);
 EXT void Com_Init(void);
 EXT INT8U SPI1_ReadWrite(INT8U writedat);
 EXT INT8U SPI2_ReadWrite(INT8U writedat);
-EXT void Soft_Rest(void);
+EXT void Soft_Reset(void);
 EXT void NVIC_Configuration(void);
 EXT void TIM2_Configuration(void);
 EXT void TIM4_Configuration(void);

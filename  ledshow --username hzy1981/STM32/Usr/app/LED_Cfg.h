@@ -58,7 +58,7 @@
 #define OE_PWM_FREQ 1000 //1KPWM频率
 #define COMPANY_NAME "AS"
 
-#define APP_ADDRESS_OFF 0x2000 //应用程序地址偏移
+#define APP_ADDRESS_OFF 0x1000 //应用程序地址偏移
 
 //#define APP_NAME "大屏LED播放系统"
 #define MAX_PROG_NUM 16 //最大节目数
@@ -126,16 +126,17 @@
 #else //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 0
 */
-#include "STM32.h"
 
 #define ASSERT_EN 1
 
-#if defined(CARD_A) || defined(CARD_B)
-#ifdef CARD_A
-#define CARD_TYPE CARD_A0
+#include "STM32.h"
+
+#if defined(CARD_A)
+#define CARD_TYPE CARD_A1
+#include "LED_ABX_Cfg.h"
+#include "LED_ABX_Drv.h"
 #elif defined(CARD_B)
 #define CARD_TYPE CARD_B0
-#endif
 #include "LED_ABX_Cfg.h"
 #include "LED_ABX_Drv.h"
 #elif defined(CARD_C)

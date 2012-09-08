@@ -172,6 +172,7 @@ void Screen_Lightness_Proc(void)
 //内部温度传感器的温度处理
 void Screen_Temperature_Proc(void)
 {
+#if TEMP_SHOW_EN
   INT32S TempCumu;
   INT8U i;
   static S_Int32U Sec = {CHK_BYTE, 0xFFFFFFFF, CHK_BYTE};
@@ -203,7 +204,7 @@ void Screen_Temperature_Proc(void)
 	}
   }
 //INT16U GetADCValue(INT8U ADC_Channel)//ADC_Channel_x 0~17
-
+#endif
 }
 
 //开关机控制
@@ -354,11 +355,81 @@ void Screen_Check_Lock_Date() //检查是否在有限显示日期内
      RT_Play_Status_Exit();
 	 if(Screen_Status.Lock_Date_Flag EQ LOCK_DATE_FLAG)//退出锁定状态，复位！！！
      {
-	   Soft_Rest();
+	   Soft_Reset();
 	   //Screen_Status.Lock_Date_Flag = 0;
 	 }
    }
 #endif
+}
+
+
+INT32U Get_Encryption_Code(INT32U Serial0, INT32U Serial1, INT32U Serial2)
+{
+  INT32U Re;
+
+  Re =  (((Serial0 >> 16) + (Serial0 << 16) + 0xA5127892) ^ 0x55AA7788) +\
+        (((Serial1 >> 24) + (Serial1 << 8) + 0x98765432) ^ 0x34678924) +\
+		(((Serial2 * 12) >> 4) ^ 0x112233);
+
+  return Re;
+}
+
+//加密
+void Encrypt(void)
+{
+  INT32U  Dev_Serial0, Dev_Serial1, Dev_Serial2;
+  INT32U Data; 
+  INT8U Re = 1;
+
+	Dev_Serial0 = *(INT32U *)(0x1FFFF7E8);
+	Dev_Serial1 = *(INT32U *)(0x1FFFF7EC);
+	Dev_Serial2 = *(INT32U *)(0x1FFFF7F0);
+
+	Data = Get_Encryption_Code(Dev_Serial0, Dev_Serial1, Dev_Serial2);
+
+	Write_Storage_Data(SDI_ENCRYPTION_DATA, &Data, sizeof(Data));
+	Write_Storage_Data(SDI_ENCRYPTION_DATA0, &Data, sizeof(Data));
+	Write_Storage_Data(SDI_ENCRYPTION_DATA1, &Data, sizeof(Data));
+	Write_Storage_Data(SDI_ENCRYPTION_DATA2, &Data, sizeof(Data));
+}
+
+void Encrypt_Chk(void)
+{
+  INT32U  Dev_Serial0, Dev_Serial1, Dev_Serial2;
+  INT32U Data0,Data1; 
+  INT8U Re = 1;
+
+  Dev_Serial0 = *(INT32U *)(0x1FFFF7E8);
+  Dev_Serial1 = *(INT32U *)(0x1FFFF7EC);
+  Dev_Serial2 = *(INT32U *)(0x1FFFF7F0);
+
+  Data0 = Get_Encryption_Code(Dev_Serial0, Dev_Serial1, Dev_Serial2);
+
+  if(Read_Storage_Data(SDI_ENCRYPTION_DATA, (INT8U *)&Data1,(INT8U *)&Data1, sizeof(Data1)) EQ 0)
+  {
+    if(Read_Storage_Data(SDI_ENCRYPTION_DATA0, (INT8U *)&Data1,(INT8U *)&Data1, sizeof(Data1)) EQ 0)
+	{
+      if(Read_Storage_Data(SDI_ENCRYPTION_DATA1, (INT8U *)&Data1,(INT8U *)&Data1, sizeof(Data1)) EQ 0)
+	  {
+		 Read_Storage_Data(SDI_ENCRYPTION_DATA2, (INT8U *)&Data1,(INT8U *)&Data1, sizeof(Data1));
+	  }
+	}
+  }
+
+  if(Data0 != Data1) //加密数据不对。不进入显示流程了
+  {
+    Screen_Status.Encryption_Err_Flag = 1;
+
+	 while(1)
+	 {
+       Screen_Com_Proc(); //屏幕通信处理,还可以继续接收
+	   Clr_Watch_Dog();
+	   debug("ecctyption data error!\r\n");
+	 }
+  }
+
+
+
 }
 
 void Screen_Proc(void)

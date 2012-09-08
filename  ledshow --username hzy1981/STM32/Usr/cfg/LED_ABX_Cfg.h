@@ -71,16 +71,16 @@
 //----根据不同的屏幕和硬件配置下列项目
 #ifdef CARD_A
 #define MAX_POINTS (192*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
-#define MAX_STORA_BLOCK_NUM  2000 //最大存储块数
+#define MAX_STORA_BLOCK_NUM  1600 //最大存储块数
 #define FONT_NUM 1 //内嵌字体个数
 #define DATA_FLASH_SIZE 1000000 //dataflash大小
 
-#define IN_SPEC_EFFECT_NUM 53 //进入特效个数
-#define OUT_SPEC_EFFECT_NUM 26 //退出特效个数
+#define IN_SPEC_EFFECT_NUM 35 //进入特效个数
+#define OUT_SPEC_EFFECT_NUM 25 //退出特效个数
 
 #elif defined(CARD_B)
 #define MAX_POINTS (512*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
-#define MAX_STORA_BLOCK_NUM  4000 //最大存储块数
+#define MAX_STORA_BLOCK_NUM  3200 //最大存储块数
 #define FONT_NUM 2 //内嵌字体个数
 #define DATA_FLASH_SIZE 2000000	//dataflash大小
 
@@ -103,7 +103,7 @@
 
 #ifdef CARD_A //A类卡，因为程序空间问题，没有农历显示
 #if CLOCK_EN
-#define CLOCK_SHOW_EN  1 //表盘显示使能
+#define CLOCK_SHOW_EN  0 //表盘显示使能
 #define TIME_SHOW_EN   1 //时间显示使能
 #define TIMER_SHOW_EN  1 //定时显示使能
 #define LUN_SHOW_EN    0 //农历显示使能

@@ -34,6 +34,7 @@ typedef struct
 
 const S_Data_Para_Storage_Info Data_Para_Storage[] =
 {
+  {SDI_ENCRYPTION_DATA, ENCRYPTION_DATA_LEN, 1}, 
   //屏幕参数以及备份
   {SDI_SCREEN_PARA, SCREEN_PARA_LEN, 1},
 #ifdef SDI_SCREEN_PARA_BK0 
@@ -54,6 +55,8 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
 #ifdef SDI_PROG_NUM_BK1
   {SDI_PROG_NUM_BK1, PROG_NUM_LEN, 1},
 #endif 
+
+  {SDI_ENCRYPTION_DATA0, ENCRYPTION_DATA_LEN, 1}, 
 
   //节目参数及备份
   {SDI_PROG_PARA, PROG_PARA_LEN, MAX_PROG_NUM},
@@ -77,7 +80,9 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
   {SDI_FILE_PARA, FILE_PARA_LEN, MAX_PROG_NUM * MAX_AREA_NUM * MAX_FILE_NUM},
 #ifdef  SDI_FILE_PARA_BK0
   {SDI_FILE_PARA_BK0,  FILE_PARA_LEN, MAX_PROG_NUM * MAX_AREA_NUM * MAX_FILE_NUM},
-#endif  
+#endif
+
+  {SDI_ENCRYPTION_DATA1, ENCRYPTION_DATA_LEN, 1},  
 /*
   //文件边框数据
    {SDI_FILE_BORDER, BORDER_DATA_LEN, MAX_PROG_NUM * MAX_AREA_NUM * MAX_FILE_NUM},
@@ -104,6 +109,8 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
                                    
   //节目显示数据
   {SDI_SHOW_DATA, BLOCK_DATA_LEN, MAX_STORA_BLOCK_NUM},
+
+  {SDI_ENCRYPTION_DATA2, ENCRYPTION_DATA_LEN, 1},
 
   {SDI_TEST_DATA, TEST_DATA_LEN, 1}
 };
@@ -456,12 +463,15 @@ void Check_Storage_Size(void)
 {
   INT32U Addr;
 
-  Addr = Get_Storage_Data_Len(SDI_TEST_DATA); //获取最后一个数据的地址
+  Addr = Get_Storage_Data_Off(SDI_TEST_DATA); //获取最后一个数据的地址
 
   if(Addr + 10 >= DATA_FLASH_SIZE) //如果大于Flash的大小
   {
     ASSERT_FAILED();
-    while(1);
+    while(1)
+	{
+	debug("mem size exceed：%d > %d", Addr + 10, DATA_FLASH_SIZE);
+	}
   }
 }
 

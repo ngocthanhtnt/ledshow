@@ -333,7 +333,7 @@ INT16U Read_Screen_Para_Frame_Proc(INT16U Cmd, INT8U *pDst, INT8U *pDst_Start, I
     {
       mem_cpy(pDst, (INT8U *)&Screen_Para.Base_Para, sizeof(Screen_Para) - CHK_BYTE_LEN, pDst_Start, DstLen);//基本参数
           return sizeof(Screen_Para) - CHK_BYTE_LEN;
-  }
+  }/*
   else if(Cmd EQ C_SCREEN_BASE_PARA)
   {
     mem_cpy(pDst, (INT8U *)&Screen_Para.Base_Para, sizeof(Screen_Para.Base_Para), pDst_Start, DstLen);//基本参数
@@ -368,7 +368,7 @@ INT16U Read_Screen_Para_Frame_Proc(INT16U Cmd, INT8U *pDst, INT8U *pDst_Start, I
   {
     mem_cpy(pDst, (INT8U *)&Prog_Num.Num, sizeof(Prog_Num.Num), pDst_Start, DstLen);
     return sizeof(Prog_Num.Num);
-  }
+  }*/
   else
   {
     ASSERT_FAILED();
@@ -512,6 +512,8 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
   INT8U RW_Flag; //读写标志
   INT16U i;
 
+
+  Clr_Watch_Dog();
 
   Re = 1;
   //pData = Frame + FDATA;
@@ -666,7 +668,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 		  }
 		  else if(Temp EQ 0x01)
 		  {
-	        Soft_Rest(); //软件复位
+	        Soft_Reset(); //软件复位
 		  }
 	#if QT_EN == 0
 		  else if(Temp EQ 0x02) //固件升级--复位进入升级程序
@@ -686,11 +688,16 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 			  else
 			    BKP_WriteBackupRegister(BKP_DR3, 0x01);
 				
-		      Soft_Rest(); //软件复位		 
+		      Soft_Reset(); //软件复位		 
 		  }
 		  else if(Temp EQ 0x04)	//进入输出接口的测试状态
 		  {
 			 Scan_Interface_Test();
+		  }
+		  else if(Temp EQ 0x05) //
+		  {
+		  	Encrypt();
+		  	Soft_Reset();
 		  } 
 	#endif
 		  return Len;
@@ -854,7 +861,7 @@ void Chk_Exit_Test_Scan_Mode()
 	   {
 		 if(RCV_DATA_BUF[FDATA] EQ 0x01) //退出
 		 {
-		   Soft_Rest(); //软件复位
+		   Soft_Reset(); //软件复位
 		 }
 	   }
 	   Screen_Status.Rcv_Posi = 0;
