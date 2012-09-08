@@ -45,7 +45,7 @@ typedef char INT8S;
 #define START_SCAN_TIMER()
 #define STOP_SCAN_TIMER()
 
-#define Soft_Rest()
+#define Soft_Reset()
 #define Clr_Watch_Dog()
 /*
 #define FILE_T char *

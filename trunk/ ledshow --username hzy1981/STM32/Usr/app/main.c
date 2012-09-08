@@ -86,7 +86,7 @@ void Chk_Main_Stack(void)
 }
 
 extern const char version[];
-
+//注意修改了起始地址后要改宏APP_ADDRESS_OFF,否则程序跑不起来！！！
 int main(void)
 {
   __set_MSP((INT32U)(&Main_Stack.Stack[MAIN_STACK_SIZE - 1])); //修改为人工堆栈方式
@@ -127,13 +127,13 @@ int main(void)
 
   SET_STATUS_LED_ON(); //打开LED状态灯
 
-  //Scan_Interface_Test();
+  //Encrypt_Chk();
 
   while(1)
   {
     Screen_Test(); //屏幕检测
 
-	Fac_Status_Self_Test(); //硬件自检
+	//Fac_Status_Self_Test(); //硬件自检
 
 #if SHELL_EN
     Shell_Proc();

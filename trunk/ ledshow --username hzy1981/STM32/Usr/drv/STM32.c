@@ -1003,7 +1003,7 @@ void Com_Init(void)
 //	Com_Send_Byte(CH_COM, 0x88);
 }
 
-void Soft_Rest(void) //软件复位
+void Soft_Reset(void) //软件复位
 {
   Delay_ms(3);
   *((INT32U *)0xE000ED0C) = 0x05fa0004; //实现系统复位
@@ -1161,13 +1161,20 @@ INT8U Chk_Test_Key_Down(void)
 //返回错误代码,0表示没有错误
 //第0位,存储器错误
 //第1位,时钟错误
-//第2位,
+//第2位,加密数据错误
 INT16U Self_Test(void)
 {
   INT32U Data = 0x55AA5AA5;
   INT8U Re = 1;
   INT16U ErrFlag = 0;
   S_Time TempTime,TempTime1;
+
+  if(Screen_Status.Encryption_Err_Flag)	//加密数据错误后不能进入自检状态，这样生产自检环节就可检测出来
+  { 
+    debug("加密数据检测失败\r\n"); 
+	Re = 0;
+	ErrFlag	|= 0x03;
+  }
 
   debug("-----------系统自检开始---------------");
 #if QT_EN EQ 0
@@ -1338,6 +1345,7 @@ void IWDG_Init(void)
 
 void ADC_configuration(void)
 {
+#if TEMP_SHOW_EN
 	ADC_InitTypeDef ADC_InitStructure;
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
@@ -1367,10 +1375,12 @@ void ADC_configuration(void)
 	ADC_RegularChannelConfig(ADC1,ADC_Channel_16,1,ADC_SampleTime_239Cycles5);
 	ADC_SoftwareStartConvCmd(ADC1,ENABLE);//使能指定的ADC的软件转换启动功能
 	*/
+#endif
 }
 
 INT16S GetInterTemperature(void)//ADC_Channel_x 0~17
 {
+#if TEMP_SHOW_EN
 	INT16U adc_value;// VrefintAD;
 	INT16S temp;
 /*
@@ -1392,6 +1402,9 @@ INT16S GetInterTemperature(void)//ADC_Channel_x 0~17
 	temp = (INT16S)((1.43 - (float)adc_value * 3.3 / 4096) * 1000 / 4.35 + 25);
 
 	return temp * 10; //单位为0.1度
+#else
+  return 0;
+#endif
 }
 
 #endif

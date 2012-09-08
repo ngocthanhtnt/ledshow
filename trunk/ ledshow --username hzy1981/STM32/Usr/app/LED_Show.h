@@ -274,6 +274,7 @@ typedef struct
 
   INT8U Self_Test_Flag;
   INT8U Scan_Mode_Test_Flag;
+  INT8U Encryption_Err_Flag; //º”√‹¥ÌŒÛ–≈œ¢
 
   INT32U Lock_Date_Flag;
   INT8U Tail;  

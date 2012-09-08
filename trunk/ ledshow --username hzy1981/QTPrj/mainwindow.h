@@ -100,6 +100,7 @@ private:
     QAction *actionDel;
     QAction *actionPreview;
     QAction *actionScreenPreiew;
+    QAction *actionTestCard;
     QAction *actionModiScreenPara;
     QAction *actionUpdateFirmware;
     QAction *actionUDisk;
@@ -126,6 +127,7 @@ public slots:
     void previewProc();
     void previewTimerProc();
     void comStatusShow();
+    void testCard(); //≤‚ ‘øÿ÷∆ø®
 public:
     QAction *actionComStatus;
 

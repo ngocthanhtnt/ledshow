@@ -183,7 +183,8 @@ typedef struct
     //以太网
     INT32U IP; //IP地址
     INT16U Port; //端口
-    INT32U Mac; //Mac地址
+    INT32U Mac0; //Mac地址
+    INT32U Mac1;
     INT32U Mask; //子网掩码
     INT32U Gate; //网关
     INT8U Mode; //0固定ip方式，1自动获取方式
@@ -205,9 +206,11 @@ typedef struct
 
 typedef struct
 {
-    INT32U Lock_Date_Flag; //有效标志
+    INT32U Lock_Date_Flag; //时间锁定标志
+	INT32U Lock_Times_Flag; //次数锁定标志
 
-    INT8U Time[3]; //日、月、年 
+	INT8U Times; //启动次数设置,暂时没有启用，备用
+    INT8U Time[3]; //日、月、年
 }S_Lock_Date;
 
 //屏幕参数
@@ -758,6 +761,7 @@ typedef struct
 #define PROG_NUM_LEN    (sizeof(S_Prog_Num)-CHK_BYTE_LEN)
 #define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN + BORDER_DATA_LEN)
 #define BLOCK_INDEX_LEN (sizeof(S_Prog_Block_Index) - CHK_BYTE_LEN)
+#define ENCRYPTION_DATA_LEN 4
 //#define BLOCK_DATA_LEN 249
 #define BLOCK_HEAD_DATA_LEN 9
 #define BLOCK_SHOW_DATA_LEN (BLOCK_DATA_LEN -BLOCK_HEAD_DATA_LEN)

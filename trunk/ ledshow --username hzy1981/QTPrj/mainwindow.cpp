@@ -613,6 +613,11 @@ void MainWindow::setupCtrlActions()
     connect(a, SIGNAL(triggered()), this, SLOT(previewScreen()));
     menu->addAction(a);
 
+    actionTestCard = a = new QAction(tr("生产检测"), this);
+    a->setPriority(QAction::LowPriority);
+    //a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(testCard()));
+    tb->addAction(a);
 }
 
 void MainWindow::setupToolActions()
@@ -1378,6 +1383,78 @@ void MainWindow::previewProc()
   }
 
   //mmtimer->start();
+}
+
+void MainWindow::testCard()
+{
+  INT8U dataBuf[10];
+  INT8U Temp[20];
+  int len;
+
+  loop:
+  QDateTime dateTime = QDateTime::currentDateTime(); //当前时间s
+
+  dataBuf[T_YEAR] = dateTime.date().year() - 2000;
+  dataBuf[T_MONTH] = dateTime.date().month();
+  dataBuf[T_DATE] = dateTime.date().day();
+  dataBuf[T_WEEK] = dateTime.date().dayOfWeek();
+  if(dataBuf[T_WEEK] EQ 7)
+      dataBuf[T_WEEK] = 0;
+  dataBuf[T_HOUR] = dateTime.time().hour();
+  dataBuf[T_MIN] = dateTime.time().minute();
+  dataBuf[T_SEC] = dateTime.time().second();
+
+  QString screenStr = w->screenArea->getCurrentScreenStr();
+
+  //发送系统校时命令
+  makeProtoBufData(screenStr, COM_MODE, C_SCREEN_TIME | WR_CMD, (char *)dataBuf, 7);
+
+  bool re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+  if(re EQ false)
+  {
+      QMessageBox::critical(w, tr("提示"),
+                             tr("控制卡自检失败：设置系统时间失败"),tr("确定"));
+      return;
+
+  }
+
+  //发送硬件自检命令
+    dataBuf[0] = 0x03; //进入硬件自检
+
+    makeProtoBufData(screenStr, COM_MODE, C_SELF_TEST | WR_CMD, (char *)dataBuf, 1);
+
+    re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+    if(re EQ false)
+    {
+        QMessageBox::critical(w, tr("提示"),
+                               tr("控制卡自检失败：硬件自检失败!"),tr("确定"));
+        return;
+
+    }
+
+    //发送接口自检命令
+    dataBuf[0] = 0x04; //进入扫描接口自检
+
+    makeProtoBufData(screenStr, COM_MODE, C_SELF_TEST | WR_CMD, (char *)dataBuf, 1);
+
+    re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+    if(re EQ false)
+    {
+      QMessageBox::critical(w, tr("提示"),
+                             tr("控制卡自检失败：发送接口自检命令没有应答"),tr("确定"));
+      return;
+
+    }
+    else
+    {
+       re = QMessageBox::information(w, tr("提示"),
+                               tr("请逐个接口接入显示屏幕，观察屏幕显示是否正确，如显示正确，则控制卡自检成功!"),tr("进入下一个检测"), tr("退出检测流程"));
+
+       if(re EQ 0)
+           goto loop;
+       else
+           return;
+    }
 }
 
 void traversalControl(const QObjectList& q)

@@ -257,7 +257,8 @@ INT8U setScreenParaToSettings(QString screenStr, S_Screen_Para &screenPara)
    settings.setValue("baud", screenPara.COM_Para.Baud);
 
    settings.setValue("ip", screenPara.ETH_Para.IP);
-   settings.setValue("mac", screenPara.ETH_Para.Mac);
+   settings.setValue("mac0", screenPara.ETH_Para.Mac0);
+   settings.setValue("mac1", screenPara.ETH_Para.Mac1);
    settings.setValue("mask", screenPara.ETH_Para.Mask);
 
    settings.setValue("dataPolarity", screenPara.Scan_Para.Data_Polarity);
@@ -334,7 +335,8 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     screenPara.COM_Para.Baud = (INT8U)settings.value("baud").toInt();
 
     screenPara.ETH_Para.IP = settings.value("ip").toInt();
-    screenPara.ETH_Para.Mac = settings.value("mac").toInt();
+    screenPara.ETH_Para.Mac0 = settings.value("mac0").toInt();
+    screenPara.ETH_Para.Mac1 = settings.value("mac1").toInt();
     screenPara.ETH_Para.Mask = settings.value("mask").toInt();
 
     screenPara.Scan_Para.Data_Polarity = settings.value("dataPolarity").toInt(); //数据级性
