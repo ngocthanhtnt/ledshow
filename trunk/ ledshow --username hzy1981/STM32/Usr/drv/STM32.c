@@ -1005,7 +1005,7 @@ void Com_Init(void)
 
 void Soft_Reset(void) //软件复位
 {
-  Delay_ms(3);
+  Delay_ms(5);
   *((INT32U *)0xE000ED0C) = 0x05fa0004; //实现系统复位
 }
 
@@ -1166,14 +1166,16 @@ INT16U Self_Test(void)
 {
   INT32U Data = 0x55AA5AA5;
   INT8U Re = 1;
-  INT16U ErrFlag = 0;
+  INT16U ErrFlag = 0;// i;
   S_Time TempTime,TempTime1;
+
+  Screen_Status.Self_OC_Flag = CLOSE_FLAG; //先关闭显示
 
   if(Screen_Status.Encryption_Err_Flag)	//加密数据错误后不能进入自检状态，这样生产自检环节就可检测出来
   { 
     debug("加密数据检测失败\r\n"); 
 	Re = 0;
-	ErrFlag	|= 0x03;
+	ErrFlag	|= 0x04;
   }
 
   debug("-----------系统自检开始---------------");
@@ -1197,6 +1199,16 @@ INT16U Self_Test(void)
 
 	//Test_LED_Flash(1, 500);
   }
+/*
+  memset(Show_Data_Bak.Color_Data, 0xAA, sizeof(Show_Data_Bak.Color_Data));
+  for(i = 0; i < DATA_FLASH_SIZE / sizeof(Show_Data.Color_Data); i ++)
+  {
+    Write_PHY_Mem(i * sizeof(Show_Data_Bak.Color_Data), Show_Data_Bak.Color_Data, sizeof(Show_Data_Bak.Color_Data));
+	Read_PHY_Mem(i * sizeof(Show_Data.Color_Data), Show_Data.Color_Data, sizeof(Show_Data.Color_Data), Show_Data.Color_Data, sizeof(Show_Data.Color_Data)); 
+    if(memcmp(Show_Data.Color_Data, Show_Data_Bak.Color_Data, sizeof(Show_Data.Color_Data)) != 0)
+	  ErrFlag	|= 0x01;	  
+  }
+*/
   //-----------------------------------------
 
   //--------对时钟的测试---------------------
@@ -1212,7 +1224,7 @@ INT16U Self_Test(void)
 #endif
   }
  
-  if(Re > 0 && TempTime.Time[T_SEC] != TempTime1.Time[T_SEC])
+  if(Re > 0 && (((TempTime.Time[T_SEC] + 1) % 60)!= TempTime1.Time[T_SEC]))
   {
     debug("时钟自检成功\r\n");
     Re = Re & 1;
@@ -1252,6 +1264,8 @@ INT16U Self_Test(void)
 	debug("外围器件自检成功！\r\n");
 
 #endif
+
+  Screen_Status.Self_OC_Flag = OPEN_FLAG; //先关闭显示
 
   return ErrFlag;
 }

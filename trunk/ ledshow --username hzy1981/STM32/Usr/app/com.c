@@ -46,7 +46,7 @@ INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len)
   
   Len = Frame[FLEN] + (INT16U)Frame[FLEN + 1] * 256; //帧长
 
-  if(Len!= Frame_Len || Frame[Len - 1] != FRAME_TAIL) //尾正确
+  if(Len > Frame_Len || Frame[Len - 1] != FRAME_TAIL) //尾正确
   {
     ASSERT_FAILED();
     return 0;
@@ -651,7 +651,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	  if(Temp EQ 0x03) //硬件自检命令
 	  {
 	    Frame[FDATA] = Self_Test();
-	    Len = 1;
+		Len = 1;
 		Re = 1;
 	  }
 	  else
