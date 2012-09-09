@@ -1914,6 +1914,45 @@ void Scan_Mode_Test(INT8U Mode)
   }
 }
 
+void Set_Scan_Interface_Test_Para(INT16U Width)
+{
+  INT8U i;
+
+  Screen_Status.Color_Num = 2;
+  Screen_Status.Lightness = 7; //中间亮度
+
+  Screen_Para.Base_Para.Width = Width;
+  Screen_Para.Base_Para.Height = MAX_SCAN_BLOCK_NUM * 16;
+  Screen_Para.Base_Para.Color = 0x03;
+
+  if(Width EQ 64)
+  {
+    //08接口的扫描
+	Screen_Para.Scan_Para.Rows = 16;
+	Screen_Para.Scan_Para.Rows_Fold	= 0x00;
+	Screen_Para.Scan_Para.Cols_Fold	= 0x00;
+	Screen_Para.Scan_Para.Direct = 0x02;
+  }
+  else
+  {
+    //12接口
+	Screen_Para.Scan_Para.Rows = 4;
+	Screen_Para.Scan_Para.Rows_Fold	= 0x03;
+	Screen_Para.Scan_Para.Cols_Fold	= 0x01;
+	Screen_Para.Scan_Para.Direct = 0x02;
+  }
+
+  SET_SUM(Screen_Para);
+
+  Clr_Watch_Dog();
+
+  memset(Show_Data.Color_Data, 0x00, sizeof(Show_Data.Color_Data)); 
+  Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+
+  for(i = 0; i < MAX_SCAN_BLOCK_NUM ; i ++)
+    LED_Print(FONT0, 0x03, &Show_Data, 0, 0, i * 16, "%d", i);
+}
+
 //扫描接口测试
 INT8U Scan_Interface_Test(void) 
 {
@@ -1929,46 +1968,26 @@ INT8U Scan_Interface_Test(void)
   Enter_Flag = 0xA5;
  //先设置好实时显示区域和显示数据
   
-  Screen_Para.Base_Para.Width = 16;
-  Screen_Para.Base_Para.Height = MAX_SCAN_BLOCK_NUM * 16;
-  Screen_Para.Base_Para.Color = 0x03;
-  Screen_Status.Color_Num = 2;
-
-  SET_SUM(Screen_Para);
-   
-  Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-
-  for(i = 0; i < MAX_SCAN_BLOCK_NUM ; i ++)
-    LED_Print(FONT0, 0x03, &Show_Data, 0, 0, i * 16, "%d", i);
-
   while(1)
   {
 	RT_Play_Status_Enter(2);
 
-    //08接口的扫描
-	Screen_Para.Scan_Para.Rows = 16;
-	Screen_Para.Scan_Para.Rows_Fold	= 0x00;
-	Screen_Para.Scan_Para.Cols_Fold	= 0x00;
-	Screen_Para.Scan_Para.Direct = 0x02;
-	SET_SUM(Screen_Para);
+   //08接口
+    Set_Scan_Interface_Test_Para(64);
 
-    for(i = 0; i < 5; i ++)
+    for(i = 0; i < 50; i ++)
 	{
-		Delay_ms(100);
+		Delay_ms(10);
 		Screen_Com_Proc();
 		Clr_Watch_Dog();
 	}
  
 	//12接口的扫描
-	Screen_Para.Scan_Para.Rows = 4;
-	Screen_Para.Scan_Para.Rows_Fold	= 0x03;
-	Screen_Para.Scan_Para.Cols_Fold	= 0x01;
-	Screen_Para.Scan_Para.Direct = 0x02;
-	SET_SUM(Screen_Para);
+	Set_Scan_Interface_Test_Para(32);
 
-    for(i = 0; i < 5; i ++)
+    for(i = 0; i < 50; i ++)
 	{
-		Delay_ms(100);
+		Delay_ms(10);
 		Screen_Com_Proc();
 		Clr_Watch_Dog();
 	}

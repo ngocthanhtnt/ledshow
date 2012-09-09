@@ -127,7 +127,7 @@ int main(void)
 
   SET_STATUS_LED_ON(); //´ò¿ªLED×´Ì¬µÆ
 
-  //Encrypt_Chk();
+  Encrypt_Chk();
 
   while(1)
   {

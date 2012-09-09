@@ -1413,7 +1413,7 @@ void MainWindow::testCard()
   if(re EQ false)
   {
       QMessageBox::critical(w, tr("提示"),
-                             tr("控制卡自检失败：设置系统时间失败"),tr("确定"));
+                             tr("控制卡自检失败:设置系统时间失败"),tr("确定"));
       return;
 
   }
@@ -1427,11 +1427,42 @@ void MainWindow::testCard()
     if(re EQ false)
     {
         QMessageBox::critical(w, tr("提示"),
-                               tr("控制卡自检失败：硬件自检失败!"),tr("确定"));
+                             tr("控制卡自检失败:没有收到硬件自检命令应答!"),tr("确定"));
         return;
+    }
+    else if(len > 0 && Temp[FDATA] > 0)
+    {
+        QString reStr ="";
 
+        if(GET_BIT(Temp[0], 0))
+            reStr += tr(",数据存储器自检失败");
+
+        if(GET_BIT(Temp[0], 1))
+            reStr += tr(",时钟自检失败");
+
+        if(GET_BIT(Temp[0], 2))
+            reStr += tr(",加密数据自检失败");
+
+        QMessageBox::critical(w, tr("提示"),
+                             tr("控制卡自检失败:") + reStr,tr("确定"));
+        return;
     }
 
+    //发送加密命令
+      dataBuf[0] = 0x05; //加密
+
+      makeProtoBufData(screenStr, COM_MODE, C_SELF_TEST | WR_CMD, (char *)dataBuf, 1);
+
+      re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+      if(re EQ false)
+      {
+          QMessageBox::critical(w, tr("提示"),
+                                 tr("控制卡自检失败:加密命令发送失败!"),tr("确定"));
+          return;
+
+      }
+
+    Delay_ms(500); //延时等控制器复位
     //发送接口自检命令
     dataBuf[0] = 0x04; //进入扫描接口自检
 
@@ -1441,7 +1472,7 @@ void MainWindow::testCard()
     if(re EQ false)
     {
       QMessageBox::critical(w, tr("提示"),
-                             tr("控制卡自检失败：发送接口自检命令没有应答"),tr("确定"));
+                             tr("控制卡自检失败:发送接口自检命令失败"),tr("确定"));
       return;
 
     }
@@ -1453,8 +1484,14 @@ void MainWindow::testCard()
        if(re EQ 0)
            goto loop;
        else
-           return;
-    }
+       {
+           //发送复位命令
+             dataBuf[0] = 0x01; //复位
+
+             makeProtoBufData(screenStr, COM_MODE, C_SELF_TEST | WR_CMD, (char *)dataBuf, 1);
+
+         }
+   }
 }
 
 void traversalControl(const QObjectList& q)
