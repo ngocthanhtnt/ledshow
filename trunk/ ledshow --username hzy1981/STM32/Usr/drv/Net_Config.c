@@ -1,19 +1,15 @@
 /*----------------------------------------------------------------------------
- *      R T L  -  T C P N E T
+ *      RL-ARM - TCPnet
  *----------------------------------------------------------------------------
  *      Name:    NET_CONFIG.C
- *      Purpose: Configuration of RTL TcpNet by user.
- *      Rev.:    V3.80
+ *      Purpose: Configuration of RL TCPnet by user.
+ *      Rev.:    V4.22
  *----------------------------------------------------------------------------
  *      This code is part of the RealView Run-Time Library.
- *      Copyright (c) 2004-2009 KEIL - An ARM Company. All rights reserved.
+ *      Copyright (c) 2004-2011 KEIL - An ARM Company. All rights reserved.
  *---------------------------------------------------------------------------*/
 
 #include <Net_Config.h>
-
-/*----------------------------------------------------------------------------
- *      RTL User configuration part BEGIN
- *---------------------------------------------------------------------------*/
 
 //-------- <<< Use Configuration Wizard in Context Menu >>> -----------------
 //
@@ -23,8 +19,8 @@
 //   <s.15>Local Host Name
 //   <i> This is the name under which embedded host can be
 //   <i> accessed on a local area network.
-//   <i> Default: "mcb2100"
-#define LHOST_NAME     "xiaowang"
+//   <i> Default: "mcb2300"
+#define LHOST_NAME     "mcb2300"
 
 //   <o>Memory Pool size <1500-32000:4><#/4>
 //   <i> This is the size of a memory pool in bytes. Buffers for
@@ -33,7 +29,8 @@
 #define MEM_SIZE       2048
 
 //   <o>Tick Timer interval <10=> 10 ms <20=> 20 ms <25=> 25 ms
-//                          <40=> 40 ms <50=> 50 ms <100=> 100 ms <200=> 200 ms
+//                          <40=> 40 ms <50=> 50 ms <100=> 100 ms 
+//                          <200=> 200 ms
 //   <i> System Tick Timer interval for software timers
 //   <i> Default: 100 ms
 #define TICK_INTERVAL  100
@@ -91,11 +88,11 @@
 
 //     <o>Address byte 3 <0-255>
 //     <i> Default: 0
-#define _IP3           1
+#define _IP3           0
 
 //     <o>Address byte 4 <0-255>
 //     <i> Default: 100
-#define _IP4           130
+#define _IP4           100
 
 //   </h>
 //   <h>Subnet mask
@@ -131,11 +128,11 @@
 
 //     <o>Address byte 3 <0-255>
 //     <i> Default: 0
-#define _GW3           1
+#define _GW3           0
 
 //     <o>Address byte 4 <0-255>
 //     <i> Default: 254
-#define _GW4           1
+#define _GW4           254
 
 //   </h>
 //   <h>Primary DNS Server
@@ -143,19 +140,19 @@
 //   <i> Primary DNS Server IP Address
 //     <o>Address byte 1 <0-255>
 //     <i> Default: 194
-#define _pDNS1         218
+#define _pDNS1         194
 
 //     <o>Address byte 2 <0-255>
 //     <i> Default: 25
-#define _pDNS2         104
+#define _pDNS2         25
 
 //     <o>Address byte 3 <0-255>
 //     <i> Default: 2
-#define _pDNS3         111
+#define _pDNS3         2
 
 //     <o>Address byte 4 <0-255>
 //     <i> Default: 129
-#define _pDNS4         114
+#define _pDNS4         129
 
 //   </h>
 //   <h>Secondary DNS Server
@@ -163,19 +160,19 @@
 //   <i> Secondary DNS Server IP Address
 //     <o>Address byte 1 <0-255>
 //     <i> Default: 194
-#define _sDNS1         218
+#define _sDNS1         194
 
 //     <o>Address byte 2 <0-255>
 //     <i> Default: 25
-#define _sDNS2         104
+#define _sDNS2         25
 
 //     <o>Address byte 3 <0-255>
 //     <i> Default: 2
-#define _sDNS3         111
+#define _sDNS3         2
 
 //     <o>Address byte 4 <0-255>
 //     <i> Default: 130
-#define _sDNS4         122
+#define _sDNS4         130
 
 //   </h>
 //   <h>ARP Definitions
@@ -202,6 +199,13 @@
 //     <i> Default: 2
 #define ARP_RESEND     2
 
+//     <q>Send Notification on Address changes
+//     <i> When this option is enabled, the embedded host
+//     <i> will send a Gratuitous ARP notification at startup,
+//     <i> or when the device IP address has changed.
+//     <i> Default: Disabled
+#define ARP_NOTIFY     0
+
 //   </h>
 //   <e>IGMP Group Management
 //   ========================
@@ -222,7 +226,7 @@
 //   <i> because NBNS protocol uses one UDP socket to run.
 #define NBNS_ENABLE    0
 
-//   <q>Dynamic Host Configuration
+//   <e>Dynamic Host Configuration
 //   =============================
 //   <i> When this option is enabled, local IP address, Net Mask
 //   <i> and Default Gateway are obtained automatically from
@@ -231,6 +235,19 @@
 //   <i> because DHCP protocol uses one UDP socket to run.
 #define DHCP_ENABLE    0
 
+//     <s.40>Vendor Class Identifier
+//     <i> This value is optional. If specified, it is added
+//     <i> to DHCP request message, identifying vendor type.
+//     <i> Default: ""
+#define DHCP_VCID      ""
+
+//     <q>Bootfile Name
+//     <i> This value is optional. If enabled, the Bootfile Name
+//     <i> (option 67) is also requested from DHCP server.
+//     <i> Default: disabled
+#define DHCP_BOOTF     0
+
+//   </e>
 // </e>
 
 // <e>PPP Network Interface
@@ -318,6 +335,21 @@
 #define _sDNS4P        130
 
 //   </h>
+//   <e>Logon Authentication
+//   =======================
+//   <i> Enable or disable user authentication
+#define PPP_AUTHEN     0
+
+//     <q>Unsecured password (PAP)
+//     <i>Allow or use Password Authentication Protocol.
+#define PPP_PAPEN      0
+
+//     <q>Secured password (CHAP-MD5)
+//     <i>Request or use Challenge Handshake Authentication
+//     <i>Protocol with MD5 digest algorithm.
+#define PPP_CHAPEN     0
+
+//   </e>
 //   <q>Obtain Client IP address automatically
 //   =========================================
 //   <i> This option only applies when PPP Dial-up is used to dial
@@ -332,75 +364,34 @@
 //   <i> is forwarded to Dial-up network instead.
 #define PPP_DEFGW      1
 
-//   <h>Async Control Character Map
-//   ==============================
-//   <i> A map of control characters 0..31 which are transmitted 
-//   <i> escaped as a 2 byte sequence.
-//     <o>Map char 31..24 mask <0x00-0xff>
-//     <i> Maps control characters from 31...24
-//     <i> Default: 0x00
-#define _ACCM1         0x00
+//   <o>Async Control Character Map <0x0-0xffffffff>
+//   <i> A bit-map of control characters 0-31, which are
+//   <i> transmitted escaped as a 2 byte sequence.
+//   <i> For XON/XOFF set this value to: 0x000A 0000
+//   <i> Default: 0x00000000
+#define PPP_ACCM       0x00000000
 
-//     <o>Map char 23..16 mask <0x00-0xff>
-//     <i> Maps control characters from 23...16
-//     <i> For XON/XOFF set this value to: 0x0A
-//     <i> Default: 0x00
-#define _ACCM2         0x0A
+//   <o>LCP Echo Interval in seconds <0-3600>
+//   <i> If no frames are received within this interval, PPP sends an
+//   <i> Echo Request and expects an Echo Response from the peer.
+//   <i> If the response is not received, the link is terminated.
+//   <i> A value of 0 disables the LCP Echo test.
+//   <i> Default: 30
+#define PPP_ECHOTOUT   30
 
-//     <o>Map char 15..8 mask <0x00-0xff>
-//     <i> Maps control characters from 15...8
-//     <i> Default: 0x00
-#define _ACCM3         0x00
+//   <o>Number of Retries <0-20>
+//   <i> How many times PPP will try to retransmit data
+//   <i> before giving up. Increase this value for links
+//   <i> with low baud rates or high latency.
+//   <i> Default: 3
+#define PPP_MAXRETRY   3
 
-//     <o>Map char 7..0 mask <0x00-0xff>
-//     <i> Maps control characters from 7...0
-//     <i> Default: 0x00
-#define _ACCM4         0x00
+//   <o>Retry Timeout in seconds <1-10>
+//   <i> If no response received within this time frame,
+//   <i> PPP module will try to resend the data again.
+//   <i> Default: 2
+#define PPP_RETRYTOUT  2
 
-//   </h>
-//   <h>Retransmissions and Timeouts
-//   ===============================
-//   <i> Several protocol settings.
-//     <o>LCP Number of Retries <0-20>
-//     <i> How many times Link Control Protocol will try to retransmit
-//     <i> data before giving up. Increase this value for links with
-//     <i> low baud rates or high latency.
-//     <i> Default: 2
-#define LCP_MAXRETRY   2
-
-//     <o>LCP Retry Timeout in seconds <1-10>
-//     <i> If no response received within this time frame,
-//     <i> LCP module will try to resend data again.
-//     <i> Default: 2
-#define LCP_RETRYTOUT  2
-
-//     <o>PAP Number of Retries <0-20>
-//     <i> How many times Password Authentication Protocol will try to 
-//     <i> retransmit data before giving up. Increase this value for links
-//     <i> with low baud rates or high latency.
-//     <i> Default: 3
-#define PAP_MAXRETRY   3
-
-//     <o>PAP Retry Timeout in seconds <1-10>
-//     <i> If no response received within this time frame,
-//     <i> PAP module will try to resend data again
-//     <i> Default: 3
-#define PAP_RETRYTOUT  3
-
-//     <o>IPCP Number of Retries <0-20>
-//     <i> How many times Internet Protocol Control Protocol will try
-//     <i> to retransmit data before giving up. Increase this value for
-//     <i> links with low baud rates or high latency.
-//     <i> Default: 3
-#define IPCP_MAXRETRY  3
-
-//     <o>IPCP Retry Timeout in seconds <1-10>
-//     <i> If no response received within this time frame,
-//     <i> IPCP module will try to resend data again
-//     <i> Default: 2
-#define IPCP_RETRYTOUT 2
-
-//   </h>
 // </e>
 // <e>SLIP Network Interface
 // ========================
@@ -525,7 +516,7 @@
 
 //   <o>Retry Timeout in seconds <1-10>
 //   <i> If data frame not acknowledged within this time frame,
-//   <i> TCP module will try to resend data again
+//   <i> TCP module will try to resend the data again.
 //   <i> Default: 4
 #define TCP_RETRYTOUT  4
 
@@ -551,12 +542,18 @@
 //   <i> Modify also the number of TCP Sockets because
 //   <i> each HTTP session uses it's own TCP socket
 //   <i> Default: 3
-#define HTTP_NUMSESS   6
+#define HTTP_NUMSESS   3
 
 //   <o>Port Number <1-65535>
 //   <i> Listening port number.
 //   <i> Default: 80
 #define HTTP_PORTNUM   80
+
+//   <s.50>Server-Id header
+//   <i> This value is optional. If specified, it overrides 
+//   <i> the default HTTP Server header from the library.
+//   <i> Default: ""
+#define HTTP_SRVID     ""
 
 //   <e>Enable User Authentication
 //     <i> When enabled, the user will have to authenticate
@@ -564,7 +561,7 @@
 //     <i> any page on this Embedded WEB server.
 #define HTTP_ENAUTH    1
 
-//     <s.20>Authentication Realm string
+//     <s.20>Authentication Realm
 //     <i> Default: "Embedded WEB Server"
 #define HTTP_AUTHREALM "Embedded WEB Server"
 
@@ -594,6 +591,12 @@
 //   <i> Listening port number.
 //   <i> Default: 23
 #define TNET_PORTNUM   23
+
+//   <o>Idle Connection Timeout in seconds <0-3600>
+//   <i> When timeout expires, the connection is closed.
+//   <i> A value of 0 disables disconnection on timeout.
+//   <i> Default: 120
+#define TNET_IDLETOUT  120
 
 //   <e>Enable User Authentication
 //   <i> When enabled, the user will have to authenticate
@@ -641,6 +644,45 @@
 #define TFTP_MAXRETRY  4
 
 // </e>
+// <e>FTP Server
+// ==============
+// <i> Enable or disable FTP Server
+#define FTP_ENABLE     0
+
+//   <o>Number of FTP Sessions <1-10>
+//   <i> Number of simultaneously active FTP Sessions
+//   <i> Modify also the number of TCP Sockets because
+//   <i> each FTP connection uses 2 TCP sockets
+//   <i> Default: 1
+#define FTP_NUMSESS    3
+
+//   <o>Port Number <1-65535>
+//   <i> Listening port number.
+//   <i> Default: 21
+#define FTP_PORTNUM    21
+
+//   <o>Idle Session Timeout in seconds <0-3600>
+//   <i> When timeout expires, the connection is closed.
+//   <i> A value of 0 disables disconnection on timeout.
+//   <i> Default: 120
+#define FTP_IDLETOUT   120
+
+//   <e>Enable User Authentication
+//   <i> When enabled, the user will have to authenticate
+//   <i> himself by username and password before access
+//   <i> to the system is allowed.
+#define FTP_ENAUTH     1
+
+//     <s.15>Authentication Username
+//     <i> Default: "admin"
+#define FTP_AUTHUSER   "admin"
+
+//     <s.15>Authentication Password
+//     <i> Default: ""
+#define FTP_AUTHPASSW  ""
+
+//   </e>
+// </e>
 // <e>DNS Client
 // =============
 // <i> Enable or disable DNS Client
@@ -655,7 +697,7 @@
 // <e>SMTP Client
 // ==============
 // <i> Enable or disable SMTP Client
-#define SMTP_ENABLE     0
+#define SMTP_ENABLE    0
 
 //     <o>Response Timeout in seconds <5-120>
 //     <i> This is a time for SMTP Client to wait for a response from
@@ -664,408 +706,123 @@
 #define SMTP_DEFTOUT   20
 
 // </e>
+// <e>SNMP Agent
+// =============
+// <i> Enable or disable SNMP Agent
+#define SNMP_ENABLE    0
+
+//   <s.15>Community Name
+//   <i> Defines where an SNMP message is destined for.
+//   <i> Default: "public"
+#define SNMP_COMMUNITY "public"
+
+//   <o>Port Number <1-65535>
+//   <i> Listening port number.
+//   <i> Default: 161
+#define SNMP_PORTNUM   161
+
+//   <o>Trap Port Number <1-65535>
+//   <i> Port number for Trap operations.
+//   <i> Default: 162
+#define SNMP_TRAPPORT  162
+
+//   <h>Trap Server
+//   ==============
+//   <i> Trap Server IP Address
+//   <o>Address byte 1 <0-255>
+//   <i> Default: 192
+#define SNMP_TRAPIP1   192
+
+//   <o>Address byte 2 <0-255>
+//   <i> Default: 168
+#define SNMP_TRAPIP2   168
+
+//   <o>Address byte 3 <0-255>
+//   <i> Default: 0
+#define SNMP_TRAPIP3   0
+
+//   <o>Address byte 4 <0-255>
+//   <i> Default: 100
+#define SNMP_TRAPIP4   1
+
+//   </h>
+// </e>
+// <e>BSD Socket Interface
+// =======================
+// <i> Enable or disable Berkeley Socket Programming Interface
+#define BSD_ENABLE     0
+
+//   <o>Number of BSD Sockets <1-20>
+//   <i> Number of available Berkeley Sockets
+//   <i> Default: 2
+#define BSD_NUMSOCKS   2
+
+//   <o>Number of Streaming Server Sockets <0-20>
+//   <i> Defines a number of Streaming (TCP) Server sockets,
+//   <i> that listen for an incoming connection from the client.
+//   <i> Default: 1
+#define BSD_SRVSOCKS   1
+
+//   <o>Receive Timeout in seconds <0-600>
+//   <i> A timeout for socket receive in blocking mode.
+//   <i> Timeout value of 0 means indefinite timeout.
+//   <i> Default: 20
+#define BSD_RCVTOUT    20
+
+//   <q>Hostname Resolver
+//   <i> Enable or disable Berkeley style hostname resolver.
+#define BSD_GETHOSTEN  0
+
+// </e>
 //------------- <<< end of configuration section >>> -----------------------
-
-/*----------------------------------------------------------------------------
- *      RTL User configuration part END
- *---------------------------------------------------------------------------*/
-
-#define TICK_RATE       1000 / TICK_INTERVAL
-
-#if (SLIP_ENABLE | PPP_ENABLE | ETH_ENABLE) == 0
-   #error all network interfaces disabled in configuration
-#endif
-
-#if (SLIP_ENABLE & PPP_ENABLE) == 1
-   #error both SLIP and PPP interfaces enabled
-#endif
-
-/*----------------------------------------------------------------------------
- *      Global Variables
- *---------------------------------------------------------------------------*/
-
-/* Own and Broadcast Ethernet address */
-#if ETH_ENABLE == 1
-  U8       own_hw_adr[ETH_ADRLEN] = { _MAC1, _MAC2, _MAC3, _MAC4, _MAC5, _MAC6 };
-  U8 const MAC_Broadcast[ETH_ADRLEN] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-#endif
-/* Broadcast IP address */
-U8 const IP_Broadcast[IP_ADRLEN]  = { 255, 255, 255, 255 };
-/* Local Machine info */
-LOCALM const nlocalm[3] = {
-  /* Ethernet: Local IP address */
-#if ETH_ENABLE == 1
-  { { _IP1, _IP2, _IP3, _IP4 },
-    /* Default Gateway IP address */
-    { _GW1, _GW2, _GW3, _GW4 },
-    /* Subnet IP Mask */
-    { _MSK1, _MSK2, _MSK3, _MSK4 },
-    /* Primary DNS Server IP */
-    { _pDNS1, _pDNS2, _pDNS3, _pDNS4 },
-    /* Secondary DNS Server IP */
-    { _sDNS1, _sDNS2, _sDNS3, _sDNS4 }
-  },
-#else
-   { { 0,0,0,0 }, { 0,0,0,0 }, { 0,0,0,0 }, { 0,0,0,0 }, { 0,0,0,0 } },
-#endif
-  /* PPP: Local IP address */
-#if PPP_ENABLE == 1
-  { { _IP1P, _IP2P, _IP3P, _IP4P },
-    /* Default Gateway IP address */
-    { 0, 0, 0, 0 },
-    /* Subnet IP Mask */
-    { _MSK1P, _MSK2P, _MSK3P, _MSK4P },
-    /* Primary DNS Server IP */
-    { _pDNS1P, _pDNS2P, _pDNS3P, _pDNS4P },
-    /* Secondary DNS Server IP */
-    { _sDNS1P, _sDNS2P, _sDNS3P, _sDNS4P }
-  },
-#else
-   { { 0,0,0,0 }, { 0,0,0,0 }, { 0,0,0,0 }, { 0,0,0,0 }, { 0,0,0,0 } },
-#endif
-  /* SLIP: Local IP address */
-#if SLIP_ENABLE == 1
-  { { _IP1S, _IP2S, _IP3S, _IP4S },
-    /* Default Gateway IP address */
-    { 0, 0, 0, 0 },
-    /* Subnet IP Mask */
-    { _MSK1S, _MSK2S, _MSK3S, _MSK4S },
-    /* Primary DNS Server IP */
-    { _pDNS1S, _pDNS2S, _pDNS3S, _pDNS4S },
-    /* Secondary DNS Server IP */
-    { _sDNS1S, _sDNS2S, _sDNS3S, _sDNS4S }
-  }
-#else
-   { { 0,0,0,0 }, { 0,0,0,0 }, { 0,0,0,0 }, { 0,0,0,0 }, { 0,0,0,0 } },
-#endif
-};
-U8 const netif_cfg = (PPP_GETIP<<5 | SLIP_DEFGW<<4 | PPP_DEFGW<<3 |
-                      SLIP_ENABLE<<2 | PPP_ENABLE<<1 | ETH_ENABLE);
-
-/* Memory pool for Eternet Frames. */
-U32 Mem_Pool[MEM_SIZE];
-/* ARP cache table */
-#if ETH_ENABLE == 1
-  struct arp_info arp_table[ARP_TABSIZE];
-#endif
-#if (IGMP_ENABLE & ETH_ENABLE) == 1
-  struct igmp_info igmp_table[IGMP_TABSIZE];
-#endif
-/* UDP socket Control block table */
-#if UDP_ENABLE == 1
-  struct udp_info udp_socket[UDP_NUMSOCKS];
-#endif
-/* TCP socket Control block table */
-#if TCP_ENABLE == 1
-  struct tcp_info tcp_socket[TCP_NUMSOCKS+1];
-#endif
-/* HTTP Server Session Control block table */
-#if HTTP_ENABLE == 1
-  struct http_info http_session[HTTP_NUMSESS];
-#endif
-/* Telnet Server Session Control block table */
-#if TNET_ENABLE == 1
-  struct tnet_info tnet_session[TNET_NUMSESS];
-#endif
-/* TFTP Server Session Control block table */
-#if TFTP_ENABLE == 1
-  struct tftp_info tftp_session[TFTP_NUMSESS];
-#endif
-/* DNS cache table */
-#if DNS_ENABLE == 1
-  struct dns_info dns_table[DNS_TABSIZE];
-#endif
-
-/* Exported defines to other modules */
-U32 const MPool_Size     = sizeof (Mem_Pool);
-U16 const tick_rate      = TICK_RATE;
-U8        lhost_name[16] = LHOST_NAME;
-#if ETH_ENABLE == 1
-  U16 const arp_TabSize  = ARP_TABSIZE;
-  U16 const arp_TimeOut  = ARP_TIMEOUT;
-  U8  const arp_MaxRetry = ARP_MAXRETRY;
-  U8  const arp_Resend   = ARP_RESEND;
-#endif
-#if PPP_ENABLE == 1
-  U32 const ppp_ACCMap    = _ACCM1<<24 | _ACCM2<<16 | _ACCM3<<8 | _ACCM4;
-  U16 const ppp_SerTout   = 5 * TICK_RATE;
-  U16 const lcp_RetryTout = LCP_RETRYTOUT * TICK_RATE;
-  U16 const pap_RetryTout = PAP_RETRYTOUT * TICK_RATE;
-  U16 const ipcp_RetryTout= IPCP_RETRYTOUT * TICK_RATE;
-  U8  const lcp_MaxRetry  = LCP_MAXRETRY;
-  U8  const pap_MaxRetry  = PAP_MAXRETRY;
-  U8  const ipcp_MaxRetry = IPCP_MAXRETRY;
-#endif
-#if (IGMP_ENABLE & ETH_ENABLE) == 1
-  U16 const igmp_TabSize  = IGMP_TABSIZE;
-  U8  const igmp_T200ms   = TICK_RATE / 5;
-  U8  const IP_AllHosts[IP_ADRLEN] = {224, 0, 0, 1 };
-#endif
-#if SLIP_ENABLE == 1
-  U16 const slip_SerTout  = 5 * TICK_RATE;
-#endif
-#if UDP_ENABLE == 1
-  U8  const udp_NumSocks  = UDP_NUMSOCKS;
-#endif
-#if TCP_ENABLE == 1
-  U8  const tcp_NumSocks  = TCP_NUMSOCKS;
-  U8  const tcp_MaxRetry  = TCP_MAXRETRY;
-  U16 const tcp_RetryTout = TCP_RETRYTOUT * TICK_RATE;
-  U16 const tcp_2MSSTout  = (200 + TICK_INTERVAL - 1) / TICK_INTERVAL;
-  U16 const tcp_SynRetryTout = TCP_SYN_RETRY_TOUT * TICK_RATE;
-  U16 const tcp_InitRetryTout= TCP_INIT_RETRY_TOUT * TICK_RATE;
-  U16 const tcp_DefTout   = TCP_DEFTOUT;
-  U8  const tcp_ConRetry  = TCP_CONRETRY;
-#endif
-#if HTTP_ENABLE == 1
-  U8  const http_NumSess  = HTTP_NUMSESS;
-  U8  const http_EnAuth   = HTTP_ENAUTH;
-  U16 const http_PortNum  = HTTP_PORTNUM;
-  U8  const http_auth_dev[]     = HTTP_AUTHREALM;
-  U8  const http_auth_user[]    = HTTP_AUTHUSER;
-  U8        http_auth_passw[20] = HTTP_AUTHPASSW;
-#endif
-#if TNET_ENABLE == 1
-  U8  const tnet_NumSess  = TNET_NUMSESS;
-  U8  const tnet_EnAuth   = TNET_ENAUTH;
-  U16 const tnet_PortNum  = TNET_PORTNUM;
-  U8  const tnet_auth_user[]    = TNET_AUTHUSER;
-  U8        tnet_auth_passw[20] = TNET_AUTHPASSW;
-#endif
-#if TFTP_ENABLE == 1
-  U8  const tftp_NumSess  = TFTP_NUMSESS;
-  U8  const tftp_MaxRetry = TFTP_MAXRETRY;
-  U16 const tftp_PortNum  = TFTP_PORTNUM;
-  U16 const tftp_DefTout  = TFTP_DEFTOUT;
-#endif
-#if DNS_ENABLE == 1
-  U16 const dns_TabSize   = DNS_TABSIZE;
-#endif
-#if SMTP_ENABLE == 1
-  U16 const smtp_DefTout  = SMTP_DEFTOUT;
-#endif
 
 /*----------------------------------------------------------------------------
  *      Fatal Error Handler
  *---------------------------------------------------------------------------*/
 
 void sys_error (ERROR_CODE code) {
-   /* This function is called when a fatal error is encountered. The normal */
-   /* program execution is not possible anymore. Add your crytical error   .*/
-   /* handler code here.                                                    */
+  /* This function is called when a fatal error is encountered. The normal */
+  /* program execution is not possible anymore. Add your crytical error   .*/
+  /* handler code here.                                                    */
 
-   switch (code) {
-      case ERR_MEM_ALLOC:
-         /* Out of memory. */
-         break;
+  switch (code) {
+    case ERR_MEM_ALLOC:
+      /* Out of memory. */
+      break;
 
-      case ERR_MEM_FREE:
-         /* Trying to release non existing memory block. */
-         break;
+    case ERR_MEM_FREE:
+      /* Trying to release non existing memory block. */
+      break;
 
-      case ERR_MEM_CORRUPT:
-         /* Memory Link pointer is Corrupted. */
-         /* More data written than the size of allocated mem block. */
-         break;
+    case ERR_MEM_CORRUPT:
+      /* Memory Link pointer is Corrupted. */
+      /* More data written than the size of allocated mem block. */
+      break;
 
-      case ERR_UDP_ALLOC:
-         /* Out of UDP Sockets. */
-         break;
+    case ERR_UDP_ALLOC:
+      /* Out of UDP Sockets. */
+      break;
 
-      case ERR_TCP_ALLOC:
-         /* Out of TCP Sockets. */
-         break;
+    case ERR_TCP_ALLOC:
+      /* Out of TCP Sockets. */
+      break;
 
-      case ERR_TCP_STATE:
-         /* TCP State machine in undefined state. */
-         break;
-   }
+    case ERR_TCP_STATE:
+      /* TCP State machine in undefined state. */
+      break;
+  }
 
-   /* End-less loop */
-   while (1);
+  /* End-less loop */
+  while (1);
 }
-
 
 /*----------------------------------------------------------------------------
- *      Global Functions
+ *      TCPnet Config Functions
  *---------------------------------------------------------------------------*/
 
+#define  __NET_CONFIG__
 
-/*--------------------------- init_system -----------------------------------*/
-
-void init_system (void) {
-   /* Initialize configured interfaces and applications. */
-
-#if ETH_ENABLE == 1
-   init_eth_link ();
-#endif
-#if PPP_ENABLE == 1
-   init_ppp_link ();
-#endif
-#if SLIP_ENABLE == 1
-   init_slip_link ();
-#endif
-
-#if (IGMP_ENABLE & ETH_ENABLE) == 1
-   init_igmp ();
-#endif
-#if UDP_ENABLE == 1
-   init_udp ();
-#endif
-#if TCP_ENABLE == 1
-   init_tcp ();
-#endif
-#if HTTP_ENABLE == 1
-   init_http ();
-#endif
-#if TNET_ENABLE == 1
-   init_tnet ();
-#endif
-#if TFTP_ENABLE == 1
-   init_tftp ();
-#endif
-#if (NBNS_ENABLE & ETH_ENABLE) == 1
-   init_nbns ();
-#endif
-#if (DHCP_ENABLE & ETH_ENABLE) == 1
-   init_dhcp ();
-#endif
-#if DNS_ENABLE == 1
-   init_dns ();
-#endif
-#if SMTP_ENABLE == 1
-   init_smtp ();
-#endif
-}
-
-
-/*--------------------------- run_system ------------------------------------*/
-
-void run_system (void) {
-   /* Run configured interfaces and applications. */
-
-#if ETH_ENABLE == 1
-   run_eth_link ();
-#endif
-#if PPP_ENABLE == 1
-   run_ppp_link ();
-#endif
-#if SLIP_ENABLE == 1
-   run_slip_link ();
-#endif
-
-#if (IGMP_ENABLE & ETH_ENABLE) == 1
-   run_igmp_host ();
-#endif
-#if TCP_ENABLE == 1
-   tcp_poll_sockets ();
-#endif
-#if HTTP_ENABLE == 1
-   run_http_server ();
-#endif
-#if TNET_ENABLE == 1
-   run_tnet_server ();
-#endif
-#if TFTP_ENABLE == 1
-   run_tftp_server ();
-#endif
-#if (DHCP_ENABLE & ETH_ENABLE) == 1
-   run_dhcp_client ();
-#endif
-#if DNS_ENABLE == 1
-   run_dns_client ();
-#endif
-#if SMTP_ENABLE == 1
-   run_smtp_client ();
-#endif
-}
-
-
-/*--------------------------- process_hl_igmp -------------------------------*/
-
-#if (IGMP_ENABLE & ETH_ENABLE) == 1
-void process_hl_igmp (OS_FRAME *frame) {
-   /* Process IGMP protocol frame */
-   process_igmp (frame);
-}
-#endif
-
-
-/*--------------------------- process_hl_udp --------------------------------*/
-
-#if UDP_ENABLE == 1
-void process_hl_udp (OS_FRAME *frame) {
-   /* Process udp protocol frame */
-   process_udp (frame);
-}
-#endif
-
-
-/*--------------------------- process_hl_tcp --------------------------------*/
-
-#if TCP_ENABLE == 1
-void process_hl_tcp (OS_FRAME *frame) {
-   /* Process tcp protocol frame */
-   process_tcp (frame);
-}
-#endif
-
-
-/*--------------------------- dispatch_frame --------------------------------*/
-
-BOOL dispatch_frame (OS_FRAME *frame, U8 netif) {
-   /* Dispatch the outgoing frame to selected network interface. */
-
-switch (netif) {
-#if ETH_ENABLE == 1
-      case NETIF_ETH:
-         return (eth_send_frame (frame));
-#endif
-#if PPP_ENABLE == 1
-      case NETIF_PPP:
-         return (ppp_send_frame (frame, PPP_PROT_IP));
-#endif
-#if SLIP_ENABLE == 1
-      case NETIF_SLIP:
-         return (slip_send_frame (frame));
-#endif
-   }
-   return (__FALSE);
-}
-
-
-/*--------------------------- eth_chk_adr -----------------------------------*/
-
-#if ETH_ENABLE == 0
-BOOL eth_chk_adr (OS_FRAME *frame) {
-   /* Provide an empty function when the 'Ethernet Interface' is disabled. */
-   frame = frame;
-   return (__FALSE);
-}
-#endif
-
-
-/*--------------------------- eth_get_adr -----------------------------------*/
-
-#if ETH_ENABLE == 0
-U8 *eth_get_adr (U8 *ipadr) {
-   /* Provide an empty function when the 'Ethernet Interface' is disabled. */
-   ipadr = ipadr;
-   return (NULL);
-}
-#endif
-
-
-/*--------------------------- igmp_is_member --------------------------------*/
-
-#if (IGMP_ENABLE & ETH_ENABLE) == 0
-BOOL igmp_is_member (U8 *ipadr) {
-   /* Provide an empty function when IP Multicasting is not enabled. */
-   ipadr = ipadr;
-   return (__FALSE);
-}
-#endif
-
+#include <Net_lib.c>
 
 /*----------------------------------------------------------------------------
  * end of file

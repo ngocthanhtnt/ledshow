@@ -201,7 +201,7 @@ void Shell_Proc(void)
   if(Re EQ 1)
   {
     _Shell_Cmd_Buf.Posi = 0;
-    mem_set((INT8S *)Shell_Cmd_Buf, 0, SHELL_CMD_BUF_LEN, (INT8S *)Shell_Cmd_Buf, SHELL_CMD_BUF_LEN);
+    OS_memset((INT8S *)Shell_Cmd_Buf, 0, SHELL_CMD_BUF_LEN, (INT8S *)Shell_Cmd_Buf, SHELL_CMD_BUF_LEN);
   }
 }
 #undef APP_SHELL_C

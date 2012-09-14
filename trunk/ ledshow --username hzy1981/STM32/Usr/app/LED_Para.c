@@ -543,7 +543,7 @@ INT16U Read_Cur_Block_Index(void *pDst, void *pDst_Start, INT16U DstLen)
   if(Len EQ 0)
   {
       Len = Get_Storage_Data_Len(SDI_CUR_BLOCK_INDEX);
-      mem_set(pDst, 0, Len, pDst_Start, DstLen);
+      OS_memset(pDst, 0, Len, pDst_Start, DstLen);
   }
 
   return Len;
@@ -1221,7 +1221,7 @@ INT16U Read_Prog_Para(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen
   }
   else
   {
-    mem_set(pDst, 0, PROG_PARA_LEN, pDst_Start, DstLen);
+    OS_memset(pDst, 0, PROG_PARA_LEN, pDst_Start, DstLen);
   }
 
   //SET_HT((*pProg_Para));

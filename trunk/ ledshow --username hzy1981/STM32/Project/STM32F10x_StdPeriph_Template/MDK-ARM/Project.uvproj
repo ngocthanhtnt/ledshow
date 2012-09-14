@@ -1257,6 +1257,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\Net_Config.c</FilePath>
             </File>
+            <File>
+              <FileName>EMAC.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\EMAC.C</FilePath>
+            </File>
+            <File>
+              <FileName>EMAC.H</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\EMAC.H</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1411,11 +1421,6 @@
               <FileName>TCP_CM3.lib</FileName>
               <FileType>4</FileType>
               <FilePath>C:\Keil\ARM\RV31\LIB\TCP_CM3.lib</FilePath>
-            </File>
-            <File>
-              <FileName>TCPD_CM3.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>C:\Keil\ARM\RV31\LIB\TCPD_CM3.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -2672,6 +2677,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\Net_Config.c</FilePath>
             </File>
+            <File>
+              <FileName>EMAC.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\EMAC.C</FilePath>
+            </File>
+            <File>
+              <FileName>EMAC.H</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\EMAC.H</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2826,11 +2841,6 @@
               <FileName>TCP_CM3.lib</FileName>
               <FileType>4</FileType>
               <FilePath>C:\Keil\ARM\RV31\LIB\TCP_CM3.lib</FilePath>
-            </File>
-            <File>
-              <FileName>TCPD_CM3.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>C:\Keil\ARM\RV31\LIB\TCPD_CM3.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -4053,6 +4063,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\Net_Config.c</FilePath>
             </File>
+            <File>
+              <FileName>EMAC.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\EMAC.C</FilePath>
+            </File>
+            <File>
+              <FileName>EMAC.H</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\EMAC.H</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4207,11 +4227,6 @@
               <FileName>TCP_CM3.lib</FileName>
               <FileType>4</FileType>
               <FilePath>C:\Keil\ARM\RV31\LIB\TCP_CM3.lib</FilePath>
-            </File>
-            <File>
-              <FileName>TCPD_CM3.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>C:\Keil\ARM\RV31\LIB\TCPD_CM3.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -5468,6 +5483,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\Net_Config.c</FilePath>
             </File>
+            <File>
+              <FileName>EMAC.C</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\EMAC.C</FilePath>
+            </File>
+            <File>
+              <FileName>EMAC.H</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\EMAC.H</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -5622,11 +5647,6 @@
               <FileName>TCP_CM3.lib</FileName>
               <FileType>4</FileType>
               <FilePath>C:\Keil\ARM\RV31\LIB\TCP_CM3.lib</FilePath>
-            </File>
-            <File>
-              <FileName>TCPD_CM3.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>C:\Keil\ARM\RV31\LIB\TCPD_CM3.lib</FilePath>
             </File>
           </Files>
         </Group>

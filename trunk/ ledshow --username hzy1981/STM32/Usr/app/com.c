@@ -68,7 +68,7 @@ INT16U Get_Soft_Version(INT8U *pDst, INT8U *pDst_Start, INT16U DstLen)
 {
     //INT16U Len = 0;
 
-    mem_set(pDst, 0, SOFT_VERSION_LEN, pDst_Start, DstLen);
+    OS_memset(pDst, 0, SOFT_VERSION_LEN, pDst_Start, DstLen);
 	mem_cpy(pDst, (INT8U *)version, sizeof(version), pDst_Start, DstLen);
 /*
     mem_cpy(pDst + Len, (INT8U *)CARD_NAME, sizeof(CARD_NAME), pDst_Start, DstLen);
