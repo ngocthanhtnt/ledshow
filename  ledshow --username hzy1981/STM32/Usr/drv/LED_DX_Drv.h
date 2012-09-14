@@ -57,7 +57,7 @@
 
 
 #define  SPInet_ReadWrite  SPI1_ReadWrite
-#define  SPInet_Init   SPI1_Init
+#define  SPInet_Init   SPI1_ENC28J60_Init
 
 ////////////////////////////////////////////////////////////////////////////////////
 #define  ENC28J60_CSL()    (GPIOC->ODR &= ~(1<<4))

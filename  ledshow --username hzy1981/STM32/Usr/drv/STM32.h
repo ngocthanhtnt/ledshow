@@ -234,7 +234,7 @@ typedef unsigned short int INT16U;
 typedef short int INT16S;
 typedef unsigned char INT8U;
 typedef char INT8S;
-typedef unsigned char BOOL;
+//typedef unsigned char BOOL;
 
 
 #ifndef DEF_WR_PHY_MEM
@@ -265,6 +265,7 @@ EXT void TIM3_Configuration(void);
 EXT void TIM1_Configuration(void);
 EXT void SPI1_FLASH_Init(void);
 EXT void SPI1_CH376_Init(void);
+EXT void SPI1_ENC28J60_Init(void);
 EXT void SPI2_Init(void);
 EXT void Set_Block_OE_En(INT8U Value);
 EXT void Set_OE_Duty_Polarity(INT8U Duty, INT8U Polarity);

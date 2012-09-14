@@ -39,7 +39,7 @@ typedef struct
 #define PUB_BUF_MUTEX_ID 0x00 //信号量ID，用于Pub_Buf使用的互斥
 
 #define mem_cpy OS_memcpy
-#define mem_set OS_memset
+//#define mem_set OS_memset
 //#define TRACE() App_Trace//OS_Trace
 #define Check_Sum OS_Check_Sum
 #define Set_Sum OS_Set_Sum

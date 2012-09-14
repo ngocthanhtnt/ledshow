@@ -360,6 +360,58 @@ void SPI1_CH376_Init(void)
 
 }
 
+//SPI1初始化
+void SPI1_ENC28J60_Init(void)
+{
+   SPI_InitTypeDef SPI_InitStructure;
+   GPIO_InitTypeDef GPIO_InitStructure;
+
+   /* Enable SPI1 and GPIOA clocks */
+   RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
+   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOC\
+   						|RCC_APB2Periph_GPIOD|RCC_APB2Periph_GPIOE, ENABLE);
+/////////////////////////////////////////////////////////////////////////////////////////////////
+	//PC4 ---CS	  PC0 ---RST
+   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4|GPIO_Pin_0;
+   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+   GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+	//	PA5--SCK----SCK
+	//	PA6--MISO---SO
+	//	PA7--MOSI---SI 	 
+   /* Configure SPI1 pins: NSS, SCK, MISO and MOSI */
+   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+   GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
+   GPIO_InitStructure.GPIO_Mode =  GPIO_Mode_IPU;   //上拉输入
+   GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+   /* SPI1 configuration */ 
+   SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex; //全双工
+   SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+   SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+   SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
+   SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
+   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;    //软件CS
+   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;  //四分频
+   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+   SPI_InitStructure.SPI_CRCPolynomial = 7;
+   SPI_Init(SPI1, &SPI_InitStructure);
+   /***************************************
+   PB5  --------  LED1
+   ****************************************/
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+   GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+   /* Enable SPI1  */
+   SPI_Cmd(SPI1, ENABLE);
+}
 /*******************************************************************************
 * Function Name  : SPI_FLASH_Init
 * Description    : Initializes the peripherals used by the SPI FLASH driver.
