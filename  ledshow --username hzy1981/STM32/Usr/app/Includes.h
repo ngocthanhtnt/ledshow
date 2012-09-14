@@ -25,6 +25,7 @@
 #include "usb_bsp.h"
 #include "UDisk_Proc.h"
 #include "DS1302.h"
+#include "ENC28J60.h"
 #include "FILE_SYS.h"
 #include "spi_flash.h"
 #include "LED_Scan.h"
