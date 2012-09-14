@@ -1242,6 +1242,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\usbh_usr.c</FilePath>
             </File>
+            <File>
+              <FileName>enc28j60.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\enc28j60.c</FilePath>
+            </File>
+            <File>
+              <FileName>enc28j60.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\enc28j60.h</FilePath>
+            </File>
+            <File>
+              <FileName>Net_Config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\Net_Config.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1386,6 +1401,21 @@
               <FileName>usbh_msc_scsi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_scsi.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>LIB</GroupName>
+          <Files>
+            <File>
+              <FileName>TCP_CM3.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>C:\Keil\ARM\RV31\LIB\TCP_CM3.lib</FilePath>
+            </File>
+            <File>
+              <FileName>TCPD_CM3.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>C:\Keil\ARM\RV31\LIB\TCPD_CM3.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -2627,6 +2657,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\usbh_usr.c</FilePath>
             </File>
+            <File>
+              <FileName>enc28j60.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\enc28j60.c</FilePath>
+            </File>
+            <File>
+              <FileName>enc28j60.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\enc28j60.h</FilePath>
+            </File>
+            <File>
+              <FileName>Net_Config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\Net_Config.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2771,6 +2816,21 @@
               <FileName>usbh_msc_scsi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_scsi.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>LIB</GroupName>
+          <Files>
+            <File>
+              <FileName>TCP_CM3.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>C:\Keil\ARM\RV31\LIB\TCP_CM3.lib</FilePath>
+            </File>
+            <File>
+              <FileName>TCPD_CM3.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>C:\Keil\ARM\RV31\LIB\TCPD_CM3.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -3978,6 +4038,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\usbh_usr.c</FilePath>
             </File>
+            <File>
+              <FileName>enc28j60.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\enc28j60.c</FilePath>
+            </File>
+            <File>
+              <FileName>enc28j60.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\enc28j60.h</FilePath>
+            </File>
+            <File>
+              <FileName>Net_Config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\Net_Config.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4122,6 +4197,21 @@
               <FileName>usbh_msc_scsi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_scsi.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>LIB</GroupName>
+          <Files>
+            <File>
+              <FileName>TCP_CM3.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>C:\Keil\ARM\RV31\LIB\TCP_CM3.lib</FilePath>
+            </File>
+            <File>
+              <FileName>TCPD_CM3.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>C:\Keil\ARM\RV31\LIB\TCPD_CM3.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -5363,6 +5453,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\usbh_usr.c</FilePath>
             </File>
+            <File>
+              <FileName>enc28j60.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\enc28j60.c</FilePath>
+            </File>
+            <File>
+              <FileName>enc28j60.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\enc28j60.h</FilePath>
+            </File>
+            <File>
+              <FileName>Net_Config.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\Net_Config.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -5507,6 +5612,21 @@
               <FileName>usbh_msc_scsi.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\src\usbh_msc_scsi.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>LIB</GroupName>
+          <Files>
+            <File>
+              <FileName>TCP_CM3.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>C:\Keil\ARM\RV31\LIB\TCP_CM3.lib</FilePath>
+            </File>
+            <File>
+              <FileName>TCPD_CM3.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>C:\Keil\ARM\RV31\LIB\TCPD_CM3.lib</FilePath>
             </File>
           </Files>
         </Group>
