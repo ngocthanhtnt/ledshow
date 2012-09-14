@@ -10,7 +10,8 @@
  *---------------------------------------------------------------------------*/
 
 #include <Net_Config.h>
-
+#include "Includes.h"
+#if NET_EN
 //-------- <<< Use Configuration Wizard in Context Menu >>> -----------------
 //
 // <h>System Definitions
@@ -26,7 +27,7 @@
 //   <i> This is the size of a memory pool in bytes. Buffers for
 //   <i> TCPnet packets are allocated from this memory pool.
 //   <i> Default: 8000 bytes
-#define MEM_SIZE       2048
+#define MEM_SIZE       800
 
 //   <o>Tick Timer interval <10=> 10 ms <20=> 20 ms <25=> 25 ms
 //                          <40=> 40 ms <50=> 50 ms <100=> 100 ms 
@@ -489,7 +490,7 @@
 // <e>UDP Sockets
 // ==============
 // <i> Enable or disable UDP Sockets
-#define UDP_ENABLE     1
+#define UDP_ENABLE     0
 
 //   <o>Number of UDP Sockets <1-20>
 //   <i> Number of available UDP sockets
@@ -505,7 +506,7 @@
 //   <o>Number of TCP Sockets <1-20>
 //   <i> Number of available TCP sockets
 //   <i> Default: 5
-#define TCP_NUMSOCKS   7
+#define TCP_NUMSOCKS   2
 
 //   <o>Number of Retries <0-20>
 //   <i> How many times TCP module will try to retransmit data
@@ -824,6 +825,7 @@ void sys_error (ERROR_CODE code) {
 
 #include <Net_lib.c>
 
+#endif
 /*----------------------------------------------------------------------------
  * end of file
  *---------------------------------------------------------------------------*/

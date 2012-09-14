@@ -68,7 +68,7 @@
 //#define USE_NOR_FLASH //并行NORFlash
 
 #define UDISK_EN  1//u盘使能
-#define NET_EN	 0//网络使能
+#define NET_EN	 1//网络使能
 #define GPRS_EN  0//GPRS使能
 
 //#define COM_BUF_ID 0x00
