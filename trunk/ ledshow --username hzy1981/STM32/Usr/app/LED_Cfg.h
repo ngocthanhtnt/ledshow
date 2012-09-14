@@ -126,8 +126,11 @@
 #else //没有使能QT仿真 ---STM32的环境下
 #define ASSERT_EN 0
 */
-
+#if defined(CARD_A)
+#define ASSERT_EN 0
+#else
 #define ASSERT_EN 1
+#endif
 
 #include "STM32.h"
 

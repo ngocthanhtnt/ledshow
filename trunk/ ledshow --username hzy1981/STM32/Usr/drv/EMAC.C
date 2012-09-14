@@ -1,5 +1,5 @@
 #include "includes.h"
-
+#if NET_EN
 
 /*----------------------------------------------------------------------------
  *      EMAC Ethernet Driver Functions
@@ -79,5 +79,6 @@ void poll_ethernet (void)
 	}
 	else return;
 }
+#endif
 
 

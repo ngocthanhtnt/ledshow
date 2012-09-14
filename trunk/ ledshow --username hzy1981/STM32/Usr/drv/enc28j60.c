@@ -1,5 +1,6 @@
 #include "includes.h"
 
+#if NET_EN
 static u8 Enc28j60Bank;
 static u16 NextPacketPtr;
 
@@ -113,7 +114,7 @@ void enc28j60clkout(u8 clk)
 }
 
 void enc28j60Init(u8 * macaddr)
-{
+{ /*
    unsigned long i;
 
    ENC28J60_RSTH();                  //œ»∏¥Œª
@@ -125,7 +126,7 @@ void enc28j60Init(u8 * macaddr)
    ENC28J60_RSTH();
    for (i = 0; i < 10000; i++)
       ;
-
+   */
 
    // initialize I/O
    //enc28j60CSinit();
@@ -318,6 +319,6 @@ u16 enc28j60PacketReceive(u16 maxlen, u8* packet)
    enc28j60WriteOp(ENC28J60_BIT_FIELD_SET, ECON2, ECON2_PKTDEC);
    return(len);
 }
-
+#endif
 
 

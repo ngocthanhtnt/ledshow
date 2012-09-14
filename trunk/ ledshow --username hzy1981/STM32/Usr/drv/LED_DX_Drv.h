@@ -40,28 +40,13 @@
 //CH376 INT引脚
 #define CHK_CH376_INT() GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_11)
 
-//-------------------------------
-//以下是以太网相关定义，下面的定义3.50与3.22的库不一样
-//----------------------------------------------
-#define SPI_FLAG_RXNE           SPI_I2S_FLAG_RXNE
-#define SPI_FLAG_TXE            SPI_I2S_FLAG_TXE
-//#define SPI_FLAG_CRCERR                    ((u16)0x0010)
-//#define SPI_FLAG_MODF                      ((u16)0x0020)
-#define SPI_FLAG_OVR            SPI_I2S_FLAG_OVR
-#define SPI_FLAG_BSY            SPI_I2S_FLAG_BSY
-//----------------------------------------------
-#define SPI_GetFlagStatus       SPI_I2S_GetFlagStatus
-#define SPI_SendData            SPI_I2S_SendData
-#define SPI_ReceiveData         SPI_I2S_ReceiveData
-//2.0 库与 3.0库 定义不一样
-
 
 #define  SPInet_ReadWrite  SPI1_ReadWrite
 #define  SPInet_Init   SPI1_ENC28J60_Init
 
 ////////////////////////////////////////////////////////////////////////////////////
-#define  ENC28J60_CSL()    (GPIOC->ODR &= ~(1<<4))
-#define  ENC28J60_CSH()    (GPIOC->ODR |= 1<<4)
+#define  ENC28J60_CSL()    GPIO_ResetBits(GPIOB,GPIO_Pin_15)//(GPIOC->ODR &= ~(1<<4))
+#define  ENC28J60_CSH()    GPIO_SetBits(GPIOB,GPIO_Pin_15)//(GPIOC->ODR |= 1<<4)
 
 #define  ENC28J60_RSTL()   (GPIOC->ODR &= ~(1<<0))
 #define  ENC28J60_RSTH()   (GPIOC->ODR |= 1<<0)

@@ -86,6 +86,7 @@ void Chk_Main_Stack(void)
 }
 
 extern const char version[];
+
 //注意修改了起始地址后要改宏APP_ADDRESS_OFF,否则程序跑不起来！！！
 int main(void)
 {
@@ -114,14 +115,14 @@ int main(void)
   UDisk_Init(); //U盘初始化
 #endif
 
-#if NET_EN
-  Net_Init(); //网络初始化
-#endif
-
 #if CLOCK_EN
   DS1302_Init(); //启动后1s再初始化DS1302，手册要求
 #endif
   //Fac_Status_Self_Test(); //自检操作
+
+#if NET_EN
+  Net_Init();
+#endif
   
   Para_Show(); //上电参数显示
 
