@@ -3,7 +3,7 @@
  *----------------------------------------------------------------------------
  *      Name:    NET_CONFIG.C
  *      Purpose: Configuration of RTL TcpNet by user.
- *      Rev.:    V3.50
+ *      Rev.:    V3.80
  *----------------------------------------------------------------------------
  *      This code is part of the RealView Run-Time Library.
  *      Copyright (c) 2004-2009 KEIL - An ARM Company. All rights reserved.
@@ -24,19 +24,19 @@
 //   <i> This is the name under which embedded host can be
 //   <i> accessed on a local area network.
 //   <i> Default: "mcb2100"
-#define LHOST_NAME     "STM32 NET"
+#define LHOST_NAME     "xiaowang"
 
 //   <o>Memory Pool size <1500-32000:4><#/4>
 //   <i> This is the size of a memory pool in bytes. Buffers for
 //   <i> TCPnet packets are allocated from this memory pool.
 //   <i> Default: 8000 bytes
-#define MEM_SIZE       4096
+#define MEM_SIZE       2048
 
 //   <o>Tick Timer interval <10=> 10 ms <20=> 20 ms <25=> 25 ms
 //                          <40=> 40 ms <50=> 50 ms <100=> 100 ms <200=> 200 ms
 //   <i> System Tick Timer interval for software timers
 //   <i> Default: 100 ms
-#define TICK_INTERVAL  200
+#define TICK_INTERVAL  100
 
 // </h>
 // <e>Ethernet Network Interface
@@ -95,7 +95,7 @@
 
 //     <o>Address byte 4 <0-255>
 //     <i> Default: 100
-#define _IP4           19
+#define _IP4           130
 
 //   </h>
 //   <h>Subnet mask
@@ -143,19 +143,19 @@
 //   <i> Primary DNS Server IP Address
 //     <o>Address byte 1 <0-255>
 //     <i> Default: 194
-#define _pDNS1         192
+#define _pDNS1         218
 
 //     <o>Address byte 2 <0-255>
 //     <i> Default: 25
-#define _pDNS2         168
+#define _pDNS2         104
 
 //     <o>Address byte 3 <0-255>
 //     <i> Default: 2
-#define _pDNS3         1
+#define _pDNS3         111
 
 //     <o>Address byte 4 <0-255>
 //     <i> Default: 129
-#define _pDNS4         1
+#define _pDNS4         114
 
 //   </h>
 //   <h>Secondary DNS Server
@@ -163,19 +163,19 @@
 //   <i> Secondary DNS Server IP Address
 //     <o>Address byte 1 <0-255>
 //     <i> Default: 194
-#define _sDNS1         194
+#define _sDNS1         218
 
 //     <o>Address byte 2 <0-255>
 //     <i> Default: 25
-#define _sDNS2         25
+#define _sDNS2         104
 
 //     <o>Address byte 3 <0-255>
 //     <i> Default: 2
-#define _sDNS3         2
+#define _sDNS3         111
 
 //     <o>Address byte 4 <0-255>
 //     <i> Default: 130
-#define _sDNS4         130
+#define _sDNS4         122
 
 //   </h>
 //   <h>ARP Definitions
@@ -206,7 +206,7 @@
 //   <e>IGMP Group Management
 //   ========================
 //   <i> Enable or disable Internet Group Management Protocol
-#define IGMP_ENABLE    1
+#define IGMP_ENABLE    0
 
 //     <o>Membership Table size <2-50>
 //     <i> Number of Groups this host can join
@@ -503,13 +503,7 @@
 //   <o>Number of UDP Sockets <1-20>
 //   <i> Number of available UDP sockets
 //   <i> Default: 5
-#define UDP_NUMSOCKS   5
-
-//   <o>Highest port for autoselect <1-32767>
-//   <i> Highest port number for UDP port when the port is not provided
-//   <i> by the user but is automatically selected by the system.
-//   <i> Default: 1023
-#define UDP_LASTPORT   1023
+#define UDP_NUMSOCKS   2
 
 // </e>
 // <e>TCP Sockets
@@ -520,13 +514,7 @@
 //   <o>Number of TCP Sockets <1-20>
 //   <i> Number of available TCP sockets
 //   <i> Default: 5
-#define TCP_NUMSOCKS   10
-
-//   <o>Highest port for autoselect <1-32767>
-//   <i> Highest port number for TCP port when the port is not provided
-//   <i> by the user but is automatically selected by the system.
-//   <i> Default: 1023
-#define TCP_LASTPORT   1023
+#define TCP_NUMSOCKS   7
 
 //   <o>Number of Retries <0-20>
 //   <i> How many times TCP module will try to retransmit data
@@ -556,14 +544,14 @@
 // <e>HTTP Server
 // ==============
 // <i> Enable or disable HTTP Server
-#define HTTP_ENABLE    1
+#define HTTP_ENABLE    0
 
 //   <o>Number of HTTP Sessions <1-10>
 //   <i> Number of simultaneously active HTTP Sessions.
 //   <i> Modify also the number of TCP Sockets because
 //   <i> each HTTP session uses it's own TCP socket
 //   <i> Default: 3
-#define HTTP_NUMSESS   4
+#define HTTP_NUMSESS   6
 
 //   <o>Port Number <1-65535>
 //   <i> Listening port number.
@@ -574,7 +562,7 @@
 //     <i> When enabled, the user will have to authenticate
 //     <i> himself by username and password before accessing
 //     <i> any page on this Embedded WEB server.
-#define HTTP_ENAUTH    0
+#define HTTP_ENAUTH    1
 
 //     <s.20>Authentication Realm string
 //     <i> Default: "Embedded WEB Server"
@@ -818,12 +806,10 @@ U8        lhost_name[16] = LHOST_NAME;
 #endif
 #if UDP_ENABLE == 1
   U8  const udp_NumSocks  = UDP_NUMSOCKS;
-  U16 const udp_LastPort  = UDP_LASTPORT;
 #endif
 #if TCP_ENABLE == 1
   U8  const tcp_NumSocks  = TCP_NUMSOCKS;
   U8  const tcp_MaxRetry  = TCP_MAXRETRY;
-  U16 const tcp_LastPort  = TCP_LASTPORT;
   U16 const tcp_RetryTout = TCP_RETRYTOUT * TICK_RATE;
   U16 const tcp_2MSSTout  = (200 + TICK_INTERVAL - 1) / TICK_INTERVAL;
   U16 const tcp_SynRetryTout = TCP_SYN_RETRY_TOUT * TICK_RATE;
