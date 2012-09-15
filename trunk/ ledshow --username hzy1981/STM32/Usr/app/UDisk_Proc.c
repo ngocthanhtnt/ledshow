@@ -195,10 +195,11 @@ void UDisk_Proc(void)
 
 		Set_RT_Show_Area(0, 0, 32, 16);
         RT_Play_Status_Enter(UDISK_RT_PLAY_TIME);
+        Clr_All_Show_Data();
 
   		if ( CH376GetDiskStatus( ) < DEF_DISK_MOUNTED )/* 未知USB设备,例如USB键盘、打印机等 */ 
 		{ 
-			Clr_All_Show_Data();
+			//Clr_All_Show_Data();
 			LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR4");
 			Set_UDisk_Status(UDISK_NULL);
 			goto UDiskProcEnd;
@@ -220,7 +221,7 @@ void UDisk_Proc(void)
 			  if(Re != USB_INT_SUCCESS) //找不到文件则以广播地址读
 			  {
 			    Set_UDisk_Status(UDISK_NULL);
-			    Clr_All_Show_Data();
+			    //Clr_All_Show_Data();
 			    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR0");
 				goto UDiskProcEnd;
 			  }
@@ -233,14 +234,14 @@ void UDisk_Proc(void)
 				CH376ByteRead((INT8U *)RCV_DATA_BUF, FLEN + 2, &RealCount );
                 if(RealCount EQ 0)
 				{
-  				  Clr_All_Show_Data();
+  				  //Clr_All_Show_Data();
 				  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "OK");
 				  break;
 				}
 			    else if(RealCount != FLEN + 2)
 				{
 				  //Screen_Status.UDisk_Flag = UDISK_END; //处理完毕
-				  Clr_All_Show_Data();
+				  //Clr_All_Show_Data();
 				  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR1");
 				  break;
 				}
@@ -261,7 +262,7 @@ void UDisk_Proc(void)
 					{
 					  //Screen_Status.UDisk_Flag = UDISK_END; //处理完毕
 					  ASSERT_FAILED();
-					  Clr_All_Show_Data();
+					  //Clr_All_Show_Data();
 					  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR2");
 					  break;
 					} 
@@ -271,7 +272,7 @@ void UDisk_Proc(void)
 				{
 				      //Screen_Status.UDisk_Flag = UDISK_END; //处理完毕
    					  ASSERT_FAILED();
-					  Clr_All_Show_Data();
+					  //Clr_All_Show_Data();
 					  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR3");
 					  break;
 				}
@@ -284,7 +285,7 @@ void UDisk_Proc(void)
 	else
 	{
 	  ASSERT_FAILED();
-	  Clr_All_Show_Data();
+	  //Clr_All_Show_Data();
 	  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR5");
 	}
 	
@@ -321,8 +322,10 @@ void Update_From_UDisk(void)
   else
 #endif
   {
+    
 	Set_RT_Show_Area(0, 0, 32, 16);
 	RT_Play_Status_Enter(UDISK_RT_PLAY_TIME);
+    Clr_All_Show_Data();
 
     sprintf((char *)buf, "/LEDDATA/%d.dat", Screen_Para.COM_Para.Addr);
     if (file_fopen(&fileR, &efs.myFs, (char *)buf, 'r') != 0)
@@ -330,7 +333,7 @@ void Update_From_UDisk(void)
 		if (file_fopen(&fileR, &efs.myFs, (char *)"/LEDDATA/65535.dat", 'r') != 0)
 		{
 			Set_UDisk_Status(UDISK_NULL);
-			Clr_All_Show_Data();
+			//Clr_All_Show_Data();
 			LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR0");
 			goto UDiskProcEnd;
 		}
@@ -343,13 +346,13 @@ void Update_From_UDisk(void)
         
 		if(RealCount EQ 0)
 		{
-		  Clr_All_Show_Data();
+		  //Clr_All_Show_Data();
 		  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "OK");
 		  break;
 		}
 	    else if(RealCount != FLEN + 2)
 		{
-		  Clr_All_Show_Data();
+		  //Clr_All_Show_Data();
 		  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR1");
 		  break;
 		}
@@ -367,7 +370,7 @@ void Update_From_UDisk(void)
 			{
 			  //Screen_Status.UDisk_Flag = UDISK_END; //处理完毕
 			  ASSERT_FAILED();
-			  Clr_All_Show_Data();
+			  //Clr_All_Show_Data();
 			  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR2");
 			  break;
 			}
@@ -376,7 +379,7 @@ void Update_From_UDisk(void)
 	  else
 	  {
 		  ASSERT_FAILED();
-		  Clr_All_Show_Data();
+		  //Clr_All_Show_Data();
 		  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR3");
 		  break;
 	  }

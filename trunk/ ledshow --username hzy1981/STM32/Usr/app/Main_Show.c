@@ -1326,7 +1326,7 @@ void RT_Play_Status_Enter(INT16U Sec)
 //退出实时显示状态
 void RT_Play_Status_Exit(void)
 {
-    //Prog_Status.Play_Status.RT_Play_Flag = 0;
+
 	Prog_Status.Play_Status.RT_Play_Time = 0;
     SET_SUM(Prog_Status.Play_Status);
 }
@@ -1890,7 +1890,7 @@ void Scan_Mode_Test(INT8U Mode)
 		    //memset(Show_Data.Color_Data, 0x55, sizeof(Show_Data.Color_Data));
            	//Delay_sec(100);
 			
-		    for(n = 0; n < 5; n ++)
+		    for(n = 0; n < 8; n ++)
 			{
 			  Clr_Watch_Dog();
 
