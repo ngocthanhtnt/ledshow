@@ -177,7 +177,7 @@ void Screen_Temperature_Proc(void)
   INT8U i;
   static S_Int32U Sec = {CHK_BYTE, 0xFFFFFFFF, CHK_BYTE};
 
-  if(Sec.Var != SEC_TIMER)
+  if(Sec.Var != SEC_TIMER && (SEC_TIMER % 2) EQ 0)
   {
     Sec.Var = SEC_TIMER;
 

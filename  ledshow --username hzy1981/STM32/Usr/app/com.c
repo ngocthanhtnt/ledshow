@@ -943,6 +943,10 @@ void Screen_Com_Proc(void)
   if(Screen_Status.Replay_Flag EQ REPLAY_FLAG)
   {
 	   if(Prog_Status.Play_Status.RT_Play_Time EQ 0 && Screen_Status.Com_Time EQ 0) //有重新播放标志
+	   {
 	    Replay_Prog();
+	    Screen_Status.Replay_Flag = 0;
+		SET_SUM(Screen_Status);
+		}
    }		   
 }

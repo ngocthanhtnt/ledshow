@@ -133,7 +133,7 @@ void UDisk_Proc(void)
 	INT8U Counts;
     INT16U RealCount,len;
 	unsigned char buf[30];
-
+	char reStr[10];
     //if(Screen_Status.UDisk_Flag != UDISK_ING) //当前有U盘中断需要处理
 	  //return;
 
@@ -158,14 +158,15 @@ void UDisk_Proc(void)
 		    //RT_Play_Status_Exit(); //退出实时显示状态
 
             Set_UDisk_Status(UDISK_NULL);
-		    goto UDiskProcEnd;
+		    //goto UDiskProcEnd;
+			return;
 		  }
 					  
 		  Counts++;
 		  if(Counts >= 20)
 		  {
             Set_UDisk_Status(UDISK_NULL);
-		    goto UDiskProcEnd;
+		    return;//goto UDiskProcEnd;
 		   }
 		   
 		   Delay_ms(100);	   
@@ -183,7 +184,7 @@ void UDisk_Proc(void)
 			{
 			  /* 检测到断开,重新检测并计时 */
 			   Set_UDisk_Status(UDISK_NULL);
-		       goto UDiskProcEnd;
+		       return;//goto UDiskProcEnd;
 			}
 
 			if ( CH376GetDiskStatus( ) >= DEF_DISK_MOUNTED && Counts >= 5 ) 
@@ -193,14 +194,11 @@ void UDisk_Proc(void)
 			Counts ++;
 		}
 
-		Set_RT_Show_Area(0, 0, 32, 16);
-        RT_Play_Status_Enter(UDISK_RT_PLAY_TIME);
-        Clr_All_Show_Data();
-
   		if ( CH376GetDiskStatus( ) < DEF_DISK_MOUNTED )/* 未知USB设备,例如USB键盘、打印机等 */ 
 		{ 
 			//Clr_All_Show_Data();
-			LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR4");
+			//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR4");
+			strcpy(reStr, "ERR4");
 			Set_UDisk_Status(UDISK_NULL);
 			goto UDiskProcEnd;
 		}
@@ -222,7 +220,7 @@ void UDisk_Proc(void)
 			  {
 			    Set_UDisk_Status(UDISK_NULL);
 			    //Clr_All_Show_Data();
-			    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR0");
+			    strcpy(reStr, "ERR0");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR0");
 				goto UDiskProcEnd;
 			  }
 			}
@@ -235,14 +233,14 @@ void UDisk_Proc(void)
                 if(RealCount EQ 0)
 				{
   				  //Clr_All_Show_Data();
-				  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "OK");
+				  strcpy(reStr, "OK");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "OK");
 				  break;
 				}
 			    else if(RealCount != FLEN + 2)
 				{
 				  //Screen_Status.UDisk_Flag = UDISK_END; //处理完毕
 				  //Clr_All_Show_Data();
-				  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR1");
+				  strcpy(reStr, "ERR1");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR1");
 				  break;
 				}
 
@@ -263,7 +261,7 @@ void UDisk_Proc(void)
 					  //Screen_Status.UDisk_Flag = UDISK_END; //处理完毕
 					  ASSERT_FAILED();
 					  //Clr_All_Show_Data();
-					  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR2");
+					  strcpy(reStr, "ERR2");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR2");
 					  break;
 					} 
 		          }
@@ -273,25 +271,33 @@ void UDisk_Proc(void)
 				      //Screen_Status.UDisk_Flag = UDISK_END; //处理完毕
    					  ASSERT_FAILED();
 					  //Clr_All_Show_Data();
-					  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR3");
+					  strcpy(reStr, "ERR3");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR3");
 					  break;
 				}
 		    }
 
 
 		CH376FileClose(FALSE);
-	    Set_UDisk_Status(UDISK_NULL);
+	    
 	}
 	else
 	{
 	  ASSERT_FAILED();
 	  //Clr_All_Show_Data();
-	  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR5");
+	  strcpy(reStr, "ERR5");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR5");
 	}
 	
-	Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
 UDiskProcEnd:
-	Restore_Show_Area();
+	Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
+
+	Set_RT_Show_Area(0, 0, 32, 16);
+	RT_Play_Status_Enter(UDISK_RT_PLAY_TIME);
+	Clr_All_Show_Data();
+
+	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, reStr);
+	Restore_Show_Area();//此处可以restore
+
+	Set_UDisk_Status(UDISK_NULL);
 
 #endif
 }
@@ -299,6 +305,7 @@ UDiskProcEnd:
 void Update_From_UDisk(void)
 {
   unsigned char buf[30];
+  char reStr[10];
   INT32U RealCount;
   INT16U len;
   INT8U Re;
@@ -322,10 +329,7 @@ void Update_From_UDisk(void)
   else
 #endif
   {
-    
-	Set_RT_Show_Area(0, 0, 32, 16);
-	RT_Play_Status_Enter(UDISK_RT_PLAY_TIME);
-    Clr_All_Show_Data();
+    Set_UDisk_Status(UDISK_ING);
 
     sprintf((char *)buf, "/LEDDATA/%d.dat", Screen_Para.COM_Para.Addr);
     if (file_fopen(&fileR, &efs.myFs, (char *)buf, 'r') != 0)
@@ -334,7 +338,7 @@ void Update_From_UDisk(void)
 		{
 			Set_UDisk_Status(UDISK_NULL);
 			//Clr_All_Show_Data();
-			LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR0");
+			strcpy(reStr, "ERR0");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR0");
 			goto UDiskProcEnd;
 		}
 	}
@@ -347,13 +351,13 @@ void Update_From_UDisk(void)
 		if(RealCount EQ 0)
 		{
 		  //Clr_All_Show_Data();
-		  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "OK");
+		  strcpy(reStr, "OK");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "OK");
 		  break;
 		}
 	    else if(RealCount != FLEN + 2)
 		{
 		  //Clr_All_Show_Data();
-		  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR1");
+		  strcpy(reStr, "ERR1");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR1");
 		  break;
 		}
 
@@ -371,7 +375,7 @@ void Update_From_UDisk(void)
 			  //Screen_Status.UDisk_Flag = UDISK_END; //处理完毕
 			  ASSERT_FAILED();
 			  //Clr_All_Show_Data();
-			  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR2");
+			  strcpy(reStr, "ERR2");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR2");
 			  break;
 			}
 		}
@@ -380,7 +384,7 @@ void Update_From_UDisk(void)
 	  {
 		  ASSERT_FAILED();
 		  //Clr_All_Show_Data();
-		  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR3");
+		  strcpy(reStr, "ERR3");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR3");
 		  break;
 	  }
 	 }
@@ -388,9 +392,17 @@ void Update_From_UDisk(void)
      file_fclose(&fileR);
    }
    
-   Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
 UDiskProcEnd:
-   Restore_Show_Area();
+    Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
+
+	Set_RT_Show_Area(0, 0, 32, 16);
+	RT_Play_Status_Enter(UDISK_RT_PLAY_TIME);
+	Clr_All_Show_Data();
+
+	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, reStr);
+	Restore_Show_Area();//此处可以restore
+
+	Set_UDisk_Status(UDISK_NULL);
 }
 
 

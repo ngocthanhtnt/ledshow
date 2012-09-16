@@ -1436,15 +1436,15 @@ void ADC_configuration(void)
 INT16S GetInterTemperature(void)//ADC_Channel_x 0~17
 {
 #if TEMP_SHOW_EN
-	INT16U adc_value;// VrefintAD;
+	INT16U adc_value, VrefintAD;
 	INT16S temp;
-/*
+
 	ADC_RegularChannelConfig(ADC1,ADC_Channel_17,1,ADC_SampleTime_239Cycles5);
 	ADC_SoftwareStartConvCmd(ADC1,ENABLE);//使能指定的ADC的软件转换启动功能
 	while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)==RESET);//检查制定ADC标志位置1与否 ADC_FLAG_EOC 转换结束标志位
 	VrefintAD=ADC_GetConversionValue(ADC1);
 	debug("VrefintAD = %d", VrefintAD);
-*/
+
     //启动下一次转化
 	ADC_RegularChannelConfig(ADC1,ADC_Channel_16,1,ADC_SampleTime_239Cycles5);
 	ADC_SoftwareStartConvCmd(ADC1,ENABLE);//使能指定的ADC的软件转换启动功能
@@ -1454,7 +1454,8 @@ INT16S GetInterTemperature(void)//ADC_Channel_x 0~17
 	//debug("adc_value = %d", adc_value);
 
 	//temp = (INT16S)(((float)1.43 * 1.2 / VrefintAD / (3.3 / 4096)  - (float)adc_value * 1.2 / VrefintAD) * 1000 / 4.35 + 25);
-	temp = (INT16S)((1.43 - (float)adc_value * 3.3 / 4096) * 1000 / 4.35 + 25);
+	//temp = (INT16S)((1.43 - (float)adc_value * 3.3 / 4096) * 1000 / 4.35 + 25);
+	temp = (INT16S)((1.43 - (float)adc_value * 1.2 / VrefintAD) * 1000 / 4.35 + 25);
 
 	return temp * 10; //单位为0.1度
 #else

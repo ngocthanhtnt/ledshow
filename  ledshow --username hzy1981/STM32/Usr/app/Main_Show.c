@@ -1366,7 +1366,7 @@ void Ram_Init(void)
   memset(&Prog_Num, 0, sizeof(Prog_Num));
   memset(&Prog_Para, 0, sizeof(Prog_Para));
 
-  memset((void *)&Screen_Status, 0, sizeof(Screen_Status));
+  //memset((void *)&Screen_Status, 0, sizeof(Screen_Status));
   Screen_Status.Time_OC_Flag = CLOSE_FLAG;
 
   memset((void *)&Prog_Status, 0, sizeof(Prog_Status));
@@ -1917,13 +1917,15 @@ void Scan_Mode_Test(INT8U Mode)
 void Set_Scan_Interface_Test_Para(INT16U Width)
 {
   INT8U i;
-
+  
   Screen_Status.Color_Num = 2;
   Screen_Status.Lightness = 7; //÷–º‰¡¡∂»
 
   Screen_Para.Base_Para.Width = Width;
   Screen_Para.Base_Para.Height = MAX_SCAN_BLOCK_NUM * 16;
   Screen_Para.Base_Para.Color = 0x03;
+
+  Screen_Para.Scan_Para.Line_Hide = 0;
 
   if(Width EQ 64)
   {
@@ -1932,6 +1934,8 @@ void Set_Scan_Interface_Test_Para(INT16U Width)
 	Screen_Para.Scan_Para.Rows_Fold	= 0x00;
 	Screen_Para.Scan_Para.Cols_Fold	= 0x00;
 	Screen_Para.Scan_Para.Direct = 0x02;
+	Screen_Para.Scan_Para.OE_Polarity = 0x00;
+
   }
   else
   {
@@ -1940,6 +1944,7 @@ void Set_Scan_Interface_Test_Para(INT16U Width)
 	Screen_Para.Scan_Para.Rows_Fold	= 0x03;
 	Screen_Para.Scan_Para.Cols_Fold	= 0x01;
 	Screen_Para.Scan_Para.Direct = 0x02;
+	Screen_Para.Scan_Para.OE_Polarity = 0x01;
   }
 
   SET_SUM(Screen_Para);

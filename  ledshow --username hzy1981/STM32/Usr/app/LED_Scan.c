@@ -805,19 +805,22 @@ void LED_Scan_One_Row(void)
  
   Flag = 0xA5;
 
-  if(Prog_Status.Play_Status.RT_Play_Time EQ 0 &&
-     (Screen_Status.Time_OC_Flag EQ CLOSE_FLAG ||\
-     Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG ||\
-	 Screen_Status.Self_OC_Flag EQ CLOSE_FLAG ||\
-	 Screen_Status.Com_Time > 0 ||\
-	 Screen_Status.Replay_Flag EQ REPLAY_FLAG ||\
-	 Chk_UDisk_Processing())) //关机状态，不显示,或当前在通信状态也不显示
+  if(Screen_Status.Time_OC_Flag EQ CLOSE_FLAG ||\
+     Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG)
 	 {
 	 Flag = 0;
     return;
 	}
  
-   // GPIO_SetBits(GPIOB,GPIO_Pin_9); //测试输出
+  if(Prog_Status.Play_Status.RT_Play_Time EQ 0 &&\
+     (Screen_Status.Self_OC_Flag EQ CLOSE_FLAG ||\
+	  Screen_Status.Com_Time > 0 ||\
+	  Screen_Status.Replay_Flag EQ REPLAY_FLAG ||\
+	  Chk_UDisk_Processing())) //关机状态，不显示,或当前在通信状态也不显示
+	 {
+	 Flag = 0;
+    return;
+	 }
 
 
   if(Screen_Para.Scan_Para.Rows EQ 0)

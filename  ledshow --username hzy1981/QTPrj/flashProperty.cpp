@@ -157,10 +157,15 @@ void CflashProperty::openFlashFile()
                                                     tr("Images (*.png *.xpm *.jpg *.gif)"));
     if(fileName.isEmpty() == false)
     {
-        flashSourceEdit->setText(fileName);
         QMovie *movie = new QMovie(fileName);
         totalFrameNumEdit->setText(QString::number(movie->frameCount()));
         frameNumEdit->setMaximum(movie->frameCount());
+
+        if(flashSourceEdit->text() != fileName)
+        {
+            flashSourceEdit->setText(fileName);
+            frameNumEdit->setValue(movie->frameCount());
+        }
 
         area = w->screenArea->getFocusArea(); //当前焦点分区
 
