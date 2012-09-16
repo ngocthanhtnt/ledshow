@@ -58,5 +58,6 @@
         <file>images/win1/校时.png</file>
         <file>images/win1/节目.png</file>
         <file>images/win1/图片.png</file>
+        <file>images/win1/检测.png</file>
     </qresource>
 </RCC>

@@ -613,11 +613,14 @@ void MainWindow::setupCtrlActions()
     connect(a, SIGNAL(triggered()), this, SLOT(previewScreen()));
     menu->addAction(a);
 
-    actionTestCard = a = new QAction(tr("生产检测"), this);
+    QIcon testIcon = QIcon::fromTheme("生产检测", QIcon(rsrcPath1 + tr("/检测.png")));
+    actionTestCard = a = new QAction(testIcon, tr("生产检测"), this);
     a->setPriority(QAction::LowPriority);
     //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(testCard()));
     tb->addAction(a);
+
+    //actionTestCard->setVisible(false);
 }
 
 void MainWindow::setupToolActions()

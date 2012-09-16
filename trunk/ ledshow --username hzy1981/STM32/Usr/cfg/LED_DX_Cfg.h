@@ -66,9 +66,17 @@
 
 #define USE_SPI_FLASH //串行SPIFlash
 //#define USE_NOR_FLASH //并行NORFlash
-
+#if CARD_TYPE == CARD_D0
+#define UDISK_EN  0//u盘使能
+#define NET_EN	 0//网络使能
+#elif CARD_TYPE == CARD_D1
+#define UDISK_EN  1//u盘使能
+#define NET_EN	 0//网络使能
+#elif CARD_TYPE == CARD_D2
 #define UDISK_EN  1//u盘使能
 #define NET_EN	 1//网络使能
+#endif
+
 #define GPRS_EN  0//GPRS使能
 
 //#define COM_BUF_ID 0x00
