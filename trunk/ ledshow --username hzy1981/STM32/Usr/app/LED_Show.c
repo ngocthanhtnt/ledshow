@@ -6494,8 +6494,12 @@ INT16U RT_LED_Print(INT8U Font, INT8U Color, INT16U X, INT16U Y, INT16U Sec, con
   return strlen((char *)Print_Buf)*Get_Font_Width(Font);
 
 }
+/*
+void Copy_Amp_Round(S_Show_Data *pSrc, S_Show_Data *pDst, S_Point *pPoint, INT16U Radius)
+{
 
 
-
+}
+*/
 
 

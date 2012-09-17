@@ -1262,8 +1262,6 @@ void MainWindow::preview(INT8U previewMode)
       return;
 
   //生成仿真文件
-  Mem_Open();
-
   screenStr = getItemStr(screenArea->screenItem);
 
   Screen_No = progManage->treeWidget->indexOfTopLevelItem(screenArea->screenItem);
@@ -1278,6 +1276,8 @@ void MainWindow::preview(INT8U previewMode)
       return;
   }
 
+  Mem_Open();
+
   Ram_Init();
 
 #if QT_SIM_EN
@@ -1287,7 +1287,10 @@ void MainWindow::preview(INT8U previewMode)
 #endif
 
   if(re EQ 0)
+  {
+      Mem_Close();
       return;
+  }
 
   Preview_Prog_No = screenArea->screenItem->indexOfChild(screenArea->progItem);
   Preview_Mode = previewMode;

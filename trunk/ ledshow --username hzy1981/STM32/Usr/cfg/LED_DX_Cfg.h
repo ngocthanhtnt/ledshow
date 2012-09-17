@@ -21,12 +21,12 @@
 #define TIM1_EN 1
 //----------------------------------------
 #if defined(CARD_D)
-#if CARD_TYPE == CARD_D0 //
-#define CARD_NAME "D0"  //卡名称
-#elif CARD_TYPE == CARD_D1
-#define CARD_NAME "D1"  //卡名称
-#elif CARD_TYPE == CARD_D2
-#define CARD_NAME "D2"  //卡名称
+#if CARD_TYPE == CARDD //
+#define CARD_NAME "D"  //卡名称
+#elif CARD_TYPE == CARDDU
+#define CARD_NAME "DU"  //卡名称
+#elif CARD_TYPE == CARDDM
+#define CARD_NAME "DM"  //卡名称
 #else
 #error "card DX name error"
 #endif
@@ -66,13 +66,13 @@
 
 #define USE_SPI_FLASH //串行SPIFlash
 //#define USE_NOR_FLASH //并行NORFlash
-#if CARD_TYPE == CARD_D0
+#if CARD_TYPE == CARD_D
 #define UDISK_EN  0//u盘使能
 #define NET_EN	 0//网络使能
-#elif CARD_TYPE == CARD_D1
+#elif CARD_TYPE == CARD_DU
 #define UDISK_EN  1//u盘使能
 #define NET_EN	 0//网络使能
-#elif CARD_TYPE == CARD_D2
+#elif CARD_TYPE == CARD_DM
 #define UDISK_EN  1//u盘使能
 #define NET_EN	 1//网络使能
 #endif
