@@ -1007,8 +1007,8 @@ INT16U _makeProtoData(QString fileName, QString screenStr, int flag, char buf[],
           fwrite(frameBuf, len, 1, file);
         }
     }
-    //else
-      //counts = 0;
+    else
+      counts = 0;
 
     free(dataBuf);
 
@@ -1066,7 +1066,7 @@ INT8U makeProtoBufData(QString screenStr, int mode, INT8U cmd , char buf[], int 
         }
     }
 
-    return 1;
+    return (counts > 0?1:0);
 }
 
 //INT8U makeProtoBufData(INT8U Cmd, )

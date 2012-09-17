@@ -2180,6 +2180,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     cardGroup = new QWidget(this);//QGroupBox(tr("控制组件"), this);//CnameEdit(this);
     vLayout = new QVBoxLayout(this);
     cardCombo = new QComboBox(this);
+    readCardTypeButton = new QPushButton(tr("读取卡类型"), this);
     cardCombo->setFixedWidth(100);
 
     //获取所有卡的列表
@@ -2193,8 +2194,12 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     cardParaEdit->setFocusPolicy(Qt::NoFocus); //禁止键盘输入(false);
     cardParaEdit->setFixedHeight(80);
 
+    hLayout =new QHBoxLayout(this);
+    hLayout ->addWidget(cardCombo);
+    hLayout ->addWidget(readCardTypeButton);
+    hLayout ->addStretch();
 
-    vLayout->addWidget(cardCombo);
+    vLayout->addLayout(hLayout);//addWidget(cardCombo);
     vLayout->addWidget(cardParaEdit);
     cardGroup->setLayout(vLayout);
     tabWidget-> addTab(cardGroup, tr("控制组件"));
@@ -2528,6 +2533,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    connect(selfTestButton, SIGNAL(clicked()), this, SLOT(setTestProc()));
    connect(readParaButton, SIGNAL(clicked()), this, SLOT(readParaProc()));
    connect(importParaButton, SIGNAL(clicked()), this, SLOT(importParaProc()));
+   connect(readCardTypeButton, SIGNAL(clicked()), this ,SLOT(readCardType()));
 
    importParaButton->setEnabled(false);
 
@@ -2795,7 +2801,7 @@ void CfacScreenProperty::readParaProc()
            return;
         }
 
-        screenParaStr += tr("固件版本 ") + QString((char *)rcvBuf) + tr(" ");
+        screenParaStr += tr("\r\n固件版本 ") + QString((char *)rcvBuf) + tr(" ");
     }
     else
     {
@@ -2817,6 +2823,61 @@ void CfacScreenProperty::importParaProc()
 
     QMessageBox::information(w, QObject::tr("提示"),
                             QObject::tr("参数导入成功!"),QObject::tr("确定"));
+}
+
+void CfacScreenProperty::readCardType()
+{
+    INT8U rcvBuf[500]; //读取屏幕参数缓冲区
+    int len;
+    bool re;
+
+    QString cardTypeStr;
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
+    this->readCardTypeButton->setEnabled(false);
+
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+
+    //读取版本号
+    if(QT_SIM_EN)
+      makeProtoBufData(screenStr, SIM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0 , 0);
+    else
+      makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0, 0);
+
+    re = w->comStatus->waitComEnd(rcvBuf, sizeof(rcvBuf), &len);
+    if(re EQ true)
+    {
+      //screenParaStr = tr("版本号:")+QString((char *)rcvBuf) + " ";
+      for(int i = 0; i < sizeof(rcvBuf); i ++)
+        {
+          if(rcvBuf[i] == ' ')
+              rcvBuf[i] = 0;
+      }
+
+      cardTypeStr = QString("AS-") + QString((char *)rcvBuf);
+
+      int cardIndex = cardCombo->findText(cardTypeStr);
+      if(cardIndex == -1) //没有找到
+      {
+          QMessageBox::information(w, QObject::tr("提示"),
+                                  QObject::tr("控制卡型号为") +cardTypeStr + QObject::tr("，当前软件版本不支持该型号卡，请使用较新版本软件"),QObject::tr("确定"));
+      }
+      else
+      {
+        QMessageBox::information(w, QObject::tr("提示"),
+                                QObject::tr("控制卡型号为") +cardTypeStr + QObject::tr("，该型号被设置为当前参数"),QObject::tr("确定"));
+        cardCombo->setCurrentIndex(cardIndex);
+      }
+    }
+    else
+    {
+        QMessageBox::warning(w, QObject::tr("提示"),
+                                QObject::tr("读取控制卡版本号失败，请检查与控制器通信连接是否正常！"),QObject::tr("确定"));
+    }
+
+    this->readCardTypeButton->setEnabled(true);
 }
 
 void CfacScreenProperty::udiskLoadParaProc()

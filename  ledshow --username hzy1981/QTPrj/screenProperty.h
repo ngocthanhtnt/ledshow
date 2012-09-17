@@ -297,6 +297,7 @@ public slots:
  void setTestProc(); // 自检
  void comLoadParaProc(); //通信加载参数
  void udiskLoadParaProc(); //U盘加载参数
+ void readCardType();
  public:
  QTabWidget *tabWidget;
 
@@ -310,6 +311,7 @@ public slots:
  QWidget *scanPicWidget;
 
  QComboBox *cardCombo; //选择卡类型
+ QPushButton *readCardTypeButton;
  QTextEdit *cardParaEdit; //卡参数
 
  //通信参数
