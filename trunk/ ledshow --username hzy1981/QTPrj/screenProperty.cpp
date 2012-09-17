@@ -2728,7 +2728,7 @@ void CfacScreenProperty::readParaProc()
     re = w->comStatus->waitComEnd(rcvBuf, sizeof(rcvBuf), &len);
     if(re EQ true)
     {
-      screenParaStr = tr("版本号:")+QString((char *)rcvBuf) + " ";
+      screenParaStr = tr("固件版本:")+QString((char *)rcvBuf) + " ";
     }
 
     if(QT_SIM_EN)
@@ -2784,29 +2784,6 @@ void CfacScreenProperty::readParaProc()
         importParaButton->setEnabled(true);//可以导入参数了
     }
 
-
-    //获取固件版本
-    if(QT_SIM_EN)
-      makeProtoBufData(screenStr, SIM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0 , 0);
-    else
-      makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0, 0);
-
-    re = w->comStatus->waitComEnd(rcvBuf, sizeof(rcvBuf), &len);
-    if(re EQ true)
-    {
-        if(len != SOFT_VERSION_LEN)
-        {
-            //读取参数长度错误
-            this->readParaButton->setEnabled(true);
-           return;
-        }
-
-        screenParaStr += tr("\r\n固件版本 ") + QString((char *)rcvBuf) + tr(" ");
-    }
-    else
-    {
-      screenParaStr += tr(SEND_PARA_FAIL_STR);
-    }
 
     readParaEdit->setText(screenParaStr);
 
@@ -2869,6 +2846,15 @@ void CfacScreenProperty::readCardType()
         QMessageBox::information(w, QObject::tr("提示"),
                                 QObject::tr("控制卡型号为") +cardTypeStr + QObject::tr("，该型号被设置为当前参数"),QObject::tr("确定"));
         cardCombo->setCurrentIndex(cardIndex);
+/*
+        QString str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
+        settings.beginGroup(str);
+        settings.beginGroup("facPara");
+        settings.setValue("cardType", cardCombo->currentIndex());
+        settings.endGroup();
+        settings.endGroup();
+*///应该等到加载成功才能更新参数
+
       }
     }
     else
@@ -2927,7 +2913,7 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
     }
 
     getScreenCardParaFromSettings(str, Screen_Para, Card_Para);//重新获取屏幕参数和板卡参数
-
+    w->setActonsEnable();
 
     int index = getScreenIndex(str);
     QString screenName = QString::number(index) + QObject::tr("号屏幕");
@@ -3028,6 +3014,8 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
                                    tr(SEND_PARA_FAIL_STR),tr("确定"));
         }
     }
+
+    w->setActonsEnable();
 
 }
 
@@ -3194,6 +3182,7 @@ void CfacScreenProperty::cardChangeProc()
 
     cardParaEdit->append(comStr);
     memcpy(&Card_Para, &cardPara_Bak, sizeof(Card_Para));
+
 }
 
 void CfacScreenProperty::endProc()
