@@ -1037,7 +1037,7 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
 
     type = checkItemType(item);
 
-    w->actionEnProc(type);
+    //w->actionEnProc(type);
     //更新当前屏幕
     if(type EQ SCREEN_PROPERTY)
     {
@@ -1083,6 +1083,8 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
         QString screenStr = screenItem->data(0, Qt::UserRole).toString();
         getScreenCardParaFromSettings(screenStr, Screen_Para, Card_Para);
 
+        w->setActonsEnable(); //设置所有图标
+
         if(oldScreenItem != w->screenArea->screenItem)
         {
             mainObj->emitScreenChangeSignal();
@@ -1123,6 +1125,7 @@ void CprogManage::clickItem(QTreeWidgetItem *item, int column)
     w->property->updateProperty(item);
     w->screenArea->updateShowArea(item);
     //treeWidget->setCurrentItem(item);//setCurrentItem()---这句话要放到最后！否则前面的两个函数触发槽，槽函数还是引用之前的curitem
+    w->actionEnProc(type);
 }
 /*
 //progManage中的treeWidget的初始化,根据settings进行初始化

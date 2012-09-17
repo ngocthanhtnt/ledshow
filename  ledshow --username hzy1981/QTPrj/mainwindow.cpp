@@ -174,6 +174,25 @@ QIcon getTypeIcon(INT8U type)
   return icon;
 }
 
+void MainWindow::setActonsEnable()
+{
+  actionSText->setData((bool)Get_Pic_Show_En());//(bool)Get_Pic_Show_En());
+  actionMText->setData((bool)Get_Pic_Show_En());
+  actionTable->setData((bool)Get_Pic_Show_En());
+  actionFlash->setData((bool)Get_Pic_Show_En());
+  actionImage->setData((bool)Get_Pic_Show_En());
+  actionClock->setData((bool)Get_Clock_Show_En());
+  actionTime->setData((bool)Get_Time_Show_En());
+  actionNongli->setData((bool)Get_Lun_Show_En());
+  actionTimer->setData((bool)Get_Timer_Show_En());
+  actionTemp->setData((bool)Get_Temp_Show_En());
+  actionHumidi->setData((bool)Get_Humidity_Show_En());
+  actionNoise->setData((bool)Get_Noise_Show_En());
+
+  w->actionEnProc(checkItemType(w->progManage->getCurItem()));
+  //actionSText->setData();
+}
+
 void MainWindow::setupEditActions()
 {
     QToolBar *tb = new QToolBar(this);
@@ -234,7 +253,7 @@ void MainWindow::setupEditActions()
     QIcon stextIcon = getTypeIcon(PIC_STEXT_PROPERTY);//QIcon::fromTheme(tr("字幕"), QIcon(rsrcPath1 + tr("/字幕.ico")));
     actionSText = a = new QAction(stextIcon, tr("字幕"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled(true);//(bool)Get_Pic_Show_En());
+    actionSText->setEnabled((bool)Get_Pic_Show_En());//(bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newSText())); //新建节目
     tb->addAction(a);
     menu->addAction(a);
@@ -242,7 +261,7 @@ void MainWindow::setupEditActions()
     QIcon mtextIcon = getTypeIcon(PIC_MTEXT_PROPERTY);//QIcon::fromTheme(tr("文本"), QIcon(rsrcPath1 + tr("/图文22.png")));
     actionMText = a = new QAction(mtextIcon, tr("文本"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Pic_Show_En());
+    actionMText->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newPic())); //新建节目
     tb->addAction(a);
     menu->addAction(a);
@@ -250,7 +269,7 @@ void MainWindow::setupEditActions()
     QIcon tableIcon = getTypeIcon(PIC_TABLE_PROPERTY);//QIcon::fromTheme(tr("文本"), QIcon(rsrcPath1 + tr("/图文22.png")));
     actionTable = a = new QAction(tableIcon, tr("表格"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Pic_Show_En());
+    actionTable->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTable())); //新建节目
     tb->addAction(a);
     menu->addAction(a);
@@ -258,7 +277,7 @@ void MainWindow::setupEditActions()
     QIcon flashIcon = getTypeIcon(PIC_FLASH_PROPERTY);//QIcon::fromTheme(tr("动画"), QIcon(rsrcPath1 + tr("/动画.ico")));
     actionFlash = a = new QAction(flashIcon, tr("动画"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Pic_Show_En());
+    actionFlash->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newFlash()));
     tb->addAction(a);
     menu->addAction(a);
@@ -266,7 +285,7 @@ void MainWindow::setupEditActions()
     QIcon imageIcon = getTypeIcon(PIC_IMAGE_PROPERTY);//QIcon::fromTheme(tr("动画"), QIcon(rsrcPath1 + tr("/动画.ico")));
     actionImage = a = new QAction(imageIcon, tr("图片"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Pic_Show_En());
+    actionImage->setEnabled((bool)Get_Pic_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newImage()));
     tb->addAction(a);
     menu->addAction(a);
@@ -274,7 +293,7 @@ void MainWindow::setupEditActions()
     QIcon clockIcon = getTypeIcon(CLOCK_PROPERTY);//QIcon::fromTheme(tr("表盘"), QIcon(rsrcPath1 + tr("/表盘.ico")));
     actionClock = a = new QAction(clockIcon, tr("表盘"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Clock_Show_En());
+    actionClock->setEnabled((bool)Get_Clock_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newClock()));
     tb->addAction(a);
     menu->addAction(a);
@@ -282,7 +301,7 @@ void MainWindow::setupEditActions()
     QIcon timeIcon = getTypeIcon(TIME_PROPERTY);//QIcon::fromTheme(tr("时间"), QIcon(rsrcPath1 + tr("/日历22.png")));
     actionTime = a = new QAction(timeIcon, tr("时间"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Time_Show_En());
+    actionTime->setEnabled((bool)Get_Time_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTime()));
     tb->addAction(a);
     menu->addAction(a);
@@ -290,7 +309,7 @@ void MainWindow::setupEditActions()
     QIcon lunIcon = getTypeIcon(LUN_PROPERTY);//QIcon::fromTheme(tr("农历"), QIcon(rsrcPath1 + tr("/农历22.png")));
     actionNongli = a = new QAction(lunIcon, tr("农历"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Lun_Show_En());
+    actionNongli->setEnabled((bool)Get_Lun_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newLun()));
     tb->addAction(a);
     menu->addAction(a);
@@ -298,7 +317,7 @@ void MainWindow::setupEditActions()
     QIcon timerIcon = getTypeIcon(TIMER_PROPERTY);//QIcon::fromTheme(tr("计时"), QIcon(rsrcPath1 + tr("/计时.png")));
     actionTimer = a = new QAction(timerIcon, tr("计时"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Timer_Show_En());
+    actionTimer->setEnabled((bool)Get_Timer_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTimer()));
     tb->addAction(a);
     menu->addAction(a);
@@ -306,7 +325,7 @@ void MainWindow::setupEditActions()
     QIcon tempIcon = getTypeIcon(TEMP_PROPERTY);//QIcon::fromTheme(tr("温度"), QIcon(rsrcPath1 + tr("/温度22.png")));
     actionTemp = a = new QAction(tempIcon, tr("温度"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Temp_Show_En());
+    actionTemp->setEnabled((bool)Get_Temp_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newTemp()));
     tb->addAction(a);
     menu->addAction(a);
@@ -314,7 +333,7 @@ void MainWindow::setupEditActions()
     QIcon humidityIcon = getTypeIcon(HUMIDITY_PROPERTY);//QIcon::fromTheme(tr("湿度"), QIcon(rsrcPath1 + tr("/湿度.png")));
     actionHumidi = a = new QAction(humidityIcon, tr("湿度"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Humidity_Show_En());
+    actionHumidi->setEnabled((bool)Get_Humidity_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newHumidity()));
     tb->addAction(a);
     menu->addAction(a);
@@ -322,7 +341,7 @@ void MainWindow::setupEditActions()
     QIcon noiseIcon = getTypeIcon(NOISE_PROPERTY);//QIcon::fromTheme(tr("湿度"), QIcon(rsrcPath1 + tr("/噪音.ico")));
     actionNoise = a = new QAction(noiseIcon, tr("噪音"), this);
     //a->setShortcut(QKeySequence::Save);
-    a->setEnabled((bool)Get_Humidity_Show_En());
+    actionNoise->setEnabled((bool)Get_Noise_Show_En());
     connect(a, SIGNAL(triggered()), progManage, SLOT(newNoise()));
     tb->addAction(a);
     menu->addAction(a);
@@ -455,18 +474,19 @@ void MainWindow::actionEnProc(int Type)
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
       actionArea->setEnabled(true);
-      actionSText->setEnabled(true);
-      actionMText->setEnabled(true);
-      actionTable->setEnabled(true);
-      actionTemp->setEnabled(true);
-      actionHumidi->setEnabled(true);
-      actionFlash->setEnabled(true);
-      actionImage->setEnabled(true);
-      actionClock->setEnabled(true);
-      actionTime->setEnabled(true);
-      actionNoise->setEnabled(true);
-      actionNongli->setEnabled(true);
-      actionTimer->setEnabled(true);
+
+      actionSText->setEnabled((actionSText->data().toBool()== true)?true:false);
+      actionMText->setEnabled((actionMText->data().toBool()== true)?true:false);
+      actionTable->setEnabled((actionTable->data().toBool()== true)?true:false);
+      actionTemp->setEnabled((actionTemp->data().toBool()== true)?true:false);
+      actionHumidi->setEnabled((actionHumidi->data().toBool()== true)?true:false);
+      actionFlash->setEnabled((actionFlash->data().toBool()== true)?true:false);
+      actionImage->setEnabled((actionImage->data().toBool()== true)?true:false);
+      actionClock->setEnabled((actionClock->data().toBool()== true)?true:false);
+      actionTime->setEnabled((actionTime->data().toBool()== true)?true:false);
+      actionNoise->setEnabled((actionNoise->data().toBool()== true)?true:false);
+      actionNongli->setEnabled((actionNongli->data().toBool()== true)?true:false);
+      actionTimer->setEnabled((actionTimer->data().toBool()== true)?true:false);
       actionDel->setEnabled(true);
   }
   else
@@ -487,18 +507,19 @@ void MainWindow::actionEnProc(int Type)
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
       actionArea->setEnabled(true);
-      actionSText->setEnabled(true);
-      actionMText->setEnabled(true);
-      actionTable->setEnabled(true);
-      actionTemp->setEnabled(true);
-      actionHumidi->setEnabled(true);
-      actionFlash->setEnabled(true);
-      actionImage->setEnabled(true);
-      actionClock->setEnabled(true);
-      actionTime->setEnabled(true);
-      actionNoise->setEnabled(true);
-      actionNongli->setEnabled(true);
-      actionTimer->setEnabled(true);
+      actionSText->setEnabled((actionSText->data().toBool()== true)?true:false);
+      actionMText->setEnabled((actionMText->data().toBool()== true)?true:false);
+      actionTable->setEnabled((actionTable->data().toBool()== true)?true:false);
+      actionTemp->setEnabled((actionTemp->data().toBool()== true)?true:false);
+      actionHumidi->setEnabled((actionHumidi->data().toBool()== true)?true:false);
+      actionFlash->setEnabled((actionFlash->data().toBool()== true)?true:false);
+      actionImage->setEnabled((actionImage->data().toBool()== true)?true:false);
+      actionClock->setEnabled((actionClock->data().toBool()== true)?true:false);
+      actionTime->setEnabled((actionTime->data().toBool()== true)?true:false);
+      actionNoise->setEnabled((actionNoise->data().toBool()== true)?true:false);
+      actionNongli->setEnabled((actionNongli->data().toBool()== true)?true:false);
+      actionTimer->setEnabled((actionTimer->data().toBool()== true)?true:false);
+
       actionDel->setEnabled(true);
   }
 }

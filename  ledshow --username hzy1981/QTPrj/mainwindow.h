@@ -81,6 +81,7 @@ private:
     void setupHelpActions();
     void setupLanguageActions();
 
+
     QMenu *ctrlMenu;
     QAction *actionScreen;
     QAction *actionProg;
@@ -149,6 +150,7 @@ public:
 
     CcomStatus *comStatus; //通信状态
 
+    void setActonsEnable();
     void actionEnProc(int type);
     void screenCardParaChangeProc();
     void setCurSettingsStr(QString str);  //获取当前的settings的str
