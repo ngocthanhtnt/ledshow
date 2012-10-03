@@ -366,23 +366,15 @@ void SPI1_ENC28J60_Init(void)
    SPI_InitTypeDef SPI_InitStructure;
    GPIO_InitTypeDef GPIO_InitStructure;
 
-   /* Enable SPI1 and GPIOA clocks */
    RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1 | RCC_APB2Periph_GPIOA, ENABLE);
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-	//	PA5--SCK----SCK
-	//	PA6--MISO---SO
-	//	PA7--MOSI---SI 	 
-   /* Configure SPI1 pins: NSS, SCK, MISO and MOSI */
    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
    GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
-   GPIO_InitStructure.GPIO_Mode =  GPIO_Mode_IPU;   //上拉输入
-   GPIO_Init(GPIOA, &GPIO_InitStructure);
-
+   ENC28J60_CSH();
    SPI_Cmd(SPI1, DISABLE);
 
    /* SPI1 configuration */ 
@@ -392,7 +384,7 @@ void SPI1_ENC28J60_Init(void)
    SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
    SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
    SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;    //软件CS
-   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_8;  //四分频
+   SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;  //16分频
    SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
    SPI_InitStructure.SPI_CRCPolynomial = 7;
    SPI_Init(SPI1, &SPI_InitStructure);
@@ -1104,7 +1096,9 @@ void Unselect_SPI_Device(void)
   SET_FLASH_CS(1); //不选中Flash
   SET_CH376_CS(1);	//不选中CH376
   SET_DS1302_CS(0);	//不选中DS1302
-
+#if NET_EN
+  ENC28J60_CSH(); //不选中ENC28J60
+#endif
 }
 
 void RST_Periph(void)
@@ -1114,6 +1108,14 @@ void RST_Periph(void)
   SET_RST(1);
   Delay_ms(100);
   SET_RST(0);
+
+#if NET_EN
+  SET_ENC28J60_RST(1);
+  Delay_us(100);
+  SET_ENC28J60_RST(0);
+  Delay_ms(100);
+  SET_ENC28J60_RST(1);
+#endif
 }
 
 //共有的驱动函数等在此文件中定义

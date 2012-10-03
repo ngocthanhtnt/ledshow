@@ -27,6 +27,7 @@
 */
 //复位脚 -PB15
 #define SET_RST(x) (x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_15):GPIO_SetBits(GPIOA,GPIO_Pin_15)
+#define SET_ENC28J60_RST(x) (x == 0)?GPIO_ResetBits(GPIOC,GPIO_Pin_2):GPIO_SetBits(GPIOC,GPIO_Pin_2)
 
 //SPI Flash的选通脚-PA4
 #define SET_FLASH_CS(x)	(x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_4):GPIO_SetBits(GPIOA,GPIO_Pin_4)
@@ -45,11 +46,11 @@
 #define  SPInet_Init   SPI1_ENC28J60_Init
 
 ////////////////////////////////////////////////////////////////////////////////////
-#define  ENC28J60_CSL()    GPIO_ResetBits(GPIOB,GPIO_Pin_15)//(GPIOC->ODR &= ~(1<<4))
-#define  ENC28J60_CSH()    GPIO_SetBits(GPIOB,GPIO_Pin_15)//(GPIOC->ODR |= 1<<4)
+#define  ENC28J60_CSL()    GPIO_ResetBits(GPIOC,GPIO_Pin_1)//(GPIOC->ODR &= ~(1<<4))
+#define  ENC28J60_CSH()    GPIO_SetBits(GPIOC,GPIO_Pin_1)//(GPIOC->ODR |= 1<<4)
 
-#define  ENC28J60_RSTL()   (GPIOC->ODR &= ~(1<<0))
-#define  ENC28J60_RSTH()   (GPIOC->ODR |= 1<<0)
+#define  ENC28J60_RSTL()   GPIO_ResetBits(GPIOC,GPIO_Pin_2)
+#define  ENC28J60_RSTH()   GPIO_SetBits(GPIOC,GPIO_Pin_2)
 //----------------------------------
 /*
 //ENC28J60_CS脚

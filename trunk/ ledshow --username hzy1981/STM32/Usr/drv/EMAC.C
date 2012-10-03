@@ -55,27 +55,32 @@ void send_frame (OS_FRAME *frame)
 	enc28j60PacketSend(frame->length,pdata);
 }
 
-void poll_ethernet (void)
+void poll_ether(void)//net(void)
 {
 	OS_FRAME *frame;
-	U8 pdata[ETH_MTU];
+	//U8 pdata[ETH_MTU];
+	U8 *pdata;
 	U32 RxLen	;
 	U32 *dp,*sp;
 
+	pdata = (U8 *)Pub_Buf;
 	RxLen=enc28j60PacketReceive(ETH_MTU, pdata);
 	sp  = (U32 *)&pdata[0];
 
 	if(RxLen!=0)
 	{	 
 		frame = alloc_mem (RxLen);
-		RxLen = (RxLen + 3) >> 2;	
-		dp = (U32 *)&frame->data[0];
-		for (  ; RxLen; RxLen--)
-		 {
-    		*dp++ =  *sp++;
- 		 }
-		frame->length=RxLen-1;
-		put_in_queue (frame);
+	    if(frame != 0)
+		{
+			RxLen = (RxLen + 3) >> 2;	
+			dp = (U32 *)&frame->data[0];
+			for (  ; RxLen; RxLen--)
+			 {
+	    		*dp++ =  *sp++;
+	 		 }
+			frame->length=RxLen-1;
+			put_in_queue (frame);
+		}
 	}
 	else return;
 }

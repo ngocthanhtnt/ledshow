@@ -272,6 +272,14 @@ typedef struct
   INT8U Env_Rcv_Posi;	  //接收缓冲区位置
 #endif
 
+#if NET_EN //远程通信相关数据
+  INT8U UDP_Soc;
+  INT8U Rem_IP[4];
+  INT16U Rem_Port;
+  INT16U Rem_Data_Flag;
+  INT16U Rem_Data_Len;
+#endif
+
   INT8U Self_Test_Flag;
   INT8U Scan_Mode_Test_Flag;
   INT8U Encryption_Err_Flag; //加密错误信息

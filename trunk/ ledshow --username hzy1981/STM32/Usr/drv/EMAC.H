@@ -2,11 +2,11 @@
 #define __EMAC_H
 
 
-#include <Net_Config.h>
+#include "Net_Config.h"
 
 
 void init_ethernet (void);
 void send_frame (OS_FRAME *frame);
-void poll_ethernet (void);
+void poll_ether (void);
 #endif
 

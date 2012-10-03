@@ -9,7 +9,7 @@
  *      Copyright (c) 2004-2011 KEIL - An ARM Company. All rights reserved.
  *---------------------------------------------------------------------------*/
 
-#include <Net_Config.h>
+#include "Net_Config.h"
 #include "Includes.h"
 #if NET_EN
 //-------- <<< Use Configuration Wizard in Context Menu >>> -----------------
@@ -89,11 +89,11 @@
 
 //     <o>Address byte 3 <0-255>
 //     <i> Default: 0
-#define _IP3           0
+#define _IP3           1
 
 //     <o>Address byte 4 <0-255>
 //     <i> Default: 100
-#define _IP4           100
+#define _IP4           133
 
 //   </h>
 //   <h>Subnet mask
@@ -129,11 +129,11 @@
 
 //     <o>Address byte 3 <0-255>
 //     <i> Default: 0
-#define _GW3           0
+#define _GW3           1
 
 //     <o>Address byte 4 <0-255>
 //     <i> Default: 254
-#define _GW4           254
+#define _GW4           1
 
 //   </h>
 //   <h>Primary DNS Server
@@ -141,19 +141,19 @@
 //   <i> Primary DNS Server IP Address
 //     <o>Address byte 1 <0-255>
 //     <i> Default: 194
-#define _pDNS1         194
+#define _pDNS1         192
 
 //     <o>Address byte 2 <0-255>
 //     <i> Default: 25
-#define _pDNS2         25
+#define _pDNS2         168
 
 //     <o>Address byte 3 <0-255>
 //     <i> Default: 2
-#define _pDNS3         2
+#define _pDNS3         0
 
 //     <o>Address byte 4 <0-255>
 //     <i> Default: 129
-#define _pDNS4         129
+#define _pDNS4         1
 
 //   </h>
 //   <h>Secondary DNS Server
@@ -161,19 +161,19 @@
 //   <i> Secondary DNS Server IP Address
 //     <o>Address byte 1 <0-255>
 //     <i> Default: 194
-#define _sDNS1         194
+#define _sDNS1         192
 
 //     <o>Address byte 2 <0-255>
 //     <i> Default: 25
-#define _sDNS2         25
+#define _sDNS2         168
 
 //     <o>Address byte 3 <0-255>
 //     <i> Default: 2
-#define _sDNS3         2
+#define _sDNS3         0
 
 //     <o>Address byte 4 <0-255>
 //     <i> Default: 130
-#define _sDNS4         130
+#define _sDNS4         1
 
 //   </h>
 //   <h>ARP Definitions
@@ -490,7 +490,7 @@
 // <e>UDP Sockets
 // ==============
 // <i> Enable or disable UDP Sockets
-#define UDP_ENABLE     0
+#define UDP_ENABLE     1
 
 //   <o>Number of UDP Sockets <1-20>
 //   <i> Number of available UDP sockets
@@ -501,7 +501,7 @@
 // <e>TCP Sockets
 // ==============
 // <i> Enable or disable TCP Sockets
-#define TCP_ENABLE     1
+#define TCP_ENABLE     0
 
 //   <o>Number of TCP Sockets <1-20>
 //   <i> Number of available TCP sockets

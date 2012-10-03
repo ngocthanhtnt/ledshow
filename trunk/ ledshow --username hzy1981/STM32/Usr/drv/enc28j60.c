@@ -139,11 +139,12 @@ void enc28j60Init(u8 * macaddr)
    // Del_1ms(250);
    // check CLKRDY bit to see if reset is complete
    // The CLKRDY does not work. See Rev. B4 Silicon Errata point. Just wait.
-   //while(!(enc28j60Read(ESTAT) & ESTAT_CLKRDY));
+   while(!(enc28j60Read(ESTAT) & ESTAT_CLKRDY));
    // do bank 0 stuff
    // initialize receive buffer
    // 16-bit transfers, must write low byte first
    // set receive buffer start address
+
    NextPacketPtr = RXSTART_INIT;
    // Rx start
    enc28j60Write(ERXSTL, RXSTART_INIT & 0xFF);

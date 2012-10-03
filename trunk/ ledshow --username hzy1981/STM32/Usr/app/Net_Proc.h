@@ -8,6 +8,8 @@
 #define EXT extern
 #endif
 
+#define REM_DATA_FLAG 0x99
+
 EXT void Net_Init(void);
 EXT void Net_Proc(void); 
 #endif
