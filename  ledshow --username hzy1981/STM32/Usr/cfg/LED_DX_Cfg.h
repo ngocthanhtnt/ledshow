@@ -41,7 +41,7 @@
 #define FONT_NUM 2 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
-#define MAX_POINTS (1280*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
+#define MAX_POINTS (1200*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  3000 //最大存储块数
 #define DATA_FLASH_SIZE 2000000	//dataflash大小
 #define MAX_SCAN_BLOCK_NUM 16 //最大扫描块
@@ -66,13 +66,13 @@
 
 #define USE_SPI_FLASH //串行SPIFlash
 //#define USE_NOR_FLASH //并行NORFlash
-#if CARD_TYPE == CARD_D
+#if CARD_TYPE == CARDD
 #define UDISK_EN  0//u盘使能
 #define NET_EN	 0//网络使能
-#elif CARD_TYPE == CARD_DU
+#elif CARD_TYPE == CARDDU
 #define UDISK_EN  1//u盘使能
 #define NET_EN	 0//网络使能
-#elif CARD_TYPE == CARD_DM
+#elif CARD_TYPE == CARDDM
 #define UDISK_EN  1//u盘使能
 #define NET_EN	 1//网络使能
 #endif

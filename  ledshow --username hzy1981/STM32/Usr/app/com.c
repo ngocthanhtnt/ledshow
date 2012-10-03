@@ -771,9 +771,22 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen)
 {
   INT16U i;
-
+  INT8U *sendBuf;
+  
+  if(Ch EQ CH_COM || Ch EQ CH_GPRS) //发送串口数据
+  {
     for(i = 0; i < FrameLen; i ++)
       Com_Send_Byte(Ch, Frame[i]);
+  }
+  else if(Ch EQ CH_NET) //发送网络数据，实际是UDP数据
+  {
+    sendBuf = udp_get_buf (FrameLen);
+    if(sendBuf)
+	{
+	  memcpy(sendBuf, Frame, FrameLen);
+      udp_send (Screen_Status.UDP_Soc, (INT8U *)Screen_Status.Rem_IP, Screen_Status.Rem_Port, sendBuf, FrameLen);
+    }
+  }
 }
 
 //接收环境变量数据,温度、湿度、噪音等

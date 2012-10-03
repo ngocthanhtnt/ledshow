@@ -148,7 +148,7 @@
 #include "LED_CX_Cfg.h"
 #include "LED_CX_Drv.h"
 #elif defined(CARD_D)
-#define CARD_TYPE CARDD
+#define CARD_TYPE CARDDM
 #include "LED_DX_Cfg.h"
 #include "LED_DX_Drv.h"
 #elif defined(CARD_E)

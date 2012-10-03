@@ -4,6 +4,7 @@
 #include "pub.h"
 #include "Storage.h"
 #include "LED_Show.h"
+#include "Net_Config.h"
 //extern "c"
 //{
 #undef EXT
@@ -768,12 +769,12 @@ typedef struct
 
 
 #define MAX(a,b,c,d) (((a)>(b)?(a):(b))>(c)?((a)>(b)?(a):(b)):(c))>(d)?(((a)>(b)?(a):(b))>(c)?((a)>(b)?(a):(b)):(c)):(d)
-#define MAX_COM_BUF_LEN (MAX(BLOCK_DATA_LEN , SCREEN_PARA_LEN, FILE_PARA_LEN, PROG_PARA_LEN)) + 20
+#define MAX_COM_BUF_LEN ((MAX(BLOCK_DATA_LEN , SCREEN_PARA_LEN, FILE_PARA_LEN, PROG_PARA_LEN)) + 20)
 
 typedef struct
 {
   INT8U Head;
-  INT8U Buf[MAX_COM_BUF_LEN];
+  INT8U Buf[(MAX_COM_BUF_LEN > ETH_MTU)?MAX_COM_BUF_LEN : ETH_MTU];
   INT8U Tail;
 }S_Pub_Buf;
 
