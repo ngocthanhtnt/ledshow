@@ -2546,7 +2546,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
 
 
   //----暂时将网络参数和回读参数删除！
-   tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
+   //tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
    //tabWidget->removeTab(tabWidget->indexOf(readParaGroup));
    //-------------
    //oePolarityLabel->setVisible(false);

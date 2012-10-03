@@ -13,6 +13,7 @@
 #define EXT extern
 #endif
 
+#define ETH_MTU 1514
 
 //定义断言,多多使用，有益身心
 #if ASSERT_EN>0
