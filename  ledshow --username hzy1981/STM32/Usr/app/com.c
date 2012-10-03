@@ -780,12 +780,14 @@ void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen)
   }
   else if(Ch EQ CH_NET) //发送网络数据，实际是UDP数据
   {
+#if QT_EN EQ 0
     sendBuf = udp_get_buf (FrameLen);
     if(sendBuf)
 	{
 	  memcpy(sendBuf, Frame, FrameLen);
       udp_send (Screen_Status.UDP_Soc, (INT8U *)Screen_Status.Rem_IP, Screen_Status.Rem_Port, sendBuf, FrameLen);
     }
+#endif
   }
 }
 

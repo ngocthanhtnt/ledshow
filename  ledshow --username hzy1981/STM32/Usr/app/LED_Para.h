@@ -4,7 +4,9 @@
 #include "pub.h"
 #include "Storage.h"
 #include "LED_Show.h"
+#if QT_EN == 0
 #include "Net_Config.h"
+#endif
 //extern "c"
 //{
 #undef EXT
