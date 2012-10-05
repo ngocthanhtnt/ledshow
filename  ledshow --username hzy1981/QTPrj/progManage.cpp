@@ -396,8 +396,9 @@ void CprogManage::newScreen()
     QHBoxLayout *hLayout = new QHBoxLayout(facParaWin);
 
     facParaWin->setWindowTitle(tr("ÐÂ½¨ÆÁÄ»"));
-    CfacScreenProperty *facScreenProperty = new CfacScreenProperty(NEW_SCN, facParaWin);
+
     CcomTest *comTest = new CcomTest(facParaWin);
+    CfacScreenProperty *facScreenProperty = new CfacScreenProperty(NEW_SCN, comTest, facParaWin);
     //facScreenProperty->setSettingsToWidget(str);
 
     hLayout->addWidget(facScreenProperty);

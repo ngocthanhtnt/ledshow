@@ -1113,8 +1113,11 @@ void MainWindow::modifyScreenPara()
       QHBoxLayout *hLayout = new QHBoxLayout(facParaWin);
 
       facParaWin->setWindowTitle(tr("ÐÞ¸ÄÆÁÄ»²ÎÊý"));
-      CfacScreenProperty *facScreenProperty = new CfacScreenProperty(MODI_SCN, facParaWin);
+
       CcomTest *comTest = new CcomTest(facParaWin);
+      CfacScreenProperty *facScreenProperty = new CfacScreenProperty(MODI_SCN, comTest, facParaWin);
+
+      //connect(facScreenProperty->cardCombo, SIGNAL(currentIndexChanged(QString)), comTest, SLOT(comModeNumChanged(QString)));
 
       facScreenProperty->setSettingsToWidget(str);
       comTest->setSettingsToWidget(str);
@@ -1125,6 +1128,7 @@ void MainWindow::modifyScreenPara()
       facParaWin->setLayout(hLayout);
       facParaWin->setAttribute(Qt::WA_DeleteOnClose);
       connect(facScreenProperty->endButton, SIGNAL(clicked()), facParaWin, SLOT(close()));
+
       facParaWin->exec();
   }
   else if(Re EQ 3)

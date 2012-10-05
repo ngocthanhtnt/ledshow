@@ -450,8 +450,7 @@ CscreenProperty::CscreenProperty(QWidget *parent):QWidget(parent)
 
     //tab = new QTabWidget(this);
      //hLayout = new QHBoxLayout(this);
-    facProperty = new CfacScreenProperty(SHOW_SCN,this);
-
+    facProperty = new CfacScreenProperty(SHOW_SCN, 0, this);
      //hLayout->addWidget(facProperty);
     //facParaGroup->setLayout(hLayout);
 
@@ -1762,7 +1761,7 @@ public:
 };
 */
 
-CipInput::CipInput(QWidget *parent):QWidget(parent)
+CipInput::CipInput(QWidget *parent):QLineEdit(parent)
 {/*
     QHBoxLayout *hLayout = new QHBoxLayout(this);
     for(int i = 0; i < 4; i++)
@@ -1796,20 +1795,21 @@ CipInput::CipInput(QWidget *parent):QWidget(parent)
     setLayout(hLayout);
     */
 
-    QHBoxLayout *hLayout = new QHBoxLayout(this);
+    //QHBoxLayout *hLayout = new QHBoxLayout(this);
     QRegExp rx("(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-4]|[01]?\\d\\d?") ;
 
     //ipLabel = new QLabel(tr("IP Address:"));
     // ipLineEdit = new QLineEdit;
     //ipLabel->setBuddy(ipLineEdit);
 
-    edit = new QLineEdit(this);
+    //edit = new QLineEdit(this);
     QValidator *validator = new QRegExpValidator(rx, this);
-    edit->setValidator(validator);
-    edit->setInputMask("000.000.000.000;");
+    this->setValidator(validator);
+    this->setInputMask("000.000.000.000;_");
 
-    hLayout->addWidget(edit);
-    setLayout(hLayout);
+    this->setFixedWidth(100);
+    //hLayout->addWidget(edit);
+    //setLayout(hLayout);
 }
 
 void CipInput::getSettingsFromWidget(QString str)
@@ -1822,14 +1822,58 @@ void CipInput::setSettingsToWidget(QString str)
 
 }
 
-void CipInput::setIP(int ip)
+QString ipToStr(INT8U ip)
 {
+  char str[4];
+  //QString ipStr ="";
 
+  str[3] = 0;
+  str[2] = (ip % 10) + 0x30;
+  ip = ip / 10;
+  str[1] = (ip % 10) + 0x30;
+  ip = ip / 10;
+  str[0] = (ip % 10) + 0x30;
+
+  return QString((char *)str);
 }
 
-int CipInput::getIP()
+void CipInput::setIP(INT32U IP)
 {
-  return 0xFFFFFFFF;
+  INT8U ip[4];
+  QString ipStr;
+
+  ip[0] = IP % 256;
+  IP = IP >> 8;
+  ip[1] = IP % 256;
+  IP = IP >> 8;
+  ip[2] = IP % 256;
+  IP = IP >> 8;
+  ip[3] = IP % 256;
+
+  ipStr = ipToStr(ip[3]) + "." + ipToStr(ip[2]) + "." + \
+          ipToStr(ip[1]) + "." + ipToStr(ip[0]);
+
+  this->setText(ipStr);
+}
+
+INT32U CipInput::getIP()
+{
+  INT8U ipBytes[4];
+  QString ipStr = this->text();
+
+  ipStr.replace(" ","0");
+  ipStr.remove(".");
+
+  long long int ip = ipStr.toLongLong();
+  ipBytes[0] = ip % 1000;
+  ip = ip / 1000;
+  ipBytes[1] = ip % 1000;
+  ip = ip / 1000;
+  ipBytes[2] = ip % 1000;
+  ip = ip / 1000;
+  ipBytes[3] = ip % 1000;
+
+  return (INT32U)(ipBytes[0] + ipBytes[1] * 256 + ipBytes[2] * 256 *256 + ipBytes[3] * 256 * 256 *256);
 }
 
 CipInput::~CipInput()
@@ -1841,13 +1885,14 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
 {
   //QVBoxLayout *vLayout = new QVBoxLayout(this);
   QGridLayout *gridLayout = new QGridLayout(this);
+  QVBoxLayout *vLayout = new QVBoxLayout(this);
 
   QLabel *comModeLabel = new QLabel(tr("通信方式"),this);
   comModeCombo = new QComboBox(this);
   comModeCombo->addItem(tr("串口"));
   QLabel *screenIDLabel = new QLabel(tr("屏幕地址"),this);
   screenIDEdit = new QSpinBox(this);
-  QLabel *comPortLabel = new QLabel(tr("串口号"),this);
+  comPortLabel = new QLabel(tr("串口号"),this);
   comPortEdit = new QComboBox(this);
 
   //QextSerialPort *comm = new QextSerialPort();
@@ -1864,11 +1909,11 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   QStringList strlist = getComPortList();
   comPortEdit->addItems(strlist);
 
-  QLabel *comBaudLabel = new QLabel(tr("波特率"),this);
+  comBaudLabel = new QLabel(tr("波特率"),this);
   comBaudCombo = new QComboBox(this);
   comBaudCombo->addItem("57600");
   comBaudCombo->addItem("9600");
-  QLabel *ipEditLabel = new QLabel(tr("IP地址"),this);
+  ipEditLabel = new QLabel(tr("屏幕IP"),this);
   ipEdit = new CipInput(this);
 
   manualConnectButton = new QPushButton(tr("手动连接"),this);
@@ -1884,12 +1929,15 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   gridLayout->addWidget(comBaudLabel, 3, 0,1,1);
   gridLayout->addWidget(comBaudCombo, 3, 1,1,2);
   gridLayout->addWidget(ipEditLabel, 4, 0,1,1);
-  gridLayout->addWidget(ipEdit, 4,1,1,2);
+  gridLayout->addWidget(ipEdit, 4,1,1,3);
   gridLayout->addWidget(comPortInfoLabel, 5,0,1,3);
   gridLayout->addWidget(manualConnectButton, 6,0,1,3);
   gridLayout->addWidget(autoConnectButton, 7,0,1,3);
 
-  setLayout(gridLayout);
+  vLayout->addLayout(gridLayout);
+  vLayout->addStretch(100);
+
+  setLayout(vLayout);
   setTitle(tr("通信参数"));
 
   comPortEdit->setEditable(true);
@@ -1906,8 +1954,8 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   connect(this, SIGNAL(editSignal()), this, SLOT(editSlot()));
 
   //------------暂时屏蔽----
-  ipEditLabel->setVisible(false);
-  ipEdit->setVisible(false);
+  //ipEditLabel->setVisible(false);
+  //ipEdit->setVisible(false);
 
 
 }
@@ -2083,6 +2131,7 @@ void CcomTest::editSlot()
 
   screenStr = w->screenArea->getCurrentScreenStr();
 
+  comModeChangedProc();
   getSettingsFromWidget(screenStr);
 }
 
@@ -2092,6 +2141,8 @@ void CcomTest::getSettingsFromWidget(QString str)
     settings.beginGroup("comTest");
 
     settings.setValue("comMode", comModeCombo->currentIndex());
+    debug("get commode = %d", comModeCombo->currentIndex());
+
     settings.setValue("screenID", screenIDEdit->value());
     settings.setValue("comPort", comPortEdit->currentText());
     //settings.setValue("comPort", comPortEdit->currentIndex());
@@ -2102,6 +2153,65 @@ void CcomTest::getSettingsFromWidget(QString str)
     settings.endGroup();
     settings.endGroup();
 }
+
+void CcomTest::comModeChangedProc()
+{
+    if(comModeCombo->currentText() == tr("串口"))
+    {
+        comPortLabel->setVisible(true);
+        comPortEdit->setVisible(true); //串口号
+        comBaudCombo->setVisible(true); //波特率
+        comBaudLabel->setVisible(true);
+        comPortInfoLabel->setVisible(true);
+
+        ipEdit->setVisible(false);; //IP地址
+        ipEditLabel->setVisible(false);
+
+        manualConnectButton->setVisible(true);; //手动连接
+        autoConnectButton->setVisible(true);; //自动连连接
+    }
+    else
+    {
+        comPortLabel->setVisible(false);
+        comPortEdit->setVisible(false); //串口号
+        comBaudCombo->setVisible(false); //波特率
+        comBaudLabel->setVisible(false);
+        comPortInfoLabel->setVisible(false);
+
+        ipEdit->setVisible(true);; //IP地址
+        ipEditLabel->setVisible(true);
+
+        manualConnectButton->setVisible(true);; //手动连接
+        autoConnectButton->setVisible(false);; //自动连连接
+    }
+}
+
+void CcomTest::cardChangedProc(QString cardName)
+{
+  S_Card_Para Card_Para;
+  int index;
+
+  disconnect(this, SIGNAL(editSignal()), this, SLOT(editSlot()));
+
+  getCardParaFromSettings(cardName, Card_Para);
+  if(Card_Para.Com_Mode & COM_ETH) //支持以太网
+  {
+    if(this->comModeCombo->findText(tr("网口")) < 0)
+      this->comModeCombo->addItem(tr("网口"));
+
+  }
+  else
+  {
+      int index = this->comModeCombo->findText(tr("网口"));
+      if(index >= 0)
+        this->comModeCombo->removeItem(index);
+  }
+
+  connect(this, SIGNAL(editSignal()), this, SLOT(editSlot()));
+
+  comModeChangedProc();
+}
+
 /*
 void getComTestParaFromSettings(QString str, S_Screen_Para &screenPara)
 {
@@ -2132,6 +2242,7 @@ void CcomTest::setSettingsToWidget(QString str)
     settings.beginGroup("comTest");
 
     comModeCombo->setCurrentIndex(settings.value("comMode").toInt());
+    debug("set commode = %d", settings.value("comMode").toInt());
     screenIDEdit->setValue(settings.value("screenID").toInt());
     comPort = settings.value("comPort").toString();
     if(comPort EQ "")
@@ -2148,6 +2259,8 @@ void CcomTest::setSettingsToWidget(QString str)
     settings.endGroup();
 
     connect(this, SIGNAL(editSignal()), this, SLOT(editSlot()));
+
+    comModeChangedProc();
 }
 
 CcomTest::~CcomTest()
@@ -2157,7 +2270,7 @@ CcomTest::~CcomTest()
 
 //工厂参数编辑
 //flag NEW_SCN表示新建屏幕参数,MODI_SCN表示修改现有屏幕参数,SHOW_SCN表示显示参数
-CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(parent)
+CfacScreenProperty::CfacScreenProperty(int flag, CcomTest *com,  QWidget *parent):QGroupBox(parent)
 {
 
     QHBoxLayout *hLayout;
@@ -2168,6 +2281,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
     QVBoxLayout *mainVLayout;
 
     paraFlag = flag;
+
+    this->comTest = com;
 
     mainVLayout = new QVBoxLayout(this);
     mainLayout = new QHBoxLayout(this);
@@ -2364,6 +2479,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    maskEdit = new CipInput(this);
    gateEdit = new CipInput(this);
    macEdit = new CipInput(this);
+
    //QRegExp rx("(2[0-5]{2}|2[0-4][0-9]|1?[0-9]{1,2})");
    //QRegExpValidator validatorIP(QRegExp("[0-9]{1,3}(.[0-9]{1,3}){3,3}"), this);
    //ipEdit->setValidator(&validatorIP);
@@ -2376,6 +2492,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
    QLabel *gateEditLabel = new QLabel(tr("网关"),this);
    QLabel *macEditLabel = new QLabel(tr("MAC地址"));
 
+   macEdit->setVisible(false); //mac地址不允许用户设置
+   macEditLabel->setVisible(false);
 
    //QLabel *ipPortLabel = new QLabel(tr("端口: 7788"));
 
@@ -2589,13 +2707,13 @@ CfacScreenProperty::CfacScreenProperty(int flag, QWidget *parent):QGroupBox(pare
  */
 
 void CfacScreenProperty::getSettingsFromWidget(QString str)
-{
+{/*
     ipEdit->getSettingsFromWidget(str+"/facPara");
     maskEdit->getSettingsFromWidget(str+"/facPara");
     gateEdit->getSettingsFromWidget(str+"/facPara");
     macEdit->getSettingsFromWidget(str+"/facPara");
     //comTest->getSettingsFromWidget(str+"/facPara");
-
+*/
   settings.beginGroup(str);
   settings.beginGroup("facPara");
 
@@ -2617,6 +2735,10 @@ void CfacScreenProperty::getSettingsFromWidget(QString str)
   settings.setValue("dataMirror", dataMirrorCombo->currentIndex());
   settings.setValue("lineOrder", lineOrderCombo->currentIndex());
 
+  settings.setValue("ip", ipEdit->getIP());
+  settings.setValue("mask", maskEdit->getIP());
+  settings.setValue("gate", gateEdit->getIP());
+
   settings.setValue("setFlag", 1);
   settings.endGroup();
   settings.endGroup();
@@ -2626,12 +2748,15 @@ void CfacScreenProperty::getSettingsFromWidget(QString str)
 
 void CfacScreenProperty::setSettingsToWidget(QString str)
 {
-
+/*
     ipEdit->setSettingsToWidget(str+"/facPara");
     maskEdit->setSettingsToWidget(str+"/facPara");
     gateEdit->setSettingsToWidget(str+"/facPara");
     macEdit->setSettingsToWidget(str+"/facPara");
     //comTest->setSettingsToWidget(str+"/facPara");
+*/
+    disconnect(defParaCheck, SIGNAL(stateChanged(int)), this, SLOT(defParaCheckProc()));
+    disconnect(cardCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(cardChangeProc()));
 
     settings.beginGroup(str);
     settings.beginGroup("facPara");
@@ -2644,6 +2769,9 @@ void CfacScreenProperty::setSettingsToWidget(QString str)
     oePolarityCombo->setCurrentIndex(settings.value("oePolarity").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
 
+    ipEdit->setIP(settings.value("ip").toInt());
+    maskEdit->setIP(settings.value("mask").toInt());
+    gateEdit->setIP(settings.value("gate").toInt());
 
     if(settings.value("setFlag").toInt() > 0)
     {
@@ -2655,6 +2783,7 @@ void CfacScreenProperty::setSettingsToWidget(QString str)
         widthEdit->setValue(DEF_SCN_WIDTH);
         heightEdit->setValue(DEF_SCN_HEIGHT);
     }
+
     _138Combo->setCurrentIndex(settings.value("138Check").toInt());
     scanModeCombo->setCurrentIndex(getScanModeIndex(settings.value("scanMode").toInt()));
 
@@ -2666,6 +2795,12 @@ void CfacScreenProperty::setSettingsToWidget(QString str)
 
     settings.endGroup();
     settings.endGroup();
+
+    connect(defParaCheck, SIGNAL(stateChanged(int)), this, SLOT(defParaCheckProc()));
+    connect(cardCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(cardChangeProc()));
+
+    this->defParaCheckProc();
+    this->cardChangeProc();
 
 }
 
@@ -3180,8 +3315,24 @@ void CfacScreenProperty::cardChangeProc()
                      (((Card_Para.Com_Mode & COM_GPRS)>0)?tr("、GSM/GPRS"):tr(""));
 
 
+    if(Card_Para.Com_Mode & COM_ETH)
+    {
+        if(tabWidget->indexOf(netParaGroup) < 0)
+          tabWidget->insertTab(4, netParaGroup, tr("网络参数"));
+        //tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
+        //tabWidget->removeTab(tabWidget->indexOf(readParaGroup));
+    }
+    else
+    {
+        if(tabWidget->indexOf(netParaGroup) > 0)
+          tabWidget->removeTab(tabWidget->indexOf(netParaGroup));
+        //tabWidget->removeTab(tabWidget->indexOf(readParaGroup));
+    }
     cardParaEdit->append(comStr);
     memcpy(&Card_Para, &cardPara_Bak, sizeof(Card_Para));
+
+    if(this->comTest)
+      this->comTest->cardChangedProc(cardCombo->currentText());
 
 }
 
@@ -3192,7 +3343,7 @@ void CfacScreenProperty::endProc()
 
 CsetFacPara::CsetFacPara(QWidget *parent):QMainWindow(parent)
 {
-    facScreenProperty = new CfacScreenProperty(MODI_SCN,this);
+    facScreenProperty = new CfacScreenProperty(MODI_SCN, 0, this);
     this->setCentralWidget(facScreenProperty);
     this->setWindowTitle(tr("设置屏幕参数"));
 
