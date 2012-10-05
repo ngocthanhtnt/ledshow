@@ -58,9 +58,9 @@ void Net_Data_Proc(void)
   {
     Set_Screen_Com_Time(COM_STANDBY_SEC); //到计时5s，5秒后重新播放节目
 	
-	//if(Check_Frame_Format((INT8U *)RCV_DATA_BUF, Screen_Status.Rem_Data_Len))
-      //Rcv_Frame_Proc(CH_NET, (INT8U *)RCV_DATA_BUF, Screen_Status.Rem_Data_Len, sizeof(RCV_DATA_BUF));
-	Send_Frame_Proc(CH_NET, (INT8U *)RCV_DATA_BUF, Screen_Status.Rem_Data_Len);
+	if(Check_Frame_Format((INT8U *)RCV_DATA_BUF, Screen_Status.Rem_Data_Len))
+      Rcv_Frame_Proc(CH_NET, (INT8U *)RCV_DATA_BUF, Screen_Status.Rem_Data_Len, sizeof(RCV_DATA_BUF));
+	//Send_Frame_Proc(CH_NET, (INT8U *)RCV_DATA_BUF, Screen_Status.Rem_Data_Len);
 
 	Screen_Status.Rem_Data_Flag = 0;
 	Screen_Status.Rem_Data_Len = 0;

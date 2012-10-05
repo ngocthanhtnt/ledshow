@@ -42,17 +42,17 @@ public:
 };
 */
 
-class CipInput:public QWidget
+class CipInput:public QLineEdit
 {
     Q_OBJECT
 signals:
     void editSignal();
 public:
-    QLineEdit *edit;
+    //QLineEdit *edit;
+    INT32U getIP();
+    void setIP(INT32U ip);
 
-    int getIP();
-    void setIP(int ip);
-
+    //QString ipToStr(INT8U ip);
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
 
@@ -69,12 +69,17 @@ public slots:
     void editSlot();
     void autoConnect();
     void manualConnect();
+    void cardChangedProc(QString cardName);
+    void comModeChangedProc();
 public:
     QComboBox *comModeCombo; //通信方式
     QSpinBox *screenIDEdit; //屏幕ID，硬件地址
+    QLabel *comPortLabel;
     QComboBox *comPortEdit; //串口号
     QComboBox *comBaudCombo; //波特率
+    QLabel *comBaudLabel;
     CipInput *ipEdit; //IP地址
+    QLabel *ipEditLabel;
     QPushButton *manualConnectButton; //链接按钮
     QPushButton *autoConnectButton; //测试按钮
     QLabel *comPortInfoLabel;
@@ -300,6 +305,7 @@ public slots:
  void readCardType();
  public:
  QTabWidget *tabWidget;
+ CcomTest *comTest;
 
  QWidget *cardGroup;
  QWidget *netParaGroup;
@@ -370,7 +376,7 @@ public slots:
  void getScreenCardParaFromWidget(S_Screen_Para &screenPara, S_Card_Para &cardPara);
     void getSettingsFromWidget(QString str);
     void setSettingsToWidget(QString str);
-    CfacScreenProperty(int flag, QWidget *parent=0);
+    CfacScreenProperty(int flag, CcomTest *comTest, QWidget *parent=0);
     ~CfacScreenProperty();
 };
 

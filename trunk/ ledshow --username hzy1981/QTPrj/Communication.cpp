@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QFile>
+#include <QtNetwork>
 #include "mainwindow.h"
 #include "makeProto.h"
 #include <windows.h>
@@ -272,6 +273,18 @@ void CcomThread::run()
 CcomThread::CcomThread(QObject * parent):QThread(parent)
 {
     //QVBoxLayout *vLayout;
+    udpSocket = new QUdpSocket(this);
+    udpPort = 0;
+
+    for(int i = 50000; i < 50000 + 100; i ++)
+    {
+        //连续尝试打开100个端口
+      if(udpSocket->bind(i, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
+       {
+          udpPort = i;
+          break;
+      }
+    }
 
     port = new QextSerialPort("COM1", QextSerialPort::EventDriven);
 
@@ -348,9 +361,20 @@ bool CcomThread::connect()
         }
 
     }
-    else //其他通信方式
+    else if(COM_Mode EQ ETH_MODE)//以太网通信方式
     {
-       return true;
+       if(this->udpPort > 0)
+        {
+           comReStr = tr("打开通信端口号:") + QString::number(this->udpPort);
+           emit comStatusChanged(comReStr);
+           return true;
+       }
+       else
+       {
+           comReStr = tr("尝试打开本地端口失败!");
+           emit comStatusChanged(comReStr);
+           return false;
+       }
 
     }
 }
@@ -452,7 +476,58 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
   }
   else if(mode EQ ETH_MODE)//以太网模式
   {
+      QHostAddress host;
 
+      //host.setAddress("192.168.001.122");//ETH_Para.IP);
+
+      host.setAddress(ETH_Para.IP);
+
+      for(i = 0; i < 2; i ++)
+      {
+        //port->write(data, len);
+        if(udpSocket->writeDatagram(data,len,host, 8000) != len)//将data中的数据发送
+          {
+            comReStr = tr("发送数据失败");
+            emit this->comStatusChanged(comReStr);
+            return false;
+        }
+
+
+        if(i EQ 0)
+          comReStr = tr("发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答...");// + QString::number(len);
+        else
+          comReStr = tr("重复发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答...");
+
+        emit this->comStatusChanged(comReStr);
+        re = waitComRcv(15); //等待应答
+        if(re > 0)
+        {
+            frameCounts++;
+            emit comProgressChanged(100*frameCounts/totalFrameCounts);
+            if((Rcv_Buf[FCMD] & 0xC0) EQ 0x40) //肯定应答
+            {
+                comReStr = tr("收到肯定应答");
+                emit this->comStatusChanged(comReStr);
+                return true;
+             }
+            else if((Rcv_Buf[FCMD] & 0xC0) EQ 0x80) //否定应答
+            {
+                comReStr = tr("收到否定应答");
+                emit this->comStatusChanged(comReStr);
+                return false;
+            }
+            else
+            {
+                comReStr = tr("收到无效应答");
+                emit this->comStatusChanged(comReStr);
+                return false;
+            }
+        }
+      }
+
+      comReStr = tr("等待应答超时");
+      emit this->comStatusChanged(comReStr);
+      return false;
   }
   else if(mode EQ GPRS_MODE)
   {
@@ -473,10 +548,22 @@ int CcomThread::comReceive()
 
     int bytesRead;
 
-    bytesRead = port->read((char *)Rcv_Buf + Rcv_Posi, sizeof(Rcv_Buf)- Rcv_Posi);//(char *)(Rcv_Buf + Rcv_Posi), sizeof(Rcv_ Buf) - Rcv_Posi);
-    if(bytesRead EQ 0)
+    if(COM_Mode EQ COM_MODE)
+    {
+      bytesRead = port->read((char *)Rcv_Buf + Rcv_Posi, sizeof(Rcv_Buf)- Rcv_Posi);//(char *)(Rcv_Buf + Rcv_Posi), sizeof(Rcv_ Buf) - Rcv_Posi);
+      if(bytesRead EQ 0)
+         return 0;
+    }
+    else if(COM_Mode EQ ETH_MODE) //以太网模式
+    {
+      QHostAddress address;
+      quint16 udpPort;
+      bytesRead = udpSocket->readDatagram((char *)Rcv_Buf + Rcv_Posi, sizeof(Rcv_Buf)- Rcv_Posi, &address, &udpPort);
+      if(bytesRead <= 0)
+          return 0;
+  }
+    else
         return 0;
-
     if(sizeof(Rcv_Buf) >= Rcv_Posi + bytesRead)
     {
         Rcv_Posi += bytesRead;
@@ -685,6 +772,8 @@ void CcomStatus::getUDiskParaFromSettings(QString str)
     settings.endGroup();
 }
 
+extern QString ipToStr(INT8U ip);
+
 //获取通信参数,str为屏幕的settings str
 void CcomStatus::getCOMParaFromSettings(QString str)
 {
@@ -734,6 +823,29 @@ void CcomStatus::getCOMParaFromSettings(QString str)
           str1 += tr("9600");
 
       paraEdit->append(str1);
+    }
+    else if(comThread->COM_Mode EQ ETH_MODE)
+    {
+        //INT8U ip[4];
+        INT32U IP;
+
+        IP = comThread->ETH_Para.IP;
+        str1 = tr("目标地址:");
+
+        QHostAddress dstAddr;
+        dstAddr.setAddress(IP);;
+
+        str1 += dstAddr.toString() + tr(":8000\r\n");
+
+/*
+
+        QHostInfo host = QHostInfo::fromName(QHostInfo::localHostName());
+
+        foreach (QHostAddress address, host.addresses())
+
+        str1 += QString(tr("本机:")) + address.toString() + tr(":") + QString::number(this->comThread->udpPort);
+*/
+        paraEdit->append(str1);
     }
 }
 

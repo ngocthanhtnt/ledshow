@@ -10,6 +10,7 @@
 #include <QListView>
 #include <QDockWidget>
 #include <QProgressBar>
+#include <QtNetwork>
 
 #include "..\Stm32\usr\app\Includes.h"
 
@@ -63,6 +64,8 @@ private:
 
     //串口
     QextSerialPort * port;
+    QUdpSocket *udpSocket;
+
 
     //QWidget *dialog;
     //QProgressDialog *progressDialog;
@@ -88,6 +91,8 @@ public:
         char status;
         INT8U COM_Mode;//通信方式
         QString COM_Port;
+
+        int udpPort;
 
         int frameCounts; //当前发送帧数
         int totalFrameCounts; //总帧数
