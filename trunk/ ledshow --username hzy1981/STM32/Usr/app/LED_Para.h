@@ -1,6 +1,7 @@
 #ifndef LED_PARA_H
 #define LED_PARA_H
 
+#include "LED_Cfg.h"
 #include "pub.h"
 #include "Storage.h"
 #include "LED_Show.h"
@@ -185,15 +186,21 @@ typedef struct
 {
     //以太网
     INT32U IP; //IP地址
-    INT16U Port; //端口
-    INT32U Mac0; //Mac地址
-    INT32U Mac1;
+    //INT16U Port; //端口
     INT32U Mask; //子网掩码
     INT32U Gate; //网关
     INT8U Mode; //0固定ip方式，1自动获取方式
 
     INT8U Temp[20]; //保留30字节备用--升级程序时可以和老的兼容
 }S_ETH_Para;
+
+typedef struct
+{
+  INT8U Head;
+  INT8U Mac[6];
+  INT8U CS[CS_BYTES];
+  INT8U Tail;
+}S_Mac_Para;
 
 typedef struct
 {
@@ -760,6 +767,7 @@ typedef struct
 
 #define BORDER_DATA_LEN 40*6
 #define SCREEN_PARA_LEN (sizeof(S_Screen_Para) -CHK_BYTE_LEN)
+#define MAC_PARA_LEN  (sizeof(S_Mac_Para) - CHK_BYTE_LEN)
 #define PROG_PARA_LEN   (sizeof(S_Prog_Para)-CHK_BYTE_LEN + BORDER_DATA_LEN)
 #define PROG_NUM_LEN    (sizeof(S_Prog_Num)-CHK_BYTE_LEN)
 #define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN + BORDER_DATA_LEN)
@@ -776,7 +784,11 @@ typedef struct
 typedef struct
 {
   INT8U Head;
+#if NET_EN
   INT8U Buf[(MAX_COM_BUF_LEN > ETH_MTU)?MAX_COM_BUF_LEN : ETH_MTU];
+#else
+  INT8U Buf[MAX_COM_BUF_LEN];
+#endif
   INT8U Tail;
 }S_Pub_Buf;
 
@@ -787,6 +799,7 @@ EXT S_Pub_Buf _Pub_Buf;
 #endif
 
 EXT S_Screen_Para Screen_Para; //显示屏相关参数
+EXT S_Mac_Para ETH_Mac_Para; //以太网Mac参数--单独列出，因为该参数不能随意修改设置
 EXT S_Card_Para Card_Para;   //板卡支持的参数
 EXT S_Prog_Para Prog_Para;  //当前节目属性[MAX_PROGRAM_NUM]; //节目个数
 EXT S_Prog_Num Prog_Num;
@@ -806,6 +819,8 @@ EXT INT8U Write_Prog_Num(void);
 EXT INT8U Read_Prog_Num(void);
 EXT INT16U Read_Screen_Para(void);
 EXT INT8U Write_Screen_Para(void);
+EXT void Write_ETH_Mac_Para(void);
+EXT INT8U Read_ETH_Mac_Para(void);
 EXT INT16U Read_Prog_Para(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen);
 EXT INT16U _Read_Prog_Para(INT8U Prog_No, INT8U *pDst, INT8U *pDst_Start, INT16U DstLen);
 EXT INT8U Write_Prog_Para(INT8U Prog_No, INT8U *pSrc,INT16U SrcLen);

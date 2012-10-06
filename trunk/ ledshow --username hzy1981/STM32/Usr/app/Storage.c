@@ -47,6 +47,18 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
   {SDI_SCREEN_PARA_BK2, SCREEN_PARA_LEN, 1},  
 #endif
 
+  //MAC参数以及备份
+  {SDI_MAC_PARA, MAC_PARA_LEN, 1},
+#ifdef SDI_MAC_PARA_BK0 
+  {SDI_MAC_PARA_BK0, MAC_PARA_LEN, 1},
+#endif  
+#ifdef SDI_MAC_PARA_BK1
+  {SDI_MAC_PARA_BK1, MAC_PARA_LEN, 1},
+#endif
+#ifdef SDI_MAC_PARA_BK2
+  {SDI_MAC_PARA_BK2, MAC_PARA_LEN, 1},  
+#endif
+
   //节目个数
   {SDI_PROG_NUM, PROG_NUM_LEN, 1},
 #ifdef  SDI_PROG_NUM_BK0

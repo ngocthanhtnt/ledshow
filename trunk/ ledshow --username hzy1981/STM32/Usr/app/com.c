@@ -333,12 +333,12 @@ INT16U Read_Screen_Para_Frame_Proc(INT16U Cmd, INT8U *pDst, INT8U *pDst_Start, I
     {
       mem_cpy(pDst, (INT8U *)&Screen_Para.Base_Para, sizeof(Screen_Para) - CHK_BYTE_LEN, pDst_Start, DstLen);//基本参数
           return sizeof(Screen_Para) - CHK_BYTE_LEN;
-  }/*
-  else if(Cmd EQ C_SCREEN_BASE_PARA)
-  {
-    mem_cpy(pDst, (INT8U *)&Screen_Para.Base_Para, sizeof(Screen_Para.Base_Para), pDst_Start, DstLen);//基本参数
-	return sizeof(Screen_Para.Base_Para);
   }
+  else if(Cmd EQ C_ETH_MAC_PARA)
+  {
+    memcpy(pDst, ETH_Mac_Para.Mac, sizeof(ETH_Mac_Para.Mac));//基本参数
+	return sizeof(ETH_Mac_Para.Mac);
+  }/*
   else if(Cmd EQ C_SCAN_PARA)
   {
     mem_cpy(pDst, (INT8U *)&Screen_Para.Scan_Para, sizeof(Screen_Para.Scan_Para), pDst_Start, DstLen);//扫描参数
@@ -431,7 +431,10 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
     }
 
 	mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para) - CHK_BYTE_LEN, (INT8U *)&Screen_Para, sizeof(Screen_Para));
-    SET_SUM(Screen_Para);
+    //SET_SUM(Screen_Para);
+#if NET_EN
+    Net_Para_Modi_Flag = NET_PARA_MODI_FLAG;
+#endif
   }
   else if(Cmd EQ C_SCREEN_BASE_PARA && Len >= sizeof(Screen_Para.Base_Para))
   {
@@ -454,10 +457,26 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 	SET_SUM(Screen_Para);
     Calc_Screen_Color_Num();
   }
+  else if(Cmd EQ C_ETH_MAC_PARA && Len >= sizeof(ETH_Mac_Para.Mac))
+  {
+#if NET_EN
+	memcpy(ETH_Mac_Para.Mac, Data, sizeof(ETH_Mac_Para.Mac));
+	SET_HT(ETH_Mac_Para);
+	SET_SUM(ETH_Mac_Para);
+
+	Write_ETH_Mac_Para();
+
+    Net_Para_Modi_Flag = NET_PARA_MODI_FLAG;
+#endif
+  }
   else if(Cmd EQ C_SCAN_PARA && Len >= sizeof(Screen_Para.Scan_Para))
     mem_cpy((INT8U *)&Screen_Para.Scan_Para, Data, sizeof(Screen_Para.Scan_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//扫描参数
   else if(Cmd EQ C_SCREEN_COM_PARA && Len >= sizeof(Screen_Para.COM_Para))
-    mem_cpy((INT8U *)&Screen_Para.COM_Para, Data, sizeof(Screen_Para.COM_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//通信参数
+    mem_cpy((INT8U *)&Screen_Para.COM_Para, Data, sizeof(Screen_Para.COM_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//通信参数 
+#if NET_EN
+  else if(Cmd EQ C_SCREEN_ETH_PARA && Len >= sizeof(Screen_Para.ETH_Para))
+    mem_cpy((INT8U *)&Screen_Para.ETH_Para, Data, sizeof(Screen_Para.ETH_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//通信参数
+#endif  
   else if(Cmd EQ C_SCREEN_OC_TIME && Len >= sizeof(Screen_Para.OC_Time))
     mem_cpy((INT8U *)&Screen_Para.OC_Time, Data, sizeof(Screen_Para.OC_Time), (INT8U *)&Screen_Para, sizeof(Screen_Para)); //定时开关机时间
   else if(Cmd EQ C_SCREEN_LIGNTNESS && Len >= sizeof(Screen_Para.Lightness))
@@ -536,6 +555,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
       Cmd_Code EQ C_SCREEN_OC_TIME ||\
       Cmd_Code EQ C_SCREEN_LIGNTNESS ||\
       Cmd_Code EQ C_SCREEN_BASE_PARA ||\
+	  Cmd_Code EQ C_ETH_MAC_PARA ||\
       Cmd_Code EQ C_SCAN_PARA ||\
       Cmd_Code EQ C_SCREEN_COM_PARA ||\
       Cmd_Code EQ C_PROG_NUM ||\
@@ -771,8 +791,9 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen)
 {
   INT16U i;
+#if NET_EN && (QT_EN EQ 0)
   INT8U *sendBuf;
-  
+#endif  
   if(Ch EQ CH_COM || Ch EQ CH_GPRS) //发送串口数据
   {
     for(i = 0; i < FrameLen; i ++)
@@ -780,7 +801,7 @@ void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen)
   }
   else if(Ch EQ CH_NET) //发送网络数据，实际是UDP数据
   {
-#if QT_EN EQ 0
+#if NET_EN && (QT_EN EQ 0)
     sendBuf = udp_get_buf (FrameLen);
     if(sendBuf)
 	{

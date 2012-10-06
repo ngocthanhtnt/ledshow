@@ -379,7 +379,7 @@ void Encrypt(void)
 {
   INT32U  Dev_Serial0, Dev_Serial1, Dev_Serial2;
   INT32U Data; 
-  INT8U Re = 1;
+  //INT8U Re = 1;
 
 	Dev_Serial0 = *(INT32U *)(0x1FFFF7E8);
 	Dev_Serial1 = *(INT32U *)(0x1FFFF7EC);
@@ -397,7 +397,7 @@ void Encrypt_Chk(void)
 {
   INT32U  Dev_Serial0, Dev_Serial1, Dev_Serial2;
   INT32U Data0,Data1; 
-  INT8U Re = 1;
+  //INT8U Re = 1;
 
   Dev_Serial0 = *(INT32U *)(0x1FFFF7E8);
   Dev_Serial1 = *(INT32U *)(0x1FFFF7EC);

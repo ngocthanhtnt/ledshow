@@ -52,6 +52,24 @@ bool chkComPortExist(QString portName)
   return false;
 }
 
+INT32U RevIP(INT32U IP)
+{
+    INT32U IP1;
+
+    INT8U *p0;
+    INT8U *p1;
+
+    p0 = (INT8U *)&IP;
+    p1 = (INT8U *)&IP1;
+
+    for(int i = 0; i < 4; i ++)
+    {
+        *(p1 + i) = *(p0 + 3 - i);
+    }
+
+    return IP1;
+}
+
 //等待通信结果,返回正确应答帧返回true,否定返回false, 返回数据域保留在pDst中
 bool CcomStatus::waitComEnd(INT8U *pDst, unsigned int maxLen, int *pDstLen)
 {
@@ -480,7 +498,7 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
 
       //host.setAddress("192.168.001.122");//ETH_Para.IP);
 
-      host.setAddress(ETH_Para.IP);
+      host.setAddress(RevIP(ETH_Para.IP));
 
       for(i = 0; i < 2; i ++)
       {
@@ -833,7 +851,7 @@ void CcomStatus::getCOMParaFromSettings(QString str)
         str1 = tr("目标地址:");
 
         QHostAddress dstAddr;
-        dstAddr.setAddress(IP);;
+        dstAddr.setAddress(RevIP(IP));
 
         str1 += dstAddr.toString() + tr(":8000\r\n");
 
