@@ -360,6 +360,7 @@ void SPI1_CH376_Init(void)
 
 }
 
+#if NET_EN
 //SPI1≥ı ºªØ
 void SPI1_ENC28J60_Init(void)
 {
@@ -393,6 +394,7 @@ void SPI1_ENC28J60_Init(void)
    /* Enable SPI1  */
    SPI_Cmd(SPI1, ENABLE);
 }
+#endif
 /*******************************************************************************
 * Function Name  : SPI_FLASH_Init
 * Description    : Initializes the peripherals used by the SPI FLASH driver.

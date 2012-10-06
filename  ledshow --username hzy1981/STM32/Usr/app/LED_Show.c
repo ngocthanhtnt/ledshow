@@ -2382,7 +2382,7 @@ void Copy_Filled_Stretch_Rect(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPo
                               S_Show_Data *pDst_Buf, S_Point *pPoint1)
 {
     INT16U i,j;//,m,n;
-    INT8U Re;
+    //INT8U Re;
     S_Point P0,P1,P2;
 
     if(Stretch_X_Fac > 1)
@@ -4969,7 +4969,7 @@ void Move_Jump_Stretch(INT8U Area_No)
 {
   S_Point P0,P1,P2;
   INT16U Area_Width, Area_Height,Step,Max_Step,TENSILE_STEP,Y0,Ratio,i;
-  INT8U Step_Flag;
+  INT8U Step_Flag = 0;
   INT16U Temp,Temp0,Temp1;
 
   Area_Height = Get_Area_Height(Area_No);

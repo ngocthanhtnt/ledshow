@@ -249,6 +249,65 @@ INT8U Read_Prog_Num(void)
 	return Len;
 }
 
+#if NET_EN
+
+void Write_ETH_Mac_Para(void)
+{
+  //INT8U Prog_No = Prog_Para.Prog_No;
+  Write_Storage_Data(SDI_MAC_PARA , ETH_Mac_Para.Mac, sizeof(ETH_Mac_Para.Mac));
+  
+#ifdef SDI_MAC_PARA_BK0 
+  Write_Storage_Data(SDI_MAC_PARA_BK0, ETH_Mac_Para.Mac, sizeof(ETH_Mac_Para.Mac));
+#endif
+
+#ifdef SDI_MAC_PARA_BK1 
+  Write_Storage_Data(SDI_MAC_PARA_BK1, ETH_Mac_Para.Mac, sizeof(ETH_Mac_Para.Mac));
+#endif  
+
+#ifdef SDI_MAC_PARA_BK2 
+  Write_Storage_Data(SDI_MAC_PARA_BK2, ETH_Mac_Para.Mac, sizeof(ETH_Mac_Para.Mac));
+#endif 
+  
+  return;
+}
+
+
+//读取屏幕的mac地址
+INT8U Read_ETH_Mac_Para(void)
+{
+    INT16U Len;
+	//INT8U Temp;
+
+    Len = Read_Storage_Data(SDI_MAC_PARA,  ETH_Mac_Para.Mac, ETH_Mac_Para.Mac, sizeof(ETH_Mac_Para.Mac));
+  #ifdef SDI_MAC_PARA_BK0
+    if(Len EQ 0)
+      Len = Read_Storage_Data(SDI_MAC_PARA_BK0,  ETH_Mac_Para.Mac, ETH_Mac_Para.Mac, sizeof(ETH_Mac_Para.Mac));
+  #endif
+
+  #ifdef SDI_MAC_PARA_BK1
+    if(Len EQ 0)
+      Len = Read_Storage_Data(SDI_MAC_PARA_BK1,  ETH_Mac_Para.Mac, ETH_Mac_Para.Mac, sizeof(ETH_Mac_Para.Mac));
+  #endif
+
+  #ifdef SDI_MAC_PARA_BK2
+    if(Len EQ 0)
+      Len = Read_Storage_Data(SDI_MAC_PARA_BK2,  ETH_Mac_Para.Mac, ETH_Mac_Para.Mac, sizeof(ETH_Mac_Para.Mac));
+  #endif
+
+  if(Len EQ 0)
+  {
+	Make_Mac_Para(ETH_Mac_Para.Mac);
+	Len = sizeof(ETH_Mac_Para.Mac);
+  }
+
+  SET_HT(ETH_Mac_Para);
+  SET_SUM(ETH_Mac_Para);
+  return Len;
+
+}
+
+#endif
+
 //保存参数帧处理
 INT8U _Write_Screen_Para(INT8U *pSrc, INT16U SrcLen)
 {

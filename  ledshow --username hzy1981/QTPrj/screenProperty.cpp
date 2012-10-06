@@ -257,9 +257,10 @@ INT8U setScreenParaToSettings(QString screenStr, S_Screen_Para &screenPara)
    settings.setValue("baud", screenPara.COM_Para.Baud);
 
    settings.setValue("ip", screenPara.ETH_Para.IP);
-   settings.setValue("mac0", screenPara.ETH_Para.Mac0);
-   settings.setValue("mac1", screenPara.ETH_Para.Mac1);
+   //settings.setValue("mac0", screenPara.ETH_Para.Mac0);
+   //settings.setValue("mac1", screenPara.ETH_Para.Mac1);
    settings.setValue("mask", screenPara.ETH_Para.Mask);
+   settings.setValue("gate", screenPara.ETH_Para.Gate);
 
    settings.setValue("dataPolarity", screenPara.Scan_Para.Data_Polarity);
    settings.setValue("oePolarity", screenPara.Scan_Para.OE_Polarity);
@@ -335,9 +336,10 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     screenPara.COM_Para.Baud = (INT8U)settings.value("baud").toInt();
 
     screenPara.ETH_Para.IP = settings.value("ip").toInt();
-    screenPara.ETH_Para.Mac0 = settings.value("mac0").toInt();
-    screenPara.ETH_Para.Mac1 = settings.value("mac1").toInt();
+    //screenPara.ETH_Para.Mac0 = settings.value("mac0").toInt();
+    //screenPara.ETH_Para.Mac1 = settings.value("mac1").toInt();
     screenPara.ETH_Para.Mask = settings.value("mask").toInt();
+    screenPara.ETH_Para.Gate = settings.value("gate").toInt();
 
     screenPara.Scan_Para.Data_Polarity = settings.value("dataPolarity").toInt(); //数据级性
     screenPara.Scan_Para.OE_Polarity = settings.value("oePolarity").toInt();
@@ -1842,16 +1844,16 @@ void CipInput::setIP(INT32U IP)
   INT8U ip[4];
   QString ipStr;
 
-  ip[0] = IP % 256;
-  IP = IP >> 8;
-  ip[1] = IP % 256;
+  ip[3] = IP % 256;
   IP = IP >> 8;
   ip[2] = IP % 256;
   IP = IP >> 8;
-  ip[3] = IP % 256;
+  ip[1] = IP % 256;
+  IP = IP >> 8;
+  ip[0] = IP % 256;
 
-  ipStr = ipToStr(ip[3]) + "." + ipToStr(ip[2]) + "." + \
-          ipToStr(ip[1]) + "." + ipToStr(ip[0]);
+  ipStr = ipToStr(ip[0]) + "." + ipToStr(ip[1]) + "." + \
+          ipToStr(ip[2]) + "." + ipToStr(ip[3]);
 
   this->setText(ipStr);
 }
@@ -1865,13 +1867,13 @@ INT32U CipInput::getIP()
   ipStr.remove(".");
 
   long long int ip = ipStr.toLongLong();
-  ipBytes[0] = ip % 1000;
-  ip = ip / 1000;
-  ipBytes[1] = ip % 1000;
+  ipBytes[3] = ip % 1000;
   ip = ip / 1000;
   ipBytes[2] = ip % 1000;
   ip = ip / 1000;
-  ipBytes[3] = ip % 1000;
+  ipBytes[1] = ip % 1000;
+  ip = ip / 1000;
+  ipBytes[0] = ip % 1000;
 
   return (INT32U)(ipBytes[0] + ipBytes[1] * 256 + ipBytes[2] * 256 *256 + ipBytes[3] * 256 * 256 *256);
 }
