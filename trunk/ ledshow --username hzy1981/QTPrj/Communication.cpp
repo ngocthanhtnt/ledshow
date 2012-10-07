@@ -395,6 +395,8 @@ bool CcomThread::connect()
        }
 
     }
+    else
+        return true;
 }
 
 bool CcomThread::sendFrame(char *data, int len, int bufLen)

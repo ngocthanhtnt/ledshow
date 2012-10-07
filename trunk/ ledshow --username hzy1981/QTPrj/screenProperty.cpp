@@ -1852,8 +1852,8 @@ void CipInput::setIP(INT32U IP)
   IP = IP >> 8;
   ip[0] = IP % 256;
 
-  ipStr = ipToStr(ip[0]) + "." + ipToStr(ip[1]) + "." + \
-          ipToStr(ip[2]) + "." + ipToStr(ip[3]);
+  ipStr = ipToStr(ip[3]) + "." + ipToStr(ip[2]) + "." + \
+          ipToStr(ip[1]) + "." + ipToStr(ip[0]);
 
   this->setText(ipStr);
 }
@@ -3152,6 +3152,7 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
         }
     }
 
+    w->progManage->saveCurItem(w->screenArea->screenItem);
     w->setActonsEnable();
 
 }
@@ -3917,4 +3918,20 @@ void CInvalidDateDialog::udiskPara()
 CInvalidDateDialog::~CInvalidDateDialog()
 {
 
+}
+
+//生成一个临时的Mac地址
+void Make_Rand_Mac_Para(INT8U Mac[])
+{
+    INT8U rand;
+
+    rand = qrand() % 256;
+    QDateTime dateTime = QDateTime::currentDateTime();
+
+    Mac[0] = dateTime.time().second() + (rand << 6);
+    Mac[1] = dateTime.time().minute() + (rand << 6);
+    Mac[2] = dateTime.time().hour() + (rand << 5);
+    Mac[3] = dateTime.date().day() + (rand << 5);
+    Mac[4] = ((dateTime.date().year() - 2010) << 4) + dateTime.date().month();
+    Mac[5] = (INT8U)rand;
 }

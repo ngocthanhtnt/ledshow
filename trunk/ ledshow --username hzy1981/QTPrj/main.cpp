@@ -4,9 +4,10 @@
 #include <QTextCodec>
 #include <QDir>
 #include <QMessageBox>
+#include <QTime>
 #include "mainwindow.h"
 #include "textedit.h"
-#include<Winbase.h>
+#include <Winbase.h>
 
 MainWindow *w;
 MainObj *mainObj;
@@ -192,6 +193,7 @@ int main(int argc, char *argv[])
         dataDir.mkdir(".\\cfg");
 
 
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
     /*
     Screen_Para.Base_Para.Width = DEF_SCN_WIDTH;

@@ -459,13 +459,13 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
   }
   else if(Cmd EQ C_ETH_MAC_PARA && Len >= sizeof(ETH_Mac_Para.Mac))
   {
-#if NET_EN
 	memcpy(ETH_Mac_Para.Mac, Data, sizeof(ETH_Mac_Para.Mac));
 	SET_HT(ETH_Mac_Para);
 	SET_SUM(ETH_Mac_Para);
 
 	Write_ETH_Mac_Para();
 
+#if NET_EN
     Net_Para_Modi_Flag = NET_PARA_MODI_FLAG;
 #endif
   }
@@ -806,6 +806,10 @@ void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen)
     if(sendBuf)
 	{
 	  memcpy(sendBuf, Frame, FrameLen);
+	  
+	  Unselect_SPI_Device();								//Provide timer tick
+      SPI1_ENC28J60_Init();
+
       udp_send (Screen_Status.UDP_Soc, (INT8U *)Screen_Status.Rem_IP, Screen_Status.Rem_Port, sendBuf, FrameLen);
     }
 #endif
