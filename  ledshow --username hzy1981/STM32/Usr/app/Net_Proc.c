@@ -75,10 +75,11 @@ void Net_Data_Proc(void)
 {
   if(Screen_Status.Rem_Data_Flag EQ REM_DATA_FLAG) //收到UDP数据了
   {
-    Set_Screen_Com_Time(COM_STANDBY_SEC); //到计时5s，5秒后重新播放节目
-	
 	if(Check_Frame_Format((INT8U *)RCV_DATA_BUF, Screen_Status.Rem_Data_Len))
-      Rcv_Frame_Proc(CH_NET, (INT8U *)RCV_DATA_BUF, Screen_Status.Rem_Data_Len, sizeof(RCV_DATA_BUF));
+    {
+	  Set_Screen_Com_Time(COM_STANDBY_SEC); //到计时5s，5秒后重新播放节目
+	  Rcv_Frame_Proc(CH_NET, (INT8U *)RCV_DATA_BUF, Screen_Status.Rem_Data_Len, sizeof(RCV_DATA_BUF));
+	}
 	//Send_Frame_Proc(CH_NET, (INT8U *)RCV_DATA_BUF, Screen_Status.Rem_Data_Len);
 
 	Screen_Status.Rem_Data_Flag = 0;

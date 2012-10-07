@@ -249,8 +249,7 @@ INT8U Read_Prog_Num(void)
 	return Len;
 }
 
-#if NET_EN
-
+//写函数保留下来--D型卡需要不带网口的需要这个，焊接上网口部分就不需要重新设置mac地址了
 void Write_ETH_Mac_Para(void)
 {
   //INT8U Prog_No = Prog_Para.Prog_No;
@@ -271,7 +270,7 @@ void Write_ETH_Mac_Para(void)
   return;
 }
 
-
+#if NET_EN
 //读取屏幕的mac地址
 INT8U Read_ETH_Mac_Para(void)
 {
@@ -405,6 +404,11 @@ INT16U Read_Screen_Para(void)
 	if(Len EQ 0)
 	{
 	  memset(&Screen_Para, 0, sizeof(Screen_Para));
+#if NET_EN
+	  Screen_Para.ETH_Para.IP = 0x7100A8C0; //192.168.0.113
+	  Screen_Para.ETH_Para.Gate = 0x0100A8C0; //192.168.0.1
+	  Screen_Para.ETH_Para.Mask = 0x00FFFFFF; //255.255.255.0
+#endif
 	}
 
 	Chk_Data_Polarity_Change(Data_Polarity); //检查数据极性是否发生修改

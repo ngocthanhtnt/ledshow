@@ -1387,6 +1387,7 @@ void MainWindow::previewTimerProc()
     TRACE();
 }
 
+extern void Make_Rand_Mac_Para(INT8U Mac[]);
 void MainWindow::previewProc()
 {
   static INT32U msCounts = 0;
@@ -1445,6 +1446,19 @@ void MainWindow::testCard()
   {
       QMessageBox::critical(w, tr("提示"),
                              tr("控制卡自检失败:设置系统时间失败"),tr("确定"));
+      return;
+
+  }
+
+  //发送MAC地址命令
+  Make_Rand_Mac_Para(dataBuf);
+  makeProtoBufData(screenStr, COM_MODE, C_ETH_MAC_PARA | WR_CMD, (char *)dataBuf, 6);
+
+  re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+  if(re EQ false)
+  {
+      QMessageBox::critical(w, tr("提示"),
+                             tr("设置MAC地址失败"),tr("确定"));
       return;
 
   }
