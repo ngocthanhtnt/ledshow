@@ -33,21 +33,22 @@
 #define C_SCREEN_COM_PARA 0x01 //串口通信参数
 #define C_SCREEN_ETH_PARA 0x02 //以太网参数
 #define C_ETH_MAC_PARA    0x03
-#define C_SCREEN_GPRS_PARA 0x04 //GPRS参数
-#define C_SCREEN_PARA    0x05 //整体屏幕参数
-#define C_SCAN_PARA      0x06 //扫描参数
-#define C_SCREEN_OC_TIME 0x07 //定时开关机时间
-#define C_SCREEN_OC    0x08 //开关机
-#define C_SCREEN_LIGNTNESS 0x09 //亮度
-#define C_SCREEN_TIME 0x0A //时间
-#define C_PROG_NUM    0x0B //节目数
-#define C_PROG_PARA  0x0C //节目属性
+#define C_HEART_BEAT      0x04
+#define C_SCREEN_GPRS_PARA 0x05 //GPRS参数
+#define C_SCREEN_PARA    0x06 //整体屏幕参数
+#define C_SCAN_PARA      0x07 //扫描参数
+#define C_SCREEN_OC_TIME 0x08 //定时开关机时间
+#define C_SCREEN_OC    0x09 //开关机
+#define C_SCREEN_LIGNTNESS 0x0A //亮度
+#define C_SCREEN_TIME 0x0B //时间
+#define C_PROG_NUM    0x0C //节目数
+#define C_PROG_PARA  0x0D //节目属性
 //#define C_PROG_BORDER 0x0C
-#define C_PROG_DATA  0x0D //显示数据
-#define C_SOFT_VERSION 0x0E //屏幕信息
-#define C_SELF_TEST 0x0F //自动监测
-#define C_SCREEN_LOCK_DATE 0x10 //运行有效时间--用于催款，超过该时间锁定屏
-#define C_ENV_VAR   0x11  //环境变量
+#define C_PROG_DATA  0x0E //显示数据
+#define C_SOFT_VERSION 0x0F //屏幕信息
+#define C_SELF_TEST 0x10 //自动监测
+#define C_SCREEN_LOCK_DATE 0x11 //运行有效时间--用于催款，超过该时间锁定屏
+#define C_ENV_VAR   0x12  //环境变量
 #define C_UPDATE    0x1F //固件升级
 
 #define CLOSE_FLAG 0x5A

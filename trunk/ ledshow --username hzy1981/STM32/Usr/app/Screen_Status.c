@@ -185,13 +185,38 @@ void Screen_Temperature_Proc(void)
 	  Screen_Status.Ext_Temperature_Sec_Counts --;
     else
 	{
+	  if(SEC_TIMER < 90) //前90s内数据快速稳定
+	  {
+	    TempCumu = 0;
+	    for(i = 0; i< 5; i ++)
+	      TempCumu += GetInterTemperature();
+	
+		#if NET_EN //以太网，考虑到发热，需要多减2度
+		   Screen_Status.Temperature = ((TempCumu / 5) + 5) / 10 * 10 - 170;
+		#else
+		   Screen_Status.Temperature = ((TempCumu / 5) + 5) / 10 * 10 - 150;
+		#endif
+	
+	    return;
+	  }
+
+	 //90s后
 	  if(Inter_Temp.Posi >= S_NUM(Inter_Temp.TempData))
 		Inter_Temp.Posi = 0;
 
-      Inter_Temp.TempData[Inter_Temp.Posi ++] = GetInterTemperature();// 0~17
+	  if(Inter_Temp.Counts < S_NUM(Inter_Temp.TempData)) //前10个数据要滤波，10个以后取平均值
+	  {
+	    TempCumu = 0;
+	  	for(i = 0; i< 5; i ++)
+	      TempCumu += GetInterTemperature();
 
-	  if(Inter_Temp.Counts < S_NUM(Inter_Temp.TempData))
+		Inter_Temp.TempData[Inter_Temp.Posi ++] = TempCumu / 5;
 	    Inter_Temp.Counts ++;
+	  }
+	  else
+	  {
+		Inter_Temp.TempData[Inter_Temp.Posi ++] = GetInterTemperature();// 0~17
+	  }
 
 	  TempCumu = 0;
 	  for(i = 0; i < Inter_Temp.Counts; i ++)
@@ -199,12 +224,32 @@ void Screen_Temperature_Proc(void)
 	    TempCumu += Inter_Temp.TempData[i];
 	  }
 
+#if NET_EN //以太网，考虑到发热，需要多减2度
+	  Screen_Status.Temperature = ((TempCumu / Inter_Temp.Counts) + 5) / 10 * 10 - 170;
+#else
 	  Screen_Status.Temperature = ((TempCumu / Inter_Temp.Counts) + 5) / 10 * 10 - 150;
-      //debug("temp = %d", Screen_Status.Temperature);
+#endif      
+	  //debug("temp = %d", Screen_Status.Temperature);
 	}
   }
 //INT16U GetADCValue(INT8U ADC_Channel)//ADC_Channel_x 0~17
 #endif
+}
+
+void Screen_Temp_Init(void)
+{
+  volatile INT32S Temp[100] = {0};
+  INT16U i,j;
+
+  for(i = 0; i < 100; i ++)
+  {
+    for(j = 0; j < 50; j ++)
+      Temp[i] += GetInterTemperature() - 170;
+
+    Temp[i] = Temp[i] / 50;
+	//debug("");
+	Delay_ms(500);
+  }
 }
 
 //开关机控制

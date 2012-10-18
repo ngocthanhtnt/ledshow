@@ -71,8 +71,28 @@ void Net_Init(void)
   udp_open (Screen_Status.UDP_Soc, 8000);
 }
 
+//发送心跳数据
+void Send_Heart_Beat(void)
+{
+    INT8U Temp[20];
+	INT16U Len;
+    INT8U *sendBuf;
+
+    Len = Make_Frame(Temp + FDATA, 0, (INT8U *)&Screen_Para.COM_Para.Addr, C_HEART_BEAT,  0, 0, 0, (char *)Temp);	
+    sendBuf = udp_get_buf (Len);
+
+	if(sendBuf)
+	{
+	  memcpy(sendBuf, Temp, Len);
+	  udp_send (Screen_Status.UDP_Soc, (INT8U *)&Screen_Para.ETH_Para.Serv_IP, Screen_Para.ETH_Para.Serv_Port, sendBuf, Len);
+	}
+}
+
 void Net_Data_Proc(void)
 {
+  static S_Int32U Sec = {CHK_BYTE, 0xFFFFFFFF, CHK_BYTE};
+  static S_Int16U Counts = {CHK_BYTE, 0xFFFE, CHK_BYTE}; //置一个较大数，上电就发送心跳
+
   if(Screen_Status.Rem_Data_Flag EQ REM_DATA_FLAG) //收到UDP数据了
   {
 	if(Check_Frame_Format((INT8U *)RCV_DATA_BUF, Screen_Status.Rem_Data_Len))
@@ -84,6 +104,23 @@ void Net_Data_Proc(void)
 
 	Screen_Status.Rem_Data_Flag = 0;
 	Screen_Status.Rem_Data_Len = 0;
+  }
+
+  if(Screen_Para.ETH_Para.Serv_En EQ 1) //使用服务器模式，需要定时向服务器发送心跳信息
+  {
+	  if(Sec.Var != Pub_Timer.Sec)
+	  {
+	    Sec.Var = Pub_Timer.Sec;
+	    Counts.Var ++;
+	
+		if(Screen_Para.ETH_Para.Heart_Beat > 0 &&\
+		   Counts.Var >= Screen_Para.ETH_Para.Heart_Beat &&\
+		   Screen_Status.Com_Time EQ 0)
+		{
+		  Send_Heart_Beat(); //发送心跳
+		  Counts.Var = 0;
+		} 
+	  }
   }
 }
 

@@ -25,6 +25,8 @@
 #define CARD_NAME "D"  //卡名称
 #elif CARD_TYPE == CARDDU
 #define CARD_NAME "DU"  //卡名称
+#elif CARD_TYPE == CARDDE
+#define CARD_NAME "DE"  //卡名称
 #elif CARD_TYPE == CARDDM
 #define CARD_NAME "DM"  //卡名称
 #else
@@ -72,6 +74,9 @@
 #elif CARD_TYPE == CARDDU
 #define UDISK_EN  1//u盘使能
 #define NET_EN	 0//网络使能
+#elif CARD_TYPE == CARDDE
+#define UDISK_EN  0//u盘使能
+#define NET_EN	 1//网络使能
 #elif CARD_TYPE == CARDDM
 #define UDISK_EN  1//u盘使能
 #define NET_EN	 1//网络使能

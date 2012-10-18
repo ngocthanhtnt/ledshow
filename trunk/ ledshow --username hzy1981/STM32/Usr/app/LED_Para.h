@@ -191,7 +191,12 @@ typedef struct
     INT32U Gate; //网关
     INT8U Mode; //0固定ip方式，1自动获取方式
 
-    INT8U Temp[20]; //保留30字节备用--升级程序时可以和老的兼容
+	INT8U Serv_En; //是否采用服务器模式,0表示不采用，1表示采用
+	INT32U Serv_IP; //服务器IP
+	INT16U Serv_Port;  //服务器端口
+	INT16U Heart_Beat; //心跳周期,单位s
+
+    INT8U Temp[11]; //保留30字节备用--升级程序时可以和老的兼容
 }S_ETH_Para;
 
 typedef struct

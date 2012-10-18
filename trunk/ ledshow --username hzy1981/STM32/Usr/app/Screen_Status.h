@@ -52,4 +52,5 @@ EXT INT32U Get_Encryption_Code(INT32U Serial0, INT32U Serial1, INT32U Serial2);
 EXT void Encrypt(void);
 EXT void Encrypt_Chk(void);
 EXT void Screen_Proc(void);
+EXT void Screen_Temp_Init(void);
 #endif

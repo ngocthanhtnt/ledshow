@@ -14,7 +14,8 @@
 //#define CARDC2	 0x32
 #define CARDD    0x40
 #define CARDDU	 0x41
-#define CARDDM	 0x42
+#define CARDDE   0x42
+#define CARDDM	 0x43
 
 #define SCAN_HARD_MODE   0x00//硬件扫描模式
 #define SCAN_SOFT_MODE0	 0x01//软件扫描模式0 --在扫描中断中进行数据转换
