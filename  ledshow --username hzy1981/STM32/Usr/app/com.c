@@ -949,7 +949,9 @@ void Screen_Com_Proc(void)
 
    }
 
-   //return;
+#if NET_EN
+   Net_Proc();
+#endif
 
    if(Sec.Var EQ SEC_TIMER)
      return;

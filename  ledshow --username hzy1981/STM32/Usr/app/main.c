@@ -130,6 +130,8 @@ int main(void)
 
   Encrypt_Chk();
 
+  //Screen_Temp_Init();
+
   while(1)
   {
     Screen_Test(); //ÆÁÄ»¼ì²â
@@ -146,11 +148,11 @@ int main(void)
 
     Show_Main_Proc();
 
-
+/*
 #if NET_EN
 	Net_Proc();
 #endif
-
+*/
     Chk_Main_Stack();
 
     Clr_Watch_Dog();

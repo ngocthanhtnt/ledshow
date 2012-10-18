@@ -364,6 +364,11 @@ unsigned char GetChinaCalendar(
 	unsigned char flag_y;
 	unsigned short temp4,table_addr;
 
+    *p = 0;
+	*(p + 1) = 0;
+	*(p + 2) = 0;
+	*(p + 3) = 0;
+
 	yearH=year/100;	yearL=year%100;
 	if((yearH!=19)&&(yearH!=20))	return(0);
 	
@@ -449,7 +454,8 @@ unsigned char GetChinaCalendar(
 	*p++=yearH;
 	*p++=yearL;
 	*p++=month;
-	*p=day;	
+	*p=day;
+
 	return(1);
 }
 

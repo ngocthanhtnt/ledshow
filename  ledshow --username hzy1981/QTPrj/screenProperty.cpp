@@ -341,6 +341,11 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     screenPara.ETH_Para.Mask = settings.value("mask").toInt();
     screenPara.ETH_Para.Gate = settings.value("gate").toInt();
 
+    screenPara.ETH_Para.Serv_En = 0;
+    screenPara.ETH_Para.Serv_IP = 0;//screenPara.ETH_Para.Gate;
+    screenPara.ETH_Para.Serv_Port = 0;//4001;
+    screenPara.ETH_Para.Heart_Beat = 0;//10;
+
     screenPara.Scan_Para.Data_Polarity = settings.value("dataPolarity").toInt(); //数据级性
     screenPara.Scan_Para.OE_Polarity = settings.value("oePolarity").toInt();
     screenPara.Scan_Para.RG_Reverse = settings.value("redGreenRev").toInt();
@@ -1278,7 +1283,7 @@ void CadjTimeProperty::setSettingsToWidget(QString str)
 //获取日期时间
 QDateTime CadjTimeProperty::getDateTime()
 {
-  if(this->selfTimeButton->isChecked())
+  if(this->sysTimeButton->isChecked())
     {
       return QDateTime::currentDateTime();
   }
@@ -1291,7 +1296,7 @@ QDateTime CadjTimeProperty::getDateTime()
 //发送校时数据
 void CadjTimeDialog::sendData()
 {
-    QDateTime dateTime = adjTimeProperty->getDateTime();
+    QDateTime dateTime;
     INT8U TimeBuf[10];
     INT8U Temp[20];
     int len;
@@ -1300,6 +1305,8 @@ void CadjTimeDialog::sendData()
         return;
 
     this->sendButton->setEnabled(false);
+
+    dateTime = adjTimeProperty->getDateTime();
 
     TimeBuf[T_YEAR] = dateTime.date().year() - 2000;
     TimeBuf[T_MONTH] = dateTime.date().month();
