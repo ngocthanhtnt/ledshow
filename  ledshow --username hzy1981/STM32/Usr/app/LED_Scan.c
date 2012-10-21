@@ -816,7 +816,8 @@ void LED_Scan_One_Row(void)
      (Screen_Status.Self_OC_Flag EQ CLOSE_FLAG ||\
 	  Screen_Status.Com_Time > 0 ||\
 	  Screen_Status.Replay_Flag EQ REPLAY_FLAG ||\
-	  Chk_UDisk_Processing())) //关机状态，不显示,或当前在通信状态也不显示
+	  Chk_UDisk_Processing() ||\
+	  CHK_ENC28J60_INT())) //关机状态，不显示,或当前在通信状态也不显示
 	 {
 	 Flag = 0;
     return;

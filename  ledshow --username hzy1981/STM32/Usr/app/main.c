@@ -1,6 +1,6 @@
 #include "Includes.h"
 
-#define MAIN_STACK_SIZE 300
+#define MAIN_STACK_SIZE 380
  
  void test()
  {
@@ -101,7 +101,7 @@ int main(void)
   Hardware_Init();
 
   OS_Debug_Print("----------system start----------");
-  OS_Debug_Print("----------version: %s----------", version);
+  //OS_Debug_Print("----------version: %s----------", version);
 
   Check_Storage_Size();
   

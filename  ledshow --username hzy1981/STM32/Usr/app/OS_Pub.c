@@ -154,7 +154,7 @@ void OS_vsPrintf(CONST OS_INT8S *format, va_list ap)
       if(LintFlag)//长整型
         uParaValue=va_arg(ap,unsigned long int);
       else
-        uParaValue=va_arg(ap,OS_INT16U);  
+        uParaValue=va_arg(ap,unsigned int);  
     }
     
     //计算数据本身的长度
@@ -199,24 +199,53 @@ void _OS_Debug_Print(CONST OS_INT8S *format, ...)
 }
 
 extern OS_INT8U OS_Debug_Print_En(void);
+
+typedef struct
+{
+    INT8U Head;
+    INT8U Buf[45];
+    INT8U Tail;
+}S_Print_Buf;
+
+extern S_Print_Buf _Print_Buf;
+
+#define Print_Buf _Print_Buf.Buf
+extern void vsPrintf(char Buf[], INT16U BufLen, CONST INT8S *format, va_list ap);
 //调试信息输出函数
 //注意目前只支持%c,%s,%d,%u,%o,%x。暂不支持浮点数
 //该函数在只有在OS_Debug_Print_En()返回>0时才输出
 void OS_Debug_Print(CONST OS_INT8S *format, ...)
-{
+{/*
   va_list ap;
  
   if(Chk_JP_Status() != FAC_STATUS) //工厂状态才允许打印调试信息
     return;
-/*
-  if(OS_Debug_Print_En() EQ 0)
-    return;
-*/ 
+ 
   va_start(ap,format);
   OS_vsPrintf(format,ap);
   OS_Put_Char('\r'); //--增加换行符
   OS_Put_Char('\n');
   va_end(ap);
+  */
+	va_list ap;
+	OS_INT8U i;
+
+    if(Chk_JP_Status() != FAC_STATUS) //工厂状态才允许打印调试信息
+      return;
+		
+	memset(Print_Buf, 0, sizeof(Print_Buf));
+	va_start(ap,format);
+    vsPrintf((char *)Print_Buf, sizeof(Print_Buf), format, ap);
+	
+    i = 0;
+	while(Print_Buf[i] != 0 && i < sizeof(Print_Buf))
+	{
+	 OS_Put_Char(Print_Buf[i++]);
+	}
+	OS_Put_Char('\r'); //--增加换行符
+	OS_Put_Char('\n');
+
+	va_end(ap);
 }
 #endif
 

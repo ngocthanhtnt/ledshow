@@ -6265,9 +6265,9 @@ INT16U Get_WeekStr_Width(INT8U Font, INT8U Language, INT8U Week)
 //显示某个分区数据--->每10ms调用该函数，实现动画或移动等
 //调用此函数前，显示数据已经读取在Show_Data_Bak中，同时Prog_Status.Area_Status和Program_Para等信息已经保存好
 
-#define Put_Char(c) Buf[j++] = c
+#define Put_Char(c) do{if(j < BufLen) Buf[j++] = c;}while(0)
 //根据format和ap参数表输出调试信息
-void vsPrintf(char Buf[], CONST INT8S *format, va_list ap)
+void vsPrintf(char Buf[], INT16U BufLen, CONST INT8S *format, va_list ap)
 {
 
   INT8U j = 0;
@@ -6465,7 +6465,7 @@ INT16U LED_Print(INT8U Font, INT8U Color, S_Show_Data *pData, INT8U Area_No, INT
 	
 	memset(Print_Buf, 0, sizeof(Print_Buf));
 	va_start(ap,format);
-        vsPrintf((char *)Print_Buf, format, ap);
+    vsPrintf((char *)Print_Buf, sizeof(Print_Buf), format, ap);
 	
 	if(pData != (S_Show_Data *)0)
 	  Show_String(Print_Buf, Font, Color, pData,  Area_No, X, Y);
@@ -6485,7 +6485,7 @@ INT16U RT_LED_Print(INT8U Font, INT8U Color, INT16U X, INT16U Y, INT16U Sec, con
   memset(Print_Buf, 0, sizeof(Print_Buf));
 
   va_start(ap,format);
-  vsPrintf((char *)Print_Buf, format, ap);
+  vsPrintf((char *)Print_Buf, sizeof(Print_Buf), format, ap);
 
   Show_String(Print_Buf, Font, Color, &Show_Data,  0, X, Y);
   

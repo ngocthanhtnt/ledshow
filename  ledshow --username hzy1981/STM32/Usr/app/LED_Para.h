@@ -178,7 +178,7 @@ typedef struct
     //串口
     INT8U Baud;  //波特率,0表示57600,1表示9600
 
-    INT8U Bak; //备用
+    //INT8U Bak; //备用
 }S_COM_Para;
 
 //以太网参数
@@ -196,7 +196,7 @@ typedef struct
 	INT16U Serv_Port;  //服务器端口
 	INT16U Heart_Beat; //心跳周期,单位s
 
-    INT8U Temp[11]; //保留30字节备用--升级程序时可以和老的兼容
+    INT8U Temp[4]; //保留30字节备用--升级程序时可以和老的兼容
 }S_ETH_Para;
 
 typedef struct
@@ -214,9 +214,9 @@ typedef struct
     INT32U Srv_IP; //服务器IP
     INT16U Srv_Port; //服务器端口
     INT8U Mode; //0唤醒方式，1在线方式
-    INT8U APN[16];
+    INT8U APN[30];
 
-    INT8U Temp[20]; //保留30字节备用--升级程序时可以和老的兼容
+    INT8U Temp[10]; //保留30字节备用--升级程序时可以和老的兼容
 }S_GPRS_Para;
 
 typedef struct
@@ -272,7 +272,7 @@ typedef struct
   S_Lock_Date Lock_Date; //有效日期--到达改日期后自动关闭--全0表示不启用改参数
   //命令3
   //INT8U Prog_Num; //节目数
-  INT8U Temp[20]; //备用
+  INT8U Temp[10]; //备用
 
   INT8U CS[CS_BYTES];
 
