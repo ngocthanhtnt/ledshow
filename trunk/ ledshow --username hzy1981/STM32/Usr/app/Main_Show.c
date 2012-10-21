@@ -112,7 +112,9 @@ void Update_Show_Data(void)
   if(Screen_Status.Time_OC_Flag EQ CLOSE_FLAG ||\
      Screen_Status.Manual_OC_Flag EQ CLOSE_FLAG ||\
 	 Screen_Status.Self_OC_Flag EQ CLOSE_FLAG ||\
-	 Chk_UDisk_Processing())
+	 Chk_UDisk_Processing() ||\
+	 CHK_ENC28J60_INT() ||\
+	 CHK_TEST_KEY_STATUS())
     return;
 
   if(Prog_Status.Play_Status.RT_Play_Time > 0) //当前在关机状态或者实时显示状态
@@ -594,6 +596,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
       //已经到了最大的一幕则切换到下个文件
       if(Chk_File_Play_End(Area_No))
           return 0;
+
 /*
       //在连续移动的情况下,在更新新一屏以前,必须将之前屏幕的边框数据恢复,否则边框会出现在移动的图像中
       if(Prog_Status.File_Para[Area_No].Pic_Para.In_Mode >= 2 &&\
@@ -1539,12 +1542,72 @@ void Print_Cur_Time(void)
 }
 #endif
 
+//Direct表示方向,左斜线或者右斜线,0表示左，1表示右
+//Flag为0表示画偶数位置斜线，1表示奇数位置斜线
+void Screen_Test_Draw_Line(INT8U Direct, INT8U Flag)
+{
+  INT16U i;
+  S_Point P0,P1;
+
+  for(i = 0; i < Screen_Para.Base_Para.Width + Screen_Para.Base_Para.Height - 1; i ++)
+  {
+    Clr_Watch_Dog();
+
+    if(Direct EQ 0)
+	{ 
+	    P0.X = (i < Screen_Para.Base_Para.Width)?i:Screen_Para.Base_Para.Width - 1;
+		P0.Y = (i < Screen_Para.Base_Para.Width)?0:(i - Screen_Para.Base_Para.Width + 1);
+	
+	    P1.X = (i < Screen_Para.Base_Para.Height)?0:(i - Screen_Para.Base_Para.Height + 1);
+		P1.Y = (i < Screen_Para.Base_Para.Height)?i:(Screen_Para.Base_Para.Height - 1);	
+	}
+	else
+	{
+	    P0.X = (i < Screen_Para.Base_Para.Height)?0:(i - Screen_Para.Base_Para.Height + 1);
+		P0.Y = (i < Screen_Para.Base_Para.Height)?(Screen_Para.Base_Para.Height - 1 - i):0;
+	
+	    P1.X = (i < Screen_Para.Base_Para.Width)?i:(Screen_Para.Base_Para.Width - 1);// - (i - Screen_Para.Base_Para.Width + 1);
+		P1.Y = (i < Screen_Para.Base_Para.Width)?(Screen_Para.Base_Para.Height - 1):(Screen_Para.Base_Para.Height - 1 - (i - Screen_Para.Base_Para.Width + 1));
+	}
+
+    if(i % 4 <= Flag)
+      Draw_Line(&Show_Data, 0, &P0, &P1, 0x03);
+  }
+
+}
+
+//返回1表示有按键退出
+//返回0表示正常延时退出
+INT8U Screen_Test_Wait_Key(void)
+{
+  INT16U i;
+  INT8U Test_Key_Up_Flag = 0;
+
+    for(i = 0; i< 300; i ++)
+	{
+		Delay_ms(1);
+
+		if(Test_Key_Up_Flag EQ 0)
+		  Test_Key_Up_Flag = Chk_Test_Key_Up();
+
+		if(Test_Key_Up_Flag && Chk_Test_Key_Down())
+		{
+		  Test_Key_Up_Flag = 0;
+		  break;
+		}
+	 }
+
+	if(i != 300)
+	  return 1;
+	else
+	  return 0;
+}
+
 //对屏幕进行测试
 void Screen_Test(void)
 {
-  INT16U i, j;
-  S_Point P0,P1;
-  INT8U Test_Key_Up_Flag;
+  S_Point P0;
+  INT8U i;
 
 #if 0
    Screen_Para.Base_Para.Width = 64; 
@@ -1608,12 +1671,9 @@ void Screen_Test(void)
 #endif
 #endif
 
-  Test_Key_Up_Flag = 0;
  //设置实时显示区域
   Set_RT_Show_Area(0, 0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
  
- //Set_RT_Show_Area(713, 0, 247, 64);//Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
-  i = 0;
   //全屏亮灭测试
   RT_Play_Status_Enter(1);
  /*-------------
@@ -1626,126 +1686,53 @@ void Screen_Test(void)
    	 Show_Data.Color_Data[120 * 2 * 43 + (120 - 1) * 2 + 1] = 0xFF;
   }*/
   //-------------------
-  while(1)
+  //Set_Show_Data();
+  Clr_Show_Data();
+
+  for(i = 1; i <= 2; i ++)
   {
-	Set_Show_Data();
-
-    for(j = 0; j < 300; j ++)
-	{
-		Delay_ms(1);
-
-		if(Test_Key_Up_Flag EQ 0)
-		  Test_Key_Up_Flag = Chk_Test_Key_Up();
-
-		if(Test_Key_Up_Flag && Chk_Test_Key_Down())
-		{
-		  Test_Key_Up_Flag = 0;
+	  if(Screen_Para.Base_Para.Color & i)
+	  {
+	    P0.X = P0.Y = 0;
+	    Fill_Rect(&Show_Data, 0, &P0, Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height, i);
+	    while(1)
+	    {
+	      if(Screen_Test_Wait_Key())
 		  break;
-		}
-	 }
+	     }
+	  }
+  }
 
-	if(j != 300)
-	  break;
-
-    Clr_Show_Data();
-
-    for(j = 0; j < 300; j ++)
-	{
-		Delay_ms(1);
-
-		if(Test_Key_Up_Flag EQ 0)
-		  Test_Key_Up_Flag = Chk_Test_Key_Up();
-
-		if(Test_Key_Up_Flag && Chk_Test_Key_Down())
-		{
-		  Test_Key_Up_Flag = 0;
-		  break;
-		}
-	 }
-
-	if(j != 300)
-	  break;
-   }
    
-  //Delay_ms(500);
- i=0;
-  //横向线测试
+  //右斜线测试
   Clr_Show_Data();
+  Clr_Watch_Dog();
 
-  while(1)
-  {
-    Clr_Watch_Dog();
-
-    P0.X = i;
-	P0.Y = 0;
-
-	P1.X = i;
-	P1.Y = Screen_Para.Base_Para.Height - 1;
-    Draw_Line(&Show_Data, 0, &P0, &P1, 0x03);
-
-    for(j = 0; j < 300; j ++)
-	{
-		Delay_ms(1);
-
-		if(Test_Key_Up_Flag EQ 0)
-		  Test_Key_Up_Flag = Chk_Test_Key_Up();
-
-		if(Test_Key_Up_Flag && Chk_Test_Key_Down())
-		{
-		  Test_Key_Up_Flag = 0;
+  for(i = 0 ; i<4; i++)
+  {	
+	  Screen_Test_Draw_Line(0, i);
+	
+	  while(1)
+	  {
+	    if(Screen_Test_Wait_Key())
 		  break;
-		}
-	 }
+	  }
+  }
 
-	if(j != 300)
-	  break;
-
-	Draw_Line(&Show_Data, 0, &P0, &P1, 0x00);
-	i++;
-	if(i >= Screen_Para.Base_Para.Width)
-	  i = 0;
-
-   }
-
-  //Delay_ms(500);
-  i=0;
-  //纵向线测试
+  //左斜线测试
   Clr_Show_Data();
-  while(1)
-  {
-    Clr_Watch_Dog();
+  Clr_Watch_Dog();
 
-    P0.X = 0;
-	P0.Y = i;
-
-	P1.X = Screen_Para.Base_Para.Width - 1;
-	P1.Y = i;
-
-    Draw_Line(&Show_Data, 0, &P0, &P1, 0x03);
-
-    for(j = 0; j < 300; j ++)
-	{
-		Delay_ms(1);
-
-		if(Test_Key_Up_Flag EQ 0)
-		  Test_Key_Up_Flag = Chk_Test_Key_Up();
-
-		if(Test_Key_Up_Flag && Chk_Test_Key_Down())
-		{
-		  Test_Key_Up_Flag = 0;
+  for(i = 0 ; i<4; i++)
+  {	
+	  Screen_Test_Draw_Line(1, i);
+	
+	  while(1)
+	  {
+	    if(Screen_Test_Wait_Key())
 		  break;
-		}
-	 }
-
-	if(j != 300)
-	  break;
-
-	Draw_Line(&Show_Data, 0, &P0, &P1, 0x00);
-	i++;
-	if(i >= Screen_Para.Base_Para.Height)
-	  i = 0;
-
-   }
+	  }
+  }
 
   Clr_Show_Data();
   

@@ -2848,11 +2848,14 @@ void CfacScreenProperty::setEditEnable(bool flag)
     }
 }
 
+extern INT32U RevIP(INT32U IP);
+
 void CfacScreenProperty::readParaProc()
 {
     INT8U rcvBuf[500]; //读取屏幕参数缓冲区
     int len;
     bool re;
+    QString cardTypeStr;
 
     QString screenParaStr;
 
@@ -2873,6 +2876,14 @@ void CfacScreenProperty::readParaProc()
     if(re EQ true)
     {
       screenParaStr = tr("固件版本:")+QString((char *)rcvBuf) + " ";
+
+      for(int i = 0; i < sizeof(rcvBuf); i ++)
+        {
+          if(rcvBuf[i] == ' ')
+              rcvBuf[i] = 0;
+      }
+
+      cardTypeStr = QString(COMPANY_NAME) + QString("-") + QString((char *)rcvBuf);//板卡名称
     }
 
     if(QT_SIM_EN)
@@ -2923,7 +2934,22 @@ void CfacScreenProperty::readParaProc()
                          arg(_138Combo->itemText(readScreenPara.Scan_Para._138Check)).\
                          arg(lineOrderCombo->itemText(readScreenPara.Scan_Para.Line_Order));
 
+        S_Card_Para Card_Para;
+        getCardParaFromSettings(cardTypeStr, Card_Para);
 
+        if(Card_Para.Com_Mode & COM_ETH)
+        {
+            //IP地址等
+            QHostAddress dstAddr;
+            dstAddr.setAddress(RevIP(readScreenPara.ETH_Para.IP));
+            screenParaStr += tr("\r\nIP地址:")+dstAddr.toString();
+
+            dstAddr.setAddress(RevIP(readScreenPara.ETH_Para.Mask));
+            screenParaStr += tr(",子网掩码:")+dstAddr.toString();
+
+            dstAddr.setAddress(RevIP(readScreenPara.ETH_Para.Gate));
+            screenParaStr += tr(",网关:")+dstAddr.toString();
+        }
 
         importParaButton->setEnabled(true);//可以导入参数了
     }
@@ -2977,7 +3003,7 @@ void CfacScreenProperty::readCardType()
               rcvBuf[i] = 0;
       }
 
-      cardTypeStr = QString("AS-") + QString((char *)rcvBuf);
+      cardTypeStr = QString(COMPANY_NAME) + QString("-") + QString((char *)rcvBuf);
 
       int cardIndex = cardCombo->findText(cardTypeStr);
       if(cardIndex == -1) //没有找到

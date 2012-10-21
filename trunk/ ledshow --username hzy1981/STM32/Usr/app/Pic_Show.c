@@ -1192,7 +1192,11 @@ void Calc_Show_Mode_Step(INT8U Area_No)
     In_Mode = Prog_Status.File_Para[Area_No].Pic_Para.In_Mode;
     //In_Mode == 0随机,1立即显示,2连续左移
     if(In_Mode EQ 0) //随机
+	{
         In_Mode = rand()%S_NUM(In_Mode_Func);//Cur_Time.Time[T_SEC] % S_NUM(In_Mode_Func);
+        if(In_Mode >= 1 && In_Mode <= 2) //不允许连续左移和上移作为随机方式，因为1、显示不连续不美观。2、作为随机方式需要读连续数据不方便处理
+		  In_Mode += 2;
+	}
     else
         In_Mode = In_Mode - 1;
 
@@ -1275,6 +1279,7 @@ void Update_Pic_Data(INT8U Area_No)
 
           //Prog_Status.Area_Status[Area_No].In_Mode = In_Mode;
           //---------
+		  Calc_Show_Mode_Step(Area_No);
 
           if(Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag))
           {

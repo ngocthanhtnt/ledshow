@@ -1223,7 +1223,7 @@ INT16U Self_Test(void)
 	ErrFlag	|= 0x04;
   }
 
-  debug("-----------系统自检开始---------------");
+  debug("---系统自检开始---");
 #if QT_EN EQ 0
   //--------对存储器的测试---------------
   Write_Storage_Data(SDI_TEST_DATA, &Data, sizeof(Data));

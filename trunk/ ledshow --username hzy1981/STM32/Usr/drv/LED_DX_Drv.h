@@ -26,8 +26,15 @@
 #define SPI_ReceiveData         SPI_I2S_ReceiveData
 */
 //复位脚 -PB15
+
 #define SET_RST(x) (x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_15):GPIO_SetBits(GPIOA,GPIO_Pin_15)
 #define SET_ENC28J60_RST(x) (x == 0)?GPIO_ResetBits(GPIOC,GPIO_Pin_2):GPIO_SetBits(GPIOC,GPIO_Pin_2)
+
+#if NET_EN
+#define CHK_ENC28J60_INT() (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_0)==0?1:0)
+#else
+#define CHK_ENC28J60_INT() 0
+#endif
 
 //SPI Flash的选通脚-PA4
 #define SET_FLASH_CS(x)	(x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_4):GPIO_SetBits(GPIOA,GPIO_Pin_4)

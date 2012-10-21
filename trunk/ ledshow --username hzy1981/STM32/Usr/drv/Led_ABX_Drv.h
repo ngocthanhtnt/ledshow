@@ -25,6 +25,8 @@
 #define SPI_SendData            SPI_I2S_SendData
 #define SPI_ReceiveData         SPI_I2S_ReceiveData
 */
+#define CHK_ENC28J60_INT() 0
+
 //¸´Î»½Å -PB15
 #define SET_RST(x) (x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_15):GPIO_SetBits(GPIOA,GPIO_Pin_15)
 

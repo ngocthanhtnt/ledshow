@@ -190,10 +190,10 @@ typedef struct
     INT8U New_Prog_Flag:4;
     INT8U CS[CS_BYTES];
 
-	INT32U Effect_Counts;
-	INT8U Effect_Flag; //特效
+	//INT32U Effect_Counts;
+	//INT8U Effect_Flag; //特效
 
-	INT32U Max_Effect_Counts;
+	//INT32U Max_Effect_Counts;
 
     INT8U Tail;
 }S_Play_Status;
@@ -457,7 +457,7 @@ EXT void Move_LR_Mid_Out(INT8U Area_No);
 EXT void Move_UD_Mid_Out(INT8U Area_No);
 EXT void Clear_Area_Data(S_Show_Data *pDst_Buf, INT8U Area_No);
 
-EXT void vsPrintf(char Buf[], CONST INT8S *format, va_list ap);
+EXT void vsPrintf(char Buf[], INT16U BufLen, CONST INT8S *format, va_list ap);
 EXT void Show_String(INT8U Str[], INT8U Font, INT8U Color, S_Show_Data *pData, INT8U Area_No, INT16U X,INT16U Y);
 EXT INT16U LED_Print(INT8U Font, INT8U Color, S_Show_Data *pData,  INT8U Area_No, INT16U X, INT16U Y,const INT8S *format, ...);
 EXT INT16U RT_LED_Print(INT8U Font, INT8U Color, INT16U X, INT16U Y, INT16U Sec, const INT8S *format,...);

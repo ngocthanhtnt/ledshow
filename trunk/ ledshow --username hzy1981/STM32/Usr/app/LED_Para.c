@@ -404,11 +404,11 @@ INT16U Read_Screen_Para(void)
 	if(Len EQ 0)
 	{
 	  memset(&Screen_Para, 0, sizeof(Screen_Para));
-#if NET_EN
-	  Screen_Para.ETH_Para.IP = 0x7100A8C0; //192.168.0.113
-	  Screen_Para.ETH_Para.Gate = 0x0100A8C0; //192.168.0.1
+//#if NET_EN
+	  Screen_Para.ETH_Para.IP = 0xFB01A8C0; //192.168.1.251
+	  Screen_Para.ETH_Para.Gate = 0x0101A8C0; //192.168.1.1
 	  Screen_Para.ETH_Para.Mask = 0x00FFFFFF; //255.255.255.0
-#endif
+//#endif
 	}
 
 	Chk_Data_Polarity_Change(Data_Polarity); //检查数据极性是否发生修改

@@ -42,6 +42,8 @@ typedef char INT8S;
 #define Chk_UDisk_Processing() 0x00
 #define Chk_Test_Key_Down() 0x00
 #define Chk_Test_Key_Up() 0x00
+#define CHK_ENC28J60_INT() 0x00
+#define CHK_TEST_KEY_STATUS() 0x00
 #define Set_OE_Duty_Polarity(X,Y)
 #define START_SCAN_TIMER()
 #define STOP_SCAN_TIMER()

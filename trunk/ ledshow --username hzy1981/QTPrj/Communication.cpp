@@ -792,7 +792,7 @@ void CcomStatus::getUDiskParaFromSettings(QString str)
     settings.endGroup();
 }
 
-extern QString ipToStr(INT8U ip);
+//extern QString ipToStr(INT8U ip);
 
 //获取通信参数,str为屏幕的settings str
 void CcomStatus::getCOMParaFromSettings(QString str)
