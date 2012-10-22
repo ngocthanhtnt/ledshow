@@ -42,8 +42,10 @@ void send_frame (OS_FRAME *frame)
 {
 	U32 len;
 	U32 *dp,*sp;
-	U8 pdata[ETH_MTU];
+	//U8 pdata[ETH_MTU];
+	U8 *pdata;
 
+    pdata = (U8 *)Pub_Buf;
 	sp  = (U32 *)&frame->data[0];
 	dp  = (U32 *)&pdata[0];
 

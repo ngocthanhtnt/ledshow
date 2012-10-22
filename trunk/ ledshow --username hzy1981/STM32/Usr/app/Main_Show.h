@@ -25,6 +25,7 @@
 #define MAX_ROWS_FOLD 2
 #define MAX_COLS_FOLD 2
 
+#pragma pack(1)
 typedef struct
 {
   INT8U Head;
@@ -67,15 +68,16 @@ typedef struct
   INT16U X_Len;
   INT16U Y_Len;
 
-  INT16U Screen_Width;
-  INT16U Screen_Height;
-  INT8U Screen_Color;
+  //INT16U Screen_Width;
+  //INT16U Screen_Height;
+  //INT8U Screen_Color;
 
   INT8U Time_OC_Flag;
   INT8U Manual_OC_Flag;
   INT8U Self_OC_Flag;
   INT8U Tail;
 }S_RT_Show_Para;
+#pragma pack()
 /*
   if((Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x8000) > 0)
     return (INT32U)(Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x7FFF);

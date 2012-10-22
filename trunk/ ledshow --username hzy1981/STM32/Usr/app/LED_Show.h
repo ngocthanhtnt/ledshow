@@ -232,8 +232,6 @@ typedef struct
   INT16U Humidity; //湿度,单位0.1
   INT16U Noise; //噪音,单位0.1
 
-  INT8U Ext_Temperature_Sec_Counts; //外部温度通信计数器。收到温度后置秒数。程序中减到0后。就采用内部温度传感器
-
   INT8U Time_OC_Flag;	//定时开关机标志
   INT8U Manual_OC_Flag; //手动关机标志
   INT8U Self_OC_Flag; //程序自控制关机
@@ -265,6 +263,8 @@ typedef struct
 
   INT8U Com_Rcv_Data[MAX_COM_BUF_LEN];//((BLOCK_DATA_LEN > SCREEN_PARA_LEN) ? BLOCK_DATA_LEN : SCREEN_PARA_LEN) + 20];
   INT8U Com_Err_Flag; //通信错误标志字
+
+  INT8U Ext_Temperature_Sec_Counts; //外部温度通信计数器。收到温度后置秒数。程序中减到0后。就采用内部温度传感器
 
 #if ENV_VAR_EN
   INT8U Env_Rcv_Data[15]; //接收环境变量数据缓冲区
