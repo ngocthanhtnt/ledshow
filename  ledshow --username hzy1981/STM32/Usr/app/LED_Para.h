@@ -138,7 +138,7 @@ typedef struct
   INT16U X_Len;
   INT16U Y_Len;
   
-  INT8U Property; //区域属性备用,0为普通，1为实时显示，备用 	
+  //INT8U Property; //区域属性备用,0为普通，1为实时显示，备用 	
 }S_Area;
 
 typedef struct
@@ -196,7 +196,7 @@ typedef struct
 	INT16U Serv_Port;  //服务器端口
 	INT16U Heart_Beat; //心跳周期,单位s
 
-    INT8U Temp[4]; //保留30字节备用--升级程序时可以和老的兼容
+    //INT8U Temp[4]; //保留30字节备用--升级程序时可以和老的兼容
 }S_ETH_Para;
 
 typedef struct
@@ -216,7 +216,7 @@ typedef struct
     INT8U Mode; //0唤醒方式，1在线方式
     INT8U APN[30];
 
-    INT8U Temp[10]; //保留30字节备用--升级程序时可以和老的兼容
+    //INT8U Temp[10]; //保留10字节备用--升级程序时可以和老的兼容
 }S_GPRS_Para;
 
 typedef struct
@@ -272,7 +272,7 @@ typedef struct
   S_Lock_Date Lock_Date; //有效日期--到达改日期后自动关闭--全0表示不启用改参数
   //命令3
   //INT8U Prog_Num; //节目数
-  INT8U Temp[10]; //备用
+  //INT8U Temp[10]; //备用
 
   INT8U CS[CS_BYTES];
 
@@ -299,18 +299,18 @@ typedef struct
   
   S_Program_Timing Timing[3];//[3]; //节目定时设置
   INT8U Area_Num; //分区数
-  INT8U Main_Area_No; //主分区号
+  //INT8U Main_Area_No; //主分区号
   INT8U Area_File_Num[MAX_AREA_NUM]; //每分区文件数
   S_Area Area[MAX_AREA_NUM]; //区域定义
   
   INT8U Border_Check; //是否显示边框
-  INT8U Border_Color;
+  //INT8U Border_Color;
   INT8U Border_Mode;  //边框模式
   INT8U Border_Speed;
 
   INT8U Border_Width;   //边框宽度
   INT8U Border_Height;  //边框高度
-  INT8U Temp;   //备用
+  //INT8U Temp;   //备用
 //#if BORDER_SHOW_EN > 0  
   //INT8U Border_Data[2*MAX_BORDER_POINTS/8]; //边框数据
 //#endif  
@@ -350,8 +350,6 @@ typedef struct
   INT16U SNum; \
   INT8U Play_Counts; \
   INT8U Border_Check; \
-  INT8U Border_Type; \
-  INT8U Border_Color; \
   INT8U Border_Mode; \
   INT8U Border_Speed;\
   INT8U Border_Width;\
@@ -468,7 +466,7 @@ typedef struct
   INT8U Timer_Font; //显示字号
   //INT8U Show_Posi; //显示位置
   
-  INT8U Temp; //备用
+  //INT8U Temp; //备用
   
   INT8U Text_Color; //背景颜色
   INT16U Text_X; //背景X
@@ -497,7 +495,7 @@ typedef struct
   INT8U Show_Font; //显示字号
   INT8U Show_Posi; //显示位置
   
-  INT8U Temp; //备用
+  //INT8U Temp; //备用
 
   INT8U SmLineFlag; //单多行标志
   INT8U LineSpace;  //行间距，在多行显示时用--备用
@@ -542,7 +540,7 @@ typedef struct
   INT8U Show_Font; //显示字号
   INT8U Show_Posi; //显示位置
 
-  INT8U Temp; //备用
+  //INT8U Temp; //备用
 
   INT8U SmLineFlag; //单多行标志
   INT8U LineSpace;  //行间距，在多行显示时用--备用
@@ -587,7 +585,7 @@ typedef struct
   INT8U Show_Font; //显示字号
   INT8U Show_Posi; //显示位置
   
-  INT8U Temp; //备用
+  //INT8U Temp; //备用
 
   INT8U Temp_Type;  //温度显示方式
   INT8U Temp_Font;  //温度字体
@@ -617,7 +615,7 @@ typedef struct
   INT8U Show_Font; //显示字号
   INT8U Show_Posi; //显示位置
   
-  INT8U Humidity; //备用
+  //INT8U Humidity; //备用
 
   INT8U Humidity_Type;  //湿度显示方式
   INT8U Humidity_Font;  //湿度字体
@@ -647,7 +645,7 @@ typedef struct
   INT8U Show_Font; //显示字号
   INT8U Show_Posi; //显示位置
   
-  INT8U Noise; //备用
+  //INT8U Noise; //备用
 
   INT8U Noise_Type;  //噪音显示方式
   INT8U Noise_Font;  //噪音字体

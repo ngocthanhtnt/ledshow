@@ -17,6 +17,7 @@
 #define EXT
 #endif
 
+#pragma pack(1)
 typedef struct
 {
   INT8U Head;
@@ -32,7 +33,7 @@ typedef struct
 
   INT8U Tail;
 }S_Pub_Timer;
-
+#pragma pack()
 //#define CHK_BYTE 0x55
 //#define EQ  ==
 

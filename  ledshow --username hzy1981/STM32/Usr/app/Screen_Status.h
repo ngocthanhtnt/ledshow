@@ -17,7 +17,7 @@
 
 #define MAX_LIGHTNESS 16 //1-16
 
-
+#pragma pack(1)
 typedef struct
 {
   INT8U Head;
@@ -34,6 +34,7 @@ EXT S_Inter_Temperature Inter_Temp = {CHK_BYTE, 0, 0, {0}, CHK_BYTE};
 #else
 EXT S_Inter_Temperature Inter_Temp;
 #endif
+#pragma pack()
 
 EXT INT16S Get_Cur_Temp(void);
 EXT INT16U Get_Cur_Humidity(void);

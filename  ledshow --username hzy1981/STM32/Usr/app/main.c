@@ -1,6 +1,10 @@
 #include "Includes.h"
 
-#define MAIN_STACK_SIZE 380
+#if NET_EN
+#define MAIN_STACK_SIZE 500
+#else
+#define MAIN_STACK_SIZE 400
+#endif
  
  void test()
  {

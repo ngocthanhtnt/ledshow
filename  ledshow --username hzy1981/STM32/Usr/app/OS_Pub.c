@@ -200,6 +200,7 @@ void _OS_Debug_Print(CONST OS_INT8S *format, ...)
 
 extern OS_INT8U OS_Debug_Print_En(void);
 
+#pragma pack(1)
 typedef struct
 {
     INT8U Head;
@@ -208,6 +209,7 @@ typedef struct
 }S_Print_Buf;
 
 extern S_Print_Buf _Print_Buf;
+#pragma pack()
 
 #define Print_Buf _Print_Buf.Buf
 extern void vsPrintf(char Buf[], INT16U BufLen, CONST INT8S *format, va_list ap);
