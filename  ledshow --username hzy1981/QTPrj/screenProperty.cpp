@@ -2198,7 +2198,7 @@ void CcomTest::comModeChangedProc()
 void CcomTest::cardChangedProc(QString cardName)
 {
   S_Card_Para Card_Para;
-  int index;
+  //int index;
 
   disconnect(this, SIGNAL(editSignal()), this, SLOT(editSlot()));
 
@@ -2877,7 +2877,7 @@ void CfacScreenProperty::readParaProc()
     {
       screenParaStr = tr("¹Ì¼þ°æ±¾:")+QString((char *)rcvBuf) + " ";
 
-      for(int i = 0; i < sizeof(rcvBuf); i ++)
+      for(int i = 0; i < (int)sizeof(rcvBuf); i ++)
         {
           if(rcvBuf[i] == ' ')
               rcvBuf[i] = 0;
@@ -2997,7 +2997,7 @@ void CfacScreenProperty::readCardType()
     if(re EQ true)
     {
       //screenParaStr = tr("°æ±¾ºÅ:")+QString((char *)rcvBuf) + " ";
-      for(int i = 0; i < sizeof(rcvBuf); i ++)
+      for(int i = 0; i < (int)sizeof(rcvBuf); i ++)
         {
           if(rcvBuf[i] == ' ')
               rcvBuf[i] = 0;

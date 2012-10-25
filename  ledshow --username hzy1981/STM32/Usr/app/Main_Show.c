@@ -1032,7 +1032,7 @@ void Check_Update_Program_Para(void)
       Re &= CHK_HT(Prog_Status.Play_Status);
       Re &= CHK_SUM(Prog_Status.Play_Status);
       Re &= CHK_SUM(Prog_Para);
-      Re &= CHK_SUM(Prog_Status.Block_Index);
+      //Re &= CHK_SUM(Prog_Status.Block_Index);
 
       //如果上次播放和当次播放的节目是一样的，则不更新节目参数等
       if(Re)//Prog_Status.Play_Status.Play_Flag = 0;
@@ -1090,9 +1090,9 @@ void Check_Update_Program_Para(void)
 	        Prog_Status.Play_Status.Prog_No = Prog_No;
 	        SET_SUM(Prog_Status.Play_Status);
 	
-	        Len = Read_Prog_Block_Index(Prog_Status.Play_Status.Prog_No);//重新读取节目的存储索引
+                //Len = Read_Prog_Block_Index(Prog_Status.Play_Status.Prog_No);//重新读取节目的存储索引
 	
-	        if(Len > 0)
+                //if(Len > 0)
 	        {
 	          TRACE();
 	

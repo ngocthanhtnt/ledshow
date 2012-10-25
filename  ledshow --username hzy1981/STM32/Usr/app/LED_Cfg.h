@@ -65,7 +65,7 @@
 //#define APP_NAME "大屏LED播放系统"
 #define MAX_PROG_NUM 16 //最大节目数
 #define MAX_AREA_NUM 6 //每个节目下最大分区数
-#define MAX_FILE_NUM 8 //每个分区下最大文件数
+#define MAX_FILE_NUM 48 //每个节目下最大文件数
 #define BLOCK_DATA_LEN 429 //每块数据的大小, BLOCK_DATA_LEN - 9应该可整除法2和3
 #define MAX_BORDER_POINTS (40*8) //边框数据大小
 //#endif
