@@ -34,7 +34,7 @@ typedef struct
   S_Int8U Prog_Para_No;
   S_Int8U Prog_Para_Flag; //参数读出标志
 
-  S_Prog_Block_Index Block_Index;
+  //S_Prog_Block_Index Block_Index;
   S_Int8U Block_Index_Flag; //Block_Index标志
 
   U_File_Para File_Para[MAX_AREA_NUM]; //文件参数

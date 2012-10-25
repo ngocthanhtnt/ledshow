@@ -833,7 +833,7 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
   para.Border_Speed = (INT8U)settings.value("borderSpeed").toInt();// + 1)*MOVE_STEP_PERIOD;
 
   para.Border_Check = check;
-  para.Border_Color = color;
+  //para.Border_Color = color;
   para.Border_Width = getBorderWidth(index);//Border_Data[index].Width;
   para.Border_Height = getBorderHeight(index);//Border_Data[index].Height;
   settings.endGroup();

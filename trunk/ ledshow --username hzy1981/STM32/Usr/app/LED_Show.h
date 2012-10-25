@@ -210,7 +210,7 @@ typedef struct
 
 
   S_Area_Status Area_Status[MAX_AREA_NUM]; //每个分区的状态 
-  S_Prog_Block_Index Block_Index; //当前节目的索引
+  //S_Prog_Block_Index Block_Index; //当前节目的索引
 
   INT8U CS[CS_BYTES];
   INT8U Tail;

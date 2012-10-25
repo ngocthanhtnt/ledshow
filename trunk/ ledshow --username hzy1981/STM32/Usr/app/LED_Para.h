@@ -353,7 +353,8 @@ typedef struct
   INT8U Border_Mode; \
   INT8U Border_Speed;\
   INT8U Border_Width;\
-  INT8U Border_Height;
+  INT8U Border_Height;\
+  INT16U Data_Index;
 
 //图文参数
 typedef struct
@@ -693,7 +694,7 @@ typedef union
 }U_File_Para;
 
 
-
+/*
 typedef struct
 {
   INT8U Head;
@@ -702,7 +703,13 @@ typedef struct
   INT8U CS[CS_BYTES];
   INT8U Tail;
 }S_Prog_Block_Index;
-
+*/
+typedef struct
+{
+  INT8U Area_No[MAX_FILE_NUM];
+  INT8U File_No[MAX_FILE_NUM];
+  //INT16U Index[MAX_FILE_NUM];
+}S_File_Para_Index;
 //文件中某个参数的偏移
 /*
 typedef struct
@@ -743,14 +750,14 @@ typedef struct
 typedef struct
 {
   INT8U Prog_No;
-  INT8U File_No:4;  
-  INT8U Area_No:4;
+  INT8U Area_No;
+  INT8U File_No;
   INT8U Type;
   
   INT16U Seq0;
    
   INT16U Len;
-  INT16U Bak;
+  INT8U Bak;
   
 }S_File_Para_Info;
 
@@ -774,7 +781,7 @@ typedef struct
 #define PROG_PARA_LEN   (sizeof(S_Prog_Para)-CHK_BYTE_LEN + BORDER_DATA_LEN)
 #define PROG_NUM_LEN    (sizeof(S_Prog_Num)-CHK_BYTE_LEN)
 #define FILE_PARA_LEN (sizeof(U_File_Para)-CHK_BYTE_LEN + BORDER_DATA_LEN)
-#define BLOCK_INDEX_LEN (sizeof(S_Prog_Block_Index) - CHK_BYTE_LEN)
+#define FILE_PARA_INDEX_LEN sizeof(S_File_Para_Index)
 #define ENCRYPTION_DATA_LEN 4
 //#define BLOCK_DATA_LEN 249
 #define BLOCK_HEAD_DATA_LEN 9
@@ -830,14 +837,16 @@ EXT INT8U Write_Prog_Para(INT8U Prog_No, INT8U *pSrc,INT16U SrcLen);
 EXT INT8U Write_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pSrc, INT16U SrcLen);
 EXT INT8U Write_Cur_Block_Index(void *pSrc, INT16U SrcLen);
 EXT INT8U Get_Show_Para_Len(INT8U Type);
-EXT STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No);
+//EXT STORA_DI Get_Show_Para_Stora_DI(INT8U Prog_No, INT8U Area_No, INT8U File_No);
 EXT INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, void *pDst_Start, INT16U DstLen);
 EXT INT8U Chk_File_Para_HT_Sum(U_File_Para *pPara);
 EXT void Set_File_Para_HT_Sum(U_File_Para *pPara);
-EXT INT8U Write_Prog_Block_Index(void);
+EXT INT16U Read_File_Para_Index(INT8U Prog_No, INT8U *pDst, INT16U DstLen);
+EXT INT8U Write_File_Para_Index(INT8U Prog_No, INT8U *pSrc);
+//EXT INT8U Write_Prog_Block_Index(void);
 //EXT INT16U Read_Prog_Para(INT8U Prog_No, S_Prog_Para *pProg_Para);
-EXT INT16U Read_Prog_Block_Index(INT8U Prog_No);
-EXT INT16U _Read_Prog_Block_Index(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen);
+//EXT INT16U Read_Prog_Block_Index(INT8U Prog_No);
+//EXT INT16U _Read_Prog_Block_Index(INT8U Prog_No, void *pDst, void *pDst_Start, INT16U DstLen);
 EXT INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT16U SIndex, \
                                   S_Show_Data *pShow_Data, INT16U X, INT16U Y);
 EXT INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT16U SIndex, \

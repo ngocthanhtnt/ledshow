@@ -145,14 +145,14 @@ const S_Border_Data Border_Data[] =
 
 int getBorderWidth(int index)
 {
-    if(index >= S_NUM(Border_Data))
+    if(index >= (int)S_NUM(Border_Data) || index < 0)
         index = 0;
     return Border_Data[index].Width;
 }
 
 int getBorderHeight(int index)
 {
-    if(index >= S_NUM(Border_Data))
+    if(index >= (int)S_NUM(Border_Data) || index < 0)
         index = 0;
     return Border_Data[index].Height;
 }
@@ -181,7 +181,7 @@ void getBorderData(QString str, INT8U Dst[], INT16U DstLen)
     settings.endGroup();
     settings.endGroup();
 
-    if(style >= S_NUM(Border_Data))
+    if(style >= (int)S_NUM(Border_Data) || style < 0)
         style = 0;
 
     if(check)
@@ -209,7 +209,7 @@ QImage getBorderImage(int type, int index, QColor color)
 {
 
    int i,j;
-   S_Simple_Border_Data *p;
+   //S_Simple_Border_Data *p;
 /*
    if(index >= sizeof(Border_Data)/sizeof(Border_Data[0]))
    {
@@ -217,7 +217,7 @@ QImage getBorderImage(int type, int index, QColor color)
        return QImage(0,0);
    }
 */
-   if(index >= S_NUM(Border_Data))
+   if(index >= (int)S_NUM(Border_Data) || index < 0)
        index = 0;
 
    //if(type EQ 0)
@@ -1904,7 +1904,7 @@ void getBorderParaFromeSettings(QString str, U_File_Para &para)
     settings.beginGroup("borderPara");
 
     int index = settings.value("borderStyle").toInt();
-    int color = settings.value("borderColor").toInt();
+    //int color = settings.value("borderColor").toInt();
     bool check = settings.value("borderCheck").toBool();
 
     para.Pic_Para.Border_Mode = settings.value("borderMode").toInt();
@@ -1912,8 +1912,8 @@ void getBorderParaFromeSettings(QString str, U_File_Para &para)
     para.Pic_Para.Border_Speed = (INT8U)settings.value("borderSpeed").toInt();// + 1)*MOVE_STEP_PERIOD;
 
     para.Pic_Para.Border_Check = check;
-    para.Pic_Para.Border_Color = color;//getColorDataFromIndex(color);
-    para.Pic_Para.Border_Type = index;
+    //para.Pic_Para.Border_Color = color;//getColorDataFromIndex(color);
+    //para.Pic_Para.Border_Type = index;
 
     para.Pic_Para.Border_Width = getBorderWidth(index);//settings.value("")
     para.Pic_Para.Border_Height = getBorderHeight(index);
