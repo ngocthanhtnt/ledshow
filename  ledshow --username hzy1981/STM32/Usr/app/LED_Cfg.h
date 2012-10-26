@@ -32,7 +32,7 @@
 #define TEMP_SHOW_BIT   0x07
 #define HUMIDITY_SHOW_BIT 0x08
 #define NOISE_SHOW_BIT  0x09
-#define TEXT_SHOW_BIT   0x0A
+#define TXT_SHOW_BIT    0x0A
 
 
 #define CS_BYTES 1
@@ -108,7 +108,7 @@
 #define TIMER_SHOW_EN  1 //定时显示使能
 #define HUMIDITY_SHOW_EN 1 //湿度湿度
 #define NOISE_SHOW_EN  1 //噪音
-#define TEXT_SHOW_EN   1 //内码文字
+#define TXT_SHOW_EN    1 //内码文字
 
 #define CARD_NAME "A0"  //卡名称
 //-----------------以下为了兼容STM32程序--------------

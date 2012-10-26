@@ -14,6 +14,7 @@
 #include "tempProperty.h"
 #include "lunProperty.h"
 #include "humidityProperty.h"
+#include "txtproperty.h"
 #include "noiseProperty.h"
 #include "textedit.h"
 #include <QDockWidget>
@@ -38,6 +39,7 @@ private:
     CimageProperty *imageProperty; //Í¼Æ¬
     CtempProperty *tempProperty; //ÎÂ¶È
     ClunProperty *lunProperty; //Å©Àú
+    CtxtProperty *txtProperty;
     ChumidityProperty *humidityProperty;
     CnoiseProperty *noiseProperty;
 public:

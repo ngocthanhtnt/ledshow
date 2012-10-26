@@ -170,13 +170,15 @@ QIcon getTypeIcon(INT8U type)
      icon = QIcon::fromTheme(QObject::tr("Êª¶È"), QIcon(rsrcPath1 + QObject::tr("/Êª¶È.png")));
   else if(type EQ NOISE_PROPERTY)
      icon = QIcon::fromTheme(QObject::tr("ÔëÒô"), QIcon(rsrcPath1 + QObject::tr("/ÔëÒô.png")));
-
+  else if(type EQ TXT_PROPERTY)
+     icon = QIcon::fromTheme(QObject::tr("ÄÚÂë"), QIcon(rsrcPath1 + QObject::tr("/×ÖÄ».png")));
   return icon;
 }
 
 void MainWindow::setActonsEnable()
 {
   actionSText->setData((bool)Get_Pic_Show_En());//(bool)Get_Pic_Show_En());
+  actionTxt->setData((bool)Get_Txt_Show_En());
   actionMText->setData((bool)Get_Pic_Show_En());
   actionTable->setData((bool)Get_Pic_Show_En());
   actionFlash->setData((bool)Get_Pic_Show_En());
@@ -249,6 +251,14 @@ void MainWindow::setupEditActions()
     menu->addAction(a);
     menu->addSeparator();
     tb->addSeparator();
+
+    QIcon txtIcon = getTypeIcon(TXT_PROPERTY);//QIcon::fromTheme(tr("×ÖÄ»"), QIcon(rsrcPath1 + tr("/×ÖÄ».ico")));
+    actionTxt = a = new QAction(txtIcon, tr("ÄÚÂë"), this);
+    //a->setShortcut(QKeySequence::Save);
+    actionTxt->setEnabled((bool)Get_Txt_Show_En());//(bool)Get_Pic_Show_En());
+    connect(a, SIGNAL(triggered()), progManage, SLOT(newTxt())); //ÐÂ½¨½ÚÄ¿
+    tb->addAction(a);
+    menu->addAction(a);
 
     QIcon stextIcon = getTypeIcon(PIC_STEXT_PROPERTY);//QIcon::fromTheme(tr("×ÖÄ»"), QIcon(rsrcPath1 + tr("/×ÖÄ».ico")));
     actionSText = a = new QAction(stextIcon, tr("×ÖÄ»"), this);
@@ -376,6 +386,7 @@ void MainWindow::actionEnProc(int Type)
     actionScreen->setEnabled(true);
     actionProg->setEnabled(false);
     actionArea->setEnabled(false);
+    actionTxt->setEnabled(false);
     actionSText->setEnabled(false);
     actionMText->setEnabled(false);
     actionTable->setEnabled(false);
@@ -410,6 +421,7 @@ void MainWindow::actionEnProc(int Type)
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
       actionArea->setEnabled(false);
+      actionTxt->setEnabled(false);
       actionSText->setEnabled(false);
       actionMText->setEnabled(false);
       actionTable->setEnabled(false);
@@ -442,6 +454,7 @@ void MainWindow::actionEnProc(int Type)
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
       actionArea->setEnabled(true);
+      actionTxt->setEnabled(false);
       actionSText->setEnabled(false);
       actionMText->setEnabled(false);
       actionTable->setEnabled(false);
@@ -475,6 +488,7 @@ void MainWindow::actionEnProc(int Type)
       actionProg->setEnabled(true);
       actionArea->setEnabled(true);
 
+      actionTxt->setEnabled((actionTxt->data().toBool()== true)?true:false);
       actionSText->setEnabled((actionSText->data().toBool()== true)?true:false);
       actionMText->setEnabled((actionMText->data().toBool()== true)?true:false);
       actionTable->setEnabled((actionTable->data().toBool()== true)?true:false);
@@ -507,6 +521,7 @@ void MainWindow::actionEnProc(int Type)
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
       actionArea->setEnabled(true);
+      actionTxt->setEnabled((actionTxt->data().toBool()== true)?true:false);
       actionSText->setEnabled((actionSText->data().toBool()== true)?true:false);
       actionMText->setEnabled((actionMText->data().toBool()== true)?true:false);
       actionTable->setEnabled((actionTable->data().toBool()== true)?true:false);

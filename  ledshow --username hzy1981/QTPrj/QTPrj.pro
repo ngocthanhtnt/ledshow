@@ -60,7 +60,9 @@ SOURCES += main.cpp\
     Communication.cpp \
     tablePropertyEdit.cpp \
     imageProperty.cpp \
-    mmtimer.cpp
+    mmtimer.cpp \
+    txtproperty.cpp \
+    ../STM32/Usr/app/Txt_Show.cpp
 
 HEADERS  += mainwindow.h \
     showArea.h \
@@ -151,7 +153,9 @@ HEADERS  += mainwindow.h \
     Communication.h \
     tablePropertyEdit.h \
     imageProperty.h \
-    mmtimer.h
+    mmtimer.h \
+    txtproperty.h \
+    ../STM32/Usr/app/Txt_Show.h
 
 RESOURCES += \
     textedit.qrc

@@ -37,6 +37,7 @@
 #define SHOW_NOISE    0x08
 #define SHOW_FLASH 0x09 //动画
 #define SHOW_IMAGE 0x0A //图片
+#define SHOW_TXT   0x0B //内码
 
 //#define MAX_FILE_NAME_SIZE 20
 
@@ -390,6 +391,21 @@ typedef struct
   INT8U Tail;
 }S_Pic_Para;
 
+//内码文字
+typedef struct
+{
+  INT8U Head;
+
+  BASE_PIC_PARA
+
+  INT8U Font_Size; //字体大小
+  INT8U Color; //颜色
+  INT16U Len; //文字长度
+
+  INT8U CS[CS_BYTES];
+  INT8U Tail;
+}S_Txt_Para;
+
 //表盘参数
 typedef struct
 {
@@ -690,7 +706,10 @@ typedef union
 #endif
 #if NOISE_SHOW_EN
   S_Noise_Para Noise_Para;
-#endif  
+#endif
+#if TXT_SHOW_EN
+  S_Txt_Para Txt_Para;
+#endif
 }U_File_Para;
 
 

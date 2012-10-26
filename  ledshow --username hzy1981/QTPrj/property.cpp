@@ -156,6 +156,17 @@ void Cproperty::deleteProperty()
       areaProperty = 0;
     }
 
+    if(txtProperty != 0)
+    {
+        QList<CtxtProperty*> items = findChildren<CtxtProperty*>(QString());
+         foreach(CtxtProperty*item, items)
+         {
+             delete item;
+         }
+      txtProperty = 0;
+    }
+
+
     if(picProperty != 0)
     {
         QList<CpicProperty*> items = findChildren<CpicProperty*>(QString());
@@ -288,6 +299,11 @@ void Cproperty::createProperty(INT8U type)
         areaProperty = new CareaProperty(this);
         hLayout -> addWidget(areaProperty);
     }
+    else if(type == TXT_PROPERTY)
+    {
+        txtProperty= new CtxtProperty(this);
+        hLayout -> addWidget(txtProperty);
+    }
     else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY || type == PIC_TABLE_PROPERTY)
     {
         picProperty = new CpicProperty(this);
@@ -376,6 +392,8 @@ void Cproperty::updateProperty(QTreeWidgetItem *item)
     }
     else if(type == AREA_PROPERTY)
         area = areaProperty->area;//->setSettingsToWidget(str);
+    else if(type == TXT_PROPERTY)
+        area = txtProperty->area;
     else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY || type == PIC_TABLE_PROPERTY)
     {
         //picProperty->setSettingsToWidget(str);
@@ -454,6 +472,7 @@ Cproperty ::~Cproperty()
 
 void Cproperty::screenCardParaChangeProc()
 {
+    txtProperty->screenCardParaChangeProc();
     clockProperty->screenCardParaChangeProc();
     timeProperty->screenCardParaChangeProc();
     timerProperty->screenCardParaChangeProc();
@@ -487,6 +506,11 @@ void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)
     {
         areaProperty->setSettingsToWidget(str);
         areaProperty->area->setSettingsToWidget(str);
+    }
+    else if(type == TXT_PROPERTY)
+    {
+        txtProperty->setSettingsToWidget(str);
+        txtProperty->area->setSettingsToWidget(pstr);
     }
     else if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY || type == PIC_TABLE_PROPERTY)
     {
@@ -572,6 +596,11 @@ void Cproperty::getSettingsFromWidget(QTreeWidgetItem *item)
     {
         areaProperty->getSettingsFromWidget(str);
         areaProperty->area->getSettingsFromWidget(str);
+    }
+    else if(type == TXT_PROPERTY)
+    {
+        txtProperty->getSettingsFromWidget(str);
+        txtProperty->area->getSettingsFromWidget(str);
     }
     else if(type == PIC_STEXT_PROPERTY)
     {

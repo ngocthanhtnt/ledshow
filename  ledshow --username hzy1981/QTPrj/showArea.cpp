@@ -22,6 +22,11 @@ bool Get_Clock_Show_En()
     return (Card_Para.File_En_Word >> CLOCK_SHOW_BIT) & 0x01;
 }
 
+bool Get_Txt_Show_En()
+{
+    return (Card_Para.File_En_Word >> TXT_SHOW_BIT) & 0x01;
+}
+
 bool Get_Pic_Show_En()
 {
     return (Card_Para.File_En_Word >> PIC_SHOW_BIT) & 0x01;
@@ -373,6 +378,10 @@ void CscreenArea::fileSettingsInit(QTreeWidgetItem *item)
     if(type EQ CLOCK_PROPERTY)//表盘显示更新
     {
         updateClockShowArea(area);
+    }
+    else if(type EQ TXT_PROPERTY)
+    {
+        updateTxtShowArea(area);
     }
     else if(type EQ PIC_STEXT_PROPERTY || type EQ PIC_MTEXT_PROPERTY || type EQ PIC_TABLE_PROPERTY)
     {
