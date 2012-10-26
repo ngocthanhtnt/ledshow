@@ -220,7 +220,7 @@ INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen)
       Para_Len = Get_Show_Para_Len(Type); //参数长度
       if(Para_Len <= Len)// || Para_Len + BORDER_DATA_LEN EQ Len)// 参数长度
       {
-        memcpy(&Frame[FDATA] + S_OFF(S_Pic_Para, Data_Index) - 1, &Cur_Block_Index.Index, 2);
+        memcpy(&Frame[FDATA] + S_OFF(S_Pic_Para, Data_Index) - 1, (INT8U *)&Cur_Block_Index.Index, 2);
         Re =  Write_File_Para(Prog_No, Area_No, File_No, &Frame[FDATA], FILE_PARA_LEN);//写入文件参数
         if(Re > 0)
         {

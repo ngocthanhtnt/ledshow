@@ -532,6 +532,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
             Len1 = Get_Show_Para_Len(Pub_Buf[0]);
 			if(Len1 > 0)
 			{
+                //debug("read file para no = %d, flag = %d", Prog_Status.Area_Status[Area_No].File_No, Prog_Status.File_Para[Area_No].Pic_Para.Flag );
 	            mem_cpy((void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, Pub_Buf, Len1, (void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, sizeof(U_File_Para));
 	
 	            Clear_Area_Data(&Show_Data_Bak, Area_No);
