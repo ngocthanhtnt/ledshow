@@ -181,6 +181,7 @@ public:
 
 bool Get_Border_Show_En();
 bool Get_Clock_Show_En();
+bool Get_Txt_Show_En();
 bool Get_Pic_Show_En();
 bool Get_Lun_Show_En();
 bool Get_Temp_Show_En();

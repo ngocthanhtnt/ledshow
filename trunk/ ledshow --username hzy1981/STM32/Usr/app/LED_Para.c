@@ -533,12 +533,17 @@ INT16U Read_File_Para_Index(INT8U Prog_No, INT8U *pDst, INT16U DstLen)
 
   Len = Read_Storage_Data(SDI_FILE_PARA_INDEX + Prog_No, pDst, pDst, DstLen);
 
+#ifdef SDI_FILE_PARA_INDEX_BK0
+  if(Len EQ 0)
+    Len = Read_Storage_Data(SDI_FILE_PARA_INDEX_BK0 + Prog_No, pDst, pDst, DstLen);
+#endif
+
   if(Len EQ 0)
   {
       memset(pDst, 0, FILE_PARA_INDEX_LEN);
   }
 
-  return Len;
+  return FILE_PARA_INDEX_LEN;
 }
 
 INT8U Write_File_Para_Index(INT8U Prog_No, INT8U *pSrc)
@@ -546,7 +551,12 @@ INT8U Write_File_Para_Index(INT8U Prog_No, INT8U *pSrc)
     INT8U Re = 1;
 
     Re &= Write_Storage_Data(SDI_FILE_PARA_INDEX + Prog_No, pSrc, FILE_PARA_INDEX_LEN);
-    return Re;
+    
+#ifdef SDI_FILE_PARA_INDEX_BK0
+    Re &= Write_Storage_Data(SDI_FILE_PARA_INDEX_BK0 + Prog_No, pSrc, FILE_PARA_INDEX_LEN);
+#endif
+	
+	return Re;
 }
 
 //读取文件参数

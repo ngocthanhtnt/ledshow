@@ -379,6 +379,27 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
           len += tmpLen;
       }
     }
+    else if(type EQ TXT_PROPERTY)
+    {
+      getTxtParaFromSettings(fileStr, filePara);
+      mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+      memcpy(buf, (char *)&filePara.Txt_Para.Head + 1, sizeof(S_Txt_Para)); //前一个字节是头，不拷贝
+      len = sizeof(S_Txt_Para) - CHK_BYTE_LEN;
+
+      getBorderData(fileStr, (INT8U *)buf + len, bufLen); //边框数据
+      len += BORDER_DATA_LEN;
+
+      //resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
+      //getTextShowData(image, &protoShowData, 0, 0);
+
+      tmpLen = getTxtData(fileStr, protoShowData.Color_Data);
+      //tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
+      //tmpLen = tmpLen * Get_Screen_Color_Num();
+      memcpy(buf + len, protoShowData.Color_Data, tmpLen);
+      len +=tmpLen;
+
+    }
     else if(type EQ CLOCK_PROPERTY) //时钟
     {
         getClockParaFromSettings(fileStr, filePara);

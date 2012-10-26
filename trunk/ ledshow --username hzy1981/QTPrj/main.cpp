@@ -46,7 +46,7 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("fileEnWord", ((0x01<<BORDER_SHOW_BIT) |\
                                       (0x01 << PIC_SHOW_BIT) |\
                                       (0x01 << TEMP_SHOW_BIT) |\
-                                      (0x01 << TEXT_SHOW_EN)));
+                                      (0x01 << TXT_SHOW_EN)));
 
   cardIniFile.setValue("comMode", COM_RS232);
   cardIniFile.endGroup();
@@ -166,6 +166,7 @@ void resetCardtoCardParaFile()
                                       (0x01 << LUN_SHOW_BIT) |\
                                       (0x01 << TEMP_SHOW_BIT) |\
                                       (0x01 << HUMIDITY_SHOW_BIT) |\
+                                      (0x01 << TXT_SHOW_BIT) |\
                                       (0x01 << NOISE_SHOW_BIT)));
   cardIniFile.setValue("comMode", COM_RS232 | COM_RS485 | COM_UDISK | COM_ETH);
   cardIniFile.endGroup();

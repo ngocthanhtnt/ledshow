@@ -46,6 +46,8 @@ INPUT(
 ./release\tablePropertyEdit.o
 ./release\imageProperty.o
 ./release\mmtimer.o
+./release\txtproperty.o
+./release\Txt_Show.o
 ./release\moc_mainwindow.o
 ./release\moc_showArea.o
 ./release\moc_progManage.o
@@ -69,5 +71,6 @@ INPUT(
 ./release\moc_tablePropertyEdit.o
 ./release\moc_imageProperty.o
 ./release\moc_mmtimer.o
+./release\moc_txtproperty.o
 ./release\qrc_textedit.o
 );

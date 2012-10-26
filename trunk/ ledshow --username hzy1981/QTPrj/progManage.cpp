@@ -178,6 +178,8 @@ QString getTypeString(int type)
         Qstr = QObject::tr("节目");
     else if(type == AREA_PROPERTY)
         Qstr = QObject::tr("分区");
+    else if(type == TXT_PROPERTY)
+        Qstr = QObject::tr("内码");
     else if(type == PIC_STEXT_PROPERTY)
         Qstr = QObject::tr("字幕");
     else if(type == PIC_MTEXT_PROPERTY)
@@ -710,6 +712,11 @@ void CprogManage::newArea()
 void CprogManage::newSText()
 {
   newFile(PIC_PROPERTY,PIC_STEXT_PROPERTY);
+}
+
+void CprogManage::newTxt()
+{
+  newFile(TXT_PROPERTY,0);
 }
 
 void CprogManage::newPic() //新图文

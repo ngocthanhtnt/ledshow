@@ -32,6 +32,7 @@
 #define LUN_PROPERTY    0x0a    //农历
 #define HUMIDITY_PROPERTY 0x0b //湿度
 #define NOISE_PROPERTY 0x0c //噪音
+#define TXT_PROPERTY   0x0D //文本
 
 #define PIC_TABLE_PROPERTY  0x30
 #define PIC_FLASH_PROPERTY  0x31 //动画
@@ -58,6 +59,7 @@ public slots:
     void newProg(); //新节目
     void newArea(); //新分区
 
+    void newTxt(); //内码
     void newSText(); //字幕
     void newPic(); //新图文
     void newTable(); //新表格

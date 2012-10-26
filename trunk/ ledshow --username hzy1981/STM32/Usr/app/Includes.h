@@ -38,6 +38,7 @@
 #include "LED_Para.h"
 #include "LED_Show.h"
 #include "Screen_Status.h"
+#include "Txt_Show.h"
 #include "Time_Show.h"
 #include "Pic_Show.h"
 #include "Flash_Show.h"
