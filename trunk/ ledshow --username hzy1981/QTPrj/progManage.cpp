@@ -26,6 +26,25 @@ extern QSettings settings;
         |-01
            |-
  */
+
+QString fixWidthNumber(int data)
+{
+    char buf[5] = {0};
+   QString re;
+
+   if(data < 0)
+      re = "000";
+   else
+   {
+      buf[0] = data / 100 + 0x30;
+      buf[1] = (data % 100) / 10 + 0x30;
+      buf[2] = (data % 10) + 0x30;
+      re = QString(buf);
+    }
+
+   return re;
+}
+
 int checkStrType(QString str)
 {
     settings.beginGroup(str);
@@ -367,7 +386,7 @@ void CprogManage::newScreen()
 
 
     //初始化分区属性
-    settings.beginGroup(QString::number(max));
+    settings.beginGroup(fixWidthNumber(max));
     settings.setValue("screenIndex", 1);//value("screenIndex").toString()
     settings.setValue("checkState", true);
     settings.endGroup();
@@ -376,7 +395,7 @@ void CprogManage::newScreen()
 
     //
     QTreeWidgetItem* item = new QTreeWidgetItem(treeWidget,QStringList(QString::number(size + 1)+tr("屏幕")));
-    item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
+    item->setData(0, Qt::UserRole, QVariant(QStr + "/" + fixWidthNumber(max)));
     item->setCheckState(0, Qt::Checked);
 
     QIcon icon = getTypeIcon(SCREEN_PROPERTY);
@@ -497,7 +516,7 @@ void CprogManage::newProg()
 
     //qDebug("new prog %d",max);
 
-    settings.beginGroup(QString::number(max));
+    settings.beginGroup(fixWidthNumber(max));
     settings.setValue("subIndex", 0); //当前子分区
     settings.setValue("name", QString("new prog"));
     settings.setValue("type", PROG_PROPERTY);
@@ -547,7 +566,7 @@ void CprogManage::newProg()
     settings.endGroup();
 
     QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(size + 1)+tr("节目")));
-    item->setData(0, Qt::UserRole, QStr + "/" + QString::number(max));
+    item->setData(0, Qt::UserRole, QStr + "/" + fixWidthNumber(max));
     item->setCheckState(0, Qt::Checked);
 
     QIcon icon = getTypeIcon(PROG_PROPERTY);
@@ -646,7 +665,7 @@ void CprogManage::newArea()
         index --;
 
     //初始化分区属性
-    settings.beginGroup(QString::number(max));
+    settings.beginGroup(fixWidthNumber(max));
     settings.setValue("subIndex", 0); //子项索引
     settings.setValue("name", QString("new area"));
     settings.setValue("type", AREA_PROPERTY);
@@ -662,7 +681,7 @@ void CprogManage::newArea()
     settings.endGroup();
 
     QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(size + 1)+tr("分区")));
-    item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
+    item->setData(0, Qt::UserRole, QVariant(QStr + "/" + fixWidthNumber(max)));
     item->setCheckState(0, Qt::Checked);
     QIcon icon = getTypeIcon(AREA_PROPERTY);
     item->setIcon(0,icon);
@@ -818,7 +837,7 @@ void CprogManage::newFile(int fileType, int subType)
           max=tmp;
     }
     max++;
-    settings.beginGroup(QString::number(max));
+    settings.beginGroup(fixWidthNumber(max));
     settings.setValue("type", fileType);
     settings.setValue("subType", subType);
     settings.setValue("setFlag", 0); //没有设过参数
@@ -829,7 +848,7 @@ void CprogManage::newFile(int fileType, int subType)
     //w->setCurSettingsStr(QStr + "/" + QString::number(max));
 
     QTreeWidgetItem* item = new QTreeWidgetItem(parentItem,QStringList(QString::number(max)));
-    item->setData(0, Qt::UserRole, QVariant(QStr + "/" + QString::number(max)));
+    item->setData(0, Qt::UserRole, QVariant(QStr + "/" + fixWidthNumber(max)));
     item->setCheckState(0, Qt::Checked);
 
     QIcon icon = getTypeIcon((subType > 0)?subType:fileType);
