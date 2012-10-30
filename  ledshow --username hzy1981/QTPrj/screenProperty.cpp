@@ -2891,10 +2891,12 @@ void CfacScreenProperty::readParaProc()
     else
       makeProtoBufData(screenStr, COM_MODE, C_SCREEN_PARA | RD_CMD, (char *)0, 0);
 
+    memset(rcvBuf, 0, sizeof(rcvBuf));
     re = w->comStatus->waitComEnd(rcvBuf, sizeof(rcvBuf), &len);
     if(re EQ true)
     {
-        if(len != sizeof(S_Screen_Para) - CHK_BYTE_LEN)
+        //串口卡没有网络相关参数
+        if(len < sizeof(S_Screen_Para) - sizeof(S_ETH_Para) - sizeof(S_GPRS_Para) - CHK_BYTE_LEN)
         {
             QMessageBox::warning(w, QObject::tr("提示"),
                                     QObject::tr("读取参数长度错误！"),QObject::tr("确定"));

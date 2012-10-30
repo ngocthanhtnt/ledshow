@@ -35,6 +35,10 @@ INT8U Get_Show_Para_Len(INT8U Type)
 {
   if(Type EQ SHOW_PIC)
     return sizeof(S_Pic_Para) - CHK_BYTE_LEN;
+#if TXT_SHOW_EN
+  else if(Type EQ SHOW_TXT)
+    return sizeof(S_Txt_Para) - CHK_BYTE_LEN;
+#endif
 #if CLOCK_EN
 #if CLOCK_SHOW_EN
   else if(Type EQ SHOW_CLOCK)
@@ -82,6 +86,12 @@ void Set_File_Para_HT_Sum(U_File_Para *pPara)
     case SHOW_PIC:
      SET_HT((*pPara).Pic_Para);
      SET_SUM((*pPara).Pic_Para);
+     break;
+#endif
+#if TXT_SHOW_EN
+    case SHOW_TXT:
+     SET_HT((*pPara).Txt_Para);
+     SET_SUM((*pPara).Txt_Para);
      break;
 #endif
 #if CLOCK_SHOW_EN     
@@ -149,6 +159,12 @@ INT8U Chk_File_Para_HT_Sum(U_File_Para *pPara)
     case SHOW_PIC:
      Re &= CHK_HT((*pPara).Pic_Para);
      Re &= CHK_SUM((*pPara).Pic_Para);
+     break;
+#endif
+#if TXT_SHOW_EN
+    case SHOW_TXT:
+     Re &= CHK_HT((*pPara).Txt_Para);
+     Re &= CHK_SUM((*pPara).Txt_Para);
      break;
 #endif
 #if CLOCK_SHOW_EN
@@ -404,11 +420,11 @@ INT16U Read_Screen_Para(void)
 	if(Len EQ 0)
 	{
 	  memset(&Screen_Para, 0, sizeof(Screen_Para));
-//#if NET_EN
+#if NET_EN
 	  Screen_Para.ETH_Para.IP = 0xFB01A8C0; //192.168.1.251
 	  Screen_Para.ETH_Para.Gate = 0x0101A8C0; //192.168.1.1
 	  Screen_Para.ETH_Para.Mask = 0x00FFFFFF; //255.255.255.0
-//#endif
+#endif
 	}
 
 	Chk_Data_Polarity_Change(Data_Polarity); //检查数据极性是否发生修改
