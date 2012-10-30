@@ -260,10 +260,6 @@ typedef struct
 
   S_COM_Para COM_Para; //通信参数-基本通信参数
 
-  S_ETH_Para ETH_Para; //以太网参数
-
-  S_GPRS_Para GPRS_Para; //GPRS参数
-
   S_Scan_Para Scan_Para; //扫描参数
   //命令1
   S_Screen_OC_Time OC_Time;//Open_Close_Time[MAX_OPEN_CLOSE_TIME]; //开关机时间
@@ -274,6 +270,11 @@ typedef struct
   //命令3
   //INT8U Prog_Num; //节目数
   //INT8U Temp[10]; //备用
+#if QT_EN || NET_EN || GPRS_EN
+  S_ETH_Para ETH_Para; //以太网参数
+
+  S_GPRS_Para GPRS_Para; //GPRS参数
+#endif
 
   INT8U CS[CS_BYTES];
 

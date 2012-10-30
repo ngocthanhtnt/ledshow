@@ -1322,6 +1322,12 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             getTextShowData(imageBk, &Show_Data, borderHeight, borderHeight);
         }
+        else if(filePara.Txt_Para.Flag == SHOW_TXT)
+        {
+            mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
+
+            Read_Txt_Show_Data(&Show_Data, Area_No, (INT8U *)"ÄãºÃ£¡", 10, 16, 0x01, 0x00, 0x00);
+        }
         else if(filePara.Temp_Para.Flag == SHOW_TIME)
         {
             Get_Cur_Time();

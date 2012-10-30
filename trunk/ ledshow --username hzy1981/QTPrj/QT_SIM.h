@@ -81,6 +81,21 @@ typedef struct
 
 EXT S_PFILE pFile;
 
+typedef struct
+{
+    INT8U Head;
+    FILE *asc0File;
+    FILE *asc1File;
+    FILE *asc2File;
+    FILE *font0File;
+    FILE *font1File;
+    FILE *font2File;
+    INT8U CS[CS_BYTES];
+    INT8U Tail;
+}S_FONTFILE;
+
+EXT S_FONTFILE fontFile;
+
 EXT void Delay_ms(int sec);
 EXT void Delay_sec(int sec);
 EXT void Put_Char(char c);
@@ -91,6 +106,8 @@ EXT INT16U Get_Cur_Humidity();
 EXT INT16U Get_Cur_Noise();
 EXT void Mem_Open();
 EXT void Mem_Close();
+EXT FILE *getFontFile(INT8U FontSize, INT8U Flag);
+EXT void fontFileOpen();
 EXT INT8U Read_PHY_Mem(INT32U Offset, void *pDst, INT16U RD_Len, void *pDst_Start, INT16U DstLen);
 EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
 EXT INT16S Get_Cur_Temp();

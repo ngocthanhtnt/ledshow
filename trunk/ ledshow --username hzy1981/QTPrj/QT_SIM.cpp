@@ -2,7 +2,15 @@
 #include "..\Stm32\usr\app\Includes.h"
 
 #if QT_EN > 0
-#define MEM_FILE "d:\\phy.dat"
+//#define MEM_FILE "d:\\phy.dat"
+#define MEM_FILE ".\\data\\phy.dat"
+
+#define ASC0_FILE ".\\font\\asc16.dat"
+#define ASC1_FILE ".\\font\\asc24.dat"
+#define ASC2_FILE ".\\font\\asc32.dat"
+#define FONT0_FILE ".\\font\\hzk16.dat"
+#define FONT1_FILE ".\\font\\hzk24.dat"
+#define FONT2_FILE ".\\font\\hzk32.dat"
 
 #include <QDateTime>
 #include <QFile>
@@ -153,6 +161,44 @@ INT8S File_Delete(char File_Name[])
   return 1;
 }
 */
+
+//打开字库文件
+void fontFileOpen()
+{
+    fontFile.asc0File = fopen(ASC0_FILE, "rb");
+    fontFile.asc1File = fopen(ASC1_FILE, "rb");
+    fontFile.asc2File = fopen(ASC2_FILE, "rb");
+    fontFile.font0File = fopen(FONT0_FILE, "rb");
+    fontFile.font1File = fopen(FONT1_FILE, "rb");
+    fontFile.font2File = fopen(FONT2_FILE, "rb");
+    SET_HT(fontFile);
+    SET_SUM(fontFile);
+}
+
+FILE *getFontFile(INT8U FontSize, INT8U Flag)
+{
+    if(Flag)
+    {
+        if(FontSize EQ 16)
+            return fontFile.font0File;
+        else if(FontSize EQ 24)
+            return fontFile.font1File;
+        else if(FontSize EQ 32)
+            return fontFile.font2File;
+    }
+    else
+    {
+        if(FontSize EQ 16)
+            return fontFile.asc0File;
+        else if(FontSize EQ 24)
+            return fontFile.asc1File;
+        else if(FontSize EQ 32)
+            return fontFile.asc2File;
+    }
+
+    return (FILE *)0;
+}
+
 void Mem_Open()
 {
   pFile.file = fopen(MEM_FILE, "wb+");
