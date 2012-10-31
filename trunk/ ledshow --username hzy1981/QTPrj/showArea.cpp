@@ -1325,8 +1325,8 @@ void CshowArea::paintEvent(QPaintEvent *)
         else if(filePara.Txt_Para.Flag == SHOW_TXT)
         {
             mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
-
-            Read_Txt_Show_Data(&Show_Data, Area_No, (INT8U *)"ÄãºÃ£¡", 10, 16, 0x01, 0x00, 0x00);
+//INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, INT8U Data[], INT16U Data_Len, INT8U SCN_No)
+            Read_Txt_Show_Data(&Show_Data, Area_No, (U_File_Para *)&Prog_Status.File_Para[0], this->txtData, strlen((char *)(this->txtData)), 0x00);
         }
         else if(filePara.Temp_Para.Flag == SHOW_TIME)
         {

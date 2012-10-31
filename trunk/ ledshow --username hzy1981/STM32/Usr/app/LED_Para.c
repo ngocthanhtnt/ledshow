@@ -1134,6 +1134,34 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
     Y = Border_Height;
   }  
 #endif
+#if TXT_SHOW_EN
+  if(Flag EQ SHOW_TXT) //内码
+  {
+    Width = Get_Area_Width(Area_No);
+    Height = Get_Area_Height(Area_No);
+
+    Width = Width - 2*Border_Height;
+    Height = Height - 2*Border_Height;
+
+    //DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+    //DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
+
+    //Index += (DstLen * SIndex) / BLOCK_SHOW_DATA_LEN;//块偏移
+    //Index += Prog_Status.Block_Index.Index[Area_No][File_No]; //起始块号
+
+    //Offset = (DstLen * SIndex) % BLOCK_SHOW_DATA_LEN; //在该块中的索引
+    X = Border_Height;
+    Y = Border_Height;
+
+    //读取Txt内码
+    Read_Storage_Data(SDI_SHOW_DATA + Index, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
+
+    //读取第SIndex屏
+    Read_Txt_Show_Data(pShow_Data, Area_No, pFile_Para, Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex);
+
+    return 1;
+  }
+#endif
 #if CLOCK_SHOW_EN  
   else if(Flag EQ SHOW_CLOCK) //表盘
   {

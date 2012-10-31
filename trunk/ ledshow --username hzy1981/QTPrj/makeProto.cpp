@@ -382,6 +382,8 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
     else if(type EQ TXT_PROPERTY)
     {
       getTxtParaFromSettings(fileStr, filePara);
+      filePara.Txt_Para.SNum = 0xFFFF; //设置最大屏数
+
       mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
 
       memcpy(buf, (char *)&filePara.Txt_Para.Head + 1, sizeof(S_Txt_Para)); //前一个字节是头，不拷贝
@@ -393,7 +395,7 @@ int getFileParaFromSettings(INT8U Prog_No, INT8U Area_No, INT8U File_No, INT16U 
       //resetShowPara(image.size().width(), image.size().height(), Screen_Para.Base_Para.Color);
       //getTextShowData(image, &protoShowData, 0, 0);
 
-      tmpLen = getTxtData(fileStr, protoShowData.Color_Data);
+      tmpLen = getTxtData(fileStr, protoShowData.Color_Data, sizeof(protoShowData.Color_Data));
       //tmpLen = GET_TEXT_LEN(image.size().width(),image.size().height());
       //tmpLen = tmpLen * Get_Screen_Color_Num();
       memcpy(buf + len, protoShowData.Color_Data, tmpLen);

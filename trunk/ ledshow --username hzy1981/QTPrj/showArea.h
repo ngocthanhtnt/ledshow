@@ -81,6 +81,8 @@ public:
     //S_Show_Data showDataBak;
     QImage imageBk;
 
+    INT8U txtData[500];
+
     //-----------图文参数----------//
     QString picStr; //显示的文本
     bool smLineFlag; //单多行标志
