@@ -1,0 +1,27 @@
+#ifndef TXT_SHOW_H
+#define TXT_SHOW_H
+
+#include "Includes.h"
+
+#if TXT_SHOW_EN
+
+#undef EXT
+#ifdef TXT_SHOW_C
+#define EXT
+#else
+#define EXT extern
+#endif
+
+#define GET_FONT_SIZE(X) ((X + 2)*8)//0-16,1-24,2-32
+
+#define GET_HZ_FONT_WIDTH(X)  ((X == 0)?16:((X == 1)?24:32))
+#define GET_HZ_FONT_HEIGHT(X) ((X == 0)?16:((X == 1)?24:32))
+#define GET_HZ_FONT_BYTES(X)  ((X == 0)?32:((X == 1)?72:128))
+
+#define GET_ASC_FONT_WIDTH(X)  ((X == 0)?8:((X == 1)?12:16))
+#define GET_ASC_FONT_HEIGHT(X) ((X == 0)?16:((X == 1)?24:32))
+#define GET_ASC_FONT_BYTES(X)  ((X == 0)?16:((X == 1)?48:64))
+
+EXT INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, INT8U Data[], INT16U Data_Len, INT8U SCN_No, INT8U pointFlag, INT16U X, INT16U Y);
+#endif
+#endif // TXT_SHOW_H
