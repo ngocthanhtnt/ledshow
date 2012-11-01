@@ -179,20 +179,20 @@ FILE *getFontFile(INT8U FontSize, INT8U Flag)
 {
     if(Flag)
     {
-        if(FontSize EQ 16)
+        if(FontSize EQ 0)
             return fontFile.font0File;
-        else if(FontSize EQ 24)
+        else if(FontSize EQ 1)
             return fontFile.font1File;
-        else if(FontSize EQ 32)
+        else if(FontSize EQ 2)
             return fontFile.font2File;
     }
     else
     {
-        if(FontSize EQ 16)
+        if(FontSize EQ 0)
             return fontFile.asc0File;
-        else if(FontSize EQ 24)
+        else if(FontSize EQ 1)
             return fontFile.asc1File;
-        else if(FontSize EQ 32)
+        else if(FontSize EQ 2)
             return fontFile.asc2File;
     }
 
