@@ -22,6 +22,8 @@
 #define GET_ASC_FONT_HEIGHT(X) ((X == 0)?16:((X == 1)?24:32))
 #define GET_ASC_FONT_BYTES(X)  ((X == 0)?16:((X == 1)?48:64))
 
+EXT void Read_Txt_Show_Chr_Data(INT16U Index, INT8U *pDst, INT16U DstLen);
+EXT void Clr_Txt_Ram_Show_Data(void);
 EXT INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, INT8U Data[], INT16U Data_Len, INT8U SCN_No, INT8U pointFlag, INT16U X, INT16U Y);
 #endif
 #endif // TXT_SHOW_H

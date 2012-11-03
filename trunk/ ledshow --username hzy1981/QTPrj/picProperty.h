@@ -53,6 +53,7 @@ public:
     Carea *area;
     CnameEdit *nameEdit;
     //QTextEdit *textEdit; //отй╬нд╠╬
+    QLabel *muLabel;
     TextEdit *edit;
     void screenCardParaChangeProc();
     void connectSignal();

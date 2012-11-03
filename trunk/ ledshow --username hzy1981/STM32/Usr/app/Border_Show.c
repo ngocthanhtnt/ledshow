@@ -374,20 +374,18 @@ void Clr_Border(S_Show_Data *pDst, INT8U Area_No)
 INT8U Get_Area_Border_Width(INT8U Area_No)
 {
   if(Area_No EQ MAX_AREA_NUM)
-    return Prog_Para.Border_Width;
+      return Prog_Para.Border_Check > 0?Prog_Para.Border_Width:0;
   else
-    return Prog_Status.File_Para[Area_No].Pic_Para.Border_Width;
+      return Prog_Status.File_Para[Area_No].Pic_Para.Border_Check>0?Prog_Status.File_Para[Area_No].Pic_Para.Border_Width:0;
 }
 
 //获取某个分区的高度
 INT8U Get_Area_Border_Height(INT8U Area_No)
 {
   if(Area_No >= MAX_AREA_NUM)
-    return Prog_Para.Border_Height;
+      return Prog_Para.Border_Check > 0?Prog_Para.Border_Height:0;
   else
-  {
-      return Prog_Status.File_Para[Area_No].Pic_Para.Border_Height;
-  }
+      return Prog_Status.File_Para[Area_No].Pic_Para.Border_Check > 0?Prog_Status.File_Para[Area_No].Pic_Para.Border_Height:0;
 }
 
 //恢复被边框覆盖的数据

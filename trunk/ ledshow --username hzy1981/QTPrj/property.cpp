@@ -472,11 +472,16 @@ Cproperty ::~Cproperty()
 
 void Cproperty::screenCardParaChangeProc()
 {
-    txtProperty->screenCardParaChangeProc();
-    clockProperty->screenCardParaChangeProc();
-    timeProperty->screenCardParaChangeProc();
-    timerProperty->screenCardParaChangeProc();
-    picProperty->screenCardParaChangeProc();
+    if(txtProperty)
+      txtProperty->screenCardParaChangeProc();
+    if(clockProperty)
+      clockProperty->screenCardParaChangeProc();
+    if(timeProperty)
+      timeProperty->screenCardParaChangeProc();
+    if(timerProperty)
+      timerProperty->screenCardParaChangeProc();
+    if(picProperty)
+      picProperty->screenCardParaChangeProc();
 }
 
 void Cproperty::setSettingsToWidget(QTreeWidgetItem *item)

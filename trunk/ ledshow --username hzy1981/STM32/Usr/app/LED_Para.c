@@ -912,7 +912,7 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
     Bk_X = X;
     //Bk_Y = Y;
 
-  #if PIC_SHOW_EN
+ // #if PIC_SHOW_EN
     if(Flag EQ SHOW_PIC) //图文
     {
 
@@ -931,125 +931,6 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
       Offset = (DstLen * SIndex + GET_POINT_INDEX(Width, X, Y)/8*Screen_Color_Num) % BLOCK_SHOW_DATA_LEN; //在该块中的索引
       X += Border_Height;
       Y += Border_Height;
-    }
-    else
-    {
-      ASSERT_FAILED();
-      return 0;
-    }
-  #endif
-    /*
-  #if CLOCK_SHOW_EN
-    else if(Flag EQ SHOW_CLOCK) //表盘
-    {
-      Width = pFile_Para->Clock_Para.Text_Width;
-      Height = pFile_Para->Clock_Para.Text_Height;
-
-      DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
-      DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
-
-      Index = Prog_Status.Block_Index.Index[Area_No][File_No];
-      Offset = 0;
-      X = pFile_Para->Clock_Para.Text_X;
-      Y = pFile_Para->Clock_Para.Text_Y;
-    }
-  #endif
-  #if TIMER_SHOW_EN
-    else if(Flag EQ SHOW_TIMER) //计时
-    {
-      Width = pFile_Para->Timer_Para.Text_Width;
-      Height = pFile_Para->Timer_Para.Text_Height;
-
-      DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
-      DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
-
-      Index = Prog_Status.Block_Index.Index[Area_No][File_No];
-      Offset = 0;
-      X = pFile_Para->Timer_Para.Text_X;
-      Y = pFile_Para->Timer_Para.Text_Y;
-    }
-  #endif
-  #if TIME_SHOW_EN
-    else if(Flag EQ SHOW_TIME) //日期时间
-    {
-      Width = pFile_Para->Time_Para.Text_Width;
-      Height = pFile_Para->Time_Para.Text_Height;
-
-      DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
-      DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
-
-      Index = Prog_Status.Block_Index.Index[Area_No][File_No];
-      Offset = 0;
-      X = pFile_Para->Time_Para.Text_X;
-      Y = pFile_Para->Time_Para.Text_Y;
-    }
-  #endif
-  #if LUN_SHOW_EN
-    else if(Flag EQ SHOW_LUN) //农历
-    {
-      Width = pFile_Para->Lun_Para.Text_Width;
-      Height = pFile_Para->Lun_Para.Text_Height;
-
-      DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
-      DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
-
-      Index = Prog_Status.Block_Index.Index[Area_No][File_No];
-      Offset = 0;
-      X = pFile_Para->Lun_Para.Text_X;
-      Y = pFile_Para->Lun_Para.Text_Y;
-    }
-  #endif
-  #if TEMP_SHOW_EN
-    else if(Flag EQ SHOW_TEMP) //温度
-    {
-      Width = pFile_Para->Temp_Para.Text_Width;
-      Height = pFile_Para->Temp_Para.Text_Height;
-
-      DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
-      DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
-
-      Index = Prog_Status.Block_Index.Index[Area_No][File_No];
-      Offset = 0;
-      X = pFile_Para->Temp_Para.Text_X;
-      Y = pFile_Para->Temp_Para.Text_Y;
-    }
-  #endif
-  #if HUMIDITY_SHOW_EN
-      else if(Flag EQ SHOW_HUMIDITY) //湿度
-      {
-          Width = pFile_Para->Humidity_Para.Text_Width;
-          Height = pFile_Para->Humidity_Para.Text_Height;
-
-          DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
-          DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
-
-          Index = Prog_Status.Block_Index.Index[Area_No][File_No];
-          Offset = 0;
-          X = pFile_Para->Humidity_Para.Text_X;
-          Y = pFile_Para->Humidity_Para.Text_Y;
-      }
-  #endif
-  #if NOISE_SHOW_EN
-      else if(Flag EQ SHOW_NOISE) //噪音
-      {
-          Width = pFile_Para->Noise_Para.Text_Width;
-          Height = pFile_Para->Noise_Para.Text_Height;
-
-          DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
-          DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
-
-          Index = Prog_Status.Block_Index.Index[Area_No][File_No];
-          Offset = 0;
-          X = pFile_Para->Noise_Para.Text_X;
-          Y = pFile_Para->Noise_Para.Text_Y;
-      }
-  #endif
-    else
-    {
-      ASSERT_FAILED();
-      return 0;
-    }
-*/
 
     Len = Screen_Color_Num;
     //INT8U temp[500];
@@ -1083,7 +964,22 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
         //if(HV_Flag EQ 0)
           //  break;
     }
+  }
+#if SHOW_TXT
+  else if(Flag EQ SHOW_TXT)
+  {
+    Read_Txt_Show_Chr_Data(SDI_SHOW_DATA + Index, Pub_Buf, sizeof(Pub_Buf));
 
+    Read_Txt_Show_Data(pShow_Data, Area_No, pFile_Para, Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, 1, X, Y);
+
+    return 1;
+  }
+#endif
+  else
+  {
+    ASSERT_FAILED();
+    return 0;
+  }
 	return 1;
     /*
 
@@ -1135,29 +1031,14 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
   }  
 #endif
 #if TXT_SHOW_EN
-  if(Flag EQ SHOW_TXT) //内码
+  else if(Flag EQ SHOW_TXT) //内码
   {
-    Width = Get_Area_Width(Area_No);
-    Height = Get_Area_Height(Area_No);
-
-    Width = Width - 2*Border_Height;
-    Height = Height - 2*Border_Height;
-
-    //DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
-    //DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
-
-    //Index += (DstLen * SIndex) / BLOCK_SHOW_DATA_LEN;//块偏移
-    //Index += Prog_Status.Block_Index.Index[Area_No][File_No]; //起始块号
-
-    //Offset = (DstLen * SIndex) % BLOCK_SHOW_DATA_LEN; //在该块中的索引
-    X = Border_Height;
-    Y = Border_Height;
-
     //读取Txt内码
-    Read_Storage_Data(SDI_SHOW_DATA + Index, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));
-
+    //if(Read_Storage_Data(SDI_SHOW_DATA + Index, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)) == 0)
+        //memset(Pub_Buf, 0, sizeof(Pub_Buf));
+    Read_Txt_Show_Chr_Data(SDI_SHOW_DATA + Index, Pub_Buf, sizeof(Pub_Buf));
     //读取第SIndex屏
-    Read_Txt_Show_Data(pShow_Data, Area_No, pFile_Para, Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex);
+    Read_Txt_Show_Data(pShow_Data, Area_No, pFile_Para, Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, 0, 0, 0);
 
     return 1;
   }
