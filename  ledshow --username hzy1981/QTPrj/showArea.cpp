@@ -694,11 +694,27 @@ void CshowArea::setAreaType(int type)
     areaType = type;
 }
 
+void CshowArea::mouseDoubleClickEvent(QMouseEvent *event)
+{
+  //debug("double click");
+    INT8U type;
+
+    type = checkItemType(w->progManage->getCurItem());
+
+    //文本类型
+    if(type == PIC_STEXT_PROPERTY || type == PIC_MTEXT_PROPERTY || type == PIC_TABLE_PROPERTY)
+    {
+      w->property->picProperty->edit->showInit();
+    }
+}
+
 void CshowArea::mousePressEvent(QMouseEvent *event)
 {
 
     int x0,y0;
     int x1,y1;
+
+    //debug("press click");
 
     if(areaType == 0)//背景屏幕不响应
         return;
@@ -1190,69 +1206,7 @@ void CshowArea::paintEvent(QPaintEvent *)
             Height = Height - borderHeight*2;
         }
 
-//测试画点
-    /*
-    for(i=0; i < 10; i ++)
-    {
-        Set_Area_Point_Data(&showData, 0, i, 1, 0x01);
-        //Set_Area_Point_Data(&showData, 0, 5, i, 0x02);
-    }*/
-//测试画线
-/*
-    S_Point p0 = {10,0};
-    S_Point P0 = {10,100};
-    S_Point p2 = {20, 10};
-
-    Draw_Line(&showData, 0, &p0, &P0, 0x01);
-    Copy_Line(&showData, 0, &p0, &P0, &showData, &p2);
-*/
-    //测试画矩形
-/*
-    S_Point p0 = {10,10};
-    S_Point P0 = {50,50};
-
-    Fill_Rect(&showData, 0, &p0, 50, 50, 0x02);
-    Copy_Filled_Rect(&showData, 0, &p0, 50, 50, &showData, &P0);
-*/
-    //画圆
-/*
-    S_Point p0 = {60, 60};
-    Fill_Round(&showData, 0, &p0, 10, 0x02);
-*/
-    //画三角形
-/*
-    S_Point p0 = {0, 0};
-    S_Point P0 = {20,80};
-    S_Point p2 = {100, 20};
-    S_Point p3 = {60, 80};
-
-    Fill_Triangle(&showData, 0, &p0, &P0, &p2, 0x03);
-    Copy_Filled_Triangle(&showData, 0, &p0, &P0, &p2, &showData, &p3);
-*/
-    //画多边形
-/*
-    S_Point p0 = {0, 0};
-    S_Point P0 = {20,20};
-    S_Point p2 = {30, 20};
-    S_Point p3 = {40, 10};
-    S_Point p4 = {50, 10};
-
-    Fill_Polygon(&showData, 0, &p0,&P0, &p2, &p3, 0x02);//(&showData, 0, &p0, &P0, &p2, 0x03);
-    Copy_Filled_Polygon(&showData, 0, &p0, &P0, &p2, &p3, &showData, &p4);
-*/
-    //画时钟的整点
-    /*
-    S_Point p0={60, 60};
-    S_Point P0;
-
-    //Get_Angle_Point(&p0, 45, 30, &P0); //找到圆的中心点
-    //Draw_Line(&showData, 0, &p0, &P0, 0x02);
-    Fill_Clock_Point(&showData, 0, &p0, 45, 30, 5, 0x01);
-    Fill_Clock_Line(&showData, 0, &p0, 135, 50, 5, 0x04);
-*/
-
-
-   if(updateFlag == true)//鼠标在没有按下的情况下才更新数据
+    if(updateFlag == true)//鼠标在没有按下的情况下才更新数据
     {
        updateFlag = 0;
        Clear_Area_Data(&Show_Data, 0);
@@ -1321,12 +1275,26 @@ void CshowArea::paintEvent(QPaintEvent *)
             //getTextPageNum(area->smLineFlag, area->width(), area->height(), lineNum, linePosi, pagePosi);
 
             getTextShowData(imageBk, &Show_Data, borderHeight, borderHeight);
+
+            if(w->property->picProperty)
+            {
+                w->property->picProperty->pageBox->setMaximum(pageNum > 0?pageNum:1);
+                w->property->picProperty->muLabel->setText(QString("/") + QString::number(w->property->picProperty->pageBox->maximum()) + tr("幕"));
+            }
         }
         else if(filePara.Txt_Para.Flag == SHOW_TXT)
         {
             mem_cpy((INT8U *)&Prog_Status.File_Para[0], &filePara, sizeof(filePara), (INT8U *)&Prog_Status.File_Para[0], sizeof(Prog_Status.File_Para[0]));
-//INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, INT8U Data[], INT16U Data_Len, INT8U SCN_No)
-            Read_Txt_Show_Data(&Show_Data, Area_No, (U_File_Para *)&Prog_Status.File_Para[0], this->txtData, strlen((char *)(this->txtData)), 0x00);
+
+            //INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, INT8U Data[], INT16U Data_Len, INT8U SCN_No)
+            //Set_Area_Border_Out(Area_No);
+            Read_Txt_Show_Data(&Show_Data, Area_No, (U_File_Para *)&Prog_Status.File_Para[0], this->txtData, strlen((char *)(this->txtData)), this->page, 0, 0, 0);
+            //Set_Area_Border_In(Area_No);
+            if(w->property->txtProperty)
+            {
+              w->property->txtProperty->simpleTextEdit->pageBox->setMaximum(Prog_Status.File_Para[0].Txt_Para.SNum == 0 ? 1:Prog_Status.File_Para[0].Txt_Para.SNum);
+              w->property->txtProperty->simpleTextEdit->muLabel->setText(QString("/") + QString::number(w->property->txtProperty->simpleTextEdit->pageBox->maximum()) + tr("幕"));
+          }
         }
         else if(filePara.Temp_Para.Flag == SHOW_TIME)
         {

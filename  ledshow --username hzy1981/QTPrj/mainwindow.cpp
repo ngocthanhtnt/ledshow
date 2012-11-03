@@ -191,6 +191,20 @@ void MainWindow::setActonsEnable()
   actionHumidi->setData((bool)Get_Humidity_Show_En());
   actionNoise->setData((bool)Get_Noise_Show_En());
 
+  actionSText->setVisible((bool)Get_Pic_Show_En());//(bool)Get_Pic_Show_En());
+  actionTxt->setVisible((bool)Get_Txt_Show_En());
+  actionMText->setVisible((bool)Get_Pic_Show_En());
+  actionTable->setVisible((bool)Get_Pic_Show_En());
+  actionFlash->setVisible((bool)Get_Pic_Show_En());
+  actionImage->setVisible((bool)Get_Pic_Show_En());
+  actionClock->setVisible((bool)Get_Clock_Show_En());
+  actionTime->setVisible((bool)Get_Time_Show_En());
+  actionNongli->setVisible((bool)Get_Lun_Show_En());
+  actionTimer->setVisible((bool)Get_Timer_Show_En());
+  actionTemp->setVisible((bool)Get_Temp_Show_En());
+  actionHumidi->setVisible((bool)Get_Humidity_Show_En());
+  actionNoise->setVisible((bool)Get_Noise_Show_En());
+
   w->actionEnProc(checkItemType(w->progManage->getCurItem()));
   //actionSText->setData();
 }

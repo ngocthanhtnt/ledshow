@@ -564,11 +564,12 @@ void TextEdit::setupTextActions()
     tb->addWidget(pageLabel);
 
     spinPage = new QSpinBox(tb);
+    spinPage->setMinimum(1);
     tb->addWidget(spinPage);
     spinPage->setValue(1);
     connect(spinPage, SIGNAL(valueChanged(int)), this, SLOT(edit()));//SLOT(textColor()));
 
-    QLabel *muLabel;
+    //QLabel *muLabel;
     muLabel = new QLabel(tr("幕"),tb);
     tb->addWidget(muLabel);
 
@@ -1042,12 +1043,15 @@ void TextEdit::showInit()
 
         }
         //int pageNum = getTextImagePageNum(mode,area->width(),area->height(),textEdit->toHtml(), linePosi);
-        spinPage->setMinimum(0);
+        spinPage->setMinimum(1);
 
-        spinPage->setMaximum((pageNum > 0)?(pageNum-1) : 0);
+        spinPage->setMaximum((pageNum > 0)?pageNum : 1);
+        muLabel->setText(QString("/") + QString::number(spinPage->maximum()) + tr("幕"));
 
         colorCombo->setCurrentIndex(0);
         this->textColor();
+
+        this->textEdit->setFocus();
 
         show();
         setWindowTitle(tr("编辑器"));
@@ -1102,9 +1106,12 @@ void TextEdit::edit()
 
   }
 
-  pageNum = (pageNum > 0)?(pageNum-1) : 0;
+  pageNum = (pageNum > 0)?pageNum : 1;
   spinPage->setMaximum(pageNum);
+  muLabel->setText(QString("/") + QString::number(spinPage->maximum()) + tr("幕"));
+
   w->property->picProperty->pageBox->setMaximum(pageNum);
+  w->property->picProperty->muLabel->setText(QString("/") + QString::number(spinPage->maximum()) + tr("幕"));
 
   if(spinPage->value() > pageNum)
   {
@@ -1112,7 +1119,7 @@ void TextEdit::edit()
     w->property->picProperty->pageBox->setValue(pageNum);
   }
 
-  area->page = spinPage->value(); //页号
+  area->page = (spinPage->value() > 0)? (spinPage->value() - 1):0; //页号
   area->updateFlag = true;
   area->update(); //更新当前显示缓冲
 

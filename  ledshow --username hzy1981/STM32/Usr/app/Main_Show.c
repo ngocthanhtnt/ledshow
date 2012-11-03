@@ -94,13 +94,18 @@ void Set_File_Stay_Time(INT8U Area_No, INT16U ms)
 //检查Area_No分区当前显示数据是否连移数据
 INT8U Chk_Pic_Continuous_Move(INT8U Area_No)
 {
+#if QT_EN EQ 0 //qt仿真情况下不做特殊处理，因为电脑处理太慢，导致卡
+    //暂时只对连续左移和连续上移动做处理
     if(Prog_Status.Area_Status[Area_No].In_Mode >= 1 &&\
        Prog_Status.Area_Status[Area_No].In_Mode <= 2 &&\
        Get_File_Stay_Time(Area_No) EQ 0 &&\
-       Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_PIC)
+       (Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_PIC || Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_TXT))
         return 1;
     else
         return 0;
+#else
+    return 0;
+#endif
 
 }
 
@@ -319,6 +324,8 @@ void Read_Continous_Move_Show_Data(S_Show_Data *pDst, INT8U Area_No)
         return;
 
     //左平移或者连续左移
+    //实际只有连续左移和连续上移才会进入处理
+    //其他几种方式暂时保留代码，以备用
     if(Prog_Status.Area_Status[Area_No].In_Mode EQ 1 ||\
        Prog_Status.Area_Status[Area_No].In_Mode EQ 3)
     {
@@ -1406,6 +1413,8 @@ void Ram_Init(void)
   Prog_Status.Play_Status.Last_Prog_No = 0xFF;
   SET_HT(Prog_Status.Play_Status);
   SET_SUM(Prog_Status.Play_Status);
+
+  Clr_Txt_Ram_Show_Data();
 /*
 #if QT_EN EQ 0
   memset(Scan_Data, 0xFF, sizeof(Scan_Data));

@@ -88,6 +88,8 @@ public:
     QMenu *menuColumn;
     QMenu *menuCell;
 
+    QLabel *muLabel;
+
     CtablePropertyEdit *tablePropertyEdit;
 
     void screenCardParaChangeProc();

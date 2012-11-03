@@ -39,13 +39,14 @@ private:
     CimageProperty *imageProperty; //图片
     CtempProperty *tempProperty; //温度
     ClunProperty *lunProperty; //农历
-    CtxtProperty *txtProperty;
+
     ChumidityProperty *humidityProperty;
     CnoiseProperty *noiseProperty;
 public:
     Carea *area;
     CareaProperty *areaProperty; //分区属性
     CpicProperty *picProperty;  //图文
+    CtxtProperty *txtProperty;
     QWidget *docWidget;
     QHBoxLayout *hLayout;
 

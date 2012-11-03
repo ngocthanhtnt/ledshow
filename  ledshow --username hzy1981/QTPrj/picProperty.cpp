@@ -32,6 +32,7 @@ void updatePicShowArea(CshowArea *area)
         settings.beginGroup("textEdit");
         area->picStr = settings.value("text").toString();
         area->page = settings.value("page").toInt();
+        area->page = area->page > 0? (area->page - 1):0;
         settings.endGroup();
 
         settings.beginGroup("smLine");
@@ -139,6 +140,7 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
     textGroup = new QGroupBox(tr("ÎÄ±¾ÄÚÈİ"), this);
     editButton = new QPushButton(tr("±à¼­ÄÚÈİ"), this);
     pageBox = new QSpinBox(this);
+    pageBox->setMinimum(1);
     vLayout = new QVBoxLayout(this);
     vLayout->addStretch(0);
     vLayout ->addWidget(editButton);
@@ -147,7 +149,7 @@ CpicProperty::CpicProperty(QWidget *parent):QWidget(parent)
     QHBoxLayout *pageHLayout = new QHBoxLayout(this);
     pageHLayout->addWidget(page);
     pageHLayout->addWidget(pageBox);
-    QLabel *muLabel = new QLabel(tr("Ä»"),this);
+    muLabel = new QLabel(tr("Ä»"),this);
     pageHLayout->addWidget(muLabel);
     vLayout->addLayout(pageHLayout);
     vLayout->addStretch(0);
@@ -222,6 +224,7 @@ void CpicProperty::setSettingsToWidget(QString str)
     connectSignal();
 
     pageBox->setMaximum(999);
+
     pageBox->setValue(edit->spinPage->value());
 
     //edit->edit();

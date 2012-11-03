@@ -13,6 +13,41 @@ typedef struct
 }S_Font_Data;
 
 S_Font_Data Font_Data;
+
+typedef struct
+{
+  INT8U Head;
+  INT16U Index;
+  INT8U Data[BLOCK_DATA_LEN];
+  INT8U Tail;
+}S_Txt_Show_Data;
+
+S_Txt_Show_Data Txt_Show_Data;
+
+void Read_Txt_Show_Chr_Data(INT16U Index, INT8U *pDst, INT16U DstLen)
+{
+   if(Index EQ Txt_Show_Data.Index)
+   {
+       mem_cpy(pDst, Txt_Show_Data.Data, sizeof(Txt_Show_Data.Data), pDst, DstLen);
+       return;
+   }
+   else
+   {
+       Txt_Show_Data.Index = Index;
+       if(Read_Storage_Data(Index, Txt_Show_Data.Data, Txt_Show_Data.Data, sizeof(Txt_Show_Data.Data)) == 0)
+           memset(Txt_Show_Data.Data, 0, BLOCK_DATA_LEN);
+
+       mem_cpy(pDst, Txt_Show_Data.Data, BLOCK_DATA_LEN, pDst, DstLen);
+
+   }
+}
+
+void Clr_Txt_Ram_Show_Data(void)
+{
+  Txt_Show_Data.Index = 0xFFFF;
+  memset(Txt_Show_Data.Data, 0, BLOCK_DATA_LEN);
+}
+
 /*
 0x0D（asc码是13） 指的是“回车”   \r是把光标置于本行行首
 
@@ -27,7 +62,7 @@ S_Font_Data Font_Data;
 //CharOff表示显示某个字符的起始位置偏移，从左到右数
 //Data表示需要显示的数据
 //pointFlag表示是否只读取某点,0表示读取整屏,>0表示读取某点
-void Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U Color, INT8U CharOff, INT8U FontSize, INT8U Data[],\
+INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U Color, INT8U CharOff, INT8U FontSize, INT8U Data[],\
                   INT8U pointFlag, INT16U X0, INT16U Y0)
 {
     //每个汉字，占两个字节, 取其区位号
@@ -69,7 +104,7 @@ void Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U Co
     {
       if(!(X0 >= X && X0 <X + FontWidth - CharOff &&
          Y0 >= Y && Y0 <Y + FontHeight))
-          return;
+          return 0;
     }
 
     Width = len * 8 / FontHeight ; //字库占用的宽度，并不是字体的宽度
@@ -92,6 +127,8 @@ void Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U Co
                 Re = Get_Rect_Buf_Bit(Font_Data.Data, len, Width, ((i >>3) << 3) + (7 - (i % 8)), j);
                 if(Re)
                   Set_Area_Point_Data(pDst, Area_No, X + i - CharOff, Y + j, Color);
+                else
+                  Set_Area_Point_Data(pDst, Area_No, X + i - CharOff, Y + j, 0);
             }
         }
      }
@@ -103,8 +140,12 @@ void Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U Co
             Re = Get_Rect_Buf_Bit(Font_Data.Data, len, Width, ((i >>3) << 3) + (7 - (i % 8)), j);
             if(Re)
               Set_Area_Point_Data(pDst, Area_No, X + i - CharOff, Y + j, Color);
+            else
+              Set_Area_Point_Data(pDst, Area_No, X + i - CharOff, Y + j, 0);
           }
     }
+
+    return 1;
 }
 
 //计算Txt出现的幕数
@@ -205,20 +246,37 @@ INT16U Calc_Txt_SNum(INT16U Area_Width, INT16U Area_Height, INT8U Data[], INT16U
 INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, INT8U Data[], INT16U Data_Len, INT8U SCN_No,\
                           INT8U pointFlag, INT16U X, INT16U Y)
 {
-  INT8U FontHeight,Color,Flag;
+  INT8U FontHeight,Color,Flag,Border_Height;
   INT16U Area_Width, Area_Height,LineSpace = 0;
   INT16U Width = 0, LineNo = 0, ScnNo = 0, i = 0, CharWidth,LineNum;
-  INT8U CharOff = 0; //字符内偏移
+  INT8U CharOff = 0,Re = 0; //字符内偏移
 
   Area_Width = Get_Area_Width(Area_No);
   Area_Height = Get_Area_Height(Area_No);
 
+  Border_Height = Get_Area_Border_Height(Area_No);
+
+  //Area_Width = Area_Width - 2*Border_Height;
+  //Area_Height = Area_Height - 2*Border_Height;
+
+  //DstLen = GET_TEXT_LEN(Width,Height);//(INT32U)Width * ((Height % 8) EQ 0 ? (Height / 8) : (Height / 8 + 1));
+  //DstLen = DstLen * Get_Screen_Color_Num(); //屏幕支持的颜色数//每屏的字节数
+
+  //Index += (DstLen * SIndex) / BLOCK_SHOW_DATA_LEN;//块偏移
+  //Index += Prog_Status.Block_Index.Index[Area_No][File_No]; //起始块号
+
+  //Offset = (DstLen * SIndex) % BLOCK_SHOW_DATA_LEN; //在该块中的索引
+  X += Border_Height;
+  Y += Border_Height;
+
   FontHeight = GET_HZ_FONT_HEIGHT(pPara->Txt_Para.Font_Size);
   Color = pPara->Txt_Para.Color;
-  Flag = (Prog_Status.File_Para[Area_No].Pic_Para.In_Mode EQ 1)?1:0; //连续左移需要
+  Flag = (Prog_Status.File_Para[Area_No].Pic_Para.In_Mode != 2)?1:0; //连续左移需要
 
-  LineNum = Area_Height / FontHeight;
-  LineSpace = (Area_Height - LineNum * FontHeight) / (LineNum + 1);
+  LineNum = (Area_Height  - 2*Border_Height) / FontHeight;
+  LineSpace = (Area_Height - 2*Border_Height - LineNum * FontHeight) / (LineNum + 1);
+
+  Width = Border_Height;
 
   while(i < Data_Len && Data[i] != 0)
   {
@@ -230,13 +288,13 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, 
 
        if(Data[i] EQ '\r')
        {
-           Width = 0;
+           Width = Border_Height;
            i++;
            continue;
        }
        else if(Data[i] EQ '\n')
        {
-           Width = 0;
+           Width = Border_Height;
            LineNo ++;
 
            if(LineNo >= LineNum)
@@ -254,7 +312,7 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, 
      }
 
      //判断是否需要换行和换屏
-     if(Width + CharWidth > Area_Width)
+     if(Width + CharWidth > (Area_Width - Border_Height))
      {
          if(LineNum > 1 || Flag > 0) //多行或者自动排版标志>0都需要自动排版
          {
@@ -263,16 +321,16 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, 
          }
          else //单行而且不需要自动排版
          {
-           CharOff = Width + CharWidth - Area_Width;
+           CharOff = CharWidth - (Width + CharWidth - (Area_Width  - Border_Height));
 
            if(ScnNo EQ SCN_No) //当前字符在当前字幕
-             Draw_Txt_Chr(pDst, Area_No, Width, LineNo * FontHeight + (LineNo + 1) * LineSpace, Color, 0, pPara->Txt_Para.Font_Size, &Data[i], \
+             Re |= Draw_Txt_Chr(pDst, Area_No, Width, Border_Height + LineNo * FontHeight + (LineNo + 1) * LineSpace, Color, 0, pPara->Txt_Para.Font_Size, &Data[i], \
                           pointFlag, X, Y); //显示字符左半边
 
            LineNo ++;
          }
 
-         Width = 0;
+         Width = Border_Height;
 
          if(LineNo >= LineNum)
          {
@@ -284,7 +342,7 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, 
 
      if(ScnNo EQ SCN_No) //当前字符在当前字幕
      {
-       Draw_Txt_Chr(pDst, Area_No, Width, LineNo * FontHeight + (LineNo + 1) * LineSpace, Color, CharOff, pPara->Txt_Para.Font_Size, &Data[i],\
+       Re |= Draw_Txt_Chr(pDst, Area_No, Width, Border_Height + LineNo * FontHeight + (LineNo + 1) * LineSpace, Color, CharOff, pPara->Txt_Para.Font_Size, &Data[i],\
                     pointFlag, X, Y); //显示字符左半边
      }
 
@@ -298,6 +356,10 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, 
 
   }
 
+  if(pointFlag > 0 && Re EQ 0)
+  {
+    Set_Area_Point_Data(pDst, Area_No, X, Y, 0);
+  }
   //设置屏幕数
   if(pPara->Txt_Para.SNum != ScnNo + 1)
   {
