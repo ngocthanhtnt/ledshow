@@ -114,7 +114,7 @@
 #define TEMP_SHOW_EN   1 //温度显示使能
 #define HUMIDITY_SHOW_EN 0 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
-#define TEXT_SHOW_EN   0
+#define TXT_SHOW_EN    0
 #else
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
@@ -125,7 +125,7 @@
 #define TIMER_SHOW_EN  1 //定时显示使能 
 #define HUMIDITY_SHOW_EN 0 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
-#define TEXT_SHOW_EN   0
+#define TXT_SHOW_EN    0
 #endif
 
 #define USE_SPI_FLASH //串行SPIFlash
@@ -134,7 +134,7 @@
 #define UDISK_EN  0//u盘使能
 #define NET_EN	 0//网络使能
 #define GPRS_EN  0//GPRS使能
-
+#define SMS_EN   0//短信使能
 //#define COM_BUF_ID 0x00
 //#define NET_BUF_ID 0x01
 //#define GPRS_BUF_ID 0x02

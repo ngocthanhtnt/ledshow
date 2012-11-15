@@ -207,7 +207,7 @@ INT8U Update_XXX_Data(S_Show_Data *pDst, INT8U Area_No)
   Flag = Prog_Status.File_Para[Area_No].Pic_Para.Flag;
   
   //某些非图文数据需要定时刷新!应该保证每分钟进入一次
-  if(Flag EQ SHOW_PIC)
+  if(PIC_SHOW_EN && Flag EQ SHOW_PIC)
     ;
 #if CLOCK_SHOW_EN  
   else if(Flag EQ SHOW_CLOCK)
@@ -1414,7 +1414,9 @@ void Ram_Init(void)
   SET_HT(Prog_Status.Play_Status);
   SET_SUM(Prog_Status.Play_Status);
 
+#if TXT_SHOW_EN
   Clr_Txt_Ram_Show_Data();
+#endif
 /*
 #if QT_EN EQ 0
   memset(Scan_Data, 0xFF, sizeof(Scan_Data));

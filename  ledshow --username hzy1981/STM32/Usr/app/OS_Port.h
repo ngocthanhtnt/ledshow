@@ -34,13 +34,21 @@ typedef unsigned int OS_ALIGN_TYPE;//定义对齐的类型
 
 //使用内嵌汇编，请勿打开任何优化选项!
 //将SP保存到Old_SP
-
-#define SAVE_TASK_SP()   __asm("mov %esp,%ebx");\
-                         __asm("mov %ebx,_Old_SP")
+#if defined (__ICCARM__) /*------------------ ICC Compiler -------------------*/
+#define SAVE_TASK_SP()  Old_SP = =Save_Task_SP()
 
 //将New_SP保存到SP
-#define RESTORE_TASK_SP()  __asm("mov _New_SP,%ebx");\
-                           __asm("mov %ebx,%esp")
+#define RESTORE_TASK_SP() Restore_Task_SP(New_SP)
+#else
+
+extern uint32_t __get_MSP(void);
+extern void __set_MSP(uint32_t mainStackPointer);
+
+#define SAVE_TASK_SP()  Old_SP = __get_MSP()//=Save_Task_SP()
+
+//将New_SP保存到SP
+#define RESTORE_TASK_SP()  __set_MSP(New_SP)//Restore_Task_SP(New_SP)
+#endif
 
 //VC6.0编译器不支持__FUCNTION__这个宏
 #define __FUNCTION__ "FUNCTION"

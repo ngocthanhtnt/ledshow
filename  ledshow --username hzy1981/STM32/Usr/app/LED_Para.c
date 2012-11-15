@@ -33,7 +33,7 @@ INT8U Get_Screen_Color_Num(void)
 //获取不同显示参数的长度
 INT8U Get_Show_Para_Len(INT8U Type)
 {
-  if(Type EQ SHOW_PIC)
+  if(PIC_SHOW_EN && Type EQ SHOW_PIC)
     return sizeof(S_Pic_Para) - CHK_BYTE_LEN;
 #if TXT_SHOW_EN
   else if(Type EQ SHOW_TXT)
@@ -913,7 +913,7 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
     //Bk_Y = Y;
 
  // #if PIC_SHOW_EN
-    if(Flag EQ SHOW_PIC) //图文
+    if(PIC_SHOW_EN && Flag EQ SHOW_PIC) //图文
     {
 
       Width = Get_Area_Width(Area_No);
@@ -965,7 +965,7 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
           //  break;
     }
   }
-#if SHOW_TXT
+#if TXT_SHOW_EN
   else if(Flag EQ SHOW_TXT)
   {
     Read_Txt_Show_Chr_Data(SDI_SHOW_DATA + Index, Pub_Buf, sizeof(Pub_Buf));
@@ -1009,8 +1009,7 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
     Border_Height = Get_Area_Border_Height(Area_No);//Get_Simple_Border_Height(Prog_Status.File_Para[Area_No].Pic_Para.Border_Type);
   }
 
-#if PIC_SHOW_EN 
-  if(Flag EQ SHOW_PIC) //图文
+  if(PIC_SHOW_EN && Flag EQ SHOW_PIC) //图文
   {
      
     Width = Get_Area_Width(Area_No);
@@ -1029,7 +1028,6 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
     X = Border_Height;
     Y = Border_Height;
   }  
-#endif
 #if TXT_SHOW_EN
   else if(Flag EQ SHOW_TXT) //内码
   {

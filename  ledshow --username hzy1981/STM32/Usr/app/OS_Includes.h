@@ -9,8 +9,8 @@
 #include "OS_Port.h"
 #include "OS_Pub.h"
 #include "OS_Core.h"
-//#include "OS_Ext.h"
-//#include "OS_Time.h"
+#include "OS_Ext.h"
+#include "OS_Time.h"
 
 #if (OS_MUTEX_EN>0) || (OS_SEM_EN>0) || (OS_MSG_EN>0) || (OS_MSG_Q_EN>0)
 #include "OS_Event.h"

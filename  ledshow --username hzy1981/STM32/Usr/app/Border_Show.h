@@ -1,7 +1,7 @@
 #ifndef BORDER_SHOW_H
 #define BORDER_SHOW_H
 
-#if BORDER_SHOW_EN > 0
+#if 1//BORDER_SHOW_EN > 0
 
 #undef EXT
 #ifdef BORDER_SHOW_C

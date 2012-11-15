@@ -3,7 +3,7 @@
 
 #include "Includes.h"
 
-#if PIC_SHOW_EN
+#if 1//PIC_SHOW_EN
 
 #undef EXT
 #ifdef PIC_SHOW_C

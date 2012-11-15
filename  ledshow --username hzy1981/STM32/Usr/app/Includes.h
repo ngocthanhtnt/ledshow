@@ -29,6 +29,11 @@
 #include "ENC28J60.h"
 #include "EMAC.h"
 #endif
+
+#if GPRS_EN || SMS_EN
+#include "SIM900a.h"
+#endif
+
 #include "FILE_SYS.h"
 #include "spi_flash.h"
 #include "LED_Scan.h"
@@ -53,6 +58,9 @@
 #include "com.h"
 #include "Shell.h"
 #include "Net_Proc.h"
+#include "sms.h"
+
+
 
 
 

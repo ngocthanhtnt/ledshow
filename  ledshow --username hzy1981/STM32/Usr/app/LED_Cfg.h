@@ -10,6 +10,8 @@
 //#define CARDB1	 0x22
 //#define CARDB2	 0x23
 #define CARDC	 0x30
+#define CARDCW0  0x31 //短信卡
+#define CARDCW1  0x32 //GRPS卡
 //#define CARDC1	 0x31
 //#define CARDC2	 0x32
 #define CARDD    0x40
@@ -59,8 +61,6 @@
 
 #define OE_PWM_FREQ 1000 //1KPWM频率
 #define COMPANY_NAME "AS"
-
-#define APP_ADDRESS_OFF 0x1000 //应用程序地址偏移
 
 //#define APP_NAME "大屏LED播放系统"
 #define MAX_PROG_NUM 16 //最大节目数
@@ -145,7 +145,7 @@
 #include "LED_ABX_Cfg.h"
 #include "LED_ABX_Drv.h"
 #elif defined(CARD_C)
-#define CARD_TYPE CARDC
+#define CARD_TYPE CARDCW0
 #include "LED_CX_Cfg.h"
 #include "LED_CX_Drv.h"
 #elif defined(CARD_D)
@@ -158,6 +158,12 @@
 #include "LED_EX_Drv.h"
 #else
 #error "Card type error"
+#endif
+
+#if CARD_TYPE == CARDCW0 || CARD_TYPE == CARDCW1
+#define APP_ADDRESS_OFF 0x8000 //应用程序地址偏移
+#else
+#define APP_ADDRESS_OFF 0x1000 //应用程序地址偏移
 #endif
 
 #endif
@@ -174,7 +180,7 @@
                        (TEMP_SHOW_EN << TEMP_SHOW_BIT) |\
                        (HUMIDITY_SHOW_EN << HUMIDITY_SHOW_BIT) |\
                        (NOISE_SHOW_EN << NOISE_SHOW_BIT) |\
-                       (TEXT_SHOW_EN << TEXT_SHOW_EN))L
+                       (TXT_SHOW_EN << TXT_SHOW_BIT))L
 
 #endif
 

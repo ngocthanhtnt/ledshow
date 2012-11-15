@@ -1,7 +1,7 @@
 #define BORDER_SHOW_C
 #include "Includes.h"
 
-#if BORDER_SHOW_EN > 0
+#if 1//BORDER_SHOW_EN > 0
 /*
 const INT8U B0Data0[] = {0xFF, 0xFF,0xFF, 0xFF, 0xFF};//, 0xFF};
 const INT8U B0Data1[] = {0xFF, 0xFF,0xF0, 0x00, 0x00};//, 0x00};
