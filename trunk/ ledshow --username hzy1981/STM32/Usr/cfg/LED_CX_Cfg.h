@@ -23,6 +23,10 @@
 #if defined(CARD_C)
 #if CARD_TYPE == CARDC //
 #define CARD_NAME "C"  //卡名称
+#elif CARD_TYPE == CARDCW0 //短信
+#define CARD_NAME "CW0"  //卡名称
+#elif CARD_TYPE == CARDCW1 //GRPS
+#define CARD_NAME "CW1"
 #else
 #error "card CX name error"
 #endif
@@ -37,8 +41,14 @@
 #define FONT_NUM 2 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
+#if CARD_TYPE == CARDC
 #define MAX_POINTS (736*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  3000 //最大存储块数
+#elif CARD_TYPE == CARDCW0 || CARD_TYPE == CARDCW1
+#define MAX_POINTS (800*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
+#define MAX_STORA_BLOCK_NUM  3000 //最大存储块数
+#endif
+
 #define DATA_FLASH_SIZE 2000000	//dataflash大小
 #define MAX_SCAN_BLOCK_NUM 8 //最大扫描块
 #define MAX_SCAN_WIDTH 2056 //最大扫描宽度
@@ -49,6 +59,7 @@
 
 #define CLOCK_EN       1 //时钟使能
 
+#if CARD_TYPE == CARDC || CARD_TYPE == CARDCW1 //串口卡或者GPRS卡
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
 #define CLOCK_SHOW_EN  1 //表盘显示使能
@@ -58,7 +69,22 @@
 #define TIMER_SHOW_EN  1 //定时显示使能 
 #define HUMIDITY_SHOW_EN 0 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
-#define TEXT_SHOW_EN   0
+#define TXT_SHOW_EN    0
+//短信卡
+#elif CARD_TYPE == CARDCW0
+#define BORDER_SHOW_EN 0 //边框显示使能
+#define PIC_SHOW_EN    0 //图文显示使能
+#define CLOCK_SHOW_EN  0 //表盘显示使能
+#define LUN_SHOW_EN    0 //农历显示使能
+#define TEMP_SHOW_EN   0 //温度显示使能
+#define TIME_SHOW_EN   0 //时间显示使能
+#define TIMER_SHOW_EN  0 //定时显示使能 
+#define HUMIDITY_SHOW_EN 0 //湿度显示使能
+#define NOISE_SHOW_EN  0 //噪音显示使能
+#define TXT_SHOW_EN    1
+#else
+#error "CARD Type Error"
+#endif
 
 #define USE_SPI_FLASH //串行SPIFlash
 //#define USE_NOR_FLASH //并行NORFlash
@@ -66,7 +92,17 @@
 #define UDISK_EN  1//u盘使能
 #define CHIP_USB_HOST //定义表示使用片上USB HOST接口
 #define NET_EN	 0//网络使能
+
+#if CARD_TYPE == CARDCW0 //短信卡
 #define GPRS_EN  0//GPRS使能
+#define SMS_EN   1//短信使能
+#elif CARD_TYPE == CARDCW1 //GPRS卡
+#define GPRS_EN  1//GPRS使能
+#define SMS_EN   0//短信使能
+#else
+#define GPRS_EN  0//GPRS使能
+#define SMS_EN   0//短信使能
+#endif  
 
 //#define COM_BUF_ID 0x00
 //#define NET_BUF_ID 0x01

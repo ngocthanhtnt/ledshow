@@ -117,23 +117,34 @@ INT8U Bcd2Hex_Byte(INT8U Byte)
   return (Byte & 0x0F) + ((Byte & 0xF0) >> 4) * 10;
 }
 
+extern void OS_Tick_ISR(void);
 void Pub_Timer_Proc(void)
 {
 //GPIO_SetBits(GPIOB,GPIO_Pin_9); //²âÊÔÊä³ö
 #if TIM1_EN
 	Pub_Timer.Ms++;
 	Pub_Timer.Ms_Counts++;
-	if(Pub_Timer.Ms_Counts >= 100)
+	if(Pub_Timer.Ms_Counts >= 10)
 	{
+	    OS_Tick_ISR();
+
 	    Pub_Timer.Ms_Counts = 0;
 
-	    Pub_Timer.Ms100++;
-	    Pub_Timer.Ms100_Counts ++;
-	
-		if(Pub_Timer.Ms100_Counts >= 10)
+		Pub_Timer.Ms10 ++;
+		Pub_Timer.Ms10_Counts ++;
+
+	    if(Pub_Timer.Ms10_Counts >= 10)
 		{
-		  Pub_Timer.Ms100_Counts = 0;
-		  Pub_Timer.Sec ++;
+		  Pub_Timer.Ms10_Counts = 0;
+	      
+		  Pub_Timer.Ms100++;
+	      Pub_Timer.Ms100_Counts ++;
+	
+		  if(Pub_Timer.Ms100_Counts >= 10)
+		  {
+		    Pub_Timer.Ms100_Counts = 0;
+		    Pub_Timer.Sec ++;
+		  }
 		}
 	}
 #else

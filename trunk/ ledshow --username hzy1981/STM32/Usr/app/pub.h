@@ -23,7 +23,9 @@ typedef struct
   INT8U Head;
   INT8U Ms100_Counts;
   INT8U Us100_Counts;
-  //INT32U Ms10;  //10ms
+  INT8U Ms10_Counts;
+
+  INT32U Ms10;  //10ms
   INT32U Ms100;
 
   INT32U Ms;

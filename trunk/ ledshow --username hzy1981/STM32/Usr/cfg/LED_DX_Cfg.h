@@ -64,7 +64,7 @@
 #define TIMER_SHOW_EN  1 //定时显示使能 
 #define HUMIDITY_SHOW_EN 1 //湿度显示使能
 #define NOISE_SHOW_EN  1 //噪音显示使能
-#define TEXT_SHOW_EN   0
+#define TXT_SHOW_EN    0
 
 #define USE_SPI_FLASH //串行SPIFlash
 //#define USE_NOR_FLASH //并行NORFlash
@@ -83,7 +83,7 @@
 #endif
 
 #define GPRS_EN  0//GPRS使能
-
+#define SMS_EN   0//短信使能
 //#define COM_BUF_ID 0x00
 //#define NET_BUF_ID 0x01
 //#define GPRS_BUF_ID 0x02

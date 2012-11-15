@@ -68,7 +68,9 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
     //每个汉字，占两个字节, 取其区位号
     INT8U FontWidth,FontHeight,i,j,Re,RD_Flag = 0;
     INT32U offset, len, Width;
-    FILE *file;
+#if QT_EN    
+	FILE *file;
+#endif
 
     if(CHK_ASC(Data[0]) EQ 0) //中文
     {
@@ -111,9 +113,11 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
 
     if(RD_Flag)
     {
+#if QT_EN
         file = getFontFile(FontSize, (CHK_ASC(Data[0]))?0:1);
         fseek(file, offset, SEEK_SET);
         fread(Font_Data.Data, len , 1, file); //读取数据长度
+#endif
     }
 
     //复制字体到显示缓冲区

@@ -1,20 +1,20 @@
 #ifndef OS_CFG_H
 #define OS_CFG_H
 
-#define OS_TASK_NUM       1 //最大任务个数,最大不能超过32
-#define OS_EVENT_NUM      5 //最大事件个数
+#define OS_TASK_NUM       2 //最大任务个数,最大不能超过32
+#define OS_EVENT_NUM      3 //最大事件个数
 //注意：本系统最多支持32个任务和16个事件,如果需要支持更多个数，需要修改OS_Core.h文件中的Tcb和OS_Event中的变量
 
-#define OS_TICK_ISR_EN    0 //0表示使用OS_Check_Tick()查询定时器的方式产生时基，1表示使用中断OS_Tick_ISR产生时基
+#define OS_TICK_ISR_EN    1 //0表示使用OS_Check_Tick()查询定时器的方式产生时基，1表示使用中断OS_Tick_ISR产生时基
 #define OS_TICK_HOOK_EN   0 //0表示不使用TickHook，1表示使用TickHook
-#define OS_MS_PER_TICK    5 //每个Tick间隔多少ms
+#define OS_MS_PER_TICK    10 //每个Tick间隔多少ms
 
-#define OS_TASK_NAME_EN   1 //0表示不增加任务名字功能,1表示增加
+#define OS_TASK_NAME_EN   0 //0表示不增加任务名字功能,1表示增加
 #define OS_TASK_NAME_SIZE 10 //任务名字大小
 
 #define OS_TASK_SWITCH_HOOK_EN 0//任务切换Hook使能
 
-#define OS_TASK_SUSPEND_EN 1 //任务挂起功能
+#define OS_TASK_SUSPEND_EN 0 //任务挂起功能
 
 #define OS_CS_EN      1 //操作系统是否采用内存变量CS校验
 #define OS_CS_BYTES       1 //校验和大小

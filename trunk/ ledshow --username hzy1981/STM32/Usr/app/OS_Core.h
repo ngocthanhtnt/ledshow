@@ -33,7 +33,7 @@ typedef struct{
   OS_Task_Env Env;          //当前任务环境
   void (*pEntry)();         //函数入口
   OS_STK *pStk;             //堆栈起始指针
-  OS_INT16U Stk_Size;       //堆栈大小
+  OS_INT32U Stk_Size;       //堆栈大小
 
 #if OS_TASK_NAME_EN>0        //使用任务名称
   OS_INT8S Name[OS_TASK_NAME_SIZE];//任务名字,多保留一个字节填0
@@ -79,7 +79,7 @@ OS_EXT volatile OS_Task_Info Task_Info;//当前任务信息
 OS_EXT void OS_Init(void);
 OS_EXT void OS_Change_Cur_Task_ID(void);
 OS_EXT void OS_Task_Switch_Proc(void);
-OS_EXT OS_INT8U OS_Create_Task(void(*pEntry)(),OS_STK *pStk,OS_INT16U Stk_Size,OS_INT8U Name[]);
+OS_EXT OS_INT8U OS_Create_Task(void(*pEntry)(),OS_STK *pStk,OS_INT32U Stk_Size,CONST OS_INT8S Name[]);
 OS_EXT void OS_Task_Suspend(OS_INT8U Task_ID);
 OS_EXT void OS_Task_Unsuspend(OS_INT8U Task_ID);
 OS_EXT void OS_Start(void);

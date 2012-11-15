@@ -684,9 +684,9 @@ typedef struct
 //所有参数的联合
 typedef union
 {
-#if PIC_SHOW_EN  
+//#if PIC_SHOW_EN  
   S_Pic_Para Pic_Para;
-#endif
+//#endif
 #if CLOCK_SHOW_EN  
   S_Clock_Para Clock_Para;
 #endif

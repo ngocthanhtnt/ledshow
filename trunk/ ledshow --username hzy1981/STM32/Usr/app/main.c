@@ -5,6 +5,8 @@
 #else
 #define MAIN_STACK_SIZE 400
 #endif
+
+#define SMS_GPRS_STACK_SIZE 200
  
  void test()
  {
@@ -28,10 +30,20 @@ typedef struct
   INT16U Left;
 
   INT8U Tail;
-}S_Stack;
+}S_Main_Stack;
 
+typedef struct
+{
+  INT8U Head;
 
-S_Stack Main_Stack = {CHK_BYTE, {0}, 0, CHK_BYTE};
+  INT32U Stack[SMS_GPRS_STACK_SIZE];
+  INT16U Left;
+
+  INT8U Tail;
+}S_SMS_GPRS_Stack;
+
+S_Main_Stack Main_Stack = {CHK_BYTE, {0}, 0, CHK_BYTE};	 //主任务stack
+S_SMS_GPRS_Stack SMS_GPRS_Stack = {CHK_BYTE, {0}, 0, CHK_BYTE};	 //短信、GRPS通信维护任务
 
 //检测系统堆栈剩余情况
 void Chk_Main_Stack(void)
@@ -91,11 +103,8 @@ void Chk_Main_Stack(void)
 
 extern const char version[];
 
-//注意修改了起始地址后要改宏APP_ADDRESS_OFF,否则程序跑不起来！！！
-int main(void)
+void mainInit(void)
 {
-  __set_MSP((INT32U)(&Main_Stack.Stack[MAIN_STACK_SIZE - 1])); //修改为人工堆栈方式
-
   Ram_Init();
 
 #if WDG_EN
@@ -132,12 +141,12 @@ int main(void)
 
   SET_STATUS_LED_ON(); //打开LED状态灯
 
-  Encrypt_Chk();
+  //Encrypt_Chk();
 
-  //Screen_Temp_Init();
+}
 
-  while(1)
-  {
+void mainProc(void)
+{
     Screen_Test(); //屏幕检测
 
 	//Fac_Status_Self_Test(); //硬件自检
@@ -160,6 +169,53 @@ int main(void)
     Chk_Main_Stack();
 
     Clr_Watch_Dog();
-  }
-  
 }
+
+//注意修改了起始地址后要改宏APP_ADDRESS_OFF,否则程序跑不起来！！！
+#if SMS_EN == 0 && GPRS_EN == 0
+int main(void)
+{
+  __set_MSP((INT32U)(&Main_Stack.Stack[MAIN_STACK_SIZE - 1])); //修改为人工堆栈方式
+
+  mainInit();
+
+  while(1)
+  {
+	mainProc();
+  } 
+}
+#else
+
+//SMS、GRPS通信任务
+void smsGPRSTask(void)
+{
+  while(1)
+  {
+    OS_TimeDly_Ms(1);
+  }
+}
+
+//主任务
+void mainTask(void)
+{
+  mainInit();
+
+  OS_Create_Task(&smsGPRSTask,(OS_STK *)(&SMS_GPRS_Stack.Stack[SMS_GPRS_STACK_SIZE - 1]),sizeof(SMS_GPRS_Stack.Stack),"smsGPRSTask");
+
+  while(1)
+  {
+	mainProc();
+	OS_TimeDly_Ms(10);
+  }
+}
+
+
+int main(void)
+{ 
+  OS_Init();
+  
+  OS_Create_Task(&mainTask,(OS_STK *)(&Main_Stack.Stack[MAIN_STACK_SIZE - 1]),sizeof(Main_Stack.Stack),"mainTask");
+  OS_Start();
+}
+
+#endif

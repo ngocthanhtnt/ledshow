@@ -5,7 +5,7 @@
 //#define QT_EN 1
 extern void LED_Scan_One_Row(void);
 
-#if PIC_SHOW_EN
+#if 1//PIC_SHOW_EN
 //数据移入方式
 const S_Mode_Func In_Mode_Func[]=
 {
