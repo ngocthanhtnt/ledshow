@@ -273,6 +273,7 @@ EXT INT8U Chk_JP_Status(void);
 EXT void UART1_Init(void);
 EXT void UART2_Init(void); //´®¿Ú2³õÊ¼»¯
 EXT void UART3_Init(void);
+EXT void UART4_Init(void);
 EXT void Com_Send_Byte(INT8U Ch, INT8U Data);
 EXT void Unselect_SPI_Device(void);
 EXT INT16U Self_Test(void);

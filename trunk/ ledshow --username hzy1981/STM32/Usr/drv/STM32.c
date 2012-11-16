@@ -260,9 +260,9 @@ void Com_Send_Byte(INT8U Ch, INT8U Data)
   }
   else if(Ch EQ CH_GPRS)
   {
-#if GPRS_EN
-     while (!(USART3->SR & USART_FLAG_TXE));
-     USART3->DR = (Data & (uint16_t)0x01FF);
+#if GPRS_EN || SMS_EN
+     while (!(UART4->SR & USART_FLAG_TXE));
+     UART4->DR = (Data & (uint16_t)0x01FF);
 #else
      ASSERT_FAILED();
 #endif
@@ -987,6 +987,38 @@ void UART3_Init(void)
 
 	//串口3用作接收传感器数据
 	USART_InitStructure.USART_BaudRate            = 9600;//Get_Com_Baud();
+	USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
+	USART_InitStructure.USART_StopBits            = USART_StopBits_1;
+	USART_InitStructure.USART_Parity              = USART_Parity_No ;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_Mode                = USART_Mode_Rx | USART_Mode_Tx;
+	USART_Init(USART3, &USART_InitStructure);
+	USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
+	USART_Cmd(USART3, ENABLE);
+}
+
+//GPRS模块接口
+void UART4_Init(void)
+{
+    USART_InitTypeDef USART_InitStructure = {0};
+    GPIO_InitTypeDef GPIO_InitStructure;
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE );
+
+	//PC11串口4接收
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+ 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	
+	//PC10串口4发送
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+	//串口4用于GPRS接口
+	USART_InitStructure.USART_BaudRate            = 115200;//Get_Com_Baud();
 	USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits            = USART_StopBits_1;
 	USART_InitStructure.USART_Parity              = USART_Parity_No ;

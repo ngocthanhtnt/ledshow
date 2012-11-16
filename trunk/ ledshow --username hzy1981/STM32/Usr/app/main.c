@@ -189,9 +189,10 @@ int main(void)
 //SMS、GRPS通信任务
 void smsGPRSTask(void)
 {
+  gsmInit();
   while(1)
   {
-    OS_TimeDly_Ms(1);
+    smsProc();
   }
 }
 

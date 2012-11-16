@@ -827,6 +827,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\cfg\LED_ABX_Cfg.h</FilePath>
             </File>
+            <File>
+              <FileName>LED_CWX_Cfg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\cfg\LED_CWX_Cfg.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1157,6 +1162,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\app\Sms.c</FilePath>
             </File>
+            <File>
+              <FileName>Sms.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\Sms.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1321,6 +1331,16 @@
               <FileName>SIM900A.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\SIM900A.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CWX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CWX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CWX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CWX_Drv.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -2307,6 +2327,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\cfg\LED_ABX_Cfg.h</FilePath>
             </File>
+            <File>
+              <FileName>LED_CWX_Cfg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\cfg\LED_CWX_Cfg.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2637,6 +2662,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\app\Sms.c</FilePath>
             </File>
+            <File>
+              <FileName>Sms.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\Sms.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2801,6 +2831,16 @@
               <FileName>SIM900A.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\SIM900A.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CWX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CWX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CWX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CWX_Drv.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -3753,6 +3793,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\cfg\LED_ABX_Cfg.h</FilePath>
             </File>
+            <File>
+              <FileName>LED_CWX_Cfg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\cfg\LED_CWX_Cfg.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4083,6 +4128,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\app\Sms.c</FilePath>
             </File>
+            <File>
+              <FileName>Sms.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\Sms.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4247,6 +4297,16 @@
               <FileName>SIM900A.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\SIM900A.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CWX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CWX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CWX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CWX_Drv.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -5233,6 +5293,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\cfg\LED_ABX_Cfg.h</FilePath>
             </File>
+            <File>
+              <FileName>LED_CWX_Cfg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\cfg\LED_CWX_Cfg.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -5563,6 +5628,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\app\Sms.c</FilePath>
             </File>
+            <File>
+              <FileName>Sms.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\Sms.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -5727,6 +5797,16 @@
               <FileName>SIM900A.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\SIM900A.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CWX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CWX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CWX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CWX_Drv.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -6229,7 +6309,7 @@
             <uThumb>0</uThumb>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_STDPERIPH_DRIVER, STM32F10X_CL,CARD_C</Define>
+              <Define>USE_STDPERIPH_DRIVER, STM32F10X_CL,CARD_CW</Define>
               <Undefine></Undefine>
               <IncludePath>..\;..\..\..\Libraries\CMSIS\CM3\CoreSupport;..\..\..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\..\..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\..\..\Utilities\STM32_EVAL;..\..\..\Utilities\STM32_EVAL\STM32100E_EVAL;..\..\..\Utilities\STM32_EVAL\Common;..\..\..\Usr\app;..\..\..\Usr\cfg;..\..\..\Usr\drv;..\..\..\Libraries\STM32_USB_HOST_Driver\inc;..\..\..\Libraries\STM32_USB_HOST_Library\Class\MSC\inc;..\..\..\Libraries\STM32_USB_HOST_Library\Core\inc;..\..\..\Utilities\Third_Party\efsl\inc;..\..\..\Libraries\STM32_USB_HOST_Library\Class\HID\inc</IncludePath>
             </VariousControls>
@@ -6679,6 +6759,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\cfg\LED_ABX_Cfg.h</FilePath>
             </File>
+            <File>
+              <FileName>LED_CWX_Cfg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\cfg\LED_CWX_Cfg.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -7009,6 +7094,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\app\Sms.c</FilePath>
             </File>
+            <File>
+              <FileName>Sms.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\Sms.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -7173,6 +7263,16 @@
               <FileName>SIM900A.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Usr\drv\SIM900A.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CWX_Drv.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CWX_Drv.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_CWX_Drv.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\LED_CWX_Drv.h</FilePath>
             </File>
           </Files>
         </Group>

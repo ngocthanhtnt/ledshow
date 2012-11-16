@@ -145,9 +145,13 @@
 #include "LED_ABX_Cfg.h"
 #include "LED_ABX_Drv.h"
 #elif defined(CARD_C)
-#define CARD_TYPE CARDCW0
+#define CARD_TYPE CARDC
 #include "LED_CX_Cfg.h"
 #include "LED_CX_Drv.h"
+#elif defined(CARD_CW)
+#define CARD_TYPE CARDCW0
+#include "LED_CWX_Cfg.h"
+#include "LED_CWX_Drv.h"
 #elif defined(CARD_D)
 #define CARD_TYPE CARDDM
 #include "LED_DX_Cfg.h"

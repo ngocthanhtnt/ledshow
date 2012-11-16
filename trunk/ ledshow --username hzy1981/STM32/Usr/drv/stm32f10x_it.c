@@ -283,4 +283,24 @@ void USART3_IRQHandler(void)	//串口3中断服务程序
 	}
 #endif
 }
+
+//串口中断4用于接收GPRS数据
+#if SMS_EN || GPRS_EN
+void USART4_IRQHandler(void)	//串口4中断服务程序
+{
+   u8 Res;
+   //STM_EVAL_LEDToggle(LED2);
+   if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
+	{
+	 Res =USART_ReceiveData(USART3);//(USART1->DR);	//读取接收到的数据
+  
+	 if(SMS_GPRS_Rcv_Buf.WRPosi < sizeof(SMS_GPRS_Rcv_Buf.Buf) - 1)
+	 {
+       SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi ++] = Res;
+	   SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi] = 0;
+	 }
+	 
+	}
+}
+#endif
 /******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
