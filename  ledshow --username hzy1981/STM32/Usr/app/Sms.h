@@ -11,6 +11,8 @@
 #define GSM_OK			1		// OK
 #define GSM_ERR			-1		// ERROR
 
+#define MSG_PROC_NUM 3
+
 // 短消息参数结构，编码/解码共用
 // 其中，字符串以'\0'结尾
 typedef struct {
@@ -26,8 +28,18 @@ typedef struct {
 // 读取应答的缓冲区
 typedef struct {
 	int len;
-	char data[16384];
+	char data[1280];
 } SM_BUFF;
+
+typedef struct{
+  INT8U Head;
+  char Buf[12800];
+  INT16U WRPosi;
+  INT16U RDPosi;
+  INT8U Tail;
+}S_SMS_GPRS_Rcv_Buf;
+
+EXT S_SMS_GPRS_Rcv_Buf SMS_GPRS_Rcv_Buf;
 
 int gsmBytes2String(const unsigned char* pSrc, char* pDst, int nSrcLength);
 int gsmString2Bytes(const char* pSrc, unsigned char* pDst, int nSrcLength);
@@ -52,5 +64,5 @@ int gsmGetResponse(SM_BUFF* pBuff);
 
 int gsmParseMessageList(SM_PARAM* pMsg, SM_BUFF* pBuff);
 
-
+void smsProc(void);
 #endif // !defined(__SMS_H__)

@@ -1,4 +1,6 @@
 #include "Includes.h"
+
+#if SMS_EN
 //#include "stdafx.h"
 //#include "Sms.h"
 //#include "Comm.h"
@@ -715,7 +717,7 @@ int gsmEncodePdu(const SM_PARAM* pSrc, char* pDst)
 {
 	int nLength;			// 内部用的串长度
 	int nDstLength;			// 目标PDU串长度
-	unsigned char buf[256];	// 内部用的缓冲区
+	static unsigned char buf[256];	// 内部用的缓冲区
 
 	// SMSC地址信息段
 	nLength = strlen(pSrc->SCA);	// SMSC地址字符串的长度	
@@ -773,7 +775,7 @@ int gsmDecodePdu(const char* pSrc, SM_PARAM* pDst)
 {
 	int nDstLength;			// 目标PDU串长度
 	unsigned char tmp;		// 内部用的临时字节变量
-	unsigned char buf[256];	// 内部用的缓冲区
+	static unsigned char buf[256];	// 内部用的缓冲区
 
 	// SMSC地址信息段
 	gsmString2Bytes(pSrc, &tmp, 2);	// 取长度
@@ -832,6 +834,13 @@ BOOL gsmInit(void)
 {
 	char ans[128];		// 应答串
 
+	//启动GSM模块
+	SET_GSM_ON(1);
+	OS_TimeDly_Ms(100);
+	SET_GSM_ON(0);
+	OS_TimeDly_Ms(1500);
+	SET_GSM_ON(1);
+
 	// 测试GSM-MODEM的存在性
 	WriteComm("AT\r", 3);
 	ReadComm(ans, 128);
@@ -839,6 +848,9 @@ BOOL gsmInit(void)
 
 	// ECHO OFF
 	WriteComm("ATE0\r", 5);
+	ReadComm(ans, 128);
+
+	WriteComm("AT+CSCS=\"UCS2\"\r", 15);
 	ReadComm(ans, 128);
 
 	// PDU模式
@@ -858,8 +870,8 @@ int gsmSendMessage(SM_PARAM* pSrc)
 	unsigned char nSmscLength;	// SMSC串长度
 	int nLength;		// 串口收到的数据长度
 	char cmd[16];		// 命令串
-	char pdu[512];		// PDU串
-	char ans[128];		// 应答串
+	static char pdu[512];		// PDU串
+	static char ans[128];		// 应答串
 
 	nPduLength = gsmEncodePdu(pSrc, pdu);	// 根据PDU参数，编码PDU串
 	strcat(pdu, "\x01a");		// 以Ctrl-Z结束
@@ -923,6 +935,9 @@ int gsmGetResponse(SM_BUFF* pBuff)
 	nLength = ReadComm(&pBuff->data[pBuff->len], 128);	
 	pBuff->len += nLength;
 
+	if(pBuff->len + 128 >= sizeof(pBuff->len))
+	  return GSM_OK;
+
 	// 确定GSM MODEM的应答状态
 	nState = GSM_WAIT;
 	if ((nLength > 0) && (pBuff->len >= 4))
@@ -963,8 +978,56 @@ int gsmParseMessageList(SM_PARAM* pMsg, SM_BUFF* pBuff)
 
 			pMsg++;		// 准备读下一条短消息
 			nMsg++;		// 短消息计数加1
+
+			if(nMsg >= MSG_PROC_NUM) //最多处理MSG_PROC_NUM条
+			  break;
 		}
 	}
 
 	return nMsg;
 }
+
+SM_BUFF smsBuf;
+SM_PARAM smsPara[MSG_PROC_NUM];
+
+void smsProc(void)
+{
+
+  INT8U i;
+  int re;
+
+  if(strstr(SMS_GPRS_Rcv_Buf.Buf, "+CMTI") EQ NULL)	//每秒检查是否收到短信
+  {
+	OS_TimeDly_Ms(1000);
+	return;
+  }
+ 
+ OS_TimeDly_Ms(100);
+
+ ClrComm(); //清接收串口
+  
+ gsmReadMessageList(); //读短消息列表
+
+ for(i = 0; i < 100; i ++) //10s内等待应答
+ {
+   OS_TimeDly_Ms(100); //等待应答
+
+   re = gsmGetResponse(&smsBuf);
+   if(re EQ GSM_OK)
+     break;
+   else if(re EQ GSM_ERR)
+     break;
+ }
+
+  if(re EQ GSM_OK)
+  {
+	  gsmParseMessageList(&smsPara[0], &smsBuf);
+
+  }
+
+  WriteComm("AT+CMGDA=6\r", 11); //删除所有短消息
+  OS_TimeDly_Ms(100);
+  ClrComm(); //清接收串口
+}
+#endif
+
