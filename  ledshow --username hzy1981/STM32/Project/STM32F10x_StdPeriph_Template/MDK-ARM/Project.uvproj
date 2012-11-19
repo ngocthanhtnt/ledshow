@@ -1167,6 +1167,16 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\Sms.h</FilePath>
             </File>
+            <File>
+              <FileName>SMS_Show.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\app\SMS_Show.c</FilePath>
+            </File>
+            <File>
+              <FileName>SMS_Show.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\SMS_Show.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2667,6 +2677,16 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\Sms.h</FilePath>
             </File>
+            <File>
+              <FileName>SMS_Show.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\app\SMS_Show.c</FilePath>
+            </File>
+            <File>
+              <FileName>SMS_Show.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\SMS_Show.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4132,6 +4152,16 @@
               <FileName>Sms.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\Sms.h</FilePath>
+            </File>
+            <File>
+              <FileName>SMS_Show.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\app\SMS_Show.c</FilePath>
+            </File>
+            <File>
+              <FileName>SMS_Show.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\SMS_Show.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -5633,6 +5663,16 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\Sms.h</FilePath>
             </File>
+            <File>
+              <FileName>SMS_Show.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\app\SMS_Show.c</FilePath>
+            </File>
+            <File>
+              <FileName>SMS_Show.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\SMS_Show.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -7098,6 +7138,16 @@
               <FileName>Sms.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\Sms.h</FilePath>
+            </File>
+            <File>
+              <FileName>SMS_Show.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\app\SMS_Show.c</FilePath>
+            </File>
+            <File>
+              <FileName>SMS_Show.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\app\SMS_Show.h</FilePath>
             </File>
           </Files>
         </Group>

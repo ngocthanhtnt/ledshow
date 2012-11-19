@@ -58,10 +58,16 @@
 #define SDI_FILE_PARA     0x4000 //文件参数
 #define SDI_FILE_PARA_BK0 0x6000 //文件参数备份
 
-#define SDI_FILE_BORDER     0x7000
-#define SDI_FILE_BORDER_BK0 0x9000
+//#define SDI_FILE_BORDER     0x7000
+//#define SDI_FILE_BORDER_BK0 0x9000
 
-#define SDI_SHOW_DATA     0xA000 //显示数据
+#define SDI_SMS_FILE_PARA     0x8000
+#define SDI_SMS_FILE_PARA_BK0 0x8200
+
+#define SDI_SMS_FILE_FLAG     0x8400
+#define SDI_SMS_FILE_FLAG_BK0 0x8401
+
+#define SDI_SHOW_DATA     0xB000 //显示数据
 
 
 

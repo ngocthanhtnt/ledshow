@@ -123,7 +123,18 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
 #ifdef SDI_CUR_BLOCK_INDEX_BK1
   {SDI_CUR_BLOCK_INDEX_BK1, sizeof(S_Cur_Block_Index), 1},
 #endif                                   
-                                   
+
+#if SMS_EN //短信控制卡增加
+  {SDI_SMS_FILE_PARA, SMS_FILE_PARA_LEN, MAX_SMS_NUM},
+#ifdef SDI_SMS_FILE_PARA_BK0
+  {SDI_SMS_FILE_PARA_BK0, SMS_FILE_PARA_LEN, MAX_SMS_NUM},
+#endif
+
+  {SDI_SMS_FILE_FLAG, MAX_SMS_NUM / 8, 1},
+#ifdef SDI_SMS_FILE_FLAG_BK0
+  {SDI_SMS_FILE_FLAG_BK0, MAX_SMS_NUM / 8, 1},
+#endif
+#endif
   //节目显示数据
   {SDI_SHOW_DATA, BLOCK_DATA_LEN, MAX_STORA_BLOCK_NUM},
 

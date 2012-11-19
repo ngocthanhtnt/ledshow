@@ -50,6 +50,10 @@
 #define PROG_COUNTS_MODE 0x00
 #define PROG_TIME_MODE  0x01
 
+#define TXT_NORMAL      0x00 //正常文本
+#define TXT_SMS_NORMAL  0x01 //短信发来的文本
+#define TXT_SMS_BK_FILE 0x02 //短信发来的启用备用文件
+
 #define COM_RS232 0x01
 #define COM_RS485 0x02
 #define COM_UDISK 0x04
@@ -402,6 +406,9 @@ typedef struct
   INT8U Font_Size; //字体大小
   INT8U Color; //颜色
   INT16U Len; //文字长度
+
+  INT8U Txt_Flag; //短信标志--正常图文情况下置0,短信TXT情况下置AA,短信但在短信情况下，数据读取好，直接放在buf中.
+  INT8U Flag_No;
 
   INT8U CS[CS_BYTES];
   INT8U Tail;

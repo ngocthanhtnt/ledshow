@@ -48,6 +48,7 @@ INPUT(
 ./release\mmtimer.o
 ./release\txtproperty.o
 ./release\Txt_Show.o
+./release\SMS_Show.o
 ./release\moc_mainwindow.o
 ./release\moc_showArea.o
 ./release\moc_progManage.o
