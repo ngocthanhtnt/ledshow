@@ -807,20 +807,15 @@ void getProgParaFromSettings(QString str, S_Prog_Para &para)
       para.Timing[0].End_Time[1] = (INT8U)settings.value("endMin").toInt();
   }
 
-  if(settings.value("playCountCheck").toBool())//按次数播放?
+  if(settings.value("playMode").toBool() EQ 0)//按次数播放?
   {
     para.Mode = PROG_COUNTS_MODE;
     para.Counts = (INT16U)settings.value("playCount").toInt();
   }
-  else if(settings.value("playTimeCheck").toBool())//按时间播放
+  else// if(settings.value("playTimeCheck").toBool())//按时间播放
   {
     para.Mode = PROG_TIME_MODE;
     para.Time = settings.value("playTime").toInt();
-  }
-  else
-  {
-    para.Mode = PROG_COUNTS_MODE;
-    para.Counts = 1;//(INT16U)settings.value("playCount").toInt();
   }
 
   settings.beginGroup("borderPara");

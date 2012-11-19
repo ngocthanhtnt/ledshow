@@ -582,6 +582,36 @@ INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, v
   INT16U Len;
   INT16U i;
   S_File_Para_Index *p;
+  S_Txt_Para *pPara;
+
+#if SMS_EN //短信使能
+  if(Area_No EQ 0) //第0分区都是用个短信的内容显示
+  {
+     Len = Read_Cur_SMS_File_Para(pDst, pDst_Start, DstLen); //根据当前SMS_File的Cur_No读取文件参数
+     if(Len > 0)
+     {
+         pPara = (S_Txt_Para *)pDst;
+         if(pPara->Txt_Flag EQ TXT_SMS_BK_FILE) //使用备用节目文件
+         {
+            File_No = pPara->File_No;
+            Len = 0;
+
+            if(File_No >= Prog_Para.Area_File_Num[0])//没有这个文件参数
+                return 0;
+
+            Prog_Status.Area_Status[0].File_No = File_No; //当前播放文件编号
+            SET_SUM(Prog_Status.Area_Status[0]);
+         }
+     }
+
+     if(Len > 0)
+     {
+         memcpy(pDst, (INT8U *)pDst + 1, sizeof(S_Txt_Para) - CHK_BYTE_LEN);
+         return Len;
+     }
+
+  }
+#endif
 
   Read_File_Para_Index(Prog_No, Pub_Buf, sizeof(Pub_Buf));
   p = (S_File_Para_Index *)Pub_Buf;
@@ -1032,12 +1062,20 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
   else if(Flag EQ SHOW_TXT) //内码
   {
     //读取Txt内码
-    //if(Read_Storage_Data(SDI_SHOW_DATA + Index, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)) == 0)
-        //memset(Pub_Buf, 0, sizeof(Pub_Buf));
+#if SMS_EN
+    if(Area_No EQ 0 && pFile_Para->Txt_Para.Txt_Flag EQ TXT_SMS_NORMAL) //第0分区是短信显示分区,读出的短信数据保存在S_SMS_Data.Data中
+        Read_Txt_Show_Data(pShow_Data, Area_No, pFile_Para, SMS_Data.Data, sizeof(SMS_Data.Data), SIndex, 0, 0, 0);
+    else
+    {
+      Read_Txt_Show_Chr_Data(SDI_SHOW_DATA + Index, Pub_Buf, sizeof(Pub_Buf));
+      //读取第SIndex屏
+      Read_Txt_Show_Data(pShow_Data, Area_No, pFile_Para, Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, 0, 0, 0);
+    }
+#else
     Read_Txt_Show_Chr_Data(SDI_SHOW_DATA + Index, Pub_Buf, sizeof(Pub_Buf));
     //读取第SIndex屏
     Read_Txt_Show_Data(pShow_Data, Area_No, pFile_Para, Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, 0, 0, 0);
-
+#endif
     return 1;
   }
 #endif

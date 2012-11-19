@@ -1,3 +1,6 @@
+#ifndef INCLUDES_H
+#define INCLUDES_H
+
 #include "string.h"
 #include "stdio.h"
 #include "stdlib.h"
@@ -34,9 +37,17 @@
 #include "SIM900a.h"
 #endif
 
+#if SMS_EN || GPRS_EN
+#include "sms.h"
+#endif
+
 #include "FILE_SYS.h"
 #include "spi_flash.h"
 #include "LED_Scan.h"
+#endif
+
+#if SMS_EN
+#include "sms_show.h"
 #endif
 
 #include "Storage.h"
@@ -58,7 +69,9 @@
 #include "com.h"
 #include "Shell.h"
 #include "Net_Proc.h"
-#include "sms.h"
+#endif
+
+
 
 
 

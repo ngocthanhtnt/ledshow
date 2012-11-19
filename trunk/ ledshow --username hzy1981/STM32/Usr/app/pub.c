@@ -126,8 +126,9 @@ void Pub_Timer_Proc(void)
 	Pub_Timer.Ms_Counts++;
 	if(Pub_Timer.Ms_Counts >= 10)
 	{
+#if QT_EN == 0
 	    OS_Tick_ISR();
-
+#endif
 	    Pub_Timer.Ms_Counts = 0;
 
 		Pub_Timer.Ms10 ++;

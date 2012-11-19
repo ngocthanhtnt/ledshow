@@ -97,6 +97,9 @@
 #define MAX_SCAN_BLOCK_NUM 10
 #define SCAN_DATA_MODE SCAN_SOFT_MODE0
 
+#define MAX_SMS_NUM 400
+#define SMS_EN 1
+
 #define CLOCK_EN       1 //时钟使能
 
 #define BORDER_SHOW_EN 1 //边框显示使能

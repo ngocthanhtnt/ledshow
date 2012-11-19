@@ -48,6 +48,7 @@ INPUT(
 ./debug\mmtimer.o
 ./debug\txtproperty.o
 ./debug\Txt_Show.o
+./debug\SMS_Show.o
 ./debug\moc_mainwindow.o
 ./debug\moc_showArea.o
 ./debug\moc_progManage.o
