@@ -1288,7 +1288,7 @@ void CshowArea::paintEvent(QPaintEvent *)
 
             //INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, INT8U Data[], INT16U Data_Len, INT8U SCN_No)
             //Set_Area_Border_Out(Area_No);
-            Read_Txt_Show_Data(&Show_Data, Area_No, (U_File_Para *)&Prog_Status.File_Para[0], this->txtData, strlen((char *)(this->txtData)), this->page, 0, 0, 0);
+            Read_Txt_Show_Data(&Show_Data, Area_No, (S_Txt_Para *)&Prog_Status.File_Para[0].Txt_Para, this->txtData, strlen((char *)(this->txtData)), this->page, RD_TXT_NORMAL_FLAG, 0, 0);
             //Set_Area_Border_In(Area_No);
             if(w->property->txtProperty)
             {

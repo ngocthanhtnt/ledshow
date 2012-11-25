@@ -72,6 +72,9 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
 	FILE *file;
 #endif
 
+    if(pointFlag & RD_TXT_NODATA_FLAG)
+        return 1;
+
     if(CHK_ASC(Data[0]) EQ 0) //中文
     {
       FontWidth = GET_HZ_FONT_WIDTH(FontSize);
@@ -102,7 +105,7 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
       }
     }
 
-    if(pointFlag)//读取某点数据
+    if(pointFlag & RD_TXT_POINT_FLAG)//读取某点数据
     {
       if(!(X0 >= X && X0 <X + FontWidth - CharOff &&
          Y0 >= Y && Y0 <Y + FontHeight))
@@ -121,7 +124,7 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
     }
 
     //复制字体到显示缓冲区
-    if(pointFlag)
+    if(pointFlag & RD_TXT_POINT_FLAG)
     {
         for(i = CharOff; i < FontWidth; i ++)
           for(j = 0; j < FontHeight; j ++)
@@ -247,7 +250,7 @@ INT16U Calc_Txt_SNum(INT16U Area_Width, INT16U Area_Height, INT8U Data[], INT16U
 //SCN_No屏幕编号
 //Flag表示，0表示自动换行切换，1表示不自动换行（左连移等需要）
 //pointFlag表示是否只读取某点,0表示读取整屏,>0表示读取某点
-INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, INT8U Data[], INT16U Data_Len, INT8U SCN_No,\
+INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, S_Txt_Para *pPara, INT8U Data[], INT16U Data_Len, INT8U SCN_No,\
                           INT8U pointFlag, INT16U X, INT16U Y)
 {
   INT8U FontHeight,Color,Flag,Border_Height;
@@ -273,8 +276,8 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, 
   X += Border_Height;
   Y += Border_Height;
 
-  FontHeight = GET_HZ_FONT_HEIGHT(pPara->Txt_Para.Font_Size);
-  Color = pPara->Txt_Para.Color;
+  FontHeight = GET_HZ_FONT_HEIGHT(pPara->Font_Size);
+  Color = pPara->Color;
   Flag = (Prog_Status.File_Para[Area_No].Pic_Para.In_Mode != 2)?1:0; //连续左移需要
 
   LineNum = (Area_Height  - 2*Border_Height) / FontHeight;
@@ -285,7 +288,7 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, 
   while(i < Data_Len && Data[i] != 0)
   {
      if(CHK_ASC(Data[i]) EQ 0)//中文
-       CharWidth = GET_HZ_FONT_WIDTH(pPara->Txt_Para.Font_Size);//FontSize;
+       CharWidth = GET_HZ_FONT_WIDTH(pPara->Font_Size);//FontSize;
      else//英文
      {
        CharWidth = 0;
@@ -311,7 +314,7 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, 
            continue;
        }
        else
-         CharWidth = GET_ASC_FONT_WIDTH(pPara->Txt_Para.Font_Size);;
+         CharWidth = GET_ASC_FONT_WIDTH(pPara->Font_Size);;
 
      }
 
@@ -328,7 +331,7 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, 
            CharOff = CharWidth - (Width + CharWidth - (Area_Width  - Border_Height));
 
            if(ScnNo EQ SCN_No) //当前字符在当前字幕
-             Re |= Draw_Txt_Chr(pDst, Area_No, Width, Border_Height + LineNo * FontHeight + (LineNo + 1) * LineSpace, Color, 0, pPara->Txt_Para.Font_Size, &Data[i], \
+             Re |= Draw_Txt_Chr(pDst, Area_No, Width, Border_Height + LineNo * FontHeight + (LineNo + 1) * LineSpace, Color, 0, pPara->Font_Size, &Data[i], \
                           pointFlag, X, Y); //显示字符左半边
 
            LineNo ++;
@@ -346,7 +349,7 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, 
 
      if(ScnNo EQ SCN_No) //当前字符在当前字幕
      {
-       Re |= Draw_Txt_Chr(pDst, Area_No, Width, Border_Height + LineNo * FontHeight + (LineNo + 1) * LineSpace, Color, CharOff, pPara->Txt_Para.Font_Size, &Data[i],\
+       Re |= Draw_Txt_Chr(pDst, Area_No, Width, Border_Height + LineNo * FontHeight + (LineNo + 1) * LineSpace, Color, CharOff, pPara->Font_Size, &Data[i],\
                     pointFlag, X, Y); //显示字符左半边
      }
 
@@ -360,15 +363,15 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, U_File_Para *pPara, 
 
   }
 
-  if(pointFlag > 0 && Re EQ 0)
+  if((pointFlag & RD_TXT_POINT_FLAG) && Re EQ 0)
   {
     Set_Area_Point_Data(pDst, Area_No, X, Y, 0);
   }
   //设置屏幕数
-  if(pPara->Txt_Para.SNum != ScnNo + 1)
+  if(pPara->SNum != ScnNo + 1)
   {
-    pPara->Txt_Para.SNum = ScnNo + 1;
-    SET_SUM((pPara->Txt_Para));
+    pPara->SNum = ScnNo + 1;
+    SET_SUM((*pPara));
   }
 
   return ScnNo + 1;

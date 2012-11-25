@@ -394,7 +394,7 @@ INT8U Chk_File_Play_End(INT8U Area_No)
         Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;
 
         Prog_Status.Area_Status[Area_No].Play_Counts ++;
-        if(Prog_Status.Area_Status[Area_No].Play_Counts >= Prog_Status.File_Para[Area_No].Pic_Para.Play_Counts)
+        if(Prog_Status.Area_Status[Area_No].Play_Counts >= Prog_Status.File_Para[Area_No].Pic_Para.Play_Counts + 1)
         {
           Prog_Status.Area_Status[Area_No].File_No ++;
           Prog_Status.Area_Status[Area_No].Play_Counts = 0;
@@ -1011,6 +1011,8 @@ void Check_Update_Program_Para(void)
         Prog_Status.Play_Status.Prog_No = 0;
         SET_SUM(Prog_Status.Play_Status);
       }
+
+      Reset_Cur_SMS_File_No();
 
       debug("\r\n-----update new prog %d para-----\r\n", Prog_Status.Play_Status.Prog_No);
 

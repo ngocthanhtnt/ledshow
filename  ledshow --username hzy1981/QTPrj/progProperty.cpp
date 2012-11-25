@@ -116,7 +116,7 @@ CprogProperty::CprogProperty(QWidget *parent):QWidget(parent)
     playTimeEdit = new QSpinBox(this);
     playTimeEdit->setMinimum(1);
     playTimeEdit->setMaximum(99999);//setValidator(validator);
-    playTimeLabel = new QLabel(tr("Ãë"));
+    playTimeLabel = new QLabel(tr("·Ö"));
     playTimeEdit->setFixedWidth(50);
 
     //validator = new QIntValidator(1,99999,this);

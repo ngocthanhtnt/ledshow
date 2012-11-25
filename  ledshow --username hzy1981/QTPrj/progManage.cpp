@@ -551,8 +551,9 @@ void CprogManage::newProg()
     settings.setValue("endMin", 0);
 
     //定长播放
-    settings.setValue("playTimeCheck", 0);
-    settings.setValue("playTime", 0);
+    settings.setValue("playMode", 0);
+    settings.setValue("playTime", 60);
+    settings.setValue("playCount", 1);
 
     //边框选择
     settings.setValue("borderCheck", 0);

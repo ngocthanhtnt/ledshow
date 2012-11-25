@@ -591,7 +591,7 @@ INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, v
      if(Len > 0)
      {
          pPara = (S_Txt_Para *)pDst;
-         if(pPara->Txt_Flag EQ TXT_SMS_BK_FILE) //使用备用节目文件
+         if(pPara->SMS_Txt_Flag EQ TXT_SMS_BK_FILE) //使用备用节目文件
          {
             File_No = pPara->File_No;
             Len = 0;
@@ -1000,7 +1000,7 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
   {
     Read_Txt_Show_Chr_Data(SDI_SHOW_DATA + Index, Pub_Buf, sizeof(Pub_Buf));
 
-    Read_Txt_Show_Data(pShow_Data, Area_No, pFile_Para, Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, 1, X, Y);
+    Read_Txt_Show_Data(pShow_Data, Area_No, &(pFile_Para->Txt_Para), Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, RD_TXT_POINT_FLAG, X, Y);
 
     return 1;
   }
@@ -1063,18 +1063,18 @@ INT16S Read_Show_Data(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Para, INT
   {
     //读取Txt内码
 #if SMS_EN
-    if(Area_No EQ 0 && pFile_Para->Txt_Para.Txt_Flag EQ TXT_SMS_NORMAL) //第0分区是短信显示分区,读出的短信数据保存在S_SMS_Data.Data中
-        Read_Txt_Show_Data(pShow_Data, Area_No, pFile_Para, SMS_Data.Data, sizeof(SMS_Data.Data), SIndex, 0, 0, 0);
+    if(Area_No EQ 0 && pFile_Para->Txt_Para.SMS_Txt_Flag EQ TXT_SMS_NORMAL) //第0分区是短信显示分区,读出的短信数据保存在S_SMS_Data.Data中
+        Read_Txt_Show_Data(pShow_Data, Area_No, &(pFile_Para->Txt_Para), SMS_Data.Data, sizeof(SMS_Data.Data), SIndex, RD_TXT_NORMAL_FLAG, 0, 0);
     else
     {
       Read_Txt_Show_Chr_Data(SDI_SHOW_DATA + Index, Pub_Buf, sizeof(Pub_Buf));
       //读取第SIndex屏
-      Read_Txt_Show_Data(pShow_Data, Area_No, pFile_Para, Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, 0, 0, 0);
+      Read_Txt_Show_Data(pShow_Data, Area_No, &(pFile_Para->Txt_Para), Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, RD_TXT_NORMAL_FLAG, 0, 0);
     }
 #else
     Read_Txt_Show_Chr_Data(SDI_SHOW_DATA + Index, Pub_Buf, sizeof(Pub_Buf));
     //读取第SIndex屏
-    Read_Txt_Show_Data(pShow_Data, Area_No, pFile_Para, Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, 0, 0, 0);
+    Read_Txt_Show_Data(pShow_Data, Area_No, &(pFile_Para->Txt_Para), Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, RD_TXT_NORMAL_FLAG, 0, 0);
 #endif
     return 1;
   }
