@@ -124,6 +124,7 @@ EXT void Send_Env_Frame(INT8U Flag);
 EXT void Clr_Env_Rcv_Data(void);
 EXT INT32U Get_Com_Baud(void);
 EXT void Com_Rcv_Byte(INT8U Ch, INT8U Byte);
+EXT INT8U Check_Screen_Base_Para(S_Screen_Base_Para *pPara);
 EXT INT8U Check_Frame_Format(INT8U Frame[], INT16U Frame_Len);
 EXT INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);

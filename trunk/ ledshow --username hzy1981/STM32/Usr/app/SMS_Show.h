@@ -10,7 +10,31 @@
 #define EXT extern
 #endif
 
-#define SMS_FILE_PARA_LEN 200
+#define SMS_NO_ERR          0x00
+#define SMS_INDEX_ERR       0x01 //短信索引号错误
+#define SMS_LEN_ERR         0x02 //短信长度错误
+#define SMS_PLAY_COUNTS_ERR 0x03 //播放次数错误
+#define SMS_IN_MODE_ERR     0x04 //进入特效错误
+#define SMS_OUT_MODE_ERR    0x05 //退出特效错误
+#define SMS_SPEED_ERR       0x06 //速度错误
+#define SMS_STAY_TIME_ERR   0x07 //停留时间错误
+#define SMS_FORMAT_ERR      0x08 //短信格式错误
+#define SMS_TIME_ERR        0x09 //时间格式错误
+#define SMS_FONT_ERR        0x0A //字体错误
+#define SMS_COLOR_ERR       0x0B //颜色错误
+#define SMS_TXTHEAD_ERR     0x0C //文本起始字符错误
+#define SMS_SCN_BASE_ERR    0x0D //屏参不合法
+#define SMS_SCN_OE_ERR      0x0E //OE极性错误
+#define SMS_SCN_DE_ERR      0x0F //数据极性错误
+#define SMS_SCN_COLOR_ERR   0x10 //屏幕颜色错误
+#define SMS_PN_FULL_ERR          0x11 //手机号码满
+
+#define SMS_FILE_PARA_LEN 250
+#define SMS_MAX_DATA_LEN (SMS_FILE_PARA_LEN - sizeof(S_Txt_Para))
+#define SMS_SUB_DATA_LEN (SMS_MAX_DATA_LEN / 3)//最多存放3条短信
+
+#define SMS_PHONE_NO_LEN sizeof(S_SMS_Phone_No)
+
 #define NULL_SMS_NO 0xFFFF
 
 typedef struct
@@ -36,7 +60,16 @@ typedef struct
     INT8U Tail;
 }S_SMS_Cur_No;
 
+typedef struct
+{
+    INT8U Head;
+    char No[10][30];
+    INT8U CS[CS_BYTES];
+    INT8U Tail;
+}S_SMS_Phone_No;
+
 EXT S_SMS_File_Flag SMS_File_Flag;
+EXT S_SMS_Phone_No SMS_Phone_No; //有效电话号码
 EXT S_SMS_Cur_No SMS_Cur_No;
 EXT S_SMS_Data SMS_Data;
 EXT INT8U SMS_File_Play_End(void);
@@ -44,4 +77,5 @@ EXT void Read_SMS_File_Flag(void);
 EXT void Reset_Cur_SMS_File_No(void);
 EXT INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen);
 EXT void Find_Next_SMS_File_No(void);
+EXT INT8U One_SMS_Proc(char *p, S_Txt_Para *pPara, char *pUSC, INT16U *pIndex, INT8U *pSubIndex);
 #endif

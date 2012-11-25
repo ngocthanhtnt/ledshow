@@ -407,8 +407,9 @@ typedef struct
   INT8U Color; //颜色
   INT16U Len; //文字长度
 
-  INT8U Txt_Flag; //短信标志--正常图文情况下置0,短信TXT情况下置AA,短信但在短信情况下，数据读取好，直接放在buf中.
-  INT8U Flag_No;
+  INT8U SMS_Txt_Flag; //短信标志--正常图文情况下置0,短信TXT情况下置AA,短信但在短信情况下，数据读取好，直接放在buf中.
+  INT8U SMS_File_No; //启用备用文件编号
+  INT8U SMS_Fix_Font_Flag;
 
   INT8U CS[CS_BYTES];
   INT8U Tail;

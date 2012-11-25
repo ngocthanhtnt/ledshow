@@ -134,6 +134,8 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
 #ifdef SDI_SMS_FILE_FLAG_BK0
   {SDI_SMS_FILE_FLAG_BK0, MAX_SMS_NUM / 8, 1},
 #endif
+
+  {SDI_SMS_PHONE_NO, SMS_PHONE_NO_LEN, 1}, //电话号码
 #endif
   //节目显示数据
   {SDI_SHOW_DATA, BLOCK_DATA_LEN, MAX_STORA_BLOCK_NUM},

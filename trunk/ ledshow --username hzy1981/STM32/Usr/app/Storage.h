@@ -66,6 +66,7 @@
 
 #define SDI_SMS_FILE_FLAG     0x8400
 #define SDI_SMS_FILE_FLAG_BK0 0x8401
+#define SDI_SMS_PHONE_NO      0x8402
 
 #define SDI_SHOW_DATA     0xB000 //ÏÔÊ¾Êý¾Ý
 

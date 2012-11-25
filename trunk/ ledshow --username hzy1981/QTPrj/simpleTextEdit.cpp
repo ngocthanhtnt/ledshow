@@ -492,7 +492,7 @@ CshowModeEdit::CshowModeEdit(QWidget *parent):QGroupBox(parent)
     //mainLayout->addStretch();
     //mainLayout->addLayout(hLayout);
 
-    playCountsLabel = new QLabel(tr("播放次数"), this);
+    playCountsLabel = new QLabel(tr("重播次数"), this);
     playCountsEdit = new QLineEdit(this);
     playCountsEdit->setFixedWidth(TIME_EDIT_WIDTH);
     playCountsUnitLabel = new QLabel(tr("次"));
@@ -535,7 +535,7 @@ void getShowModeParaFromSettings(QString str, U_File_Para &para)
   //para.Pic_Para.Out_Time |= 0x8000; //停留时间单位为ms，因此最高位置1
   para.Pic_Para.Stay_Time = (INT16U)settings.value("stayTime").toInt();
 
-  para.Pic_Para.Play_Counts = (INT8U)settings.value("playCounts").toInt();
+  para.Pic_Para.Play_Counts = (INT8U)settings.value("playCount").toInt();
 
   settings.endGroup();
   settings.endGroup();
@@ -615,7 +615,7 @@ void CshowModeEdit::getSettingsFromWidget(QString str)
     settings.setValue("outMode", outModeCombo->currentIndex());
     settings.setValue("outSpeed", outSpeedEdit->currentIndex());
     settings.setValue("stayTime", stayTimeEdit->text().toInt());
-    settings.setValue("playCounts", playCountsEdit->text().toInt());
+    settings.setValue("playCount", playCountsEdit->text().toInt());
     settings.endGroup();
     settings.endGroup();
 
@@ -641,7 +641,7 @@ void CshowModeEdit::setSettingsToWidget(QString str)
       settings.setValue("outMode", 0);
       settings.setValue("outSpeed", 0);
       settings.setValue("stayTime", 5);
-      settings.setValue("playCounts", 1);
+      settings.setValue("playCount", 1);
       settings.setValue("text", QString(tr("图文显示")));
     }
 
@@ -650,7 +650,7 @@ void CshowModeEdit::setSettingsToWidget(QString str)
     outModeCombo->setCurrentIndex(settings.value("outMode").toInt());
     outSpeedEdit->setCurrentIndex(settings.value("outSpeed").toInt());
     stayTimeEdit->setText(QString::number(settings.value("stayTime").toInt()));
-    playCountsEdit->setText(QString::number(settings.value("playCounts").toInt()));
+    playCountsEdit->setText(QString::number(settings.value("playCount").toInt()));
 
     /*
     text = settings.value("text").toString();
