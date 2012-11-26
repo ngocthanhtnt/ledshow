@@ -966,6 +966,7 @@ int gsmParseMessageList(SM_PARAM* pMsg, SM_BUFF* pBuff)
 	while((ptr = strstr(ptr, "+CMGL:")) != NULL)
 	{
 		ptr += 6;		// 跳过"+CMGL:", 定位到序号
+		pMsg->index = 0;
 		sscanf(ptr, "%d", &pMsg->index);	// 读取序号
 //		TRACE("  index=%d\n",pMsg->index);
 
@@ -1021,8 +1022,8 @@ void smsProc(void)
 
   if(re EQ GSM_OK)
   {
-	  gsmParseMessageList(&smsPara[0], &smsBuf);
-
+	  re = gsmParseMessageList(&smsPara[0], &smsBuf);
+	  smsMessageProc(&smsPara[0], (INT8U)re);
   }
 
   WriteComm("AT+CMGDA=6\r", 11); //删除所有短消息
