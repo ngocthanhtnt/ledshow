@@ -170,7 +170,8 @@ E110  追加信息时，顺序错误，或出现没有原始信息直接追加的情况。
 INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 {
   S_Txt_Para *pPara;
-  INT8U subIndex, i, Num0, Num1;
+  INT8U subIndex, i, Num0 = 1, Num1;
+  INT16U index;
 
   Find_Next_SMS_File_No();
 
@@ -217,8 +218,8 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 
   strcpy((char *)SMS_Data.Data, (char *)"你好啊哈哈，很好啊，你个笨蛋");
 
-  INT16U index;
-  One_SMS_Proc((char *)"+P0002AB0901#ijk你是个大笨蛋，你有毛病吧，哈哈哈哈，大,国家", (S_Txt_Para *)pDst, (char *)SMS_Data.Data, &index, &subIndex);
+
+  One_SMS_Proc((char *)"+P0002AB0901#ijk你是个大笨蛋，你有毛病吧，哈哈哈哈，大,国家");//, (S_Txt_Para *)pDst, (char *)SMS_Data.Data, &index, &subIndex);
 
   //------自适应字体大小---------
   if(((S_Txt_Para *)pDst)->SMS_Fix_Font_Flag EQ 0) //没有固定字体大小
@@ -302,7 +303,7 @@ INT8U Chk_PH_No(char No[])
 }
 
 //处理一条短信数据
-INT8U One_SMS_Proc(char *p, S_Txt_Para *pPara, char *pUSC, INT16U *pIndex, INT8U *pSubIndex)
+INT8U One_SMS_Proc(char *p)
 {
   int index,temp,i;
   INT8U Rows,TxtOff;
@@ -311,7 +312,10 @@ INT8U One_SMS_Proc(char *p, S_Txt_Para *pPara, char *pUSC, INT16U *pIndex, INT8U
   S_Screen_Base_Para Base_Para = {0};
   S_Time tempTime;
   INT16U scanMode;
+  S_Txt_Para *pPara;
 
+
+  pPara = (S_Txt_Para *)SMS_WR_Buf.Data;
   pPara->SMS_Fix_Font_Flag = 0;
   pPara->Color = Screen_Para.Base_Para.Color;
 
@@ -327,8 +331,8 @@ INT8U One_SMS_Proc(char *p, S_Txt_Para *pPara, char *pUSC, INT16U *pIndex, INT8U
         if(index > MAX_SMS_NUM)
             return SMS_INDEX_ERR;
 
-        *pIndex = (INT16U)index;
-        *pSubIndex = 0;
+        //*pIndex = (INT16U)index;
+        //*pSubIndex = 0;
 
         if(strlen(&p[5]) >= SMS_MAX_DATA_LEN)
             return SMS_LEN_ERR;
@@ -338,8 +342,21 @@ INT8U One_SMS_Proc(char *p, S_Txt_Para *pPara, char *pUSC, INT16U *pIndex, INT8U
         pPara->Play_Counts = 0x01;
         pPara->Stay_Time = 10;
 
-        strcpy(pUSC, &p[4]);
-        return SMS_NO_ERR;
+        //strcpy(pUSC, &p[4]);
+		memset(SMS_WR_Buf.Data, 0, sizeof(SMS_WR_Buf.Data));
+		memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
+		
+		
+		mem_cpy(SMS_WR_Buf.Data + sizeof(S_Txt_Para), &p[5],strlen(&p[5]),\
+		      SMS_WR_Buf.Data,sizeof(SMS_WR_Buf.Data));
+		Write_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_FILE_PARA_LEN);
+
+		//修改并保存SMS_File_Flag
+		Set_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index, 1);
+		SET_SUM(SMS_File_Flag);
+        Write_SMS_File_Flag();
+
+		return SMS_NO_ERR;
       }
       else if(p[1] EQ 'P') //+T0002AB09
       {
@@ -351,14 +368,14 @@ INT8U One_SMS_Proc(char *p, S_Txt_Para *pPara, char *pUSC, INT16U *pIndex, INT8U
            if(index > MAX_SMS_NUM)
                return SMS_INDEX_ERR;
 
-           *pIndex = (INT16U)index;
+           //*pIndex = (INT16U)index;
 
            //---播放次数------------
            if(!(p[5] >= '0' && p[5] <= '2'))
                return SMS_PLAY_COUNTS_ERR;
 
            SubIndex = (p[5] - '0'); //追加次数
-           *pSubIndex = SubIndex;
+           //*pSubIndex = SubIndex;
 
            TxtOff = 11;
 
@@ -452,10 +469,26 @@ INT8U One_SMS_Proc(char *p, S_Txt_Para *pPara, char *pUSC, INT16U *pIndex, INT8U
             return SMS_LEN_ERR;
 
           if(SubIndex EQ 0)
-            memset(pUSC, 0, SMS_MAX_DATA_LEN);
-
-          strcpy(pUSC + SubIndex * SMS_SUB_DATA_LEN,&p[TxtOff]);
-          return SMS_NO_ERR;
+		  {
+            memset(SMS_WR_Buf.Data, 0, sizeof(SMS_WR_Buf.Data));
+		    memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
+		  }
+		  else
+		  {
+		    if(Read_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data)) > 0)
+			  return SMS_STORA_ERR;
+		  }
+		  
+	      mem_cpy(SMS_WR_Buf.Data + sizeof(S_Txt_Para) + SubIndex * SMS_SUB_DATA_LEN,&p[TxtOff],strlen(&p[TxtOff]),\
+		          SMS_WR_Buf.Data,sizeof(SMS_WR_Buf.Data));
+		  Write_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_FILE_PARA_LEN);
+ 
+	 	  //修改并保存SMS_File_Flag
+		  Set_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index, 1);
+		  SET_SUM(SMS_File_Flag);
+	      Write_SMS_File_Flag();
+		           
+		  return SMS_NO_ERR;
       }
       else if(p[1] EQ 'T' && p[2] EQ 'I' && p[3] EQ 'M') //校时
       {
@@ -529,8 +562,10 @@ INT8U One_SMS_Proc(char *p, S_Txt_Para *pPara, char *pUSC, INT16U *pIndex, INT8U
                return SMS_SCN_OE_ERR;
 
            //扫描方式
-           if(Chk_Int_Str(&p[17], 4) EQ 0)
+           if(Chk_Int_Str(&p[17], 4) > 0)
                scanMode = Str_2_Int(&p[17], 4);
+		   else
+		      return SMS_SCN_SCAN_ERR;
 
            Scan_Para.Direct = (scanMode%1000) / 100;
            Scan_Para.Cols_Fold = (scanMode %100) / 10;
@@ -551,7 +586,13 @@ INT8U One_SMS_Proc(char *p, S_Txt_Para *pPara, char *pUSC, INT16U *pIndex, INT8U
              Scan_Para.Rows = 16;
 
            memcpy(&Screen_Para.Base_Para, &Base_Para, sizeof(Base_Para));
-           memcpy(&Screen_Para.Scan_Para, &Scan_Para, sizeof(Scan_Para));
+           //memcpy(&Screen_Para.Scan_Para, &Scan_Para, sizeof(Scan_Para));
+		   Screen_Para.Scan_Para.Data_Polarity = Scan_Para.Data_Polarity;
+		   Screen_Para.Scan_Para.OE_Polarity = Scan_Para.OE_Polarity;
+		   Screen_Para.Scan_Para.Direct = Scan_Para.Direct;
+           Screen_Para.Scan_Para.Cols_Fold = Scan_Para.Cols_Fold;
+           Screen_Para.Scan_Para.Rows_Fold = Scan_Para.Rows_Fold;
+		   Screen_Para.Scan_Para.Rows = Scan_Para.Rows;
            SET_SUM(Screen_Para);
 
            Write_Screen_Para();
@@ -617,11 +658,41 @@ INT8U One_SMS_Proc(char *p, S_Txt_Para *pPara, char *pUSC, INT16U *pIndex, INT8U
          else
              return SMS_FORMAT_ERR;
       }
-
+      
+	  return SMS_FORMAT_ERR;
   }
+  else
+    return SMS_UNAVAIL_ERR;
 
-  return SMS_FORMAT_ERR;
+
 }
 
+//收到消息处理
+void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
+{
+  INT8U i;
+  INT8U re;
+
+  for(i = 0; i < Num; i ++)
+  {
+    re = One_SMS_Proc(pMsg[i].TP_UD);
+	
+	if(pMsg[i].TP_UD[0] EQ '*') //需要应答
+	{
+	   if(re EQ SMS_NO_ERR)
+	   	 strcpy(SMS_WR_Buf.Data, "OK,设置成功,原始信息:"); 											   
+	   else
+	   	 sprintf(SMS_WR_Buf.Data, "Err %d,设置失败,原始信息:", re);
+	  
+	   mem_cpy(SMS_WR_Buf.Data + strlen(SMS_WR_Buf.Data), pMsg[i].TP_UD, sizeof(pMsg[i].TP_UD),\
+	           SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data));
+	   mem_cpy(pMsg[i].TP_UD, SMS_WR_Buf.Data, sizeof(pMsg[i].TP_UD),\
+	           pMsg[i].TP_UD, sizeof(pMsg[i].TP_UD)); 
+	   
+	   gsmSendMessage(&(pMsg[i]));
+	}
+  }
+
+}
 #endif
 
