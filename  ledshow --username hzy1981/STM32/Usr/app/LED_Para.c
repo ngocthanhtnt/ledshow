@@ -722,7 +722,7 @@ INT16U Read_Cur_Block_Index(void *pDst, void *pDst_Start, INT16U DstLen)
   
   if(Len EQ 0)
   {
-      Len = Get_Storage_Data_Len(SDI_CUR_BLOCK_INDEX);
+      Len = (INT16U)Get_Storage_Data_Len(SDI_CUR_BLOCK_INDEX);
       OS_memset(pDst, 0, Len, pDst_Start, DstLen);
   }
 

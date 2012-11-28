@@ -814,10 +814,15 @@ typedef struct
 //#define BLOCK_DATA_LEN 249
 #define BLOCK_HEAD_DATA_LEN 9
 #define BLOCK_SHOW_DATA_LEN (BLOCK_DATA_LEN -BLOCK_HEAD_DATA_LEN)
-
+#define ZK_DATA_LEN 2000
 
 #define MAX(a,b,c,d) (((a)>(b)?(a):(b))>(c)?((a)>(b)?(a):(b)):(c))>(d)?(((a)>(b)?(a):(b))>(c)?((a)>(b)?(a):(b)):(c)):(d)
+
+#if SMS_EN || GPRS_EN
+#define MAX_COM_BUF_LEN (ZK_DATA_LEN * 3)
+#else
 #define MAX_COM_BUF_LEN ((MAX(BLOCK_DATA_LEN , SCREEN_PARA_LEN, FILE_PARA_LEN, PROG_PARA_LEN)) + 20)
+#endif
 
 typedef struct
 {

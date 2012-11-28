@@ -158,6 +158,20 @@ int makeFrame(char *data, int dataLen, char cmd, char seq, char *pDst)
         }
     }
   }
+  else if(cmd EQ (C_ZK_DATA | WR_CMD))
+  {
+      if(frameInfo.off + ZK_DATA_LEN >= dataLen)
+      {
+        len = dataLen - frameInfo.off; //后续帧长度
+        frameInfo.seq0 = 0; //没有后续帧了
+      }
+      else
+      {
+        len = ZK_DATA_LEN;
+        cmd1 |= 0x01;
+        frameInfo.seq0 ++; // 有后续帧
+      }
+  }
   else
       len = dataLen;
 

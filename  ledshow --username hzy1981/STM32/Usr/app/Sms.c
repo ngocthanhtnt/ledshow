@@ -709,6 +709,13 @@ int gsmSerializeNumbers(const char* pSrc, char* pDst, int nSrcLength)
 	return nDstLength;
 }
 
+typedef struct
+{
+  INT8U Head;
+  unsigned char Data[256];
+  INT8U Tail;
+}S_Buf;
+
 // PDU编码，用于编制、发送短消息
 // 输入: pSrc - 源PDU参数指针
 // 输出: pDst - 目标PDU串指针
@@ -717,7 +724,12 @@ int gsmEncodePdu(const SM_PARAM* pSrc, char* pDst)
 {
 	int nLength;			// 内部用的串长度
 	int nDstLength;			// 目标PDU串长度
-	static unsigned char buf[256];	// 内部用的缓冲区
+	static S_Buf Buf = {CHK_BYTE, {0}, CHK_BYTE};//unsigned char buf[256];	// 内部用的缓冲区
+
+#define buf Buf.Data
+
+    if(CHK_HT(Buf) EQ 0)
+	  ASSERT_FAILED();
 
 	// SMSC地址信息段
 	nLength = strlen(pSrc->SCA);	// SMSC地址字符串的长度	
@@ -765,6 +777,8 @@ int gsmEncodePdu(const SM_PARAM* pSrc, char* pDst)
 
 	// 返回目标字符串长度
 	return nDstLength;
+
+#undef buf
 }
 
 // PDU解码，用于接收、阅读短消息
@@ -860,6 +874,19 @@ BOOL gsmInit(void)
 	return TRUE;
 }
 
+typedef struct
+{
+  INT8U Head;
+  char Data[512];
+  INT8U Tail;
+}S_PDU;
+
+typedef struct
+{
+  INT8U Head;
+  char Data[128];
+  INT8U Tail;
+}S_ANS;
 
 // 发送短消息，仅发送命令，不读取应答
 // 输入: pSrc - 源PDU参数指针
@@ -870,13 +897,19 @@ int gsmSendMessage(SM_PARAM* pSrc)
 	unsigned char nSmscLength;	// SMSC串长度
 	int nLength;		// 串口收到的数据长度
 	char cmd[16];		// 命令串
-	static char pdu[512];		// PDU串
-	static char ans[128];		// 应答串
+	static S_PDU pdu = {CHK_BYTE, {0}, CHK_BYTE};		// PDU串
+	static S_ANS ans = {CHK_BYTE, {0}, CHK_BYTE};		// 应答串
 
-	nPduLength = gsmEncodePdu(pSrc, pdu);	// 根据PDU参数，编码PDU串
-	strcat(pdu, "\x01a");		// 以Ctrl-Z结束
+	if(CHK_HT(pdu) EQ 0)
+	  ASSERT_FAILED();
+
+	if(CHK_HT(ans) EQ 0)
+	  ASSERT_FAILED();
+
+	nPduLength = gsmEncodePdu(pSrc, pdu.Data);	// 根据PDU参数，编码PDU串
+	strcat(pdu.Data, "\x01a");		// 以Ctrl-Z结束
 //	TRACE("%s", pdu);  //zhao
-	gsmString2Bytes(pdu, &nSmscLength, 2);	// 取PDU串中的SMSC信息长度
+	gsmString2Bytes(pdu.Data, &nSmscLength, 2);	// 取PDU串中的SMSC信息长度
 	nSmscLength++;		// 加上长度字节本身
 
 	// 命令中的长度，不包括SMSC信息长度，以数据字节计
@@ -887,12 +920,12 @@ int gsmSendMessage(SM_PARAM* pSrc)
 
 	WriteComm(cmd, strlen(cmd));	// 先输出命令串
 
-	nLength = ReadComm(ans, 128);	// 读应答数据
+	nLength = ReadComm(ans.Data, 128);	// 读应答数据
 
 	// 根据能否找到"\r\n> "决定成功与否
-	if(nLength == 4 && strncmp(ans, "\r\n> ", 4) == 0)
+	if(nLength == 4 && strncmp(ans.Data, "\r\n> ", 4) == 0)
 	{
-		return WriteComm(pdu, strlen(pdu));		// 得到肯定回答，继续输出PDU串
+		return WriteComm(pdu.Data, strlen(pdu.Data));		// 得到肯定回答，继续输出PDU串
 	}
 
 	return 0;

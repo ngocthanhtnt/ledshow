@@ -535,7 +535,8 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 #endif
   INT8U Re, Temp;
   INT16U Len = 0;  //应答帧数据长
-  INT8U Seq, Seq0;
+  INT8U Seq;
+  INT16U Seq0;
   INT8U RW_Flag; //读写标志
   INT16U i;
 
@@ -550,7 +551,8 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
   Cmd_Code = (Frame[FCMD] & 0x1F);// + (INT16U)Frame[FCMD + 1] * 256;
   RW_Flag = ((Frame[FCMD] & WR_CMD) >> 5);
   Seq = Frame[FSEQ];
-  Seq0 = Frame[FSEQ0];
+  //Seq0 = Frame[FSEQ0];
+  memcpy(&Seq0, &Frame[FSEQ0], 2);
 
   for(i = 0; i < FrameLen - F_NDATA_LEN; i ++)
   {
@@ -766,6 +768,16 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	}
 
 	return 1;
+  }
+#endif
+#if SMS_EN || GPRS_EN
+  else if(Cmd_Code EQ C_ZK_DATA)
+  {
+    if(RW_Flag EQ SET_FLAG)
+	{
+	   Len = 0;
+	   Re = Write_Storage_Data_NoCS(SDI_ZK_DATA, Seq0 * ZK_DATA_LEN, &Frame[FDATA], FrameLen - F_NDATA_LEN); 
+	}
   }
 #endif
   else

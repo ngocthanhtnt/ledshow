@@ -40,6 +40,9 @@
 #define COM_PROTO_FILE ".\\data\\comData.dat"
 #define UDISK_DATA_DIR ".\\data\\"
 
+#define MCUZK_FILE ".\\font\\mcuzk.dat" //发送到下位机的字库文件
+#define MCUZK_PROTO_FILE ".\\font\\mcuzkproto.dat"
+
 #define SEND_PARA_OK_STR    "数据发送成功"
 #define SEND_PARA_FAIL_STR  "数据发送失败，请检查通信参数是否通信链路是否正确！"
 
@@ -103,6 +106,7 @@ private:
     QAction *actionPreview;
     QAction *actionScreenPreiew;
     QAction *actionTestCard;
+    QAction *actionDownloadZK; //下载字库
     QAction *actionModiScreenPara;
     QAction *actionUpdateFirmware;
     QAction *actionUDisk;
@@ -130,6 +134,7 @@ public slots:
     void previewTimerProc();
     void comStatusShow();
     void testCard(); //测试控制卡
+    void downloadZK();
 public:
     QAction *actionComStatus;
 

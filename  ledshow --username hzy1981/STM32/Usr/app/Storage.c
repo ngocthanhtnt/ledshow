@@ -142,6 +142,10 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
 
   {SDI_ENCRYPTION_DATA2, ENCRYPTION_DATA_LEN, 1},
 
+#if SMS_EN || GPRS_EN //短信卡或者GPRS卡需要字库16、24、32三种字体
+  {SDI_ZK_DATA, 1930065, 1}, //字库
+#endif
+
   {SDI_TEST_DATA, TEST_DATA_LEN, 1}
 };
 
@@ -249,7 +253,7 @@ INT32U Get_Storage_Data_Off(STORA_DI SDI)
 }
 
 //获取某个存储的数据项的长度, DI只能是Data_Para_Storage中定义的数据
-INT16U Get_Storage_Data_Len(STORA_DI SDI)
+INT32U Get_Storage_Data_Len(STORA_DI SDI)
 {
   INT16U i; 
 
@@ -271,7 +275,7 @@ INT16U Get_Storage_Data_Len(STORA_DI SDI)
 }
 
 //读取某个SDI内的数据，不进行CS校验
-INT16U Read_Storage_Data_NoCS(STORA_DI SDI, INT16U Offset, INT16U Len, void* pDst, void* pDst_Start, INT16U DstLen)
+INT16U Read_Storage_Data_NoCS(STORA_DI SDI, INT32U Offset, INT16U Len, void* pDst, void* pDst_Start, INT16U DstLen)
 {
     INT32U Off;
     INT8U Re;
@@ -299,6 +303,40 @@ INT16U Read_Storage_Data_NoCS(STORA_DI SDI, INT16U Offset, INT16U Len, void* pDs
 
     if(Re > 0)
         return Len;
+    else
+        return 0;
+
+}
+
+//写某个SDI内的数据，不进行CS校验
+INT8U Write_Storage_Data_NoCS(STORA_DI SDI, INT32U Offset, void* pSrc, INT16U Len)
+{
+    INT32U Off;
+    INT8U Re;
+
+    TRACE();
+
+    Unselect_SPI_Device();
+    ReInit_Mem_Port();//重新初始化端口
+
+    Off = Get_Storage_Data_Off(SDI); //获取数据偏移
+    if(NULL_4BYTES EQ Off)//ASSERT(NULL_4BYTES != Off))
+    {
+      ASSERT_FAILED();
+      //*pErr = RD_STORAGE_DATA_DI_ERR;
+      return 0;
+    }
+
+    debug("read data:ID = 0x%x, Addr = %d, Off = %d, Len = %d", SDI, Off, Offset, Len);
+
+    Off += Offset; // + 内部偏移
+
+    //OS_Mutex_Pend(PUB_RW_ROM_ID); //申请写ROM的信号量ID
+    //if(Check_Power_Status() EQ POWER_ON_STATUS)
+    Re = Write_PHY_Mem(Off, pSrc, Len);
+
+    if(Re > 0)
+        return 1;
     else
         return 0;
 
@@ -410,7 +448,7 @@ INT8U Write_Storage_Data_Fix_Len(STORA_DI SDI, INT16U Offset, void* pSrc, INT16U
 //返回值：读取的数据长度, 读取失败时返回0
 INT16U Read_Storage_Data(STORA_DI SDI, void* pDst, void* pDst_Start, INT16U DstLen)
 {
-  INT16U Len, Len1; 
+  INT32U Len, Len1;
 
   TRACE();
 
@@ -460,7 +498,7 @@ INT16U Read_Multi_Storage_Data(STORA_DI SDI, INT16U Num, void *pDst, void *pDst_
 //返回值：1表示成功，其他表示失败
 INT8U Write_Storage_Data(STORA_DI SDI, void* pSrc, INT16U SrcLen)
 {
-  INT16U Len; 
+  INT32U Len;
   INT8U Re; 
 
   TRACE();
