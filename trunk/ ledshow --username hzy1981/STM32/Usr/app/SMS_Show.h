@@ -90,5 +90,7 @@ EXT void Reset_Cur_SMS_File_No(void);
 EXT INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen);
 EXT void Find_Next_SMS_File_No(void);
 EXT INT8U One_SMS_Proc(char *p);//, S_Txt_Para *pPara, char *pUSC, INT16U *pIndex, INT8U *pSubIndex);
+#if QT_EN == 0
 EXT void smsMessageProc(SM_PARAM* pMsg, INT8U Num);
+#endif
 #endif

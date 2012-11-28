@@ -19,6 +19,11 @@
 #define PCLK2_DIV RCC_HCLK_Div1 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/8不能超过24M
 
 #define TIM1_EN 1
+
+#define MAX_PROG_NUM 16 //最大节目数
+#define MAX_AREA_NUM 6 //每个节目下最大分区数
+#define MAX_FILE_NUM 50 //每个节目下最大文件数
+
 //----------------------------------------
 #if defined(CARD_D)
 #if CARD_TYPE == CARDD //

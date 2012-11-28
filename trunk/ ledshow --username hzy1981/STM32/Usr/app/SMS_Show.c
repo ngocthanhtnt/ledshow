@@ -615,7 +615,7 @@ INT8U One_SMS_Proc(char *p)
                  return SMS_FORMAT_ERR;
 
              //寻找一个空闲位置存储号码
-             for(i = 0; i < S_NUM(SMS_Phone_No.No); i ++)
+             for(i = 0; i < (int)S_NUM(SMS_Phone_No.No); i ++)
              {
                  if(strlen(SMS_Phone_No.No[i]) EQ 0)
                  {
@@ -667,6 +667,7 @@ INT8U One_SMS_Proc(char *p)
 
 }
 
+#if QT_EN == 0
 //收到消息处理
 void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 {
@@ -694,5 +695,6 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
   }
 
 }
+#endif
 #endif
 

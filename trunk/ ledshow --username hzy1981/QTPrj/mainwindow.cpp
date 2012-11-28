@@ -663,6 +663,7 @@ void MainWindow::setupCtrlActions()
     connect(a, SIGNAL(triggered()), this, SLOT(previewScreen()));
     menu->addAction(a);
 
+    //--------------生产以及内部使用--------
     QIcon testIcon = QIcon::fromTheme("生产检测", QIcon(rsrcPath1 + tr("/检测.png")));
     actionTestCard = a = new QAction(testIcon, tr("生产检测"), this);
     a->setPriority(QAction::LowPriority);
@@ -670,7 +671,12 @@ void MainWindow::setupCtrlActions()
     connect(a, SIGNAL(triggered()), this, SLOT(testCard()));
     tb->addAction(a);
 
-    //actionTestCard->setVisible(false);
+    QIcon zkIcon = QIcon::fromTheme("下载字库", QIcon(rsrcPath1 + tr("/检测.png")));
+    actionDownloadZK = a = new QAction(zkIcon, tr("下载字库"), this);
+    a->setPriority(QAction::LowPriority);
+    //a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(downloadZK()));
+    tb->addAction(a);
 }
 
 void MainWindow::setupToolActions()
@@ -1446,6 +1452,96 @@ void MainWindow::previewProc()
   //mmtimer->start();
 }
 
+//下载字库文件
+void MainWindow::downloadZK()
+{
+    FILE *file, *ZKFile;
+    char *zkBuf, *frameBuf;
+    int len, counts;
+    char seq;
+    INT8U Temp[100];
+
+    QString screenStr = w->screenArea->getCurrentScreenStr();
+
+    ZKFile = fopen(MCUZK_PROTO_FILE, "wb+");
+    fseek(ZKFile, 0, SEEK_SET); //前50字节用于记录版本号、校验和等程序信息
+
+    file = fopen(MCUZK_FILE, "rb");
+    if(file EQ 0)
+    {
+        ASSERT_FAILED();
+        QMessageBox::critical(w, tr("提示"),
+                               tr("找不到字库文件!"),tr("确定"));
+        return ;
+    }
+
+    fseek(file, 0, SEEK_END);
+    len = ftell(file);
+
+    zkBuf = (char *)malloc(len + 1000); //动态申请内存
+    frameBuf = (char *)malloc(ZK_DATA_LEN + 200);
+
+    if(zkBuf EQ 0 || frameBuf EQ 0)
+        return;
+
+    fseek(file, 0, SEEK_SET);
+    if(fread(zkBuf, len, 1, file) <= 0)
+    {
+        ASSERT_FAILED();
+        QMessageBox::critical(w, tr("提示"),
+                               tr("读取字库文件出错!"),tr("确定"));
+        return ;
+    }
+
+    counts = 0;
+    seq = frameInfo.seq + 1;
+    while(1)
+    {
+      //节目显示数据帧
+      int tmpLen = makeFrame(zkBuf, len, C_ZK_DATA | WR_CMD, seq, frameBuf);
+      if(tmpLen > 0)
+      {
+          counts++;
+          fwrite(frameBuf, tmpLen, 1, ZKFile);
+      }
+      else
+      {
+          //frameInfo.seq++;
+          break;
+      }
+    }
+
+    fclose(file);
+    fclose(ZKFile);
+    free(zkBuf);
+    free(frameBuf);
+
+    if(counts)
+    {
+      w->comStatus->setTotalFrameCounts(counts);
+      w->comStatus->getCOMParaFromSettings(screenStr); //获取通信参数--具体的通信方式在通信参数中定义
+      w->comStatus->sendProtoFile(MCUZK_PROTO_FILE);
+    }
+
+    bool re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+    if(re EQ false)
+    {
+        QMessageBox::critical(w, tr("提示"),
+                               tr("下载字库失败!"),tr("确定"));
+        return;
+
+    }
+    else
+    {
+        QMessageBox::information(w, tr("提示"),
+                               tr("下载字库成功!"),tr("确定"));
+        return;
+    }
+
+
+}
+
+//测试
 void MainWindow::testCard()
 {
   INT8U dataBuf[10];

@@ -1011,9 +1011,9 @@ void Check_Update_Program_Para(void)
         Prog_Status.Play_Status.Prog_No = 0;
         SET_SUM(Prog_Status.Play_Status);
       }
-
+#if SMS_EN
       Reset_Cur_SMS_File_No();
-
+#endif
       debug("\r\n-----update new prog %d para-----\r\n", Prog_Status.Play_Status.Prog_No);
 
       Re = 1;

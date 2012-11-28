@@ -40,7 +40,9 @@
 //#define H_HCLK_MUL  RCC_PLLMul_9  //高速运行时AHB速度
 //#define H_PCLK1_DIV RCC_HCLK_Div2 //高速运行时APB1速度--确保和正常运行时保持一致，这样就不需要调整各外设的Clock 
 //#define H_PCLK2_DIV RCC_HCLK_Div1 //高速运行时APB2速度--确保和正常运行时保持一致，这样就不需要调整各外设的Clock 
-
+#define MAX_PROG_NUM 16 //最大节目数
+#define MAX_AREA_NUM 6 //每个节目下最大分区数
+#define MAX_FILE_NUM 50 //每个节目下最大文件数
 
 //----------------------------------------
 #if defined(CARD_A)

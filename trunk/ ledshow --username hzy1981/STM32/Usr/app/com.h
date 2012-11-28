@@ -48,7 +48,8 @@
 #define C_SOFT_VERSION 0x0F //屏幕信息
 #define C_SELF_TEST 0x10 //自动监测
 #define C_SCREEN_LOCK_DATE 0x11 //运行有效时间--用于催款，超过该时间锁定屏
-#define C_ENV_VAR   0x12  //环境变量
+#define C_ZK_DATA   0x12 //字库数据
+#define C_ENV_VAR   0x13  //环境变量
 #define C_UPDATE    0x1F //固件升级
 
 #define CLOSE_FLAG 0x5A
