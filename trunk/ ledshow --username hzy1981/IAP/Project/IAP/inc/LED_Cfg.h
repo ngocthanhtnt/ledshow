@@ -25,7 +25,7 @@
 #define PCLK1_DIV RCC_HCLK_Div2 //最高APB/2--这是正常运行时速度,这里不能为DIV1，因为定时器使用的分频系数默认PCLK1分频>1
 #define PCLK2_DIV RCC_HCLK_Div1 //最高和AHB一样,注意SPIFlash的速度是APB2/2不能超过50M,CH376的速度是APB2/4不能超过24M
 
-#elif defined(CARD_C)
+#elif defined(CARD_C) || defined(CARD_CW)
 
 #define HSE_VALUE 25000000 //外部晶振频率
 #define HCLK_VALUE  72000000
@@ -53,7 +53,11 @@
 
 #define CMD_STRING_SIZE       128
 
+#ifdef CARD_CW
+#define ApplicationAddress    0x8008000
+#else
 #define ApplicationAddress    0x8001000
+#endif
 
 #define PAGE_SIZE                         (0x400)    /* 1 Kbyte */
 #define FLASH_SIZE                        (0x20000)  /* 128 KBytes */

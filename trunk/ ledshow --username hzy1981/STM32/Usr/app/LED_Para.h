@@ -216,9 +216,12 @@ typedef struct
 {
     //以太网
     //GPRS服务器地址
-    INT32U Srv_IP; //服务器IP
-    INT16U Srv_Port; //服务器端口
+    //INT32U Srv_IP; //服务器IP
+	INT8U Srv[40]; //服务器IP或者域名
+    INT16U SrvPort; //服务器端口
     INT8U Mode; //0唤醒方式，1在线方式
+	INT8U HeartPeriod; //心跳周期
+	INT8U ConnectPeriod; //重连周期
     INT8U APN[30];
 
     //INT8U Temp[10]; //保留10字节备用--升级程序时可以和老的兼容
@@ -274,7 +277,7 @@ typedef struct
   //命令3
   //INT8U Prog_Num; //节目数
   //INT8U Temp[10]; //备用
-#if QT_EN || NET_EN || GPRS_EN
+#if QT_EN || NET_EN || GPRS_EN || SMS_EN
   S_ETH_Para ETH_Para; //以太网参数
 
   S_GPRS_Para GPRS_Para; //GPRS参数

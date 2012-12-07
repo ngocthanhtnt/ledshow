@@ -250,6 +250,7 @@ void USART1_IRQHandler(void)	//串口1中断服务程序
 	{
 	Res =USART_ReceiveData(USART1);//(USART1->DR);	//读取接收到的数据
   	Com_Rcv_Byte(CH_COM, Res);	 
+	//Com_Send_Byte(CH_GPRS, Res);
 	}
 }
 
@@ -286,19 +287,24 @@ void USART3_IRQHandler(void)	//串口3中断服务程序
 
 //串口中断4用于接收GPRS数据
 #if SMS_EN || GPRS_EN
-void USART4_IRQHandler(void)	//串口4中断服务程序
+void UART4_IRQHandler(void)	//串口4中断服务程序
 {
    u8 Res;
    //STM_EVAL_LEDToggle(LED2);
-   if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
+   if(USART_GetITStatus(UART4, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 	{
-	 Res =USART_ReceiveData(USART3);//(USART1->DR);	//读取接收到的数据
-  
+	 Res =USART_ReceiveData(UART4);//(USART1->DR);	//读取接收到的数据
+
+#if GMODULE_DBG_EN //直接输出到调试口--暂时定为  
+	 Com_Send_Byte(CH_DBG, Res); 
+#endif   
+
 	 if(SMS_GPRS_Rcv_Buf.WRPosi < sizeof(SMS_GPRS_Rcv_Buf.Buf) - 1)
 	 {
        SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi ++] = Res;
 	   SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi] = 0;
 	 }
+	 
 	 
 	}
 }

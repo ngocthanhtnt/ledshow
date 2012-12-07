@@ -145,7 +145,7 @@ bool CcomThread::comRun()
     INT16U len;
     int len0 = 0;
     bool flag = false;
-    char frameBuf[2000];//[MAX_COM_BUF_LEN + 20];
+    char frameBuf[3000];//[MAX_COM_BUF_LEN + 20];
 
     if(status == COM_ING) //当前在通信过程中,退出
         return false;
