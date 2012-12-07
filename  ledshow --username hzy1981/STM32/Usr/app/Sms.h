@@ -33,7 +33,7 @@ typedef struct {
 
 typedef struct{
   INT8U Head;
-  char Buf[12800];
+  char Buf[1280*5];
   INT16U WRPosi;
   INT16U RDPosi;
   INT8U Tail;
@@ -54,7 +54,6 @@ int gsmSerializeNumbers(const char* pSrc, char* pDst, int nSrcLength);
 int gsmEncodePdu(const SM_PARAM* pSrc, char* pDst);
 int gsmDecodePdu(const char* pSrc, SM_PARAM* pDst);
 
-BOOL gsmInit(void);
 
 int gsmSendMessage(SM_PARAM* pSrc);
 int gsmReadMessageList(void);
@@ -64,5 +63,5 @@ int gsmGetResponse(SM_BUFF* pBuff);
 
 int gsmParseMessageList(SM_PARAM* pMsg, SM_BUFF* pBuff);
 
-void smsProc(void);
+void SmsProc(void);
 #endif // !defined(__SMS_H__)

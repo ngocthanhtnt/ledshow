@@ -420,6 +420,10 @@ INT16U Read_Screen_Para(void)
 	if(Len EQ 0)
 	{
 	  memset(&Screen_Para, 0, sizeof(Screen_Para));
+	  Screen_Para.Base_Para.Width = 64;
+	  Screen_Para.Base_Para.Height = 32;
+	  Screen_Para.Base_Para.Color = 0x01;
+
 #if NET_EN
 	  Screen_Para.ETH_Para.IP = 0xFB01A8C0; //192.168.1.251
 	  Screen_Para.ETH_Para.Gate = 0x0101A8C0; //192.168.1.1

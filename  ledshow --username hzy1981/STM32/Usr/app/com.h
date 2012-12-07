@@ -92,7 +92,7 @@ A	…	帧数据域内容
 #define CH_NET 0x02
 #define CH_UDISK  0x03 //UDisk不需要单独的Buf，可以使用 COM_BUF，就是串口通信的Buf
 #define CH_ENV 0x04
-#define CH_SIM 0x05 //仿真
+#define CH_DBG 0x05 //仿真
 //#define RCV_BUF_NUM 1
 
 #define READ_FLAG 0x00

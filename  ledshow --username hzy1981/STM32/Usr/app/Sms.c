@@ -594,6 +594,27 @@ int gsmEncodeUcs2(const char* pSrc, unsigned char* pDst, int nSrcLength)
 	return nDstLength * 2;
 */
   return GB2UCS2(pSrc, pDst, nSrcLength);
+ /*
+ 	int i,j = 0;
+
+	for(i = 0; i < nSrcLength;)
+	{
+	  if(pSrc[i] < 0xA0)
+	  {
+	    pDst[j ++] = pSrc[i ++];
+	    pDst[j ++] = 0x00;
+	  }
+	  else
+	  {
+	    pDst[j ++] = pSrc[i ++];
+	    pDst[j ++] = pSrc[i ++];
+	  }	
+	}
+
+	pDst[j] = 0;
+
+	return j;
+	*/
 }
 
 // UCS2解码
@@ -624,17 +645,19 @@ int gsmDecodeUcs2(const unsigned char* pSrc, char* pDst, int nSrcLength)
 	return nDstLength;
 	*/
 
-	INT16U i;
+	INT16U i,j = 0;
 
 	for(i = 0; i < nSrcLength; i +=2)
 	{
-	  pDst[i + 1] = pSrc[i];
-	  pDst[i] = pSrc[i + 1];
+	  pDst[j ++] = pSrc[i + 1];
+
+	  if(pSrc[i] != 0)
+	    pDst[j ++] = pSrc[i];	
 	}
 
-	pDst[nSrcLength] = 0;
+	pDst[j] = 0;
 
-	return nSrcLength;
+	return j;
 }
 
 // 正常顺序的字符串转换为两两颠倒的字符串，若长度为奇数，补'F'凑成偶数
@@ -843,37 +866,6 @@ int gsmDecodePdu(const char* pSrc, SM_PARAM* pDst)
 }
 
 
-// 初始化GSM状态
-BOOL gsmInit(void)
-{
-	char ans[128];		// 应答串
-
-	//启动GSM模块
-	SET_GSM_ON(1);
-	OS_TimeDly_Ms(100);
-	SET_GSM_ON(0);
-	OS_TimeDly_Ms(1500);
-	SET_GSM_ON(1);
-
-	// 测试GSM-MODEM的存在性
-	WriteComm("AT\r", 3);
-	ReadComm(ans, 128);
-	if (strstr(ans, "OK") == NULL)  return FALSE;
-
-	// ECHO OFF
-	WriteComm("ATE0\r", 5);
-	ReadComm(ans, 128);
-
-	WriteComm("AT+CSCS=\"UCS2\"\r", 15);
-	ReadComm(ans, 128);
-
-	// PDU模式
-	WriteComm("AT+CMGF=0\r", 10);
-	ReadComm(ans, 128);
-
-	return TRUE;
-}
-
 typedef struct
 {
   INT8U Head;
@@ -907,7 +899,8 @@ int gsmSendMessage(SM_PARAM* pSrc)
 	  ASSERT_FAILED();
 
 	nPduLength = gsmEncodePdu(pSrc, pdu.Data);	// 根据PDU参数，编码PDU串
-	strcat(pdu.Data, "\x01a");		// 以Ctrl-Z结束
+	pdu.Data[nPduLength] = 26; //Ctrl-Z字符
+	//strcat(pdu.Data, "\x01a");		// 以Ctrl-Z结束
 //	TRACE("%s", pdu);  //zhao
 	gsmString2Bytes(pdu.Data, &nSmscLength, 2);	// 取PDU串中的SMSC信息长度
 	nSmscLength++;		// 加上长度字节本身
@@ -918,14 +911,19 @@ int gsmSendMessage(SM_PARAM* pSrc)
 //	TRACE("%s", cmd);  
 //	TRACE("%s\n", pdu);
 
-	WriteComm(cmd, strlen(cmd));	// 先输出命令串
+	//ATSend(cmd);////WriteComm(cmd, strlen(cmd));	// 先输出命令串
 
-	nLength = ReadComm(ans.Data, 128);	// 读应答数据
+	//nLength = ReadComm(ans.Data, 128);	// 读应答数据
 
 	// 根据能否找到"\r\n> "决定成功与否
-	if(nLength == 4 && strncmp(ans.Data, "\r\n> ", 4) == 0)
+	//if(nLength == 4 && strncmp(ans.Data, "\r\n> ", 4) == 0)
+	if(ATSendResponse(cmd, "\r\n", 1000))
 	{
-		return WriteComm(pdu.Data, strlen(pdu.Data));		// 得到肯定回答，继续输出PDU串
+	  ClrComm();
+      WriteComm(pdu.Data, nPduLength + 1);
+	  OS_TimeDly_Ms(1000);
+	  GetResponse("OK", 1000);
+		//return ATSend(pdu.Data);//WriteComm(pdu.Data, strlen(pdu.Data));		// 得到肯定回答，继续输出PDU串
 	}
 
 	return 0;
@@ -937,7 +935,7 @@ int gsmSendMessage(SM_PARAM* pSrc)
 
 int gsmReadMessageList(void)
 {
-	return WriteComm("AT+CMGL\r", 8);  //zhao 
+	return ATSend("AT+CMGL\r");//WriteComm("AT+CMGL\r", 8);  //zhao 
 }
 
 
@@ -951,7 +949,7 @@ int gsmDeleteMessage(int index)
 	sprintf(cmd, "AT+CMGD=%d\r", index);	// 生成命令
 
 	// 输出命令串
-	return WriteComm(cmd, strlen(cmd));
+	return ATSend(cmd);//WriteComm(cmd, strlen(cmd));
 }
 
 // 读取GSM MODEM的应答，可能是一部分
@@ -965,18 +963,19 @@ int gsmGetResponse(SM_BUFF* pBuff)
 	int nState;
 
 	// 从串口读数据，追加到缓冲区尾部
-	nLength = ReadComm(&pBuff->data[pBuff->len], 128);	
-	pBuff->len += nLength;
+	nLength = ReadComm(&pBuff->data[pBuff->len], sizeof(pBuff->data));	
+	pBuff->len = nLength;
 
-	if(pBuff->len + 128 >= sizeof(pBuff->len))
-	  return GSM_OK;
+	//if(pBuff->len + 128 >= sizeof(pBuff->data))
+	  //return GSM_OK;
 
 	// 确定GSM MODEM的应答状态
 	nState = GSM_WAIT;
-	if ((nLength > 0) && (pBuff->len >= 4))
+	if (nLength >= 4)
 	{
-		if (strncmp(&pBuff->data[pBuff->len - 4], "OK\r\n", 4) == 0)  nState = GSM_OK;
+		if (strncmp(&pBuff->data[nLength - 4], "OK", 2) == 0)  nState = GSM_OK;
 		else if (strstr(pBuff->data, "+CMS ERROR") != NULL) nState = GSM_ERR;
+		else if(nLength >= sizeof(pBuff->data)) nState = GSM_OK; 
 	}
 
 	return nState;
@@ -1024,10 +1023,10 @@ int gsmParseMessageList(SM_PARAM* pMsg, SM_BUFF* pBuff)
 SM_BUFF smsBuf;
 SM_PARAM smsPara[MSG_PROC_NUM];
 
-void smsProc(void)
+void SmsProc(void)
 {
 
-  INT8U i;
+//  INT8U i;
   int re;
 
   if(strstr(SMS_GPRS_Rcv_Buf.Buf, "+CMTI") EQ NULL)	//每秒检查是否收到短信
@@ -1035,31 +1034,22 @@ void smsProc(void)
 	OS_TimeDly_Ms(1000);
 	return;
   }
+
+  OS_TimeDly_Ms(100);
+
+  ClrComm(); //清接收串口
+   
+  gsmReadMessageList(); //读短消息列表
  
- OS_TimeDly_Ms(100);
-
- ClrComm(); //清接收串口
-  
- gsmReadMessageList(); //读短消息列表
-
- for(i = 0; i < 100; i ++) //10s内等待应答
- {
-   OS_TimeDly_Ms(100); //等待应答
-
-   re = gsmGetResponse(&smsBuf);
-   if(re EQ GSM_OK)
-     break;
-   else if(re EQ GSM_ERR)
-     break;
- }
-
+  re = gsmGetResponse(&smsBuf);
+ 
   if(re EQ GSM_OK)
   {
 	  re = gsmParseMessageList(&smsPara[0], &smsBuf);
 	  smsMessageProc(&smsPara[0], (INT8U)re);
   }
-
-  WriteComm("AT+CMGDA=6\r", 11); //删除所有短消息
+  
+  ATSend("AT+CMGDA=6\r");//WriteComm("AT+CMGDA=6\r", 11); //删除所有短消息
   OS_TimeDly_Ms(100);
   ClrComm(); //清接收串口
 }

@@ -12,7 +12,7 @@
 #endif
 
 //#define QT_EN 1
-#if QT_EN > 0
+#if QT_EN == 0
 //iar 编译器支持
 #define CONST const       //定义Flash变量
 #define NO_INIT //定义非初始化变量
@@ -41,8 +41,8 @@ typedef unsigned int OS_ALIGN_TYPE;//定义对齐的类型
 #define RESTORE_TASK_SP() Restore_Task_SP(New_SP)
 #else
 
-extern uint32_t __get_MSP(void);
-extern void __set_MSP(uint32_t mainStackPointer);
+extern INT32U __get_MSP(void);
+extern void __set_MSP(INT32U mainStackPointer);
 
 #define SAVE_TASK_SP()  Old_SP = __get_MSP()//=Save_Task_SP()
 
@@ -56,7 +56,7 @@ extern void __set_MSP(uint32_t mainStackPointer);
 #else
 //iar 编译器支持
 #define CONST const       //定义Flash变量
-#define NO_INIT __no_init //定义非初始化变量
+#define NO_INIT //__no_init //定义非初始化变量
 
 typedef unsigned int OS_INT32U;
 typedef int OS_INT32S;

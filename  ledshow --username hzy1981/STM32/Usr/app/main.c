@@ -6,7 +6,7 @@
 #define MAIN_STACK_SIZE 400
 #endif
 
-#define SMS_GPRS_STACK_SIZE 200
+#define SMS_GPRS_STACK_SIZE 400
  
  void test()
  {
@@ -189,10 +189,10 @@ int main(void)
 //SMS、GRPS通信任务
 void smsGPRSTask(void)
 {
-  gsmInit();
+  ModuleInit();
   while(1)
   {
-    smsProc();
+    SmsProc();
   }
 }
 

@@ -32,7 +32,7 @@
 #define SMS_PN_FULL_ERR     0x13 //手机号码满
 #define SMS_UNAVAIL_ERR   0x20 //非有效短信，不需应答
 
-#define SMS_FILE_PARA_LEN 250
+#define SMS_FILE_PARA_LEN 400
 #define SMS_MAX_DATA_LEN (SMS_FILE_PARA_LEN - sizeof(S_Txt_Para))
 #define SMS_SUB_DATA_LEN (SMS_MAX_DATA_LEN / 3)//最多存放3条短信
 

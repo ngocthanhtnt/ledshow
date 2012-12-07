@@ -266,6 +266,19 @@ void Com_Send_Byte(INT8U Ch, INT8U Data)
 #else
      ASSERT_FAILED();
 #endif
+
+#if GMODULE_DBG_EN
+     while (!(USART1->SR & USART_FLAG_TXE));
+     USART1->DR = (Data & (uint16_t)0x01FF);
+#endif
+  }
+  else if(Ch EQ CH_DBG)
+  {
+	//用于调试
+#if GMODULE_DBG_EN
+     while (!(USART1->SR & USART_FLAG_TXE));
+     USART1->DR = (Data & (uint16_t)0x01FF);
+#endif
   }
   else if(Ch EQ CH_NET)
   {
@@ -504,12 +517,14 @@ void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;		//
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
- 
-	NVIC_InitStructure.NVIC_IRQChannel = USART3_IRQn;		//USART3中断,用于接收传感器数据
+
+#if SMS_EN || GPRS_EN
+	NVIC_InitStructure.NVIC_IRQChannel = UART4_IRQn;		//USART3中断,用于接收传感器数据
  	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;		//
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
+#endif
 
 #if TIM1_EN
 	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;  //1ms中断
@@ -533,6 +548,7 @@ void NVIC_Configuration(void)
 	NVIC_Init(&NVIC_InitStructure);
 #endif
    */
+    
 	//扫描中断
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //扫描特效
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
@@ -542,6 +558,7 @@ void NVIC_Configuration(void)
 
 	//特效中断
     NVIC_SetPriority (SysTick_IRQn, 0x0C);                //抢占优先级为1
+
 }
 
 //INT8U SPI2_DMA_Data[] = {0x24, 0x92, 0x49};
@@ -1003,12 +1020,12 @@ void UART4_Init(void)
     USART_InitTypeDef USART_InitStructure = {0};
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE );
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART4, ENABLE );
 
 	//PC11串口4接收
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
  	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; //内部上拉，防止模块没初始化好，总是进中断
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	
 	//PC10串口4发送
@@ -1024,9 +1041,9 @@ void UART4_Init(void)
 	USART_InitStructure.USART_Parity              = USART_Parity_No ;
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode                = USART_Mode_Rx | USART_Mode_Tx;
-	USART_Init(USART3, &USART_InitStructure);
-	USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
-	USART_Cmd(USART3, ENABLE);
+	USART_Init(UART4, &USART_InitStructure);
+	USART_ITConfig(UART4, USART_IT_RXNE, ENABLE);
+	USART_Cmd(UART4, ENABLE);
 }
 
 //串口1用于232/485通信
@@ -1049,8 +1066,12 @@ void UART1_Init(void)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
   	
-	//串口1用作与主机通信					    
+	//串口1用作与主机通信
+#if GMODULE_DBG_EN
+    USART_InitStructure.USART_BaudRate            = 115200;
+#else						    
 	USART_InitStructure.USART_BaudRate            = Get_Com_Baud();
+#endif
 	USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits            = USART_StopBits_1;
 	USART_InitStructure.USART_Parity              = USART_Parity_No ;
