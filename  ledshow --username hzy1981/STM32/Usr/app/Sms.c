@@ -753,7 +753,7 @@ int gsmEncodePdu(const SM_PARAM* pSrc, char* pDst)
 
     if(CHK_HT(Buf) EQ 0)
 	  ASSERT_FAILED();
-
+/*
 	// SMSC地址信息段
 	nLength = strlen(pSrc->SCA);	// SMSC地址字符串的长度	
 	buf[0] = (char)((nLength & 1) == 0 ? nLength : nLength + 1) / 2 + 1;	// SMSC地址信息长度
@@ -763,14 +763,16 @@ int gsmEncodePdu(const SM_PARAM* pSrc, char* pDst)
 //	TRACE("%s",pDst);
 	nDstLength += gsmInvertNumbers(pSrc->SCA, &pDst[nDstLength], nLength);	// 转换SMSC号码到目标PDU串
 //	TRACE("%s",pDst);
-
+*/
 	// TPDU段基本参数、目标地址等
+	nDstLength = 0;
 	nLength = strlen(pSrc->TPA);	// TP-DA地址字符串的长度
-	buf[0] = 0x11;					// 是发送短信(TP-MTI=01)，TP-VP用相对格式(TP-VPF=10)
-	buf[1] = 0;						// TP-MR=0
-	buf[2] = (char)nLength;			// 目标地址数字个数(TP-DA地址字符串真实长度)
-	buf[3] = 0x91;					// 固定: 用国际格式号码
-	nDstLength += gsmBytes2String(buf, &pDst[nDstLength], 4);		// 转换4个字节到目标PDU串
+	buf[0] = 0x00;
+	buf[1] = 0x11;					// 是发送短信(TP-MTI=01)，TP-VP用相对格式(TP-VPF=10)
+	buf[2] = 0x00;						// TP-MR=0
+	buf[3] = (char)nLength;			// 目标地址数字个数(TP-DA地址字符串真实长度)
+	buf[4] = 0x91;					// 固定: 用国际格式号码
+	nDstLength = gsmBytes2String(buf, &pDst[nDstLength], 5);		// 转换4个字节到目标PDU串
 	nDstLength += gsmInvertNumbers(pSrc->TPA, &pDst[nDstLength], nLength);	// 转换TP-DA到目标PDU串
 
 	// TPDU段协议标识、编码方式、用户信息等
@@ -887,7 +889,7 @@ int gsmSendMessage(SM_PARAM* pSrc)
 {
 	int nPduLength;		// PDU串长度
 	unsigned char nSmscLength;	// SMSC串长度
-	int nLength;		// 串口收到的数据长度
+	//int nLength;		// 串口收到的数据长度
 	char cmd[16];		// 命令串
 	static S_PDU pdu = {CHK_BYTE, {0}, CHK_BYTE};		// PDU串
 	static S_ANS ans = {CHK_BYTE, {0}, CHK_BYTE};		// 应答串
@@ -973,7 +975,7 @@ int gsmGetResponse(SM_BUFF* pBuff)
 	nState = GSM_WAIT;
 	if (nLength >= 4)
 	{
-		if (strncmp(&pBuff->data[nLength - 4], "OK", 2) == 0)  nState = GSM_OK;
+		if (pBuff->data[nLength - 4] EQ 'O' && pBuff->data[nLength - 3] EQ 'K') nState = GSM_OK;//strncmp(&pBuff->data[nLength - 4], "OK", 2) == 0)  nState = GSM_OK;
 		else if (strstr(pBuff->data, "+CMS ERROR") != NULL) nState = GSM_ERR;
 		else if(nLength >= sizeof(pBuff->data)) nState = GSM_OK; 
 	}
@@ -1049,7 +1051,7 @@ void SmsProc(void)
 	  smsMessageProc(&smsPara[0], (INT8U)re);
   }
   
-  ATSend("AT+CMGDA=6\r");//WriteComm("AT+CMGDA=6\r", 11); //删除所有短消息
+  //ATSend("AT+CMGDA=6\r");//WriteComm("AT+CMGDA=6\r", 11); //删除所有短消息
   OS_TimeDly_Ms(100);
   ClrComm(); //清接收串口
 }

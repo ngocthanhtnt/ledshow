@@ -674,7 +674,7 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
   INT8U i;
   INT8U re;
 
-  for(i = 0; i < Num; i ++)
+  for(i = 0; i < 1; i ++)
   {
     re = One_SMS_Proc(pMsg[i].TP_UD);
 	
@@ -683,9 +683,9 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 	   if(re EQ SMS_NO_ERR)
 	   	 strcpy(SMS_WR_Buf.Data, "OK");//"OK,设置成功,原始信息:"); 											   
 	   else
-	   	 sprintf(SMS_WR_Buf.Data, "Err %d", re);//"Err %d,设置失败,原始信息:", re);
+	   	 sprintf(SMS_WR_Buf.Data, "ERR %d", re);//"Err %d,设置失败,原始信息:", re);
 
-	   strcpy(SMS_WR_Buf.Data, "Hi");//"OK,设置成功,原始信息:");
+	   //strcpy(SMS_WR_Buf.Data, "你好");//"OK,设置成功,原始信息:");
 	   /*
 	   mem_cpy(SMS_WR_Buf.Data + strlen(SMS_WR_Buf.Data), pMsg[i].TP_UD, sizeof(pMsg[i].TP_UD),\
 	           SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data));

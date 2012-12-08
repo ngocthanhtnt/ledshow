@@ -192,6 +192,7 @@ void smsGPRSTask(void)
   ModuleInit();
   while(1)
   {
+    Chk_Module_Status();
     SmsProc();
   }
 }

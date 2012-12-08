@@ -25,4 +25,5 @@ EXT INT8U ATSend(char *p);
 EXT INT8U ATSendResponse(char *pSrc, char *pRes, INT16U ms);
 EXT INT8U GetResponse(char *p, INT16U ms);
 EXT void ClrComm(void);
+EXT void Chk_Module_Status(void);
 #endif

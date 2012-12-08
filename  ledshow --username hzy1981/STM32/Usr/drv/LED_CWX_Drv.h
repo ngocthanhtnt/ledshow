@@ -129,6 +129,8 @@
 
 #define SET_GSM_ON(x) (x == 0)?GPIO_ResetBits(GPIOC,GPIO_Pin_9):GPIO_SetBits(GPIOC,GPIO_Pin_9)
 
+#define CHK_MODULE_STATUS() GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_8)
+
 EXT void Put_Char(char c);
 //EXT INT8U Get_Cur_Time(void);//S_Time *pTime);
 //EXT INT8U Set_Cur_Time(INT8U Time[]);//S_Time *pTime);
