@@ -249,8 +249,13 @@ void USART1_IRQHandler(void)	//串口1中断服务程序
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 	{
 	Res =USART_ReceiveData(USART1);//(USART1->DR);	//读取接收到的数据
-  	Com_Rcv_Byte(CH_COM, Res);	 
-	//Com_Send_Byte(CH_GPRS, Res);
+  	
+#if GMODULE_DBG_EN //直接输出到调试口--暂时定为		 
+	 while (!(UART4->SR & USART_FLAG_TXE));
+     UART4->DR = (Res & (uint16_t)0x01FF);
+#else
+	Com_Rcv_Byte(CH_COM, Res);
+#endif
 	}
 }
 

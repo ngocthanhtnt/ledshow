@@ -42,7 +42,7 @@ INT8U GprsInit(void)
     //erro+= GetResponse("+COPS", 2);
 
 	if(ATSendResponse("AT+CIPHEAD=1\r\n", "OK", 200) EQ 0)
-	  return 0;
+	  ;//return 0;
 
     for(i = 0; i < 20; i ++)
 	{
@@ -132,11 +132,15 @@ void ModuleInit(void) //模块初始化
 	SET_GSM_ON(0);
 	OS_TimeDly_Ms(1100);
 	SET_GSM_ON(1);
-    OS_TimeDly_Ms(1000);
+
+    OS_Core_Wait_Ms(CHK_MODULE_STATUS(),3000); //最多等待3000ms。
 
 	// 测试GSM-MODEM的存在性
 	while(1)
 	{
+	  if(CHK_MODULE_STATUS() EQ 0)
+	    return;
+
 	  if(ATSendResponse("AT\r", "OK", 200))
 	    break;
 
@@ -152,6 +156,9 @@ void ModuleInit(void) //模块初始化
 	//检测sim卡是否正常
     while(1)
 	{
+	  if(CHK_MODULE_STATUS() EQ 0)
+	    return;
+
 	  if(ATSendResponse("AT+CCID\r\n", "OK", 200))
 	    break;
 
@@ -159,6 +166,8 @@ void ModuleInit(void) //模块初始化
 	}
 
 	ATSendResponse("AT+CSQ\r\n", "OK", 200); //信号强度
+
+	ATSendResponse("AT+CGSMS?\r\n", "OK", 200); //信号强度
 /*       
     for(i = 0; i < 20; i ++)
 	{
@@ -221,6 +230,9 @@ INT16U ReadComm(char *pDst, INT16U Len)
 
   //100ms内没有收到数据则认为数据稳定了.
   //OS_TimeDly_Ms(100);
+  if(CHK_MODULE_STATUS() EQ 0)
+    return 0;
+
   WRPosi = SMS_GPRS_Rcv_Buf.WRPosi;
 
   OS_Core_Wait_Ms(WRPosi != SMS_GPRS_Rcv_Buf.WRPosi,2000); //最多等待500ms。等到有数据接收
@@ -278,7 +290,7 @@ char TempRcvData[200];
 //检测是否收到p字符串，最多等待ms
 INT8U GetResponse(char *p, INT16U ms)
 {
-   INT16U Len;
+  INT16U Len;
 
   memset(TempRcvData, 0, sizeof(TempRcvData));
   Len = ReadComm(TempRcvData, sizeof(TempRcvData));
@@ -296,5 +308,17 @@ void ClrComm(void)
   SMS_GPRS_Rcv_Buf.Buf[0] = 0;
   SMS_GPRS_Rcv_Buf.Buf[1] = 0;
 
+}
+
+void Chk_Module_Status(void)
+{
+  if(CHK_MODULE_STATUS() EQ 0)
+  {
+    OS_TimeDly_Ms(10);
+	if(CHK_MODULE_STATUS() EQ 0)
+	{
+	  ModuleInit();
+	}
+  }
 }
 #endif
