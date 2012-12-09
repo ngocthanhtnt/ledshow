@@ -965,7 +965,7 @@ int gsmGetResponse(SM_BUFF* pBuff)
 	int nState;
 
 	// 从串口读数据，追加到缓冲区尾部
-	nLength = ReadComm(&pBuff->data[pBuff->len], sizeof(pBuff->data));	
+	nLength = ReadComm(&pBuff->data[0], sizeof(pBuff->data));	
 	pBuff->len = nLength;
 
 	//if(pBuff->len + 128 >= sizeof(pBuff->data))
@@ -975,7 +975,7 @@ int gsmGetResponse(SM_BUFF* pBuff)
 	nState = GSM_WAIT;
 	if (nLength >= 4)
 	{
-		if (pBuff->data[nLength - 4] EQ 'O' && pBuff->data[nLength - 3] EQ 'K') nState = GSM_OK;//strncmp(&pBuff->data[nLength - 4], "OK", 2) == 0)  nState = GSM_OK;
+		if (strstr(&pBuff->data[nLength - 4], "OK") != NULL) nState = GSM_OK;// EQ 'O' && pBuff->data[nLength - 3] EQ 'K') nState = GSM_OK;//strncmp(&pBuff->data[nLength - 4], "OK", 2) == 0)  nState = GSM_OK;
 		else if (strstr(pBuff->data, "+CMS ERROR") != NULL) nState = GSM_ERR;
 		else if(nLength >= sizeof(pBuff->data)) nState = GSM_OK; 
 	}
@@ -1049,9 +1049,11 @@ void SmsProc(void)
   {
 	  re = gsmParseMessageList(&smsPara[0], &smsBuf);
 	  smsMessageProc(&smsPara[0], (INT8U)re);
+	  //ClrComm(); //清接收串口
+	  //OS_TimeDly_Ms(100);
   }
   
-  //ATSend("AT+CMGDA=6\r");//WriteComm("AT+CMGDA=6\r", 11); //删除所有短消息
+  ATSend("AT+CMGDA=6\r");//WriteComm("AT+CMGDA=6\r", 11); //删除所有短消息
   OS_TimeDly_Ms(100);
   ClrComm(); //清接收串口
 }

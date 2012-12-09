@@ -249,13 +249,7 @@ void USART1_IRQHandler(void)	//串口1中断服务程序
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
 	{
 	Res =USART_ReceiveData(USART1);//(USART1->DR);	//读取接收到的数据
-  	
-#if GMODULE_DBG_EN //直接输出到调试口--暂时定为		 
-	 while (!(UART4->SR & USART_FLAG_TXE));
-     UART4->DR = (Res & (uint16_t)0x01FF);
-#else
 	Com_Rcv_Byte(CH_COM, Res);
-#endif
 	}
 }
 
@@ -300,17 +294,17 @@ void UART4_IRQHandler(void)	//串口4中断服务程序
 	{
 	 Res =USART_ReceiveData(UART4);//(USART1->DR);	//读取接收到的数据
 
-#if GMODULE_DBG_EN //直接输出到调试口--暂时定为  
-	 Com_Send_Byte(CH_DBG, Res); 
-#endif   
-
 	 if(SMS_GPRS_Rcv_Buf.WRPosi < sizeof(SMS_GPRS_Rcv_Buf.Buf) - 1)
 	 {
        SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi ++] = Res;
 	   SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi] = 0;
 	 }
-	 
-	 
+
+     if(Chk_JP_Status() EQ FAC_STATUS) //工厂状态才允许打印调试信息 
+	 {
+	    while (!(USART2->SR & USART_FLAG_TXE));
+        USART2->DR = (Res & (uint16_t)0x01FF);
+	 } 	 	 
 	}
 }
 #endif

@@ -9,7 +9,7 @@
 #endif
 
 //¶¨Òå¶ÑÕ»¼ì²é×Ö
-#define CHK_STK_BYTE (OS_INT8U)0x5A
+#define CHK_STK_BYTE (OS_INT8U)0x00
 
 #define OS_TASK_WAITING 0x00//µÈ´ý×´Ì¬
 #define OS_TASK_SUSPEND 0x11//¹ÒÆð×´Ì¬
