@@ -50,21 +50,38 @@ void Chk_Main_Stack(void)
 {
 #if CLOCK_EN
   INT16U i = 0;
+  INT8U *p;
   static INT8U Min = 0xFF;
 
   //每分钟打印一次堆栈大小
   if(Min != Cur_Time.Time[T_MIN])
   {
     Min = Cur_Time.Time[T_MIN]; 
-	  
-	while(Main_Stack.Stack[i] EQ 0)
-	{ 
-	i ++;
-	}
 	
-	Main_Stack.Left = i*4;
+	p =  (INT8U *)&Main_Stack.Stack[0]; 
+	while(*p EQ 0)
+	{
+	  p ++;
+	  i ++;
+	}
 
-    debug("stack left %d", Main_Stack.Left);
+	Main_Stack.Left = i;
+
+    debug("main stack remain %d", Main_Stack.Left);
+
+#if SMS_EN || GPRS_EN
+    i = 0;
+
+	p =  (INT8U *)&SMS_GPRS_Stack.Stack[0];
+	while(*p EQ 0)
+	{
+	  p ++;
+	  i ++;
+	}
+
+	SMS_GPRS_Stack.Left = i;
+	debug("smsGprs stack remain %d", SMS_GPRS_Stack.Left);
+#endif
   }
 #else
   INT16U i = 0;

@@ -266,19 +266,14 @@ void Com_Send_Byte(INT8U Ch, INT8U Data)
 #else
      ASSERT_FAILED();
 #endif
-
-#if GMODULE_DBG_EN
-     while (!(USART1->SR & USART_FLAG_TXE));
-     USART1->DR = (Data & (uint16_t)0x01FF);
-#endif
   }
   else if(Ch EQ CH_DBG)
   {
-	//用于调试
-#if GMODULE_DBG_EN
-     while (!(USART1->SR & USART_FLAG_TXE));
-     USART1->DR = (Data & (uint16_t)0x01FF);
-#endif
+    if(Chk_JP_Status() EQ FAC_STATUS) //工厂状态
+	{
+      while (!(USART2->SR & USART_FLAG_TXE));
+      USART2->DR = (Data & (uint16_t)0x01FF);
+	}
   }
   else if(Ch EQ CH_NET)
   {
@@ -1066,12 +1061,8 @@ void UART1_Init(void)
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
   	
-	//串口1用作与主机通信
-#if GMODULE_DBG_EN
-    USART_InitStructure.USART_BaudRate            = 115200;
-#else						    
+	//串口1用作与主机通信				    
 	USART_InitStructure.USART_BaudRate            = Get_Com_Baud();
-#endif
 	USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits            = USART_StopBits_1;
 	USART_InitStructure.USART_Parity              = USART_Parity_No ;

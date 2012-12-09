@@ -122,9 +122,10 @@ void Pub_Timer_Proc(void)
 {
 //GPIO_SetBits(GPIOB,GPIO_Pin_9); //²âÊÔÊä³ö
 #if TIM1_EN
+#if SMS_EN || GPRS_EN
 	Pub_Timer.Ms++;
 	Pub_Timer.Ms_Counts++;
-	if(Pub_Timer.Ms_Counts >= 10)
+	if(Pub_Timer.Ms_Counts >= OS_MS_PER_TICK)
 	{
 #if QT_EN == 0
 	    OS_Tick_ISR();
@@ -148,6 +149,23 @@ void Pub_Timer_Proc(void)
 		  }
 		}
 	}
+#else
+	Pub_Timer.Ms++;
+	Pub_Timer.Ms_Counts++;
+	if(Pub_Timer.Ms_Counts >= 100)
+	{
+	    Pub_Timer.Ms_Counts = 0;
+
+	    Pub_Timer.Ms100++;
+	    Pub_Timer.Ms100_Counts ++;
+	
+		if(Pub_Timer.Ms100_Counts >= 10)
+		{
+		  Pub_Timer.Ms100_Counts = 0;
+		  Pub_Timer.Sec ++;
+		}
+	}
+#endif
 #else
     Pub_Timer.Us100_Counts++;
 	if(Pub_Timer.Us100_Counts >= 10)

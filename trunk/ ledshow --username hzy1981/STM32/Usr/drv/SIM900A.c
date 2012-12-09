@@ -15,7 +15,7 @@ INT8U GsmInit(void)
 	// PDU模式
 	if(ATSendResponse("AT+CMGF=0\r", "OK", 200) EQ 0)
 	  ;//return 0;
-
+    ATSend("AT+CSCA?\r");
 	return 1;
 }
 
@@ -124,9 +124,11 @@ exit:
 
 void ModuleInit(void) //模块初始化
 {
-    INT8U i;
+    //INT8U i;
 
 	//启动GSM模块
+	debug("reset sim900A module");
+
 	SET_GSM_ON(1);
 	OS_TimeDly_Ms(10);
 	SET_GSM_ON(0);
@@ -167,7 +169,8 @@ void ModuleInit(void) //模块初始化
 
 	ATSendResponse("AT+CSQ\r\n", "OK", 200); //信号强度
 
-	ATSendResponse("AT+CGSMS?\r\n", "OK", 200); //信号强度
+	ATSendResponse("AT+CGSMS?\r\n", "OK", 200);
+
 /*       
     for(i = 0; i < 20; i ++)
 	{
@@ -270,7 +273,10 @@ INT16U WriteComm(char *pDst, INT16U Len)
   INT16U i;
 
   for(i = 0; i < Len; i ++)
+  {
     Com_Send_Byte(CH_GPRS, pDst[i]);
+    Com_Send_Byte(CH_DBG, pDst[i]);
+  }
   return Len;
 } 
 
