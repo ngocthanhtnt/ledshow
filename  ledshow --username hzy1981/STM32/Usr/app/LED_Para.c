@@ -607,6 +607,8 @@ INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, v
             SET_SUM(Prog_Status.Area_Status[0]);
          }
      }
+	 else
+	   return 0;
 
      if(Len > 0)
      {

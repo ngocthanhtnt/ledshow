@@ -10,12 +10,12 @@ INT8U GsmInit(void)
 
 
 	//UCS字符集
-	if(ATSendResponse("AT+CSCS=\"UCS2\"\r", "OK", 200) EQ 0)
+	if(ATSendResponse("AT+CSCS=\"UCS2\"\r", "OK", 2000) EQ 0)
 	  ;//return 0;
 	// PDU模式
-	if(ATSendResponse("AT+CMGF=0\r", "OK", 200) EQ 0)
+	if(ATSendResponse("AT+CMGF=0\r", "OK", 2000) EQ 0)
 	  ;//return 0;
-    ATSend("AT+CSCA?\r");
+    //ATSend("AT+CSCA?\r");
 	return 1;
 }
 
@@ -41,12 +41,12 @@ INT8U GprsInit(void)
     //ATSend("AT+COPS?\r\n");
     //erro+= GetResponse("+COPS", 2);
 
-	if(ATSendResponse("AT+CIPHEAD=1\r\n", "OK", 200) EQ 0)
+	if(ATSendResponse("AT+CIPHEAD=1\r\n", "OK", 2000) EQ 0)
 	  ;//return 0;
 
     for(i = 0; i < 20; i ++)
 	{
-        if(ATSendResponse("AT+CGATT=1\r\n", "OK", 200))  //注册网络
+        if(ATSendResponse("AT+CGATT=1\r\n", "OK", 2000))  //注册网络
 		  break;          
     }
 
@@ -143,17 +143,17 @@ void ModuleInit(void) //模块初始化
 	  if(CHK_MODULE_STATUS() EQ 0)
 	    return;
 
-	  if(ATSendResponse("AT\r", "OK", 200))
+	  if(ATSendResponse("AT\r", "OK", 2000))
 	    break;
 
 	  OS_TimeDly_Ms(100);
 	}
 	// ECHO OFF
-	ATSendResponse("ATE0&W\r\n", "OK", 200);
+	ATSendResponse("ATE0&W\r\n", "OK", 2000);
 	   
-    ATSendResponse("AT+CFUN=1\r\n", "OK", 200); //全功能
+    ATSendResponse("AT+CFUN=1\r\n", "OK", 2000); //全功能
     
-    ATSendResponse("AT+CMEE=1\r\n", "OK", 200);// EQ 0)
+    ATSendResponse("AT+CMEE=1\r\n", "OK", 2000);// EQ 0)
 
 	//检测sim卡是否正常
     while(1)
@@ -161,16 +161,15 @@ void ModuleInit(void) //模块初始化
 	  if(CHK_MODULE_STATUS() EQ 0)
 	    return;
 
-	  if(ATSendResponse("AT+CCID\r\n", "OK", 200))
+	  if(ATSendResponse("AT+CCID\r\n", "OK", 2000))
 	    break;
 
 	  OS_TimeDly_Ms(200);
 	}
 
-	ATSendResponse("AT+CSQ\r\n", "OK", 200); //信号强度
+	ATSendResponse("AT+CSQ\r\n", "OK", 2000); //信号强度
 
-	ATSendResponse("AT+CGSMS?\r\n", "OK", 200);
-
+   	//ATSendResponse("AT+CMGDA=6\r\n", "OK", 2000);
 /*       
     for(i = 0; i < 20; i ++)
 	{
@@ -187,6 +186,8 @@ void ModuleInit(void) //模块初始化
 #if GPRS_EN
 	GprsInit();
 #endif
+
+
 
 }
 
@@ -227,7 +228,7 @@ void TcpSendData(INT8U Data[], INT16U DataLen)
 }
 
 //读取COM口数据
-INT16U ReadComm(char *pDst, INT16U Len)
+INT16U ReadComm(char *pDst, INT16U Len, INT16U ms)
 {
   INT16U WRPosi, RDPosi;
 
@@ -238,7 +239,7 @@ INT16U ReadComm(char *pDst, INT16U Len)
 
   WRPosi = SMS_GPRS_Rcv_Buf.WRPosi;
 
-  OS_Core_Wait_Ms(WRPosi != SMS_GPRS_Rcv_Buf.WRPosi,2000); //最多等待500ms。等到有数据接收
+  OS_Core_Wait_Ms(WRPosi != SMS_GPRS_Rcv_Buf.WRPosi, ms); //最多等待500ms。等到有数据接收
 
   while(1)
   {
@@ -299,7 +300,7 @@ INT8U GetResponse(char *p, INT16U ms)
   INT16U Len;
 
   memset(TempRcvData, 0, sizeof(TempRcvData));
-  Len = ReadComm(TempRcvData, sizeof(TempRcvData));
+  Len = ReadComm(TempRcvData, sizeof(TempRcvData), ms);
   if(Len > 0 && strstr(TempRcvData, p) != 0)
     return 1; 
   else
