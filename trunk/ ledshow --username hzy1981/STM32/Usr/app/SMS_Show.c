@@ -171,7 +171,7 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 {
   S_Txt_Para *pPara;
   INT8U subIndex, i, Num0 = 1, Num1;
-  INT16U index;
+  INT16U index,Len;
 
   Find_Next_SMS_File_No();
 
@@ -181,16 +181,18 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
       if(SMS_Cur_No.No EQ NULL_SMS_NO)
         return 0;
   }
-/*
-  if(Read_Storage_Data(SDI_SMS_FILE_PARA + SMS_Cur_No.No, Pub_Buf, Pub_Buf, sizeof(Pub_Buf)))
-  {
 
-  }
-  */
+  Len = Read_Storage_Data(SDI_SMS_FILE_PARA + SMS_Cur_No.No, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));// EQ 0)
+
+  if(Len EQ 0)
+    return 0;
+
+  mem_cpy(pDst, Pub_Buf, Len, pDst_Start, DstLen); 
   pPara = (S_Txt_Para *)pDst;
 
   pPara->Flag = SHOW_TXT;
   pPara->Border_Check = 0;
+ /*
   pPara->Color = 0x01;
   pPara->In_Mode = 0x06;
   pPara->In_Speed = 0x01;
@@ -220,7 +222,7 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 
 
   One_SMS_Proc((char *)"+P0002AB0901#ijk你是个大笨蛋，你有毛病吧，哈哈哈哈，大,国家");//, (S_Txt_Para *)pDst, (char *)SMS_Data.Data, &index, &subIndex);
-
+*/
   //------自适应字体大小---------
   if(((S_Txt_Para *)pDst)->SMS_Fix_Font_Flag EQ 0) //没有固定字体大小
   {
@@ -319,7 +321,7 @@ INT8U One_SMS_Proc(char *p)
   pPara->SMS_Fix_Font_Flag = 0;
   pPara->Color = Screen_Para.Base_Para.Color;
 
-  if(p[0] EQ '+' || p[0] EQ '*') //'+'表示不需应答，'*'表示需要应答
+  if(p[0] EQ '+' || p[0] EQ '*') //'#'表示不需应答，'*'表示需要应答
   {
     if(p[1] EQ '#') //简单方式
       {
@@ -681,7 +683,7 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 	if(pMsg[i].TP_UD[0] EQ '*') //需要应答
 	{
 	   if(re EQ SMS_NO_ERR)
-	   	 strcpy(SMS_WR_Buf.Data, "OK");//"OK,设置成功,原始信息:"); 											   
+	   	 strcpy(SMS_WR_Buf.Data, "你好");//"OK,设置成功,原始信息:"); 											   
 	   else
 	   	 sprintf(SMS_WR_Buf.Data, "ERR %d", re);//"Err %d,设置失败,原始信息:", re);
 

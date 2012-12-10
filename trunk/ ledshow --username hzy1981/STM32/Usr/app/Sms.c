@@ -301,6 +301,8 @@ INT16U const GB2UCS2_Table[40][95]={
 //输出：pDst - 目标数据指针
 //返回: 目标数据长度
 //----------------------------------------------------------------------------------------------
+extern INT16U GB2Unicode(INT16U GBCode);
+
 INT8U GB2UCS2(const char *pSrc,INT8U *pDest,INT8U nSrcLength)
 {
 	INT8U n = 0;//当前处理的第n个字节
@@ -341,13 +343,21 @@ INT8U GB2UCS2(const char *pSrc,INT8U *pDest,INT8U nSrcLength)
 		else if(*pSrc > 0xB0) //(3)双字节，16区(0xB0XX)以上为中文
 		{
 			INT16U temp;
-			temp = GB2UCS2_Table[*pSrc - 0xB0][*(pSrc+1) - 0xA0];
+			temp = ((INT16U)(*pSrc) << 8) + *(pSrc + 1);//GB2UCS2_Table//GB2UCS2_Table[*pSrc - 0xB0][*(pSrc+1) - 0xA0];
+			temp = GB2Unicode(temp);
 			*pDest = (INT8U)(temp>>8); //高字节
 			*(pDest+1) = (INT8U)(temp&0x00FF);//低字节
 			n+=2;
 			pSrc +=2;
 			pDest +=2;
 			DestLength +=2;
+		}
+		else
+		{
+		  *pDest = 0x00;//高字节全填0
+		  pDest++;
+		  pSrc++;
+		  n++;
 		}
 	}
 	return DestLength;
@@ -617,6 +627,8 @@ int gsmEncodeUcs2(const char* pSrc, unsigned char* pDst, int nSrcLength)
 	*/
 }
 
+extern INT16U Unicode2GB(INT16U Unicode);
+
 // UCS2解码
 // 输入: pSrc - 源编码串指针
 //       nSrcLength -  源编码串长度
@@ -645,14 +657,29 @@ int gsmDecodeUcs2(const unsigned char* pSrc, char* pDst, int nSrcLength)
 	return nDstLength;
 	*/
 
-	INT16U i,j = 0;
+	INT16U Code,i,j = 0;
 
 	for(i = 0; i < nSrcLength; i +=2)
-	{
+	{/*
 	  pDst[j ++] = pSrc[i + 1];
 
 	  if(pSrc[i] != 0)
-	    pDst[j ++] = pSrc[i];	
+	    pDst[j ++] = pSrc[i];
+	  */
+	  if(pSrc[i] EQ 0) //字母型号
+	  {
+	    pDst[j ++] = pSrc[i + 1];
+	  }
+	  else
+	  {
+	    Code = (INT16U)(pSrc[i] << 8) + pSrc[i + 1];//GB2UCS2_Table//GB2UCS2_Table[*pSrc - 0xB0][*(pSrc+1) - 0xA0];
+	    Code = Unicode2GB(Code);
+
+		pDst[j++] = (char)(Code & 0xFF);
+	    pDst[j++] = (char)((Code & 0xFF00) >> 8); 
+	  }
+		
+			
 	}
 
 	pDst[j] = 0;
@@ -919,12 +946,12 @@ int gsmSendMessage(SM_PARAM* pSrc)
 
 	// 根据能否找到"\r\n> "决定成功与否
 	//if(nLength == 4 && strncmp(ans.Data, "\r\n> ", 4) == 0)
-	if(ATSendResponse(cmd, "\r\n", 1000))
+	if(ATSendResponse(cmd, "\r\n", 2000))
 	{
 	  ClrComm();
       WriteComm(pdu.Data, nPduLength + 1);
-	  OS_TimeDly_Ms(1000);
-	  GetResponse("OK", 1000);
+	  //OS_TimeDly_Ms(1000);
+	  GetResponse("OK", 5000);
 		//return ATSend(pdu.Data);//WriteComm(pdu.Data, strlen(pdu.Data));		// 得到肯定回答，继续输出PDU串
 	}
 
@@ -965,7 +992,7 @@ int gsmGetResponse(SM_BUFF* pBuff)
 	int nState;
 
 	// 从串口读数据，追加到缓冲区尾部
-	nLength = ReadComm(&pBuff->data[0], sizeof(pBuff->data));	
+	nLength = ReadComm(&pBuff->data[0], sizeof(pBuff->data), 2000);	
 	pBuff->len = nLength;
 
 	//if(pBuff->len + 128 >= sizeof(pBuff->data))

@@ -19,7 +19,7 @@ EXT S_GPRS_Buf GPRS_Buf;
 
 EXT void ModuleInit(void);
 EXT INT8U GsmInit(void);
-EXT INT16U ReadComm(char *pDst, INT16U Len);
+EXT INT16U ReadComm(char *pDst, INT16U Len, INT16U ms);
 EXT INT16U WriteComm(char *pDst, INT16U Len);
 EXT INT8U ATSend(char *p);
 EXT INT8U ATSendResponse(char *pSrc, char *pRes, INT16U ms);

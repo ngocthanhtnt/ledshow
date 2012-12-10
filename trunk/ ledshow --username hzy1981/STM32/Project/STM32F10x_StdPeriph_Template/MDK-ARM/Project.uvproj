@@ -1177,6 +1177,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\SMS_Show.h</FilePath>
             </File>
+            <File>
+              <FileName>GB2UCS2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\app\GB2UCS2.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2687,6 +2692,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\SMS_Show.h</FilePath>
             </File>
+            <File>
+              <FileName>GB2UCS2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\app\GB2UCS2.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4162,6 +4172,11 @@
               <FileName>SMS_Show.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\SMS_Show.h</FilePath>
+            </File>
+            <File>
+              <FileName>GB2UCS2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\app\GB2UCS2.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -5673,6 +5688,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\SMS_Show.h</FilePath>
             </File>
+            <File>
+              <FileName>GB2UCS2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\app\GB2UCS2.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -7148,6 +7168,11 @@
               <FileName>SMS_Show.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\app\SMS_Show.h</FilePath>
+            </File>
+            <File>
+              <FileName>GB2UCS2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\app\GB2UCS2.c</FilePath>
             </File>
           </Files>
         </Group>
