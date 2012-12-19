@@ -28,6 +28,7 @@
 #include "usb_bsp.h"
 #include "UDisk_Proc.h"
 #include "DS1302.h"
+#include "SHT1X.h"
 #if NET_EN
 #include "ENC28J60.h"
 #include "EMAC.h"

@@ -514,7 +514,7 @@ void NVIC_Configuration(void)
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
 
 #if SMS_EN || GPRS_EN
-	NVIC_InitStructure.NVIC_IRQChannel = UART4_IRQn;		//USART3中断,用于接收传感器数据
+	NVIC_InitStructure.NVIC_IRQChannel = UART4_IRQn;		//USART4中断,用于接收GPRS模块数据
  	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;		//
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			//IRQ通道使能
@@ -536,7 +536,7 @@ void NVIC_Configuration(void)
 #endif
  /*
 #ifdef CHIP_USB_HOST	
-	NVIC_InitStructure.NVIC_IRQChannel = OTG_FS_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannel = OTG_FS_IRQHandler;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -552,7 +552,7 @@ void NVIC_Configuration(void)
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 
 	//特效中断
-    NVIC_SetPriority (SysTick_IRQn, 0x0C);                //抢占优先级为1
+    NVIC_SetPriority (SysTick_IRQn, 0x0C);                //抢占优先级为3
 
 }
 

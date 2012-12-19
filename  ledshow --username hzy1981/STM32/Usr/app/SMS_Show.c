@@ -304,6 +304,72 @@ INT8U Chk_PH_No(char No[])
 
 }
 
+typedef struct
+{
+  INT8U Err_No;
+  char *pErr_Info;
+}S_Err_Info;
+
+const S_Err_Info Err_Info[]=
+{
+{SMS_INDEX_ERR, "索引号错误"},//       0x01 //短信索引号错误
+{SMS_LEN_ERR,"短信长度错误"},//         0x02 //短信长度错误
+{SMS_STORA_ERR,"存储错误"},//       0x03 //短信存储错误
+{SMS_PLAY_COUNTS_ERR,"播放次数错误"},// 0x04 //播放次数错误
+{SMS_IN_MODE_ERR,"进入特效错误"},//     0x05 //进入特效错误
+{SMS_OUT_MODE_ERR,"退出特效错误"},//    0x06 //退出特效错误
+{SMS_SPEED_ERR,"播放速度错误"},//       0x07 //速度错误
+{SMS_STAY_TIME_ERR,"停留时间错误"},//   0x08 //停留时间错误
+{SMS_FORMAT_ERR,"短信格式错误"},//      0x09//短信格式错误
+{SMS_TIME_ERR,"/时间格式错误"},//        0x0A //时间格式错误
+{SMS_FONT_ERR,"字体错误"},//        0x0B //字体错误
+{SMS_COLOR_ERR,"颜色错误"},//       0x0C //颜色错误
+{SMS_TXTHEAD_ERR,"文本起始字符错误"},//     0x0D //文本起始字符错误
+{SMS_SCN_BASE_ERR,"屏参不合法"},//    0x0E //屏参不合法
+{SMS_SCN_OE_ERR,"OE极性错误"},//      0x0F //OE极性错误
+{SMS_SCN_DE_ERR,"数据极性错误"},//      0x10 //数据极性错误
+{SMS_SCN_SCAN_ERR,"扫描方式错误"},//    0x11 //扫描方式错误
+{SMS_SCN_COLOR_ERR,"屏幕颜色错误"},//   0x12 //屏幕颜色错误
+{SMS_PN_FULL_ERR,"手机号码满"},//     0x13 //手机号码满
+//{SMS_UNAVAIL_ERR   0x20 //非有效短信，不需应答
+};
+/*
+#define SMS_NO_ERR          0x00
+#define SMS_INDEX_ERR       0x01 //短信索引号错误
+#define SMS_LEN_ERR         0x02 //短信长度错误
+#define SMS_STORA_ERR       0x03 //短信存储错误
+#define SMS_PLAY_COUNTS_ERR 0x04 //播放次数错误
+#define SMS_IN_MODE_ERR     0x05 //进入特效错误
+#define SMS_OUT_MODE_ERR    0x06 //退出特效错误
+#define SMS_SPEED_ERR       0x07 //速度错误
+#define SMS_STAY_TIME_ERR   0x08 //停留时间错误
+#define SMS_FORMAT_ERR      0x09//短信格式错误
+#define SMS_TIME_ERR        0x0A //时间格式错误
+#define SMS_FONT_ERR        0x0B //字体错误
+#define SMS_COLOR_ERR       0x0C //颜色错误
+#define SMS_TXTHEAD_ERR     0x0D //文本起始字符错误
+#define SMS_SCN_BASE_ERR    0x0E //屏参不合法
+#define SMS_SCN_OE_ERR      0x0F //OE极性错误
+#define SMS_SCN_DE_ERR      0x10 //数据极性错误
+#define SMS_SCN_SCAN_ERR    0x11 //扫描方式错误
+#define SMS_SCN_COLOR_ERR   0x12 //屏幕颜色错误
+#define SMS_PN_FULL_ERR     0x13 //手机号码满
+#define SMS_UNAVAIL_ERR   0x20 //非有效短信，不需应答
+*/
+
+char *GetErrInfo(INT8U Err_No)
+{
+  INT8U i;
+
+  for(i = 0; i < S_NUM(Err_Info); i ++)
+  {
+    if(Err_Info[i].Err_No EQ Err_No)
+	  return Err_Info[i].pErr_Info;
+  }
+
+  return 0;
+}
+
 //处理一条短信数据
 INT8U One_SMS_Proc(char *p)
 {
@@ -321,9 +387,9 @@ INT8U One_SMS_Proc(char *p)
   pPara->SMS_Fix_Font_Flag = 0;
   pPara->Color = Screen_Para.Base_Para.Color;
 
-  if(p[0] EQ '+' || p[0] EQ '*') //'#'表示不需应答，'*'表示需要应答
+  if(p[0] EQ '#' || p[0] EQ '*') //'#'表示不需应答，'*'表示需要应答
   {
-    if(p[1] EQ '#') //简单方式
+    if(p[1] EQ '+') //简单方式
       {
         if(Chk_Int_Str(&p[2], 3) EQ 0)
             return SMS_INDEX_ERR;
@@ -426,7 +492,7 @@ INT8U One_SMS_Proc(char *p)
 
                pPara->Stay_Time = p[9] - '0';
 
-               if(p[10] != '#')
+               if(p[10] != '+')
                {
                    //字体
                    if(!(p[10] >= '0' && p[10] <= '2'))
@@ -445,7 +511,7 @@ INT8U One_SMS_Proc(char *p)
                    if((pPara->Color & Screen_Para.Base_Para.Color) EQ 0)
                        return SMS_COLOR_ERR;
 
-                   if(p[12] != '#')
+                   if(p[12] != '+')
                        return SMS_TXTHEAD_ERR;
 
                    pPara->SMS_Fix_Font_Flag = 1;
@@ -461,7 +527,7 @@ INT8U One_SMS_Proc(char *p)
           }
           else
            {
-              if(p[10] != '#')
+              if(p[10] != '+')
                   return SMS_TXTHEAD_ERR;
 
               TxtOff = 11;
@@ -602,7 +668,7 @@ INT8U One_SMS_Proc(char *p)
            return SMS_NO_ERR;
 
       }
-      else if(p[1] EQ 'P' && p[2] EQ 'N')//接收过滤短信号码
+      else if(p[1] EQ 'M' && p[2] EQ 'P' && p[3] EQ 'N')//接收过滤短信号码
       {
           if(p[3] EQ 0) //清除所有号码
           {
@@ -683,19 +749,22 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 	if(pMsg[i].TP_UD[0] EQ '*') //需要应答
 	{
 	   if(re EQ SMS_NO_ERR)
-	   	 strcpy(SMS_WR_Buf.Data, "你好");//"OK,设置成功,原始信息:"); 											   
-	   else
-	   	 sprintf(SMS_WR_Buf.Data, "ERR %d", re);//"Err %d,设置失败,原始信息:", re);
+	   	 strcpy(SMS_WR_Buf.Data, "设置成功");//"OK,设置成功,原始信息:"); 											   
+	   else if(re != SMS_UNAVAIL_ERR)
+	   	 sprintf(SMS_WR_Buf.Data, "设置失败:%s", GetErrInfo(re));//"Err %d,设置失败,原始信息:", re);
 
 	   //strcpy(SMS_WR_Buf.Data, "你好");//"OK,设置成功,原始信息:");
 	   /*
 	   mem_cpy(SMS_WR_Buf.Data + strlen(SMS_WR_Buf.Data), pMsg[i].TP_UD, sizeof(pMsg[i].TP_UD),\
 	           SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data));
-	*/		  
+	*/
+	  if(re != SMS_UNAVAIL_ERR)
+	  {		  
 	   mem_cpy(pMsg[i].TP_UD, SMS_WR_Buf.Data, sizeof(pMsg[i].TP_UD),\
 	           pMsg[i].TP_UD, sizeof(pMsg[i].TP_UD)); 
 	   
 	   gsmSendMessage(&(pMsg[i]));
+	   }
 	}
   }
 

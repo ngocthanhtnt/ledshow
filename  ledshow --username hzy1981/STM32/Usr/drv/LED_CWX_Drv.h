@@ -130,6 +130,20 @@
 #define SET_GSM_ON(x) (x == 0)?GPIO_ResetBits(GPIOC,GPIO_Pin_9):GPIO_SetBits(GPIOC,GPIO_Pin_9)
 
 #define CHK_MODULE_STATUS() GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_8)
+/*
+#define SCLL GPIOE->ODR&=~(1<<11)
+#define SCLH GPIOE->ODR|=1<<11
+#define SDAL GPIOE->ODR&=~(1<<13)
+#define SDAH GPIOE->ODR|=1<<13
+
+#define ReadState() {GPIOE->CRH&=0xFF0FFFFF; GPIOE->CRH|=0x00800000; GPIOE->ODR&=~(1<<13);}
+#define WriteState() {GPIOE->CRH&=0xFF0FFFFF; GPIOE->CRH|=0x00300000;}
+*/
+
+#define SHT1X_SCL_PIN   GPIO_Pin_13
+#define SHT1X_SCL_PORT  GPIOB
+#define SHT1X_SDA_PIN   GPIO_Pin_12
+#define SHT1X_SDA_PORT  GPIOC
 
 EXT void Put_Char(char c);
 //EXT INT8U Get_Cur_Time(void);//S_Time *pTime);

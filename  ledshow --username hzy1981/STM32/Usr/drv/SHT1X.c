@@ -1,7 +1,13 @@
+#include "Includes.h"
+/*
 #include<stm32f10x_lib.h>
 #include "sys.h"
 #include "delay.h"
 #include "1602.h"
+*/
+#if TEMP_SHOW_EN || HUMIDITY_SHOW_EN
+#define NO_SHT1X_FLAG 0x1235A9A5
+#define EXIST_SHT1X_FLAG 0x87394203
 
 #define noACK 0 //用于判断是否结束SHT10通讯
 #define ACK 1 //结束数据传输
@@ -12,27 +18,67 @@
 #define MEASURE_HUMI 0x05 // 1
 #define RESET 0x1E        // 0
 
-#define SCLL GPIOE->ODR&=~(1<<11)
-#define SCLH GPIOE->ODR|=1<<11
-#define SDAL GPIOE->ODR&=~(1<<13)
-#define SDAH GPIOE->ODR|=1<<13
-
+#define SCLL SHT1X_SCL_PORT->ODR&=~SHT1X_SCL_PIN//GPIOE->ODR&=~(1<<11)
+#define SCLH SHT1X_SCL_PORT->ODR|=SHT1X_SCL_PIN//GPIOE->ODR|=1<<11
+#define SDAL SHT1X_SDA_PORT->ODR&=~SHT1X_SDA_PIN //GPIOE->ODR&=~(1<<13)
+#define SDAH SHT1X_SDA_PORT->ODR|=SHT1X_SDA_PIN //GPIOE->ODR|=1<<13
+/*
 #define ReadState() {GPIOE->CRH&=0xFF0FFFFF; GPIOE->CRH|=0x00800000; GPIOE->ODR&=~(1<<13);}
 #define WriteState() {GPIOE->CRH&=0xFF0FFFFF; GPIOE->CRH|=0x00300000;}
+*/
+#define DATA() ((SHT1X_SDA_PORT->IDR & SHT1X_SDA_PIN) > 0?1:0)//(GPIOE->IDR>>13)&1
 
-#define DATA() (GPIOE->IDR>>13)&1
+#define delay_us Delay_us
 
 enum{TEMP,HUMI};
 
 unsigned int Temperature,Humidity;
 u8 t[2];
 
-void SHT_GPIO_Config(){
-	RCC->APB2ENR|=1<<(2+4);
-	GPIOE->CRH&=0x0F0F0F0F;
-	GPIOE->CRH|=0x30303030;
-	GPIOE->ODR&=0x00000001;
-	GPIOE->ODR|=1<<15;
+INT32U SHT_In_Flag;
+
+void ReadState(void)
+{
+  GPIO_InitTypeDef GPIO_InitStructure = {0};
+
+  GPIO_InitStructure.GPIO_Pin =  SHT1X_SDA_PIN;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;	//上拉输入
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(SHT1X_SDA_PORT, &GPIO_InitStructure);
+}
+
+void WriteState(void)
+{
+  GPIO_InitTypeDef GPIO_InitStructure = {0};
+
+  GPIO_InitStructure.GPIO_Pin =  SHT1X_SDA_PIN;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; //推挽输出
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(SHT1X_SDA_PORT, &GPIO_InitStructure);
+}
+
+void SHT_Init(void)
+{
+  INT16S Temp, Humidity;
+  GPIO_InitTypeDef GPIO_InitStructure = {0};
+
+  GPIO_InitStructure.GPIO_Pin =  SHT1X_SCL_PIN;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; //推挽输出
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(SHT1X_SCL_PORT, &GPIO_InitStructure);
+
+  //连续读3次SHT1X,如果3次都没有读到，认为没有连接传感器
+  SHT_In_Flag = EXIST_SHT1X_FLAG;
+  if(Get_Temp_Humidity(&Temp, &Humidity) EQ 0)
+  {
+    Delay_ms(100);
+	if(Get_Temp_Humidity(&Temp, &Humidity) EQ 0)
+	{
+	  Delay_ms(100);
+	  if(Get_Temp_Humidity(&Temp, &Humidity) EQ 0)
+	    SHT_In_Flag = NO_SHT1X_FLAG;
+	}
+  }
 }
 
 //启动传输
@@ -127,7 +173,7 @@ char WriteByte(unsigned char value){//从高位开始发送
 	return error;
 }
 
-char Measure(unsigned char *pCheckSum,unsigned char mode){
+char Measure(unsigned char *pCheckSum,unsigned char mode, unsigned char t[]){
 	unsigned char error=0;
 	TransStart();
 	switch(mode){
@@ -150,7 +196,7 @@ char Measure(unsigned char *pCheckSum,unsigned char mode){
 	*pCheckSum=ReadByte(noACK);
 	return error;
 }
-
+/*
 //温度暂时设定值为0-99，可以根据需要更改
 void Display(u32 x){
 //	x=x%1000;
@@ -160,11 +206,6 @@ void Display(u32 x){
 }
 
 int main(){
-	unsigned char error,CheckSum;
-	Stm32_Clock_Init(9);
-	delay_init(72);
-	L1602_GPIO_Init();
-	L1602_Init();
 
 	SHT_GPIO_Config();
 	delay_us(11000);
@@ -172,7 +213,7 @@ int main(){
 	while(1){
 		WriteCmd(0x01);
 		error=0;
-		error+=Measure(&CheckSum,TEMP);
+		error+=Measure(&CheckSum,TEMP, t);
 		if(error!=0){
 			ConnectionReset();
 			WriteData(error+'0');
@@ -184,3 +225,22 @@ int main(){
 		delay_us(500000);
 	}
 }
+*/
+
+INT8U Get_Temp_Humidity(INT16S *pTemp, INT16S *pHumidity)
+{
+  INT8U buf[5], sum;
+
+  if(SHT_In_Flag EQ NO_SHT1X_FLAG)
+    return 0;
+
+  Measure(&sum, TEMP, buf);
+
+  Screen_Status.Temperature = (u32)(((buf[0]<<8)+buf[1])*0.01-40);
+
+  Measure(&sum, HUMI, buf);
+
+  return 0;
+}
+#endif
+

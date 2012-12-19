@@ -266,12 +266,6 @@ typedef struct
 
   INT8U Ext_Temperature_Sec_Counts; //外部温度通信计数器。收到温度后置秒数。程序中减到0后。就采用内部温度传感器
 
-#if ENV_VAR_EN
-  INT8U Env_Rcv_Data[15]; //接收环境变量数据缓冲区
-  INT8U Env_Frame_Flag;	  //环境变量帧标志
-  INT8U Env_Rcv_Posi;	  //接收缓冲区位置
-#endif
-
 #if NET_EN //远程通信相关数据
   INT8U UDP_Soc;
   INT8U Rem_IP[4];

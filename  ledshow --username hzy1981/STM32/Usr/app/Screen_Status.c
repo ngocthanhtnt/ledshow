@@ -25,42 +25,24 @@ INT16U Get_Cur_Noise(void)
 void Screen_Env_Proc()
 {
 #if ENV_VAR_EN
-  static S_Int32U Sec = {CHK_BYTE, 0xFFFFFFFF, CHK_BYTE};
-  static S_Int32U Counts = {CHK_BYTE, 0x00, CHK_BYTE};
+   static S_Int8U Sec_Counts ={CHK_BYTE, 40, CHK_BYTE};
+   static S_Int32U Sec_Bak = {CHK_BYTE, 0x00, CHK_BYTE};
+   INT16S Temp, Humidity;
 
-  //接收到数据达到一帧则处理
-  if(Screen_Status.Env_Rcv_Posi >= 3 + F_NDATA_LEN)
-  {
-    Screen_Status.Env_Frame_Flag = 1;
-
-    if(Check_Frame_Format((INT8U *)Screen_Status.Env_Rcv_Data, Screen_Status.Env_Rcv_Posi))	  
-	  Rcv_Frame_Proc(CH_ENV, (INT8U *)Screen_Status.Env_Rcv_Data, Screen_Status.Env_Rcv_Posi, sizeof(Screen_Status.Env_Rcv_Data)); 
-
-	Clr_Env_Rcv_Data();
-  }
-
-  //每秒发送一帧查询数据
-  if(Sec.Var != Pub_Timer.Sec)
-  {
-    Sec.Var = Pub_Timer.Sec;
-    Counts.Var ++;
-
-	Clr_Env_Rcv_Data();
-
-    Screen_Status.Env_Frame_Flag = 1; //利用接收缓冲区发送数据，因此在打包发送期间不能接收数据
-
-	if(Counts.Var EQ 1)
-      Send_Env_Frame(0x00);
-	else if(Counts.Var EQ 2)
-      Send_Env_Frame(0x01);
-	else if(Counts.Var >= 3)
-    { 
-	  Send_Env_Frame(0x02);
-	  Counts.Var = 0;
+   if(SEC_TIMER != Sec_Bak.Var)
+   {
+	 Sec_Bak.Var = SEC_TIMER;
+	 Sec_Counts.Var ++;
+	 if(Sec_Counts.Var >= 30)
+	 {
+        if(Get_Temp_Humidity(&Temp, &Humidity))
+		{
+		  Screen_Status.Temperature = Temp;
+		  Screen_Status.Humidity = Humidity;
+		}
 	 }
 
-	 Screen_Status.Env_Frame_Flag = 0;
-  }
+   }
 #endif
 }
 
@@ -481,7 +463,7 @@ void Screen_Proc(void)
 {
   Screen_Time_Proc();
   Screen_Lightness_Proc();
-  Screen_Temperature_Proc();
+  Screen_Env_Proc();
   Screen_Open_Close_Proc();
   Screen_Com_Proc(); //屏幕通信处理
   Screen_Check_Lock_Date();

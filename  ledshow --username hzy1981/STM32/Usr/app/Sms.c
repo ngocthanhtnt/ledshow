@@ -340,7 +340,7 @@ INT8U GB2UCS2(const char *pSrc,INT8U *pDest,INT8U nSrcLength)
 			pDest++;
 			DestLength +=2;
 		}
-		else if(*pSrc > 0xB0) //(3)双字节，16区(0xB0XX)以上为中文
+		else if(*pSrc >= 0xB0) //(3)双字节，16区(0xB0XX)以上为中文
 		{
 			INT16U temp;
 			temp = ((INT16U)(*pSrc) << 8) + *(pSrc + 1);//GB2UCS2_Table//GB2UCS2_Table[*pSrc - 0xB0][*(pSrc+1) - 0xA0];

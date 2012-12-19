@@ -735,41 +735,6 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
 	}
 
   }
-#if ENV_VAR_EN
-  else if(Cmd_Code EQ C_ENV_VAR)  //环境变量，温度、湿度、噪音等
-  {
-    if(RW_Flag EQ SET_FLAG)
-	{
-	  Re = 1;
-	  if(Frame[FDATA] EQ 0x00)
-	  {
-	    memcpy((void *)&Screen_Status.Temperature, Frame + FDATA + 1, sizeof(Screen_Status.Temperature));//, (void *)&Screen_Status.Temp, sizeof(Screen_Status.Temp));
-	    Screen_Status.Ext_Temperature_Sec_Counts = 30; //30s还没有收到则采用内部温度传感器
-	  }
-	  else if(Frame[FDATA] EQ 0x01)
-	    memcpy((void *)&Screen_Status.Humidity, Frame + FDATA + 1, sizeof(Screen_Status.Humidity));//, (void *)&Screen_Status.Humidity, sizeof(Screen_Status.Humidity));
-	  else if(Frame[FDATA] EQ 0x02)
-	    memcpy((void *)&Screen_Status.Noise, Frame + FDATA + 1, sizeof(Screen_Status.Noise));//, (void *)&Screen_Status.Humidity, sizeof(Screen_Status.Noise));
-	  else
-	    Re = 0;
-	}
-	else
-	{
-	  Re = 1;
-	  if(Frame[FDATA] EQ 0x00)
-	    memcpy(Frame + FDATA + 1, (void *)&Screen_Status.Temperature, sizeof(Screen_Status.Temperature));//, &Screen_Status.Temp, sizeof(Screen_Status.Temp));
-	  else if(Frame[FDATA] EQ 0x01)
-	    memcpy(Frame + FDATA + 1, (void *)&Screen_Status.Humidity, sizeof(Screen_Status.Humidity));
-	  else if(Frame[FDATA] EQ 0x02)
-	    memcpy(Frame + FDATA + 1, (void *)&Screen_Status.Noise, sizeof(Screen_Status.Noise));
-	  else
-	    Re = 0;
-
-	}
-
-	return 1;
-  }
-#endif
 #if SMS_EN || GPRS_EN
   else if(Cmd_Code EQ C_ZK_DATA)
   {
@@ -839,38 +804,19 @@ void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen)
 //接收环境变量数据,温度、湿度、噪音等
 void Env_Rcv_Byte(INT8U Ch, INT8U Byte)
 {
-#if ENV_VAR_EN
-  if(Screen_Status.Env_Rcv_Posi >= sizeof(Screen_Status.Env_Rcv_Data) ||\
-     Screen_Status.Env_Frame_Flag > 0)//当前有帧正在处理或者发送则不接收数据
-    return;
-
-  Screen_Status.Env_Rcv_Data[Screen_Status.Env_Rcv_Posi ++] = 0;
-#endif  
+ 
 }
 
 //清除环境变量缓冲区
 void Clr_Env_Rcv_Data(void)
 {
-#if ENV_VAR_EN
-    Screen_Status.Env_Frame_Flag = 1;
 
-	memset((void *)&Screen_Status.Env_Rcv_Data, 0, sizeof(Screen_Status.Env_Rcv_Data));
-  	Screen_Status.Env_Rcv_Posi = 0;
-
-    Screen_Status.Env_Frame_Flag = 0;  
-#endif
 }
 
 //INT16U Make_Frame(INT8U *pData, INT16U Len, INT8U Addr[], INT8U Cmd, INT8U Cmd0, INT8U Seq, INT16U Seq0, char *pDst)
 //发送环境变量帧
 void Send_Env_Frame(INT8U Flag)
 {
-#if ENV_VAR_EN
-  INT16U Len;
-
-  Len =  Make_Frame((INT8U *)&Flag, 1, (INT8U *)&Screen_Para.COM_Para.Addr, C_ENV_VAR, 0, 0, 0, (char *)Screen_Status.Env_Rcv_Data);
-  Send_Frame_Proc(CH_ENV, (INT8U *)Screen_Status.Env_Rcv_Data, Len); //向来数据的通道发送应答数据
-#endif
 }
 
 //收到一个字节,中断中调用该函数
