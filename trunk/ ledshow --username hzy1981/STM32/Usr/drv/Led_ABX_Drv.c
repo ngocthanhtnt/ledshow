@@ -160,7 +160,7 @@ void Hardware_Init(void)
 
   DMA_Configuration();
 
-  ADC_configuration();
+  //ADC_configuration();
 
   UART2_Init(); //用于调试信息输出
 

@@ -153,7 +153,11 @@ void mainInit(void)
 #if NET_EN
   Net_Init();
 #endif
-  
+
+#if TEMP_SHOW_EN || HUMIDITY_SHOW_EN
+  SHT_Init(); 
+#endif
+   
   Para_Show(); //上电参数显示
 
   SET_STATUS_LED_ON(); //打开LED状态灯

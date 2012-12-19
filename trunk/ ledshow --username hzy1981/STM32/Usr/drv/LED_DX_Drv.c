@@ -207,10 +207,10 @@ void Hardware_Init(void)
 
   DMA_Configuration();
 
-  ADC_configuration();
+  //ADC_configuration();
 
   UART2_Init();	//用于调试信息输出
-  UART3_Init(); //用于传感器返回信息
+  //UART3_Init(); //用于传感器返回信息
 
   Unselect_SPI_Device(); //不选中任何一个SPI设备
 

@@ -178,7 +178,7 @@
 
 #endif
 
-#define ENV_VAR_EN (HUMIDITY_SHOW_EN | NOISE_SHOW_EN) //外部环境变量的支持,温度因为有内部温度传感器支持，所以不判断
+#define ENV_VAR_EN (TEMP_SHOW_EN | HUMIDITY_SHOW_EN | NOISE_SHOW_EN) //外部环境变量的支持,温度因为有内部温度传感器支持，所以不判断
 //节目特征字
 #define FILE_EN_WORD ((BORDER_SHOW_EN<<BORDER_SHOW_BIT) |\
                        (PIC_SHOW_EN << PIC_SHOW_BIT) |\

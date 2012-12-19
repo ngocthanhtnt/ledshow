@@ -268,20 +268,6 @@ void USART2_IRQHandler(void)	//串口2中断服务程序
 //串口中断3用于接收环境变量数据
 void USART3_IRQHandler(void)	//串口3中断服务程序
 {
-#if ENV_VAR_EN
-   u8 Res;
-   //STM_EVAL_LEDToggle(LED2);
-   if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)  //接收中断(接收到的数据必须是0x0d 0x0a结尾)
-	{
-	Res =USART_ReceiveData(USART3);//(USART1->DR);	//读取接收到的数据
-  
-	 Env_Rcv_Byte(CH_ENV, Res); //接收环境变量
-     //while (!(USART3->SR & USART_FLAG_TXE));
-     //USART3->DR = (Res & (uint16_t)0x01FF);
-    //Com_Rcv_Byte(CH_GPRS, Res);
-	 
-	}
-#endif
 }
 
 //串口中断4用于接收GPRS数据
