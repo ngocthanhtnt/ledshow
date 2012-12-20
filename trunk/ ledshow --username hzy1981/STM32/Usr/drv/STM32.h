@@ -285,4 +285,5 @@ EXT void BKP_Register_Init(void);
 EXT void DMA_Configuration(void);
 EXT void ADC_configuration(void);
 EXT INT16S GetInterTemperature(void);
+EXT INT32U CRC32(INT8U *pBuf, INT16U nSize);
 #endif
