@@ -120,6 +120,8 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
         file = getFontFile(FontSize, (CHK_ASC(Data[0]))?0:1);
         fseek(file, offset, SEEK_SET);
         fread(Font_Data.Data, len , 1, file); //读取数据长度
+#else
+	  offset = offset;
 #endif
     }
 

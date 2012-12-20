@@ -500,6 +500,7 @@ OS_INT16U OS_Crc16_0(OS_INT8U *pSrc, OS_INT16U Len)
 //CRC校验算法1，用于空间比较大的情况,但速度要求较高的情况
 OS_INT16U OS_Crc16_1(OS_INT8U *pSrc, OS_INT16U Len)
 {
+#if QT_EN == 0
   OS_INT16U Crc=0;
   OS_INT16U Temp;
   
@@ -510,6 +511,9 @@ OS_INT16U OS_Crc16_1(OS_INT8U *pSrc, OS_INT16U Len)
     Crc=Crc^(Temp<<8);
   }
   return(Crc);
+#else //采用硬件CRC可以加快运算速度
+  return (OS_INT16U)CRC32(pSrc, Len);
+#endif
 }
 
 //通用检查校验和函数
