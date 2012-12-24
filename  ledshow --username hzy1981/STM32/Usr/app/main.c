@@ -155,7 +155,7 @@ void mainInit(void)
 #endif
 
 #if TEMP_SHOW_EN || HUMIDITY_SHOW_EN
-  SHT_Init(); 
+  SHT1X_Init(); 
 #endif
    
   Para_Show(); //上电参数显示
