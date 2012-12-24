@@ -27,21 +27,22 @@ void Screen_Env_Proc()
 #if ENV_VAR_EN
    static S_Int8U Sec_Counts ={CHK_BYTE, 40, CHK_BYTE};
    static S_Int32U Sec_Bak = {CHK_BYTE, 0x00, CHK_BYTE};
-   INT16S Temp, Humidity;
+   INT16S Temp, Humi;
 
    if(SEC_TIMER != Sec_Bak.Var)
    {
 	 Sec_Bak.Var = SEC_TIMER;
 	 Sec_Counts.Var ++;
-	 if(Sec_Counts.Var >= 30)
+	 if(Sec_Counts.Var >= 5)
 	 {
-        if(Get_Temp_Humidity(&Temp, &Humidity))
+        if(Get_Temp_Humi(&Temp, &Humi))
 		{
 		  Screen_Status.Temperature = Temp;
-		  Screen_Status.Humidity = Humidity;
+		  Screen_Status.Humidity = Humi;
 		}
-	 }
 
+		Sec_Counts.Var = 0;
+	 }
    }
 #endif
 }

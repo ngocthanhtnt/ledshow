@@ -35,7 +35,49 @@ enum{TEMP,HUMI};
 unsigned int Temperature,Humidity;
 u8 t[2];
 
-INT32U SHT_In_Flag;
+INT32U SHT1X_In_Flag;
+
+const char CRC8Table[]={
+  0, 94, 188, 226, 97, 63, 221, 131, 194, 156, 126, 32, 163, 253, 31, 65,
+  157, 195, 33, 127, 252, 162, 64, 30, 95, 1, 227, 189, 62, 96, 130, 220,
+  35, 125, 159, 193, 66, 28, 254, 160, 225, 191, 93, 3, 128, 222, 60, 98,
+  190, 224, 2, 92, 223, 129, 99, 61, 124, 34, 192, 158, 29, 67, 161, 255,
+  70, 24, 250, 164, 39, 121, 155, 197, 132, 218, 56, 102, 229, 187, 89, 7,
+  219, 133, 103, 57, 186, 228, 6, 88, 25, 71, 165, 251, 120, 38, 196, 154,
+  101, 59, 217, 135, 4, 90, 184, 230, 167, 249, 27, 69, 198, 152, 122, 36,
+  248, 166, 68, 26, 153, 199, 37, 123, 58, 100, 134, 216, 91, 5, 231, 185,
+  140, 210, 48, 110, 237, 179, 81, 15, 78, 16, 242, 172, 47, 113, 147, 205,
+  17, 79, 173, 243, 112, 46, 204, 146, 211, 141, 111, 49, 178, 236, 14, 80,
+  175, 241, 19, 77, 206, 144, 114, 44, 109, 51, 209, 143, 12, 82, 176, 238,
+  50, 108, 142, 208, 83, 13, 239, 177, 240, 174, 76, 18, 145, 207, 45, 115,
+  202, 148, 118, 40, 171, 245, 23, 73, 8, 86, 180, 234, 105, 55, 213, 139,
+  87, 9, 235, 181, 54, 104, 138, 212, 149, 203, 41, 119, 244, 170, 72, 22,
+  233, 183, 85, 11, 136, 214, 52, 106, 43, 117, 151, 201, 74, 20, 246, 168,
+  116, 42, 200, 150, 21, 75, 169, 247, 182, 232, 10, 84, 215, 137, 107, 53
+};
+
+//计算CRC-8校验
+unsigned char CRC8_Table(unsigned char *p, char counter)
+{
+    unsigned char crc8 = 0;
+
+    for( ; counter > 0; counter--){
+        crc8 = CRC8Table[crc8^*p];
+        p++;
+    }
+    return(crc8);
+
+}
+/*
+void main()
+{
+    unsigned  char  a[] = {0x02, 0x03};
+
+    printf("%d", CRC8_Table(&a, 2));
+
+    getch();
+}
+*/
 
 void ReadState(void)
 {
@@ -57,9 +99,9 @@ void WriteState(void)
   GPIO_Init(SHT1X_SDA_PORT, &GPIO_InitStructure);
 }
 
-void SHT_Init(void)
+void SHT1X_Init(void)
 {
-  INT16S Temp, Humidity;
+  INT16S Temp, Humi;
   GPIO_InitTypeDef GPIO_InitStructure = {0};
 
   GPIO_InitStructure.GPIO_Pin =  SHT1X_SCL_PIN;
@@ -68,16 +110,22 @@ void SHT_Init(void)
   GPIO_Init(SHT1X_SCL_PORT, &GPIO_InitStructure);
 
   //连续读3次SHT1X,如果3次都没有读到，认为没有连接传感器
-  SHT_In_Flag = EXIST_SHT1X_FLAG;
-  if(Get_Temp_Humidity(&Temp, &Humidity) EQ 0)
+  SHT1X_In_Flag = EXIST_SHT1X_FLAG;
+  if(Get_Temp_Humi(&Temp, &Humi) EQ 0)
   {
     Delay_ms(100);
-	if(Get_Temp_Humidity(&Temp, &Humidity) EQ 0)
+	if(Get_Temp_Humi(&Temp, &Humi) EQ 0)
 	{
 	  Delay_ms(100);
-	  if(Get_Temp_Humidity(&Temp, &Humidity) EQ 0)
-	    SHT_In_Flag = NO_SHT1X_FLAG;
+	  if(Get_Temp_Humi(&Temp, &Humi) EQ 0)
+	    SHT1X_In_Flag = NO_SHT1X_FLAG;
 	}
+  }
+
+  if(SHT1X_In_Flag EQ EXIST_SHT1X_FLAG)
+  {
+	Screen_Status.Temperature = Temp;
+	Screen_Status.Humidity = Humi; 
   }
 }
 
@@ -173,8 +221,9 @@ char WriteByte(unsigned char value){//从高位开始发送
 	return error;
 }
 
-char Measure(unsigned char *pCheckSum,unsigned char mode, unsigned char t[]){
+char Measure(unsigned char mode, unsigned char t[]){
 	unsigned char error=0;
+	unsigned char sum;
 	TransStart();
 	switch(mode){
 		case TEMP:
@@ -193,7 +242,11 @@ char Measure(unsigned char *pCheckSum,unsigned char mode, unsigned char t[]){
 	WriteState();
 	t[0]=ReadByte(ACK);
 	t[1]=ReadByte(ACK);
-	*pCheckSum=ReadByte(noACK);
+	sum=ReadByte(noACK);
+
+    //if(sum != CRC8_Table(t,2))
+	 //error +=1;
+
 	return error;
 }
 /*
@@ -226,19 +279,79 @@ int main(){
 	}
 }
 */
+void calc_dht10(float *p_humidity ,float *p_temperature)   
+// calculates temperature [C] and humidity [%RH]     
+// input :  humi [Ticks] (12 bit)     
+//          temp [Ticks] (14 bit)    
+// output:  humi [%RH]    
+//          temp [C]    
+{ const float C1=-4.0;              // for 12 Bit (-4.0)    
+  const float C2=+0.0405;           // for 12 Bit    
+  const float C3=-0.0000028;        // for 12 Bit(-0.0000028)    
+  const float T1=+0.01;             // for 14 Bit @ 5V    
+  const float T2=+0.00008;           // for 14 Bit @ 5V     
+   
+  float rh=*p_humidity;             // rh:      Humidity [Ticks] 12 Bit     
+  float t=*p_temperature;           // t:       Temperature [Ticks] 14 Bit    
+  float rh_lin;                     // rh_lin:  Humidity linear    
+  float rh_true;                    // rh_true: Temperature compensated humidity    
+  float t_C;                        // t_C   :  Temperature [C]    
+   
+  t_C=t*0.01 - 40;                  //calc. temperature from ticks to [C]    
+  rh_lin=C3*rh*rh + C2*rh + C1;     //calc. humidity from ticks to [%RH]    
+  rh_true=(t_C-25)*(T1+T2*rh)+rh_lin;   //calc. temperature compensated humidity [%RH]    
+  if(rh_true>99)rh_true=99;       //cut if the value is outside of//100    
+  if(rh_true<0.1)rh_true=0.1;       //the physical possible range    
+   
+  *p_temperature=t_C;               //return temperature [C]    
+  *p_humidity=rh_true;              //return humidity[%RH]    
+}
 
-INT8U Get_Temp_Humidity(INT16S *pTemp, INT16S *pHumidity)
+INT8U Get_Temp_Humi(INT16S *pTemp, INT16S *pHumi)
 {
-  INT8U buf[5], sum;
+  INT8U buf[5];
+  float temp, humi;
 
-  if(SHT_In_Flag EQ NO_SHT1X_FLAG)
+  if(SHT1X_In_Flag EQ NO_SHT1X_FLAG)
     return 0;
 
-  Measure(&sum, TEMP, buf);
+  ConnectionReset();
 
-  Screen_Status.Temperature = (u32)(((buf[0]<<8)+buf[1])*0.01-40);
+  if(Measure(TEMP, buf) EQ 0)
+  {
+    //*pTemp = (u32)(((buf[0]<<8)+buf[1])*0.01-40);
+	//temp = (float)(((buf[0]<<8)+buf[1]) * 0.01 - 40);
+	temp = (float)((buf[0]<<8)+buf[1]);
+	
+	if(Measure(HUMI, buf) EQ 0)
+	{
+	  humi = (float)((buf[0]<<8)+buf[1]);
+	  calc_dht10(&humi, &temp);	//校正温度和湿度
 
-  Measure(&sum, HUMI, buf);
+	  *pTemp = (INT16S)temp * 10;
+	  *pHumi = (INT16S)humi * 10;
+	  return 1;
+	}
+  }
+
+  return 0;
+}
+
+INT8U Get_Humidity(INT16S *pHumidity)
+{
+
+  INT8U buf[5];
+
+  if(SHT1X_In_Flag EQ NO_SHT1X_FLAG)
+    return 0;
+
+  ConnectionReset();
+
+  Measure(HUMI, buf);
+
+  //Screen_Status.Temperature = (u32)(((buf[0]<<8)+buf[1])*0.01-40);
+
+  //Measure(HUMI, buf);
 
   return 0;
 }
