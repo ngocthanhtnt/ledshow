@@ -18,7 +18,7 @@ void Read_SMS_File_Flag(void)
     {
       memset(SMS_File_Flag.Flag, 0, sizeof(SMS_File_Flag.Flag));
 
-      SMS_File_Flag.Flag[0] = 0x03; //测试用
+      //SMS_File_Flag.Flag[0] = 0x03; //测试用
     }
 
     SET_SUM(SMS_File_Flag);
@@ -170,29 +170,17 @@ E110  追加信息时，顺序错误，或出现没有原始信息直接追加的情况。
 INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 {
   S_Txt_Para *pPara;
-  INT8U subIndex, i, Num0 = 1, Num1;
-  INT16U index,Len;
+  INT8U i, Num0 = 1, Num1;
+  INT16U Len;
 
-  Find_Next_SMS_File_No();
-
-  if(SMS_Cur_No.No EQ NULL_SMS_NO) //已经播放到最后一个了，再重头开始查找
-  {
-      Find_Next_SMS_File_No();
-      if(SMS_Cur_No.No EQ NULL_SMS_NO)
-        return 0;
-  }
-
-  Len = Read_Storage_Data(SDI_SMS_FILE_PARA + SMS_Cur_No.No, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));// EQ 0)
-
-  if(Len EQ 0)
-    return 0;
-
-  mem_cpy(pDst, Pub_Buf, Len, pDst_Start, DstLen); 
+/*/---------以下测试临时用----------------------
+  SMS_Cur_No.No = 0;
   pPara = (S_Txt_Para *)pDst;
 
   pPara->Flag = SHOW_TXT;
   pPara->Border_Check = 0;
- /*
+
+
   pPara->Color = 0x01;
   pPara->In_Mode = 0x06;
   pPara->In_Speed = 0x01;
@@ -220,12 +208,39 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 
   strcpy((char *)SMS_Data.Data, (char *)"你好啊哈哈，很好啊，你个笨蛋");
 
+  return sizeof(S_Txt_Para);
+---------------------------------------*/
 
-  One_SMS_Proc((char *)"+P0002AB0901#ijk你是个大笨蛋，你有毛病吧，哈哈哈哈，大,国家");//, (S_Txt_Para *)pDst, (char *)SMS_Data.Data, &index, &subIndex);
-*/
+  //--------------------------
+  Find_Next_SMS_File_No();
+
+  if(SMS_Cur_No.No EQ NULL_SMS_NO) //已经播放到最后一个了，再重头开始查找
+  {
+      Find_Next_SMS_File_No();
+      if(SMS_Cur_No.No EQ NULL_SMS_NO)
+        return 0;
+  }
+
+  Len = Read_Storage_Data(SDI_SMS_FILE_PARA + SMS_Cur_No.No, Pub_Buf, Pub_Buf, sizeof(Pub_Buf));// EQ 0)
+
+  if(Len EQ 0)
+    return 0;
+
+  mem_cpy(pDst, Pub_Buf, sizeof(S_Txt_Para), pDst_Start, DstLen);
+  //将3条短信合并
+  SMS_Data.Data[0] = 0;
+  for(i = 0; i < SMS_SUB_DATA_NUM; i ++)
+    mem_cpy(SMS_Data.Data + strlen((char *)SMS_Data.Data), Pub_Buf + sizeof(S_Txt_Para) + i * SMS_SUB_DATA_LEN, strlen((char *)(Pub_Buf + sizeof(S_Txt_Para) + i * SMS_SUB_DATA_LEN)) + 1,\
+            SMS_Data.Data, sizeof(SMS_Data.Data));
+
+  pPara = (S_Txt_Para *)pDst;
+
+  pPara->Flag = SHOW_TXT;
+  pPara->Border_Check = 0;
+
   //------自适应字体大小---------
   if(((S_Txt_Para *)pDst)->SMS_Fix_Font_Flag EQ 0) //没有固定字体大小
-  {
+  {/*
       for(i = 0; i < GET_FONT_NUM() - 1; i ++)
       {
         pPara->Font_Size = i; //16*16字体
@@ -248,7 +263,25 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
        }
 
        pPara->SNum = Num0;
+       */
+      //使用能够使用的最大字体
+      for(i = 0; i < GET_FONT_NUM(); i ++)
+      {
+          if((GET_HZ_FONT_WIDTH(GET_FONT_NUM() - 1 - i) <= Get_Area_Width(0) &&\
+             GET_HZ_FONT_HEIGHT(GET_FONT_NUM() - 1 - i) <= Get_Area_Height(0)) ||\
+             i EQ GET_FONT_NUM() - 1)
+          {
+            pPara->Font_Size = GET_FONT_NUM() - 1 - i;
+            pPara->SNum = Read_Txt_Show_Data(&Show_Data, 0, pPara, SMS_Data.Data, sizeof(SMS_Data.Data), 0, RD_TXT_NODATA_FLAG, 0, 0);
+            break;
+          }
 
+      }
+  }
+  else //固定字体大小
+  {
+      pPara->SNum = Read_Txt_Show_Data(&Show_Data, 0, pPara, SMS_Data.Data, sizeof(SMS_Data.Data), 0, RD_TXT_NODATA_FLAG, 0, 0);
+      //pPara->SNum = Num0;
   }
 
   //pPara->Font_Size = 2;
@@ -312,25 +345,25 @@ typedef struct
 
 const S_Err_Info Err_Info[]=
 {
-{SMS_INDEX_ERR, "索引号错误"},//       0x01 //短信索引号错误
-{SMS_LEN_ERR,"短信长度错误"},//         0x02 //短信长度错误
-{SMS_STORA_ERR,"存储错误"},//       0x03 //短信存储错误
-{SMS_PLAY_COUNTS_ERR,"播放次数错误"},// 0x04 //播放次数错误
-{SMS_IN_MODE_ERR,"进入特效错误"},//     0x05 //进入特效错误
-{SMS_OUT_MODE_ERR,"退出特效错误"},//    0x06 //退出特效错误
-{SMS_SPEED_ERR,"播放速度错误"},//       0x07 //速度错误
-{SMS_STAY_TIME_ERR,"停留时间错误"},//   0x08 //停留时间错误
-{SMS_FORMAT_ERR,"短信格式错误"},//      0x09//短信格式错误
-{SMS_TIME_ERR,"/时间格式错误"},//        0x0A //时间格式错误
-{SMS_FONT_ERR,"字体错误"},//        0x0B //字体错误
-{SMS_COLOR_ERR,"颜色错误"},//       0x0C //颜色错误
-{SMS_TXTHEAD_ERR,"文本起始字符错误"},//     0x0D //文本起始字符错误
-{SMS_SCN_BASE_ERR,"屏参不合法"},//    0x0E //屏参不合法
-{SMS_SCN_OE_ERR,"OE极性错误"},//      0x0F //OE极性错误
-{SMS_SCN_DE_ERR,"数据极性错误"},//      0x10 //数据极性错误
-{SMS_SCN_SCAN_ERR,"扫描方式错误"},//    0x11 //扫描方式错误
-{SMS_SCN_COLOR_ERR,"屏幕颜色错误"},//   0x12 //屏幕颜色错误
-{SMS_PN_FULL_ERR,"手机号码满"},//     0x13 //手机号码满
+{SMS_INDEX_ERR, (char *)"索引号错误"},//       0x01 //短信索引号错误
+{SMS_LEN_ERR, (char *)"短信长度错误"},//         0x02 //短信长度错误
+{SMS_STORA_ERR, (char *)"存储错误"},//       0x03 //短信存储错误
+{SMS_SUB_INDEX_ERR, (char *)"追加播放索引错误"},// 0x04 //追加播放索引错误
+{SMS_IN_MODE_ERR,(char *)"进入特效错误"},//     0x05 //进入特效错误
+{SMS_OUT_MODE_ERR, (char *)"退出特效错误"},//    0x06 //退出特效错误
+{SMS_SPEED_ERR, (char *)"播放速度错误"},//       0x07 //速度错误
+{SMS_STAY_TIME_ERR, (char *)"停留时间错误"},//   0x08 //停留时间错误
+{SMS_FORMAT_ERR, (char *)"短信格式错误"},//      0x09//短信格式错误
+{SMS_TIME_ERR,(char *)"时间格式错误"},//        0x0A //时间格式错误
+{SMS_FONT_ERR,(char *)"字体错误"},//        0x0B //字体错误
+{SMS_COLOR_ERR,(char *)"颜色错误"},//       0x0C //颜色错误
+{SMS_TXTHEAD_ERR,(char *)"文本起始字符错误"},//     0x0D //文本起始字符错误
+{SMS_SCN_BASE_ERR,(char *)"屏参不合法"},//    0x0E //屏参不合法
+{SMS_SCN_OE_ERR,(char *)"OE极性错误"},//      0x0F //OE极性错误
+{SMS_SCN_DE_ERR,(char *)"数据极性错误"},//      0x10 //数据极性错误
+{SMS_SCN_SCAN_ERR,(char *)"扫描方式错误"},//    0x11 //扫描方式错误
+{SMS_SCN_COLOR_ERR,(char *)"屏幕颜色错误"},//   0x12 //屏幕颜色错误
+{SMS_PN_FULL_ERR,(char *)"手机号码满"},//     0x13 //手机号码满
 //{SMS_UNAVAIL_ERR   0x20 //非有效短信，不需应答
 };
 /*
@@ -338,7 +371,7 @@ const S_Err_Info Err_Info[]=
 #define SMS_INDEX_ERR       0x01 //短信索引号错误
 #define SMS_LEN_ERR         0x02 //短信长度错误
 #define SMS_STORA_ERR       0x03 //短信存储错误
-#define SMS_PLAY_COUNTS_ERR 0x04 //播放次数错误
+#define SMS_SUB_INDEX_ERR   0x04 //播放次数错误
 #define SMS_IN_MODE_ERR     0x05 //进入特效错误
 #define SMS_OUT_MODE_ERR    0x06 //退出特效错误
 #define SMS_SPEED_ERR       0x07 //速度错误
@@ -382,13 +415,16 @@ INT8U One_SMS_Proc(char *p)
   INT16U scanMode;
   S_Txt_Para *pPara;
 
-
+  memset(SMS_WR_Buf.Data, 0, sizeof(SMS_WR_Buf.Data));
   pPara = (S_Txt_Para *)SMS_WR_Buf.Data;
+
+  pPara->Flag = SHOW_TXT;
   pPara->SMS_Fix_Font_Flag = 0;
   pPara->Color = Screen_Para.Base_Para.Color;
+  pPara->SMS_Txt_Flag = TXT_SMS_NORMAL;
 
   if(p[0] EQ '#' || p[0] EQ '*') //'#'表示不需应答，'*'表示需要应答
-  {
+  {/*
     if(p[1] EQ '+') //简单方式
       {
         if(Chk_Int_Str(&p[2], 3) EQ 0)
@@ -415,8 +451,8 @@ INT8U One_SMS_Proc(char *p)
 		memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
 		
 		
-		mem_cpy(SMS_WR_Buf.Data + sizeof(S_Txt_Para), &p[5],strlen(&p[5]),\
-		      SMS_WR_Buf.Data,sizeof(SMS_WR_Buf.Data));
+                mem_cpy(SMS_WR_Buf.Data + sizeof(S_Txt_Para), &p[5],strlen(&p[5]) + 1,\
+                        SMS_WR_Buf.Data,sizeof(SMS_WR_Buf.Data));
 		Write_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_FILE_PARA_LEN);
 
 		//修改并保存SMS_File_Flag
@@ -426,7 +462,8 @@ INT8U One_SMS_Proc(char *p)
 
 		return SMS_NO_ERR;
       }
-      else if(p[1] EQ 'P') //+T0002AB09
+      else */
+      if(p[1] EQ 'P') //+T0002AB09
       {
           if(Chk_Int_Str(&p[2], 3) EQ 0) //序号错误
               return SMS_INDEX_ERR;
@@ -436,13 +473,33 @@ INT8U One_SMS_Proc(char *p)
            if(index > MAX_SMS_NUM)
                return SMS_INDEX_ERR;
 
+           if(p[5] EQ '+') //最简方式
+           {
+               pPara->In_Mode = 0x01;
+               pPara->Out_Mode = 0x01;
+               pPara->Play_Counts = 0x01;
+               pPara->Stay_Time = 10;
+
+               memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
+
+               mem_cpy(SMS_WR_Buf.Data + sizeof(S_Txt_Para), &p[6],strlen(&p[6]) + 1,\
+                       SMS_WR_Buf.Data,sizeof(SMS_WR_Buf.Data));
+               Write_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_FILE_PARA_LEN);
+
+               //修改并保存SMS_File_Flag
+               Set_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index, 1);
+               SET_SUM(SMS_File_Flag);
+               Write_SMS_File_Flag();
+
+               return SMS_NO_ERR;
+           }
            //*pIndex = (INT16U)index;
 
-           //---播放次数------------
+           //---追加播放错误------------
            if(!(p[5] >= '0' && p[5] <= '2'))
-               return SMS_PLAY_COUNTS_ERR;
+               return SMS_SUB_INDEX_ERR;
 
-           SubIndex = (p[5] - '0'); //追加次数
+           SubIndex = (p[5] - '0'); //追加索引
            //*pSubIndex = SubIndex;
 
            TxtOff = 11;
@@ -528,9 +585,14 @@ INT8U One_SMS_Proc(char *p)
           else
            {
               if(p[10] != '+')
-                  return SMS_TXTHEAD_ERR;
+              {
+                  if(p[12] != '+')
+                      return SMS_TXTHEAD_ERR;
 
-              TxtOff = 11;
+                   TxtOff = 13;
+              }
+              else
+                TxtOff = 11;
           }
 
           if(strlen(&p[TxtOff]) >= SMS_MAX_DATA_LEN)
@@ -538,16 +600,16 @@ INT8U One_SMS_Proc(char *p)
 
           if(SubIndex EQ 0)
 		  {
-            memset(SMS_WR_Buf.Data, 0, sizeof(SMS_WR_Buf.Data));
-		    memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
+            //memset(SMS_WR_Buf.Data, 0, sizeof(SMS_WR_Buf.Data));
+                 //   memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
 		  }
 		  else
 		  {
-		    if(Read_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data)) > 0)
+                    if(Read_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data)) EQ 0)
 			  return SMS_STORA_ERR;
 		  }
 		  
-	      mem_cpy(SMS_WR_Buf.Data + sizeof(S_Txt_Para) + SubIndex * SMS_SUB_DATA_LEN,&p[TxtOff],strlen(&p[TxtOff]),\
+              mem_cpy(SMS_WR_Buf.Data + sizeof(S_Txt_Para) + SubIndex * SMS_SUB_DATA_LEN,&p[TxtOff],strlen(&p[TxtOff]) + 1,\
 		          SMS_WR_Buf.Data,sizeof(SMS_WR_Buf.Data));
 		  Write_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_FILE_PARA_LEN);
  
@@ -759,10 +821,11 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 	           SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data));
 	*/
 	  if(re != SMS_UNAVAIL_ERR)
-	  {		  
+	  {/*		  
 	   mem_cpy(pMsg[i].TP_UD, SMS_WR_Buf.Data, sizeof(pMsg[i].TP_UD),\
 	           pMsg[i].TP_UD, sizeof(pMsg[i].TP_UD)); 
-	   
+	   */
+	   strcpy(pMsg[i].TP_UD, SMS_WR_Buf.Data); 
 	   gsmSendMessage(&(pMsg[i]));
 	   }
 	}
