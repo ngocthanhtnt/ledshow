@@ -1394,6 +1394,17 @@ void Para_Init(void)
   Read_SMS_File_Flag();
   Reset_Cur_SMS_File_No();
 #endif
+/*
+  One_SMS_Proc("*P0020AB0501+ijk第一");
+  One_SMS_Proc("*P0021AB0501+条短信");
+  One_SMS_Proc("*P0040AB0501+kji第二");
+  One_SMS_Proc("*P0041AB0501+条短信xxx");
+  */
+  One_SMS_Proc("*P005+第三条简易短信");
+  One_SMS_Proc("*P0060AB05+第四条短");
+  One_SMS_Proc("*P0061AB05+信xxx");
+
+  One_SMS_Proc("*SCN0061AB05+信xxx");
 }
 
 void Para_Show(void)

@@ -927,6 +927,8 @@ int gsmSendMessage(SM_PARAM* pSrc)
 	if(CHK_HT(ans) EQ 0)
 	  ASSERT_FAILED();
 
+    pSrc->TP_DCS = GSM_UCS2; //采用UCS2编码方式
+
 	nPduLength = gsmEncodePdu(pSrc, pdu.Data);	// 根据PDU参数，编码PDU串
 	pdu.Data[nPduLength] = 26; //Ctrl-Z字符
 	//strcat(pdu.Data, "\x01a");		// 以Ctrl-Z结束

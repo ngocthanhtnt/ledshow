@@ -104,6 +104,7 @@ EXT INT8U _Get_Cur_Time(INT8U Time[]);//S_Time *pTime);
 EXT INT8U Set_Cur_Time(INT8U Time[]);//S_Time *pTime);
 EXT INT16U Get_Cur_Humidity();
 EXT INT16U Get_Cur_Noise();
+EXT INT8U Get_Temp_Humi(INT16S *pTemp, INT16S *pHumi);
 EXT void Mem_Open();
 EXT void Mem_Close();
 EXT FILE *getFontFile(INT8U FontSize, INT8U Flag);

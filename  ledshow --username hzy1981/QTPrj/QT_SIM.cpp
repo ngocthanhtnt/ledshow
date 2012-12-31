@@ -107,6 +107,14 @@ INT16S GetInterTemperature()
     return 250;
 }
 
+INT8U Get_Temp_Humi(INT16S *pTemp, INT16S *pHumi)
+{
+  *pTemp = 250;
+  *pHumi = 750;
+  return 1;
+}
+
+
 INT8U Self_Test()
 {
     return 0;

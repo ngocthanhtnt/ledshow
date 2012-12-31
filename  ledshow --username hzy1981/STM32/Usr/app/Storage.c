@@ -34,6 +34,9 @@ typedef struct
 
 const S_Data_Para_Storage_Info Data_Para_Storage[] =
 {
+#if SMS_EN || GPRS_EN //短信卡或者GPRS卡需要字库16、24、32三种字体
+  {SDI_ZK_DATA, 1930065, 1}, //字库
+#endif
   {SDI_ENCRYPTION_DATA, ENCRYPTION_DATA_LEN, 1}, 
   //屏幕参数以及备份
   {SDI_SCREEN_PARA, SCREEN_PARA_LEN, 1},
@@ -141,10 +144,6 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
   {SDI_SHOW_DATA, BLOCK_DATA_LEN, MAX_STORA_BLOCK_NUM},
 
   {SDI_ENCRYPTION_DATA2, ENCRYPTION_DATA_LEN, 1},
-
-#if SMS_EN || GPRS_EN //短信卡或者GPRS卡需要字库16、24、32三种字体
-  {SDI_ZK_DATA, 1930065, 1}, //字库
-#endif
 
   {SDI_TEST_DATA, TEST_DATA_LEN, 1}
 };
