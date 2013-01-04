@@ -1020,9 +1020,9 @@ INT16U Unicode2GB(INT16U Unicode)
 			  }
 		   }    
 
-           hi     = QWCode / 100 + 0xa0;  
+           low   = QWCode / 100 + 0xa0;  
 
-           low    = QWCode % 100 + 0xa0;  
+           hi    = QWCode % 100 + 0xa0;  
 
            GBCode = (hi << 8) + low;  
 

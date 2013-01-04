@@ -1517,7 +1517,7 @@ void Update_Pic_Data(INT8U Area_No)
   }
   else
   {
-    ASSERT_FAILED(); 
+    //ASSERT_FAILED(); 
   }
 
 }

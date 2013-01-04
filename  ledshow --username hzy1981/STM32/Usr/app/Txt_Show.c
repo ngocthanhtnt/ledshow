@@ -1,7 +1,7 @@
 #include "Includes.h"
 #if TXT_SHOW_EN
 
-#define CHK_ASC(X) ((X>0xA0)?0:1)
+#define CHK_ASC(X) ((X>=0xA0)?0:1)
 
 
 typedef struct
@@ -80,7 +80,7 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
       FontWidth = GET_HZ_FONT_WIDTH(FontSize);
       FontHeight = GET_HZ_FONT_HEIGHT(FontSize);
       len = GET_HZ_FONT_BYTES(FontSize);
-      offset = (94*(Data[0] - 0xa0 -1)+(Data[1] - 0xa0 -1)) * len; //得到偏移位置
+      offset = GET_HZ_FONT_OFF(FontSize) + (94*(Data[0] - 0xa0 -1)+(Data[1] - 0xa0 -1)) * len; //得到偏移位置
 
       //前一个读取的字符和当前一致则不需要读取了
       if(Font_Data.Chr[0] != Data[0] || Font_Data.Chr[1] != Data[1])
@@ -95,7 +95,7 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
       FontWidth = GET_ASC_FONT_WIDTH(FontSize);
       FontHeight = GET_ASC_FONT_HEIGHT(FontSize);
       len = GET_ASC_FONT_BYTES(FontSize);
-      offset = Data[0] * len;
+      offset = GET_ASC_FONT_OFF(FontSize) + Data[0] * len;
 
       if(Font_Data.Chr[0] != Data[0])
       {
@@ -121,7 +121,8 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
         fseek(file, offset, SEEK_SET);
         fread(Font_Data.Data, len , 1, file); //读取数据长度
 #else
-	  offset = offset;
+	  //offset = offset;
+	  Read_Storage_Data_NoCS(SDI_ZK_DATA, offset, len, Font_Data.Data, Font_Data.Data, sizeof(Font_Data.Data));
 #endif
     }
 

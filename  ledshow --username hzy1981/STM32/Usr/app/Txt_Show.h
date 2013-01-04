@@ -26,6 +26,31 @@
 #define GET_ASC_FONT_HEIGHT(X) (((X) == 0)?16:(((X) == 1)?24:32))
 #define GET_ASC_FONT_BYTES(X)  (((X) == 0)?16:(((X) == 1)?48:64))
 
+//字库排列顺序:
+//ASC16 4096
+//ASC24	12288
+//ASC32 16384
+//HZ16  261696
+//HZ24  588816
+//HZ32  1046784
+#if QT_EN
+#define GET_ASC_FONT_OFF(X) 0
+#define GET_HZ_FONT_OFF(X)  0
+#else
+#define GET_ASC_FONT_OFF(X) (((X) == 0)?0:(((X) == 1)?4096:(4096 + 12288)))
+#define GET_HZ_FONT_OFF(X)  (((X) == 0)?(4096 + 12288 + 16384):(((X) == 1)?(4096 + 12288 + 16384 + 261696):(4096 + 12288 + 16384 + 261696 + 588816)))//(4096 + 12288 + 16384)L
+#endif
+/*
+//字库排列顺序:
+//ASC16 4096
+//HZ16  261696
+//ASC24	12288
+//HZ24  588816
+//ASC32 16384
+//HZ32  1046784
+#define GET_ASC_FONT_OFF(X) (((X) == 0)?0:(((X) == 1)?(4096 + 261696):(4096 + 261696 + 12288 + 588816)))
+#define GET_HZ_FONT_OFF(X)  (((X) == 0)?4096:(((X) == 1)?(4096 + 261696 + 12288):(4096 + 261696 + 12288 + 588816 + 16384)))//(4096 + 12288 + 16384)L
+*/
 #define GET_FONT_NUM() 3//获取字体个数
 
 EXT void Read_Txt_Show_Chr_Data(INT16U Index, INT8U *pDst, INT16U DstLen);
