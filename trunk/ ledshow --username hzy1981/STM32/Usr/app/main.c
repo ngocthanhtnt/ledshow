@@ -163,6 +163,7 @@ void mainInit(void)
   SET_STATUS_LED_ON(); //´ò¿ªLED×´Ì¬µÆ
 
   //Encrypt_Chk();
+  //Read_Storage_Data_NoCS(SDI_ZK_DATA, 0x8030, 16, (INT8U *)Pub_Buf,  (INT8U *)Pub_Buf, sizeof(Pub_Buf));
 
 }
 

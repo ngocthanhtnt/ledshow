@@ -170,7 +170,7 @@ E110  追加信息时，顺序错误，或出现没有原始信息直接追加的情况。
 INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 {
   S_Txt_Para *pPara;
-  INT8U i, Num0 = 1, Num1;
+  INT8U i;//, Num0 = 1, Num1;
   INT16U Len;
 
 /*/---------以下测试临时用----------------------
@@ -237,6 +237,7 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 
   pPara->Flag = SHOW_TXT;
   pPara->Border_Check = 0;
+  pPara->Play_Counts = 0;
 
   //------自适应字体大小---------
   if(((S_Txt_Para *)pDst)->SMS_Fix_Font_Flag EQ 0) //没有固定字体大小
@@ -363,7 +364,8 @@ const S_Err_Info Err_Info[]=
 {SMS_SCN_DE_ERR,(char *)"数据极性错误"},//      0x10 //数据极性错误
 {SMS_SCN_SCAN_ERR,(char *)"扫描方式错误"},//    0x11 //扫描方式错误
 {SMS_SCN_COLOR_ERR,(char *)"屏幕颜色错误"},//   0x12 //屏幕颜色错误
-{SMS_PN_FULL_ERR,(char *)"手机号码满"},//     0x13 //手机号码满
+{SMS_PN_FULL_ERR,(char *)"过滤手机号码已满"},//     0x13 //手机号码满
+{SMS_PN_INVALID,(char *)"手机号码无权限"},//     0x13 //手机号码满
 //{SMS_UNAVAIL_ERR   0x20 //非有效短信，不需应答
 };
 /*
@@ -435,9 +437,6 @@ INT8U One_SMS_Proc(char *p)
         if(index > MAX_SMS_NUM)
             return SMS_INDEX_ERR;
 
-        //*pIndex = (INT16U)index;
-        //*pSubIndex = 0;
-
         if(strlen(&p[5]) >= SMS_MAX_DATA_LEN)
             return SMS_LEN_ERR;
 
@@ -477,7 +476,7 @@ INT8U One_SMS_Proc(char *p)
            {
                pPara->In_Mode = 0x01;
                pPara->Out_Mode = 0x01;
-               pPara->Play_Counts = 0x01;
+               pPara->Play_Counts = 0x00;
                pPara->Stay_Time = 10;
 
                memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
@@ -650,7 +649,7 @@ INT8U One_SMS_Proc(char *p)
 
            Base_Para.Width = Str_2_Int(&p[4], 4);
 
-           if(p[8] EQ 'x' || p[8] EQ 'X')
+           if(!(p[8] EQ 'x' || p[8] EQ 'X'))
              return SMS_FORMAT_ERR;
 
            //高度
@@ -667,7 +666,7 @@ INT8U One_SMS_Proc(char *p)
                Base_Para.Color = 0x01;
            else if(p[13] EQ '2')
                Base_Para.Color = 0x02;
-           else if(p[12] EQ '3')
+           else if(p[13] EQ '3')
                Base_Para.Color = 0x03;
            else
                return SMS_COLOR_ERR;
@@ -676,20 +675,23 @@ INT8U One_SMS_Proc(char *p)
              return SMS_SCN_BASE_ERR;
 
            //数据极性
-           if(p[14] EQ 0)
+           if(p[14] EQ '0')
                Scan_Para.Data_Polarity = 0x00;
-           else if(p[14] EQ 1)
+           else if(p[14] EQ '1')
                Scan_Para.Data_Polarity = 0x01;
            else
                return SMS_SCN_DE_ERR;
 
            //OE极性
-           if(p[15] EQ 0)
+           if(p[15] EQ '0')
                Scan_Para.OE_Polarity = 0x00;
-           else if(p[15] EQ 1)
+           else if(p[15] EQ '1')
                Scan_Para.OE_Polarity = 0x01;
            else
                return SMS_SCN_OE_ERR;
+
+           if(p[16] != ',')
+               return SMS_FORMAT_ERR;
 
            //扫描方式
            if(Chk_Int_Str(&p[17], 4) > 0)
@@ -732,16 +734,16 @@ INT8U One_SMS_Proc(char *p)
       }
       else if(p[1] EQ 'M' && p[2] EQ 'P' && p[3] EQ 'N')//接收过滤短信号码
       {
-          if(p[3] EQ 0) //清除所有号码
+          if(p[4] EQ '0' && p[5] EQ 0) //清除所有号码
           {
-              memset(SMS_Phone_No.No, 0, sizeof(SMS_Phone_No));
+              memset(SMS_Phone_No.No, 0, sizeof(SMS_Phone_No.No));
               SET_SUM(SMS_Phone_No);
 
               Write_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, sizeof(SMS_Phone_No));
           }
           else
           {
-             if(strlen(&p[3]) >= sizeof(SMS_Phone_No.No[0]))
+             if(strlen(&p[4]) >= sizeof(SMS_Phone_No.No[0]))
                  return SMS_FORMAT_ERR;
 
              //寻找一个空闲位置存储号码
@@ -749,7 +751,9 @@ INT8U One_SMS_Proc(char *p)
              {
                  if(strlen(SMS_Phone_No.No[i]) EQ 0)
                  {
-                     strcpy(SMS_Phone_No.No[i], &p[3]);
+                     //strcpy(SMS_Phone_No.No[i], &p[4]);
+                     mem_cpy(SMS_Phone_No.No[i], &p[4], strlen(&p[4]) + 1, \
+                             SMS_Phone_No.No[i], sizeof(SMS_Phone_No.No[i]));
                      SET_SUM(SMS_Phone_No);
 
                      Write_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, sizeof(SMS_Phone_No));
@@ -806,6 +810,9 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 
   for(i = 0; i < 1; i ++)
   {
+    //if(Chk_PH_No(pMsg[i].TPA) EQ 0) //手机号码无权限
+	  //continue;
+
     re = One_SMS_Proc(pMsg[i].TP_UD);
 	
 	if(pMsg[i].TP_UD[0] EQ '*') //需要应答

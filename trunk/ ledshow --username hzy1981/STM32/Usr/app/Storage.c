@@ -133,9 +133,9 @@ const S_Data_Para_Storage_Info Data_Para_Storage[] =
   {SDI_SMS_FILE_PARA_BK0, SMS_FILE_PARA_LEN, MAX_SMS_NUM},
 #endif
 
-  {SDI_SMS_FILE_FLAG, MAX_SMS_NUM / 8, 1},
+  {SDI_SMS_FILE_FLAG, sizeof(SMS_File_Flag.Flag), 1},
 #ifdef SDI_SMS_FILE_FLAG_BK0
-  {SDI_SMS_FILE_FLAG_BK0, MAX_SMS_NUM / 8, 1},
+  {SDI_SMS_FILE_FLAG_BK0, sizeof(SMS_File_Flag.Flag), 1},
 #endif
 
   {SDI_SMS_PHONE_NO, SMS_PHONE_NO_LEN, 1}, //µç»°ºÅÂë

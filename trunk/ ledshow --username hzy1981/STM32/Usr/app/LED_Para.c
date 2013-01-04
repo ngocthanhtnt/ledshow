@@ -1004,10 +1004,26 @@ INT16S Read_Show_Data_Point(INT8U Area_No, INT8U File_No, U_File_Para *pFile_Par
 #if TXT_SHOW_EN
   else if(Flag EQ SHOW_TXT)
   {
+    //Read_Txt_Show_Chr_Data(SDI_SHOW_DATA + Index, Pub_Buf, sizeof(Pub_Buf));
+
+    //Read_Txt_Show_Data(pShow_Data, Area_No, &(pFile_Para->Txt_Para), Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, RD_TXT_POINT_FLAG, X, Y);
+
+//-----
+#if SMS_EN
+    if(Area_No EQ 0 && pFile_Para->Txt_Para.SMS_Txt_Flag EQ TXT_SMS_NORMAL) //第0分区是短信显示分区,读出的短信数据保存在S_SMS_Data.Data中
+        Read_Txt_Show_Data(pShow_Data, Area_No, &(pFile_Para->Txt_Para), SMS_Data.Data, sizeof(SMS_Data.Data), SIndex, RD_TXT_POINT_FLAG, X, Y);
+    else
+    {
+      Read_Txt_Show_Chr_Data(SDI_SHOW_DATA + Index, Pub_Buf, sizeof(Pub_Buf));
+      //读取第SIndex屏
+      Read_Txt_Show_Data(pShow_Data, Area_No, &(pFile_Para->Txt_Para), Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, RD_TXT_POINT_FLAG, X, Y);
+    }
+#else
     Read_Txt_Show_Chr_Data(SDI_SHOW_DATA + Index, Pub_Buf, sizeof(Pub_Buf));
 
     Read_Txt_Show_Data(pShow_Data, Area_No, &(pFile_Para->Txt_Para), Pub_Buf + 9, sizeof(Pub_Buf) - 9, SIndex, RD_TXT_POINT_FLAG, X, Y);
-
+#endif
+//-------
     return 1;
   }
 #endif

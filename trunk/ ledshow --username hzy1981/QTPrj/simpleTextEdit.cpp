@@ -641,7 +641,7 @@ void CshowModeEdit::setSettingsToWidget(QString str)
       settings.setValue("outMode", 0);
       settings.setValue("outSpeed", 0);
       settings.setValue("stayTime", 5);
-      settings.setValue("playCount", 1);
+      settings.setValue("playCount", 0); //重播次数
       settings.setValue("text", QString(tr("图文显示")));
     }
 

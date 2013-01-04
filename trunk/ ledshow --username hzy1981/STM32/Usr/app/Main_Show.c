@@ -467,6 +467,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
         Prog_Status.Area_Status[Area_No].File_No >= MAX_FILE_NUM)))
     {
         //第0分区是短信显示分区
+		  Prog_Status.Area_Status[Area_No].File_No = 0;
           Prog_Status.Area_Status[Area_No].Counts++; //文件播放一次+1
           SET_SUM(Prog_Status.Area_Status[Area_No]);
 
@@ -1394,17 +1395,25 @@ void Para_Init(void)
   Read_SMS_File_Flag();
   Reset_Cur_SMS_File_No();
 #endif
-/*
-  One_SMS_Proc("*P0020AB0501+ijk第一");
-  One_SMS_Proc("*P0021AB0501+条短信");
-  One_SMS_Proc("*P0040AB0501+kji第二");
-  One_SMS_Proc("*P0041AB0501+条短信xxx");
-  */
-  One_SMS_Proc("*P005+第三条简易短信");
-  One_SMS_Proc("*P0060AB05+第四条短");
-  One_SMS_Proc("*P0061AB05+信xxx");
 
-  One_SMS_Proc("*SCN0061AB05+信xxx");
+//--以下代码仅测试
+  One_SMS_Proc("*DEL999");
+  
+  One_SMS_Proc("*P00002B5001+这是第一条左连移短信测试欢迎使用。.");
+  /*
+  One_SMS_Proc("*P0021AB0101+条短信");
+  One_SMS_Proc("*P0040AB0101+kji第二");
+  One_SMS_Proc("*P0041AB0101+条短信xxx");
+
+  One_SMS_Proc("*P005+第三条简易短信");
+  
+  One_SMS_Proc("*P0060AB01+第四条短");
+  One_SMS_Proc("*P0061AB01+信xxx");
+
+  //One_SMS_Proc("*SCN0512X128,100,0200");
+  One_SMS_Proc("*MPN18900732873");
+  One_SMS_Proc("*MPN0");*/
+//
 }
 
 void Para_Show(void)
