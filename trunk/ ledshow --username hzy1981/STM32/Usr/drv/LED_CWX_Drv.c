@@ -58,6 +58,7 @@ void GPIO_Configuration()
   GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_All;
   GPIO_Init(GPIOD, &GPIO_InitStructure);
 
+  SET_GSM_ON(1);
   //PEµÄÊä³ö¿Ú
   //GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_All;
   //GPIO_Init(GPIOE, &GPIO_InitStructure);
