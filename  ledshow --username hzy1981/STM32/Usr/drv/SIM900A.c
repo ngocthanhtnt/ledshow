@@ -122,18 +122,27 @@ exit:
 */
 }
 
+void Module_PWR_KEY(void)
+{
+	SET_GSM_ON(1);
+	OS_TimeDly_Ms(10);
+	SET_GSM_ON(0);
+	OS_TimeDly_Ms(10);
+	SET_GSM_ON(1);
+	OS_TimeDly_Ms(1100);
+	SET_GSM_ON(0);
+}
+
 void ModuleInit(void) //模块初始化
 {
     //INT8U i;
 
-	//启动GSM模块
-	debug("reset sim900A module");
-
-	SET_GSM_ON(1);
-	OS_TimeDly_Ms(10);
-	SET_GSM_ON(0);
-	OS_TimeDly_Ms(1100);
-	SET_GSM_ON(1);
+	//启动GSM模块	
+	if(CHK_MODULE_STATUS() EQ 0)
+	{
+	    debug("reset sim900A module");
+		Module_PWR_KEY();
+	}
 
     OS_Core_Wait_Ms(CHK_MODULE_STATUS(),3000); //最多等待3000ms。
 
