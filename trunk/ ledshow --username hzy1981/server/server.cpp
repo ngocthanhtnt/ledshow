@@ -102,7 +102,17 @@ Server::Server(QWidget *parent)
         setLayout(mainLayout);
 
         setWindowTitle(tr("Fortune Server"));
-}
+
+        //-----------------------
+        createActions();
+        createTrayIcon();
+        trayIcon->show();
+
+        connect(trayIcon, SIGNAL(messageClicked()), this, SLOT(messageClicked()));
+        connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+                this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+
+    }
 
 void Server::sessionOpened()
 {
@@ -169,8 +179,89 @@ void Server::sendFortune()
             clientConnection, SLOT(deleteLater()));
 //! [7] //! [8]
 
+    while(1) //处理所有数据
+    {
+
+    }
+
     clientConnection->write(block);
     clientConnection->disconnectFromHost();
+
+    qDebug("new connection");
 //! [5]
 }
 //! [8]
+void Server::createActions()
+{/*
+    minimizeAction = new QAction(tr("Mi&nimize"), this);
+    connect(minimizeAction, SIGNAL(triggered()), this, SLOT(hide()));
+
+    maximizeAction = new QAction(tr("Ma&ximize"), this);
+    connect(maximizeAction, SIGNAL(triggered()), this, SLOT(showMaximized()));
+
+    restoreAction = new QAction(tr("&Restore"), this);
+    connect(restoreAction, SIGNAL(triggered()), this, SLOT(showNormal()));
+
+    quitAction = new QAction(tr("&Quit"), this);
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    */
+}
+
+void Server::createTrayIcon()
+{/*
+    trayIconMenu = new QMenu(this);
+    trayIconMenu->addAction(minimizeAction);
+    trayIconMenu->addAction(maximizeAction);
+    trayIconMenu->addAction(restoreAction);
+    trayIconMenu->addSeparator();
+    trayIconMenu->addAction(quitAction);
+*/
+    trayIcon = new QSystemTrayIcon(this);
+    //trayIcon->setContextMenu(trayIconMenu);
+
+    QIcon icon = QIcon(":/images/heart.svg");
+    trayIcon->setIcon(icon);
+    setWindowIcon(icon);
+
+    trayIcon->setToolTip("server");
+}
+
+void Server::closeEvent(QCloseEvent *event)
+{
+    if (trayIcon->isVisible()) {
+        QMessageBox::information(this, tr("Systray"),
+                                 tr("The program will keep running in the "
+                                    "system tray. To terminate the program, "
+                                    "choose <b>Quit</b> in the context menu "
+                                    "of the system tray entry."));
+        hide();
+        event->ignore();
+    }
+}
+
+//! [4]
+void Server::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    switch (reason) {
+    case QSystemTrayIcon::Trigger:
+    case QSystemTrayIcon::DoubleClick:
+        /*
+        iconComboBox->setCurrentIndex((iconComboBox->currentIndex() + 1)
+                                      % iconComboBox->count());
+        */
+        show();
+        break;
+    case QSystemTrayIcon::MiddleClick:
+        //showMessage();
+        break;
+    default:
+        ;
+    }
+}
+
+void Server::messageClicked()
+{
+    QMessageBox::information(0, tr("Systray"),
+                             tr("Sorry, I already gave what help I could.\n"
+                                "Maybe you should try asking a human?"));
+}

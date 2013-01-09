@@ -10,8 +10,8 @@
 //#define CARDB1	 0x22
 //#define CARDB2	 0x23
 #define CARDC	 0x30
-#define CARDCW0  0x31 //短信卡
-#define CARDCW1  0x32 //GRPS卡
+#define CARDCW1  0x31 //短信卡
+#define CARDCW2  0x32 //GRPS卡
 //#define CARDC1	 0x31
 //#define CARDC2	 0x32
 #define CARDD    0x40
@@ -143,7 +143,7 @@
 #include "STM32.h"
 
 #if defined(CARD_A)
-#define CARD_TYPE CARDA1
+#define CARD_TYPE CARDA0
 #include "LED_ABX_Cfg.h"
 #include "LED_ABX_Drv.h"
 #elif defined(CARD_B)
@@ -155,7 +155,7 @@
 #include "LED_CX_Cfg.h"
 #include "LED_CX_Drv.h"
 #elif defined(CARD_CW)
-#define CARD_TYPE CARDCW0
+#define CARD_TYPE CARDCW1
 #include "LED_CWX_Cfg.h"
 #include "LED_CWX_Drv.h"
 #elif defined(CARD_D)
@@ -170,7 +170,7 @@
 #error "Card type error"
 #endif
 
-#if CARD_TYPE == CARDCW0 || CARD_TYPE == CARDCW1
+#if CARD_TYPE == CARDCW1 || CARD_TYPE == CARDCW2
 #define APP_ADDRESS_OFF 0x8000 //应用程序地址偏移
 #else
 #define APP_ADDRESS_OFF 0x1000 //应用程序地址偏移

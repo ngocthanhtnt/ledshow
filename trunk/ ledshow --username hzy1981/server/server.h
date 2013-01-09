@@ -42,6 +42,7 @@
 #define SERVER_H
 
 #include <QDialog>
+#include <QSystemTrayIcon>
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -58,9 +59,14 @@ class Server : public QDialog
 public:
     Server(QWidget *parent = 0);
 
+protected:
+    void closeEvent(QCloseEvent *event);
+
 private slots:
     void sessionOpened();
     void sendFortune();
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
+    void messageClicked();
 
 private:
     QLabel *statusLabel;
@@ -68,6 +74,12 @@ private:
     QTcpServer *tcpServer;
     QStringList fortunes;
     QNetworkSession *networkSession;
+
+    QSystemTrayIcon *trayIcon;
+    QMenu *trayIconMenu;
+
+    void createActions();
+    void createTrayIcon();
 };
 //! [0]
 
