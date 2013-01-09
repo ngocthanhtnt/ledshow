@@ -1,6 +1,8 @@
-HEADERS       = server.h
+HEADERS       = server.h \
+    window.h
 SOURCES       = server.cpp \
-                main.cpp
+                main.cpp \
+    window.cpp
 QT           += network
 
 # install
@@ -15,3 +17,6 @@ symbian {
     TARGET.CAPABILITY = "NetworkServices ReadUserData"
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 }
+
+RESOURCES += \
+    systray.qrc
