@@ -41,8 +41,13 @@
 //#define H_PCLK1_DIV RCC_HCLK_Div2 //高速运行时APB1速度--确保和正常运行时保持一致，这样就不需要调整各外设的Clock 
 //#define H_PCLK2_DIV RCC_HCLK_Div1 //高速运行时APB2速度--确保和正常运行时保持一致，这样就不需要调整各外设的Clock 
 #define MAX_PROG_NUM 16 //最大节目数
-#define MAX_AREA_NUM 6 //每个节目下最大分区数
 #define MAX_FILE_NUM 50 //每个节目下最大文件数
+
+#if defined(CARD_A)
+#define MAX_AREA_NUM 2 //每个节目下最大分区数
+#else
+#define MAX_AREA_NUM 6 //每个节目下最大分区数
+#endif
 
 //----------------------------------------
 #if defined(CARD_A)
@@ -56,8 +61,8 @@
 #error "card AX name error"
 #endif
 #elif defined(CARD_B)
-#if CARD_TYPE == CARDB //A0型卡是最低端卡，不支持时钟,其他类型卡均支持
-#define CARD_NAME "B"  //卡名称
+#if CARD_TYPE == CARDB1 //A0型卡是最低端卡，不支持时钟,其他类型卡均支持
+#define CARD_NAME "B1"  //卡名称
 #else
 #error "card BX name error"
 #endif
@@ -68,12 +73,14 @@
 
 //----根据不同的屏幕和硬件配置下列项目
 #ifdef CARD_A
-
+/*
 #if CARD_TYPE == CARDA0
-#define MAX_POINTS (128*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
+#define MAX_POINTS (144*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #else//if CARD_TYPE == CARDA1
 #define MAX_POINTS (184*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #endif
+*/
+#define MAX_POINTS (128*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 
 #define MAX_STORA_BLOCK_NUM  1600 //最大存储块数
 #define FONT_NUM 1 //内嵌字体个数
@@ -119,8 +126,8 @@
 #endif
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
-#define TEMP_SHOW_EN   0 //温度显示使能
-#define HUMIDITY_SHOW_EN 0 //湿度显示使能
+#define TEMP_SHOW_EN   1 //温度显示使能
+#define HUMIDITY_SHOW_EN 1 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
 #define TXT_SHOW_EN    0
 #else

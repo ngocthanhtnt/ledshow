@@ -133,6 +133,11 @@
 //¼ì²éÌøÏß×´Ì¬
 #define CHK_FAC_JP_STATUS()  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)
 
+#define SHT1X_SCL_PIN   GPIO_Pin_11
+#define SHT1X_SCL_PORT  GPIOA
+#define SHT1X_SDA_PIN   GPIO_Pin_12
+#define SHT1X_SDA_PORT  GPIOA
+
 EXT void Put_Char(char c);
 //EXT INT8U Get_Cur_Time(void);//S_Time *pTime);
 //EXT INT8U Set_Cur_Time(INT8U Time[]);//S_Time *pTime);

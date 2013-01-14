@@ -223,7 +223,8 @@ INT8U getCardParaFromSettings(QString cardName, S_Card_Para &cardPara)
     cardPara.OutMode_Num = cardSettings.value("outModeNum").toInt();
     cardPara.File_En_Word = cardSettings.value("fileEnWord").toInt();
     cardPara.Max_Points = cardSettings.value("maxPoints").toInt();
-    Card_Para.Max_Height = cardSettings.value("maxHeight").toInt();
+    cardPara.Max_Height = cardSettings.value("maxHeight").toInt();
+    cardPara.Max_Area_Num = cardSettings.value("maxAreaNum").toInt();
     cardPara.Flag = cardSettings.value("flag").toInt();
     cardPara.ROM_Size = cardSettings.value("romSize").toInt();
     cardPara.Com_Mode = cardSettings.value("comMode").toInt();

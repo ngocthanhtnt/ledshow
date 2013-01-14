@@ -21,7 +21,7 @@
 #define TIM1_EN 1
 
 #define MAX_PROG_NUM 16 //最大节目数
-#define MAX_AREA_NUM 6 //每个节目下最大分区数
+#define MAX_AREA_NUM 8 //每个节目下最大分区数
 #define MAX_FILE_NUM 50 //每个节目下最大文件数
 
 //----------------------------------------
