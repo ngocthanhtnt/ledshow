@@ -39,6 +39,7 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("maxPoints", 384*64);
   cardIniFile.setValue("flag", 0); //第0位表示是否支持全彩
   cardIniFile.setValue("maxHeight", 64);
+  cardIniFile.setValue("maxAreaNum", 2);
   cardIniFile.setValue("FontNum", 1);
   cardIniFile.setValue("inModeNum", 35);
   cardIniFile.setValue("outModeNum", 25);
@@ -55,6 +56,7 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("maxPoints", 384*64);
   cardIniFile.setValue("flag", 0); //第0位表示是否支持全彩
   cardIniFile.setValue("maxHeight", 64);
+  cardIniFile.setValue("maxAreaNum", 2);
   cardIniFile.setValue("FontNum", 1);
   cardIniFile.setValue("inModeNum", 35);
   cardIniFile.setValue("outModeNum", 25);
@@ -73,6 +75,7 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("maxPoints", 1024*64);
   cardIniFile.setValue("flag", 0); //第0位表示是否支持全彩
   cardIniFile.setValue("maxHeight", 64);
+  cardIniFile.setValue("maxAreaNum", 6);
   cardIniFile.setValue("FontNum", 2);
   cardIniFile.setValue("inModeNum", IN_SPEC_EFFECT_NUM);
   cardIniFile.setValue("outModeNum", OUT_SPEC_EFFECT_NUM);
@@ -92,6 +95,7 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("maxPoints", 1488*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 128);
+  cardIniFile.setValue("maxAreaNum", 6);
   cardIniFile.setValue("FontNum", 2);
   cardIniFile.setValue("inModeNum", IN_SPEC_EFFECT_NUM);
   cardIniFile.setValue("outModeNum", OUT_SPEC_EFFECT_NUM);
@@ -111,6 +115,7 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("maxPoints", 2560*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 256);
+  cardIniFile.setValue("maxAreaNum", 8);
   cardIniFile.setValue("FontNum", 2);
   cardIniFile.setValue("inModeNum", IN_SPEC_EFFECT_NUM);
   cardIniFile.setValue("outModeNum", OUT_SPEC_EFFECT_NUM);
@@ -132,6 +137,7 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("maxPoints", 2560*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 256);
+  cardIniFile.setValue("maxAreaNum", 8);
   cardIniFile.setValue("FontNum", 2);
   cardIniFile.setValue("inModeNum", IN_SPEC_EFFECT_NUM);
   cardIniFile.setValue("outModeNum", OUT_SPEC_EFFECT_NUM);
@@ -153,6 +159,7 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("maxPoints", 2560*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 256);
+  cardIniFile.setValue("maxAreaNum", 8);
   cardIniFile.setValue("FontNum", 2);
   cardIniFile.setValue("inModeNum", IN_SPEC_EFFECT_NUM);
   cardIniFile.setValue("outModeNum", OUT_SPEC_EFFECT_NUM);

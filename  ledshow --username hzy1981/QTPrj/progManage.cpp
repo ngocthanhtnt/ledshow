@@ -643,7 +643,7 @@ void CprogManage::newArea()
     QStringList groups = settings.childGroups(); //area列表
 
     size = groups.size();
-    if(size >= MAX_AREA_NUM)
+    if(size >= Card_Para.Max_Area_Num)
     {
         settings.endGroup();
         QMessageBox::information(w, tr("提示"),
@@ -822,6 +822,24 @@ void CprogManage::newFile(int fileType, int subType)
       parentItem = curItem ->parent();
     }
 
+    //计算该节目下目前有的文件数
+    int fileNum = 0;
+    QTreeWidgetItem *progItem = parentItem->parent(); //节目item
+    for(i = 0; i < progItem->childCount(); i ++) //分区数
+    {
+      fileNum += progItem->child(i)->childCount();
+    }
+
+    if(fileNum >= MAX_FILE_NUM)
+    {
+        QMessageBox::information(w, tr("提示"),
+                                 tr("当前节目播放文件数已经达到上限") + QString::number(MAX_FILE_NUM),tr("确定"));
+          return;
+    }
+
+    debug("cur prog file num = %d", fileNum);
+    //-----------------
+
     QStr = (parentItem ->data(0,Qt::UserRole)).toString();
     QStr = QStr + "/" + QString(tr("file"));
 
@@ -829,6 +847,7 @@ void CprogManage::newFile(int fileType, int subType)
     QStringList groups = settings.childGroups(); //area列表
 
     size = groups.size();
+    /*
     if(size >= MAX_FILE_NUM)
     {
         settings.endGroup();
@@ -837,7 +856,7 @@ void CprogManage::newFile(int fileType, int subType)
 
         return;
     }
-
+    */
     for(i = 0; i < size; i ++)
     {
       tmp = groups.at(i).toInt();

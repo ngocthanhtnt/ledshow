@@ -1600,7 +1600,7 @@
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>C:\Keil\ARM\BIN40\fromelf.exe --bin -o E:\mine\LED\Software\ledshow\STM32\Project\STM32F10x_StdPeriph_Template\MDK-ARM\B\B.bin E:\mine\LED\Software\ledshow\STM32\Project\STM32F10x_StdPeriph_Template\MDK-ARM\B\B.axf</UserProg1Name>
             <UserProg2Name></UserProg2Name>

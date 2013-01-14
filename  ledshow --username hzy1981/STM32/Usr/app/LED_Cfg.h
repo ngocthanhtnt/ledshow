@@ -5,11 +5,14 @@
 #define CARDA0	 0x10 //A0型卡不支持时钟，最简单的卡，其他的卡都一样。
 #define CARDA1	 0x11
 #define CARDA2	 0x12
-#define CARDB    0x20
+
+#define CARDB1   0x21
 //#define CARDB0	 0x21
 //#define CARDB1	 0x22
 //#define CARDB2	 0x23
-#define CARDC	 0x30
+#define CARDC1	 0x31
+#define CARDC2   0x32
+
 #define CARDCW1  0x31 //短信卡
 #define CARDCW2  0x32 //GRPS卡
 //#define CARDC1	 0x31
@@ -73,7 +76,7 @@
 #define ASSERT_EN 1
 
 #define MAX_PROG_NUM 16 //最大节目数
-#define MAX_AREA_NUM 6 //每个节目下最大分区数
+#define MAX_AREA_NUM 16 //每个节目下最大分区数
 #define MAX_FILE_NUM 50 //每个节目下最大文件数
 
 #include "QT_SIM.h"
@@ -101,7 +104,7 @@
 #define SCAN_DATA_MODE SCAN_SOFT_MODE0
 
 #define MAX_SMS_NUM 400
-#define SMS_EN 1
+#define SMS_EN 0
 
 #define CLOCK_EN       1 //时钟使能
 
@@ -143,15 +146,15 @@
 #include "STM32.h"
 
 #if defined(CARD_A)
-#define CARD_TYPE CARDA0
+#define CARD_TYPE CARDA1
 #include "LED_ABX_Cfg.h"
 #include "LED_ABX_Drv.h"
 #elif defined(CARD_B)
-#define CARD_TYPE CARDB
+#define CARD_TYPE CARDB1
 #include "LED_ABX_Cfg.h"
 #include "LED_ABX_Drv.h"
 #elif defined(CARD_C)
-#define CARD_TYPE CARDC
+#define CARD_TYPE CARDC1
 #include "LED_CX_Cfg.h"
 #include "LED_CX_Drv.h"
 #elif defined(CARD_CW)
