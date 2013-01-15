@@ -27,7 +27,12 @@ void Read_SMS_File_Flag(void)
     //读取有效号码
     Len = Read_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, &SMS_Phone_No, sizeof(SMS_Phone_No));
     if(Len EQ 0)
+	{
       memset(&SMS_Phone_No, 0, sizeof(SMS_Phone_No));
+	  SMS_Phone_No.PSW[0] = '0';
+	  SMS_Phone_No.PSW[1] = '0';
+	  SMS_Phone_No.PSW[2] = '0'; //默认密码为3个0
+	}
 
     SET_HT(SMS_Phone_No);
     SET_SUM(SMS_Phone_No);
