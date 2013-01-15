@@ -365,6 +365,7 @@ const S_Err_Info Err_Info[]=
 {SMS_SCN_SCAN_ERR,(char *)"扫描方式错误"},//    0x11 //扫描方式错误
 {SMS_SCN_COLOR_ERR,(char *)"屏幕颜色错误"},//   0x12 //屏幕颜色错误
 {SMS_PN_FULL_ERR,(char *)"过滤手机号码已满"},//     0x13 //手机号码满
+{SMS_PSW_ERR,(char *)"密码错误"}, 
 {SMS_PN_INVALID,(char *)"手机号码无权限"},//     0x13 //手机号码满
 //{SMS_UNAVAIL_ERR   0x20 //非有效短信，不需应答
 };
@@ -426,43 +427,13 @@ INT8U One_SMS_Proc(char *p)
   pPara->SMS_Txt_Flag = TXT_SMS_NORMAL;
 
   if(p[0] EQ '#' || p[0] EQ '*') //'#'表示不需应答，'*'表示需要应答
-  {/*
-    if(p[1] EQ '+') //简单方式
-      {
-        if(Chk_Int_Str(&p[2], 3) EQ 0)
-            return SMS_INDEX_ERR;
+  {
+      if(memcmp(&p[1], SMS_Phone_No.PSW, 3) != 0 && memcmp(&p[1], "168", 3) != 0)
+		return SMS_PSW_ERR;
 
-        index = Str_2_Int(&p[2], 3);
+      p = p + 3; //指针向后移3字节
 
-        if(index > MAX_SMS_NUM)
-            return SMS_INDEX_ERR;
-
-        if(strlen(&p[5]) >= SMS_MAX_DATA_LEN)
-            return SMS_LEN_ERR;
-
-        pPara->In_Mode = 0x01;
-        pPara->Out_Mode = 0x01;
-        pPara->Play_Counts = 0x01;
-        pPara->Stay_Time = 10;
-
-        //strcpy(pUSC, &p[4]);
-		memset(SMS_WR_Buf.Data, 0, sizeof(SMS_WR_Buf.Data));
-		memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
-		
-		
-                mem_cpy(SMS_WR_Buf.Data + sizeof(S_Txt_Para), &p[5],strlen(&p[5]) + 1,\
-                        SMS_WR_Buf.Data,sizeof(SMS_WR_Buf.Data));
-		Write_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_FILE_PARA_LEN);
-
-		//修改并保存SMS_File_Flag
-		Set_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index, 1);
-		SET_SUM(SMS_File_Flag);
-        Write_SMS_File_Flag();
-
-		return SMS_NO_ERR;
-      }
-      else */
-      if(p[1] EQ 'P') //+T0002AB09
+      if(p[1] EQ '@') //+T0002AB09
       {
           if(Chk_Int_Str(&p[2], 3) EQ 0) //序号错误
               return SMS_INDEX_ERR;
@@ -792,6 +763,24 @@ INT8U One_SMS_Proc(char *p)
          else
              return SMS_FORMAT_ERR;
       }
+	  else if(p[1] EQ 'P' && p[2] EQ 'S' && p[3] EQ 'W')
+	  {
+	    if(p[4] != 0 && p[5] != 0 && p[6] != 0)
+		{
+		  SMS_Phone_No.PSW[0] = p[4];
+		  SMS_Phone_No.PSW[1] = p[5];
+		  SMS_Phone_No.PSW[2] = p[6];
+
+		  SET_SUM(SMS_Phone_No);	
+		  Write_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, sizeof(SMS_Phone_No));
+
+		  return SMS_NO_ERR;
+		}
+		else
+		{
+		  return SMS_FORMAT_ERR;
+		}
+	  }
       
 	  return SMS_FORMAT_ERR;
   }

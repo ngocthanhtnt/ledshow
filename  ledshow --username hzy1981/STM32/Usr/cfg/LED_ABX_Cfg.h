@@ -44,7 +44,7 @@
 #define MAX_FILE_NUM 50 //每个节目下最大文件数
 
 #if defined(CARD_A)
-#define MAX_AREA_NUM 2 //每个节目下最大分区数
+#define MAX_AREA_NUM 4 //每个节目下最大分区数
 #else
 #define MAX_AREA_NUM 6 //每个节目下最大分区数
 #endif
