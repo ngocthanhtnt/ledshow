@@ -31,6 +31,7 @@
 #define SMS_SCN_COLOR_ERR   0x12 //屏幕颜色错误
 #define SMS_PN_FULL_ERR     0x13 //手机号码满
 #define SMS_PN_INVALID      0x14 //手机号码无权限
+#define SMS_PSW_ERR         0x15 //密码错误
 #define SMS_UNAVAIL_ERR     0x20 //非有效短信，不需应答
 
 #define SMS_FILE_PARA_LEN 400
@@ -69,6 +70,7 @@ typedef struct
 {
     INT8U Head;
     char No[10][30];
+	INT8U PSW[3];
     INT8U CS[CS_BYTES];
     INT8U Tail;
 }S_SMS_Phone_No;

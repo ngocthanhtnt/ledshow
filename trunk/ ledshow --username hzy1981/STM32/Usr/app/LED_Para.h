@@ -309,8 +309,8 @@ typedef struct
   S_Program_Timing Timing[3];//[3]; //节目定时设置
   INT8U Area_Num; //分区数
   //INT8U Main_Area_No; //主分区号
-  INT8U Area_File_Num[16]; //每分区文件数
-  S_Area Area[16]; //区域定义
+  INT8U Area_File_Num[8]; //每分区文件数
+  S_Area Area[8]; //区域定义
   
   INT8U Border_Check; //是否显示边框
   //INT8U Border_Color;
@@ -329,7 +329,7 @@ typedef struct
 }S_Prog_Para;
 
 #if QT_EN
-#if MAX_AREA_NUM != 16
+#if MAX_AREA_NUM != 8
 #error "MAX_AREA_NUM error"
 #endif
 #endif
