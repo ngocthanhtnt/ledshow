@@ -113,10 +113,10 @@ void SHT1X_Init(void)
   SHT1X_In_Flag = EXIST_SHT1X_FLAG;
   if(Get_Temp_Humi(&Temp, &Humi) EQ 0)
   {
-    Delay_ms(100);
+    Delay_ms(10);
 	if(Get_Temp_Humi(&Temp, &Humi) EQ 0)
 	{
-	  Delay_ms(100);
+	  Delay_ms(10);
 	  if(Get_Temp_Humi(&Temp, &Humi) EQ 0)
 	    SHT1X_In_Flag = NO_SHT1X_FLAG;
 	}
