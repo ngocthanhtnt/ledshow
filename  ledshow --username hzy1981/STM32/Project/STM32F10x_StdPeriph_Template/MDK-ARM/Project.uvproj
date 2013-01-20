@@ -1372,6 +1372,16 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\SHT1X.h</FilePath>
             </File>
+            <File>
+              <FileName>DS18B20.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\DS18B20.c</FilePath>
+            </File>
+            <File>
+              <FileName>DS18B20.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\DS18B20.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2902,6 +2912,16 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\SHT1X.h</FilePath>
             </File>
+            <File>
+              <FileName>DS18B20.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\DS18B20.c</FilePath>
+            </File>
+            <File>
+              <FileName>DS18B20.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\DS18B20.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4397,6 +4417,16 @@
               <FileName>SHT1X.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\SHT1X.h</FilePath>
+            </File>
+            <File>
+              <FileName>DS18B20.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\DS18B20.c</FilePath>
+            </File>
+            <File>
+              <FileName>DS18B20.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\DS18B20.h</FilePath>
             </File>
           </Files>
         </Group>
@@ -5928,6 +5958,16 @@
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\SHT1X.h</FilePath>
             </File>
+            <File>
+              <FileName>DS18B20.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\DS18B20.c</FilePath>
+            </File>
+            <File>
+              <FileName>DS18B20.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\DS18B20.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -7423,6 +7463,16 @@
               <FileName>SHT1X.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\..\Usr\drv\SHT1X.h</FilePath>
+            </File>
+            <File>
+              <FileName>DS18B20.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Usr\drv\DS18B20.c</FilePath>
+            </File>
+            <File>
+              <FileName>DS18B20.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Usr\drv\DS18B20.h</FilePath>
             </File>
           </Files>
         </Group>

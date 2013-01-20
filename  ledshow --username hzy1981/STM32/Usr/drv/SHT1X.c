@@ -5,7 +5,7 @@
 #include "delay.h"
 #include "1602.h"
 */
-#if TEMP_SHOW_EN || HUMIDITY_SHOW_EN
+#if TEMP_SHOW_EN && HUMIDITY_SHOW_EN
 #define NO_SHT1X_FLAG 0x1235A9A5
 #define EXIST_SHT1X_FLAG 0x87394203
 
@@ -111,13 +111,13 @@ void SHT1X_Init(void)
 
   //连续读3次SHT1X,如果3次都没有读到，认为没有连接传感器
   SHT1X_In_Flag = EXIST_SHT1X_FLAG;
-  if(Get_Temp_Humi(&Temp, &Humi) EQ 0)
+  if(Get_SHT1X_Temp_Humi(&Temp, &Humi) EQ 0)
   {
     Delay_ms(10);
-	if(Get_Temp_Humi(&Temp, &Humi) EQ 0)
+	if(Get_SHT1X_Temp_Humi(&Temp, &Humi) EQ 0)
 	{
 	  Delay_ms(10);
-	  if(Get_Temp_Humi(&Temp, &Humi) EQ 0)
+	  if(Get_SHT1X_Temp_Humi(&Temp, &Humi) EQ 0)
 	    SHT1X_In_Flag = NO_SHT1X_FLAG;
 	}
   }
@@ -307,7 +307,7 @@ void calc_dht10(float *p_humidity ,float *p_temperature)
   *p_humidity=rh_true;              //return humidity[%RH]    
 }
 
-INT8U Get_Temp_Humi(INT16S *pTemp, INT16S *pHumi)
+INT8U Get_SHT1X_Temp_Humi(INT16S *pTemp, INT16S *pHumi)
 {
   INT8U buf[5];
   float temp, humi;
@@ -354,6 +354,14 @@ INT8U Get_Humidity(INT16S *pHumidity)
   //Measure(HUMI, buf);
 
   return 0;
+}
+
+INT8U Chk_SHT1X_Sensor(void)
+{
+  if(SHT1X_In_Flag EQ EXIST_SHT1X_FLAG)
+    return 1;
+  else
+    return 0;
 }
 #endif
 

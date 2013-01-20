@@ -1528,6 +1528,23 @@ INT32U CRC32(INT8U *pBuf, INT16U nSize)
     return (CRC->DR);  
 }
 
+//传感器初始化
+void Sensor_Init(void)
+{
+#if TEMP_SHOW_EN || HUMIDITY_SHOW_EN
+
+#if TEMP_SHOW_EN
+  DS18B20_Start();
+  DS18B20_Read();
+
+#endif
+
+#if TEMP_SHOW_EN && HUMIDITY_SHOW_EN
+  SHT1X_Init();
+#endif
+   
+#endif
+}
 //以上CRC代码在上位机中对应的C#代码
 /*
 static readonly uint[] Crc32Table =  

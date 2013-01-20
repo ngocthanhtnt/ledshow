@@ -133,7 +133,7 @@ void mainInit(void)
   OS_Debug_Print("----------system start----------");
   //OS_Debug_Print("----------version: %s----------", version);
 
-  Check_Storage_Size();
+  //Check_Storage_Size();
   
   RST_Periph();
 
@@ -154,9 +154,7 @@ void mainInit(void)
   Net_Init();
 #endif
 
-#if TEMP_SHOW_EN || HUMIDITY_SHOW_EN
-  SHT1X_Init(); 
-#endif
+  Sensor_Init(); //传感器初始化
    
   Para_Show(); //上电参数显示
 

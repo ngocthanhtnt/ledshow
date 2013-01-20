@@ -127,7 +127,7 @@
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
 #define TEMP_SHOW_EN   1 //温度显示使能
-#define HUMIDITY_SHOW_EN 1 //湿度显示使能
+#define HUMIDITY_SHOW_EN 0 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
 #define TXT_SHOW_EN    0
 #else
@@ -135,10 +135,10 @@
 #define PIC_SHOW_EN    1 //图文显示使能
 #define CLOCK_SHOW_EN  1 //表盘显示使能
 #define LUN_SHOW_EN    1 //农历显示使能
-#define TEMP_SHOW_EN   0 //温度显示使能
+#define TEMP_SHOW_EN   1 //温度显示使能
 #define TIME_SHOW_EN   1 //时间显示使能
 #define TIMER_SHOW_EN  1 //定时显示使能 
-#define HUMIDITY_SHOW_EN 0 //湿度显示使能
+#define HUMIDITY_SHOW_EN 1 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
 #define TXT_SHOW_EN    0
 #endif

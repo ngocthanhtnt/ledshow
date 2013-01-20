@@ -35,12 +35,20 @@ void Screen_Env_Proc()
 	 Sec_Counts.Var ++;
 	 if(Sec_Counts.Var >= 5)
 	 {
-        if(Get_Temp_Humi(&Temp, &Humi))
+#if TEMP_SHOW_EN //温度使能DS18B20
+        if(Chk_DS18B20_Sensor()) //检查温度传感器有安装
+	      Screen_Status.Temperature = Get_DS18B20_Temp();
+#endif
+
+#if TEMP_SHOW_EN && HUMIDITY_SHOW_EN //温湿度使能SHT1X
+        if(Chk_DS18B20_Sensor() EQ 0 && \
+		   Chk_SHT1X_Sensor() &&\
+		   Get_SHT1X_Temp_Humi(&Temp, &Humi))
 		{
 		  Screen_Status.Temperature = Temp;
 		  Screen_Status.Humidity = Humi;
 		}
-
+#endif
 		Sec_Counts.Var = 0;
 	 }
    }
