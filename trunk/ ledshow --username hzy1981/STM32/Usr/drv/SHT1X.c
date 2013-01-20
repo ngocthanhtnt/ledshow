@@ -279,7 +279,7 @@ int main(){
 	}
 }
 */
-void calc_dht10(float *p_humidity ,float *p_temperature)   
+void Calc_SHT1X(float *p_humidity ,float *p_temperature)   
 // calculates temperature [C] and humidity [%RH]     
 // input :  humi [Ticks] (12 bit)     
 //          temp [Ticks] (14 bit)    
@@ -326,7 +326,7 @@ INT8U Get_SHT1X_Temp_Humi(INT16S *pTemp, INT16S *pHumi)
 	if(Measure(HUMI, buf) EQ 0)
 	{
 	  humi = (float)((buf[0]<<8)+buf[1]);
-	  calc_dht10(&humi, &temp);	//校正温度和湿度
+	  Calc_SHT1X(&humi, &temp);	//校正温度和湿度
 
 	  *pTemp = (INT16S)temp * 10;
 	  *pHumi = (INT16S)humi * 10;
