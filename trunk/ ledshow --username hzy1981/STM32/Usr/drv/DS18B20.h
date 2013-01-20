@@ -30,14 +30,15 @@ typedef enum{FAILED = 0 ,PASSED = !FAILED} TestStatus ;
 extern void GPIO_DQ_Out_Mode(void) ; //DQ输出模式
 extern void GPIO_DQ_Input_Mode(void) ;  //DQ输入模式
 extern void Tx_ResetPulse(void) ;    //发送复位脉冲
-extern void Rx_PresencePulse(void) ; //接受应答信号
+extern INT8U Rx_PresencePulse(void) ; //接受应答信号
 extern void Write_OneByte_ToDS18b20(unsigned char data) ; //写一个字节到18b20
 extern unsigned char Read_OneByte_FromDS18b20(void) ; //从18b20读一个字节
 extern void Read_Temperature(unsigned char *sign ,unsigned char *interger ,
                       unsigned int *decimal) ; //读温度
 //写配置参数TH，TL和初始化配置寄存器
-extern void Write_EEPROM(unsigned char Th,unsigned char Tl,unsigned char Register_Con );
-void DS18B20_Init(void) ; //初始化
-INT16S Get_DS18B20_Temp(void);
-INT8U Chk_DS18B20_Sensor(void);
+//extern void Write_EEPROM(unsigned char Th,unsigned char Tl,unsigned char Register_Con );
+extern INT8U DS18B20_Reset(void) ; //初始化
+extern void DS18B20_Init(void);
+extern INT16S Get_DS18B20_Temp(void);
+extern INT8U Chk_DS18B20_Sensor(void);
 #endif /*DS18B20*/

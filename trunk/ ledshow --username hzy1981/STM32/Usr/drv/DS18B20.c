@@ -13,6 +13,9 @@ INT32U DS18B20_In_Flag;
 
 #define Delay_Nus Delay_us 
 #define Delay_Nms Delay_ms
+
+#define DIS_INT() __disable_irq()
+#define EN_INT() __enable_irq()
 /******************************************
 函数名称：GPIO_DQ_Out_Mode
 功    能：设置DQ引脚为开漏输出模式
@@ -63,13 +66,36 @@ void Tx_ResetPulse(void)
 参    数：无
 返回值  ：无
 *******************************************/
-void Rx_PresencePulse(void)
+INT8U Rx_PresencePulse(void)
 {
+    INT16U i;
+
     GPIO_DQ_Input_Mode() ;
-    while( DQ_ReadBit()) ;  //等待DS18b20应答
-    while( DQ_ReadBit() == 0) ; //DS18b20将总线拉低60~240us ,然后总线由上拉电阻拉高
+
+	for(i = 0; i < 50; i ++)
+	{
+      if( DQ_ReadBit() EQ 0)   //等待DS18b20应答
+	    break;
+	  Delay_Nus(1);
+    }
+
+	if(i EQ 50)
+	  return 0;
+
+	for(i = 0; i < 250; i ++)
+	{
+	  if( DQ_ReadBit())  //DS18b20将总线拉低60~240us ,然后总线由上拉电阻拉高
+	    break;
+	  Delay_Nus(1);
+	}
+
+	if(i EQ 250)
+	  return 0;
+
     Delay_Nus(300) ;
     GPIO_DQ_Out_Mode() ;    //接受完成，主机重新控制总线
+
+	return 1;
 }
 /******************************************
 函数名称：Write_OneByte_ToDS18b20
@@ -102,6 +128,17 @@ void Write_OneByte_ToDS18b20(unsigned char data)
         data >>= 1 ;
     }
 }
+
+void DS18B20_StartConvert(void)
+{
+    DIS_INT();
+    DS18B20_Reset();
+    Write_OneByte_ToDS18b20(ROM_Skip_Cmd);//跳过读序列号操作
+    Write_OneByte_ToDS18b20(Convert_T); //启动温度转换
+	EN_INT();
+    //Delay_Nms(780);//等待DS18b20转换完成
+}
+
 /******************************************
 函数名称：Read_OneByte_FromDS18b20
 功    能：从DS18b20读一个字节
@@ -148,26 +185,30 @@ void Read_Temperature(unsigned char *sign ,
     //volatile unsigned char e=0;
     
     unsigned int tmp ;
-    
-    DS18B20_Init();
+/*    
+    DS18B20_Reset();
     Write_OneByte_ToDS18b20(ROM_Read_Cmd);
   
-    DS18B20_Init();
+    DS18B20_Reset();
     Write_OneByte_ToDS18b20(ROM_Skip_Cmd);//跳过读序列号操作
     Write_OneByte_ToDS18b20(Convert_T); //启动温度转换
     Delay_Nms(780);//等待DS18b20转换完成
-    
-    DS18B20_Init();
+*/ 
+    DIS_INT();
+	   
+    DS18B20_Reset();
     Write_OneByte_ToDS18b20(ROM_Skip_Cmd);
     Write_OneByte_ToDS18b20(Read_Scratchpad); //读取寄存器内容（可以从寄存器0读到寄存器8）
     
     a= Read_OneByte_FromDS18b20();     //温度低8位
     b= Read_OneByte_FromDS18b20();     //温度高8位
+
+	EN_INT();
     //c= Read_OneByte_FromDS18B20();   //TH
     //d= Read_OneByte_FromDS18B20();   //TL
     //e= Read_OneByte_FromDS18B20();   //Configuration Register
     
-    Tx_ResetPulse();  //中断数据读取
+    //Tx_ResetPulse();  //中断数据读取
     tmp = (b<<8) | a ;
     if(b & 0xF0)
     {
@@ -182,16 +223,34 @@ void Read_Temperature(unsigned char *sign ,
     *decimal = (tmp & 0x000F) * 625 ; //小数部分 
 }
 
+void DS18B20_Init(void)
+{
+    INT8U Re;
+
+	DIS_INT();
+	Re = DS18B20_Reset();
+	EN_INT();
+
+    if(Re)
+	{
+	  DS18B20_In_Flag = EXIST_18B20_FLAG;	//18B20存在
+	  DS18B20_StartConvert();
+	} 
+	else
+	{
+	  DS18B20_In_Flag = NO_18B20_FLAG;
+	}
+}
 /******************************************
-函数名称：DS18B20_Init
+函数名称：DS18B20_Reset
 功    能：初始化DS18b20
 参    数：无
 返回值  ：无
 *******************************************/
-void DS18B20_Init(void)
+INT8U DS18B20_Reset(void)
 {
     Tx_ResetPulse();
-    Rx_PresencePulse(); 
+	return 	Rx_PresencePulse();
 }
 
 //获取温度
@@ -201,6 +260,8 @@ INT16S Get_DS18B20_Temp(void)
   unsigned int dec;
     
   Read_Temperature(&sign, &integer, &dec);
+
+  DS18B20_StartConvert();
   return integer;
 }
 
