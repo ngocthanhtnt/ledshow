@@ -1534,8 +1534,8 @@ void Sensor_Init(void)
 #if TEMP_SHOW_EN || HUMIDITY_SHOW_EN
 
 #if TEMP_SHOW_EN
-  DS18B20_Start();
-  DS18B20_Read();
+  DS18B20_Init();
+  //DS18B20_Read();
 
 #endif
 
