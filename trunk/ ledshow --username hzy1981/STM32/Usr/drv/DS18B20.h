@@ -21,8 +21,8 @@
 #define  ReadPower       0xB4    //读电源的供电方式：0为寄生电源供电；1为外部电源供电
 
 
-void ds18b20_start(void);
-unsigned short ds18b20_read(void);
-
-
+void DS1820_Start(void);
+unsigned short DS18B20_Read(void);
+INT16S Get_DS18B20_Temp(void);
+INT8U Chk_DS18B20_Sensor(void);
 #endif

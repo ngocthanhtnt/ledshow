@@ -29,6 +29,8 @@
 #include "UDisk_Proc.h"
 #include "DS1302.h"
 #include "SHT1X.h"
+#include "DS18B20.h"
+
 #if NET_EN
 #include "ENC28J60.h"
 #include "EMAC.h"
