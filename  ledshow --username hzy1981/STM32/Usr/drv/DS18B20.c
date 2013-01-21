@@ -28,7 +28,7 @@ void GPIO_DQ_Out_Mode(void)
     
     GPIO_InitStructure.GPIO_Pin = DQ_GPIO_Pin ;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz ;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_OD ; //开漏输出
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ; //推挽输出
     GPIO_Init(DQ_GPIO ,&GPIO_InitStructure) ;
 }
 /******************************************
@@ -43,7 +43,7 @@ void GPIO_DQ_Input_Mode(void)
     
     GPIO_InitStructure.GPIO_Pin = DQ_GPIO_Pin ;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz ;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING ; //浮空输入
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU ; //上拉输入
     GPIO_Init(DQ_GPIO ,&GPIO_InitStructure) ;
 }
 /******************************************
@@ -121,7 +121,7 @@ void Write_OneByte_ToDS18b20(unsigned char data)
         {
             //写0
             DQ_Write_0() ;
-            Delay_Nus(110) ; //保持在60us到120us之间
+            Delay_Nus(80) ; //保持在60us到120us之间
             DQ_Write_1() ;
             Delay_Nus(5) ;
         }

@@ -3327,6 +3327,9 @@ void CfacScreenProperty::cardChangeProc()
       pointsStr += tr("，全彩") + QString::number(Card_Para.Max_Points/3);
 
     //pointsStr += tr("，最大高度：") + QString::number(Card_Para.Max_Height);
+    //cardParaEdit->setText(pointsStr);
+
+    pointsStr += tr("。最大分区数：") + QString::number(Card_Para.Max_Area_Num);
     cardParaEdit->setText(pointsStr);
 
     QString fileStr = tr("支持：") +\
@@ -3351,7 +3354,8 @@ void CfacScreenProperty::cardChangeProc()
                      (((Card_Para.Com_Mode & COM_RS485)>0)?tr("、R485"):tr("")) +\
                      (((Card_Para.Com_Mode & COM_UDISK)>0)?tr("、U盘"):tr("")) +\
                      (((Card_Para.Com_Mode & COM_ETH)>0)?tr("、以太网"):tr("")) +\
-                     (((Card_Para.Com_Mode & COM_GPRS)>0)?tr("、GSM/GPRS"):tr(""));
+                     (((Card_Para.Com_Mode & COM_SMS)>0)?tr("、短信"):tr("")) +\
+                     (((Card_Para.Com_Mode & COM_GPRS)>0)?tr("、GPRS"):tr(""));
 
 
     if(Card_Para.Com_Mode & COM_ETH)
