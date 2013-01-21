@@ -94,7 +94,7 @@ INT8U Set_Cur_Time(INT8U Time[])//S_Time *pTime)
 
 INT16U Get_Cur_Humidity()
 {
-  return 60; 
+  return 750;
 }
 
 INT16U Get_Cur_Noise()
@@ -107,7 +107,7 @@ INT16S GetInterTemperature()
     return 250;
 }
 
-INT8U Get_Temp_Humi(INT16S *pTemp, INT16S *pHumi)
+INT8U Get_SHT1X_Temp_Humi(INT16S *pTemp, INT16S *pHumi)
 {
   *pTemp = 250;
   *pHumi = 750;
@@ -275,7 +275,7 @@ INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen)
 
 INT16S Get_Cur_Temp()
 {
-  return 215;
+  return 250;
 }
 
 void Build_Scan_Data_Index()

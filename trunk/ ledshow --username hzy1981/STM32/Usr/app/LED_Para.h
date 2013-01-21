@@ -58,7 +58,8 @@
 #define COM_RS485 0x02
 #define COM_UDISK 0x04
 #define COM_ETH   0x08
-#define COM_GPRS  0x10
+#define COM_SMS   0x10
+#define COM_GPRS  0x20
 
 #define GET_TEXT_LEN(W,H) (((W)%8) EQ 0)?((W)*(H)/8):(((W)/8+1)*(H))//((H%8) EQ 0)?(W*H/8):(W*(H/8+1))
 #define GET_POINT_INDEX(W,X,Y) ((((W)%8)?((W)/8 + 1)*8:(W))*(Y) + (X))//((W)*(Y) + (X))//

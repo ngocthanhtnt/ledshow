@@ -211,15 +211,21 @@ void Delay_ms(INT16U nms)
 //nus为要延时的us数.		    								   
 void Delay_us(INT32U nus)
 {
-  volatile INT32U i;
-  volatile INT32U j; 
+  volatile INT32S i;
+  volatile INT32S j; 
    
   i =0;
 
-  Clr_Watch_Dog(); 
+#if WDG_EN
+  IWDG->KR = ((uint16_t)0xAAAA);
+#endif    
+  //if(nus EQ 0)
+    //return; 
   
-  j = 28 * nus * (HCLK_VALUE / 1000000) / 72;
-  while(i <= j) 
+  //j = (INT32S)(12 * nus - 2) * (HCLK_VALUE / 72000000);
+  //48M、72M等均已验证正确
+  j = (INT32S)nus * (HCLK_VALUE / 6000000) - HCLK_VALUE / 36000000;
+  while(i < j) 
   {
     i++;
 	}
@@ -1535,8 +1541,16 @@ void Sensor_Init(void)
 
 #if TEMP_SHOW_EN
   DS18B20_Init();
-  //DS18B20_Read();
-
+/*  
+  GPIO_DQ_Out_Mode() ;  
+  while(1)
+  {
+    DQ_Write_0() ;  //复位脉冲
+    Delay_us(100) ; //至少保持480us
+    DQ_Write_1() ;  //加速上升沿速度
+    Delay_us(100) ; //至少保持480us
+  }
+*/
 #endif
 
 #if TEMP_SHOW_EN && HUMIDITY_SHOW_EN

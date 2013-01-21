@@ -48,6 +48,10 @@ typedef char INT8S;
 #define START_SCAN_TIMER()
 #define STOP_SCAN_TIMER()
 
+#define Chk_DS18B20_Sensor() 0
+#define Chk_SHT1X_Sensor() 1
+#define Get_DS18B20_Temp() 250
+
 #define Soft_Reset()
 #define Clr_Watch_Dog()
 /*
@@ -104,7 +108,7 @@ EXT INT8U _Get_Cur_Time(INT8U Time[]);//S_Time *pTime);
 EXT INT8U Set_Cur_Time(INT8U Time[]);//S_Time *pTime);
 EXT INT16U Get_Cur_Humidity();
 EXT INT16U Get_Cur_Noise();
-EXT INT8U Get_Temp_Humi(INT16S *pTemp, INT16S *pHumi);
+EXT INT8U Get_SHT1X_Temp_Humi(INT16S *pTemp, INT16S *pHumi);
 EXT void Mem_Open();
 EXT void Mem_Close();
 EXT FILE *getFontFile(INT8U FontSize, INT8U Flag);

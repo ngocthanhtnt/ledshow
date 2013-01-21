@@ -76,12 +76,12 @@
 #define ASSERT_EN 1
 
 #define MAX_PROG_NUM 16 //最大节目数
-#define MAX_AREA_NUM 16 //每个节目下最大分区数
+#define MAX_AREA_NUM 8  //每个节目下最大分区数
 #define MAX_FILE_NUM 50 //每个节目下最大文件数
 
 #include "QT_SIM.h"
 
-#define APP_NAME "LED设计师 2012"
+#define APP_NAME "LED设计师 2013"
 
 #define SCAN_SCREEN_PERIOD 200//扫屏周期,单位us
 //显示效果配置
