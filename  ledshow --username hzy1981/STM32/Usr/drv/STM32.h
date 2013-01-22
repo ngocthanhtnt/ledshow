@@ -286,4 +286,5 @@ EXT void DMA_Configuration(void);
 EXT void ADC_configuration(void);
 EXT INT16S GetInterTemperature(void);
 EXT INT32U CRC32(INT8U *pBuf, INT16U nSize);
+EXT void Sensor_Init(void);
 #endif

@@ -1523,6 +1523,8 @@ void CRC_Init(void)
  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);
 }
 
+extern void CRC_ResetDR(void);
+
 INT32U CRC32(INT8U *pBuf, INT16U nSize)  
 {  
     INT32U index = 0;  
