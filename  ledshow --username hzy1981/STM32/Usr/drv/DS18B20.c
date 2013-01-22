@@ -92,7 +92,7 @@ INT8U Rx_PresencePulse(void)
 	if(i EQ 250)
 	  return 0;
 
-    Delay_Nus(300) ;
+    Delay_Nus(10) ;
     GPIO_DQ_Out_Mode() ;    //接受完成，主机重新控制总线
 
 	return 1;
@@ -217,7 +217,7 @@ void Read_Temperature(unsigned char *sign ,
     }
     else 
     {
-    sign = 0 ;
+    *sign = 0 ;
     }
     *interger = (tmp>>4) & 0x00FF;  //整数部分
     *decimal = (tmp & 0x000F) * 625 ; //小数部分 
@@ -231,10 +231,21 @@ void DS18B20_Init(void)
 	Re = DS18B20_Reset();
 	EN_INT();
 
+	if(Re EQ 0) //连续两次检测18B20是否存在
+	{
+	  Delay_ms(100);
+
+	  DIS_INT();
+	  Re = DS18B20_Reset();
+	  EN_INT();
+	}
+
     if(Re)
 	{
 	  DS18B20_In_Flag = EXIST_18B20_FLAG;	//18B20存在
 	  DS18B20_StartConvert();
+	  Delay_ms(900);
+	  Screen_Status.Temperature = Get_DS18B20_Temp();
 	} 
 	else
 	{

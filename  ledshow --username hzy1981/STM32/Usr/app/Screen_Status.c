@@ -27,30 +27,43 @@ void Screen_Env_Proc()
 #if ENV_VAR_EN
    static S_Int8U Sec_Counts ={CHK_BYTE, 40, CHK_BYTE};
    static S_Int32U Sec_Bak = {CHK_BYTE, 0x00, CHK_BYTE};
+#if TEMP_SHOW_EN && HUMIDITY_SHOW_EN
    INT16S Temp, Humi;
+#endif
 
    if(SEC_TIMER != Sec_Bak.Var)
    {
 	 Sec_Bak.Var = SEC_TIMER;
-	 Sec_Counts.Var ++;
-	 if(Sec_Counts.Var >= 5)
-	 {
+
 #if TEMP_SHOW_EN //温度使能DS18B20
-        if(Chk_DS18B20_Sensor()) //检查温度传感器有安装
-	      Screen_Status.Temperature = Get_DS18B20_Temp();
+    if(Chk_DS18B20_Sensor()) //检查温度传感器有安装--4s更新一次数据
+	{
+	  Sec_Counts.Var ++;
+	  if(Sec_Counts.Var >= 4)
+      {
+        Screen_Status.Temperature = Get_DS18B20_Temp();
+		Sec_Counts.Var = 0;
+	  }
+	}
 #endif
 
-#if TEMP_SHOW_EN && HUMIDITY_SHOW_EN //温湿度使能SHT1X
-        if(Chk_DS18B20_Sensor() EQ 0 && \
-		   Chk_SHT1X_Sensor() &&\
-		   Get_SHT1X_Temp_Humi(&Temp, &Humi))
-		{
-		  Screen_Status.Temperature = Temp;
-		  Screen_Status.Humidity = Humi;
-		}
-#endif
+#if TEMP_SHOW_EN && HUMIDITY_SHOW_EN //温湿度使能SHT1X,4s更新一次数据
+    if(Chk_DS18B20_Sensor() EQ 0 && \
+	   Chk_SHT1X_Sensor())
+	{
+	  Sec_Counts.Var ++;
+	  if(Sec_Counts.Var >= 2)
+      {
+	    if(Get_SHT1X_Temp_Humi(1, &Temp, &Humi))
+	    {
+	      Screen_Status.Temperature = Temp;
+	      Screen_Status.Humidity = Humi;
+	    }
+
 		Sec_Counts.Var = 0;
-	 }
+	  }
+	}
+#endif
    }
 #endif
 }

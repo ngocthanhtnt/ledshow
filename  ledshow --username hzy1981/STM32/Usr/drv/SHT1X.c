@@ -111,6 +111,7 @@ void SHT1X_Init(void)
 
   //连续读3次SHT1X,如果3次都没有读到，认为没有连接传感器
   SHT1X_In_Flag = EXIST_SHT1X_FLAG;
+  /*
   if(Get_SHT1X_Temp_Humi(&Temp, &Humi) EQ 0)
   {
     Delay_ms(10);
@@ -120,6 +121,20 @@ void SHT1X_Init(void)
 	  if(Get_SHT1X_Temp_Humi(&Temp, &Humi) EQ 0)
 	    SHT1X_In_Flag = NO_SHT1X_FLAG;
 	}
+  }
+  */
+  Get_SHT1X_Temp_Humi(0, &Temp, &Humi);
+  Delay_ms(300);
+  Get_SHT1X_Temp_Humi(1, &Temp, &Humi);
+  Delay_ms(300);
+  if(Get_SHT1X_Temp_Humi(1, &Temp, &Humi) EQ 0)
+  {
+	Get_SHT1X_Temp_Humi(0, &Temp, &Humi);
+	Delay_ms(300);
+	Get_SHT1X_Temp_Humi(1, &Temp, &Humi);
+	Delay_ms(300);
+	if(Get_SHT1X_Temp_Humi(1, &Temp, &Humi) EQ 0)
+	  SHT1X_In_Flag = NO_SHT1X_FLAG;
   }
 
   if(SHT1X_In_Flag EQ EXIST_SHT1X_FLAG)
@@ -221,9 +236,8 @@ char WriteByte(unsigned char value){//从高位开始发送
 	return error;
 }
 
-char Measure(unsigned char mode, unsigned char t[]){
-	unsigned char error=0;
-	unsigned char sum;
+void Measure_Start(unsigned char mode)
+{
 	TransStart();
 	switch(mode){
 		case TEMP:
@@ -236,7 +250,26 @@ char Measure(unsigned char mode, unsigned char t[]){
 			break;
 	}
 	ReadState();
-	delay_us(320000);
+}
+
+char Measure(unsigned char mode, unsigned char t[]){
+	unsigned char error=0;
+	unsigned char sum;
+	/*
+	TransStart();
+	switch(mode){
+		case TEMP:
+			error+=WriteByte(MEASURE_TEMP);
+			break;
+		case HUMI:
+			error+=WriteByte(MEASURE_HUMI);
+			break;
+		default:
+			break;
+	}
+	*/
+	ReadState();
+	//delay_us(320000);
 	if(DATA())// 或超时 (约2 sec.)
 		error+=1;  
 	WriteState();
@@ -307,20 +340,86 @@ void Calc_SHT1X(float *p_humidity ,float *p_temperature)
   *p_humidity=rh_true;              //return humidity[%RH]    
 }
 
-INT8U Get_SHT1X_Temp_Humi(INT16S *pTemp, INT16S *pHumi)
+//#define S_SHT1X_DILE       0x00
+#define S_SHT1X_TEMP_START 0x01
+#define S_SHT1X_TEMP_MEASU 0x02
+//#define S_SHT1X_HUMI_START 0x02
+#define S_SHT1X_HUMI_MEASU 0x03
+
+INT8U Get_SHT1X_Temp_Humi(INT8U Flag, INT16S *pTemp, INT16S *pHumi)
 {
   INT8U buf[5];
-  float temp, humi;
+  float  humi;
+  static S_Int8U state = {CHK_BYTE, S_SHT1X_TEMP_START, CHK_BYTE};
+  static S_Float temp = {CHK_BYTE, 0, CHK_BYTE};;
 
   if(SHT1X_In_Flag EQ NO_SHT1X_FLAG)
     return 0;
 
-  ConnectionReset();
+  if(CHK_HT(temp) EQ 0 || CHK_HT(state) EQ 0)
+    ASSERT_FAILED();
 
+  if(state.Var EQ S_SHT1X_TEMP_START || Flag EQ 0) //起始状态或者初始化状态机
+  {
+    ConnectionReset();
+	Measure_Start(TEMP);
+	state.Var = S_SHT1X_TEMP_MEASU;
+
+	return 0; 
+  }
+  else if(state.Var EQ S_SHT1X_TEMP_MEASU)
+  {
+    if(Measure(TEMP, buf) EQ 0)
+	{
+	  temp.Var = (float)((buf[0]<<8)+buf[1]);
+
+      ConnectionReset();
+	  Measure_Start(HUMI);
+
+	  state.Var = S_SHT1X_HUMI_MEASU;
+	}
+	else
+	  state.Var = S_SHT1X_TEMP_START;
+	
+	return 0;	
+  }/*
+  else if(state.Var EQ S_SHT1X_HUMI_START)
+  {
+    ConnectionReset();
+	Measure_Start(HUMI);
+	state.Var = S_SHT1X_HUMI_MEASU;
+
+	return 0; 
+  }*/
+  else if(state.Var EQ S_SHT1X_HUMI_MEASU)
+  {
+    if(Measure(HUMI, buf) EQ 0)
+	{
+	  humi = (float)((buf[0]<<8)+buf[1]);
+	  Calc_SHT1X(&humi, &temp.Var);	//校正温度和湿度
+
+	  *pTemp = (INT16S)temp.Var * 10;
+	  *pHumi = (INT16S)humi * 10;
+      
+	  ConnectionReset();
+	  Measure_Start(TEMP);
+
+	  state.Var = S_SHT1X_TEMP_MEASU;
+	  return 1;	  
+	}
+	else
+	  state.Var = S_SHT1X_TEMP_START;
+	  
+	return 0;
+  }
+  else
+  {
+	state.Var = S_SHT1X_TEMP_START;
+	return 0;
+  }
+/*
   if(Measure(TEMP, buf) EQ 0)
   {
-    //*pTemp = (u32)(((buf[0]<<8)+buf[1])*0.01-40);
-	//temp = (float)(((buf[0]<<8)+buf[1]) * 0.01 - 40);
 	temp = (float)((buf[0]<<8)+buf[1]);
 	
 	if(Measure(HUMI, buf) EQ 0)
@@ -333,7 +432,7 @@ INT8U Get_SHT1X_Temp_Humi(INT16S *pTemp, INT16S *pHumi)
 	  return 1;
 	}
   }
-
+*/
   return 0;
 }
 
