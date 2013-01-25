@@ -111,6 +111,8 @@ void SHT1X_Init(void)
 
   //连续读3次SHT1X,如果3次都没有读到，认为没有连接传感器
   SHT1X_In_Flag = EXIST_SHT1X_FLAG;
+
+  WriteState();
   /*
   if(Get_SHT1X_Temp_Humi(&Temp, &Humi) EQ 0)
   {
@@ -140,7 +142,8 @@ void SHT1X_Init(void)
   if(SHT1X_In_Flag EQ EXIST_SHT1X_FLAG)
   {
 	Screen_Status.Temperature = Temp;
-	Screen_Status.Humidity = Humi; 
+	Screen_Status.Humidity = Humi;
+	//Get_SHT1X_Temp_Humi(0, &Temp, &Humi); 
   }
 }
 
@@ -238,6 +241,7 @@ char WriteByte(unsigned char value){//从高位开始发送
 
 void Measure_Start(unsigned char mode)
 {
+    unsigned char error = 0;
 	TransStart();
 	switch(mode){
 		case TEMP:
@@ -398,8 +402,8 @@ INT8U Get_SHT1X_Temp_Humi(INT8U Flag, INT16S *pTemp, INT16S *pHumi)
 	  humi = (float)((buf[0]<<8)+buf[1]);
 	  Calc_SHT1X(&humi, &temp.Var);	//校正温度和湿度
 
-	  *pTemp = (INT16S)temp.Var * 10;
-	  *pHumi = (INT16S)humi * 10;
+	  *pTemp = (INT16S)(temp.Var * 10);
+	  *pHumi = (INT16S)(humi * 10);
       
 	  ConnectionReset();
 	  Measure_Start(TEMP);
@@ -417,23 +421,6 @@ INT8U Get_SHT1X_Temp_Humi(INT8U Flag, INT16S *pTemp, INT16S *pHumi)
 	state.Var = S_SHT1X_TEMP_START;
 	return 0;
   }
-/*
-  if(Measure(TEMP, buf) EQ 0)
-  {
-	temp = (float)((buf[0]<<8)+buf[1]);
-	
-	if(Measure(HUMI, buf) EQ 0)
-	{
-	  humi = (float)((buf[0]<<8)+buf[1]);
-	  Calc_SHT1X(&humi, &temp);	//校正温度和湿度
-
-	  *pTemp = (INT16S)temp * 10;
-	  *pHumi = (INT16S)humi * 10;
-	  return 1;
-	}
-  }
-*/
-  return 0;
 }
 
 INT8U Get_Humidity(INT16S *pHumidity)

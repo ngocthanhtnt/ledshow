@@ -33,7 +33,7 @@ extern void Tx_ResetPulse(void) ;    //发送复位脉冲
 extern INT8U Rx_PresencePulse(void) ; //接受应答信号
 extern void Write_OneByte_ToDS18b20(unsigned char data) ; //写一个字节到18b20
 extern unsigned char Read_OneByte_FromDS18b20(void) ; //从18b20读一个字节
-extern void Read_Temperature(unsigned char *sign ,unsigned char *interger ,
+extern INT16S Read_Temperature(unsigned char *sign ,unsigned char *interger ,
                       unsigned int *decimal) ; //读温度
 //写配置参数TH，TL和初始化配置寄存器
 //extern void Write_EEPROM(unsigned char Th,unsigned char Tl,unsigned char Register_Con );

@@ -228,7 +228,7 @@ typedef struct
   INT8U Lightness;
   INT8U Color_Num;
 
-  INT16U Temperature;    //当前温度,单位0.1度
+  INT16S Temperature;    //当前温度,单位0.1度
   INT16U Humidity; //湿度,单位0.1
   INT16U Noise; //噪音,单位0.1
 
