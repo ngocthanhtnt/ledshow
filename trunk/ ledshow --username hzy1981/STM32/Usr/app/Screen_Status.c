@@ -25,7 +25,7 @@ INT16U Get_Cur_Noise(void)
 void Screen_Env_Proc()
 {
 #if ENV_VAR_EN
-   static S_Int8U Sec_Counts ={CHK_BYTE, 40, CHK_BYTE};
+   static S_Int8U Sec_Counts ={CHK_BYTE, 0, CHK_BYTE};
    static S_Int32U Sec_Bak = {CHK_BYTE, 0x00, CHK_BYTE};
 #if TEMP_SHOW_EN && HUMIDITY_SHOW_EN
    INT16S Temp, Humi;

@@ -174,7 +174,7 @@ unsigned char Read_OneByte_FromDS18b20(void)
           *decimal - 保存小数部分
 返回值  ：无
 *******************************************/
-void Read_Temperature(unsigned char *sign ,
+INT16S Read_Temperature(unsigned char *sign ,
                       unsigned char *interger ,
                       unsigned int *decimal)
 {
@@ -184,7 +184,7 @@ void Read_Temperature(unsigned char *sign ,
     //volatile unsigned char d=0;
     //volatile unsigned char e=0;
     
-    unsigned int tmp ;
+    INT16U tmp ;
 /*    
     DS18B20_Reset();
     Write_OneByte_ToDS18b20(ROM_Read_Cmd);
@@ -200,8 +200,8 @@ void Read_Temperature(unsigned char *sign ,
     Write_OneByte_ToDS18b20(ROM_Skip_Cmd);
     Write_OneByte_ToDS18b20(Read_Scratchpad); //读取寄存器内容（可以从寄存器0读到寄存器8）
     
-    a= Read_OneByte_FromDS18b20();     //温度低8位
-    b= Read_OneByte_FromDS18b20();     //温度高8位
+    a= Read_OneByte_FromDS18b20();     //温度低8位0x90;//
+    b= Read_OneByte_FromDS18b20();     //温度高8位0xFC;//--该测试数据为零下55
 
 	EN_INT();
     //c= Read_OneByte_FromDS18B20();   //TH
@@ -210,7 +210,7 @@ void Read_Temperature(unsigned char *sign ,
     
     //Tx_ResetPulse();  //中断数据读取
     tmp = (b<<8) | a ;
-    if(b & 0xF0)
+    if(b & 0xFC)
     {
     *sign = 1 ;              //符号部分
     tmp = ~tmp+1 ;
@@ -221,6 +221,8 @@ void Read_Temperature(unsigned char *sign ,
     }
     *interger = (tmp>>4) & 0x00FF;  //整数部分
     *decimal = (tmp & 0x000F) * 625 ; //小数部分 
+
+    return (INT16S)((float)tmp * 0.0625 * 10);
 }
 
 void DS18B20_Init(void)
@@ -269,11 +271,15 @@ INT16S Get_DS18B20_Temp(void)
 {
   unsigned char sign, integer;
   unsigned int dec;
+  INT16S Temp;
     
-  Read_Temperature(&sign, &integer, &dec);
+  Temp = Read_Temperature(&sign, &integer, &dec);
+
+  if(sign)
+    Temp = 0 - Temp;
 
   DS18B20_StartConvert();
-  return integer;
+  return Temp;//integer;
 }
 
 INT8U Chk_DS18B20_Sensor(void)
