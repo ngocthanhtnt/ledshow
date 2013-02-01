@@ -37,7 +37,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
+/*
 #include <QApplication>
 #include <QtCore>
 
@@ -52,4 +52,21 @@ int main(int argc, char *argv[])
     dialog.show();
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
     return dialog.exec();
+}
+*/
+
+//main.cpp
+
+#include <QtGui>
+#include <server.h>
+
+int main(int argv,char **argc)
+{
+    QApplication app(argv,argc);
+    tcpServer listenSocket;
+
+    if(!listenSocket.listen(QHostAddress::Any,6000))                  //监听本机6000端口，SD专属
+        return 0;
+    //if(!listenSocket.listen((QHostAddress::Any,8888)))
+    return app.exec();
 }
