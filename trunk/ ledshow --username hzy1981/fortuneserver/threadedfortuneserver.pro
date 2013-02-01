@@ -1,11 +1,16 @@
 HEADERS       = dialog.h \
                 fortuneserver.h \
-                fortunethread.h
+                fortunethread.h \
+    server.h \
+    thread.h
 SOURCES       = dialog.cpp \
                 fortuneserver.cpp \
                 fortunethread.cpp \
-                main.cpp
+                main.cpp \
+    server.cpp \
+    thread.cpp
 QT           += network
+QT           += sql
 
 # install
 target.path = $$[QT_INSTALL_EXAMPLES]/network/threadedfortuneserver
