@@ -4,7 +4,7 @@
 
 #if LUN_SHOW_EN
 
-#define TIANGAN_LEN 6
+#define TIANGAN_LEN 8
 #define NONGLI_LEN  8
 #define JIEQI_LEN   10
 /*
@@ -164,7 +164,7 @@ void Update_Lun_Data(S_Show_Data *pDst, INT8U Area_No)
   S_Point P0;
   INT16U Width,Height;
   INT16U Min_Width, Min_Height;
-  char Tiangan[20];
+  char Tiangan[22];
   char Nongli[20];
   char Jieqi[20];
 
