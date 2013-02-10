@@ -52,8 +52,8 @@ bool tcpThread::createConnection()
         *db=QSqlDatabase::database("db_test");
     else
     {
-        *db = QSqlDatabase::addDatabase("QMYSQL","db_test");    //若没打开则添加
-        //*db = QSqlDatabase::addDatabase("QSQLITE","db_test");    //若没打开则添加
+        //*db = QSqlDatabase::addDatabase("QMYSQL","db_test");    //若没打开则添加
+        *db = QSqlDatabase::addDatabase("QSQLITE","db_test");    //若没打开则添加
         db->setDatabaseName("db_test");
     }
 
@@ -218,39 +218,28 @@ void tcpThread::readMessage()
 }
 
 /**************************发送查询命令**********************************/
+//查询数据库是否有数据需要发送
 void tcpThread::sendSearch()
 {
-    char block[5];
-    char cdNum;
+    if(fileSendFlag > 0) //当前有文件正在发送
+    {
 
-    if(1 == sendNum)
-    {
-        cdNum =0x01;
-        sendNum = 2;
+
     }
-    else if(2 == sendNum)
+    else if(fileSendFlag EQ 0) //当前没有文件发送
     {
-        cdNum =0x02;
-        sendNum = 3;
-    }
-    else if(3 == sendNum)
-    {
-        cdNum = 0x03;
-        sendNum = 4;
-    }
-    else if(4 == sendNum)
-    {
-        cdNum = 0x04;
-        sendNum =1;
+        if(fileName.length() > 0) //文件长度>0,表示文件刚发送完毕.
+        {
+
+            //清除数据库中的
+        }
+        else //之前没有
+        {
+           fileName = QString("temp.dat");
+        }
     }
 
-    block[0]=0x44;
-    block[1]=0x11;
-    block[2]=0x01;
-    block[3]=0x07;
-    block[4]=cdNum;
-
-    tcpSocket->write(block,5);
+    //tcpSocket->write(block,5);
 }
 
 /**************************发送控制命令**********************************/
