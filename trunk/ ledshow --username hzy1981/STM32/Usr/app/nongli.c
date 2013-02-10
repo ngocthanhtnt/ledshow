@@ -527,7 +527,7 @@ static void GetSkyEarth(unsigned int year,unsigned char *p)
 	*p=x;
 }
 static unsigned char const sky[][3]=  {"¼×","ÒÒ","±û","¶¡","Îì","¼º","¸ý","ÐÁ","ÈÉ","¹ï",};
-static unsigned char const earth[][3]={"×Ó","³ó","Òú","Ã®","³½","ËÈ","Îç","Î´","Éê","ÓÏ","Ðç","º¥",};
+static unsigned char const earth[][5]={"×ÓÊó","³óÅ£","Òú»¢","Ã®ÍÃ","³½Áú","ËÈÉß","ÎçÂí","Î´Ñò","Éêºï","ÓÏ¼¦","Ðç¹·","º¥Öí",};
 static unsigned char const monthcode[][3]={"Ò»","¶þ","Èý","ËÄ","Îå","Áù","Æß","°Ë","¾Å","Ê®","¶¬","À°",};
 static unsigned char const nongliday[][3]={"³õ","Ê®","Ø¥","Èý",};
 //static unsigned char const shengxiao[][3]={"Êó","Å£","»¢","ÍÃ","Áú","Éß","Âí","Ñò","ºï",'¼¦","¹·","Öí"};
@@ -565,18 +565,18 @@ void GetChinaCalendarStr(
 	unsigned char NLyear[4];
 	unsigned char SEyear;
 	
-        StrCopy(&str[0],(unsigned char *)"¼××ÓÄêÕýÔÂ³õÒ»",15);
+        StrCopy(&str[0],(unsigned char *)"¼××ÓÊóÄêÕýÔÂ³õÒ»",15);
 	if(GetChinaCalendar(year,month,day,(unsigned char *)NLyear)==0)	return;
 	GetSkyEarth(NLyear[0]*100+NLyear[1],&SEyear);
 	StrCopy(&str[0],(unsigned char *)  sky[SEyear%10],2);	//  ¼×
-	StrCopy(&str[2],(unsigned char *)earth[SEyear%12],2);	//  ×Ó	
+        StrCopy(&str[2],(unsigned char *)earth[SEyear%12],4);	//  ×Ó
 	
-	if(NLyear[2]==1)	StrCopy(&str[6],(unsigned char *)"Õý",2);
-	else				StrCopy(&str[6],(unsigned char *)monthcode[NLyear[2]-1],2);		
+        if(NLyear[2]==1)	StrCopy(&str[8],(unsigned char *)"Õý",2);
+        else				StrCopy(&str[8],(unsigned char *)monthcode[NLyear[2]-1],2);
 	
-	if(NLyear[3]>10) 	StrCopy(&str[10],(unsigned char *)nongliday[NLyear[3]/10],2);	
-	else				StrCopy(&str[10],(unsigned char *)"³õ",2);
-	StrCopy(&str[12],(unsigned char *)monthcode[(NLyear[3]-1)%10],2);
+        if(NLyear[3]>10) 	StrCopy(&str[12],(unsigned char *)nongliday[NLyear[3]/10],2);
+        else				StrCopy(&str[12],(unsigned char *)"³õ",2);
+        StrCopy(&str[14],(unsigned char *)monthcode[(NLyear[3]-1)%10],2);
 }
 
 /*********************************************************************************************************
