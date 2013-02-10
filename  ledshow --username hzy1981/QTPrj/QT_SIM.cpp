@@ -107,8 +107,9 @@ INT16S GetInterTemperature()
     return 250;
 }
 
-INT8U Get_SHT1X_Temp_Humi(INT16S *pTemp, INT16S *pHumi)
+INT8U Get_SHT1X_Temp_Humi(INT8U Flag, INT16S *pTemp, INT16S *pHumi)
 {
+  Flag = Flag;
   *pTemp = 250;
   *pHumi = 750;
   return 1;

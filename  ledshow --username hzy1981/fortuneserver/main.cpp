@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
 
 #include <QtGui>
 #include <server.h>
+#include <mainwindow.h>
 
 int main(int argv,char **argc)
 {
@@ -67,6 +68,10 @@ int main(int argv,char **argc)
 
     if(!listenSocket.listen(QHostAddress::Any,6000))                  //监听本机6000端口，SD专属
         return 0;
+
+    MainWindow mwin;
+
+    mwin.show();
     //if(!listenSocket.listen((QHostAddress::Any,8888)))
     return app.exec();
 }

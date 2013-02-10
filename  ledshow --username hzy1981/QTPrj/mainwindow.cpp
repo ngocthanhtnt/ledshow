@@ -663,6 +663,7 @@ void MainWindow::setupCtrlActions()
     connect(a, SIGNAL(triggered()), this, SLOT(previewScreen()));
     menu->addAction(a);
 
+#if FAC_VERSION_EN //工厂版本
     //--------------生产以及内部使用--------
     QIcon testIcon = QIcon::fromTheme("生产检测", QIcon(rsrcPath1 + tr("/检测.png")));
     actionTestCard = a = new QAction(testIcon, tr("生产检测"), this);
@@ -677,6 +678,7 @@ void MainWindow::setupCtrlActions()
     //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(downloadZK()));
     tb->addAction(a);
+#endif
 }
 
 void MainWindow::setupToolActions()
@@ -1079,10 +1081,10 @@ MainWindow::MainWindow(QWidget *parent)
    //initComStatus(); //通信状态初始化
 
    timer = new QTimer(this);
-   connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()));
+   connect(timer,SIGNAL(timeout()),this,SLOT(previewProc()),Qt::DirectConnection);
 
    mmtimer = new MMTimer(QT_MOVE_STEP_TIMER, this);
-   connect(mmtimer, SIGNAL(timeout()), this, SLOT(previewProc()));
+   connect(mmtimer, SIGNAL(timeout()), this, SLOT(previewProc()),Qt::DirectConnection);
 
    setWindowTitle(tr(APP_NAME));
 }

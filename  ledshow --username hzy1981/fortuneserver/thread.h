@@ -25,5 +25,9 @@ class tcpThread : public QThread
         QTimer* cmdTimer;
         int sendNum;
         QSqlDatabase* db;
+
+        char fileSendFlag; //发送文件,1表示当前有文件发送，0表示无文件发送
+        int fileSendOffset;   //发送文件偏移
+        QString fileName; //发送文件名字
  };
 #endif // TCPTHREAD_H

@@ -2,13 +2,15 @@ HEADERS       = dialog.h \
                 fortuneserver.h \
                 fortunethread.h \
     server.h \
-    thread.h
+    thread.h \
+    mainwindow.h
 SOURCES       = dialog.cpp \
                 fortuneserver.cpp \
                 fortunethread.cpp \
                 main.cpp \
     server.cpp \
-    thread.cpp
+    thread.cpp \
+    mainwindow.cpp
 QT           += network
 QT           += sql
 
@@ -19,3 +21,6 @@ sources.path = $$[QT_INSTALL_EXAMPLES]/network/threadedfortuneserver
 INSTALLS += target sources
 
 symbian: include($$QT_SOURCE_TREE/examples/symbianpkgrules.pri)
+
+FORMS += \
+    mainwindow.ui
