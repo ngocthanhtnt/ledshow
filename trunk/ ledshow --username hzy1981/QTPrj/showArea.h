@@ -37,7 +37,7 @@
 #define ANTIALIAS_VALUE 102
 
 #define MIN_AREA 8
-#define DEF_SCN_WIDTH 360
+#define DEF_SCN_WIDTH 256
 #define DEF_SCN_HEIGHT 64
 #define DEF_SCN_COLOR  0x01
 

@@ -34,7 +34,7 @@ void resetCardtoCardParaFile()
   QSettings cardIniFile(CARD_INI_FILE,QSettings::IniFormat,0);
 
   cardIniFile.clear();
-
+/*
   cardIniFile.beginGroup(QString(COMPANY_NAME) + "-A0");
   cardIniFile.setValue("maxPoints", 384*64);
   cardIniFile.setValue("flag", 0); //第0位表示是否支持全彩
@@ -51,9 +51,9 @@ void resetCardtoCardParaFile()
 
   cardIniFile.setValue("comMode", COM_RS232);
   cardIniFile.endGroup();
-
+*/
   cardIniFile.beginGroup(QString(COMPANY_NAME) + "-A1");
-  cardIniFile.setValue("maxPoints", 384*64);
+  cardIniFile.setValue("maxPoints", 256*64);
   cardIniFile.setValue("flag", 0); //第0位表示是否支持全彩
   cardIniFile.setValue("maxHeight", 64);
   cardIniFile.setValue("maxAreaNum", 4);
@@ -72,7 +72,7 @@ void resetCardtoCardParaFile()
   cardIniFile.endGroup();
 
   cardIniFile.beginGroup(QString(COMPANY_NAME) + "-B1");
-  cardIniFile.setValue("maxPoints", 1024*64);
+  cardIniFile.setValue("maxPoints", 1008*64);
   cardIniFile.setValue("flag", 0); //第0位表示是否支持全彩
   cardIniFile.setValue("maxHeight", 64);
   cardIniFile.setValue("maxAreaNum", 6);
@@ -91,8 +91,8 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("comMode", COM_RS232);
   cardIniFile.endGroup();
 
-  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-C1");
-  cardIniFile.setValue("maxPoints", 1488*64);
+  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-CU1");
+  cardIniFile.setValue("maxPoints", 1472*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 128);
   cardIniFile.setValue("maxAreaNum", 6);
@@ -112,14 +112,14 @@ void resetCardtoCardParaFile()
   cardIniFile.endGroup();
 
   cardIniFile.beginGroup(QString(COMPANY_NAME) + "-CW1");
-  cardIniFile.setValue("maxPoints", 1488*64);
+  cardIniFile.setValue("maxPoints", 1600*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 128);
   cardIniFile.setValue("maxAreaNum", 6);
   cardIniFile.setValue("FontNum", 2);
   cardIniFile.setValue("inModeNum", IN_SPEC_EFFECT_NUM);
   cardIniFile.setValue("outModeNum", OUT_SPEC_EFFECT_NUM);
-  cardIniFile.setValue("romSize", 2048);
+  cardIniFile.setValue("romSize", 4096);
   cardIniFile.setValue("fileEnWord", ((0x01<<BORDER_SHOW_BIT) |\
                                       (0x01 << PIC_SHOW_BIT) |\
                                       (0x01<<CLOCK_BIT) |\
@@ -132,14 +132,14 @@ void resetCardtoCardParaFile()
   cardIniFile.endGroup();
 
   cardIniFile.beginGroup(QString(COMPANY_NAME) + "-CW2");
-  cardIniFile.setValue("maxPoints", 1488*64);
+  cardIniFile.setValue("maxPoints", 1600*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 128);
   cardIniFile.setValue("maxAreaNum", 6);
   cardIniFile.setValue("FontNum", 2);
   cardIniFile.setValue("inModeNum", IN_SPEC_EFFECT_NUM);
   cardIniFile.setValue("outModeNum", OUT_SPEC_EFFECT_NUM);
-  cardIniFile.setValue("romSize", 2048);
+  cardIniFile.setValue("romSize", 4096);
   cardIniFile.setValue("fileEnWord", ((0x01<<BORDER_SHOW_BIT) |\
                                       (0x01 << PIC_SHOW_BIT) |\
                                       (0x01<<CLOCK_BIT) |\
@@ -152,7 +152,7 @@ void resetCardtoCardParaFile()
   cardIniFile.endGroup();
 
   cardIniFile.beginGroup(QString(COMPANY_NAME) + "-D");
-  cardIniFile.setValue("maxPoints", 2560*64);
+  cardIniFile.setValue("maxPoints", 2400*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 256);
   cardIniFile.setValue("maxAreaNum", 8);
@@ -170,11 +170,11 @@ void resetCardtoCardParaFile()
                                       (0x01 << TEMP_SHOW_BIT)|\
                                       (0x01 << HUMIDITY_SHOW_BIT) |\
                                       (0x01 << NOISE_SHOW_BIT)));
-  cardIniFile.setValue("comMode", COM_RS232 | COM_RS485);
+  cardIniFile.setValue("comMode", COM_RS232);
   cardIniFile.endGroup();
 
   cardIniFile.beginGroup(QString(COMPANY_NAME) + "-DU");
-  cardIniFile.setValue("maxPoints", 2560*64);
+  cardIniFile.setValue("maxPoints", 2400*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 256);
   cardIniFile.setValue("maxAreaNum", 8);
@@ -192,11 +192,11 @@ void resetCardtoCardParaFile()
                                       (0x01 << TEMP_SHOW_BIT)|\
                                       (0x01 << HUMIDITY_SHOW_BIT) |\
                                       (0x01 << NOISE_SHOW_BIT)));
-  cardIniFile.setValue("comMode", COM_RS232 | COM_RS485 | COM_UDISK);
+  cardIniFile.setValue("comMode", COM_RS232 | COM_UDISK);
   cardIniFile.endGroup();
 
-  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-DM");
-  cardIniFile.setValue("maxPoints", 2560*64);
+  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-DE");
+  cardIniFile.setValue("maxPoints", 2400*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 256);
   cardIniFile.setValue("maxAreaNum", 8);
@@ -215,7 +215,30 @@ void resetCardtoCardParaFile()
                                       (0x01 << HUMIDITY_SHOW_BIT) |\
                                       (0x01 << TXT_SHOW_BIT) |\
                                       (0x01 << NOISE_SHOW_BIT)));
-  cardIniFile.setValue("comMode", COM_RS232 | COM_RS485 | COM_UDISK | COM_ETH);
+  cardIniFile.setValue("comMode", COM_RS232 | COM_ETH);
+  cardIniFile.endGroup();
+
+  cardIniFile.beginGroup(QString(COMPANY_NAME) + "-DM");
+  cardIniFile.setValue("maxPoints", 2400*64);
+  cardIniFile.setValue("flag", 0);
+  cardIniFile.setValue("maxHeight", 256);
+  cardIniFile.setValue("maxAreaNum", 8);
+  cardIniFile.setValue("FontNum", 2);
+  cardIniFile.setValue("inModeNum", IN_SPEC_EFFECT_NUM);
+  cardIniFile.setValue("outModeNum", OUT_SPEC_EFFECT_NUM);
+  cardIniFile.setValue("romSize", 2048);
+  cardIniFile.setValue("fileEnWord", ((0x01<<BORDER_SHOW_BIT) |\
+                                      (0x01 << PIC_SHOW_BIT) |\
+                                      (0x01<<CLOCK_BIT) |\
+                                      (0x01<<CLOCK_SHOW_BIT) |\
+                                      (0x01 << TIME_SHOW_BIT) |\
+                                      (0x01 << TIMER_SHOW_BIT) |\
+                                      (0x01 << LUN_SHOW_BIT) |\
+                                      (0x01 << TEMP_SHOW_BIT) |\
+                                      (0x01 << HUMIDITY_SHOW_BIT) |\
+                                      (0x01 << TXT_SHOW_BIT) |\
+                                      (0x01 << NOISE_SHOW_BIT)));
+  cardIniFile.setValue("comMode", COM_RS232 | COM_UDISK | COM_ETH);
   cardIniFile.endGroup();
 }
 
