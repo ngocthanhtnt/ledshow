@@ -64,7 +64,7 @@
 #define GMODULE_DBG_EN 1//GPRS模块测试使能
 
 #define OE_PWM_FREQ 1000 //1KPWM频率
-#define COMPANY_NAME "AS"
+#define COMPANY_NAME "AL"
 
 //#define APP_NAME "大屏LED播放系统"
 #define BLOCK_DATA_LEN 459 //每块数据的大小, BLOCK_DATA_LEN - 9应该可整除法2和3

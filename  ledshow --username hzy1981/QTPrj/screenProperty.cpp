@@ -3350,8 +3350,7 @@ void CfacScreenProperty::cardChangeProc()
     cardParaEdit->append(modeStr);
 
     QString comStr = tr("通信方式：") +\
-                     (((Card_Para.Com_Mode & COM_RS232)>0)?tr("RS232"):tr("")) +\
-                     (((Card_Para.Com_Mode & COM_RS485)>0)?tr("、R485"):tr("")) +\
+                     (((Card_Para.Com_Mode & COM_RS232)>0)?tr("串口"):tr("")) +\
                      (((Card_Para.Com_Mode & COM_UDISK)>0)?tr("、U盘"):tr("")) +\
                      (((Card_Para.Com_Mode & COM_ETH)>0)?tr("、以太网"):tr("")) +\
                      (((Card_Para.Com_Mode & COM_SMS)>0)?tr("、短信"):tr("")) +\
