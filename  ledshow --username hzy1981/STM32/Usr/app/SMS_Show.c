@@ -454,6 +454,8 @@ INT8U One_SMS_Proc(char *p)
                pPara->Out_Mode = 0x01;
                pPara->Play_Counts = 0x00;
                pPara->Stay_Time = 10;
+			  
+			   SET_SUM(*pPara);
 
                memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
 
@@ -468,6 +470,34 @@ INT8U One_SMS_Proc(char *p)
 
                return SMS_NO_ERR;
            }
+		   else if(p[5] EQ '!') //调用预存显示内容
+		   {
+             if(Chk_Int_Str(&p[6], 2) EQ 0) //序号错误
+               return SMS_FORMAT_ERR;
+
+			 temp = Str_2_Int(&p[6], 2);
+			 temp = (temp != 0)?(temp - 1):0;
+
+			 if(temp >= MAX_FILE_NUM)
+			   return SMS_FORMAT_ERR;
+             
+			 pPara->SMS_Txt_Flag = TXT_SMS_BK_FILE;
+             pPara->SMS_File_No = (INT8U)temp;
+
+			 SET_SUM(*pPara);
+			 memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
+			
+			 mem_cpy(SMS_WR_Buf.Data + sizeof(S_Txt_Para), &p[6],strlen(&p[6]) + 1,\
+			         SMS_WR_Buf.Data,sizeof(SMS_WR_Buf.Data));
+			 Write_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_FILE_PARA_LEN);
+			
+			 //修改并保存SMS_File_Flag
+			 Set_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index, 1);
+			 SET_SUM(SMS_File_Flag);
+			 Write_SMS_File_Flag();
+
+			 return SMS_NO_ERR;
+		   }
            //*pIndex = (INT16U)index;
 
            //---追加播放错误------------
@@ -494,7 +524,7 @@ INT8U One_SMS_Proc(char *p)
                else
                    temp = 10 + 26 + p[6] - 'a';
 
-               pPara->In_Mode = (INT8U)temp;
+               pPara->In_Mode = (INT8U)temp + 1; //随机方式不采用
 
                //----退出方式----
                if(!((p[7] >= '0' && p[7] <= '9') ||\
@@ -509,7 +539,7 @@ INT8U One_SMS_Proc(char *p)
                else
                    temp = 10 + 26 + p[7] - 'a';
 
-               pPara->Out_Mode = (INT8U)temp;
+               pPara->Out_Mode = (INT8U)temp + 1; //随机方式不采用
 
                //---速度-----------
                if(!(p[8] >= '0' && p[8] <= '9'))

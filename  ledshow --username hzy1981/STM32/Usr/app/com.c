@@ -559,6 +559,17 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
     Frame[FDATA + i] -= 0x33;
   } 
 
+#if QT_EN == 0 //非QT情况下判断地址
+  if(Ch EQ CH_COM) //GPRS、短信不需要判地址，U盘以文件名作为地址判断
+  {
+	if(memcmp((INT8U *)&Frame[FADDR], (INT8U *)&Screen_Para.COM_Para.Addr, 2) != 0)
+	{
+	  debug("Frame addr err");
+	  return 0;
+	}  
+  }
+#endif
+
   debug("Rcv Frame cmd = %d", Cmd_Code);
 
   if(Cmd_Code EQ  C_SCREEN_COM_PARA ||\
