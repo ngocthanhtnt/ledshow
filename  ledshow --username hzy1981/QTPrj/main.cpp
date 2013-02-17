@@ -5,6 +5,8 @@
 #include <QDir>
 #include <QMessageBox>
 #include <QTime>
+#include <QSystemSemaphore>
+#include <QSharedMemory>
 #include "mainwindow.h"
 #include "textedit.h"
 #include <Winbase.h>
@@ -246,16 +248,28 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    if(GetLastError() == ERROR_ALREADY_EXISTS)
+    //设置为支持中文---重要
+    QTextCodec::setCodecForTr(QTextCodec::codecForName("gb2312"));
+    QFont font(QObject::tr("新宋体"),9,QFont::Normal,FALSE);
+    a.setFont(font);
+
+    QSystemSemaphore sema("led designer",1,QSystemSemaphore::Open);
+    sema.acquire();// 在临界区操作共享内存SharedMemory
+    QSharedMemory mem("led");// 全局对象名
+    if (!mem.create(1))// 如果全局对象以存在则退出
     {
-        QString _title = QObject::tr("提醒");
-        QString _Information = QObject::tr("程序已经启动!");
-        QMessageBox::information (NULL, _title, _Information);
+        QMessageBox::information(0, QObject::tr("提示"),QObject::tr("请勿重复运行该程序!"));
+        sema.release();
         return 0;
     }
+    sema.release();
 
     fontFileOpen();
+
+#ifdef QT_DEBUG
+    qDebug("reset card para file");
     resetCardtoCardParaFile();
+#endif
 
     QDir dataDir;
     if(dataDir.exists(".\\data") == false)
@@ -282,13 +296,6 @@ int main(int argc, char *argv[])
     memset(Show_Data.Color_Data, 0, sizeof(Show_Data.Color_Data));
     memset(Show_Data_Bak.Color_Data, 0, sizeof(Show_Data_Bak.Color_Data));
     //-------------
-
-    //设置为支持中文---重要
-
-    QTextCodec::setCodecForTr(QTextCodec::codecForName("gb2312"));
-    QFont font(QObject::tr("新宋体"),9,QFont::Normal,FALSE);
-    a.setFont(font);
-
 
     mainObj = new MainObj;
     w = new MainWindow;
