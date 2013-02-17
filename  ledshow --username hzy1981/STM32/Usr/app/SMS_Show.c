@@ -519,10 +519,10 @@ INT8U One_SMS_Proc(char *p)
 
                if(p[6] >= '0' && p[6] <= '9')
                    temp = p[6] - '0';
-               else if(p[6] >= 'A' && p[6] <= 'Z')
-                   temp = 10 + p[6] - 'A';
+               else if(p[6] >= 'a' && p[6] <= 'z')
+                   temp = 10 + p[6] - 'a';
                else
-                   temp = 10 + 26 + p[6] - 'a';
+                   temp = 10 + 26 + p[6] - 'A';
 
                pPara->In_Mode = (INT8U)temp + 1; //随机方式不采用
 
@@ -534,10 +534,10 @@ INT8U One_SMS_Proc(char *p)
 
                if(p[7] >= '0' && p[7] <= '9')
                    temp = p[7] - '0';
-               else if(p[7] >= 'A' && p[7] <= 'Z')
-                   temp = 10 + p[7] - 'A';
+               else if(p[7] >= 'a' && p[7] <= 'z')
+                   temp = 10 + p[7] - 'a';
                else
-                   temp = 10 + 26 + p[7] - 'a';
+                   temp = 10 + 26 + p[7] - 'A';
 
                pPara->Out_Mode = (INT8U)temp + 1; //随机方式不采用
 
@@ -573,12 +573,14 @@ INT8U One_SMS_Proc(char *p)
                    if((pPara->Color & Screen_Para.Base_Para.Color) EQ 0)
                        return SMS_COLOR_ERR;
 
-                   if(p[12] != '+')
+				   //p[12]保留作为边框选项---预留处理
+
+                   if(p[13] != '+')
                        return SMS_TXTHEAD_ERR;
 
                    pPara->SMS_Fix_Font_Flag = 1;
 
-                   TxtOff = 13;
+                   TxtOff = 14;
                }
                else
                  TxtOff = 11;
@@ -591,10 +593,10 @@ INT8U One_SMS_Proc(char *p)
            {
               if(p[10] != '+')
               {
-                  if(p[12] != '+')
+                  if(p[13] != '+')
                       return SMS_TXTHEAD_ERR;
 
-                   TxtOff = 13;
+                   TxtOff = 14;
               }
               else
                 TxtOff = 11;
