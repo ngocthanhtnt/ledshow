@@ -3334,12 +3334,12 @@ void CfacScreenProperty::cardChangeProc()
 
     QString fileStr = tr("支持：") +\
     ((Get_Border_Show_En()>0)?tr("边框"):tr("")) +\
-    ((Get_Clock_Show_En()>0)?tr("、表盘"):tr("")) +\
     ((Get_Pic_Show_En()>0)?tr("、字幕、文本、表格、图片、动画"):tr("")) +\
+    ((Get_Clock_Show_En()>0)?tr("、表盘"):tr("")) +\
     ((Get_Lun_Show_En()>0)?tr("、农历"):tr(""))+\
-    ((Get_Temp_Show_En()>0)?tr("、温度"):tr(""))+\
     ((Get_Time_Show_En()>0)?tr("、时间"):tr(""))+\
     ((Get_Timer_Show_En()>0)?tr("、计时"):tr(""))+\
+    ((Get_Temp_Show_En()>0)?tr("、温度"):tr(""))+\
     ((Get_Humidity_Show_En()>0)?tr("、湿度"):tr(""))+\
     ((Get_Noise_Show_En()>0)?tr("、噪音"):tr(""));
 

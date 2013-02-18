@@ -806,7 +806,7 @@ void MainWindow::fileSaveAs()
     //QString fileName;
     QString newFileName;
 
-    newFileName = QFileDialog::getSaveFileName(this, tr("保存工程文件"), ".", tr("工程文件(*.ini)"));
+    newFileName = QFileDialog::getSaveFileName(this, tr("保存工程文件"), ".", tr("工程文件(*.ipj)"));
     if(newFileName.length()==0)
         return;
 
@@ -932,7 +932,7 @@ void MainWindow::fileOpen()
 
     settings.clear();//clear(); //清除
 
-    newFileName = QFileDialog::getOpenFileName(this, tr("打开工程文件"), ".", tr("工程文件(*.ini)"));
+    newFileName = QFileDialog::getOpenFileName(this, tr("打开工程文件"), ".", tr("工程文件(*.ipj)"));
     if(newFileName.length()==0)
     {
         return;
