@@ -1,6 +1,8 @@
 #define SMS_SHOW_C
 #include "Includes.h"
 
+#define SMS_VER "010"
+
 #if SMS_EN
 void Read_SMS_File_Flag(void)
 {
@@ -412,7 +414,7 @@ char *GetErrInfo(INT8U Err_No)
 }
 
 //处理一条短信数据
-INT8U One_SMS_Proc(char *p)
+INT8U One_SMS_Proc(char *p, char *pReStr)
 {
   int index,temp,i;
   INT8U Rows,TxtOff;
@@ -423,6 +425,7 @@ INT8U One_SMS_Proc(char *p)
   INT16U scanMode;
   S_Txt_Para *pPara;
 
+  *pReStr = '\0';
   memset(SMS_WR_Buf.Data, 0, sizeof(SMS_WR_Buf.Data));
   pPara = (S_Txt_Para *)SMS_WR_Buf.Data;
 
@@ -431,13 +434,16 @@ INT8U One_SMS_Proc(char *p)
   pPara->Color = Screen_Para.Base_Para.Color;
   pPara->SMS_Txt_Flag = TXT_SMS_NORMAL;
 
+  if(!(p[0] EQ '#' || p[0] EQ '*' || p[0] EQ '?'))
+    return SMS_UNAVAIL_ERR;
+
+  if(memcmp(&p[1], SMS_Phone_No.PSW, 3) != 0 && memcmp(&p[1], "168", 3) != 0)
+	return SMS_PSW_ERR;
+
+  p = p + 3; //指针向后移3字节
+
   if(p[0] EQ '#' || p[0] EQ '*') //'#'表示不需应答，'*'表示需要应答
   {
-      if(memcmp(&p[1], SMS_Phone_No.PSW, 3) != 0 && memcmp(&p[1], "168", 3) != 0)
-		return SMS_PSW_ERR;
-
-      p = p + 3; //指针向后移3字节
-
       if(p[1] EQ '@') //+T0002AB09
       {
           if(Chk_Int_Str(&p[2], 3) EQ 0) //序号错误
@@ -524,7 +530,7 @@ INT8U One_SMS_Proc(char *p)
                else
                    temp = 10 + 26 + p[6] - 'A';
 
-               pPara->In_Mode = (INT8U)temp + 1; //随机方式不采用
+               pPara->In_Mode = (INT8U)temp;
 
                //----退出方式----
                if(!((p[7] >= '0' && p[7] <= '9') ||\
@@ -539,7 +545,7 @@ INT8U One_SMS_Proc(char *p)
                else
                    temp = 10 + 26 + p[7] - 'A';
 
-               pPara->Out_Mode = (INT8U)temp + 1; //随机方式不采用
+               pPara->Out_Mode = (INT8U)temp;
 
                //---速度-----------
                if(!(p[8] >= '0' && p[8] <= '9'))
@@ -821,10 +827,21 @@ INT8U One_SMS_Proc(char *p)
       
 	  return SMS_FORMAT_ERR;
   }
-  else
-    return SMS_UNAVAIL_ERR;
+  else //查询短信！
+  {
+    if(p[1] EQ 'V' && p[2] EQ 'E' && p[3] EQ 'R') //查询版本号
+	{
+	  pReStr[0] = 'V';
+	  pReStr[1] = 'E';
+	  pReStr[2] = 'R';
 
+	  strcpy(&pReStr[3], SMS_VER);
+	  return SMS_NO_ERR;
+	}
 
+	 //查询版本号，待加
+	return SMS_UNAVAIL_ERR;
+  }
 }
 
 #if QT_EN == 0
@@ -833,19 +850,23 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 {
   INT8U i;
   INT8U re;
+  char reStr[20];
 
   for(i = 0; i < 1; i ++)
   {
     //if(Chk_PH_No(pMsg[i].TPA) EQ 0) //手机号码无权限
 	  //continue;
 
-    re = One_SMS_Proc(pMsg[i].TP_UD);
-	
+    re = One_SMS_Proc(pMsg[i].TP_UD, reStr);
+
+	if(re EQ SMS_UNAVAIL_ERR) //无效短信直接返回
+	  return;
+
 	if(pMsg[i].TP_UD[0] EQ '*') //需要应答
 	{
 	   if(re EQ SMS_NO_ERR)
-	   	 strcpy(SMS_WR_Buf.Data, "设置成功");//"OK,设置成功,原始信息:"); 											   
-	   else if(re != SMS_UNAVAIL_ERR)
+	   	 strcpy(SMS_WR_Buf.Data, "设置成功");//"OK,设置成功,原始信息:");								   
+	   else
 	   	 sprintf(SMS_WR_Buf.Data, "设置失败:%s", GetErrInfo(re));//"Err %d,设置失败,原始信息:", re);
 
 	   //strcpy(SMS_WR_Buf.Data, "你好");//"OK,设置成功,原始信息:");
@@ -853,14 +874,22 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 	   mem_cpy(SMS_WR_Buf.Data + strlen(SMS_WR_Buf.Data), pMsg[i].TP_UD, sizeof(pMsg[i].TP_UD),\
 	           SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data));
 	*/
-	  if(re != SMS_UNAVAIL_ERR)
-	  {/*		  
-	   mem_cpy(pMsg[i].TP_UD, SMS_WR_Buf.Data, sizeof(pMsg[i].TP_UD),\
-	           pMsg[i].TP_UD, sizeof(pMsg[i].TP_UD)); 
-	   */
-	   strcpy(pMsg[i].TP_UD, SMS_WR_Buf.Data); 
-	   gsmSendMessage(&(pMsg[i]));
-	   }
+	}
+	else if(pMsg[i].TP_UD[0] EQ '?') //查询命令
+	{
+	   if(re EQ SMS_NO_ERR)
+		 strcpy(SMS_WR_Buf.Data, reStr);
+	   else
+	     sprintf(SMS_WR_Buf.Data, "查询失败");//"Err %d,设置失败,原始信息:", re);
+	}
+
+	if(re != SMS_UNAVAIL_ERR)
+	{/*		  
+		mem_cpy(pMsg[i].TP_UD, SMS_WR_Buf.Data, sizeof(pMsg[i].TP_UD),\
+		       pMsg[i].TP_UD, sizeof(pMsg[i].TP_UD)); 
+		*/
+		strcpy(pMsg[i].TP_UD, SMS_WR_Buf.Data); 
+		gsmSendMessage(&(pMsg[i]));
 	}
   }
 
