@@ -68,6 +68,7 @@ private slots:
     void fileNew();
     void fileOpen();
     void helpFileOpen();
+    void hardwareHelpFileOpen();
     void showAboutDialog();
     void settingsInit();
     void updateTreeWidget(QMdiSubWindow*);

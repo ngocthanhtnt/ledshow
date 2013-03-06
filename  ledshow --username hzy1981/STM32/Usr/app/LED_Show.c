@@ -4755,7 +4755,7 @@ void Move_Up_Laser(INT8U Area_No)
     for(i = 0; i < Prog_Para.Area[Area_No].X_Len; i ++)
     {
        Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, i, Temp.Y);
-       if(Re)// && (i % 2))
+       if(Re && (i % 3))
        {
            Temp1.X = i;
            Temp1.Y = 0;
@@ -4790,7 +4790,7 @@ void Move_Down_Laser(INT8U Area_No)
     {
        //Temp.Y = i;
        Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, i, Temp.Y);
-       if(Re)// && (i % 2))
+       if(Re && (i % 3))
        {
            Temp1.X = i;
            Temp1.Y = Prog_Para.Area[Area_No].Y_Len - 1;
@@ -4823,7 +4823,7 @@ void Move_Left_Laser(INT8U Area_No)
     for(i = 0; i < Prog_Para.Area[Area_No].Y_Len; i ++)
     {
        Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, Temp.X, i);
-       if(Re)// && (i % 2))
+       if(Re && (i % 3))
        {
            Temp1.X = 0;
            Temp1.Y = i;
@@ -4859,7 +4859,7 @@ void Move_Right_Laser(INT8U Area_No)
     {
        //Temp.Y = i;
        Re = Get_Area_Point_Data(&Show_Data_Bak, Area_No, Temp.X, i);
-       if(Re)// && (i % 2))
+       if(Re && (i % 3))
        {
            Temp1.X = Prog_Para.Area[Area_No].X_Len - 1;
            Temp1.Y = i;

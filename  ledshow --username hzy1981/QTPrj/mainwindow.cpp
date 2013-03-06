@@ -746,18 +746,25 @@ void MainWindow::setupHelpActions()
     QAction *a;
 
     //QIcon newIcon = QIcon::fromTheme("document-new", QIcon(rsrcPath + "/filenew.png"));
+    a = new QAction(tr("使用说明"), this);
+    //a->setShortcut(QKeySequence::Open);
+    connect(a, SIGNAL(triggered()), this, SLOT(helpFileOpen()));
+    //tb->addAction(a);
+    menu->addAction(a);
+
     a = new QAction(tr("关于"), this);
     a->setPriority(QAction::LowPriority);
     //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
     //tb->addAction(a);
     menu->addAction(a);
-
-    a = new QAction(tr("帮助"), this);
+/*
+    a = new QAction(tr("硬件使用手册"), this);
     //a->setShortcut(QKeySequence::Open);
-    connect(a, SIGNAL(triggered()), this, SLOT(helpFileOpen()));
+    connect(a, SIGNAL(triggered()), this, SLOT(hardwareHelpFileOpen()));
     //tb->addAction(a);
     menu->addAction(a);
+    */
 }
 /*
 void MainWindow::createProgTreeArea()
@@ -875,14 +882,25 @@ void MainWindow::fileNew()
 
 void MainWindow::showAboutDialog()
 {
-    QMessageBox::information(w, tr("关于"), tr("LED设计师 2012\r\n\r\n\r\n编译时间  ")+QString(__TIME__) + QString(" ") + QString(__DATE__), tr("确定"));
+    QMessageBox::information(w, tr("关于"), tr(APP_NAME) + tr(" ") + tr(APP_VERSION) + tr("\r\n\r\n") + tr("编译时间 ")+QString(__TIME__) + QString(" ") + QString(__DATE__), tr("确定"));
 
 }
 
 void MainWindow::helpFileOpen() //打开帮助文件
 {
     QString strUrl=QApplication::applicationDirPath () ;
-    strUrl=QString("file:///%1/mainhelp.chm").arg (strUrl);
+    strUrl=QString("file:///%1/LED Designer help.chm").arg (strUrl);
+    QUrl qqq(strUrl);
+    QDesktopServices::openUrl(qqq);
+
+
+  //QDesktopServices::openUrl(QUrl("file:///C:/Documents and Settings/All Users/Desktop", QUrl::TolerantMode));
+}
+
+void MainWindow::hardwareHelpFileOpen() //打开帮助文件
+{
+    QString strUrl=QApplication::applicationDirPath () ;
+    strUrl=QString("file:///%1/hardwareHelp.chm").arg (strUrl);
     QUrl qqq(strUrl);
     QDesktopServices::openUrl(qqq);
 

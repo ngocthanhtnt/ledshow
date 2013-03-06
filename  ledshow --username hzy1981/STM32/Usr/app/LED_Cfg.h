@@ -83,6 +83,7 @@
 #include "QT_SIM.h"
 
 #define APP_NAME "LED设计师 2013"
+#define APP_VERSION "V1.0"
 
 #define SCAN_SCREEN_PERIOD 200//扫屏周期,单位us
 //显示效果配置
