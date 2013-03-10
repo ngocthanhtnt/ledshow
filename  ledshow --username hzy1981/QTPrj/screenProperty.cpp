@@ -2009,9 +2009,12 @@ void CcomTest::autoConnect()
             settings.endGroup();
             settings.endGroup();
 
-            makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)temp, sizeof(temp));
+            w->comStatus->comThread->setComTimeOutSec(SEARCH_COM_TIME_OUT);
 
+            makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)temp, sizeof(temp));
             bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
+
+            w->comStatus->comThread->setComTimeOutSec(DEF_COM_TIME_OUT);
             if(re EQ true)
             {
                 QMessageBox::information(w, tr("ÌבÊ¾"),

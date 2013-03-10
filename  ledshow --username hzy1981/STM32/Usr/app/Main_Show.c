@@ -1383,18 +1383,49 @@ void Restore_Show_Area(void)
  //根据format和ap参数表输出调试信息
  // INT16U LED_Print(INT8U Font, INT8U Color, S_Show_Data *pData, INT8U Area_No, INT16U X, INT16U Y, const INT8S *format,...)
 
+extern void Reset_Ram_Screen_Para(void);
+extern void Reset_Ram_SMS_Phone_No(void);
+extern void Reset_Ram_SMS_File_Flag(void);
+
 //显示初始化
 void Para_Init(void)
 {
   Ram_Init();
+
+#if QT_EN == 0
+  //重置默认参数判断
+  if(Chk_JP_Status() EQ FAC_STATUS && Chk_Test_Key_Down()) //工厂状态且测试按键按下
+  {
+    Delay_sec(1);
+	if(Chk_JP_Status() EQ FAC_STATUS && Chk_Test_Key_Down())
+	{
+	   Reset_Ram_Screen_Para();
+	   Write_Screen_Para();
+
+	   Prog_Num.Num = 0;
+	   Write_Prog_Num();
+
+#if SMS_EN
+	   Reset_Ram_SMS_Phone_No();
+	   Write_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, sizeof(SMS_Phone_No));
+
+	   Reset_Ram_SMS_File_Flag();
+	   Write_SMS_File_Flag();
+#endif
+	}
+  }
+#endif
+
   Read_Screen_Para();
   Read_Prog_Num();
   Calc_Screen_Color_Num(); //计算屏幕颜色个数
   Build_Scan_Data_Index(); //构建索引表
+
 #if SMS_EN
   Read_SMS_File_Flag();
   Reset_Cur_SMS_File_No();
 #endif
+
 
 /*--以下代码仅测试
   One_SMS_Proc("*DEL999");

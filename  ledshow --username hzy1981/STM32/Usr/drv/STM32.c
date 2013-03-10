@@ -202,7 +202,10 @@ void Delay_ms(INT16U nms)
 	  counts ++;
 	  if(counts > nms + 1)
 	   return;
+
+      Clr_Watch_Dog();
 	}
+	
   }
 } 
 
