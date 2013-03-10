@@ -408,6 +408,23 @@ void Chk_Baud_Change(INT8U Old_Baud)
 #endif
 }
 
+void Reset_Ram_Screen_Para(void)
+{
+  memset(&Screen_Para, 0, sizeof(Screen_Para));
+  Screen_Para.Base_Para.Width = 64;
+  Screen_Para.Base_Para.Height = 32;
+  Screen_Para.Base_Para.Color = 0x01;
+
+#if NET_EN
+  Screen_Para.ETH_Para.IP = 0xFB01A8C0; //192.168.1.251
+  Screen_Para.ETH_Para.Gate = 0x0101A8C0; //192.168.1.1
+  Screen_Para.ETH_Para.Mask = 0x00FFFFFF; //255.255.255.0
+#endif
+
+  SET_HT(Screen_Para);
+  SET_SUM(Screen_Para);
+}
+
 //读取屏幕参数
 INT16U Read_Screen_Para(void)
 {
@@ -419,16 +436,7 @@ INT16U Read_Screen_Para(void)
     Len = _Read_Screen_Para(&Screen_Para.Head + 1, &Screen_Para.Head, sizeof(Screen_Para));
 	if(Len EQ 0)
 	{
-	  memset(&Screen_Para, 0, sizeof(Screen_Para));
-	  Screen_Para.Base_Para.Width = 64;
-	  Screen_Para.Base_Para.Height = 32;
-	  Screen_Para.Base_Para.Color = 0x01;
-
-#if NET_EN
-	  Screen_Para.ETH_Para.IP = 0xFB01A8C0; //192.168.1.251
-	  Screen_Para.ETH_Para.Gate = 0x0101A8C0; //192.168.1.1
-	  Screen_Para.ETH_Para.Mask = 0x00FFFFFF; //255.255.255.0
-#endif
+	  Reset_Ram_Screen_Para();
 	}
 
 	Chk_Data_Polarity_Change(Data_Polarity); //检查数据极性是否发生修改

@@ -107,6 +107,11 @@ bool CcomStatus::waitComEnd(INT8U *pDst, unsigned int maxLen, int *pDstLen)
 
 }
 
+void CcomThread::setComTimeOutSec(int sec)
+{
+
+  comTimeOutSec = sec;
+}
 
 int CcomThread::waitComRcv(int sec)
 {
@@ -129,7 +134,7 @@ int CcomThread::waitComRcv(int sec)
         }
 
         j ++;
-        if(j >= 50) //最大不超过5s
+        if(j >= 150) //最大不超过15s
             return 0;
 
     }
@@ -309,6 +314,7 @@ CcomThread::CcomThread(QObject * parent):QThread(parent)
     memset(Rcv_Buf, 0, sizeof(Rcv_Buf));
     Rcv_Posi = 0;
 
+    comTimeOutSec = DEF_COM_TIME_OUT;
         //QObject::connect(port, SIGNAL(readyRead()), this, SLOT(receive()));
 }
 
@@ -464,7 +470,7 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
         comReStr = tr("重复发送第") + QString::number(frameCounts + 1)+"/"+QString::number(totalFrameCounts)+tr("帧,等待应答...");
 
       emit this->comStatusChanged(comReStr);
-      re = waitComRcv(5); //等待应答
+      re = waitComRcv(comTimeOutSec); //等待应答
       if(re > 0)
       {
           frameCounts++;

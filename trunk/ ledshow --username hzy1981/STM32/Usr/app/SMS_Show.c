@@ -4,6 +4,25 @@
 #define SMS_VER "010"
 
 #if SMS_EN
+
+void Reset_Ram_SMS_Phone_No(void)
+{
+	memset(&SMS_Phone_No, 0, sizeof(SMS_Phone_No));
+	SMS_Phone_No.PSW[0] = '0';
+	SMS_Phone_No.PSW[1] = '0';
+	SMS_Phone_No.PSW[2] = '0'; //默认密码为3个0
+	
+	SET_HT(SMS_Phone_No);
+	SET_SUM(SMS_Phone_No);
+}
+
+void Reset_Ram_SMS_File_Flag(void)
+{
+    memset(SMS_File_Flag.Flag, 0, sizeof(SMS_File_Flag.Flag));
+    SET_SUM(SMS_File_Flag);
+    SET_HT(SMS_File_Flag);
+}
+
 void Read_SMS_File_Flag(void)
 {
     INT16U Len;
@@ -18,7 +37,7 @@ void Read_SMS_File_Flag(void)
 
     if(Len == 0)
     {
-      memset(SMS_File_Flag.Flag, 0, sizeof(SMS_File_Flag.Flag));
+      Reset_Ram_SMS_File_Flag();
 
       //SMS_File_Flag.Flag[0] = 0x03; //测试用
     }
@@ -30,10 +49,7 @@ void Read_SMS_File_Flag(void)
     Len = Read_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, &SMS_Phone_No, sizeof(SMS_Phone_No));
     if(Len EQ 0)
 	{
-      memset(&SMS_Phone_No, 0, sizeof(SMS_Phone_No));
-	  SMS_Phone_No.PSW[0] = '0';
-	  SMS_Phone_No.PSW[1] = '0';
-	  SMS_Phone_No.PSW[2] = '0'; //默认密码为3个0
+      Reset_Ram_SMS_Phone_No();
 	}
 
     SET_HT(SMS_Phone_No);

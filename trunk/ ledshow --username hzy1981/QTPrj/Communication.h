@@ -18,6 +18,9 @@
 #define COM_ING    0x01 //当前正在通信
 #define COM_FAILED 0x02 //当前通信失败
 #define COM_OK     0x03 //通信成功
+
+#define SEARCH_COM_TIME_OUT 1
+#define DEF_COM_TIME_OUT    5
 /*
 class SerialThread: public QThread
 {
@@ -66,7 +69,7 @@ private:
     QextSerialPort * port;
     QUdpSocket *udpSocket;
 
-
+    int comTimeOutSec; //串口超时
     //QWidget *dialog;
     //QProgressDialog *progressDialog;
     //QLabel *statusLabel;
@@ -112,6 +115,7 @@ public:
 
 
         int waitComRcv(int ms); //等待通信返回数据
+        void setComTimeOutSec(int sec);
 
         bool comRun();
         int clearRcvData(); //清除接收数据
