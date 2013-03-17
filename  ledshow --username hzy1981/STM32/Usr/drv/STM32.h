@@ -31,6 +31,12 @@
 #define debug(...)
 #endif
 
+#if WDG_EN
+#define Clr_Watch_Dog() do{IWDG->KR = ((uint16_t)0xAAAA);}while(0)
+#else
+#define Clr_Watch_Dog()
+#endif
+
 #define _debug OS_Debug_Print
 
 #define SPI_FLASH_CS_HIGH() SET_FLASH_CS(1)
@@ -246,7 +252,7 @@ EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
 EXT void ReInit_Mem_Port(void);
 #endif
 
-EXT void Clr_Watch_Dog(void);
+//EXT void Clr_Watch_Dog(void);
 EXT void RCC_Configuration(void);
 EXT void SysTick_Configuration(void);
 EXT void Delay_ms(INT16U nms);

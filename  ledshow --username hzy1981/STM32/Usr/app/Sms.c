@@ -485,6 +485,56 @@ int gsmEncode7bit(const char* pSrc, unsigned char* pDst, int nSrcLength)
 	return nDst;
 }
 
+const INT8U GSM7Bit_ASCII_Map[][2]=
+{
+ {0x00, 0x40},//@
+ {0x01, 0xA3},//￡
+ {0x02, 0x24},//$
+ {0x03, 0xA5},//￥
+ {0x04, 0xE8}, //è
+ {0x05, 0xE9}, //é
+ {0x06, 0xF9}, //ù
+ {0x07, 0xEC}, //ì
+ {0x08, 0xF2}, //ò
+ {0x09, 0xC7}, //?
+ {0x0B, 0xDB}, //?
+ {0x0C, 0xF8}, //?
+ {0x0E, 0xC5}, //?
+ {0x0F, 0xE5}, //
+ {0x11, 0x5F}, //_
+ {0x1C, 0xC6}, //?
+ {0x1E, 0xDF},//
+ {0x1F, 0xA9},
+ {0x24, 0xA4}, //
+ {0x40, 0xA1},
+ {0x5B, 0xC4}, //
+ {0x5C, 0xD6}, //
+ {0x5D, 0xD1}, //
+ {0x5E, 0xDC}, //
+ {0x5F, 0xA7}, //
+ {0x60, 0xBF}, 
+ {0x7B, 0xE4}, 
+ {0x7C, 0xF6},
+ {0x7D, 0xF1},
+ {0x7E, 0xFC},
+ {0x7F, 0xE0}
+
+};
+
+INT8U Convert_GSM7Bit_2_ASCII(INT8U chr)
+{
+  INT8U i;
+
+  for(i = 0; i < S_NUM(GSM7Bit_ASCII_Map); i ++)
+  {
+	if(chr EQ GSM7Bit_ASCII_Map[i][0])
+	  return GSM7Bit_ASCII_Map[i][1];
+
+  }
+
+  return chr;
+}
+
 // 7bit解码
 // 输入: pSrc - 源编码串指针
 //       nSrcLength - 源编码串长度
@@ -512,7 +562,7 @@ int gsmDecode7bit(const unsigned char* pSrc, char* pDst, int nSrcLength)
 	{
 		// 将源字节右边部分与残余数据相加，去掉最高位，得到一个目标解码字节
 		*pDst = ((*pSrc << nByte) | nLeft) & 0x7f;
-
+		*pDst = Convert_GSM7Bit_2_ASCII(*pDst);
 		// 将该字节剩下的左边部分，作为残余数据保存起来
 		nLeft = *pSrc >> (7-nByte);
 
@@ -528,7 +578,7 @@ int gsmDecode7bit(const unsigned char* pSrc, char* pDst, int nSrcLength)
 		{
 			// 额外得到一个目标解码字节
 			*pDst = nLeft;
-
+			*pDst = Convert_GSM7Bit_2_ASCII(*pDst);
 			// 修改目标串的指针和计数值
 			pDst++;
 			nDst++;
@@ -953,7 +1003,7 @@ int gsmSendMessage(SM_PARAM* pSrc)
 	  ClrComm();
       WriteComm(pdu.Data, nPduLength + 1);
 	  //OS_TimeDly_Ms(1000);
-	  GetResponse("OK", 5000);
+	  GetResponse("OK", 10000);
 		//return ATSend(pdu.Data);//WriteComm(pdu.Data, strlen(pdu.Data));		// 得到肯定回答，继续输出PDU串
 	}
 
@@ -1069,6 +1119,8 @@ void SmsProc(void)
   OS_TimeDly_Ms(100);
 
   ClrComm(); //清接收串口
+  
+  Clr_Watch_Dog();
    
   gsmReadMessageList(); //读短消息列表
  

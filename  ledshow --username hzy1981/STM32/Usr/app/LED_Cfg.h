@@ -60,7 +60,7 @@
 
 //#define CARD_TYPE CARD_AX //A系列板卡针对小条屏，其他针对中大屏
 //QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
-#define WDG_EN 1 //看门狗使能，仿真调试时关闭
+#define WDG_EN 0 //看门狗使能，仿真调试时关闭
 #define GMODULE_DBG_EN 1//GPRS模块测试使能
 
 #define OE_PWM_FREQ 1000 //1KPWM频率
@@ -74,7 +74,7 @@
 
 #if QT_EN
 #define ASSERT_EN 1
-#define FAC_VERSION_EN 0 //工厂版本
+#define FAC_VERSION_EN 1 //工厂版本
 
 #define MAX_PROG_NUM 16 //最大节目数
 #define MAX_AREA_NUM 8  //每个节目下最大分区数
@@ -82,7 +82,12 @@
 
 #include "QT_SIM.h"
 
+#if FAC_VERSION_EN
+#define APP_NAME "LED设计师 2013 内部生产使用版"
+#else
 #define APP_NAME "LED设计师 2013"
+#endif
+
 #define APP_VERSION "V1.0"
 
 #define SCAN_SCREEN_PERIOD 200//扫屏周期,单位us

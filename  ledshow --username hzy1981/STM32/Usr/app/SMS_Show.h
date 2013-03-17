@@ -22,16 +22,17 @@
 #define SMS_FORMAT_ERR      0x09//短信格式错误
 #define SMS_TIME_ERR        0x0A //时间格式错误
 #define SMS_FONT_ERR        0x0B //字体错误
-#define SMS_COLOR_ERR       0x0C //颜色错误
-#define SMS_TXTHEAD_ERR     0x0D //文本起始字符错误
-#define SMS_SCN_BASE_ERR    0x0E //屏参不合法
-#define SMS_SCN_OE_ERR      0x0F //OE极性错误
-#define SMS_SCN_DE_ERR      0x10 //数据极性错误
-#define SMS_SCN_SCAN_ERR    0x11 //扫描方式错误
-#define SMS_SCN_COLOR_ERR   0x12 //屏幕颜色错误
-#define SMS_PN_FULL_ERR     0x13 //手机号码满
-#define SMS_PN_INVALID      0x14 //手机号码无权限
-#define SMS_PSW_ERR         0x15 //密码错误
+#define SMS_FONT_ERR1       0x0C //字体超过分区大小
+#define SMS_COLOR_ERR       0x0D //颜色错误
+#define SMS_TXTHEAD_ERR     0x0E //文本起始字符错误
+#define SMS_SCN_BASE_ERR    0x0F //屏参不合法
+#define SMS_SCN_OE_ERR      0x10 //OE极性错误
+#define SMS_SCN_DE_ERR      0x11 //数据极性错误
+#define SMS_SCN_SCAN_ERR    0x12 //扫描方式错误
+#define SMS_SCN_COLOR_ERR   0x13 //屏幕颜色错误
+#define SMS_PN_FULL_ERR     0x14 //手机号码满
+#define SMS_PN_INVALID      0x15 //手机号码无权限
+#define SMS_PSW_ERR         0x16 //密码错误
 #define SMS_UNAVAIL_ERR     0x20 //非有效短信，不需应答
 
 #define SMS_FILE_PARA_LEN 400

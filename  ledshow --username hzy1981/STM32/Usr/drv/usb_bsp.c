@@ -268,6 +268,7 @@ void USB_OTG_BSP_uDelay (const uint32_t usec)
 #ifdef USE_ACCURATE_TIME
   BSP_Delay(usec, TIM_USEC_DELAY);
 #else
+/*
   __IO uint32_t count = 0;
   const uint32_t utime = (120 * usec / 7);
   do
@@ -278,6 +279,8 @@ void USB_OTG_BSP_uDelay (const uint32_t usec)
     }
   }
   while (1);
+  */
+  Delay_us(usec);
 #endif
 
 }

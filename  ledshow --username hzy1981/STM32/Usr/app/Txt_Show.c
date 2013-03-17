@@ -81,7 +81,24 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
       FontHeight = GET_HZ_FONT_HEIGHT(FontSize);
       len = GET_HZ_FONT_BYTES(FontSize);
       offset = GET_HZ_FONT_OFF(FontSize) + (94*(Data[0] - 0xa0 -1)+(Data[1] - 0xa0 -1)) * len; //得到偏移位置
+    }
+    else //英文
+    {
+      FontWidth = GET_ASC_FONT_WIDTH(FontSize);
+      FontHeight = GET_ASC_FONT_HEIGHT(FontSize);
+      len = GET_ASC_FONT_BYTES(FontSize);
+      offset = GET_ASC_FONT_OFF(FontSize) + Data[0] * len;
+    }
 
+    if(pointFlag & RD_TXT_POINT_FLAG)//读取某点数据
+    {
+      if(!(X0 >= X && X0 <X + FontWidth - CharOff &&
+         Y0 >= Y && Y0 <Y + FontHeight))
+          return 0;
+    }
+
+    if(CHK_ASC(Data[0]) EQ 0) //中文
+    {
       //前一个读取的字符和当前一致则不需要读取了
       if(Font_Data.Chr[0] != Data[0] || Font_Data.Chr[1] != Data[1])
       {
@@ -92,24 +109,12 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
     }
     else //英文
     {
-      FontWidth = GET_ASC_FONT_WIDTH(FontSize);
-      FontHeight = GET_ASC_FONT_HEIGHT(FontSize);
-      len = GET_ASC_FONT_BYTES(FontSize);
-      offset = GET_ASC_FONT_OFF(FontSize) + Data[0] * len;
-
       if(Font_Data.Chr[0] != Data[0])
       {
         Font_Data.Chr[0] = Data[0];
         //Font_Data.Chr[1] = 0;
         RD_Flag = 1;
       }
-    }
-
-    if(pointFlag & RD_TXT_POINT_FLAG)//读取某点数据
-    {
-      if(!(X0 >= X && X0 <X + FontWidth - CharOff &&
-         Y0 >= Y && Y0 <Y + FontHeight))
-          return 0;
     }
 
     Width = len * 8 / FontHeight ; //字库占用的宽度，并不是字体的宽度
@@ -129,16 +134,22 @@ INT8U Draw_Txt_Chr(S_Show_Data *pDst, INT8U Area_No, INT16U X, INT16U Y, INT8U C
     //复制字体到显示缓冲区
     if(pointFlag & RD_TXT_POINT_FLAG)
     {
-        for(i = CharOff; i < FontWidth; i ++)
-          for(j = 0; j < FontHeight; j ++)
-          {
-            if(X + i - CharOff == X0 && Y + j == Y0)
+        //for(i = CharOff; i < FontWidth; i ++)
+          
+		  //for(j = 0; j < FontHeight; j ++)
+          //for(i = CharOff; i < FontWidth; i ++)
+		  {
+            //if(X + i - CharOff == X0 && Y + j == Y0)
+			i = X0 - X + CharOff;
+			j = Y0 - Y;
             {
                 Re = Get_Rect_Buf_Bit(Font_Data.Data, len, Width, ((i >>3) << 3) + (7 - (i % 8)), j);
                 if(Re)
                   Set_Area_Point_Data(pDst, Area_No, X + i - CharOff, Y + j, Color);
                 else
                   Set_Area_Point_Data(pDst, Area_No, X + i - CharOff, Y + j, 0);
+
+				return 1;
             }
         }
      }
@@ -285,6 +296,12 @@ INT16U Read_Txt_Show_Data(S_Show_Data *pDst, INT8U Area_No, S_Txt_Para *pPara, I
 
   LineNum = (Area_Height  - 2*Border_Height) / FontHeight;
   LineSpace = (Area_Height - 2*Border_Height - LineNum * FontHeight) / (LineNum + 1);
+
+  if(LineNum EQ 0)
+  {
+    LineNum = 1;
+	LineSpace = 0;
+  }
 
   Width = Border_Height;
 

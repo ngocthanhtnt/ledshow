@@ -605,7 +605,7 @@ INT16U Read_File_Para(INT8U Prog_No, INT8U Area_No, INT8U File_No, void *pDst, v
          pPara = (S_Txt_Para *)pDst;
          if(pPara->SMS_Txt_Flag EQ TXT_SMS_BK_FILE) //使用备用节目文件
          {
-            File_No = pPara->File_No;
+            File_No = pPara->SMS_File_No;
             Len = 0;
 
             if(File_No >= Prog_Para.Area_File_Num[0])//没有这个文件参数
