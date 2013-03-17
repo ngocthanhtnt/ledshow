@@ -3,13 +3,14 @@
 
 extern void Set_Clock_Normal_Speed(void);
 
-
+/*
 void Clr_Watch_Dog(void)
 {
 #if WDG_EN
   IWDG_ReloadCounter();
 #endif
 }
+*/
 
 /** 
   * @brief  Configures the clock 

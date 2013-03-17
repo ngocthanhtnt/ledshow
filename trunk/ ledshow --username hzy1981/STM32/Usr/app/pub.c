@@ -109,10 +109,10 @@ INT8U Hex2Bcd_Byte(INT8U Byte)
 //×Ö½ÚHex2Bcd×ª»»
 INT8U Bcd2Hex_Byte(INT8U Byte)
 {
-  INT8U Re;
-  Re = Check_BCD_Data(&Byte, 1);
-  if(Re EQ 0)
-    ASSERT_FAILED();
+  //INT8U Re;
+  //Re = Check_BCD_Data(&Byte, 1);
+  //if(Re EQ 0)
+    //ASSERT_FAILED();
   
   return (Byte & 0x0F) + ((Byte & 0xF0) >> 4) * 10;
 }

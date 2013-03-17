@@ -144,6 +144,8 @@ void ModuleInit(void) //模块初始化
 		Module_PWR_KEY();
 	}
 
+    Clr_Watch_Dog();
+
     OS_Core_Wait_Ms(CHK_MODULE_STATUS(),3000); //最多等待3000ms。
 
 	// 测试GSM-MODEM的存在性
@@ -248,6 +250,8 @@ INT16U ReadComm(char *pDst, INT16U Len, INT16U ms)
 
   WRPosi = SMS_GPRS_Rcv_Buf.WRPosi;
 
+  Clr_Watch_Dog();
+
   OS_Core_Wait_Ms(WRPosi != SMS_GPRS_Rcv_Buf.WRPosi, ms); //最多等待500ms。等到有数据接收
 
   while(1)
@@ -256,6 +260,8 @@ INT16U ReadComm(char *pDst, INT16U Len, INT16U ms)
     
 	OS_TimeDly_Ms(200);
 	
+	Clr_Watch_Dog();
+
 	if(WRPosi EQ SMS_GPRS_Rcv_Buf.WRPosi)
 	  break; 
   }

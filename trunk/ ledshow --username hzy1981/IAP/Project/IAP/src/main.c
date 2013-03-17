@@ -72,7 +72,7 @@ int main(void)
   /* Keep the user application running */
   else
   {
-    IWDG_Init();
+    //IWDG_Init();
     /* Test if user code is programmed starting from address "ApplicationAddress" */
     if (((*(__IO uint32_t*)ApplicationAddress) & 0x2FFE0000 ) == 0x20000000)
     { 

@@ -544,11 +544,14 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
             Len1 = Get_Show_Para_Len(Pub_Buf[0]);
 			if(Len1 > 0)
 			{
+			    if(Prog_Status.File_Para[Area_No].Pic_Para.Out_Mode EQ 1) //当前退出方式为不清则，换文件时应该清屏幕
+				  Clear_Area_Data(&Show_Data, Area_No);
                 //debug("read file para no = %d, flag = %d", Prog_Status.Area_Status[Area_No].File_No, Prog_Status.File_Para[Area_No].Pic_Para.Flag );
 	            mem_cpy((void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, Pub_Buf, Len1, (void *)&Prog_Status.File_Para[Area_No].Pic_Para.Flag, sizeof(U_File_Para));
 	
 	            Clear_Area_Data(&Show_Data_Bak, Area_No);
-	            if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check)
+	            
+				if(Prog_Status.File_Para[Area_No].Pic_Para.Border_Check)
 	            {
 	              Draw_Border(&Show_Data_Bak, Area_No, Pub_Buf + Len1, 0, 0);
 	            }
@@ -763,7 +766,7 @@ INT8U _Check_Prog_End(void)
   //次数模式
   if(Prog_Para.Mode EQ PROG_COUNTS_MODE)
   {
-    if(Prog_Status.Play_Status.Counts >= Prog_Para.Counts)
+    if(Prog_Status.Play_Status.Counts >= Prog_Para.Counts && Prog_Status.Play_Status.Counts >= 1) //至少播放一次
     {
       debug("prog %d play counts %d, end", Prog_Status.Play_Status.Prog_No, Prog_Status.Play_Status.Counts);
       return 1;
@@ -1386,7 +1389,7 @@ void Restore_Show_Area(void)
 extern void Reset_Ram_Screen_Para(void);
 extern void Reset_Ram_SMS_Phone_No(void);
 extern void Reset_Ram_SMS_File_Flag(void);
-
+extern void Write_SMS_File_Flag(void);
 //显示初始化
 void Para_Init(void)
 {

@@ -326,7 +326,7 @@ INT8U Write_Storage_Data_NoCS(STORA_DI SDI, INT32U Offset, void* pSrc, INT16U Le
       return 0;
     }
 
-    debug("read data:ID = 0x%x, Addr = %d, Off = %d, Len = %d", SDI, Off, Offset, Len);
+    debug("write data:ID = 0x%x, Addr = %d, Off = %d, Len = %d", SDI, Off, Offset, Len);
 
     Off += Offset; // + ÄÚ²¿Æ«ÒÆ
 

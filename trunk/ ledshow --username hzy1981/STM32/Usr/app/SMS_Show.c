@@ -380,6 +380,7 @@ const S_Err_Info Err_Info[]=
 {SMS_FORMAT_ERR, (char *)"短信格式错误"},//      0x09//短信格式错误
 {SMS_TIME_ERR,(char *)"时间格式错误"},//        0x0A //时间格式错误
 {SMS_FONT_ERR,(char *)"字体错误"},//        0x0B //字体错误
+{SMS_FONT_ERR1,(char *)"字体高度超出分区高度"},//        0x0B //字体过大
 {SMS_COLOR_ERR,(char *)"颜色错误"},//       0x0C //颜色错误
 {SMS_TXTHEAD_ERR,(char *)"文本起始字符错误"},//     0x0D //文本起始字符错误
 {SMS_SCN_BASE_ERR,(char *)"屏参不合法"},//    0x0E //屏参不合法
@@ -429,6 +430,7 @@ char *GetErrInfo(INT8U Err_No)
   return 0;
 }
 
+extern void Set_Prog_Num(INT8U Num);
 //处理一条短信数据
 INT8U One_SMS_Proc(char *p, char *pReStr)
 {
@@ -456,10 +458,12 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
   if(memcmp(&p[1], SMS_Phone_No.PSW, 3) != 0 && memcmp(&p[1], "168", 3) != 0)
 	return SMS_PSW_ERR;
 
-  p = p + 3; //指针向后移3字节
+  //p = p + 3; //指针向后移3字节
 
   if(p[0] EQ '#' || p[0] EQ '*') //'#'表示不需应答，'*'表示需要应答
   {
+      p = p + 3; //指针向后移3字节
+
       if(p[1] EQ '@') //+T0002AB09
       {
           if(Chk_Int_Str(&p[2], 3) EQ 0) //序号错误
@@ -583,6 +587,10 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
                      return SMS_FONT_ERR;
 
                    pPara->Font_Size = p[10] - '0';
+
+				  //
+				   if(GET_HZ_FONT_HEIGHT(pPara->Font_Size) > Prog_Para.Area[0].Y_Len)
+                     return SMS_FONT_ERR1;
 
                    //颜色
                    if(!(p[11] >= '0' && p[11] <= '3'))
@@ -746,6 +754,23 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
              Scan_Para.Rows = 1;
            else
              Scan_Para.Rows = 16;
+		   
+		   //重新 
+		   //if(memcmp((INT8U *)&Screen_Para.Base_Para, (INT8U *)&Base_Para, sizeof(Screen_Para.Base_Para)) != 0)
+		   {
+		   //默认设置为只有一个节目，且只有一个分区
+		     Prog_Para.Area_Num = 1;
+			 Prog_Para.Border_Check = 0;
+			 Prog_Para.Area[0].X = 0;
+			 Prog_Para.Area[0].Y = 0;
+			 Prog_Para.Area[0].X_Len = Base_Para.Width;
+			 Prog_Para.Area[0].Y_Len = Base_Para.Height;
+			 SET_SUM(Prog_Para);
+			 Write_Prog_Para(0, (INT8U *)&Prog_Para.Head + 1, PROG_PARA_LEN);
+
+		     Set_Screen_Replay_Flag(); //重播节目标志
+		     Set_Prog_Num(1);	//重置节目个数为1  
+		   }
 
            memcpy(&Screen_Para.Base_Para, &Base_Para, sizeof(Base_Para));
            //memcpy(&Screen_Para.Scan_Para, &Scan_Para, sizeof(Scan_Para));
@@ -845,7 +870,9 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
   }
   else //查询短信！
   {
-    if(p[1] EQ 'V' && p[2] EQ 'E' && p[3] EQ 'R') //查询版本号
+    p = p + 3; //指针向后移3字节
+    
+	if(p[1] EQ 'V' && p[2] EQ 'E' && p[3] EQ 'R') //查询版本号
 	{
 	  pReStr[0] = 'V';
 	  pReStr[1] = 'E';
