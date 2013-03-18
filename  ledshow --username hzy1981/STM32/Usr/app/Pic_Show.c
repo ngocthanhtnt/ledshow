@@ -1394,7 +1394,7 @@ void Update_Pic_Data(INT8U Area_No)
         //更新XXX数据，例如表盘、温度、湿度、计时等等的
         if(Pub_Timer.Ms100 > Prog_Status.Area_Status[Area_No].Step_Timer + Step)
         {
-          Prog_Status.Area_Status[Area_No].Step_Timer = 0;//Pub_Timer.Ms100;
+          Prog_Status.Area_Status[Area_No].Step_Timer = 0;//此处应该是0不是bug,因为上面对为0时赋值了定时器
 
           P0.X = P0.Y = 0;
 
