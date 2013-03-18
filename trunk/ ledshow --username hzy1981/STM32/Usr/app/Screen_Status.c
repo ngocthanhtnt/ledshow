@@ -481,6 +481,32 @@ void Encrypt_Chk(void)
 
 }
 
+//检测报警信号
+void Screen_Warn_Chk(void)
+{
+#if QT_EN == 0
+  if(GPIO_ReadInputDataBit(WARN_PORT,WARN_PIN) EQ 0)
+  {
+    Delay_ms(100);
+	if(GPIO_ReadInputDataBit(WARN_PORT,WARN_PIN) EQ 0)
+	{
+		Set_RT_Show_Area(0, 0, 84, 16);
+		RT_Play_Status_Enter(10);
+		Clr_All_Show_Data();
+	
+		LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "被打劫请报警");
+		while(GPIO_ReadInputDataBit(WARN_PORT,WARN_PIN) EQ 0)
+	    {
+		  Clr_Watch_Dog();
+		}
+
+		Restore_Show_Area();
+		RT_Play_Status_Exit();		
+	}
+  }
+#endif
+}
+
 void Screen_Proc(void)
 {
   Screen_Time_Proc();
@@ -489,4 +515,5 @@ void Screen_Proc(void)
   Screen_Open_Close_Proc();
   Screen_Com_Proc(); //屏幕通信处理
   Screen_Check_Lock_Date();
+  Screen_Warn_Chk();
 }

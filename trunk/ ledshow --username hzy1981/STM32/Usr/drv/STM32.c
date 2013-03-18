@@ -544,15 +544,15 @@ void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 #endif
- /*
+
 #ifdef CHIP_USB_HOST	
-	NVIC_InitStructure.NVIC_IRQChannel = OTG_FS_IRQHandler;
+	NVIC_InitStructure.NVIC_IRQChannel = OTG_FS_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 #endif
-   */
+
     
 	//扫描中断
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //扫描特效
@@ -1563,6 +1563,25 @@ void Sensor_Init(void)
   SHT1X_Init();
 #endif
    
+#endif
+}
+
+void Warn_Ctrl_Init(void)
+{
+#if GPRS_EN || SMS_EN
+  GPIO_InitTypeDef GPIO_InitStructure = {0};
+
+  GPIO_InitStructure.GPIO_Pin =  CTRL_PIN;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; //推挽输出
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(CTRL_PORT, &GPIO_InitStructure);
+
+  GPIO_InitStructure.GPIO_Pin =  WARN_PIN;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU; //上拉输入
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(WARN_PORT, &GPIO_InitStructure);
+
+  GPIO_ResetBits(CTRL_PORT,CTRL_PIN);
 #endif
 }
 //以上CRC代码在上位机中对应的C#代码

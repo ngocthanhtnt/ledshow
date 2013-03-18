@@ -140,10 +140,15 @@
 #define WriteState() {GPIOE->CRH&=0xFF0FFFFF; GPIOE->CRH|=0x00300000;}
 */
 
-#define SHT1X_SCL_PIN   GPIO_Pin_13
-#define SHT1X_SCL_PORT  GPIOB
-#define SHT1X_SDA_PIN   GPIO_Pin_12
-#define SHT1X_SDA_PORT  GPIOC
+#define SHT1X_SCL_PIN   GPIO_Pin_15
+#define SHT1X_SCL_PORT  GPIOA
+#define SHT1X_SDA_PIN   GPIO_Pin_2
+#define SHT1X_SDA_PORT  GPIOD
+
+#define WARN_PIN   GPIO_Pin_13
+#define WARN_PORT  GPIOB
+#define CTRL_PIN   GPIO_Pin_12
+#define CTRL_PORT  GPIOC
 
 EXT void Put_Char(char c);
 //EXT INT8U Get_Cur_Time(void);//S_Time *pTime);

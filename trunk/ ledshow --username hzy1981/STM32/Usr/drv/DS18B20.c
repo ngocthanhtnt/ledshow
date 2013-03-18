@@ -107,35 +107,35 @@ void Write_OneByte_ToDS18b20(unsigned char data)
 {
     unsigned char i ;
     GPIO_DQ_Out_Mode() ;
+	DQ_Write_1() ;
     for(i=0 ;i<8 ;i++)
-    {
+    {	DIS_INT();
         if(data&0x01)    //低位在前
         {
             //写1
             DQ_Write_0() ; //写时间空隙总是从总线的低电平开始
-            Delay_Nus(8) ;  //15us内拉高
+            Delay_Nus(2) ;  //15us内拉高
             DQ_Write_1() ;
-            Delay_Nus(80) ; //整个写1时隙不低于60us
+            Delay_Nus(60) ; //整个写1时隙不低于60us
         }
         else
         {
             //写0
             DQ_Write_0() ;
-            Delay_Nus(80) ; //保持在60us到120us之间
+            Delay_Nus(60) ; //保持在60us到120us之间
             DQ_Write_1() ;
-            Delay_Nus(5) ;
+            Delay_Nus(2) ;
         }
         data >>= 1 ;
+		EN_INT();
     }
 }
 
 void DS18B20_StartConvert(void)
-{
-    DIS_INT();
+{   
     DS18B20_Reset();
     Write_OneByte_ToDS18b20(ROM_Skip_Cmd);//跳过读序列号操作
     Write_OneByte_ToDS18b20(Convert_T); //启动温度转换
-	EN_INT();
     //Delay_Nms(780);//等待DS18b20转换完成
 }
 
@@ -151,6 +151,7 @@ unsigned char Read_OneByte_FromDS18b20(void)
     
     for(i=0 ;i<8 ;i++)
     {
+	    DIS_INT();
         GPIO_DQ_Out_Mode() ;
         data >>= 1 ;
         DQ_Write_0() ;
@@ -161,7 +162,8 @@ unsigned char Read_OneByte_FromDS18b20(void)
         {
             data |= 0x80 ;
         }
-        Delay_Nus(70) ;   //等待这一位数据完成传输
+        Delay_Nus(60) ;   //等待这一位数据完成传输
+		EN_INT();
     }
     GPIO_DQ_Out_Mode() ;
     return data ;
@@ -194,16 +196,12 @@ INT16S Read_Temperature(unsigned char *sign ,
     Write_OneByte_ToDS18b20(Convert_T); //启动温度转换
     Delay_Nms(780);//等待DS18b20转换完成
 */ 
-    DIS_INT();
 	   
     DS18B20_Reset();
     Write_OneByte_ToDS18b20(ROM_Skip_Cmd);
     Write_OneByte_ToDS18b20(Read_Scratchpad); //读取寄存器内容（可以从寄存器0读到寄存器8）
-    
     a= Read_OneByte_FromDS18b20();     //温度低8位0x90;//
     b= Read_OneByte_FromDS18b20();     //温度高8位0xFC;//--该测试数据为零下55
-
-	EN_INT();
     //c= Read_OneByte_FromDS18B20();   //TH
     //d= Read_OneByte_FromDS18B20();   //TL
     //e= Read_OneByte_FromDS18B20();   //Configuration Register
@@ -229,17 +227,12 @@ void DS18B20_Init(void)
 {
     INT8U Re;
 
-	DIS_INT();
 	Re = DS18B20_Reset();
-	EN_INT();
 
 	if(Re EQ 0) //连续两次检测18B20是否存在
 	{
 	  Delay_ms(100);
-
-	  DIS_INT();
 	  Re = DS18B20_Reset();
-	  EN_INT();
 	}
 
     if(Re)

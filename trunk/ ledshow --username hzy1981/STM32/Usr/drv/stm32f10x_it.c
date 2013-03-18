@@ -159,6 +159,12 @@ void SysTick_Handler(void)
 void OTG_FS_IRQHandler(void)
 {
   USBH_OTG_ISR_Handler(&USB_OTG_FS_dev);
+
+  if(Screen_Status.UDisk_Flag EQ UDISK_NULL) //第一次扫描到U盘,方便快速读取U盘
+  {
+    Set_Screen_Com_Time(3); //通信等待状态，停止扫描
+    RT_Play_Status_Enter(0);	//实时显示状态，停止读取播放文件
+  }
 }
 #endif
 #endif

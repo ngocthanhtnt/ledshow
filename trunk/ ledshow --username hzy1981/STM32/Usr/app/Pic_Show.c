@@ -1382,7 +1382,7 @@ void Update_Pic_Data(INT8U Area_No)
         //更新XXX数据，例如表盘、温度、湿度、计时等等的
         if(Pub_Timer.Ms100 > Prog_Status.Area_Status[Area_No].Step_Timer + 1)
         {
-		  Prog_Status.Area_Status[Area_No].Step_Timer = 0;
+		  Prog_Status.Area_Status[Area_No].Step_Timer = Pub_Timer.Ms100;
 
           P0.X = P0.Y = 0;
 
