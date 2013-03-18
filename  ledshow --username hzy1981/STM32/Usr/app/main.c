@@ -155,6 +155,8 @@ void mainInit(void)
 #endif
 
   Sensor_Init(); //传感器初始化
+  
+  Warn_Ctrl_Init();
    
   Para_Show(); //上电参数显示
 

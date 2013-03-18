@@ -2,7 +2,7 @@
 #include "Includes.h"
 #include "FILE_SYS.H"
 
-#define UDISK_RT_PLAY_TIME 3
+#define UDISK_RT_PLAY_TIME 5
 
 extern esint8 efs_init(EmbeddedFileSystem * efs,eint8* opts);
 /**
@@ -225,8 +225,16 @@ void UDisk_Proc(void)
 			  }
 			}
 
+			Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
+			Set_RT_Show_Area(0, 0, 64, 16);
+			RT_Play_Status_Enter(500);
+			Clr_All_Show_Data();
+
+			LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "Updating");
+
  			while(1)
 			{
+			    Clr_Watch_Dog();
 			    //Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
 
 				CH376ByteRead((INT8U *)RCV_DATA_BUF, FLEN + 2, &RealCount );
@@ -288,12 +296,12 @@ void UDisk_Proc(void)
 	}
 	
 UDiskProcEnd:
-	Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
+	//Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
 
-	Set_RT_Show_Area(0, 0, 32, 16);
-	RT_Play_Status_Enter(UDISK_RT_PLAY_TIME);
-	Clr_All_Show_Data();
-
+	//Set_RT_Show_Area(0, 0, 32, 16);
+	//RT_Play_Status_Enter(UDISK_RT_PLAY_TIME);
+	//Clr_All_Show_Data();
+    RT_Play_Status_Enter(5);
 	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, reStr);
 	Restore_Show_Area();//此处可以restore
 
@@ -343,8 +351,16 @@ void Update_From_UDisk(void)
 		}
 	}
 
+	Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
+	Set_RT_Show_Area(0, 0, 64, 16);
+	RT_Play_Status_Enter(500);
+	Clr_All_Show_Data();
+
+	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "Updating");
+
 	while (1)
 	{
+	    Clr_Watch_Dog();
 	    //读取字节数
 	    RealCount = file_read(&fileR, FLEN + 2, (INT8U *)RCV_DATA_BUF);
         
@@ -364,10 +380,11 @@ void Update_From_UDisk(void)
         memcpy(&len, (INT8U *)RCV_DATA_BUF + FLEN, 2);
 		if(len <= sizeof(RCV_DATA_BUF) && len > FLEN + 2)
 		{
+		  Clr_Watch_Dog();
 		  RealCount = file_read(&fileR, len - (FLEN + 2), (INT8U *)RCV_DATA_BUF + FLEN + 2);
           if(RealCount EQ len - (FLEN + 2) && Check_Frame_Format((INT8U *)RCV_DATA_BUF, len))
           {
-
+			Clr_Watch_Dog();
 		    Re = Rcv_Frame_Proc(CH_UDISK, (INT8U *)RCV_DATA_BUF, len, sizeof(RCV_DATA_BUF)); 
 			
 			if(Re EQ 0)
@@ -393,12 +410,12 @@ void Update_From_UDisk(void)
    }
    
 UDiskProcEnd:
-    Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
+    //Set_Screen_Com_Time(0); //到计时0秒后重新播放节目
 
-	Set_RT_Show_Area(0, 0, 32, 16);
-	RT_Play_Status_Enter(UDISK_RT_PLAY_TIME);
-	Clr_All_Show_Data();
-
+	//Set_RT_Show_Area(0, 0, 32, 16);
+	//RT_Play_Status_Enter(UDISK_RT_PLAY_TIME);
+	//Clr_All_Show_Data();
+	RT_Play_Status_Enter(5);
 	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, reStr);
 	Restore_Show_Area();//此处可以restore
 
