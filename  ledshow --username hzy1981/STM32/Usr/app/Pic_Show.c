@@ -1251,7 +1251,7 @@ void Update_Pic_Data(INT8U Area_No)
   //INT8U i;
   INT8U In_Mode, Out_Mode;
   INT16U Area_Width, Area_Height;
-  INT32U Stay_Time,In_Delay, Out_Delay;// Size;
+  INT32U Stay_Time,In_Delay, Out_Delay, Step;// Size;
   //INT32U In_Step_Bak;
   //INT32U Out_Time;
   S_Point P0;
@@ -1368,21 +1368,33 @@ void Update_Pic_Data(INT8U Area_No)
     if(Check_XXX_Data(Prog_Status.File_Para[Area_No].Pic_Para.Flag)) //更新
     {
         //如果是显示表盘，需要定时更新背景，因为背景每秒会被秒钟覆盖修改
-        if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_CLOCK &&\
-           Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
+        if(Prog_Status.Area_Status[Area_No].Step_Timer EQ 0)
         {
           Prog_Status.Area_Status[Area_No].Step_Timer = Pub_Timer.Ms100;
-          Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
-          Prog_Status.Area_Status[Area_No].SCN_No = 0; //重新更新背景
-          Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFFFF;
-          SET_SUM(Prog_Status.Area_Status[Area_No]);
-          return;
+
+          if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_CLOCK)
+          {
+            Prog_Status.Area_Status[Area_No].New_SCN_Flag = NEW_FLAG;
+            Prog_Status.Area_Status[Area_No].SCN_No = 0; //重新更新背景
+            Prog_Status.Area_Status[Area_No].Last_SCN_No = 0xFFFF;
+            SET_SUM(Prog_Status.Area_Status[Area_No]);
+          }
+
+          //return;
         }
 
+        //表盘和时间、定时100ms更新一次，其他则1s更新一次
+        if(Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_CLOCK ||\
+           Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_TIME ||\
+           Prog_Status.File_Para[Area_No].Pic_Para.Flag EQ SHOW_TIMER)
+          Step = 1;
+        else
+          Step = 10;
+
         //更新XXX数据，例如表盘、温度、湿度、计时等等的
-        if(Pub_Timer.Ms100 > Prog_Status.Area_Status[Area_No].Step_Timer + 1)
+        if(Pub_Timer.Ms100 > Prog_Status.Area_Status[Area_No].Step_Timer + Step)
         {
-		  Prog_Status.Area_Status[Area_No].Step_Timer = Pub_Timer.Ms100;
+          Prog_Status.Area_Status[Area_No].Step_Timer = 0;//Pub_Timer.Ms100;
 
           P0.X = P0.Y = 0;
 
