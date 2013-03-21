@@ -145,9 +145,9 @@
 //¼ì²éÌøÏß×´Ì¬
 #define CHK_FAC_JP_STATUS()  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)
 
-#define SHT1X_SCL_PIN   GPIO_Pin_13
-#define SHT1X_SCL_PORT  GPIOB
-#define SHT1X_SDA_PIN   GPIO_Pin_12
+#define SHT1X_SCL_PIN   GPIO_Pin_8
+#define SHT1X_SCL_PORT  GPIOC
+#define SHT1X_SDA_PIN   GPIO_Pin_9
 #define SHT1X_SDA_PORT  GPIOC
 
 EXT void Put_Char(char c);

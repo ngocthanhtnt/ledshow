@@ -485,6 +485,7 @@ void Encrypt_Chk(void)
 void Screen_Warn_Chk(void)
 {
 #if QT_EN == 0
+#if GPRS_EN || SMS_EN
   if(GPIO_ReadInputDataBit(WARN_PORT,WARN_PIN) EQ 0)
   {
     Delay_ms(100);
@@ -504,6 +505,7 @@ void Screen_Warn_Chk(void)
 		RT_Play_Status_Exit();		
 	}
   }
+#endif
 #endif
 }
 
