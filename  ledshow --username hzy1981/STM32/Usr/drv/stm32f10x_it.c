@@ -22,8 +22,13 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
+#include "usb_bsp.h"
 #include "usb_hcd_int.h"
+#include "usbh_core.h"
 #include "includes.h"
+
+extern USB_OTG_CORE_HANDLE          USB_OTG_Core;
+extern USBH_HOST                    USB_Host;
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -158,13 +163,13 @@ void SysTick_Handler(void)
 #ifdef CHIP_USB_HOST //定义表示使用片上USB HOST接口
 void OTG_FS_IRQHandler(void)
 {
-  USBH_OTG_ISR_Handler(&USB_OTG_FS_dev);
-
+  USBH_OTG_ISR_Handler(&USB_OTG_Core);
+/*
   if(Screen_Status.UDisk_Flag EQ UDISK_NULL) //第一次扫描到U盘,方便快速读取U盘
   {
     Set_Screen_Com_Time(3); //通信等待状态，停止扫描
-    RT_Play_Status_Enter(0);	//实时显示状态，停止读取播放文件
-  }
+    //RT_Play_Status_Enter(0);	//实时显示状态，停止读取播放文件
+  }*/
 }
 #endif
 #endif

@@ -2,20 +2,26 @@
   ******************************************************************************
   * @file    usbh_usr.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date   22/07/2011
+  * @version V2.1.0
+  * @date    19-March-2012
   * @brief   Header file for usbh_usr.c
   ******************************************************************************
   * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
   ******************************************************************************
   */ 
 
@@ -23,52 +29,75 @@
 #ifndef __USH_USR_H__
 #define __USH_USR_H__
 
-#ifdef __cplusplus
- extern "C" {
-#endif
-
 /* Includes ------------------------------------------------------------------*/
-#include "efs.h"
-//#include "stm3210c_eval_lcd.h"
+//#include "ff.h"
 #include "usbh_core.h"
-//#include "stm32_eval.h"
+#include "usb_conf.h"
 #include <stdio.h>
 #include "usbh_msc_core.h"
-#include "ls.h"
-//#include "stm3210c_eval_ioe.h"
 
-/* Exported types ------------------------------------------------------------*/
-typedef struct 
-{
-  uint8_t filenameString[12];
-  uint8_t file_index ;
-}Download_FileTypeDef;
-/* Exported constants --------------------------------------------------------*/
-#define BUFFER_SIZE                      ((uint16_t)4*512)  /* This value must be equal to 4 * x with x=[1,8192]                                                           see application note for more details */
-/* IAP defines */
-#define IAP_COMMAND_SELECT               ((uint8_t)0xFF)
-#define IAP_DOWNLOAD_SELECT              ((uint8_t)0xF0)
-#define NEXT_DOWNLOAD                    ((uint8_t)0xAA)
-#define NEXT_MENU                        ((uint8_t)0xBB)
-#define DEVICE_DISCONNECT                ((uint8_t)0xCC) 
+/** @addtogroup USBH_USER
+  * @{
+  */
+
+/** @addtogroup USBH_MSC_DEMO_USER_CALLBACKS
+  * @{
+  */
+
+/** @defgroup USBH_USR
+  * @brief This file is the Header file for usbh_usr.c
+  * @{
+  */ 
+
+
+/** @defgroup USBH_USR_Exported_Types
+  * @{
+  */ 
+
+
+extern const USBH_Usr_cb_TypeDef USR_cb;
+
+
+
+/**
+  * @}
+  */ 
+
+
+
+/** @defgroup USBH_USR_Exported_Defines
+  * @{
+  */ 
 /* State Machine for the USBH_USR_ApplicationState */
-#define USH_USR_FS_INIT                  ((uint8_t)0x00)
-#define USH_USR_IAP                      ((uint8_t)0x01)
-/* Exported macros -----------------------------------------------------------*/
-/* Exported variables --------------------------------------------------------*/
-extern  USBH_Usr_cb_TypeDef USR_Callbacks;
-extern  EmbeddedFile               fileR;
-extern EmbeddedFileSystem          efs;
-extern EmbeddedFile                file;
-extern DirList                     list;
-extern Download_FileTypeDef Download_File [9];
-extern __IO uint8_t Seclect_FileCounter;
-extern __IO uint8_t Seclect_CommandCounter;
-extern uint8_t CMD_index;
-/* Exported functions ------------------------------------------------------- */ 
-void USBH_USR_IAPInit(void);
-void USBH_USR_IAPMenu(void);
+#define USH_USR_FS_INIT       0
+#define USH_USR_FS_READLIST   1
+#define USH_USR_FS_WRITEFILE  2
+#define USH_USR_FS_DRAW       3
+/**
+  * @}
+  */ 
+
+/** @defgroup USBH_USR_Exported_Macros
+  * @{
+  */ 
+/**
+  * @}
+  */ 
+
+/** @defgroup USBH_USR_Exported_Variables
+  * @{
+  */ 
+extern  uint8_t USBH_USR_ApplicationState ;
+/**
+  * @}
+  */ 
+
+/** @defgroup USBH_USR_Exported_FunctionsPrototype
+  * @{
+  */ 
+void USBH_USR_ApplicationSelected(void);
 void USBH_USR_Init(void);
+void USBH_USR_DeInit(void);
 void USBH_USR_DeviceAttached(void);
 void USBH_USR_ResetDevice(void);
 void USBH_USR_DeviceDisconnected (void);
@@ -82,28 +111,30 @@ void USBH_USR_Configuration_DescAvailable(USBH_CfgDesc_TypeDef * cfgDesc,
 void USBH_USR_Manufacturer_String(void *);
 void USBH_USR_Product_String(void *);
 void USBH_USR_SerialNum_String(void *);
+void USBH_USR_EnumerationDone(void);
 USBH_USR_Status USBH_USR_UserInput(void);
-int USBH_USR_MSC_Application(void);
 void USBH_USR_DeInit(void);
 void USBH_USR_DeviceNotSupported(void);
 void USBH_USR_UnrecoveredError(void);
-uint8_t USBH_USR_DisplayBinaryFlashContents (Download_FileTypeDef* Download_FileStruct);
-uint8_t USBH_USR_CheckSelectedImage(Download_FileTypeDef* Download_FileStruct);
-void USBH_USR_JoystickInterrupt (FunctionalState NewState);
-void USBH_USR_InitDownloadStructure(Download_FileTypeDef* Download_FileStruct);
-void USBH_USR_LCDClearPart(uint8_t start, uint8_t end);
-uint8_t USBH_USR_SelectControlMenu(void);
-void USBH_USR_BufferSizeControl(void);
-extern void COMMAND_IAPExecuteApplication(void);
+int USBH_USR_MSC_Application(void);
 
-#ifdef __cplusplus
-}
-#endif
+/**
+  * @}
+  */ 
 
 #endif /*__USH_USR_H__*/
 
-/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/
+/**
+  * @}
+  */ 
 
+/**
+  * @}
+  */ 
 
+/**
+  * @}
+  */ 
 
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

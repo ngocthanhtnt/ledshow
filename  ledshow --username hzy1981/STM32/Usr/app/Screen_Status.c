@@ -54,7 +54,7 @@ void Screen_Env_Proc()
 	  Sec_Counts.Var ++;
 	  if(Sec_Counts.Var >= 2)
       {
-	    if(Get_SHT1X_Temp_Humi(1, &Temp, &Humi))
+	    if(Get_SHT1X_Temp_Humi(1, &Temp, &Humi) EQ 1)
 	    {
 	      Screen_Status.Temperature = Temp;
 	      Screen_Status.Humidity = Humi;
@@ -501,7 +501,7 @@ void Screen_Warn_Chk(void)
 		  Clr_Watch_Dog();
 		}
 
-		Restore_Show_Area();
+		//Restore_Show_Area();
 		RT_Play_Status_Exit();		
 	}
   }

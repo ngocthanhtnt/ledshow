@@ -26,6 +26,21 @@
                                                                  in the internal Flash memory or in SRAM */
 /* Exported macros -----------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */ 
+#define UDISK_INPUT_FLAG 0xAA
+
+#define UDISK_RES_OK    0xFF
+#define UDISK_RES_NO    0x00
+
+#ifdef UDISK_PROC_C
+EXT S_Int8U UDisk_Input_Flag = {CHK_BYTE, 0x00, CHK_BYTE};
+EXT S_Int8U UDisk_Res_Flag = {CHK_BYTE, 0x00, CHK_BYTE};
+EXT S_Int8U UDisk_Disc_Flag = {CHK_BYTE, 0x00, CHK_BYTE};
+#else
+EXT S_Int8U UDisk_Input_Flag;
+EXT S_Int8U UDisk_Res_Flag;
+EXT S_Int8U UDisk_Disc_Flag;
+#endif
+
 void COMMAND_IAPExecuteApplication(void);
 void COMMAND_UPLOAD(void);
 void COMMAND_JUMP(void);

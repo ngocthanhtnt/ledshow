@@ -2,20 +2,27 @@
   ******************************************************************************
   * @file    usb_hcd.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    11/29/2010
+  * @version V2.1.0
+  * @date    19-March-2012
   * @brief   Host Interface Layer
   ******************************************************************************
-  * @copy
+  * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */
 
 /* Includes ------------------------------------------------------------------*/
@@ -80,8 +87,6 @@
   * @{
   */ 
 
-
-
 /**
   * @brief  HCD_Init 
   *         Initialize the HOST portion of the driver.
@@ -89,22 +94,30 @@
   * @param  base_address: OTG base address
   * @retval Status
   */
-uint32_t HCD_Init(USB_OTG_CORE_HANDLE *pdev)
+uint32_t HCD_Init(USB_OTG_CORE_HANDLE *pdev , 
+                  USB_OTG_CORE_ID_TypeDef coreID)
 {
+  uint8_t i = 0;
   pdev->host.ConnSts = 0;
-  pdev->host.ErrCnt  = 0;
-  pdev->host.XferCnt  = 0;
-  pdev->host.HC_Status  = HC_IDLE;
+  
+  for (i= 0; i< USB_OTG_MAX_TX_FIFOS; i++)
+  {
+  pdev->host.ErrCnt[i]  = 0;
+  pdev->host.XferCnt[i]   = 0;
+  pdev->host.HC_Status[i]   = HC_IDLE;
+  }
   pdev->host.hc[0].max_packet  = 8; 
 
+  USB_OTG_SelectCore(pdev, coreID);
+#ifndef DUAL_ROLE_MODE_ENABLED
+  USB_OTG_DisableGlobalInt(pdev);
   USB_OTG_CoreInit(pdev);
 
   /* Force Host Mode*/
-  USB_OTG_SetHostMode(pdev);
-
+  USB_OTG_SetCurrentMode(pdev , HOST_MODE);
   USB_OTG_CoreInitHost(pdev);
   USB_OTG_EnableGlobalInt(pdev);
-
+#endif
    
   return 0;
 }
@@ -175,9 +188,9 @@ uint32_t HCD_GetCurrentFrame (USB_OTG_CORE_HANDLE *pdev)
   * @retval URB_STATE
   * 
   */
-URB_STATE HCD_GetURB_State (USB_OTG_CORE_HANDLE *pdev) 
+URB_STATE HCD_GetURB_State (USB_OTG_CORE_HANDLE *pdev , uint8_t ch_num) 
 {
-  return pdev->host.URB_State ;
+  return pdev->host.URB_State[ch_num] ;
 }
 
 /**
@@ -187,9 +200,9 @@ URB_STATE HCD_GetURB_State (USB_OTG_CORE_HANDLE *pdev)
   * @retval No. of data bytes transferred
   * 
   */
-uint32_t HCD_GetXferCnt (USB_OTG_CORE_HANDLE *pdev) 
+uint32_t HCD_GetXferCnt (USB_OTG_CORE_HANDLE *pdev, uint8_t ch_num) 
 {
-  return pdev->host.XferCnt ;
+  return pdev->host.XferCnt[ch_num] ;
 }
 
 
@@ -201,9 +214,9 @@ uint32_t HCD_GetXferCnt (USB_OTG_CORE_HANDLE *pdev)
   * @retval HC_STATUS
   * 
   */
-HC_STATUS HCD_GetHCState (USB_OTG_CORE_HANDLE *pdev) 
+HC_STATUS HCD_GetHCState (USB_OTG_CORE_HANDLE *pdev ,  uint8_t ch_num) 
 {
-  return pdev->host.HC_Status ;
+  return pdev->host.HC_Status[ch_num] ;
 }
 
 /**
@@ -228,8 +241,8 @@ uint32_t HCD_HC_Init (USB_OTG_CORE_HANDLE *pdev , uint8_t hc_num)
 uint32_t HCD_SubmitRequest (USB_OTG_CORE_HANDLE *pdev , uint8_t hc_num) 
 {
   
-  pdev->host.URB_State =   URB_IDLE;  
-  pdev->host.hc[hc_num].xfer_Count = 0 ;
+  pdev->host.URB_State[hc_num] =   URB_IDLE;  
+  pdev->host.hc[hc_num].xfer_count = 0 ;
   return USB_OTG_HC_StartXfer(pdev, hc_num);
 }
 
@@ -246,4 +259,4 @@ uint32_t HCD_SubmitRequest (USB_OTG_CORE_HANDLE *pdev , uint8_t hc_num)
 * @}
 */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

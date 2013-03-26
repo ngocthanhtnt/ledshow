@@ -2,20 +2,27 @@
   ******************************************************************************
   * @file    usbh_hcs.c
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    11/29/2010
+  * @version V2.1.0
+  * @date    19-March-2012
   * @brief   This file implements functions for opening and closing host channels
   ******************************************************************************
-  * @copy
+  * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */ 
 
 /* Includes ------------------------------------------------------------------*/
@@ -60,7 +67,6 @@
 /** @defgroup USBH_HCS_Private_Variables
   * @{
   */ 
-uint16_t USBH_Channels [HC_MAX];
 
 /**
   * @}
@@ -70,7 +76,7 @@ uint16_t USBH_Channels [HC_MAX];
 /** @defgroup USBH_HCS_Private_FunctionPrototypes
   * @{
   */ 
-static uint16_t HC_GetFreeChannel (USB_OTG_CORE_HANDLE *pdev);
+static uint16_t USBH_GetFreeChannel (USB_OTG_CORE_HANDLE *pdev);
 /**
   * @}
   */ 
@@ -98,17 +104,21 @@ uint8_t USBH_Open_Channel  (USB_OTG_CORE_HANDLE *pdev,
                             uint8_t dev_address,
                             uint8_t speed,
                             uint8_t ep_type,
-                            uint8_t mps)
+                            uint16_t mps)
 {
 
-  pdev->host.hc[hc_num].ep_num = USBH_Channels[hc_num]& 0x7F;
-  pdev->host.hc[hc_num].ep_is_in = (USBH_Channels[hc_num] & 0x80 ) == 0x80;  
+  pdev->host.hc[hc_num].ep_num = pdev->host.channel[hc_num]& 0x7F;
+  pdev->host.hc[hc_num].ep_is_in = (pdev->host.channel[hc_num] & 0x80 ) == 0x80;  
   pdev->host.hc[hc_num].dev_addr = dev_address;  
   pdev->host.hc[hc_num].ep_type = ep_type;  
   pdev->host.hc[hc_num].max_packet = mps; 
   pdev->host.hc[hc_num].speed = speed; 
   pdev->host.hc[hc_num].toggle_in = 0; 
   pdev->host.hc[hc_num].toggle_out = 0;   
+  if(speed == HPRT0_PRTSPD_HIGH_SPEED)
+  {
+    pdev->host.hc[hc_num].do_ping = 1;
+  }
   
   USB_OTG_HC_Init(pdev, hc_num) ;
   
@@ -132,7 +142,7 @@ uint8_t USBH_Modify_Channel (USB_OTG_CORE_HANDLE *pdev,
                             uint8_t dev_address,
                             uint8_t speed,
                             uint8_t ep_type,
-                            uint8_t mps)
+                            uint16_t mps)
 {
   
   if(dev_address != 0)
@@ -165,11 +175,11 @@ uint8_t USBH_Alloc_Channel  (USB_OTG_CORE_HANDLE *pdev, uint8_t ep_addr)
 {
   uint16_t hc_num;
   
-  hc_num =  HC_GetFreeChannel(pdev);
+  hc_num =  USBH_GetFreeChannel(pdev);
 
   if (hc_num != HC_ERROR)
   {
-	USBH_Channels[hc_num] = HC_USED | ep_addr;
+	pdev->host.channel[hc_num] = HC_USED | ep_addr;
   }
   return hc_num;
 }
@@ -184,24 +194,42 @@ uint8_t USBH_Free_Channel  (USB_OTG_CORE_HANDLE *pdev, uint8_t idx)
 {
    if(idx < HC_MAX)
    {
-	 USBH_Channels[idx] &= HC_USED_MASK;
+	 pdev->host.channel[idx] &= HC_USED_MASK;
+   }
+   return USBH_OK;
+}
+
+
+/**
+  * @brief  USBH_DeAllocate_AllChannel
+  *         Free all USB host channel
+* @param  pdev : core instance
+  * @retval Status
+  */
+uint8_t USBH_DeAllocate_AllChannel  (USB_OTG_CORE_HANDLE *pdev)
+{
+   uint8_t idx;
+   
+   for (idx = 2; idx < HC_MAX ; idx ++)
+   {
+	 pdev->host.channel[idx] = 0;
    }
    return USBH_OK;
 }
 
 /**
-  * @brief  HC_GetFreeChannel
+  * @brief  USBH_GetFreeChannel
   *         Get a free channel number for allocation to a device endpoint
   * @param  None
   * @retval idx: Free Channel number
   */
-static uint16_t HC_GetFreeChannel (USB_OTG_CORE_HANDLE *pdev)
+static uint16_t USBH_GetFreeChannel (USB_OTG_CORE_HANDLE *pdev)
 {
   uint8_t idx = 0;
   
   for (idx = 0 ; idx < HC_MAX ; idx++)
   {
-	if ((USBH_Channels[idx] & HC_USED) == 0)
+	if ((pdev->host.channel[idx] & HC_USED) == 0)
 	{
 	   return idx;
 	} 
@@ -226,6 +254,6 @@ static uint16_t HC_GetFreeChannel (USB_OTG_CORE_HANDLE *pdev)
 * @}
 */ 
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 
 

@@ -26,7 +26,7 @@
 
 //----------------------------------------
 #if defined(CARD_C)
-#if CARD_TYPE == CARDC1 //
+#if CARD_TYPE == CARDCU1 //
 #define CARD_NAME "C1"  //卡名称
 #else
 #error "card CX name error"
@@ -42,8 +42,8 @@
 #define FONT_NUM 2 //内嵌字体个数
 
 //----根据不同的屏幕和硬件配置下列项目
-#if CARD_TYPE == CARDC1
-#define MAX_POINTS (736*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
+#if CARD_TYPE == CARDCU1
+#define MAX_POINTS (720*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #define MAX_STORA_BLOCK_NUM  3000 //最大存储块数
 #endif
 
@@ -57,7 +57,7 @@
 
 #define CLOCK_EN       1 //时钟使能
 
-#if CARD_TYPE == CARDC1
+#if CARD_TYPE == CARDCU1
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
 #define CLOCK_SHOW_EN  1 //表盘显示使能

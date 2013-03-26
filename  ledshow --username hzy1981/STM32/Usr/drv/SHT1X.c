@@ -109,33 +109,37 @@ void SHT1X_Init(void)
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(SHT1X_SCL_PORT, &GPIO_InitStructure);
 
-  //连续读3次SHT1X,如果3次都没有读到，认为没有连接传感器
+  //如果已经存在DS18B20，则不处理SHT1X
+  if(Chk_DS18B20_Sensor())
+  {
+    SHT1X_In_Flag = NO_SHT1X_FLAG;
+	return;
+  }
+
+  //连续读2次SHT1X,如果2次都没有读到，认为没有连接传感器
   SHT1X_In_Flag = EXIST_SHT1X_FLAG;
 
   WriteState();
-  /*
-  if(Get_SHT1X_Temp_Humi(&Temp, &Humi) EQ 0)
+
+  Get_SHT1X_Temp_Humi(0, &Temp, &Humi);//启动转换
+  Delay_ms(900);
+  if(Get_SHT1X_Temp_Humi(1, &Temp, &Humi) EQ 2)	//返回2读取失败
   {
-    Delay_ms(10);
-	if(Get_SHT1X_Temp_Humi(&Temp, &Humi) EQ 0)
+	Get_SHT1X_Temp_Humi(0, &Temp, &Humi);//启动转换
+	Delay_ms(900);
+	if(Get_SHT1X_Temp_Humi(1, &Temp, &Humi) EQ 2)
+	  SHT1X_In_Flag = NO_SHT1X_FLAG;
+	else
 	{
-	  Delay_ms(10);
-	  if(Get_SHT1X_Temp_Humi(&Temp, &Humi) EQ 0)
-	    SHT1X_In_Flag = NO_SHT1X_FLAG;
+	  Delay_ms(900);
+      if(Get_SHT1X_Temp_Humi(1, &Temp, &Humi) EQ 2)
+		SHT1X_In_Flag = NO_SHT1X_FLAG;
 	}
   }
-  */
-  Get_SHT1X_Temp_Humi(0, &Temp, &Humi);
-  Delay_ms(300);
-  Get_SHT1X_Temp_Humi(1, &Temp, &Humi);
-  Delay_ms(300);
-  if(Get_SHT1X_Temp_Humi(1, &Temp, &Humi) EQ 0)
+  else
   {
-	Get_SHT1X_Temp_Humi(0, &Temp, &Humi);
-	Delay_ms(300);
-	Get_SHT1X_Temp_Humi(1, &Temp, &Humi);
-	Delay_ms(300);
-	if(Get_SHT1X_Temp_Humi(1, &Temp, &Humi) EQ 0)
+    Delay_ms(900);
+	if(Get_SHT1X_Temp_Humi(1, &Temp, &Humi) EQ 2)
 	  SHT1X_In_Flag = NO_SHT1X_FLAG;
   }
 
@@ -350,6 +354,10 @@ void Calc_SHT1X(float *p_humidity ,float *p_temperature)
 //#define S_SHT1X_HUMI_START 0x02
 #define S_SHT1X_HUMI_MEASU 0x03
 
+//返回值：
+//0：转换中
+//1: 转换成功
+//2:转换失败
 INT8U Get_SHT1X_Temp_Humi(INT8U Flag, INT16S *pTemp, INT16S *pHumi)
 {
   INT8U buf[5];
@@ -381,11 +389,15 @@ INT8U Get_SHT1X_Temp_Humi(INT8U Flag, INT16S *pTemp, INT16S *pHumi)
 	  Measure_Start(HUMI);
 
 	  state.Var = S_SHT1X_HUMI_MEASU;
+	  
+	  return 0;
 	}
 	else
+	{
 	  state.Var = S_SHT1X_TEMP_START;
-	
-	return 0;	
+
+	  return 2;
+	}	
   }/*
   else if(state.Var EQ S_SHT1X_HUMI_START)
   {
@@ -412,9 +424,10 @@ INT8U Get_SHT1X_Temp_Humi(INT8U Flag, INT16S *pTemp, INT16S *pHumi)
 	  return 1;	  
 	}
 	else
-	  state.Var = S_SHT1X_TEMP_START;
-	  
-	return 0;
+	{
+	  state.Var = S_SHT1X_TEMP_START;	
+	  return 2;
+	} 
   }
   else
   {

@@ -127,10 +127,10 @@
 //¼ì²éÌøÏß×´Ì¬
 #define CHK_FAC_JP_STATUS()  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_13)
 
-#define SHT1X_SCL_PIN   GPIO_Pin_8
-#define SHT1X_SCL_PORT  GPIOC
-#define SHT1X_SDA_PIN   GPIO_Pin_9
-#define SHT1X_SDA_PORT  GPIOC
+#define SHT1X_SCL_PIN   GPIO_Pin_15
+#define SHT1X_SCL_PORT  GPIOA
+#define SHT1X_SDA_PIN   GPIO_Pin_2
+#define SHT1X_SDA_PORT  GPIOD
 
 #define WARN_PIN   GPIO_Pin_13
 #define WARN_PORT  GPIOB

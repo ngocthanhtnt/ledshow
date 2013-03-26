@@ -2,20 +2,27 @@
   ******************************************************************************
   * @file    usb_defines.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    11/29/2010
+  * @version V2.1.0
+  * @date    19-March-2012
   * @brief   Header of the Core Layer
   ******************************************************************************
-  * @copy
+  * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -46,7 +53,16 @@
 /** @defgroup _CORE_DEFINES_
   * @{
   */
-#define USB_OTG_SPEED_PARAM_FULL 1
+
+#define USB_OTG_SPEED_PARAM_HIGH 0
+#define USB_OTG_SPEED_PARAM_HIGH_IN_FULL 1
+#define USB_OTG_SPEED_PARAM_FULL 3
+
+#define USB_OTG_SPEED_HIGH      0
+#define USB_OTG_SPEED_FULL      1
+
+#define USB_OTG_ULPI_PHY      1
+#define USB_OTG_EMBEDDED_PHY  2
 
 /**
   * @}
@@ -59,7 +75,12 @@
 #define GAHBCFG_TXFEMPTYLVL_EMPTY              1
 #define GAHBCFG_TXFEMPTYLVL_HALFEMPTY          0
 #define GAHBCFG_GLBINT_ENABLE                  1
-
+#define GAHBCFG_INT_DMA_BURST_SINGLE           0
+#define GAHBCFG_INT_DMA_BURST_INCR             1
+#define GAHBCFG_INT_DMA_BURST_INCR4            3
+#define GAHBCFG_INT_DMA_BURST_INCR8            5
+#define GAHBCFG_INT_DMA_BURST_INCR16           7
+#define GAHBCFG_DMAENABLE                      1
 #define GAHBCFG_TXFEMPTYLVL_EMPTY              1
 #define GAHBCFG_TXFEMPTYLVL_HALFEMPTY          0
 #define GRXSTS_PKTSTS_IN                       2
@@ -74,6 +95,18 @@
 /** @defgroup _OnTheGo_DEFINES_
   * @{
   */
+#define MODE_HNP_SRP_CAPABLE                   0
+#define MODE_SRP_ONLY_CAPABLE                  1
+#define MODE_NO_HNP_SRP_CAPABLE                2
+#define MODE_SRP_CAPABLE_DEVICE                3
+#define MODE_NO_SRP_CAPABLE_DEVICE             4
+#define MODE_SRP_CAPABLE_HOST                  5
+#define MODE_NO_SRP_CAPABLE_HOST               6
+#define A_HOST                                 1
+#define A_SUSPEND                              2
+#define A_PERIPHERAL                           3
+#define B_PERIPHERAL                           4
+#define B_HOST                                 5
 #define DEVICE_MODE                            0
 #define HOST_MODE                              1
 #define OTG_MODE                               2
@@ -85,7 +118,8 @@
 /** @defgroup __DEVICE_DEFINES_
   * @{
   */
-
+#define DSTS_ENUMSPD_HS_PHY_30MHZ_OR_60MHZ     0
+#define DSTS_ENUMSPD_FS_PHY_30MHZ_OR_60MHZ     1
 #define DSTS_ENUMSPD_LS_PHY_6MHZ               2
 #define DSTS_ENUMSPD_FS_PHY_48MHZ              3
 
@@ -93,6 +127,11 @@
 #define DCFG_FRAME_INTERVAL_85                 1
 #define DCFG_FRAME_INTERVAL_90                 2
 #define DCFG_FRAME_INTERVAL_95                 3
+
+#define DEP0CTL_MPS_64                         0
+#define DEP0CTL_MPS_32                         1
+#define DEP0CTL_MPS_16                         2
+#define DEP0CTL_MPS_8                          3
 
 #define EP_SPEED_LOW                           0
 #define EP_SPEED_FULL                          1
@@ -135,6 +174,8 @@
 #define HCCHAR_BULK                            2
 #define HCCHAR_INTR                            3
 
+#define  MIN(a, b)      (((a) < (b)) ? (a) : (b))
+
 /**
   * @}
   */
@@ -143,6 +184,12 @@
 /** @defgroup USB_DEFINES_Exported_Types
   * @{
   */ 
+
+typedef enum
+{
+  USB_OTG_HS_CORE_ID = 0,
+  USB_OTG_FS_CORE_ID = 1
+}USB_OTG_CORE_ID_TypeDef;
 /**
   * @}
   */ 
@@ -173,15 +220,20 @@
 /** @defgroup Internal_Macro's
   * @{
   */
-#define  MIN(a, b)      (((a) < (b)) ? (a) : (b))
-  
 #define USB_OTG_READ_REG32(reg)  (*(__IO uint32_t *)reg)
 #define USB_OTG_WRITE_REG32(reg,value) (*(__IO uint32_t *)reg = value)
 #define USB_OTG_MODIFY_REG32(reg,clear_mask,set_mask) \
   USB_OTG_WRITE_REG32(reg, (((USB_OTG_READ_REG32(reg)) & ~clear_mask) | set_mask ) )
-/**
-  * @}
-  */
+
+/********************************************************************************
+                              ENUMERATION TYPE
+********************************************************************************/
+enum USB_OTG_SPEED {
+  USB_SPEED_UNKNOWN = 0,
+  USB_SPEED_LOW,
+  USB_SPEED_FULL,
+  USB_SPEED_HIGH
+};
 
 #endif //__USB_DEFINES__H__
 
@@ -193,5 +245,5 @@
 /**
   * @}
   */ 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

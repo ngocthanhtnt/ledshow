@@ -2,22 +2,30 @@
   ******************************************************************************
   * @file    stm3210c_eval_lcd.c
   * @author  MCD Application Team
-  * @version V4.3.0
-  * @date    10/15/2010
+  * @version V5.0.1
+  * @date    05-March-2012
   * @brief   This file includes the LCD driver for AM-240320L8TNQW00H (LCD_ILI9320)
-  *          Liquid Crystal Display Module of STM3210C-EVAL board.
+  *          and AM240320D5TOQW01H (LCD_ILI9325) Liquid Crystal Display Modules
+  *          of STM3210C-EVAL board.
   ******************************************************************************
-  * @copy
+  * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
+  */
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm3210c_eval_lcd.h"
@@ -52,6 +60,10 @@
 /** @defgroup STM3210C_EVAL_LCD_Private_Defines
   * @{
   */ 
+
+#define LCD_ILI9320       0x9320
+#define LCD_ILI9325       0x9325
+
 #define START_BYTE         0x70
 #define SET_INDEX          0x00
 #define READ_STATUS        0x01
@@ -79,7 +91,7 @@
   */ 
 static sFONT *LCD_Currentfonts;
 /* Global variables to set the written text color */
-static  __IO uint16_t TextColor = 0x0000, BackColor = 0xFFFF;
+__IO uint16_t TextColor = 0x0000, BackColor = 0xFFFF;
 /**
   * @}
   */ 
@@ -147,80 +159,167 @@ void LCD_DeInit(void)
   */
 void LCD_Setup(void)
 { 
+  __IO uint32_t lcdid = 0;
+
 /* Configure the LCD Control pins --------------------------------------------*/
   LCD_CtrlLinesConfig();
   
 /* Configure the LCD_SPI interface ----------------------------------------------*/
   LCD_SPIConfig();
+
   _delay_(5); /* Delay 50 ms */
-  /* Start Initial Sequence ------------------------------------------------*/
-  LCD_WriteReg(LCD_REG_229, 0x8000); /* Set the internal vcore voltage */
-  LCD_WriteReg(LCD_REG_0,  0x0001); /* Start internal OSC. */
-  LCD_WriteReg(LCD_REG_1,  0x0100); /* set SS and SM bit */
-  LCD_WriteReg(LCD_REG_2,  0x0700); /* set 1 line inversion */
-  LCD_WriteReg(LCD_REG_3,  0x1030); /* set GRAM write direction and BGR=1. */
-  LCD_WriteReg(LCD_REG_4,  0x0000); /* Resize register */
-  LCD_WriteReg(LCD_REG_8,  0x0202); /* set the back porch and front porch */
-  LCD_WriteReg(LCD_REG_9,  0x0000); /* set non-display area refresh cycle ISC[3:0] */
-  LCD_WriteReg(LCD_REG_10, 0x0000); /* FMARK function */
-  LCD_WriteReg(LCD_REG_12, 0x0000); /* RGB interface setting */
-  LCD_WriteReg(LCD_REG_13, 0x0000); /* Frame marker Position */
-  LCD_WriteReg(LCD_REG_15, 0x0000); /* RGB interface polarity */
-  /* Power On sequence -----------------------------------------------------*/
-  LCD_WriteReg(LCD_REG_16, 0x0000); /* SAP, BT[3:0], AP, DSTB, SLP, STB */
-  LCD_WriteReg(LCD_REG_17, 0x0000); /* DC1[2:0], DC0[2:0], VC[2:0] */
-  LCD_WriteReg(LCD_REG_18, 0x0000); /* VREG1OUT voltage */
-  LCD_WriteReg(LCD_REG_19, 0x0000); /* VDV[4:0] for VCOM amplitude */
-  _delay_(20);                 /* Dis-charge capacitor power voltage (200ms) */
-  LCD_WriteReg(LCD_REG_16, 0x17B0); /* SAP, BT[3:0], AP, DSTB, SLP, STB */
-  LCD_WriteReg(LCD_REG_17, 0x0137); /* DC1[2:0], DC0[2:0], VC[2:0] */
-  _delay_(5);                  /* Delay 50 ms */
-  LCD_WriteReg(LCD_REG_18, 0x0139); /* VREG1OUT voltage */
-  _delay_(5);                  /* Delay 50 ms */
-  LCD_WriteReg(LCD_REG_19, 0x1d00); /* VDV[4:0] for VCOM amplitude */
-  LCD_WriteReg(LCD_REG_41, 0x0013); /* VCM[4:0] for VCOMH */
-  _delay_(5);                  /* Delay 50 ms */
-  LCD_WriteReg(LCD_REG_32, 0x0000); /* GRAM horizontal Address */
-  LCD_WriteReg(LCD_REG_33, 0x0000); /* GRAM Vertical Address */
-  /* Adjust the Gamma Curve ------------------------------------------------*/
-  LCD_WriteReg(LCD_REG_48, 0x0006);
-  LCD_WriteReg(LCD_REG_49, 0x0101);
-  LCD_WriteReg(LCD_REG_50, 0x0003);
-  LCD_WriteReg(LCD_REG_53, 0x0106);
-  LCD_WriteReg(LCD_REG_54, 0x0b02);
-  LCD_WriteReg(LCD_REG_55, 0x0302);
-  LCD_WriteReg(LCD_REG_56, 0x0707);
-  LCD_WriteReg(LCD_REG_57, 0x0007);
-  LCD_WriteReg(LCD_REG_60, 0x0600);
-  LCD_WriteReg(LCD_REG_61, 0x020b);
-  
-  /* Set GRAM area ---------------------------------------------------------*/
-  LCD_WriteReg(LCD_REG_80, 0x0000); /* Horizontal GRAM Start Address */
-  LCD_WriteReg(LCD_REG_81, 0x00EF); /* Horizontal GRAM End Address */
-  LCD_WriteReg(LCD_REG_82, 0x0000); /* Vertical GRAM Start Address */
-  LCD_WriteReg(LCD_REG_83, 0x013F); /* Vertical GRAM End Address */
-  LCD_WriteReg(LCD_REG_96,  0x2700); /* Gate Scan Line */
-  LCD_WriteReg(LCD_REG_97,  0x0001); /* NDL,VLE, REV */
-  LCD_WriteReg(LCD_REG_106, 0x0000); /* set scrolling line */
-  /* Partial Display Control -----------------------------------------------*/
-  LCD_WriteReg(LCD_REG_128, 0x0000);
-  LCD_WriteReg(LCD_REG_129, 0x0000);
-  LCD_WriteReg(LCD_REG_130, 0x0000);
-  LCD_WriteReg(LCD_REG_131, 0x0000);
-  LCD_WriteReg(LCD_REG_132, 0x0000);
-  LCD_WriteReg(LCD_REG_133, 0x0000);
-  /* Panel Control ---------------------------------------------------------*/
-  LCD_WriteReg(LCD_REG_144, 0x0010);
-  LCD_WriteReg(LCD_REG_146, 0x0000);
-  LCD_WriteReg(LCD_REG_147, 0x0003);
-  LCD_WriteReg(LCD_REG_149, 0x0110);
-  LCD_WriteReg(LCD_REG_151, 0x0000);
-  LCD_WriteReg(LCD_REG_152, 0x0000);
-  /* Set GRAM write direction and BGR = 1 */
-  /* I/D=01 (Horizontal : increment, Vertical : decrement) */
-  /* AM=1 (address is updated in vertical writing direction) */
-  LCD_WriteReg(LCD_REG_3, 0x1018);
-  LCD_WriteReg(LCD_REG_7, 0x0173); /* 262K color and display ON */
+
+  /* Read the LCD ID */
+  lcdid = LCD_ReadReg(LCD_REG_0);  
+
+  /* Check if the LCD is ILI9320 Controller */
+  if(lcdid == LCD_ILI9320)
+  {
+    /* Start Initial Sequence ------------------------------------------------*/
+    LCD_WriteReg(LCD_REG_229, 0x8000); /* Set the internal vcore voltage */
+    LCD_WriteReg(LCD_REG_0,  0x0001); /* Start internal OSC. */
+    LCD_WriteReg(LCD_REG_1,  0x0100); /* set SS and SM bit */
+    LCD_WriteReg(LCD_REG_2,  0x0700); /* set 1 line inversion */
+    LCD_WriteReg(LCD_REG_3,  0x1030); /* set GRAM write direction and BGR=1. */
+    LCD_WriteReg(LCD_REG_4,  0x0000); /* Resize register */
+    LCD_WriteReg(LCD_REG_8,  0x0202); /* set the back porch and front porch */
+    LCD_WriteReg(LCD_REG_9,  0x0000); /* set non-display area refresh cycle ISC[3:0] */
+    LCD_WriteReg(LCD_REG_10, 0x0000); /* FMARK function */
+    LCD_WriteReg(LCD_REG_12, 0x0000); /* RGB interface setting */
+    LCD_WriteReg(LCD_REG_13, 0x0000); /* Frame marker Position */
+    LCD_WriteReg(LCD_REG_15, 0x0000); /* RGB interface polarity */
+    /* Power On sequence -----------------------------------------------------*/
+    LCD_WriteReg(LCD_REG_16, 0x0000); /* SAP, BT[3:0], AP, DSTB, SLP, STB */
+    LCD_WriteReg(LCD_REG_17, 0x0000); /* DC1[2:0], DC0[2:0], VC[2:0] */
+    LCD_WriteReg(LCD_REG_18, 0x0000); /* VREG1OUT voltage */
+    LCD_WriteReg(LCD_REG_19, 0x0000); /* VDV[4:0] for VCOM amplitude */
+    _delay_(20);                 /* Dis-charge capacitor power voltage (200ms) */
+    LCD_WriteReg(LCD_REG_16, 0x17B0); /* SAP, BT[3:0], AP, DSTB, SLP, STB */
+    LCD_WriteReg(LCD_REG_17, 0x0137); /* DC1[2:0], DC0[2:0], VC[2:0] */
+    _delay_(5);                  /* Delay 50 ms */
+    LCD_WriteReg(LCD_REG_18, 0x0139); /* VREG1OUT voltage */
+    _delay_(5);                  /* Delay 50 ms */
+    LCD_WriteReg(LCD_REG_19, 0x1d00); /* VDV[4:0] for VCOM amplitude */
+    LCD_WriteReg(LCD_REG_41, 0x0013); /* VCM[4:0] for VCOMH */
+    _delay_(5);                  /* Delay 50 ms */
+    LCD_WriteReg(LCD_REG_32, 0x0000); /* GRAM horizontal Address */
+    LCD_WriteReg(LCD_REG_33, 0x0000); /* GRAM Vertical Address */
+    /* Adjust the Gamma Curve ------------------------------------------------*/
+    LCD_WriteReg(LCD_REG_48, 0x0006);
+    LCD_WriteReg(LCD_REG_49, 0x0101);
+    LCD_WriteReg(LCD_REG_50, 0x0003);
+    LCD_WriteReg(LCD_REG_53, 0x0106);
+    LCD_WriteReg(LCD_REG_54, 0x0b02);
+    LCD_WriteReg(LCD_REG_55, 0x0302);
+    LCD_WriteReg(LCD_REG_56, 0x0707);
+    LCD_WriteReg(LCD_REG_57, 0x0007);
+    LCD_WriteReg(LCD_REG_60, 0x0600);
+    LCD_WriteReg(LCD_REG_61, 0x020b);  
+    /* Set GRAM area ---------------------------------------------------------*/
+    LCD_WriteReg(LCD_REG_80, 0x0000); /* Horizontal GRAM Start Address */
+    LCD_WriteReg(LCD_REG_81, 0x00EF); /* Horizontal GRAM End Address */
+    LCD_WriteReg(LCD_REG_82, 0x0000); /* Vertical GRAM Start Address */
+    LCD_WriteReg(LCD_REG_83, 0x013F); /* Vertical GRAM End Address */
+    LCD_WriteReg(LCD_REG_96,  0x2700); /* Gate Scan Line */
+    LCD_WriteReg(LCD_REG_97,  0x0001); /* NDL,VLE, REV */
+    LCD_WriteReg(LCD_REG_106, 0x0000); /* set scrolling line */
+    /* Partial Display Control -----------------------------------------------*/
+    LCD_WriteReg(LCD_REG_128, 0x0000);
+    LCD_WriteReg(LCD_REG_129, 0x0000);
+    LCD_WriteReg(LCD_REG_130, 0x0000);
+    LCD_WriteReg(LCD_REG_131, 0x0000);
+    LCD_WriteReg(LCD_REG_132, 0x0000);
+    LCD_WriteReg(LCD_REG_133, 0x0000);
+    /* Panel Control ---------------------------------------------------------*/
+    LCD_WriteReg(LCD_REG_144, 0x0010);
+    LCD_WriteReg(LCD_REG_146, 0x0000);
+    LCD_WriteReg(LCD_REG_147, 0x0003);
+    LCD_WriteReg(LCD_REG_149, 0x0110);
+    LCD_WriteReg(LCD_REG_151, 0x0000);
+    LCD_WriteReg(LCD_REG_152, 0x0000);
+    /* Set GRAM write direction and BGR = 1 */
+    /* I/D=01 (Horizontal : increment, Vertical : decrement) */
+    /* AM=1 (address is updated in vertical writing direction) */
+    LCD_WriteReg(LCD_REG_3, 0x1018);
+    LCD_WriteReg(LCD_REG_7, 0x0173); /* 262K color and display ON */
+  }                                                                           
+  else if(lcdid == LCD_ILI9325) /* Check if the LCD is ILI9325 Controller */
+  { 
+    /* Start Initial Sequence ------------------------------------------------*/
+    LCD_WriteReg(LCD_REG_0, 0x0001); /* Start internal OSC. */
+    LCD_WriteReg(LCD_REG_1, 0x0100); /* Set SS and SM bit */
+    LCD_WriteReg(LCD_REG_2, 0x0700); /* Set 1 line inversion */
+    LCD_WriteReg(LCD_REG_3, 0x1018); /* Set GRAM write direction and BGR=1. */
+    LCD_WriteReg(LCD_REG_4, 0x0000); /* Resize register */
+    LCD_WriteReg(LCD_REG_8, 0x0202); /* Set the back porch and front porch */
+    LCD_WriteReg(LCD_REG_9, 0x0000); /* Set non-display area refresh cycle ISC[3:0] */
+    LCD_WriteReg(LCD_REG_10, 0x0000); /* FMARK function */
+    LCD_WriteReg(LCD_REG_12, 0x0000); /* RGB interface setting */
+    LCD_WriteReg(LCD_REG_13, 0x0000); /* Frame marker Position */
+    LCD_WriteReg(LCD_REG_15, 0x0000); /* RGB interface polarity */
+
+    /* Power On sequence -----------------------------------------------------*/
+    LCD_WriteReg(LCD_REG_16, 0x0000); /* SAP, BT[3:0], AP, DSTB, SLP, STB */
+    LCD_WriteReg(LCD_REG_17, 0x0000); /* DC1[2:0], DC0[2:0], VC[2:0] */
+    LCD_WriteReg(LCD_REG_18, 0x0000); /* VREG1OUT voltage */
+    LCD_WriteReg(LCD_REG_19, 0x0000); /* VDV[4:0] for VCOM amplitude */
+    _delay_(20);                      /* Dis-charge capacitor power voltage (200ms) */
+    LCD_WriteReg(LCD_REG_16, 0x17B0); /* SAP, BT[3:0], AP, DSTB, SLP, STB */
+    LCD_WriteReg(LCD_REG_17, 0x0137); /* DC1[2:0], DC0[2:0], VC[2:0] */
+    _delay_(5);                       /* Delay 50 ms */
+    LCD_WriteReg(LCD_REG_18, 0x0139); /* VREG1OUT voltage */
+    _delay_(5);                       /* Delay 50 ms */
+    LCD_WriteReg(LCD_REG_19, 0x1d00); /* VDV[4:0] for VCOM amplitude */
+    LCD_WriteReg(LCD_REG_41, 0x0013); /* VCM[4:0] for VCOMH */
+    _delay_(5);                       /* Delay 50 ms */
+    LCD_WriteReg(LCD_REG_32, 0x0000); /* GRAM horizontal Address */
+    LCD_WriteReg(LCD_REG_33, 0x0000); /* GRAM Vertical Address */
+
+    /* Adjust the Gamma Curve (ILI9325)---------------------------------------*/
+    LCD_WriteReg(LCD_REG_48, 0x0007);
+    LCD_WriteReg(LCD_REG_49, 0x0302);
+    LCD_WriteReg(LCD_REG_50, 0x0105);
+    LCD_WriteReg(LCD_REG_53, 0x0206);
+    LCD_WriteReg(LCD_REG_54, 0x0808);
+    LCD_WriteReg(LCD_REG_55, 0x0206);
+    LCD_WriteReg(LCD_REG_56, 0x0504);
+    LCD_WriteReg(LCD_REG_57, 0x0007);
+    LCD_WriteReg(LCD_REG_60, 0x0105);
+    LCD_WriteReg(LCD_REG_61, 0x0808);
+
+    /* Set GRAM area ---------------------------------------------------------*/
+    LCD_WriteReg(LCD_REG_80, 0x0000); /* Horizontal GRAM Start Address */
+    LCD_WriteReg(LCD_REG_81, 0x00EF); /* Horizontal GRAM End Address */
+    LCD_WriteReg(LCD_REG_82, 0x0000); /* Vertical GRAM Start Address */
+    LCD_WriteReg(LCD_REG_83, 0x013F); /* Vertical GRAM End Address */
+
+    LCD_WriteReg(LCD_REG_96,  0xA700); /* Gate Scan Line(GS=1, scan direction is G320~G1) */
+    LCD_WriteReg(LCD_REG_97,  0x0001); /* NDL,VLE, REV */
+    LCD_WriteReg(LCD_REG_106, 0x0000); /* set scrolling line */
+
+    /* Partial Display Control -----------------------------------------------*/
+    LCD_WriteReg(LCD_REG_128, 0x0000);
+    LCD_WriteReg(LCD_REG_129, 0x0000);
+    LCD_WriteReg(LCD_REG_130, 0x0000);
+    LCD_WriteReg(LCD_REG_131, 0x0000);
+    LCD_WriteReg(LCD_REG_132, 0x0000);
+    LCD_WriteReg(LCD_REG_133, 0x0000);
+
+    /* Panel Control ---------------------------------------------------------*/
+    LCD_WriteReg(LCD_REG_144, 0x0010);
+    LCD_WriteReg(LCD_REG_146, 0x0000);
+    LCD_WriteReg(LCD_REG_147, 0x0003);
+    LCD_WriteReg(LCD_REG_149, 0x0110);
+    LCD_WriteReg(LCD_REG_151, 0x0000);
+    LCD_WriteReg(LCD_REG_152, 0x0000);
+
+    /* set GRAM write direction and BGR = 1 */
+    /* I/D=00 (Horizontal : increment, Vertical : decrement) */
+    /* AM=1 (address is updated in vertical writing direction) */
+    LCD_WriteReg(LCD_REG_3, 0x1018);
+
+    LCD_WriteReg(LCD_REG_7, 0x0133); /* 262K color and display ON */ 
+  }
 }
 
 
@@ -1008,7 +1107,7 @@ void LCD_FillPolyLine(pPoint Points, uint16_t PointCount)
       j = i; 
     }
   
-    /* Sort the nodes, via a simple “Bubble” sort. */
+    /* Sort the nodes, via a simple "Bubble" sort. */
     i = 0;
     while (i < nodes-1) 
     {
@@ -1403,4 +1502,4 @@ static void delay(__IO uint32_t nCount)
   * @}
   */  
   
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
