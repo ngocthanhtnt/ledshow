@@ -1,24 +1,31 @@
 /**
-******************************************************************************
-* @file    usbh_hid_keybd.c 
-* @author  MCD Application Team
-* @version V1.0.0
-* @date    11/29/2010
-* @brief   This file is the application layer for USB Host HID Keyboard handling
-*          QWERTY and AZERTY Keyboard are supported as per the selection in 
-*          usbh_hid_keybd.h              
-******************************************************************************
-* @copy
-*
-* THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-* WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-* TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-* DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-* FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-* CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
-*
-* <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-*/ 
+  ******************************************************************************
+  * @file    usbh_hid_keybd.c 
+  * @author  MCD Application Team
+  * @version V2.1.0
+  * @date    19-March-2012
+  * @brief   This file is the application layer for USB Host HID Keyboard handling
+  *          QWERTY and AZERTY Keyboard are supported as per the selection in 
+  *          usbh_hid_keybd.h              
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
+  *
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
+  */ 
 
 
 /* Includes ------------------------------------------------------------------*/
@@ -74,6 +81,18 @@ static void  KEYBRD_Decode(uint8_t *data);
 * @}
 */ 
 
+#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
+ #if defined   (__CC_ARM) /*!< ARM Compiler */
+  __align(4) 
+ #elif defined ( __ICCARM__ ) /*!< IAR Compiler */
+  #pragma data_alignment=4
+ #elif defined (__GNUC__) /*!< GNU Compiler */
+ #pragma pack(4) 
+ #elif defined  (__TASKING__) /*!< TASKING Compiler */                           
+  __align(4) 
+ #endif /* __CC_ARM */
+#endif
+ 
 /** @defgroup USBH_HID_KEYBD_Private_Variables
 * @{
 */
@@ -321,5 +340,5 @@ static void KEYBRD_Decode(uint8_t *pbuf)
 * @}
 */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

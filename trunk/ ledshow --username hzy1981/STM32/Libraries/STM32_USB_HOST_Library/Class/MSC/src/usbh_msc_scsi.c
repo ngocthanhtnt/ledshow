@@ -2,22 +2,28 @@
   ******************************************************************************
   * @file    usbh_msc_scsi.c 
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    11/29/2010
+  * @version V2.1.0
+  * @date    19-March-2012
   * @brief   This file implements the SCSI commands
   ******************************************************************************
-  * @copy
+  * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */ 
-
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbh_msc_core.h"
@@ -48,6 +54,7 @@
 /** @defgroup USBH_MSC_SCSI_Private_TypesDefinitions
   * @{
   */ 
+
 MassStorageParameter_TypeDef USBH_MSC_Param; 
 /**
   * @}
@@ -71,8 +78,20 @@ MassStorageParameter_TypeDef USBH_MSC_Param;
 /** @defgroup USBH_MSC_SCSI_Private_Variables
   * @{
   */ 
-uint8_t USBH_DataInBuffer[512];
-uint8_t USBH_DataOutBuffer[512];
+  
+#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
+  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
+    #pragma data_alignment=4   
+  #endif
+#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
+__ALIGN_BEGIN uint8_t USBH_DataInBuffer[512] __ALIGN_END ;
+
+#ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
+  #if defined ( __ICCARM__ ) /*!< IAR Compiler */
+    #pragma data_alignment=4   
+  #endif
+#endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
+__ALIGN_BEGIN uint8_t USBH_DataOutBuffer[512] __ALIGN_END ;
 /**
   * @}
   */ 
@@ -109,12 +128,12 @@ uint8_t USBH_DataOutBuffer[512];
   * @param  None
   * @retval Status
   */
-uint8_t USBH_MSC_TestUnitReady(void)
+uint8_t USBH_MSC_TestUnitReady (USB_OTG_CORE_HANDLE *pdev)
 {
   uint8_t index;
   USBH_MSC_Status_TypeDef status = USBH_MSC_BUSY;
   
-  if(HCD_IsDeviceConnected(&USB_OTG_FS_dev))
+  if(HCD_IsDeviceConnected(pdev))
   {  
     switch(USBH_MSC_BOTXferParam.CmdStateMachine)
     {
@@ -181,12 +200,12 @@ uint8_t USBH_MSC_TestUnitReady(void)
   * @param  None
   * @retval Status
   */
-uint8_t USBH_MSC_ReadCapacity10(void)
+uint8_t USBH_MSC_ReadCapacity10(USB_OTG_CORE_HANDLE *pdev)
 {
   uint8_t index;
   USBH_MSC_Status_TypeDef status = USBH_MSC_BUSY;
   
-  if(HCD_IsDeviceConnected(&USB_OTG_FS_dev))
+  if(HCD_IsDeviceConnected(pdev))
   {  
     switch(USBH_MSC_BOTXferParam.CmdStateMachine)
     {
@@ -267,12 +286,12 @@ uint8_t USBH_MSC_ReadCapacity10(void)
   * @param  None
   * @retval Status
   */
-uint8_t USBH_MSC_ModeSense6(void)
+uint8_t USBH_MSC_ModeSense6(USB_OTG_CORE_HANDLE *pdev)
 {
   uint8_t index;
   USBH_MSC_Status_TypeDef status = USBH_MSC_BUSY;
   
-  if(HCD_IsDeviceConnected(&USB_OTG_FS_dev))
+  if(HCD_IsDeviceConnected(pdev))
   {  
     switch(USBH_MSC_BOTXferParam.CmdStateMachine)
     {
@@ -359,14 +378,14 @@ uint8_t USBH_MSC_ModeSense6(void)
   * @param  None
   * @retval Status
   */
-uint8_t USBH_MSC_RequestSense(void)
+uint8_t USBH_MSC_RequestSense(USB_OTG_CORE_HANDLE *pdev)
 {
   USBH_MSC_Status_TypeDef status = USBH_MSC_BUSY;
   
   uint8_t index;
   
   
-  if(HCD_IsDeviceConnected(&USB_OTG_FS_dev))
+  if(HCD_IsDeviceConnected(pdev))
   {  
     switch(USBH_MSC_BOTXferParam.CmdStateMachine)
     {
@@ -455,13 +474,16 @@ uint8_t USBH_MSC_RequestSense(void)
   * @param  nbOfbytes : NbOfbytes to be written
   * @retval Status
   */
-uint8_t USBH_MSC_Write10(uint8_t *dataBuffer,uint32_t address,uint32_t nbOfbytes)
+uint8_t USBH_MSC_Write10(USB_OTG_CORE_HANDLE *pdev, 
+                         uint8_t *dataBuffer,
+                         uint32_t address,
+                         uint32_t nbOfbytes)
 {
   uint8_t index;
   USBH_MSC_Status_TypeDef status = USBH_MSC_BUSY;
   uint16_t nbOfPages;
   
-  if(HCD_IsDeviceConnected(&USB_OTG_FS_dev))
+  if(HCD_IsDeviceConnected(pdev))
   {  
     switch(USBH_MSC_BOTXferParam.CmdStateMachine)
     {
@@ -540,14 +562,17 @@ uint8_t USBH_MSC_Write10(uint8_t *dataBuffer,uint32_t address,uint32_t nbOfbytes
   * @param  nbOfbytes : NbOfbytes to be read
   * @retval Status
   */
-uint8_t USBH_MSC_Read10(uint8_t *dataBuffer,uint32_t address,uint32_t nbOfbytes)
+uint8_t USBH_MSC_Read10(USB_OTG_CORE_HANDLE *pdev,
+                        uint8_t *dataBuffer,
+                        uint32_t address,
+                        uint32_t nbOfbytes)
 {
   uint8_t index;
   static USBH_MSC_Status_TypeDef status = USBH_MSC_BUSY;
   uint16_t nbOfPages;
   status = USBH_MSC_BUSY;
   
-  if(HCD_IsDeviceConnected(&USB_OTG_FS_dev))
+  if(HCD_IsDeviceConnected(pdev))
   {
     switch(USBH_MSC_BOTXferParam.CmdStateMachine)
     {
@@ -595,14 +620,14 @@ uint8_t USBH_MSC_Read10(uint8_t *dataBuffer,uint32_t address,uint32_t nbOfbytes)
     case CMD_WAIT_STATUS:
       
       if((USBH_MSC_BOTXferParam.BOTXferStatus == USBH_MSC_OK) && \
-        (HCD_IsDeviceConnected(&USB_OTG_FS_dev)))
+        (HCD_IsDeviceConnected(pdev)))
       { 
         /* Commands successfully sent and Response Received  */       
         USBH_MSC_BOTXferParam.CmdStateMachine = CMD_SEND_STATE;
         status = USBH_MSC_OK;      
       }
       else if (( USBH_MSC_BOTXferParam.BOTXferStatus == USBH_MSC_FAIL ) && \
-        (HCD_IsDeviceConnected(&USB_OTG_FS_dev)))
+        (HCD_IsDeviceConnected(pdev)))
       {
         /* Failure Mode */
         USBH_MSC_BOTXferParam.CmdStateMachine = CMD_SEND_STATE;
@@ -649,7 +674,7 @@ uint8_t USBH_MSC_Read10(uint8_t *dataBuffer,uint32_t address,uint32_t nbOfbytes)
   * @}
   */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 
 
 

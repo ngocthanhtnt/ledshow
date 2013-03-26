@@ -1204,7 +1204,7 @@ void RT_Play_Status_Enter(INT16U Sec)
 //退出实时显示状态
 void RT_Play_Status_Exit(void)
 {
-
+	Restore_Show_Area();
 	Prog_Status.Play_Status.RT_Play_Time = 0;
     SET_SUM(Prog_Status.Play_Status);
 }
@@ -1669,7 +1669,7 @@ void Screen_Test(void)
 
   Clr_Show_Data();
   
-  Restore_Show_Area();
+  //Restore_Show_Area();
   RT_Play_Status_Exit(); //退出实时显示状态
 }
 

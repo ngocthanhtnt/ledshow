@@ -2,23 +2,30 @@
   ******************************************************************************
   * @file    usbh_msc_bot.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    11/29/2010
+  * @version V2.1.0
+  * @date    19-March-2012
   * @brief   Header file for usbh_msc_bot.c
   ******************************************************************************
-  * @copy
+  * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */ 
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive  ----------------------------------------------*/
 #ifndef __USBH_MSC_BOT_H__
 #define __USBH_MSC_BOT_H__
 
@@ -145,7 +152,8 @@ typedef union _USBH_CSW_Block
 #define USBH_MSC_DIR_IN                   0
 #define USBH_MSC_DIR_OUT                  1
 #define USBH_MSC_BOTH_DIR                 2
-#define USBH_MSC_PAGE_SIZE_64             0x40
+
+//#define USBH_MSC_PAGE_LENGTH                 0x40
 #define USBH_MSC_PAGE_LENGTH              512
 
 
@@ -185,10 +193,14 @@ extern HostCSWPkt_TypeDef USBH_MSC_CSWData;
 /** @defgroup USBH_MSC_BOT_Exported_FunctionsPrototype
   * @{
   */ 
-void USBH_MSC_HandleBOTXfer(void);
-uint8_t USBH_MSC_DecodeCSW(void);
-void USBH_MSC_Init(void);
-USBH_Status USBH_MSC_BOT_Abort(uint8_t direction);
+void USBH_MSC_HandleBOTXfer(USB_OTG_CORE_HANDLE *pdev,
+                            USBH_HOST *phost);
+uint8_t USBH_MSC_DecodeCSW(USB_OTG_CORE_HANDLE *pdev,
+                           USBH_HOST *phost);
+void USBH_MSC_Init(USB_OTG_CORE_HANDLE *pdev);
+USBH_Status USBH_MSC_BOT_Abort(USB_OTG_CORE_HANDLE *pdev, 
+                               USBH_HOST *phost,
+                               uint8_t direction);
 /**
   * @}
   */ 
@@ -211,5 +223,5 @@ USBH_Status USBH_MSC_BOT_Abort(uint8_t direction);
 /**
   * @}
   */
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

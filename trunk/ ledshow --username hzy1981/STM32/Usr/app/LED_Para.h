@@ -6,7 +6,9 @@
 #include "Storage.h"
 #include "LED_Show.h"
 #if QT_EN == 0
+#if NET_EN
 #include "Net_Config.h"
+#endif
 #endif
 //extern "c"
 //{

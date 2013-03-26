@@ -2,23 +2,30 @@
   ******************************************************************************
   * @file    usbh_hid_core.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    11/29/2010
+  * @version V2.1.0
+  * @date    19-March-2012
   * @brief   This file contains all the prototypes for the usbh_hid_core.c
   ******************************************************************************
-  * @copy
+  * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */ 
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+/* Define to prevent recursive  ----------------------------------------------*/
 #ifndef __USBH_HID_CORE_H
 #define __USBH_HID_CORE_H
 
@@ -51,6 +58,7 @@
   * @{
   */ 
 
+#define HID_MIN_POLL          10
 
 /* States for HID State Machine */
 typedef enum
@@ -59,6 +67,7 @@ typedef enum
   HID_SEND_DATA,
   HID_BUSY,
   HID_GET_DATA,   
+  HID_SYNC,     
   HID_POLL,
   HID_ERROR,
 }
@@ -68,6 +77,7 @@ typedef enum
 {
   HID_REQ_IDLE = 0,
   HID_REQ_GET_REPORT_DESC,
+  HID_REQ_GET_HID_DESC,
   HID_REQ_SET_IDLE,
   HID_REQ_SET_PROTOCOL,
   HID_REQ_SET_REPORT,
@@ -109,13 +119,13 @@ HID_Report_TypeDef;
 /* Structure for HID process */
 typedef struct _HID_Process
 {
+  uint8_t              buff[64];
   uint8_t              hc_num_in; 
   uint8_t              hc_num_out; 
   HID_State            state; 
   uint8_t              HIDIntOutEp;
   uint8_t              HIDIntInEp;
   HID_CtlState         ctl_state;
-  uint8_t              buff[64];
   uint16_t             length;
   uint8_t              ep_addr;
   uint16_t             poll; 
@@ -137,7 +147,7 @@ HID_Machine_TypeDef;
 #define USB_HID_GET_PROTOCOL         0x03
 #define USB_HID_SET_REPORT           0x09
 #define USB_HID_SET_IDLE             0x0A
-#define USB_HID_SET_PROTOCOL         0x0B
+#define USB_HID_SET_PROTOCOL         0x0B    
 /**
   * @}
   */ 
@@ -160,9 +170,9 @@ extern USBH_Class_cb_TypeDef  HID_cb;
 /** @defgroup USBH_HID_CORE_Exported_FunctionsPrototype
   * @{
   */ 
-void USBH_ParseHIDDesc(uint8_t *buf);
-uint8_t USBH_ParseClassDesc( USBH_InterfaceDesc_TypeDef* itf_desc,uint8_t *buf);
-USBH_Status USBH_Set_Report (USB_OTG_CORE_HANDLE *pdev, 
+
+USBH_Status USBH_Set_Report (USB_OTG_CORE_HANDLE *pdev,
+                             USBH_HOST *phost,
                                   uint8_t reportType,
                                   uint8_t reportId,
                                   uint8_t reportLen,
@@ -189,5 +199,5 @@ USBH_Status USBH_Set_Report (USB_OTG_CORE_HANDLE *pdev,
 /**
   * @}
   */ 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

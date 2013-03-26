@@ -545,6 +545,8 @@ void NVIC_Configuration(void)
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 #endif
 
+//USB_OTG_BSP_EnableInterrupt  函数中有设置，此处不设置
+/*
 #ifdef CHIP_USB_HOST	
 	NVIC_InitStructure.NVIC_IRQChannel = OTG_FS_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
@@ -552,7 +554,7 @@ void NVIC_Configuration(void)
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 #endif
-
+*/
     
 	//扫描中断
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //扫描特效

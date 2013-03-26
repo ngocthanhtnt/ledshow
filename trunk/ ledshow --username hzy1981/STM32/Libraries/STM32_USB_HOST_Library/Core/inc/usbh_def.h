@@ -2,21 +2,29 @@
   ******************************************************************************
   * @file    usbh_def.h
   * @author  MCD Application Team
-  * @version V1.0.0
-  * @date    11/29/2010
+  * @version V2.1.0
+  * @date    19-March-2012
   * @brief   Definitions used in the USB host library
   ******************************************************************************
-  * @copy
+  * @attention
   *
-  * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
-  * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
-  * TIME. AS A RESULT, STMICROELECTRONICS SHALL NOT BE HELD LIABLE FOR ANY
-  * DIRECT, INDIRECT OR CONSEQUENTIAL DAMAGES WITH RESPECT TO ANY CLAIMS ARISING
-  * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
-  * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
+  * <h2><center>&copy; COPYRIGHT 2012 STMicroelectronics</center></h2>
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+  * Licensed under MCD-ST Liberty SW License Agreement V2, (the "License");
+  * You may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at:
+  *
+  *        http://www.st.com/software_license_agreement_liberty_v2
+  *
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  *
+  ******************************************************************************
   */ 
+
 /** @addtogroup USBH_LIB
   * @{
   */
@@ -101,6 +109,7 @@
 #define  USB_DESC_TYPE_DEVICE_QUALIFIER                    6
 #define  USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION           7
 #define  USB_DESC_TYPE_INTERFACE_POWER                     8
+#define  USB_DESC_TYPE_HID                                 0x21
 #define  USB_DESC_TYPE_HID_REPORT                          0x22
 
 
@@ -121,6 +130,7 @@
 #define  USB_DESC_OTHER_SPEED_CONFIGURATION ((USB_DESC_TYPE_OTHER_SPEED_CONFIGURATION << 8) & 0xFF00)
 #define  USB_DESC_INTERFACE_POWER           ((USB_DESC_TYPE_INTERFACE_POWER << 8) & 0xFF00)
 #define  USB_DESC_HID_REPORT                ((USB_DESC_TYPE_HID_REPORT << 8) & 0xFF00)
+#define  USB_DESC_HID                       ((USB_DESC_TYPE_HID << 8) & 0xFF00)
 
 
 #define  USB_EP_TYPE_CTRL                               0x00
@@ -273,5 +283,6 @@ typedef struct _EndpointDescriptor
 }
 USBH_EpDesc_TypeDef;
 #endif
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

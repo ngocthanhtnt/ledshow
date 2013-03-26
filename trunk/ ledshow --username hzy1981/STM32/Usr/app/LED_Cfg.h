@@ -10,11 +10,11 @@
 //#define CARDB0	 0x21
 //#define CARDB1	 0x22
 //#define CARDB2	 0x23
-#define CARDC1	 0x31
-#define CARDC2   0x32
+#define CARDCU1	 0x31
+#define CARDCU2   0x32
 
-#define CARDCW1  0x31 //¶ÌÐÅ¿¨
-#define CARDCW2  0x32 //GRPS¿¨
+#define CARDCW1  0x33 //¶ÌÐÅ¿¨
+#define CARDCW2  0x34 //GRPS¿¨
 //#define CARDC1	 0x31
 //#define CARDC2	 0x32
 #define CARDD    0x40
@@ -162,7 +162,7 @@
 #include "LED_ABX_Cfg.h"
 #include "LED_ABX_Drv.h"
 #elif defined(CARD_C)
-#define CARD_TYPE CARDC1
+#define CARD_TYPE CARDCU1
 #include "LED_CX_Cfg.h"
 #include "LED_CX_Drv.h"
 #elif defined(CARD_CW)
