@@ -22,14 +22,22 @@
 //#include <intrinsic.h>
 #include "stm32f10x_conf.h"
 #include "STM32.h"
-#include "CH376INC.h"
-#include "ch376.h"
-#include "usbh_usr.h"
-#include "usb_bsp.h"
-#include "UDisk_Proc.h"
 #include "DS1302.h"
 #include "SHT1X.h"
 #include "DS18B20.h"
+
+#if UDISK_EN
+#ifdef CHIP_USB_HOST
+#include "usbh_usr.h"
+#include "usb_bsp.h"
+#else
+#include "CH376INC.h"
+#include "ch376.h"
+#include "FILE_SYS.h"
+#endif
+#include "UDisk_Proc.h"
+#endif
+
 
 #if NET_EN
 #include "ENC28J60.h"
@@ -44,7 +52,6 @@
 #include "sms.h"
 #endif
 
-#include "FILE_SYS.h"
 #include "spi_flash.h"
 #include "LED_Scan.h"
 #endif

@@ -1,10 +1,10 @@
 #define UDISK_PROC_C
 #include "Includes.h"
-#include "FILE_SYS.H"
 #ifdef CHIP_USB_HOST
 #include "ff.h"
 #endif
 
+#if UDISK_EN
 #define UDISK_RT_PLAY_TIME 5
 
 //FATFS fatfs;
@@ -46,13 +46,14 @@
 
 
 /* External variables --------------------------------------------------------*/
-extern uint8_t CMD_index;
-extern uint8_t joystick_use;
+//extern uint8_t CMD_index;
+//extern uint8_t joystick_use;
 /* Private typedef -----------------------------------------------------------*/
 /* Private defines -----------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 //Download_FileTypeDef Download_File [9];
+#ifdef CHIP_USB_HOST
 #ifdef USB_OTG_HS_INTERNAL_DMA_ENABLED
   #if defined ( __ICCARM__ ) /*!< IAR Compiler */
     #pragma data_alignment=4   
@@ -66,6 +67,7 @@ __ALIGN_BEGIN USB_OTG_CORE_HANDLE      USB_OTG_Core __ALIGN_END;
   #endif
 #endif /* USB_OTG_HS_INTERNAL_DMA_ENABLED */
 __ALIGN_BEGIN USBH_HOST                USB_Host __ALIGN_END;
+#endif
 
 void UDisk_Init(void)
 {
@@ -428,6 +430,7 @@ UDiskProcEnd:
 	f_mount(0, NULL);
 	Set_UDisk_Status(UDISK_NULL);
 }
+#endif
 #endif
 
 /*******************(C)COPYRIGHT 2011 STMicroelectronics *****END OF FILE******/

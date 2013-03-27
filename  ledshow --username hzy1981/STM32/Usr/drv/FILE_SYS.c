@@ -18,7 +18,7 @@
 #include "stm32f10x.h"
 #include "CH376INC.h"
 #include "FILE_SYS.H"
-
+#if UDISK_EN
 UINT8	CH376ReadBlock( PUINT8 buf )  /* 从当前主机端点的接收缓冲区读取数据块,返回长度 */
 {
 	UINT8	s, l;
@@ -884,5 +884,5 @@ CH376CreateLongNameE:
 	CH376FileClose( FALSE );  /* 对于根目录则必须要关闭 */
 	return( s );
 }
-
+#endif
 #endif

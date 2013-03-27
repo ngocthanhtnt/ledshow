@@ -30,6 +30,10 @@
 #define SET_RST(x) (x == 0)?GPIO_ResetBits(GPIOA,GPIO_Pin_15):GPIO_SetBits(GPIOA,GPIO_Pin_15)
 #define SET_ENC28J60_RST(x) (x == 0)?GPIO_ResetBits(GPIOC,GPIO_Pin_2):GPIO_SetBits(GPIOC,GPIO_Pin_2)
 
+#if UDISK_EN == 0
+#define Chk_UDisk_Processing() 0
+#endif
+
 #if NET_EN
 #define CHK_ENC28J60_INT() (GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_0)==0?1:0)
 #else

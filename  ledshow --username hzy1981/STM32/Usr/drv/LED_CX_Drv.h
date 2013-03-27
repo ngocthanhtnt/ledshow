@@ -25,6 +25,7 @@
 #define SPI_SendData            SPI_I2S_SendData
 #define SPI_ReceiveData         SPI_I2S_ReceiveData
 */
+//#define Chk_UDisk_Processing() 0
 #define CHK_ENC28J60_INT() 0
 
 //¸´Î»½Å -PB15
