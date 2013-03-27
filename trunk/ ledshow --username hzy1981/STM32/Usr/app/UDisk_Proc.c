@@ -138,7 +138,7 @@ void UDisk_Proc(void)
 
     if(UDisk_Res_Flag.Var != UDISK_RES_NO)
     {
-	  Set_Screen_Com_Time(0); //参数0该函数保证扫描中断不停
+	  //Set_Screen_Com_Time(0); //参数0该函数保证扫描中断不停
 	  Set_RT_Show_Area(0, 0, 64, 16);
  	  RT_Play_Status_Enter(3);
 	  Clr_All_Show_Data();
