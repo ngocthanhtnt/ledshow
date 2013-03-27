@@ -18,6 +18,7 @@
 #include "stm32.h"
 */
 #include "includes.h"
+#if UDISK_EN
 
 UINT8	Wait376Interrupt( void )  /* 等待CH376中断(INT#低电平)，返回中断状态码, 超时则返回ERR_USB_UNKNOWN */
 {
@@ -318,5 +319,6 @@ void SPI_CH376_Init(void)
    /* Enable SPI1  */
    SPI_Cmd(SPI1, ENABLE);
 }
+#endif
 #endif
 

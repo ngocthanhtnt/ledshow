@@ -17,7 +17,7 @@ LOCALM ip_config = {
   { 192,168,1,122 }               // Secondary DNS server
 };
 //U8 const DHCP_mode = 0;
-U8 dev_name[16] = { "ZJ_CARD" };
+U8 dev_name[16] = { "AL_CARD" };
 
 
 U16 udp_callback (U8 socket, U8 *remip, U16 port, U8 *buf, U16 len)
