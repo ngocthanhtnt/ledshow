@@ -1,0 +1,87 @@
+<html>
+<head>
+<title>网络参数设置</title>
+<style type="text/css">
+<!--
+.STYLE2 {color: #FF0000}
+body {
+	background-color: #3399FF;
+}
+.STYLE3 {color: #FFFFFF}
+-->
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312"></head>
+<body>
+<h2 align="left" class="STYLE3">WIFI参数设置</h2>
+<hr size=3>
+<form name="form" method="GET" action="Route">
+  <p>无线网类型:
+    <select name="NET">
+      <option value="0" selected>Infra</option>
+      <option value="1"         >Ad-Hoc</option>
+    </select>
+  </p>
+  <p>无线网名称:
+    <input name="SSID" type="text" value="linux"                                                         >
+  </p>
+  <p>无线网密钥:  
+    <input name="KEY" type="password" value=""                                                           >
+  （支持WPA/WPA2 AD-HOC 请设置为13位密码比如：1234567890123）</p>
+  <p>无线网络IP:
+    <input name="WIP1"  type="text" size="3" maxlength="3" value="192"/> 
+    <input name="WIP2"  type="text" size="3" maxlength="3" value="168"/>
+    <input name="WIP3"  type="text" size="3" maxlength="3" value="144"/>
+    <input name="WIP4"  type="text" size="3" maxlength="3" value="010"/>
+  (0..255) </p>
+  <p>子 网 掩码:
+    <input name="MASK1"  type="text" size="3" maxlength="3" value="255"/>
+    <input name="MASK2"  type="text" size="3" maxlength="3" value="255"/>
+    <input name="MASK3"  type="text" size="3" maxlength="3" value="255"/>
+    <input name="MASK4"  type="text" size="3" maxlength="3" value="000"/>
+  </p>
+  <p>默 认 网关:
+    <input name="GW1"  type="text" size="3" maxlength="3" value="192"/>
+    <input name="GW2"  type="text" size="3" maxlength="3" value="168"/>
+    <input name="GW3"  type="text" size="3" maxlength="3" value="001"/>
+    <input name="GW4"  type="text" size="3" maxlength="3" value="001"/>
+  </p>
+  <p>DNS 服务器:
+    <input name="DNS1"  type="text" size="3" maxlength="3" value="202"/>
+    <input name="DNS2"  type="text" size="3" maxlength="3" value="114"/>
+    <input name="DNS3"  type="text" size="3" maxlength="3" value="134"/>
+    <input name="DNS4"  type="text" size="3" maxlength="3" value="133"/>
+    <br>
+    <br>
+    无线网 MAC:
+    <input name="WMAC0"  type="text" size="2" maxlength="2" value="00"/>
+    <input name="WMAC1"  type="text" size="2" maxlength="2" value="DF"/>
+    <input name="WMAC2"  type="text" size="2" maxlength="2" value="24"/>
+    <input name="WMAC3"  type="text" size="2" maxlength="2" value="6C"/>
+    <input name="WMAC4"  type="text" size="2" maxlength="2" value="74"/>
+    <input name="WMAC5"  type="text" size="2" maxlength="2" value="96"/>
+    （固件固定，无法修改)</p>
+  <hr size=3>
+  <p><span class="STYLE2">说明:本设备支持一键恢复出厂设置，恢复后默认为infra型网络，关联AP的ssid为linux，无加密。默认IP为192.168.1.10。</span></p>
+  <hr size=3>
+  <input name="OK"  type="submit" value="保存"/>
+  &nbsp;
+</form>
+<hr size="3">
+<form name="form" method="GET" action="J_OPEN">
+  <input name="J_OPEN" type="submit" value="继电器开">
+</form>
+<form name="form" method="GET" action="J_CLOSE">
+  <input name="J_OPEN" type="submit" value="继电器关">
+</form>
+<form name="form" method="GET" action="TEST_BUTTON">
+  <input name="TEST_BUTTON" type="submit" value="TEST_BUTTON">
+</form>
+
+<hr size="3">
+<form name="form" method="GET" action="RESET_SYS">
+  <input name="RESET_SYS" type="submit" value="系统复位">
+</form>
+
+<p align=center>&nbsp;</p>
+</body>
+</html>
