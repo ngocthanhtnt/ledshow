@@ -32,6 +32,7 @@
 *---------------------------------------------------------------------------*/
 extern U8 own_hw_adr[];
 
+#if NET_TYPE EQ NET_ETH
 void init_ethernet(void) 
 {
 	SPInet_Init();
@@ -86,6 +87,62 @@ void poll_ether(void)//net(void)
 	}
 	else return;
 }
+#elif NET_TYPE EQ NET_WIFI
+void init_ethernet(void) 
+{
+	//SPInet_Init();
+	//enc28j60Init(own_hw_adr);
+} 
+
+void send_frame (OS_FRAME *frame)
+{
+	U32 len;
+	U32 *dp,*sp;
+	//U8 pdata[ETH_MTU];
+	U8 *pdata;
+
+    pdata = (U8 *)Pub_Buf;
+	sp  = (U32 *)&frame->data[0];
+	dp  = (U32 *)&pdata[0];
+
+	for (len = (frame->length + 3) >> 2; len; len--) 
+	{
+  	  *dp++ = *sp++;
+  	}
+
+	enc28j60PacketSend(frame->length,pdata);
+}
+
+void poll_ether(void)//net(void)
+{
+	OS_FRAME *frame;
+	//U8 pdata[ETH_MTU];
+	U8 *pdata;
+	U32 RxLen	;
+	U32 *dp,*sp;
+
+	pdata = (U8 *)Pub_Buf;
+	RxLen=enc28j60PacketReceive(ETH_MTU, pdata);
+	sp  = (U32 *)&pdata[0];
+
+	if(RxLen!=0)
+	{	 
+		frame = alloc_mem (RxLen);
+	    if(frame != 0)
+		{
+			RxLen = (RxLen + 3) >> 2;	
+			dp = (U32 *)&frame->data[0];
+			for (  ; RxLen; RxLen--)
+			 {
+	    		*dp++ =  *sp++;
+	 		 }
+			frame->length=RxLen-1;
+			put_in_queue (frame);
+		}
+	}
+	else return;
+}
+#endif
 #endif
 
 

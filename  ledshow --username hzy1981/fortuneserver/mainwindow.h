@@ -19,7 +19,7 @@ public:
 //private slots:
 
 
-private:
+//public:
     Ui::MainWindow ui;
 };
 //! [1]

@@ -109,17 +109,17 @@ void Carea::setEditMax()
    heightEdit->setMaximum(Screen_Para.Base_Para.Height);
 }
 
-void Carea::updateRect(QRect &rect)
+void Carea::updateRect(QRect &rect, int sdWidth)
 {
     disconnect(xEdit, SIGNAL(valueChanged(int)), this, SLOT(xEdited()));
     disconnect(yEdit, SIGNAL(valueChanged(int)), this, SLOT(yEdited()));
     disconnect(widthEdit, SIGNAL(valueChanged(int)), this, SLOT(xLenEdited()));
     disconnect(heightEdit, SIGNAL(valueChanged(int)), this, SLOT(yLenEdited()));
 
-    xEdit->setValue((rect.x()));
-    yEdit->setValue((rect.y()));
-    widthEdit->setValue((rect.width()));
-    heightEdit->setValue((rect.height()));
+    xEdit->setValue((rect.x() / sdWidth));
+    yEdit->setValue((rect.y()) / sdWidth);
+    widthEdit->setValue((rect.width()) / sdWidth);
+    heightEdit->setValue((rect.height()) / sdWidth);
 
     connect(xEdit, SIGNAL(valueChanged(int)), this, SLOT(xEdited()));
     connect(yEdit, SIGNAL(valueChanged(int)), this, SLOT(yEdited()));
@@ -136,9 +136,15 @@ void Carea::xEdited()
     QTreeWidgetItem *item;
     QString str;
 
-    if(xEdit->value() + widthEdit->value() > w->screenArea->width())
+    int sdWidth;
+    sdWidth = w->screenArea->spaceWidth + w->screenArea->dotWidth;
+
+    if(sdWidth == 0)
+        sdWidth = 1;
+
+    if(xEdit->value() + widthEdit->value() > w->screenArea->width() / sdWidth)
     {
-        x = w->screenArea->width() - widthEdit->value();
+        x = w->screenArea->width() / sdWidth - widthEdit->value();
         xEdit->setValue((x));
     }
     else
@@ -155,7 +161,9 @@ void Carea::xEdited()
     settings.endGroup();
 
     area = w->screenArea->getFocusArea(); //当前点中的分区
-    area->move(x, yEdit->value());
+
+    //int sdWidth = w->screenArea->spaceWidth + w->screenArea->dotWidth;
+    area->move(x * sdWidth, yEdit->value() * sdWidth);
 }
 
 void Carea::yEdited()
@@ -165,9 +173,15 @@ void Carea::yEdited()
     QTreeWidgetItem *item;
     QString str;
 
-    if(yEdit->value() + heightEdit->value() > w->screenArea->height())
+    int sdWidth;
+    sdWidth = w->screenArea->spaceWidth + w->screenArea->dotWidth;
+
+    if(sdWidth == 0)
+        sdWidth = 1;
+
+    if(yEdit->value() + heightEdit->value() > w->screenArea->height() / sdWidth)
     {
-        y = w->screenArea->height() - heightEdit->value();
+        y = w->screenArea->height() / sdWidth - heightEdit->value();
         yEdit->setValue((y));
     }
     else
@@ -184,7 +198,8 @@ void Carea::yEdited()
     settings.endGroup();
 
     area = w->screenArea->getFocusArea(); //当前点中的分区
-    area->move(xEdit->value(), y);
+    //int sdWidth = w->screenArea->spaceWidth + w->screenArea->dotWidth;
+    area->move(xEdit->value()* sdWidth, y* sdWidth);
 }
 
 void Carea::xLenEdited()
@@ -194,9 +209,15 @@ void Carea::xLenEdited()
     QTreeWidgetItem *item;
     QString str;
 
-    if(xEdit->value() + widthEdit->value() > w->screenArea->width())
+    int sdWidth;
+    sdWidth = w->screenArea->spaceWidth + w->screenArea->dotWidth;
+
+    if(sdWidth == 0)
+        sdWidth = 1;
+
+    if(xEdit->value() + widthEdit->value() > w->screenArea->width() / sdWidth)
     {
-        width = w->screenArea->width() - xEdit->value();
+        width = w->screenArea->width() / sdWidth - xEdit->value();
         widthEdit->setValue((width));
     }
     else
@@ -215,7 +236,8 @@ void Carea::xLenEdited()
     area = w->screenArea->getFocusArea(); //当前点中的分区
     //area->move(xEdit, yEdit->value());
     area->updateFlag = 1;
-    area->resize(width, heightEdit->value());
+    //int sdWidth = w->screenArea->spaceWidth + w->screenArea->dotWidth;
+    area->resize(width *sdWidth, heightEdit->value()* sdWidth);
 }
 
 void Carea::yLenEdited()
@@ -225,9 +247,16 @@ void Carea::yLenEdited()
     QTreeWidgetItem *item;
     QString str;
 
-    if(yEdit->value() + heightEdit->value() > w->screenArea->height())
+    int sdWidth;
+    sdWidth = w->screenArea->spaceWidth + w->screenArea->dotWidth;
+
+    if(sdWidth == 0)
+        sdWidth = 1;
+
+
+    if(yEdit->value() + heightEdit->value() > w->screenArea->height() / sdWidth)
     {
-        height = w->screenArea->height() - yEdit->value();
+        height = w->screenArea->height() / sdWidth - yEdit->value();
         heightEdit->setValue((height));
     }
     else
@@ -245,7 +274,10 @@ void Carea::yLenEdited()
 
     area = w->screenArea->getFocusArea(); //当前点中的分区
     area->updateFlag = 1;
-    area->resize(widthEdit->value(), height);
+
+    //int sdWidth = w->screenArea->spaceWidth + w->screenArea->dotWidth;
+
+    area->resize(widthEdit->value()*sdWidth , height* sdWidth);
 }
 
 Carea::~Carea()
@@ -256,7 +288,6 @@ Carea::~Carea()
 
 void Carea::getSettingsFromWidget(QString str)
 {
-    return;
     settings.beginGroup(str);
     //settings.setValue("name", nameEdit->value());
     settings.setValue("x", xEdit->value());

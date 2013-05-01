@@ -1008,9 +1008,15 @@ QTextEdit *TextEdit::getEdit()
 void TextEdit::showInit()
 {
     CshowArea *area;
+    int sdWidth;
+
 
     //qDebug("propertyEdited");
     area = w->screenArea->getFocusArea(); //当前焦点分区
+    sdWidth = area->spaceWidth + area->dotWidth;
+    if(sdWidth EQ 0)
+        sdWidth = 1;
+
     if(area != (CshowArea *)0)
     {
         //connect(textEdit, SIGNAL(textChanged()), this, SLOT(edit())); //文本发生变化则触发事件
@@ -1022,7 +1028,7 @@ void TextEdit::showInit()
         else
           borderHeight = 0;
 
-        textEdit->setLineWrapColumnOrWidth(area->width() - borderHeight*2 + TEXT_LEFT_BORDER_WIDTH + TEXT_RIGHT_BORDER_WIDTH);
+        textEdit->setLineWrapColumnOrWidth(area->width() / sdWidth - borderHeight*2 + TEXT_LEFT_BORDER_WIDTH + TEXT_RIGHT_BORDER_WIDTH);
 
         int mode;
         if(smLineCombo->currentIndex() == 0)
@@ -1034,12 +1040,12 @@ void TextEdit::showInit()
         if(editMode EQ 0)
         {
             int lineNum;
-            QImage image = getTextImage(area->width() - borderHeight*2, textEdit->toHtml(), &lineNum, linePosi);
-            pageNum = getTextPageNum(mode, MOVE_NORMAL, image.height(), area->width() - borderHeight*2, area->height() - borderHeight*2, lineNum, linePosi, pagePosi);
+            QImage image = getTextImage(area->width() / sdWidth - borderHeight*2, textEdit->toHtml(), &lineNum, linePosi);
+            pageNum = getTextPageNum(mode, MOVE_NORMAL, image.height(), area->width() / sdWidth - borderHeight*2, area->height() / sdWidth - borderHeight*2, lineNum, linePosi, pagePosi);
         }
         else
         {
-            getTableImage(area->width() - borderHeight*2, area->height() - borderHeight*2, textEdit->toHtml(), &pageNum);
+            getTableImage(area->width() / sdWidth - borderHeight*2, area->height() / sdWidth - borderHeight*2, textEdit->toHtml(), &pageNum);
 
         }
         //int pageNum = getTextImagePageNum(mode,area->width(),area->height(),textEdit->toHtml(), linePosi);
@@ -1061,11 +1067,16 @@ void TextEdit::showInit()
 void TextEdit::edit()
 {
     CshowArea *area;
+    int sdWidth;
 
   QString str = w->screenArea->getCurrentFileStr();//getCurrentStr
   //setSettingsToWidget(str);
   getSettingsFromWidget(str);
   area = w->screenArea->getFocusArea();
+
+  sdWidth = area->spaceWidth + area->dotWidth;
+  if(sdWidth EQ 0)
+      sdWidth = 1;
 
   if(smLineCombo->currentIndex() == 0) {
       area->smLineFlag = SLINE_MODE;
@@ -1087,22 +1098,22 @@ void TextEdit::edit()
   {
       if(area->moveFlag != MOVE_LEFT_CONTINUOUS) //不是连续左移
       {
-          QImage image = getTextImage(area->width() - borderHeight*2, area->picStr, &lineNum, linePosi);
-          pageNum = getTextPageNum(area->smLineFlag, area->moveFlag, image.height(), area->width() - borderHeight*2, area->height() - borderHeight*2, lineNum, linePosi, pagePosi);
+          QImage image = getTextImage(area->width() / sdWidth - borderHeight*2, area->picStr, &lineNum, linePosi);
+          pageNum = getTextPageNum(area->smLineFlag, area->moveFlag, image.height(), area->width() / sdWidth - borderHeight*2, area->height() / sdWidth - borderHeight*2, lineNum, linePosi, pagePosi);
           //int pageNum = getTextImagePageNum(area->smLineFlag, area->width(),area->height(),area->picStr, linePosi);
 
 
       }
       else //连续左移
       {
-          pageNum = getSLineTextPageNum(area->picStr, area->width() - borderHeight*2);
+          pageNum = getSLineTextPageNum(area->picStr, area->width()  / sdWidth- borderHeight*2);
         //getSLineTextImage(area->picStr, area->width(),area->height());
 
       }
   }
   else //表格编辑方式
   {
-    getTableImage(area->width() - borderHeight*2, area->height() - borderHeight*2, area->picStr, &pageNum);
+    getTableImage(area->width()  / sdWidth - borderHeight*2, area->height() / sdWidth - borderHeight*2, area->picStr, &pageNum);
 
   }
 

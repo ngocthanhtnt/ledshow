@@ -387,6 +387,8 @@ void MainWindow::actionEnProc(int Type)
     property->setEnabled(false);
     ctrlMenu->setEnabled(false);
     actionPreview->setEnabled(false);
+    actionLarge->setEnabled(false);
+    actionSmall->setEnabled(false);
     actionModiScreenPara->setEnabled(false);
     actionUpdateFirmware->setEnabled(false);
     actionUDisk->setEnabled(false);
@@ -395,6 +397,8 @@ void MainWindow::actionEnProc(int Type)
     actionLightness->setEnabled(false);
     actionOpenClose->setEnabled(false);
     actionPreview->setEnabled(false);
+    actionLarge->setEnabled(false);
+    actionSmall->setEnabled(false);
     actionScreenPreiew->setEnabled(false);
 
     actionScreen->setEnabled(true);
@@ -431,6 +435,8 @@ void MainWindow::actionEnProc(int Type)
       actionOpenClose->setEnabled(true);
       actionPreview->setEnabled(false);
       actionScreenPreiew->setEnabled(true);
+      actionLarge->setEnabled(true);
+      actionSmall->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -464,6 +470,8 @@ void MainWindow::actionEnProc(int Type)
       actionOpenClose->setEnabled(true);
       actionPreview->setEnabled(true);
       actionScreenPreiew->setEnabled(true);
+      actionLarge->setEnabled(true);
+      actionSmall->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -497,6 +505,8 @@ void MainWindow::actionEnProc(int Type)
       actionOpenClose->setEnabled(true);
       actionPreview->setEnabled(true);
       actionScreenPreiew->setEnabled(true);
+      actionLarge->setEnabled(true);
+      actionSmall->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -531,6 +541,8 @@ void MainWindow::actionEnProc(int Type)
       actionOpenClose->setEnabled(true);
       actionPreview->setEnabled(true);
       actionScreenPreiew->setEnabled(true);
+      actionLarge->setEnabled(true);
+      actionSmall->setEnabled(true);
 
       actionScreen->setEnabled(true);
       actionProg->setEnabled(true);
@@ -645,6 +657,23 @@ void MainWindow::setupCtrlActions()
     a->setCheckable(true);
     connect(a, SIGNAL(triggered()), this, SLOT(comStatusShow()));
     //tb->addAction(a);
+    menu->addAction(a);
+    menu->addSeparator();
+
+    QIcon largeIcon = QIcon::fromTheme("放大", QIcon(rsrcPath1 + tr("/放大.png")));
+    actionLarge = a = new QAction(largeIcon, tr("放大"), this);
+    a->setPriority(QAction::LowPriority);
+    //a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(largeScreen()));
+    tb->addAction(a);
+    menu->addAction(a);
+
+    QIcon smallIcon = QIcon::fromTheme("缩小", QIcon(rsrcPath1 + tr("/缩小.png")));
+    actionSmall = a = new QAction(smallIcon, tr("缩小"), this);
+    a->setPriority(QAction::LowPriority);
+    //a->setShortcut(QKeySequence::New);
+    connect(a, SIGNAL(triggered()), this, SLOT(smallScreen()));
+    tb->addAction(a);
     menu->addAction(a);
     menu->addSeparator();
 
@@ -1325,6 +1354,20 @@ void MainWindow::previewProg()
   preview(PREVIEW_PROG);
 }
 
+//放大屏幕
+void MainWindow::largeScreen()
+{
+  w->screenArea->enLarge();
+
+}
+
+//缩小屏幕
+void MainWindow::smallScreen()
+{
+  w->screenArea->enSmall();
+
+}
+
 //预览当前屏幕下的所有节目
 void MainWindow::previewScreen()
 {
@@ -1336,7 +1379,7 @@ void MainWindow::preview(INT8U previewMode)
 {
   QString screenStr;//progStr;
   INT8U Screen_No,re;
-
+  int sdWidth;
 
   if(w->comStatus->comThread->isRunning())//当前线程还在运行
       return;
@@ -1380,6 +1423,10 @@ void MainWindow::preview(INT8U previewMode)
   timerFlag = 0;
   stepTimer = 0;
 
+  sdWidth = screenArea->spaceWidth + screenArea->dotWidth;
+  if(sdWidth EQ 0)
+      sdWidth = 1;
+
   //previewWin = new CpreviewWin(w);//new QMainWindow(w);
  if(QT_SIM_EN EQ 0)
    previewWin->setWindowModality(Qt::WindowModal);
@@ -1389,9 +1436,11 @@ void MainWindow::preview(INT8U previewMode)
   previewArea->setWindowModality(Qt::WindowModal);
   */
 
+  previewArea->spaceWidth = screenArea->spaceWidth;
+  previewArea->dotWidth = screenArea->dotWidth;
   //previewArea->setGeometry(0,0,Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height); //resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
   //previewArea->setFixedSize(previewArea->size());
-  previewArea->setFixedSize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
+  previewArea->setFixedSize(Screen_Para.Base_Para.Width * sdWidth, Screen_Para.Base_Para.Height * sdWidth);
   //previewWin->resize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);
   previewWin->setFixedSize(previewWin->sizeHint());
   //previewArea->setFixedSize(Screen_Para.Base_Para.Width, Screen_Para.Base_Para.Height);

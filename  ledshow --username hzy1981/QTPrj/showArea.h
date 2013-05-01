@@ -41,7 +41,7 @@
 #define DEF_SCN_HEIGHT 64
 #define DEF_SCN_COLOR  0x01
 
-class CshowArea:public QWidget
+class CshowArea:public QLabel
 {
     Q_OBJECT
 private:
@@ -82,6 +82,9 @@ public:
     //S_Show_Data showDataBak;
     QImage imageBk;
 
+    QImage imageBG; //背景image
+    QPixmap pixmapBG;
+
     INT8U txtData[500];
 
     //-----------图文参数----------//
@@ -110,12 +113,27 @@ public:
 
     //int getWidth();
     //int getHeight();
+    int spaceWidth;// = 1;
+    int dotWidth;// = 2;
+    //int sdWidth;
 
     void draw_point(int x,int y, int value);
     void clrShowData();
     void setAreaType(int type);
     CshowArea(QWidget *parent = 0, int i = 0);
     ~CshowArea();
+};
+
+class CMdiSubWindow:public QMdiSubWindow
+{
+        Q_OBJECT
+protected:
+    void closeEvent(QCloseEvent *closeEvent);
+public:
+    int previewFlag;
+
+    CMdiSubWindow(QWidget *parent = 0);
+    ~CMdiSubWindow();
 };
 
 class CscreenArea:public CshowArea
@@ -128,6 +146,7 @@ private:
 
 
 public:
+    CMdiSubWindow *parentWin;
 
     CshowArea *pArea[MAX_AREA_NUM];
     //U_File_Para File_Para[MAX_AREA_NUM]; //当前分区的文件参数，更换文件时刷新之
@@ -146,6 +165,8 @@ public:
     void setFocusArea(CshowArea *area);
 
     void progChangedProc(QString settingsStr);
+    void enLarge();
+    void enSmall();
 
     //int setOneAreaVisible(QString settingsStr);
     void setAreaVisible(int index, bool flag);
@@ -156,18 +177,6 @@ public:
     CscreenArea(QWidget *parent = 0, INT16U width = DEF_SCN_WIDTH, INT16U height = DEF_SCN_HEIGHT, INT8U color = DEF_SCN_COLOR);
     ~CscreenArea();
 
-};
-
-class CMdiSubWindow:public QMdiSubWindow
-{
-        Q_OBJECT
-protected:
-    void closeEvent(QCloseEvent *closeEvent);
-public:
-    int previewFlag;
-
-    CMdiSubWindow(QWidget *parent = 0);
-    ~CMdiSubWindow();
 };
 
 class CpreviewWin:public QMainWindow

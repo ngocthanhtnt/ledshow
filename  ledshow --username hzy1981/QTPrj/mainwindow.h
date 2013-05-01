@@ -105,6 +105,8 @@ private:
     QAction *actionTimer;
     QAction *actionDel;
     QAction *actionPreview;
+    QAction *actionLarge;
+    QAction *actionSmall;
     QAction *actionScreenPreiew;
     QAction *actionTestCard;
     QAction *actionDownloadZK; //下载字库
@@ -132,6 +134,8 @@ public slots:
     void previewScreen();
     void previewProg();
     void previewProc();
+    void largeScreen(); //放大屏幕
+    void smallScreen(); //缩小屏幕
     void previewTimerProc();
     void comStatusShow();
     void testCard(); //测试控制卡
