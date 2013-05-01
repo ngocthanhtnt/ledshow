@@ -320,7 +320,7 @@ void CprogManage::updateTextHead(QTreeWidgetItem *parent)
     }
 }
 
-CMdiSubWindow * _newScreen(QString name, int x, int y, INT16U width, INT16U height ,INT8U color)
+CMdiSubWindow * _newScreen(QString name, int x, int y, INT16U width, INT16U height , INT8U spaceWidth, INT8U dotWidth, INT8U color)
 {
 
     //--------------
@@ -330,12 +330,21 @@ CMdiSubWindow * _newScreen(QString name, int x, int y, INT16U width, INT16U heig
 
     w->screenArea =  new CscreenArea(subWin, width, height, color);
 
+    w->screenArea->parentWin = subWin;
     w->screenArea->screenPara.Base_Para.Width = width;
     w->screenArea->screenPara.Base_Para.Height = height;
     w->screenArea->screenPara.Base_Para.Color = color;
 
+    w->screenArea->dotWidth = dotWidth;
+    w->screenArea->spaceWidth = spaceWidth;
+    w->screenArea->setFixedSize(width * (dotWidth + spaceWidth), height * (dotWidth + spaceWidth));
+
     for(int i =0; i<MAX_AREA_NUM;i++)
+    {
         w->screenArea->pArea[i]->screenPara.Base_Para.Color = color;
+        w->screenArea->pArea[i]->dotWidth = dotWidth;
+        w->screenArea->pArea[i]->spaceWidth = spaceWidth;
+    }
     //w->screenArea->setGeometry(10,10,Screen_Para.Base_Para.Width+8, Screen_Para.Base_Para.Height+34);
     subWin->setWidget(w->screenArea);
     //subWin->setAttribute(Qt::WA_DeleteOnClose);
@@ -391,6 +400,8 @@ void CprogManage::newScreen()
     settings.beginGroup(fixWidthNumber(max));
     settings.setValue("screenIndex", 1);//value("screenIndex").toString()
     settings.setValue("checkState", true);
+    settings.setValue("spaceWidth", 1);
+    settings.setValue("dotWidth", 2);
     settings.endGroup();
     settings.endGroup();
 
@@ -406,7 +417,7 @@ void CprogManage::newScreen()
     treeWidget->addTopLevelItem(item);
 
     /*CMdiSubWindow * subWin =*/
-    _newScreen(QString::number(size + 1) + tr("屏幕"), 0, 0, DEF_SCN_WIDTH, DEF_SCN_HEIGHT, DEF_SCN_COLOR);
+    _newScreen(QString::number(size + 1) + tr("屏幕"), 0, 0, DEF_SCN_WIDTH, DEF_SCN_HEIGHT,1, 2, DEF_SCN_COLOR);
     w->screenArea->screenItem = item;
 
     w->progManage->treeWidget->setCurrentItem(item);
@@ -1303,7 +1314,7 @@ void CprogManage::itemCheckStateChangedProc(QTreeWidgetItem *item, int column)
 //progManage中的treeWidget的初始化,根据settings进行初始化
 void CprogManage::settingsInit()
 {
-    int screenSize, progSize, fileSize;
+    int screenSize, progSize, fileSize, dotWidth, spaceWidth;
     QStringList screenGroups, progGroups, areaGroups, fileGroups;
     S_Screen_Para screenPara;
     bool checkState;
@@ -1329,6 +1340,12 @@ void CprogManage::settingsInit()
 
         settings.beginGroup(screenGroups.at(m));
         checkState = settings.value("checkState").toBool();
+
+        dotWidth = settings.value("dotWidth").toInt();
+        spaceWidth = settings.value("spaceWidth").toInt();
+        if(dotWidth EQ 0)
+            dotWidth = 1;
+
         settings.beginGroup("facPara");
         screenPara.Base_Para.Width = settings.value("width").toInt();
         screenPara.Base_Para.Height = settings.value("height").toInt();
@@ -1383,7 +1400,7 @@ void CprogManage::settingsInit()
         /*CMdiSubWindow * subWin = */    
         settings.endGroup();
         //screenItem->setData(0, Qt::UserRole, screenStr);
-        _newScreen(QString::number(m + 1) + tr("屏幕"), m*50, m*50, screenPara.Base_Para.Width, screenPara.Base_Para.Height, screenPara.Base_Para.Color);
+        _newScreen(QString::number(m + 1) + tr("屏幕"), m*50, m*50, screenPara.Base_Para.Width, screenPara.Base_Para.Height, spaceWidth, dotWidth, screenPara.Base_Para.Color);
 
 
         w->screenArea->screenItem = screenItem;

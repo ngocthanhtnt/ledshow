@@ -96,7 +96,7 @@ void resetCardtoCardParaFile()
   cardIniFile.endGroup();
 
   cardIniFile.beginGroup(QString(COMPANY_NAME) + "-CU1");
-  cardIniFile.setValue("maxPoints", 1472*64);
+  cardIniFile.setValue("maxPoints", 1440*64);
   cardIniFile.setValue("flag", 0);
   cardIniFile.setValue("maxHeight", 128);
   cardIniFile.setValue("maxAreaNum", 6);

@@ -149,9 +149,13 @@ CscreenArea::CscreenArea(QWidget *parent, INT16U width, INT16U height, INT8U col
     screenPara.Base_Para.Height = yLen = height;//Screen_Para.Base_Para.Height;
     screenPara.Base_Para.Color = color = color;//Screen_Para.Base_Para.Color;
 
-    resize(xLen, yLen);
+    int sdWidth = spaceWidth + dotWidth;
+    if(sdWidth EQ 0)
+        sdWidth = 1;
 
-    setFixedSize(xLen, yLen);
+    resize(xLen * sdWidth, yLen * sdWidth);
+
+    setFixedSize(xLen * sdWidth, yLen * sdWidth);
     //settings.endGroup();
     setAreaType(0);
 }
@@ -163,11 +167,14 @@ void CscreenArea::screenSettingsInit(QTreeWidgetItem *item)
     QStringList progGroups;
     QString progStr;
     QString str;
+    //int spaceWidth,dotWidth;
 
     str = item->data(0, Qt::UserRole).toString();
 
    settings.beginGroup(str);
    subIndex = settings.value("subIndex").toInt(); //当前子节目
+   //spaceWidth = settings.value("spaceWidth").toInt();
+   //dotWidth = settings.value("dotWidth").toInt();
    settings.endGroup();
 
    settings.beginGroup(str + "/program/");
@@ -318,6 +325,16 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
 
     if(index < MAX_AREA_NUM)
     {
+        int sdWidth;
+
+        if(dotWidth EQ 0)
+            dotWidth = 1;
+
+        pArea[index]->spaceWidth = spaceWidth;
+        pArea[index]->dotWidth = dotWidth;
+
+        sdWidth = spaceWidth + dotWidth;
+
         pArea[index] -> setVisible(1);
         pArea[index]->areaItem = item; //背景区域对应该项
         pArea[index]->fileItem = (QTreeWidgetItem *)0; //还没有绑定一个文件
@@ -325,8 +342,8 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
         pArea[index]->filePara.Time_Para.Flag = 0;
 
         w->screenArea->setFocusArea(pArea[index]);
-        pArea[index]->move(x, y);
-        pArea[index]->resize(xLen,yLen);
+        pArea[index]->move(x * sdWidth, y * sdWidth);
+        pArea[index]->resize(xLen * sdWidth ,yLen *sdWidth);
 
         memset(pArea[index]->showData.Color_Data, 0, sizeof(pArea[index]->showData.Color_Data));
         //Clear_Area_Data(&(pArea[index]->showData), 0);
@@ -632,7 +649,7 @@ void CscreenArea::updateShowArea(QTreeWidgetItem *item)
 }
 
 //分区的初始化函数
-CshowArea::CshowArea(QWidget *parent, int colorFlag):QWidget(parent)
+CshowArea::CshowArea(QWidget *parent, int colorFlag):QLabel(parent)
 {
     memset(&screenPara, 0, sizeof(screenPara));
     memset(&progPara, 0, sizeof(progPara));
@@ -675,6 +692,9 @@ CshowArea::CshowArea(QWidget *parent, int colorFlag):QWidget(parent)
     fileItem = (QTreeWidgetItem *)0;
     areaItem = (QTreeWidgetItem *)0;
     screenItem = (QTreeWidgetItem *)0;
+
+    spaceWidth = 1;
+    dotWidth = 2;
 
     previewFlag = 0; //不是预览窗口
 
@@ -796,6 +816,11 @@ void CshowArea::mouseReleaseEvent(QMouseEvent *event)
 
     int x,y,width,height;
     QString str;
+    int sdWidth;
+
+    sdWidth = this->spaceWidth + this->dotWidth;
+    if(sdWidth EQ 0)
+        sdWidth = 1;
 
     mousePressed = false; //鼠标松开
     setCursor(Qt::ArrowCursor);
@@ -812,10 +837,10 @@ void CshowArea::mouseReleaseEvent(QMouseEvent *event)
         {
             str = areaItem->data(0, Qt::UserRole).toString();
             settings.beginGroup(str);
-            settings.setValue("x", x);
-            settings.setValue("y", y);
-            settings.setValue("width", width);
-            settings.setValue("height", height);
+            settings.setValue("x", x / sdWidth);
+            settings.setValue("y", y / sdWidth);
+            settings.setValue("width", width / sdWidth);
+            settings.setValue("height", height / sdWidth);
             settings.endGroup();
         }
     }
@@ -824,13 +849,13 @@ void CshowArea::mouseReleaseEvent(QMouseEvent *event)
 
 void CshowArea::mouseMoveEvent(QMouseEvent *event)
 {
-    QPoint point = pos();
+    QPoint point;// = pos();
     int width,height;
     QRect rect, rect1,rect2;
     int x,y;
     int x0,y0;
     int x1,y1;
-
+    //int xNew,yNew,wNew,hNew;
 
     if(areaType EQ 0)
         return;
@@ -843,6 +868,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
       return;
     }
 
+    point = pos();
     x0 = event->x();
     y0 = event->y();
 
@@ -850,6 +876,14 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
     y1 = this->height();
 
     rect2 = parentWidget()->geometry();
+
+    int sdWidth = spaceWidth + dotWidth;
+    if(sdWidth == 0)
+        sdWidth = 1;
+
+    int minArea = sdWidth * MIN_AREA;
+
+    //return;
 
 /*
     qDebug("gloabal pos x = %d, y = %d, frame toleft x= %d, y = %d",
@@ -939,6 +973,8 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
             if(posi.y() + this->height() > rect2.height())
                 posi.setY(rect2.height() - this->height());
 
+            posi.setX(posi.x() / sdWidth * sdWidth);
+            posi.setY(posi.y() / sdWidth * sdWidth);
             move(posi);
 
         }
@@ -954,9 +990,9 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
             width = oldSize.width() + event->globalPos().x() - dragPosition.x();
 
         updateFlag = true;
-        if(width < MIN_AREA)
-            width = MIN_AREA;
-        resize(width, oldSize.height());
+        if(width < minArea)
+            width = minArea;
+        resize(width / sdWidth * sdWidth, oldSize.height() / sdWidth * sdWidth);
     }
     else if(dragFlag == DRAG_RD)//右下拉伸
     {
@@ -971,14 +1007,14 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         else
             height = oldSize.height() + event->globalPos().y() - dragPosition.y();
 
-        if(width < MIN_AREA)
-            width = MIN_AREA;
+        if(width < minArea)
+            width = minArea;
 
-        if(height < MIN_AREA)
-            height = MIN_AREA;
+        if(height < minArea)
+            height = minArea;
 
         updateFlag = true;
-        resize(width,height);
+        resize(width / sdWidth * sdWidth,height / sdWidth * sdWidth);
     }
     else if(dragFlag == DRAG_RU) //右上
     {
@@ -987,10 +1023,10 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
            y = 0;
            height = framePosition.y() + oldSize.height();
         }
-        else if(event->globalPos().y() - dragPosition.y() > oldSize.height() - MIN_AREA)
+        else if(event->globalPos().y() - dragPosition.y() > oldSize.height() - minArea)
         {
-           y = framePosition.y() +oldSize.height() - MIN_AREA;
-           height = MIN_AREA;
+           y = framePosition.y() +oldSize.height() - minArea;
+           height = minArea;
         }
         else
         {
@@ -1006,14 +1042,14 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
 
         updateFlag = true;
 
-        if(width < MIN_AREA)
-            width = MIN_AREA;
+        if(width < minArea)
+            width = minArea;
 
-        if(height < MIN_AREA)
-            height = MIN_AREA;
+        if(height < minArea)
+            height = minArea;
 
-        move(framePosition.x(),y);
-        resize(width, height);
+        move(framePosition.x() / sdWidth * sdWidth, y / sdWidth * sdWidth);
+        resize(width / sdWidth * sdWidth, height / sdWidth * sdWidth);
     }
     else if(dragFlag == DRAG_D) //垂直向下拉伸
     {
@@ -1024,9 +1060,9 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
           height = rect2.height() - framePosition.y();
 
         updateFlag = true;
-        if(height < MIN_AREA)
-            height = MIN_AREA;
-        resize(oldSize.width(), height);
+        if(height < minArea)
+            height = minArea;
+        resize(oldSize.width() / sdWidth * sdWidth, height / sdWidth * sdWidth);
     }
     else if(dragFlag == DRAG_U) //垂直向上拉伸
     {
@@ -1042,10 +1078,10 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         }
 
         updateFlag = true;
-        if(height < MIN_AREA)
-            height = MIN_AREA;
-        move(framePosition.x(),y);
-        resize(oldSize.width(), height);
+        if(height < minArea)
+            height = minArea;
+        move(framePosition.x() / sdWidth * sdWidth,y / sdWidth * sdWidth);
+        resize(oldSize.width() / sdWidth * sdWidth, height / sdWidth *sdWidth);
     }
     else if(dragFlag == DRAG_L) //左
     {
@@ -1054,10 +1090,10 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
            x = 0;
            width = framePosition.x() + oldSize.width();
         }
-        else if(event->globalPos().x() - dragPosition.x() > oldSize.width() - MIN_AREA)
+        else if(event->globalPos().x() - dragPosition.x() > oldSize.width() - minArea)
         {
-           x = framePosition.x() + oldSize.width()-MIN_AREA;
-           width = MIN_AREA;
+           x = framePosition.x() + oldSize.width()-minArea;
+           width = minArea;
         }
         else
         {
@@ -1066,12 +1102,12 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
        }
 
         updateFlag = true;
-        //if(width < MIN_AREA)
-            //width = MIN_AREA;
+        //if(width < minArea)
+            //width = minArea;
 
         //setGeometry(x,framePosition.y(),width,oldSize.height());
-        move(x,framePosition.y());
-        resize(width, oldSize.height());
+        move(x / sdWidth * sdWidth,framePosition.y() / sdWidth * sdWidth);
+        resize(width / sdWidth * sdWidth, oldSize.height() / sdWidth * sdWidth);
 
         //qDebug("old x = %d, width = %d, new x = %d, width = %d",framePosition.x(), oldSize.width(), x, width);
 
@@ -1083,10 +1119,10 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
            x = 0;
            width = framePosition.x() + oldSize.width();
         }
-        else if(event->globalPos().x() - dragPosition.x() > oldSize.width() - MIN_AREA)
+        else if(event->globalPos().x() - dragPosition.x() > oldSize.width() - minArea)
         {
-           x = framePosition.x() + oldSize.width()-MIN_AREA;
-           width = MIN_AREA;
+           x = framePosition.x() + oldSize.width()-minArea;
+           width = minArea;
         }
         else
         {
@@ -1100,13 +1136,13 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
           height = rect2.height() - framePosition.y();
 
         updateFlag = true;
-        if(width < MIN_AREA)
-            width = MIN_AREA;
+        if(width < minArea)
+            width = minArea;
 
-        if(height < MIN_AREA)
-            height = MIN_AREA;
-        move(x, framePosition.y());
-        resize(width,height);
+        if(height < minArea)
+            height = minArea;
+        move(x / sdWidth * sdWidth, framePosition.y() / sdWidth * sdWidth);
+        resize(width / sdWidth * sdWidth, height / sdWidth * sdWidth);
     }
     else if(dragFlag == DRAG_LU) //左上
     {
@@ -1116,10 +1152,10 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
            x = 0;
            width = framePosition.x() + oldSize.width();
         }
-        else if(event->globalPos().x() - dragPosition.x() > oldSize.width() - MIN_AREA)
+        else if(event->globalPos().x() - dragPosition.x() > oldSize.width() - minArea)
         {
-           x = framePosition.x() + oldSize.width()-MIN_AREA;
-           width = MIN_AREA;
+           x = framePosition.x() + oldSize.width()-minArea;
+           width = minArea;
         }
         else
         {
@@ -1132,10 +1168,10 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
            y = 0;
            height = framePosition.y() + oldSize.height();
         }
-        else if(event->globalPos().y() - dragPosition.y() > oldSize.height() - MIN_AREA)
+        else if(event->globalPos().y() - dragPosition.y() > oldSize.height() - minArea)
         {
-           y = framePosition.y() +oldSize.height() - MIN_AREA;
-           height = MIN_AREA;
+           y = framePosition.y() +oldSize.height() - minArea;
+           height = minArea;
         }
         else
         {
@@ -1144,13 +1180,13 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
         }
 
         updateFlag = true;
-        if(width < MIN_AREA)
-            width = MIN_AREA;
+        if(width < minArea)
+            width = minArea;
 
-        if(height < MIN_AREA)
-            height = MIN_AREA;
-        move(x,y);
-        resize(width,height);
+        if(height < minArea)
+            height = minArea;
+        move(x / sdWidth * sdWidth, y / sdWidth * sdWidth);
+        resize(width / sdWidth * sdWidth,height / sdWidth * sdWidth);
     }
     event->accept();
 
@@ -1159,7 +1195,7 @@ void CshowArea::mouseMoveEvent(QMouseEvent *event)
 
     //更新当前显示的property的分区大小数据
     if(w->property->area != (Carea *)0) {
-        w->property->area->updateRect(rect1);
+        w->property->area->updateRect(rect1, sdWidth);
     }
 
     //rect1 = geometry();
@@ -1180,6 +1216,20 @@ void CshowArea::paintEvent(QPaintEvent *)
     S_Prog_Para Prog_Para_Bak;
     int borderHeight = 0;
 
+    int sdWidth = this->spaceWidth + this->dotWidth;
+    if(sdWidth EQ 0)
+        sdWidth = 1;
+    //imageBG = QImage(geometry().width(), geometry().height(),QImage::Format_ARGB32);
+    //pixmapBG = QPixmap();
+
+    //imageBG.fill(QColor("black").rgb());
+    //imageBG.save("e:\\bg.png");
+    //pixmapBG.convertFromImage(imageBG);
+    //label=newQLabel(this);
+    //label->setGeometry(100,0,1000,700);
+    //painter.begin(this);
+    //painter.drawImage(0,0, imageBG);
+    //painter.end();
     //return;
 
     saveScreenPara(Screen_Para_Bak);
@@ -1187,14 +1237,14 @@ void CshowArea::paintEvent(QPaintEvent *)
 
     //screenPara.Base_Para.Color = Screen_Para.Base_Para.Color;//分区的颜色应该和屏幕颜色保持一致.修改屏幕参数时不会刷新分区颜色
 
-    resetShowPara(geometry().width(), geometry().height(), screenPara.Base_Para.Color);
+    resetShowPara(geometry().width() / sdWidth, geometry().height() / sdWidth, screenPara.Base_Para.Color);
     Calc_Screen_Color_Num();
     painter.begin(this);
 
     color =getColor();
 
-    Width = width();
-    Height = height();
+    Width = width() / sdWidth;
+    Height = height() / sdWidth;
 
     if(areaType != 0)//0表示是分区
     {
@@ -1491,11 +1541,19 @@ void CshowArea::paintEvent(QPaintEvent *)
               //qDebug("point %d,%d = %d", i, j, colorData);
            if(colorData > 0)
            {
-             painter.setPen(getQColor(colorData));
-             painter.drawPoint(i,j);
+             //painter.setPen(getQColor(colorData));
+             //painter.drawPoint(i,j);
+             //painter.setBrush();
+             painter.fillRect(i *(spaceWidth + dotWidth), j *(spaceWidth + dotWidth), dotWidth, dotWidth, getQColor(colorData));
+             //imageBG.setPixel(i,j,getQColor(colorData).rgba());
+
            }
            else
            {
+               //painter.setPen(QColor(Qt::black));//getQColor(colorData));
+               //painter.drawPoint(i,j);
+               //painter.drawRect(i *(spaceWidth + dotWidth), j *(spaceWidth + dotWidth), dotWidth, dotWidth);
+               //painter.fillRect(i *(spaceWidth + dotWidth), j *(spaceWidth + dotWidth), dotWidth, dotWidth, QColor(Qt::black));
 
            }
            /*
@@ -1571,13 +1629,18 @@ void CshowArea::paintEvent(QPaintEvent *)
 
                 if(colorData > 0)
                 {
-                    painter.setPen(getQColor(colorData));
-                    painter.drawPoint(i,j);
+                    //painter.setPen(getQColor(colorData));
+                    //painter.drawPoint(i,j);
+                   //imageBG.setPixel(i,j,getQColor(colorData).rgba());
+                    painter.fillRect(i *(spaceWidth + dotWidth), j *(spaceWidth + dotWidth), dotWidth, dotWidth, getQColor(colorData));
+
                 }
                 else
                 {
-                    //painter.setPen(QColor(Qt::black));
+                    //painter.setPen(QColor(Qt::black));//getQColor(colorData));
                     //painter.drawPoint(i,j);
+                    //painter.fillRect(i *(spaceWidth + dotWidth), j *(spaceWidth + dotWidth), dotWidth, dotWidth, QColor(Qt::black));
+
                 }
               }
            }
@@ -1591,6 +1654,9 @@ void CshowArea::paintEvent(QPaintEvent *)
 
     //painter.setPen(QColor(Qt::yellow));
     //painter.drawRect(0, 0, geometry().width()-1, geometry().height()-1);
+
+    //painter.begin(this);
+    //painter.drawImage(0,0, imageBG);
     painter.end();
 
     restoreScreenPara(Screen_Para_Bak);
@@ -1620,6 +1686,130 @@ void resetShowPara(int width, int height, int color)
     Prog_Para.Area[0].Y = 0;
     Prog_Para.Area[0].X_Len = width;//geometry().width();
     Prog_Para.Area[0].Y_Len = height;//geometry().height();
+
+}
+
+const int spaceDotWidth[][2] =
+{
+    {0, 1},
+    {0, 2},
+    {1, 2},
+    {1, 3},
+    {1, 4}
+};
+
+void CscreenArea::enLarge()
+{
+  int width,height,x,y,i;
+  int sdWidth;
+
+  if((spaceWidth + dotWidth) EQ 0)
+      dotWidth = 1;
+
+  width = this->width() / (spaceWidth + dotWidth);
+  height = this->height() / (spaceWidth + dotWidth);
+
+  for(i = 0; i < (int)S_NUM(spaceDotWidth); i ++)
+  {
+    if(spaceWidth EQ spaceDotWidth[i][0] &&
+       dotWidth EQ spaceDotWidth[i][1])
+        break;
+  }
+
+  i++;
+  if(i >= (int)S_NUM(spaceDotWidth))
+      i = S_NUM(spaceDotWidth) - 1;
+
+  spaceWidth = spaceDotWidth[i][0];
+  dotWidth = spaceDotWidth[i][1];
+
+  setFixedSize(width * (spaceWidth + dotWidth), height * (spaceWidth + dotWidth));
+  //parentWin->setFixedSize(parentWin->sizeHint());
+  parentWin->setFixedSize(this->width() + 14, this->height() + 37);
+
+  this->update();
+
+  for(int i = 0; i < MAX_AREA_NUM; i ++)
+  {
+    sdWidth = (pArea[i]->spaceWidth + pArea[i]->dotWidth);
+
+    if(sdWidth EQ 0)
+        sdWidth = 1;
+
+    width = pArea[i]->width() / sdWidth;
+    height = pArea[i]->height() / sdWidth;
+    x = pArea[i]->pos().x() / sdWidth;
+    y = pArea[i]->pos().y() / sdWidth;
+
+    pArea[i]->spaceWidth = spaceWidth;
+    pArea[i]->dotWidth = dotWidth;
+
+    pArea[i]->resize(width * (spaceWidth + dotWidth), height * (spaceWidth + dotWidth));
+    pArea[i]->move(x * (spaceWidth + dotWidth), y * (spaceWidth + dotWidth));
+  }
+
+  QString str = w->screenArea->getCurrentScreenStr();
+  settings.beginGroup(str);
+  settings.setValue("spaceWidth", spaceWidth);
+  settings.setValue("dotWidth", dotWidth);;
+  settings.endGroup();
+}
+
+void CscreenArea::enSmall()
+{
+  int width,height,x,y,i;
+
+  if((spaceWidth + dotWidth) EQ 0)
+      dotWidth = 1;
+
+  width = this->width() / (spaceWidth + dotWidth);
+  height = this->height() / (spaceWidth + dotWidth);
+
+  for(i = 0; i < (int)S_NUM(spaceDotWidth); i ++)
+  {
+    if(spaceWidth EQ spaceDotWidth[i][0] &&
+       dotWidth EQ spaceDotWidth[i][1])
+        break;
+  }
+
+  if(i >= (int)S_NUM(spaceDotWidth) || i EQ 0)
+      i = 0;
+  else i--;
+
+  spaceWidth = spaceDotWidth[i][0];
+  dotWidth = spaceDotWidth[i][1];
+
+  setFixedSize(width * (spaceWidth + dotWidth), height * (spaceWidth + dotWidth));
+  //parentWin->setFixedSize(parentWin->sizeHint());
+  parentWin->setFixedSize(this->width() + 14, this->height() + 37);
+
+  this->update();
+
+  //w->mdiArea->activeSubWindow()->resize(parentWin->sizeHint());
+
+  for(int i = 0; i < MAX_AREA_NUM; i ++)
+  {
+    width = pArea[i]->width() / (pArea[i]->spaceWidth + pArea[i]->dotWidth);
+    height = pArea[i]->height() / (pArea[i]->spaceWidth + pArea[i]->dotWidth);
+    x = pArea[i]->pos().x() / (pArea[i]->spaceWidth + pArea[i]->dotWidth);
+    y = pArea[i]->pos().y() / (pArea[i]->spaceWidth + pArea[i]->dotWidth);
+
+    pArea[i]->spaceWidth = spaceWidth;
+    pArea[i]->dotWidth = dotWidth;
+
+    pArea[i]->resize(width * (spaceWidth + dotWidth), height * (spaceWidth + dotWidth));
+    pArea[i]->move(x * (spaceWidth + dotWidth), y * (spaceWidth + dotWidth));
+
+    //pArea[i]->update();
+  }
+
+  //parentWin->setWidget(this);
+  //parentWin->setFixedSize(this->width() + 16, this->height() + 100);
+  QString str = w->screenArea->getCurrentScreenStr();
+  settings.beginGroup(str);
+  settings.setValue("spaceWidth", spaceWidth);
+  settings.setValue("dotWidth", dotWidth);;
+  settings.endGroup();
 
 }
 

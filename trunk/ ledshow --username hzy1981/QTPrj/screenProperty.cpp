@@ -1926,6 +1926,8 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   ipEditLabel = new QLabel(tr("屏幕IP"),this);
   ipEdit = new CipInput(this);
 
+  ipEdit->setIP(0xFB01A8C0);//默认ip 192.168.1.251
+
   manualConnectButton = new QPushButton(tr("手动连接"),this);
   autoConnectButton = new QPushButton(tr("自动连接"),this);
   comPortInfoLabel = new QLabel(tr("使用交叉串口线"));
@@ -2493,6 +2495,9 @@ CfacScreenProperty::CfacScreenProperty(int flag, CcomTest *com,  QWidget *parent
    gateEdit = new CipInput(this);
    macEdit = new CipInput(this);
 
+   ipEdit->setIP(0xFB01A8C0);//192.168.1.251
+   maskEdit->setIP(0x00FFFFFF);//255.255.255.0
+   gateEdit->setIP(0x0101A8C0);//192.168.1.1
    //QRegExp rx("(2[0-5]{2}|2[0-4][0-9]|1?[0-9]{1,2})");
    //QRegExpValidator validatorIP(QRegExp("[0-9]{1,3}(.[0-9]{1,3}){3,3}"), this);
    //ipEdit->setValidator(&validatorIP);
@@ -2782,17 +2787,21 @@ void CfacScreenProperty::setSettingsToWidget(QString str)
     oePolarityCombo->setCurrentIndex(settings.value("oePolarity").toInt());
     colorCombo->setCurrentIndex(settings.value("color").toInt());
 
-    ipEdit->setIP(settings.value("ip").toInt());
-    maskEdit->setIP(settings.value("mask").toInt());
-    gateEdit->setIP(settings.value("gate").toInt());
-
     if(settings.value("setFlag").toInt() > 0)
     {
+      ipEdit->setIP(settings.value("ip").toInt());
+      maskEdit->setIP(settings.value("mask").toInt());
+      gateEdit->setIP(settings.value("gate").toInt());
+
       widthEdit->setValue(settings.value("width").toInt());
       heightEdit->setValue(settings.value("height").toInt());
     }
     else
     {
+        ipEdit->setIP(0xFB01A8C0);//settings.value("ip").toInt());
+        maskEdit->setIP(0x00FFFFFF);//settings.value("mask").toInt());
+        gateEdit->setIP(0x0101A8C0);//settings.value("gate").toInt());
+
         widthEdit->setValue(DEF_SCN_WIDTH);
         heightEdit->setValue(DEF_SCN_HEIGHT);
     }
@@ -3074,7 +3083,7 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
     int height = settings.value("height").toInt();
     int color = settings.value("color").toInt();
     int card = settings.value("cardType").toInt();
-    settings.endGroup();
+    settings.endGroup();   
     settings.endGroup();
 
     if(card != cardCombo->currentIndex()) //板卡类型发生了变化
@@ -3135,12 +3144,12 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
 
         //重新修改显示窗口大小
         QMdiSubWindow * subWin =w->mdiArea->currentSubWindow();
-        w->screenArea->setFixedSize(widthEdit->value(), heightEdit->value());
+        w->screenArea->setFixedSize(widthEdit->value() * (w->screenArea->dotWidth + w->screenArea->spaceWidth), heightEdit->value() * (w->screenArea->dotWidth + w->screenArea->spaceWidth));
 
         for(int i = 0; i <MAX_AREA_NUM ;i ++)
           (*(w->screenArea->pArea[i])).screenPara.Base_Para.Color = Screen_Para.Base_Para.Color;
 
-        subWin->setFixedSize(subWin->sizeHint());
+        subWin->setFixedSize(w->screenArea->width() + 14, w->screenArea->height() + 37);//subWin->sizeHint());
         //清除所有子项
         QTreeWidgetItem *screenItem = w->screenArea->screenItem;
         int count = screenItem->childCount();
