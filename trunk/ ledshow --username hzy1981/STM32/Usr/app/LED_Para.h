@@ -192,16 +192,22 @@ typedef struct
 typedef struct
 {
     //以太网
+    INT8U Mode; //0固定ip方式，1自动获取方式
+
     INT32U IP; //IP地址
     //INT16U Port; //端口
     INT32U Mask; //子网掩码
     INT32U Gate; //网关
-    INT8U Mode; //0固定ip方式，1自动获取方式
+
 
 	INT8U Serv_En; //是否采用服务器模式,0表示不采用，1表示采用
 	INT32U Serv_IP; //服务器IP
-	INT16U Serv_Port;  //服务器端口
-	INT16U Heart_Beat; //心跳周期,单位s
+        //INT32U Serv_IP_1; //服务器IP备用,IPV6时使用
+        INT8U Serv_Domain[50]; //服务器域名,当服务器IP为全0时使用
+
+        INT16U Serv_Port;  //服务器端口
+        INT16U Heart_Period; //心跳周期,单位s
+
 
     //INT8U Temp[4]; //保留30字节备用--升级程序时可以和老的兼容
 }S_ETH_Para;
@@ -218,13 +224,17 @@ typedef struct
 {
     //以太网
     //GPRS服务器地址
-    //INT32U Srv_IP; //服务器IP
-	INT8U Srv[40]; //服务器IP或者域名
-    INT16U SrvPort; //服务器端口
     INT8U Mode; //0唤醒方式，1在线方式
-	INT8U HeartPeriod; //心跳周期
-	INT8U ConnectPeriod; //重连周期
-    INT8U APN[30];
+
+    INT32U Serv_IP; //服务器IP
+    //INT32U Serv_IP_1;//服务器IP备用,IPV6时使用
+    INT8U Serv_Domain[50]; //服务器域名,IP为0时使用
+    INT8U APN[30]; //APN
+    INT16U Serv_Port; //服务器端口
+
+    INT8U Heart_Period; //心跳周期
+    INT8U Connect_Period; //重连周期
+
 
     //INT8U Temp[10]; //保留10字节备用--升级程序时可以和老的兼容
 }S_GPRS_Para;

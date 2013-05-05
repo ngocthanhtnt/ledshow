@@ -113,8 +113,8 @@ void Net_Data_Proc(void)
 	    Sec.Var = Pub_Timer.Sec;
 	    Counts.Var ++;
 	
-		if(Screen_Para.ETH_Para.Heart_Beat > 0 &&\
-		   Counts.Var >= Screen_Para.ETH_Para.Heart_Beat &&\
+		if(Screen_Para.ETH_Para.Heart_Period > 0 &&\
+		   Counts.Var >= (INT16U)Screen_Para.ETH_Para.Heart_Period * 60 &&\
 		   Screen_Status.Com_Time EQ 0)
 		{
 		  Send_Heart_Beat(); //·¢ËÍĞÄÌø
