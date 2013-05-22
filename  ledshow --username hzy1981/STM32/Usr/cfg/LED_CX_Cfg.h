@@ -47,7 +47,7 @@
 #define MAX_STORA_BLOCK_NUM  3000 //最大存储块数
 #endif
 
-#define DATA_FLASH_SIZE 2000000	//dataflash大小
+#define DATA_FLASH_SIZE (2*1024*1024)	//dataflash大小
 #define MAX_SCAN_BLOCK_NUM 8 //最大扫描块
 #define MAX_SCAN_WIDTH 2056 //最大扫描宽度
 
