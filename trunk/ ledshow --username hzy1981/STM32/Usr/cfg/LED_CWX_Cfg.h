@@ -44,7 +44,7 @@
 #define MAX_POINTS (800*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #endif
 
-#define DATA_FLASH_SIZE (2*1024*1024)	//dataflash大小
+#define DATA_FLASH_SIZE (4*1024*1024)	//dataflash大小
 #define MAX_SCAN_BLOCK_NUM 8 //最大扫描块
 #define MAX_SCAN_WIDTH 2056 //最大扫描宽度
 
