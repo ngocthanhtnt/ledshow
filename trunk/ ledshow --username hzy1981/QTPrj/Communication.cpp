@@ -15,6 +15,8 @@
 #include <windows.h>
 #include <dbt.h>
 
+#define DEF_WIFI_DST_IP 0x7F000001//0xC0A8010F
+
 extern QSettings settings;
 extern MainWindow *w;
 
@@ -385,7 +387,7 @@ bool CcomThread::connect()
         }
 
     }
-    else if(COM_Mode EQ ETH_MODE)//以太网通信方式
+    else if(COM_Mode EQ ETH_MODE || COM_Mode EQ WIFI_MODE)//以太网通信方式
     {
        if(this->udpPort > 0)
         {
@@ -500,13 +502,16 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
     emit this->comStatusChanged(comReStr);
     return false;
   }
-  else if(mode EQ ETH_MODE)//以太网模式
+  else if(mode EQ ETH_MODE || mode EQ WIFI_MODE)//以太网模式
   {
       QHostAddress host;
 
       //host.setAddress("192.168.001.122");//ETH_Para.IP);
 
-      host.setAddress(RevIP(ETH_Para.IP));
+      if(mode EQ ETH_MODE)
+        host.setAddress(RevIP(ETH_Para.IP));
+      else
+        host.setAddress(DEF_WIFI_DST_IP);
 
       for(i = 0; i < 2; i ++)
       {
@@ -580,7 +585,7 @@ int CcomThread::comReceive()
       if(bytesRead EQ 0)
          return 0;
     }
-    else if(COM_Mode EQ ETH_MODE) //以太网模式
+    else if(COM_Mode EQ ETH_MODE || COM_Mode EQ WIFI_MODE) //以太网模式
     {
       QHostAddress address;
       quint16 udpPort;
@@ -715,7 +720,8 @@ bool checkComMode(INT8U COM_Mode)
 {
     if(COM_Mode EQ COM_MODE ||\
        COM_Mode EQ GPRS_MODE ||\
-       COM_Mode EQ ETH_MODE)
+       COM_Mode EQ ETH_MODE ||\
+       COM_Mode EQ WIFI_MODE)
         return true;
     else
         return false;
@@ -850,7 +856,7 @@ void CcomStatus::getCOMParaFromSettings(QString str)
 
       paraEdit->append(str1);
     }
-    else if(comThread->COM_Mode EQ ETH_MODE)
+    else if(comThread->COM_Mode EQ ETH_MODE || comThread->COM_Mode EQ WIFI_MODE)
     {
         //INT8U ip[4];
         INT32U IP;
@@ -859,7 +865,11 @@ void CcomStatus::getCOMParaFromSettings(QString str)
         str1 = tr("目标地址:");
 
         QHostAddress dstAddr;
-        dstAddr.setAddress(RevIP(IP));
+
+        if(comThread->COM_Mode EQ ETH_MODE)
+          dstAddr.setAddress(RevIP(IP));
+        else
+          dstAddr.setAddress(DEF_WIFI_DST_IP); //192.168.1.15--固定使用该ip
 
         str1 += dstAddr.toString() + tr(":8000\r\n");
 
@@ -921,9 +931,9 @@ void CcomStatus::statusChange(QString str)
 void CcomStatus::comEnd(bool flag)
 {
     if(flag EQ false)
-        statusEdit->append(tr("发送数据失败!"));
+        statusEdit->append(tr("本次通信失败!"));
     else
-        statusEdit->append(tr("发送数据成功!"));
+        statusEdit->append(tr("本次通信成功!"));
 }
 
 void CcomStatus::comStart()

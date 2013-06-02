@@ -235,6 +235,11 @@ INT8U sendProtoData(char *pFrame, int len)
     {
 
     }
+    else if(mode EQ WIFI_MODE)//wifiģʽ
+    {
+
+
+    }
     else if(mode EQ GPRS_MODE)
     {
 

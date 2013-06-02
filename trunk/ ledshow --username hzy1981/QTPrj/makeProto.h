@@ -17,9 +17,16 @@
 #define ETH_MODE   0x01 //以太网模式
 #define GPRS_MODE  0x02 //GPRS模式
 #define UDISK_MODE 0x03 //u盘
-#define PREVIEW_MODE   0x04 //预览模式
-#define SIM_MODE  0x05 //仿真模式
+#define WIFI_MODE  0x04 //Wifi
+#define PREVIEW_MODE   0x05 //预览模式
+#define SIM_MODE  0x06 //仿真模式
 #define NULL_MODE 0xFF
+
+#define COM_MODE_STR  "串口"
+#define ETH_MODE_STR  "网口"
+#define GPRS_MODE_STR "GPRS"
+#define WIFI_MODE_STR "WIFI"
+#define UDISK_MODE_STR "U盘"
 
 #define PROTO_FILE_FLAG 0x00
 #define PROTO_BUF_FLAG 0x01
