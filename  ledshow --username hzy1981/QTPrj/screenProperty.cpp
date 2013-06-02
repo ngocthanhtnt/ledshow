@@ -215,6 +215,48 @@ public:
     ~CscreenProperty();
 };
 */
+
+/*
+#define COM_MODE   0x00 //串口
+#define ETH_MODE   0x01 //以太网模式
+#define GPRS_MODE  0x02 //GPRS模式
+#define UDISK_MODE 0x03 //u盘
+#define WIFI_MODE  0x04 //Wifi
+*/
+QString index2ComTxt(int index)
+{
+  if(index EQ COM_MODE)
+      return QObject::tr(COM_MODE_STR);
+  else if(index EQ ETH_MODE)
+      return QObject::tr(ETH_MODE_STR);
+  else if(index EQ GPRS_MODE)
+      return QObject::tr(GPRS_MODE_STR);
+  else if(index EQ WIFI_MODE)
+      return QObject::tr(WIFI_MODE_STR);
+  else
+  {
+      ASSERT_FAILED();
+      return QObject::tr(COM_MODE_STR);
+  }
+}
+
+int comTxt2Index(QString comTxt)
+{
+    if(comTxt EQ QObject::tr(COM_MODE_STR))
+        return COM_MODE;
+    else if(comTxt EQ QObject::tr(ETH_MODE_STR))
+        return ETH_MODE;
+    else if(comTxt EQ QObject::tr(GPRS_MODE_STR))
+        return GPRS_MODE;
+    else if(comTxt EQ QObject::tr(WIFI_MODE_STR))
+        return WIFI_MODE;
+    else //if(comTxt EQ "U盘")
+    {
+        ASSERT_FAILED();
+        return COM_MODE;
+    }
+}
+
 INT8U getCardParaFromSettings(QString cardName, S_Card_Para &cardPara)
 {
     cardSettings.beginGroup(cardName);
@@ -1899,7 +1941,8 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
 
   QLabel *comModeLabel = new QLabel(tr("通信方式"),this);
   comModeCombo = new QComboBox(this);
-  comModeCombo->addItem(tr("串口"));
+  comModeCombo->addItem(tr(COM_MODE_STR));
+  comModeCombo->addItem(tr(WIFI_MODE_STR));
   QLabel *screenIDLabel = new QLabel(tr("屏幕地址"),this);
   screenIDEdit = new QSpinBox(this);
   comPortLabel = new QLabel(tr("串口号"),this);
@@ -2155,8 +2198,9 @@ void CcomTest::getSettingsFromWidget(QString str)
     settings.beginGroup(str);
     settings.beginGroup("comTest");
 
-    settings.setValue("comMode", comModeCombo->currentIndex());
-    debug("get commode = %d", comModeCombo->currentIndex());
+    int index = comTxt2Index(comModeCombo->currentText());
+    settings.setValue("comMode", index);//comModeCombo->currentIndex());
+    debug("get commode = %d", index);
 
     settings.setValue("screenID", screenIDEdit->value());
     settings.setValue("comPort", comPortEdit->currentText());
@@ -2171,7 +2215,10 @@ void CcomTest::getSettingsFromWidget(QString str)
 
 void CcomTest::comModeChangedProc()
 {
-    if(comModeCombo->currentText() == tr("串口"))
+    QString comStr;
+
+    comStr = comModeCombo->currentText();
+    if(comStr == tr(COM_MODE_STR))
     {
         comPortLabel->setVisible(true);
         comPortEdit->setVisible(true); //串口号
@@ -2185,7 +2232,7 @@ void CcomTest::comModeChangedProc()
         manualConnectButton->setVisible(true);; //手动连接
         autoConnectButton->setVisible(true);; //自动连连接
     }
-    else
+    else //if(comStr == tr("网口"))
     {
         comPortLabel->setVisible(false);
         comPortEdit->setVisible(false); //串口号
@@ -2198,6 +2245,17 @@ void CcomTest::comModeChangedProc()
 
         manualConnectButton->setVisible(true);; //手动连接
         autoConnectButton->setVisible(false);; //自动连连接
+
+        if(comStr == tr(WIFI_MODE_STR))
+        {
+          ipEdit->setVisible(false);
+          ipEditLabel->setVisible(false);
+        }
+        else
+        {
+          ipEdit->setVisible(true);
+          ipEditLabel->setVisible(true);
+        }
     }
 }
 
@@ -2211,13 +2269,13 @@ void CcomTest::cardChangedProc(QString cardName)
   getCardParaFromSettings(cardName, Card_Para);
   if(Card_Para.Com_Mode & COM_ETH) //支持以太网
   {
-    if(this->comModeCombo->findText(tr("网口")) < 0)
-      this->comModeCombo->addItem(tr("网口"));
+    if(this->comModeCombo->findText(tr(ETH_MODE_STR)) < 0)
+      this->comModeCombo->addItem(tr(ETH_MODE_STR));
 
   }
   else
   {
-      int index = this->comModeCombo->findText(tr("网口"));
+      int index = this->comModeCombo->findText(tr(ETH_MODE_STR));
       if(index >= 0)
         this->comModeCombo->removeItem(index);
   }
@@ -2256,7 +2314,10 @@ void CcomTest::setSettingsToWidget(QString str)
     settings.beginGroup(str);
     settings.beginGroup("comTest");
 
-    comModeCombo->setCurrentIndex(settings.value("comMode").toInt());
+    //comModeCombo->setCurrentIndex(settings.value("comMode").toInt());
+    QString comTxt = index2ComTxt(settings.value("comMode").toInt());
+    comModeCombo->setCurrentIndex(comModeCombo->findText(comTxt));
+
     debug("set commode = %d", settings.value("comMode").toInt());
     screenIDEdit->setValue(settings.value("screenID").toInt());
     comPort = settings.value("comPort").toString();
