@@ -18,6 +18,8 @@
 #define VERSION_FRAME_FCOUNTS_OFF 34  //版本信息帧中帧个数偏移,2字节
 #define VERSION_FRAME_BINSIZE_OFF 36  //整个bin文件大小
 
+#define DEF_ETH_DST_IP 0xFB01A8C0 //192.168.1.251
+
 extern MainWindow *w;
 extern QSettings settings;
 
@@ -1219,6 +1221,9 @@ void CopenCloseDialog::udiskPara()
     S_Card_Para cardPara;
     //int len;
 
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
     QString str = w->screenArea->getCurrentScreenStr();
 
     this->udiskButton->setEnabled(false);
@@ -1646,6 +1651,9 @@ void CsendDataDialog::sendData()
     int flag = 0;
     INT8U Re;
 
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
     QString str = w->screenArea->getCurrentScreenStr();
 
     if(lightnessCheck->isChecked())
@@ -1659,11 +1667,7 @@ void CsendDataDialog::sendData()
     SET_BIT(flag, C_PROG_PARA);
     SET_BIT(flag, C_PROG_DATA);
 
-    if(w->comStatus->comThread->isRunning())//当前线程还在运行
-        return;
-
     this->sendButton->setEnabled(false);
-
 
     if(QT_SIM_EN)
       Re = makeProtoFileData(str, SIM_MODE, flag);
@@ -1969,7 +1973,7 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   ipEditLabel = new QLabel(tr("屏幕IP"),this);
   ipEdit = new CipInput(this);
 
-  ipEdit->setIP(0xFB01A8C0);//默认ip 192.168.1.251
+  ipEdit->setIP(DEF_ETH_DST_IP);//默认ip 192.168.1.251
 
   manualConnectButton = new QPushButton(tr("手动连接"),this);
   autoConnectButton = new QPushButton(tr("自动连接"),this);
@@ -2023,6 +2027,9 @@ void CcomTest::autoConnect()
     QString oldComPortStr;
     int oldComMode;
     int oldComBaud;
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
 
     QStringList portList = getComPortList();
 
@@ -2103,6 +2110,9 @@ void CcomTest::manualConnect()
     int oldComBaud;
 
     //QStringList portList = getComPortList();
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
 
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
@@ -2209,6 +2219,7 @@ void CcomTest::getSettingsFromWidget(QString str)
     settings.setValue("baud", comBaudCombo->currentIndex());
     settings.setValue("ip", ipEdit->getIP());
 
+    settings.setValue("setFlag", 1);
     settings.endGroup();
     settings.endGroup();
 }
@@ -2329,7 +2340,11 @@ void CcomTest::setSettingsToWidget(QString str)
     comPortEdit->setEditText(comPort);
 
     comBaudCombo->setCurrentIndex(settings.value("baud").toInt());
-    ipEdit->setIP(settings.value("ip").toInt());
+
+    if(settings.value("setFlag").toInt())
+      ipEdit->setIP(settings.value("ip").toInt());
+    else
+      ipEdit->setIP(DEF_ETH_DST_IP);
 
     settings.endGroup();
     settings.endGroup();
@@ -2556,7 +2571,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, CcomTest *com,  QWidget *parent
    gateEdit = new CipInput(this);
    macEdit = new CipInput(this);
 
-   ipEdit->setIP(0xFB01A8C0);//192.168.1.251
+   ipEdit->setIP(DEF_ETH_DST_IP);//192.168.1.251
    maskEdit->setIP(0x00FFFFFF);//255.255.255.0
    gateEdit->setIP(0x0101A8C0);//192.168.1.1
    //QRegExp rx("(2[0-5]{2}|2[0-4][0-9]|1?[0-9]{1,2})");
@@ -2859,7 +2874,7 @@ void CfacScreenProperty::setSettingsToWidget(QString str)
     }
     else
     {
-        ipEdit->setIP(0xFB01A8C0);//settings.value("ip").toInt());
+        ipEdit->setIP(DEF_ETH_DST_IP);//settings.value("ip").toInt());
         maskEdit->setIP(0x00FFFFFF);//settings.value("mask").toInt());
         gateEdit->setIP(0x0101A8C0);//settings.value("gate").toInt());
 
@@ -3133,6 +3148,9 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
     QString str;
     INT8U temp[100];
     int colorNum;
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
 
     str = w->screenArea->getCurrentScreenStr(); //当前屏幕str
     debug("loadpara:%s",(const char *)str.toLocal8Bit());
@@ -3552,6 +3570,10 @@ void CupdateFirmwareDialog::updateFirmware()
     int len;
     bool re;
 
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return;
+
     QString screenStr = w->screenArea->getCurrentScreenStr();
 
     this->setEnabled(false);
@@ -3636,6 +3658,9 @@ bool CupdateFirmwareDialog::readVersion()
     INT8U rcvBuf[500] = {0};
     bool re;
     int len;
+
+    if(w->comStatus->comThread->isRunning())//当前线程还在运行
+        return 0;
 
     //读取前一版本的版本号
     makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0, 0);

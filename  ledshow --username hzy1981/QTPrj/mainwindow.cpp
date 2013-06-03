@@ -1617,6 +1617,9 @@ void MainWindow::testCard()
   INT8U Temp[20];
   int len;
 
+  if(w->comStatus->comThread->isRunning())//当前线程还在运行
+      return;
+
   loop:
   QDateTime dateTime = QDateTime::currentDateTime(); //当前时间s
 
