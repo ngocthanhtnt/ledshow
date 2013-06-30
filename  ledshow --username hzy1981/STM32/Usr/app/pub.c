@@ -167,25 +167,19 @@ void Pub_Timer_Proc(void)
 	}
 #endif
 #else
-    Pub_Timer.Us100_Counts++;
-	if(Pub_Timer.Us100_Counts >= 10)
+	Pub_Timer.Ms++;
+	Pub_Timer.Ms_Counts++;
+	if(Pub_Timer.Ms_Counts >= 100)
 	{
-	    Pub_Timer.Us100_Counts = 0;
+	    Pub_Timer.Ms_Counts = 0;
 
-		Pub_Timer.Ms++;
-		Pub_Timer.Ms_Counts++;
-		if(Pub_Timer.Ms_Counts >= 100)
-		{
-		    Pub_Timer.Ms_Counts = 0;
+	    Pub_Timer.Ms100++;
+	    Pub_Timer.Ms100_Counts ++;
 	
-		    Pub_Timer.Ms100++;
-		    Pub_Timer.Ms100_Counts ++;
-		
-			if(Pub_Timer.Ms100_Counts >= 10)
-			{
-			  Pub_Timer.Ms100_Counts = 0;
-			  Pub_Timer.Sec ++;
-			}
+		if(Pub_Timer.Ms100_Counts >= 10)
+		{
+		  Pub_Timer.Ms100_Counts = 0;
+		  Pub_Timer.Sec ++;
 		}
 	}
 #endif

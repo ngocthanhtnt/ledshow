@@ -207,12 +207,12 @@ INT8U TCPConnect(void)
 {
   INT8U Re;
 
-  Screen_Para.GPRS_Para.Srv[sizeof(Screen_Para.GPRS_Para.Srv) - 1] = 0;	//目标地址最后一个字节填0，避免复制字符串溢出
+  Screen_Para.GPRS_Para.Serv_Domain[sizeof(Screen_Para.GPRS_Para.Serv_Domain) - 1] = 0;	//目标地址最后一个字节填0，避免复制字符串溢出
   
   while(1)
   {
 	  snprintf(GPRS_Buf.Data, sizeof(GPRS_Buf.Data), "AT+CIPSTART=\"TCP\",\"%s\",%d\r\n", \
-	           Screen_Para.GPRS_Para.Srv,  Screen_Para.GPRS_Para.SrvPort);
+	           Screen_Para.GPRS_Para.Serv_Domain,  Screen_Para.GPRS_Para.Serv_Port);
 	
 	  Re = ATSendResponse(GPRS_Buf.Data, "CONNECT OK", 2000);
 	  if(Re)
@@ -220,13 +220,13 @@ INT8U TCPConnect(void)
 	  
 	  ATSend("AT+IPCLOSE=1\r\n");
 
-	  if(Screen_Para.GPRS_Para.HeartPeriod EQ 0)
+	  if(Screen_Para.GPRS_Para.Heart_Period EQ 0)
 	  {
-	    Screen_Para.GPRS_Para.HeartPeriod = 3;
+	    Screen_Para.GPRS_Para.Heart_Period = 3;
 	    SET_SUM(Screen_Para);
 	  }
 
-      OS_TimeDly_Sec(Screen_Para.GPRS_Para.HeartPeriod * 60 - 25); 
+      OS_TimeDly_Sec(Screen_Para.GPRS_Para.Heart_Period * 60 - 25); 
       
   }
 }

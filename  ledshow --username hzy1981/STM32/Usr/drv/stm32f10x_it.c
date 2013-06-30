@@ -223,7 +223,7 @@ void TIM3_IRQHandler(void)   //TIM3中断--用于扫描
 //该中断为100us一次,pwm频率为10k，因此周期100us
 void TIM2_IRQHandler(void)   //TIM3中断--100ms周期
 {
-    //GPIOB->BSRR = GPIO_Pin_1;
+    //DQ_Write_0() ;  //复位脉冲
 	//if(TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) //检查指定的TIM中断发生与否:TIM 中断源 
 	if((TIM2->SR & TIM_IT_Update))
 	{
@@ -232,7 +232,7 @@ void TIM2_IRQHandler(void)   //TIM3中断--100ms周期
 		Pub_Timer_Proc();
 	}
 
-	//GPIOB->BRR = GPIO_Pin_1;
+	//DQ_Write_1() ;  //复位脉冲
 }
 #else
 //该中断为1ms一次

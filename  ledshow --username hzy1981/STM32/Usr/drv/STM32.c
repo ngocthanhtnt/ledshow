@@ -234,11 +234,19 @@ void Delay_us(INT32U nus)
   
   //j = (INT32S)(12 * nus - 2) * (HCLK_VALUE / 72000000);
   //48M、72M等均已验证正确
+#ifdef CARD_A
+  j = (INT32S)nus * (HCLK_VALUE / 2000000);// - HCLK_VALUE / 36000000;
+  while(i < j) 
+  {
+    i++;
+	}
+#else
   j = (INT32S)nus * (HCLK_VALUE / 6000000) - HCLK_VALUE / 36000000;
   while(i < j) 
   {
     i++;
 	}
+#endif
 }
 
 //sec为要延时的秒
@@ -537,15 +545,22 @@ void NVIC_Configuration(void)
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
 #endif
 
+	//扫描中断
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //扫描特效
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
+	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
+
 #if TIM1_EN
 	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;  //1ms中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 #else 	 	
 	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;  //1ms中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
@@ -562,13 +577,6 @@ void NVIC_Configuration(void)
 #endif
 */
     
-	//扫描中断
-	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //扫描特效
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
-	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
-
 	//特效中断
     NVIC_SetPriority (SysTick_IRQn, 0x0C);                //抢占优先级为3
 
@@ -747,12 +755,19 @@ void TIM2_Configuration(void)
 
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 
+#if TIM1_EN EQ 0
+	TIM_TimeBaseStructure.TIM_Period = 1000 / 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
+	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
+#else
 	TIM_TimeBaseStructure.TIM_Period = 100 / 10 * (PCLK1_VALUE * 2/100000); //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
 	TIM_TimeBaseStructure.TIM_Prescaler =0;//(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
-	
+#endif	
 	/* Enables the Update event for TIM3 */
 	//TIM_UpdateDisableConfig(TIM3,ENABLE); 	//使能 TIM4 更新事件 
 	

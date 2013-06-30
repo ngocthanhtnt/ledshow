@@ -149,7 +149,10 @@ void Update_Show_Data(void)
 //#if PIC_SHOW_EN    
     //if(Prog_Status.File_Para[i].Pic_Para.Flag EQ SHOW_PIC)
       Update_Pic_Data(i);
-	  
+
+      if(Screen_Status.Com_Time > 0) //收到一帧，先处理此帧
+          return;
+		  	  
 #if BORDER_SHOW_EN
       Update_Border_Data(i); //更新边框数据
 #endif
@@ -187,6 +190,8 @@ void Update_Show_Data(void)
 #endif
       */
   }
+       if(Screen_Status.Com_Time > 0) //收到一帧，先处理此帧
+          return;
 
 #if BORDER_SHOW_EN
       Update_Border_Data(MAX_AREA_NUM); //更新边框数据
@@ -713,7 +718,8 @@ INT8U Check_Update_Show_Data_Bak(void)
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
 
-     if(Screen_Status.Rcv_Flag EQ FRAME_FLAG) //收到一帧，先处理此帧
+     if(Screen_Status.Com_Time > 0 ||\
+	    Screen_Status.Rcv_Flag EQ FRAME_FLAG) //收到一帧，先处理此帧
          return 1;
 
      if(Prog_Status.Area_Status[i].New_File_Flag ||\
@@ -963,7 +969,8 @@ void Check_Update_Program_Para(void)
   if(Re EQ 0)
     ASSERT_FAILED();
  
-  if(Prog_Status.Play_Status.RT_Play_Time > 0)
+  if(Screen_Status.Com_Time > 0 ||\
+     Prog_Status.Play_Status.RT_Play_Time > 0)
     return;
 
   if(Prog_Status.Play_Status.New_Prog_Flag EQ 0)//--当前在节目播放状态
