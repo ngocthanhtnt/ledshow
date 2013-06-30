@@ -125,7 +125,7 @@ int CcomThread::waitComRcv(int sec)
 
     for(int i = 0; i < sec*10; i ++)
     {
-        this->msleep(100); //延时100ms
+        //this->msleep(100); //延时100ms
         rcvBytes = comReceive();
 
         if(Rcv_Flag EQ FRAME_FLAG) //收到应答帧
@@ -138,6 +138,8 @@ int CcomThread::waitComRcv(int sec)
         j ++;
         if(j >= 150) //最大不超过15s
             return 0;
+
+        this->msleep(100); //延时100ms
 
     }
 
@@ -411,6 +413,7 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
 {
     int i,re;
   INT8U mode = COM_Mode;
+  const char temp[3] = {0xEE, 0xEE, 0xEE};
 
   if(mode EQ PREVIEW_MODE)//预览模式
   {
@@ -464,6 +467,7 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
   {
     for(i = 0; i < 2; i ++)
     {
+      port->write(temp, sizeof(temp));
       port->write(data, len);
 
       if(i EQ 0)

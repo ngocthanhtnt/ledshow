@@ -792,6 +792,13 @@ void Send_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen)
 #endif  
   if(Ch EQ CH_COM || Ch EQ CH_GPRS) //发送串口数据
   {
+    if(Ch EQ CH_COM)
+	{
+	  Com_Send_Byte(Ch, 0xEE);
+	  Com_Send_Byte(Ch, 0xEE);
+	  Com_Send_Byte(Ch, 0xEE);
+	}
+
     for(i = 0; i < FrameLen; i ++)
       Com_Send_Byte(Ch, Frame[i]);
   }
@@ -858,6 +865,10 @@ void Com_Rcv_Byte(INT8U Ch, INT8U Byte)
   {
     Screen_Status.Rcv_Ch = Ch;
 	Set_Screen_Com_Time(COM_STANDBY_SEC); //通信保持时间，在这段时间内，扫描中断不进行扫描.
+  }
+  else if(Byte EQ 0xEE)
+  {
+	Set_Screen_Com_Time(COM_STANDBY_SEC); //前导字符
   }
 
   if(Screen_Status.Head_Flag)

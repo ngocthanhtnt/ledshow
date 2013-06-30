@@ -30,6 +30,8 @@ U16 udp_callback (U8 socket, U8 *remip, U16 port, U8 *buf, U16 len)
 	memcpy((INT8U *)RCV_DATA_BUF, buf, len);
 	Screen_Status.Rem_Data_Flag = REM_DATA_FLAG;
 	Screen_Status.Rem_Data_Len = len;
+
+	Set_Screen_Com_Time(COM_STANDBY_SEC);
   }
 
   return (0);

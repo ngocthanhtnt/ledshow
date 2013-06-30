@@ -1035,11 +1035,9 @@ void LED_Scan_One_Row(void)
        GPIOB->ODR = *(INT16U *)&Scan_Data0[0][0];
 #endif
 	   		
-	   __enable_irq();//(0); //开总中断--开中断一次让其他更高优先级中断可以运行
-	   __disable_irq() ; //关总中断 dma传输过程中，中断对dma时序有影响，因此传输过程中关闭
-	   //if(i EQ Cols)
-	     //SPI2->DR = 0;
-	   //else	 	
+	   //__enable_irq();//(0); //开总中断--开中断一次让其他更高优先级中断可以运行
+	   //__disable_irq() ; //关总中断 dma传输过程中，中断对dma时序有影响，因此传输过程中关闭
+		   	 	
 	   SPI2->DR = 0xAAAA;
 
        

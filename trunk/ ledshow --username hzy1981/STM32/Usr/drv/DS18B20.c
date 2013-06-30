@@ -59,6 +59,15 @@ void Tx_ResetPulse(void)
     Delay_Nus(500) ; //至少保持480us
     DQ_Write_1() ;  //加速上升沿速度
     Delay_Nus(1) ;
+ /*
+	while(1)
+	{
+	Delay_ms(100) ; //至少保持480us
+    DQ_Write_0() ;  //复位脉冲
+    Delay_ms(100) ; //至少保持480us
+    DQ_Write_1() ;  //加速上升沿速度
+	}
+	*/
 }
 /******************************************
 函数名称：Rx_PresencePulse
