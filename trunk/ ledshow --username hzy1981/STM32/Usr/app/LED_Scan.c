@@ -265,7 +265,11 @@ void Set_Clock_Normal_Speed(void)
 #ifdef STM32F10X_CL
     RCC_PLLConfig(RCC_PLLSource_PREDIV1, HCLK_MUL);
 #else
-	RCC_PLLConfig(RCC_PLLSource_HSE_Div1, HCLK_MUL); //PLL必须在其激活前完成配置（设置PLL时钟源及倍频系数）
+   #if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL) && !defined (STM32F10X_CL)
+	    RCC_PLLConfig(RCC_PLLSource_HSE_Div1, HCLK_MUL); //PLL必须在其激活前完成配置（设置PLL时钟源及倍频系数）
+   #else
+		RCC_PLLConfig(RCC_PLLSource_PREDIV1, HCLK_MUL); //PLL必须在其激活前完成配置（设置PLL时钟源及倍频系数）
+   #endif
 #endif	
 	RCC_PLLCmd(ENABLE);
 	// Wait till PLL is ready 
