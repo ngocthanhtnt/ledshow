@@ -646,7 +646,7 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 		  {
 		    //还没有显示数据，直接追加，返回错误
 		    if(Get_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index) EQ 0)
-			  return SMS_STORA_ERR;
+			  return SMS_SUB_INDEX_ERR;
 
             if(Read_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data)) EQ 0)
 		      return SMS_STORA_ERR;
