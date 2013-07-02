@@ -133,7 +133,7 @@ void mainInit(void)
   OS_Debug_Print("----------system start----------");
   //OS_Debug_Print("----------version: %s----------", version);
 
-  //Check_Storage_Size();
+  Check_Storage_Size();
   
   RST_Periph();
 

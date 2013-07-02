@@ -990,16 +990,16 @@ INT16U Unicode2GB(INT16U Unicode)
     {  
       if(Unicode EQ 65306)      // 修正冒号的GB码  
       {  
-           GBCode = 41914;  
+           GBCode = 0xBAA3;  
       }  
 
       else if(Unicode EQ 65307) // 修正中文分号；的GB码  
       {  
-           GBCode = 41915;  
+           GBCode = 0xBBA3;  
       }  
       else if(Unicode EQ 65281) // 修正感叹号的GB码  
       {  
-           GBCode = 41889;  
+           GBCode = 0xA1A3;  
       }
       else if((Unicode <= 0xFF5E) && (Unicode >= 0xFF01)) // 对应于ASCII码范围0x21~0x7E  
       {  

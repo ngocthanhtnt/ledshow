@@ -637,16 +637,22 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 
           if(SubIndex EQ 0)
 		  {
-            //memset(SMS_WR_Buf.Data, 0, sizeof(SMS_WR_Buf.Data));
-                 //   memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
+		    //清除之前的显示数据
+            OS_memset(SMS_WR_Buf.Data + sizeof(S_Txt_Para), 0, SMS_SUB_DATA_LEN * SMS_SUB_DATA_NUM,\
+			          SMS_WR_Buf.Data,sizeof(SMS_WR_Buf.Data));
+            //memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
 		  }
 		  else
 		  {
-                    if(Read_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data)) EQ 0)
+		    //还没有显示数据，直接追加，返回错误
+		    if(Get_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index) EQ 0)
 			  return SMS_STORA_ERR;
+
+            if(Read_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data)) EQ 0)
+		      return SMS_STORA_ERR;
 		  }
-		  
-              mem_cpy(SMS_WR_Buf.Data + sizeof(S_Txt_Para) + SubIndex * SMS_SUB_DATA_LEN,&p[TxtOff],strlen(&p[TxtOff]) + 1,\
+			 	  
+          mem_cpy(SMS_WR_Buf.Data + sizeof(S_Txt_Para) + SubIndex * SMS_SUB_DATA_LEN,&p[TxtOff],strlen(&p[TxtOff]) + 1,\
 		          SMS_WR_Buf.Data,sizeof(SMS_WR_Buf.Data));
 		  Write_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_FILE_PARA_LEN);
  
@@ -830,6 +836,10 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
               SET_SUM(SMS_File_Flag);
 
               Write_SMS_File_Flag();
+			  
+			  //删除显示数据 
+			  Clear_Area_Data(&Show_Data_Bak, 0);
+			  Clear_Area_Data(&Show_Data, 0);
               return SMS_NO_ERR;
           }
           else if(Chk_Int_Str(&p[4], 3))
