@@ -1672,7 +1672,7 @@ void MainWindow::testCard()
                              tr("控制卡自检失败:没有收到硬件自检命令应答!"),tr("确定"));
         return;
     }
-    else if(len > 0 && Temp[FDATA] > 0)
+    else if(len > 0 && Temp[0] > 0)
     {
         QString reStr ="";
 

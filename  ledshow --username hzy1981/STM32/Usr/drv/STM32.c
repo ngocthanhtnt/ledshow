@@ -1063,7 +1063,7 @@ void UART4_Init(void)
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 	//串口4用于GPRS接口
-	USART_InitStructure.USART_BaudRate            = 115200;//Get_Com_Baud();
+	USART_InitStructure.USART_BaudRate            = 57600;//Get_Com_Baud();
 	USART_InitStructure.USART_WordLength          = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits            = USART_StopBits_1;
 	USART_InitStructure.USART_Parity              = USART_Parity_No ;

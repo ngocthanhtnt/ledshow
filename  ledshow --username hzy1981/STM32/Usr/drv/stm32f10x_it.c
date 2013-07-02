@@ -297,6 +297,8 @@ void UART4_IRQHandler(void)	//串口4中断服务程序
 	   SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi] = 0;
 	 }
 
+	 //USART2->DR = (Res & (uint16_t)0x01FF);
+   
 	 Clr_Watch_Dog();
      if(Chk_JP_Status() EQ FAC_STATUS) //工厂状态才允许打印调试信息 
 	 {
@@ -304,6 +306,7 @@ void UART4_IRQHandler(void)	//串口4中断服务程序
         USART2->DR = (Res & (uint16_t)0x01FF);
 	 } 	 	 
 	}
+	
 }
 #endif
 /******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

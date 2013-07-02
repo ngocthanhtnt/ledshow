@@ -148,6 +148,14 @@ void ModuleInit(void) //模块初始化
 
     OS_Core_Wait_Ms(CHK_MODULE_STATUS(),3000); //最多等待3000ms。
 
+	//连续3个AT自适应波特率
+	ATSend("AT\r");
+	OS_TimeDly_Ms(50);
+	ATSend("AT\r");
+	OS_TimeDly_Ms(50);
+	ATSend("AT\r");
+	OS_TimeDly_Ms(50);
+
 	// 测试GSM-MODEM的存在性
 	while(1)
 	{
@@ -160,6 +168,8 @@ void ModuleInit(void) //模块初始化
 	  OS_TimeDly_Ms(100);
 	}
 	// ECHO OFF
+	ATSendResponse("AT+IPR=57600\r\n", "OK", 2000);
+
 	ATSendResponse("ATE0&W\r\n", "OK", 2000);
 	   
     ATSendResponse("AT+CFUN=1\r\n", "OK", 2000); //全功能
