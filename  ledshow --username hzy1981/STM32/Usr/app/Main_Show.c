@@ -921,7 +921,7 @@ void Calc_Prog_Play_Counts(void)
 
 void Check_RT_Play_Status()
 {
-  static S_Int8U Sec = {CHK_BYTE, 0xFF, CHK_BYTE};
+  static S_Int32U Sec = {CHK_BYTE, 0xFF, CHK_BYTE};
   
   if(Sec.Var != Pub_Timer.Sec) //每秒对实时显示区计时
   {
@@ -938,19 +938,19 @@ void Check_RT_Play_Status()
   }
 }
 
-INT8U Check_Prog_Para()
+INT8U Check_Prog_Para(S_Prog_Para *pPara)
 {
   INT8U i;
 
-  if(Prog_Para.Area_Num > MAX_AREA_NUM)
+  if(pPara->Area_Num > MAX_AREA_NUM)
     return 0;
 
-  for(i = 0; i<Prog_Para.Area_Num; i ++)
+  for(i = 0; i<pPara->Area_Num; i ++)
   {
-    if(Prog_Para.Area[i].X >= Screen_Para.Base_Para.Width ||\
-	   Prog_Para.Area[i].X + Prog_Para.Area[i].X_Len > Screen_Para.Base_Para.Width ||\
-	   Prog_Para.Area[i].Y >= Screen_Para.Base_Para.Height ||\
-	   Prog_Para.Area[i].Y + Prog_Para.Area[i].Y_Len > Screen_Para.Base_Para.Height)
+    if(pPara->Area[i].X >= Screen_Para.Base_Para.Width ||\
+	   pPara->Area[i].X + pPara->Area[i].X_Len > Screen_Para.Base_Para.Width ||\
+	   pPara->Area[i].Y >= Screen_Para.Base_Para.Height ||\
+	   pPara->Area[i].Y + pPara->Area[i].Y_Len > Screen_Para.Base_Para.Height)
 	   return 0; 
   }
   return 1;
@@ -1080,7 +1080,7 @@ void Check_Update_Program_Para(void)
         SET_HT(Prog_Para);
 	    SET_SUM(Prog_Para);
 
-	    if(Check_Prog_Para() > 0 && Check_Prog_Play_Time() > 0)
+	    if(Check_Prog_Para(&Prog_Para) > 0 && Check_Prog_Play_Time() > 0)
 		{
 	        TRACE();
 	
@@ -1214,6 +1214,8 @@ void RT_Play_Status_Exit(void)
 	Restore_Show_Area();
 	Prog_Status.Play_Status.RT_Play_Time = 0;
     SET_SUM(Prog_Status.Play_Status);
+
+    debug("rt play exit\r\n");
 }
 
 void Prog_Status_Init(void)

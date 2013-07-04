@@ -105,6 +105,7 @@ A	…	帧数据域内容
 #define COM_ERR_PARA_LEN_ERR 0x04 //参数长度错误，或者控制码错误
 #define COM_ERR_WR_DATA      0x05 //写数据出错
 #define COM_ERR_RD_DATA		 0x06 //读数据出错
+#define COM_ERR_OTHER        0xFF //其他错误
 
 #define RCV_DATA_BUF Screen_Status.Com_Rcv_Data
 /*
@@ -132,7 +133,7 @@ EXT INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT8U Save_Prog_Data_Frame_Proc(INT8U Frame[],INT16U FrameLen);
 EXT INT8U Save_Screen_Para_Frame_Proc(INT16U Ctrl_Code, INT8U Data[], INT16U Len);
 EXT void Clr_Rcv_Flag(void);
-EXT INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf_Len);
+EXT INT8U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf_Len);
 EXT INT16U Make_Frame(INT8U *pData, INT16U Len, INT8U Addr[], INT8U Cmd, INT8U Cmd0, INT8U Seq, INT16U Seq0, char *pDst);
 EXT void Screen_Com_Proc(void);
 #endif

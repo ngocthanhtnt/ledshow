@@ -150,7 +150,14 @@ INT8U Save_Prog_Para_Frame_Proc(INT8U Frame[],INT16U FrameLen)
       Screen_Status.Com_Err_Flag = COM_ERR_PARA_LEN_ERR;
       ASSERT_FAILED();
 	  return 0;
-   }
+  }
+
+  if(Check_Prog_Para((S_Prog_Para *)(Frame + FDATA - 1)) EQ 0)
+  {
+	  Screen_Status.Com_Err_Flag = COM_ERR_PARA_INVALID;
+	  ASSERT_FAILED();
+	  return 0;
+  }
 
   Prog_No = *(Frame + FDATA); //节目号
   if(Write_Prog_Para(Prog_No, Frame + FDATA, PROG_PARA_LEN))
@@ -459,6 +466,9 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
     {
       Set_Screen_Replay_Flag(); //重播节目标志
       Set_Prog_Num(0);	//重置节目个数为0  
+#if SMS_EN
+	  Clear_All_SMS();
+#endif
     }
 
 	memcpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para));
@@ -527,7 +537,7 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 //第0-5位表示控制码
 //对收到的一帧的处理
 //Ch表示通道
-INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf_Len)
+INT8U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf_Len)
 {
   INT8U Cmd_Code,Baud;
 #if CLOCK_EN
@@ -767,6 +777,10 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
   else
   {
      Cmd_Code = Cmd_Code | 0x80;
+
+	 if(Screen_Status.Com_Err_Flag EQ 0)
+	   Screen_Status.Com_Err_Flag = COM_ERR_OTHER;
+
 	 Frame[FDATA] = Screen_Status.Com_Err_Flag; //错误信息字
      Len = 1;
   }
@@ -780,7 +794,7 @@ INT16U Rcv_Frame_Proc(INT8U Ch, INT8U Frame[], INT16U FrameLen, INT16U Frame_Buf
   Chk_Baud_Change(Baud); //检查波特率参数是否发生修改
   //memset(RCV_DATA_BUF, 0, sizeof(RCV_DATA_BUF));
   
-  return Len;
+  return Re;
 }
 
 //发送一条帧数据
