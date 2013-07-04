@@ -416,7 +416,7 @@ void OS_Assert_Failed(CONST OS_INT8S File[],CONST OS_INT8S Function[],OS_INT16U 
 #endif
 */
   //打印出错文件
-  OS_Debug_Print("\r\n  Err File:%s,Function:%s,Line:%u",pFile,Function,Line); 
+  OS_Debug_Print("\r\n  Err File:%s,Line:%u",pFile,Line); 
   
   //打印函数调用轨迹
 #if OS_TRACE_EN>0  

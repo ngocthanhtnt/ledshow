@@ -105,6 +105,7 @@ EXT void Update_Show_Data(void);
 EXT INT8U Check_Prog_Play_Time(void);
 EXT INT8U Update_XXX_Data(S_Show_Data *pDst, INT8U Area_No);
 EXT INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No);
+EXT INT8U Check_Prog_Para(S_Prog_Para *pPara);
 EXT INT8U Check_Update_Show_Data_Bak(void);
 EXT INT8U Check_Prog_End(void);
 EXT void Check_Show_Data_Para(void);

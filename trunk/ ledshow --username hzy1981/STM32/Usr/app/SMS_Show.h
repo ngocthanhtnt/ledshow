@@ -90,6 +90,7 @@ EXT S_SMS_Cur_No SMS_Cur_No;
 EXT S_SMS_Data SMS_Data;
 EXT S_SMS_WR_Buf SMS_WR_Buf; //SMS¶ÁÐ´µÄbuf
 EXT INT8U SMS_File_Play_End(void);
+EXT void Clear_All_SMS(void);
 EXT void Read_SMS_File_Flag(void);
 EXT void Reset_Cur_SMS_File_No(void);
 EXT INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen);

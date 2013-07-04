@@ -430,6 +430,15 @@ char *GetErrInfo(INT8U Err_No)
   return 0;
 }
 
+//清除所有短信
+void Clear_All_SMS(void)
+{
+	memset(SMS_File_Flag.Flag, 0, sizeof(SMS_File_Flag.Flag));
+	SET_SUM(SMS_File_Flag);
+	
+	Write_SMS_File_Flag();
+}
+
 extern void Set_Prog_Num(INT8U Num);
 //处理一条短信数据
 INT8U One_SMS_Proc(char *p, char *pReStr)
@@ -832,10 +841,7 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
       {
           if(p[4] EQ '9' && p[5] EQ '9' && p[6] EQ '9') //删除所有短信
           {
-              memset(SMS_File_Flag.Flag, 0, sizeof(SMS_File_Flag.Flag));
-              SET_SUM(SMS_File_Flag);
-
-              Write_SMS_File_Flag();
+              Clear_All_SMS();
 			  
 			  //删除显示数据 
 			  Clear_Area_Data(&Show_Data_Bak, 0);
