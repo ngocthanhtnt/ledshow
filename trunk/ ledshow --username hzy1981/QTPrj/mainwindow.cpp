@@ -979,7 +979,7 @@ void MainWindow::fileOpen()
 
     settings.clear();//clear(); //清除
 
-    newFileName = QFileDialog::getOpenFileName(this, tr("打开工程文件"), ".", tr("工程文件(*.ipj)"));
+    newFileName = QFileDialog::getOpenFileName(this, tr("打开工程文件"), WORKDIR(), tr("工程文件(*.ipj)"));
     if(newFileName.length()==0)
     {
         return;

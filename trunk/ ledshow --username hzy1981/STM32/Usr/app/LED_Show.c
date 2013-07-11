@@ -682,7 +682,7 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
 
           if((INT16U)j > Y) //注意！！！！这里和Draw函数不一样。不用Y+1作为比较，因为Copy函数需要尽可能的避免漏copy数据。否则可能导致屏幕漏数据现象
           {
-            for(k = Y; k < j; k ++)
+            for(k = Y; k <= j; k ++)
             {
                 Value = Get_Area_Point_Data(pSrc_Buf, Area_No, (INT16U)i, (INT16U)k);
                 Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)(i + Xdiff), (INT16U)(k + Ydiff), Value);
@@ -690,7 +690,7 @@ void Copy_Line(S_Show_Data *pSrc_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
           }
           else if(Y > (INT16U)j)
           {
-              for(k = (INT16U)j; k < Y; k ++)
+              for(k = (INT16U)j; k <= Y; k ++)
               {
                   Value = Get_Area_Point_Data(pSrc_Buf, Area_No, (INT16U)i, (INT16U)k);
                   Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)(i + Xdiff), (INT16U)(k + Ydiff), Value);
@@ -754,12 +754,12 @@ void Draw_Line(S_Show_Data *pDst_Buf, INT8U Area_No, S_Point *pPoint0, S_Point *
 //--------------
         if((INT16U)j > Y + 1)
         {
-          for(k = Y + 1; k < j; k ++)
+          for(k = Y + 1; k <= j; k ++)
               Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)k, Value);
         }
         else if(Y > (INT16U)j + 1)
         {
-            for(k = (INT16U)j + 1; k < Y; k ++)
+            for(k = (INT16U)j + 1; k <= Y; k ++)
                 Set_Area_Point_Data(pDst_Buf, Area_No, (INT16U)i, (INT16U)k, Value);
         }
         else
@@ -5192,18 +5192,22 @@ void Move_Diamond_0(INT8U Area_No)
         P[3].Y = Prog_Para.Area[Area_No].Y_Len - 1;
     }
 
-    //Draw_Line(&Show_Data, Area_No, &P[0], &P[1], 0x01);
+    //debug("line x0:%d,y0:%d,  x1:%d,y1:%d", P[0].X, P[0].Y, P[1].X, P[1].Y);
     Copy_Line(&Show_Data_Bak, Area_No, &P[0], &P[1], &Show_Data, &P[0]);
+
     P[1].X = Prog_Para.Area[Area_No].X_Len - 1 - P[1].X;
-    //Draw_Line(&Show_Data, Area_No, &P[1], &P[2], 0x01);
+    //debug("line x0:%d,y0:%d,  x1:%d,y1:%d", P[1].X, P[1].Y, P[2].X, P[2].Y);
     Copy_Line(&Show_Data_Bak, Area_No, &P[1], &P[2], &Show_Data, &P[1]);
     P[2].Y = Prog_Para.Area[Area_No].Y_Len - 1 - P[2].Y;
     //Draw_Line(&Show_Data, Area_No, &P[2], &P[3], 0x01);
+    //debug("line x0:%d,y0:%d,  x1:%d,y1:%d", P[2].X, P[2].Y, P[3].X, P[3].Y);
     Copy_Line(&Show_Data_Bak, Area_No, &P[2], &P[3], &Show_Data, &P[2]);
     P[3].X = Prog_Para.Area[Area_No].X_Len - 1 - P[3].X;
     P[0].Y = Prog_Para.Area[Area_No].Y_Len - 1 - P[0].Y;
     //Draw_Line(&Show_Data, Area_No, &P[3], &P[0], 0x01);
-    Copy_Line(&Show_Data_Bak, Area_No, &P[3], &P[0], &Show_Data, &P[3]);
+    //debug("line x0:%d,y0:%d,  x1:%d,y1:%d", P[3].X, P[3].Y, P[0].X, P[0].Y);
+    Copy_Line(&Show_Data_Bak, Area_No, &P[0],&P[3],  &Show_Data, &P[0]);
+    //debug("\r\n");
 }
 
 //水平百叶窗

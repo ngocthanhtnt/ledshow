@@ -103,9 +103,9 @@ A	…	帧数据域内容
 #define COM_ERR_PROGRAM_NUM  0x02 //节目数超,文件数、分区数超都用这个
 #define COM_ERR_PARA_INVALID 0x03 //参数不合法
 #define COM_ERR_PARA_LEN_ERR 0x04 //参数长度错误，或者控制码错误
-#define COM_ERR_WR_DATA      0x05 //写数据出错
-#define COM_ERR_RD_DATA		 0x06 //读数据出错
-#define COM_ERR_OTHER        0xFF //其他错误
+#define COM_ERR_WR_DATA      0x05 //读写数据出错
+//#define COM_ERR_RD_DATA		 0x06 //读数据出错
+#define COM_ERR_OTHER        0x09 //其他错误
 
 #define RCV_DATA_BUF Screen_Status.Com_Rcv_Data
 /*

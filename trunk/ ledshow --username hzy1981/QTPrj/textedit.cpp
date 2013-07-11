@@ -76,6 +76,7 @@
 #include <QRgb>
 #include <QDialog>
 #include <QTextLayout>
+#include <QDesktopServices>
 #include "showArea.h"
 #include "mainwindow.h"
 /*
@@ -669,7 +670,8 @@ void TextEdit::fileNew()
 void TextEdit::fileOpen()
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("打开文件..."),
-                                              QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
+                                              WORKDIR(),
+                                              tr("HTML-Files (*.htm *.html);;All Files (*)"));
     if (!fn.isEmpty())
         load(fn);
 }

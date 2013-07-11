@@ -7,6 +7,7 @@
 #include <QextSerialEnumerator>
 #include <QList>
 #include <QObject>
+#include <QDesktopServices>
 #include "makeProto.h"
 #include "mainwindow.h"
 #include "screenProperty.h"
@@ -3689,7 +3690,7 @@ void CupdateFirmwareDialog::openFirmwareFile()
 
     if(makeFlag)
     {
-      newFileName = QFileDialog::getOpenFileName(this, tr("打开固件文件"), ".", tr("二进制文件(*.bin)"));
+      newFileName = QFileDialog::getOpenFileName(this, tr("打开固件文件"), WORKDIR(), tr("二进制文件(*.bin)"));
       if(newFileName.length()==0)
       {
           return;
@@ -3700,7 +3701,7 @@ void CupdateFirmwareDialog::openFirmwareFile()
     }
     else
     {
-      newFileName = QFileDialog::getOpenFileName(this, tr("打开固件文件"), ".", tr("固件(*.fwb)"));
+      newFileName = QFileDialog::getOpenFileName(this, tr("打开固件文件"), WORKDIR(), tr("固件(*.fwb)"));
 
       if(newFileName.length()==0)
           return;
