@@ -300,7 +300,8 @@ void UDisk_Proc(void)
 					  //Screen_Status.UDisk_Flag = UDISK_END; //¥¶¿ÌÕÍ±œ
 					  ASSERT_FAILED();
 					  //Clr_All_Show_Data();
-					  strcpy(reStr, "ERR2");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR2");
+					  strcpy(reStr, "ERR2 ");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR2");
+					  reStr[4] = Screen_Status.Com_Err_Flag + '0';
 					  break;
 					} 
 		          }
@@ -411,7 +412,7 @@ void Update_From_UDisk(void)
 			  ASSERT_FAILED();
 			  //Clr_All_Show_Data();
 			  //strcpy(reStr, "ERR2");//LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR2");
-			  UDisk_Res_Flag.Var = 3;
+			  UDisk_Res_Flag.Var = 21 +  Screen_Status.Com_Err_Flag;
 			  break;
 			}
 		}

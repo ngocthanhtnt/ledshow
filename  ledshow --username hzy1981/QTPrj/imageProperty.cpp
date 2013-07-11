@@ -2,6 +2,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QMovie>
+#include <QDesktopServices>
 #include "mainwindow.h"
 #include "imageProperty.h"
 
@@ -149,7 +150,7 @@ void CimageProperty::openImageFile()
     QTreeWidgetItem *item;
 
     QString fileName = QFileDialog::getOpenFileName(this, tr("打开文件"),
-                                                    "/home",
+                                                    WORKDIR(),
                                                     tr("Images (*.png *.bmp *.jpg *.ico)"));
     if(fileName.isEmpty() == false)
     {
@@ -322,19 +323,19 @@ QSize getImageShowData(QImage image, S_Show_Data *pDst, INT8U Area_No, INT16U x,
           if(v < 80 || s < 20)
             colorData = 0;
           //ye = QColor(rgb).yellow();
-          else if(h >=300 || h < 30)
+          else if(h >=330 || h <= 30)
           {
               colorData = getColorData(QColor(Qt::red));
               //Set_Area_Point_Data(pDst, 0, x + i, y + j, colorData);
               //qDebug("yellow");
           }
-          else if(h > 30 && h < 90)
+          else if(h >= 30 && h <= 90)
           {
               colorData = getColorData(QColor(Qt::yellow));
               //Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x01);
               //qDebug("red");
           }
-          else if(h >= 90 && h< 180)// && r < IMAGE_VALUE && b <IMAGE_VALUE)
+          else if(h >= 90 && h<= 150)// && r < IMAGE_VALUE && b <IMAGE_VALUE)
           {
               colorData = getColorData(QColor(Qt::green));
               //Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x02);

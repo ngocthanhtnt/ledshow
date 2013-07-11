@@ -133,7 +133,7 @@ INT16U Read_Prog_Para_Frame_Proc(INT8U Frame[], INT16U FrameLen, INT16U Frame_Bu
 
   Len = _Read_Prog_Para(Prog_No, Frame + FDATA, Frame, Frame_Buf_Len);
   if(Len EQ 0)
-    Screen_Status.Com_Err_Flag =  COM_ERR_RD_DATA;
+    Screen_Status.Com_Err_Flag =  COM_ERR_WR_DATA;
   return Len;
 }
 

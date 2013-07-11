@@ -349,6 +349,8 @@ INT8U Chk_PH_No(char No[])
   {
     if(strlen(SMS_Phone_No.No[i]) != 0)
         num ++;
+    else
+	    continue;
 
     if(strstr(No, SMS_Phone_No.No[i]) != '\0')
         break;
@@ -702,7 +704,7 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 
            Base_Para.Width = Str_2_Int(&p[4], 4);
 
-           if(!(p[8] EQ 'x' || p[8] EQ 'X'))
+           if(!(p[8] EQ 'x' || p[8] EQ 'X' || p[8] EQ '*'))
              return SMS_FORMAT_ERR;
 
            //高度
@@ -816,6 +818,13 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
              if(strlen(&p[4]) >= sizeof(SMS_Phone_No.No[0]))
                  return SMS_FORMAT_ERR;
 
+             //该号码已经设置好了，则不需再设置
+             for(i = 0; i < (int)S_NUM(SMS_Phone_No.No); i ++)
+             {
+                 if(strcmp(SMS_Phone_No.No[i], &p[4]) EQ 0)
+                   return SMS_NO_ERR;
+             }
+
              //寻找一个空闲位置存储号码
              for(i = 0; i < (int)S_NUM(SMS_Phone_No.No); i ++)
              {
@@ -913,8 +922,9 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 
   for(i = 0; i < 1; i ++)
   {
-    //if(Chk_PH_No(pMsg[i].TPA) EQ 0) //手机号码无权限
-	  //continue;
+    if(Chk_PH_No(pMsg[i].TPA) EQ 0 &&\
+	   memcmp(pMsg[i].TP_UD + 1, "168", 3) != 0) //手机号码无权限
+	  continue;
 
     re = One_SMS_Proc(pMsg[i].TP_UD, reStr);
 

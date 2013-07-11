@@ -1,6 +1,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QMovie>
+#include <QDesktopServices>
 #include "mainwindow.h"
 #include "flashProperty.h"
 
@@ -153,7 +154,7 @@ void CflashProperty::openFlashFile()
     QTreeWidgetItem *item;
 
     QString fileName = QFileDialog::getOpenFileName(this, tr("打开文件"),
-                                                    "/home",
+                                                    WORKDIR(),
                                                     tr("Images (*.png *.xpm *.jpg *.gif)"));
     if(fileName.isEmpty() == false)
     {
@@ -343,19 +344,19 @@ QSize getFlashShowData(QImage image, S_Show_Data *pDst, INT8U Area_No, INT16U x,
           if(v < 80 || s < 20)
             colorData = 0;
           //ye = QColor(rgb).yellow();
-          else if(h >=300 || h < 30)
+          else if(h >=330 || h <= 30)
           {
               colorData = getColorData(QColor(Qt::red));
               //Set_Area_Point_Data(pDst, 0, x + i, y + j, colorData);
               //qDebug("yellow");
           }
-          else if(h > 30 && h < 90)
+          else if(h >= 30 && h <= 90)
           {
               colorData = getColorData(QColor(Qt::yellow));
               //Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x01);
               //qDebug("red");
           }
-          else if(h >= 90 && h< 180)// && r < FLASH_VALUE && b <FLASH_VALUE)
+          else if(h >= 90 && h<= 150)// && r < FLASH_VALUE && b <FLASH_VALUE)
           {
               colorData = getColorData(QColor(Qt::green));
               //Set_Area_Point_Data(pDst, 0, x + i, y + j, 0x02);
@@ -395,9 +396,16 @@ void getFlashPageShowData(QString str, INT8U page, S_Show_Data *pDst, INT8U Area
 
 int getFlashFrameCount(QString str)
 {
+    QString fileName;
+    QMovie flash;
+
     settings.beginGroup(str);
-    QMovie *movie = new QMovie(settings.value("fileName").toString());
+    fileName = settings.value("fileName").toString();
     settings.endGroup();
+
+    flash.setFileName(fileName);
+    //QMovie *movie = new QMovie(settings.value("fileName").toString());
+
     //totalFrameNumEdit->setText(QString::number(movie->frameCount()));
-    return movie->frameCount();
+    return flash.frameCount();
 }

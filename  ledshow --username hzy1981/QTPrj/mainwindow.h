@@ -43,8 +43,10 @@
 #define MCUZK_FILE ".\\font\\mcuzk.dat" //发送到下位机的字库文件
 #define MCUZK_PROTO_FILE ".\\font\\mcuzkproto.dat"
 
+#define WORKDIR() QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)
+
 #define SEND_PARA_OK_STR    "数据发送成功"
-#define SEND_PARA_FAIL_STR  "数据发送失败，请检查通信参数是否通信链路是否正确！"
+#define SEND_PARA_FAIL_STR  "数据发送失败，请检查通信参数和通信链路是否正常！"
 
 class MainObj:public QObject
 {
