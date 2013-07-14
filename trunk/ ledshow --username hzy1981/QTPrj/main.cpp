@@ -273,7 +273,7 @@ int main(int argc, char *argv[])
 
     fontFileOpen();
 
-#ifdef QT_DEBUG
+#if 0//def QT_DBG
     qDebug("reset card para file");
     resetCardtoCardParaFile();
 #endif
