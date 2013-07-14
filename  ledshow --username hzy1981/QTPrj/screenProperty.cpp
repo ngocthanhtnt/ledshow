@@ -2067,7 +2067,6 @@ void CcomTest::autoConnect()
             makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)temp, sizeof(temp));
             bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
 
-            w->comStatus->comThread->setComTimeOutSec(DEF_COM_TIME_OUT);
             if(re EQ true)
             {
                 QMessageBox::information(w, tr("提示"),
@@ -2076,6 +2075,9 @@ void CcomTest::autoConnect()
                 setSettingsToWidget(screenStr);
 
                 this->autoConnectButton->setEnabled(true);
+
+                w->comStatus->comThread->setComTimeOutSec(DEF_COM_TIME_OUT);
+
                 return;
 
             }
@@ -2098,6 +2100,8 @@ void CcomTest::autoConnect()
                                tr("连接失败，没有找到连接成功的串口！"),tr("确定"));
 
     this->autoConnectButton->setEnabled(true);
+
+    w->comStatus->comThread->setComTimeOutSec(DEF_COM_TIME_OUT);
 
 }
 

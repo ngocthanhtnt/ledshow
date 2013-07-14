@@ -117,7 +117,7 @@ void CcomThread::setComTimeOutSec(int sec)
 
 int CcomThread::waitComRcv(int sec)
 {
-    int rcvBytes,j = 0;
+    int rcvBytes,j = 0, dataFlag = 0;
 
     Rcv_Posi = 0;
     Rcv_Flag = 0;
@@ -132,7 +132,11 @@ int CcomThread::waitComRcv(int sec)
             return 1;
         else if(rcvBytes > 0)//收到了数据则重新计时
         {
-            i = 0;
+            if(dataFlag EQ 0) //之前没有收到数据
+            {
+              i = 0;
+              dataFlag = 1;
+            }
         }
 
         j ++;

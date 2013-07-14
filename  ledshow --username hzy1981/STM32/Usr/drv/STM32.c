@@ -1279,6 +1279,7 @@ INT8U Chk_Test_Key_Down(void)
   return 0;
 }
 
+static const INT8U TempTime1[] = {12, 12, 31, 23, 59, 59, 0};
 //自身硬件的检测
 //返回错误代码,0表示没有错误
 //第0位,存储器错误
@@ -1289,8 +1290,16 @@ INT16U Self_Test(void)
   INT32U Data = 0x55AA5AA5;
   INT8U Re = 1;
   INT16U ErrFlag = 0;// i;
-  S_Time TempTime,TempTime1;
+  S_Time TempTime, TempTime2;
 
+/*#define T_YEAR  0 //--除了日和年其他都从0开始计起。日从1计起，年从1900年计起
+#define T_MONTH 1
+#define T_DATE  2
+#define T_HOUR  3
+#define T_MIN   4
+#define T_SEC   5
+#define T_WEEK  6
+*/
   Screen_Status.Self_OC_Flag = CLOSE_FLAG; //先关闭显示
 
   if(Screen_Status.Encryption_Err_Flag)	//加密数据错误后不能进入自检状态，这样生产自检环节就可检测出来
@@ -1339,14 +1348,20 @@ INT16U Self_Test(void)
   {
  // DS1302_Init();
 #if CLOCK_EN
-  Re &= _Get_Cur_Time(TempTime.Time);
+  _Get_Cur_Time(TempTime.Time); //保存当前时间
   Print_Cur_Time();
-  Delay_sec(1);//Delay_sec(2);
-  Re &=_Get_Cur_Time(TempTime1.Time);
+
+  Set_Cur_Time((INT8U *)TempTime1); //置时间到零点前，跨日
+  Delay_sec(2);//Delay_sec(2);
+  _Get_Cur_Time(TempTime2.Time);
+
+  Set_Cur_Time(TempTime.Time); //恢复时间
 #endif
   }
  
-  if(Re > 0 && (((TempTime.Time[T_SEC] + 1) % 60)!= TempTime1.Time[T_SEC]))
+  if(TempTime2.Time[T_YEAR] EQ 13 && TempTime2.Time[T_MONTH] EQ 1 &&\
+     TempTime2.Time[T_DATE] EQ 1 && TempTime2.Time[T_HOUR] EQ 0 &&\
+	 TempTime2.Time[T_MIN] EQ 0 && TempTime2.Time[T_SEC] < 3)
   {
     debug("时钟自检成功\r\n");
     Re = Re & 1;
