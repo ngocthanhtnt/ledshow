@@ -703,6 +703,25 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
   return AREA_OK;
 }
 
+//检查播放文件是否为空，空返回1，否则返回0
+INT8U Chk_File_Null(void)
+{
+#if SMS_EN
+  return 0;
+#else	
+	INT16U Num = 0,i;
+	
+	for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
+	{
+		Num += Prog_Para.Area_File_Num[i];
+	}
+	
+	if(Num EQ 0)
+		return 1;
+	else
+		return  0;
+#endif	
+}
 
 //检测更新显示备份区数据
 INT8U Check_Update_Show_Data_Bak(void)
@@ -710,11 +729,17 @@ INT8U Check_Update_Show_Data_Bak(void)
   INT8U i;
   //INT32U Stay_Time;
   //S_Int8U Sec = {CHK_BYTE, 0xFF, {0},CHK_BYTE};
-  
-  if(Prog_Status.Play_Status.RT_Play_Time > 0 ||\
-     Prog_Num.Num EQ 0)
-      return 0;
-
+	if(Prog_Num.Num EQ 0/* || Prog_Para.Area_Num EQ 0 || Chk_File_Null()*/) //没有输入节目
+	{
+		Set_RT_Show_Area(0, 0, 4*16, 32);
+		RT_Play_Status_Enter(2);
+    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "无节目"/*, Prog_Status.Play_Status.Prog_No + 1*/);
+    return 0;		
+	}
+		
+  if(Prog_Status.Play_Status.RT_Play_Time > 0)
+		return 0;
+	
   for(i = 0; i < Prog_Para.Area_Num && i < MAX_AREA_NUM; i ++)
   {
 

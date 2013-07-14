@@ -823,7 +823,7 @@ void sys_error (ERROR_CODE code) {
 
 #define  __NET_CONFIG__
 
-#include <Net_lib.c>
+#include "Net_lib.c"
 
 #endif
 /*----------------------------------------------------------------------------
