@@ -727,15 +727,27 @@ INT8U Chk_File_Null(void)
 INT8U Check_Update_Show_Data_Bak(void)
 {
   INT8U i;
+	//static INT8U Flag = 0;
   //INT32U Stay_Time;
   //S_Int8U Sec = {CHK_BYTE, 0xFF, {0},CHK_BYTE};
 	if(Prog_Num.Num EQ 0/* || Prog_Para.Area_Num EQ 0 || Chk_File_Null()*/) //没有输入节目
 	{
-		Set_RT_Show_Area(0, 0, 4*16, 32);
-		RT_Play_Status_Enter(2);
-    LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "无节目"/*, Prog_Status.Play_Status.Prog_No + 1*/);
+		if(Prog_Status.Play_Status.RT_Play_Time EQ 0)//如果是U盘插入设置节目数为0，则应该先显示u盘处理结果。因此等待实时显示完
+		{/*
+			if(Flag EQ 0)
+			{
+				Clr_All_Show_Data();
+				Flag = 1;
+			}*/
+			Clr_All_Show_Data();
+			Set_RT_Show_Area(0, 0, 4*16, 32);
+			RT_Play_Status_Enter(2);
+			LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "无节目"/*, Prog_Status.Play_Status.Prog_No + 1*/);
+	  }
     return 0;		
 	}
+	//else
+		//Flag = 0;
 		
   if(Prog_Status.Play_Status.RT_Play_Time > 0)
 		return 0;
