@@ -70,7 +70,7 @@ typedef struct
 typedef struct
 {
     INT8U Head;
-    char No[10][30];
+    char No[9][30];
 	INT8U PSW[3];
     INT8U CS[CS_BYTES];
     INT8U Tail;

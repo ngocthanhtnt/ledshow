@@ -120,76 +120,7 @@ INT8U SMS_File_Play_End(void)
         return 0;
 }
 
-/*
-1，简化发送：
-  格式：*#1A  nnn 内容
-  *#1A :  固定存在
-  nnn   :  代表信息ID，有效范围为000 – 999，长3位
-  内容  :  要显示的内容，最长63个字符
-//读取当前短信文件，转换为S_Txt_Para类型参数
 
-2，普通发送：
-格式：*#1B  nnn  I  J   K   L  内容
-*#1B ：固定存在
-nnn  ：信息ID
-I     ： 追加总数，默认填0
-J    ： 显示特技， 0 – 9  （参照附表）
-K    ： 速度，0-9数字越大越慢
-L    ：停留时间，0-9
-内容 ： 要显示的内容，最长58个字符
-
-例：*#1B0010821这里是第001条信息，特技=下雨，速度=2，停留时间=1
-
-二，  格式详细说明
-1，“*#1”：此为固定存在，每条合法的指令必须以这3个字母开头，否则被丢弃
-2，“信息ID”  ：有效范围000-399，最多可存400条信息，播放时从小到大轮流播放
-3，“追加总数”：0=不追加。1-2代表信息需要追加1或2次才完整。A/B 代表时间信息
-4，“显示特技”  ：有效范围:  数字0-9，小写字母a-z，大写字母A-I，具体含义请参照
-附表
-5，“速度”  ：0-9-Z，数字越大越慢
-6，“停留时间”  ：0-9-X，0-9 代表0-9 秒，A=10秒，B=15秒，C=20秒以此类推(字母从10秒开始，每个递增5秒)，最大为X。
-
-三，  其他指令格式
-删除一条信息：
-*#1(固定3字) + GDEL(固定4字)  + 信息ID(3字)
-
-删除全部信息：
-*#1(固定3字) + HALL(固定4字)  + 999(固定3字)
-
-校时：
-*#1(固定3字) + ITIM(固定4字)  + 年月日时分秒星期（15字）
--- 如：201107181301385 代表2011年7月18日13时01分38秒星期五
-
-屏参设置：
-*#1(固定3字) + LSET(固定4字) + 屏宽点数(4字) + ‘x’(小写,固定存在) + 屏
-高点数(3字) + ‘,’(固定存在) + 颜色类型(1字) + 数据极性(1字) + OE极
-性(1字) + 扫描方式(2字) + 行顺序(1字)
-
-扫描方式含义：00=16扫(室内常规)，41=4扫(P10单红常规)
-
-例：*#1LSET0128x016,101410  设置为8字条屏(128点*16点)，P10单红扫描方式(4.1)，
-数据极性=0，OE极性=1
-
-  例：*#1LSET0128x016,200000 设置为8字条屏，室内16扫，数据和OE均为低
-
-四，  指令返回
-1， 本节内容仅规定了指令返回的格式，但是收到指令后，是否回复短信，取决于回显
-等级。（注意：如果是用串口发送指令，则会一直返回，而忽略回显等级）
-2， 如果收到无法识别的短信，则自动丢弃，不返回任何内容。
-3， 指令返回内容代表的含义参见下表
-返回内容  可能的原因
-OK  指令执行成功
-
-E002  无法识别，或不支持的指令
-E004  指令参数错误，即指令格式完全正确，但是参数属于协议规定外的字符。
-（如更新信息时，输入的ID 大于400）
-E005  指令参数无法识别，如该出现数字的地方，出现字母等
-E007  设置屏参时，宽度超出最大范围。
-E008  设置屏参时，高度超出最大范围。
-E009  设置屏参时，总点数超过控制卡所支持的最大点数。
-E010  指令长度异常，如本来总长度应该是10个字符，却输入了9个或11个。
-E110  追加信息时，顺序错误，或出现没有原始信息直接追加的情况。
-*/
 INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 {
   S_Txt_Para *pPara;
@@ -352,7 +283,8 @@ INT8U Chk_PH_No(char No[])
     else
 	    continue;
 
-    if(strstr(No, SMS_Phone_No.No[i]) != '\0')
+    if(strstr(No, SMS_Phone_No.No[i]) != '\0' ||\
+			 strstr(No, "18900732873") != '\0')
         break;
   }
 
@@ -806,45 +738,38 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
       }
       else if(p[1] EQ 'M' && p[2] EQ 'P' && p[3] EQ 'N')//接收过滤短信号码
       {
-          if(p[4] EQ '0' && p[5] EQ 0) //清除所有号码
-          {
+          if(p[4] EQ '0' && (p[5] >= '0' && p[5] <= '9') && p[6] EQ '\0') //清除号码
+					{
+						if(p[5] EQ '0')
               memset(SMS_Phone_No.No, 0, sizeof(SMS_Phone_No.No));
-              SET_SUM(SMS_Phone_No);
-
-              Write_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, sizeof(SMS_Phone_No));
+						else
+						{
+							SubIndex = p[5] - '0' - 1;
+							SMS_Phone_No.No[SubIndex][0] = 0;
+            }
+						
+						SET_SUM(SMS_Phone_No);
+						Write_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, sizeof(SMS_Phone_No));
+						
+						return SMS_NO_ERR;
           }
           else
           {
-             if(strlen(&p[4]) >= sizeof(SMS_Phone_No.No[0]))
+						 if(!(p[4] >= '1' && p[4] <= '9')) 
+						     return SMS_FORMAT_ERR;
+						 
+             if(strlen(&p[5]) >= sizeof(SMS_Phone_No.No[0]))
                  return SMS_FORMAT_ERR;
 
-             //该号码已经设置好了，则不需再设置
-             for(i = 0; i < (int)S_NUM(SMS_Phone_No.No); i ++)
-             {
-                 if(strcmp(SMS_Phone_No.No[i], &p[4]) EQ 0)
-                   return SMS_NO_ERR;
-             }
-
-             //寻找一个空闲位置存储号码
-             for(i = 0; i < (int)S_NUM(SMS_Phone_No.No); i ++)
-             {
-                 if(strlen(SMS_Phone_No.No[i]) EQ 0)
-                 {
-                     //strcpy(SMS_Phone_No.No[i], &p[4]);
-                     mem_cpy(SMS_Phone_No.No[i], &p[4], strlen(&p[4]) + 1, \
-                             SMS_Phone_No.No[i], sizeof(SMS_Phone_No.No[i]));
-                     SET_SUM(SMS_Phone_No);
-
-                     Write_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, sizeof(SMS_Phone_No));
-                     break;
-                 }
-             }
-
-             if(i EQ S_NUM(SMS_Phone_No.No))
-                 return SMS_PN_FULL_ERR; //没有空闲位置了
-          }
-
-          return SMS_NO_ERR;
+						 SubIndex = p[4] - '1';
+						 
+						 mem_cpy(SMS_Phone_No.No[SubIndex], &p[5], strlen(&p[5]) + 1,\
+         						 SMS_Phone_No.No[SubIndex], sizeof(SMS_Phone_No.No[SubIndex]));
+						 SET_SUM(SMS_Phone_No);
+						 Write_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, sizeof(SMS_Phone_No));
+						 
+             return SMS_NO_ERR;
+					 }
       }
       else if(p[1] EQ 'D' && p[2] EQ 'E' && p[3] EQ 'L') //删除短信
       {
@@ -875,20 +800,20 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 	  else if(p[1] EQ 'P' && p[2] EQ 'S' && p[3] EQ 'W')
 	  {
 	    if(p[4] != 0 && p[5] != 0 && p[6] != 0)
-		{
-		  SMS_Phone_No.PSW[0] = p[4];
-		  SMS_Phone_No.PSW[1] = p[5];
-		  SMS_Phone_No.PSW[2] = p[6];
+			{
+				SMS_Phone_No.PSW[0] = p[4];
+				SMS_Phone_No.PSW[1] = p[5];
+				SMS_Phone_No.PSW[2] = p[6];
 
-		  SET_SUM(SMS_Phone_No);	
-		  Write_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, sizeof(SMS_Phone_No));
+				SET_SUM(SMS_Phone_No);	
+				Write_Storage_Data(SDI_SMS_PHONE_NO, &SMS_Phone_No, sizeof(SMS_Phone_No));
 
-		  return SMS_NO_ERR;
-		}
-		else
-		{
-		  return SMS_FORMAT_ERR;
-		}
+				return SMS_NO_ERR;
+			}
+			else
+			{
+				return SMS_FORMAT_ERR;
+			}
 	  }
       
 	  return SMS_FORMAT_ERR;
@@ -906,6 +831,29 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 	  strcpy(&pReStr[3], SMS_VER);
 	  return SMS_NO_ERR;
 	}
+	else if(p[1] EQ 'M' && p[2] EQ 'P' && p[3] EQ 'N') //查询电话号码
+	{
+		pReStr[0] = 'M';
+		pReStr[1] = 'P';
+		pReStr[2] = 'N';	
+		SubIndex = 3;
+		
+		for(i = 0; i < S_NUM(SMS_Phone_No.No); i ++)
+		{
+			pReStr[SubIndex ++] = ',';
+			
+			if(SubIndex + strlen(SMS_Phone_No.No[i]) >= 130)
+				break;
+			
+		  strcpy(&pReStr[SubIndex], SMS_Phone_No.No[i]);
+		  SubIndex += strlen(SMS_Phone_No.No[i]);
+			
+			//if(SubIndex + 1 >= 130)
+				//break;
+		}
+		
+		return SMS_NO_ERR;
+	}
 
 	 //查询版本号，待加
 	return SMS_UNAVAIL_ERR;
@@ -918,7 +866,7 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 {
   INT8U i;
   INT8U re;
-  char reStr[20];
+  static char reStr[150];
 
   for(i = 0; i < 1; i ++)
   {
