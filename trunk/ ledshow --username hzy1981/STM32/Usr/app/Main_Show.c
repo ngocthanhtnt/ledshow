@@ -732,7 +732,7 @@ INT8U Check_Update_Show_Data_Bak(void)
   //S_Int8U Sec = {CHK_BYTE, 0xFF, {0},CHK_BYTE};
 	if(Prog_Num.Num EQ 0/* || Prog_Para.Area_Num EQ 0 || Chk_File_Null()*/) //没有输入节目
 	{
-		if(Prog_Status.Play_Status.RT_Play_Time EQ 0)//如果是U盘插入设置节目数为0，则应该先显示u盘处理结果。因此等待实时显示完
+		if(Screen_Status.Com_Time EQ 0 && Prog_Status.Play_Status.RT_Play_Time EQ 0)//如果是U盘插入设置节目数为0，则应该先显示u盘处理结果。因此等待实时显示完
 		{/*
 			if(Flag EQ 0)
 			{
