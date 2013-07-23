@@ -161,15 +161,13 @@ void SysTick_Handler(void)
   */
 #if UDISK_EN  //u盘使能
 #ifdef CHIP_USB_HOST //定义表示使用片上USB HOST接口
+extern void Set_Screen_Com_Time(INT8U Sec);
 void OTG_FS_IRQHandler(void)
 {
   USBH_OTG_ISR_Handler(&USB_OTG_Core);
-/*
-  if(Screen_Status.UDisk_Flag EQ UDISK_NULL) //第一次扫描到U盘,方便快速读取U盘
-  {
-    Set_Screen_Com_Time(3); //通信等待状态，停止扫描
-    //RT_Play_Status_Enter(0);	//实时显示状态，停止读取播放文件
-  }*/
+
+  if(Screen_Status.UDisk_Flag EQ UDISK_NULL || Screen_Status.UDisk_Flag EQ UDISK_ING)
+    Set_Screen_Com_Time(3);
 }
 #endif
 #endif

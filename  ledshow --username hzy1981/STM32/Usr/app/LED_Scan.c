@@ -1099,7 +1099,7 @@ void LED_Scan_One_Row(void)
 #endif
 	 //此处是硬件扫描方式代码
     Delay_us(5);
-    __enable_irq();
+    //__enable_irq();
 		 
 	//关闭OE使能
 	Set_OE_Duty_Polarity(0, Screen_Para.Scan_Para.OE_Polarity);

@@ -431,7 +431,7 @@ void Update_From_UDisk(void)
 
 UDiskProcEnd:
 	f_mount(0, NULL);
-	Set_UDisk_Status(UDISK_NULL);
+	Set_UDisk_Status(UDISK_END);
 }
 #endif
 #endif
