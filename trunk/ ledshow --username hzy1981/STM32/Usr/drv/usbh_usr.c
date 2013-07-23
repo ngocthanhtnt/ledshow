@@ -185,10 +185,18 @@ void USBH_USR_Init(void)
 * @param  None
 * @retval None
 */
+extern void Set_UDisk_Status(INT8U Status);
 void USBH_USR_DeviceAttached(void)
 {
   LCD_UsrLog((void *)MSG_DEV_ATTACHED);
   UDisk_Input_Flag.Var = UDISK_INPUT_FLAG;
+
+  //if(Screen_Status.UDisk_Flag EQ UDISK_NULL) //第一次扫描到U盘,方便快速读取U盘
+  {
+    //Set_Screen_Com_Time(3); //通信等待状态，停止扫描
+	Set_UDisk_Status(UDISK_ING);
+    //RT_Play_Status_Enter(0);	//实时显示状态，停止读取播放文件
+  }
 }
 
 
@@ -211,6 +219,7 @@ void USBH_USR_UnrecoveredError (void)
 * @param  None
 * @retval Staus
 */
+extern void Set_Screen_Com_Time(INT8U Sec);
 void USBH_USR_DeviceDisconnected (void)
 {
 #if 0  
@@ -222,7 +231,7 @@ void USBH_USR_DeviceDisconnected (void)
   /* Set default screen color*/
 #endif
   LCD_ErrLog((void *)MSG_DEV_DISCONNECTED);
-
+  Set_UDisk_Status(UDISK_NULL);
 }
 /**
 * @brief  USBH_USR_ResetUSBDevice 
