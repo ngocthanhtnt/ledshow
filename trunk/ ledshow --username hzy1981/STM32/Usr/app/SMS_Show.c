@@ -120,11 +120,23 @@ INT8U SMS_File_Play_End(void)
         return 0;
 }
 
+ //获取字符索引
+INT8U Get_Chr_Index(char Chr)
+{
+   if(Chr >= '0' && Chr <= '9')
+     return Chr - '0';
+   else if(Chr >= 'a' && Chr <= 'z')
+     return Chr - 'a' + 10;
+   else if(Chr >= 'A' && Chr <= 'Z')
+     return Chr - 'A' + 10 + 26;
+   else
+     return 0xFF;
+}
 
 INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 {
   S_Txt_Para *pPara;
-  INT8U i;//, Num0 = 1, Num1;
+  INT8U i, Re, color = 0, Border_Flag;//, Num0 = 1, Num1;
   INT16U Len;
 
 /*/---------以下测试临时用----------------------
@@ -239,6 +251,42 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
       //pPara->SNum = Num0;
   }
 
+  Border_Flag = Get_Chr_Index(pPara->SMS_Border_Flag);	//范围0-60,0xFF
+  if(Border_Flag != 0xFF)
+  {
+ 	   pPara->Border_Width = 48;
+	   pPara->Border_Height = 1;
+
+	   color = (Border_Flag - 1) / 20; //1-20红色，21-40绿色,41-60黄色
+	   pPara->Border_Speed = ((Border_Flag - 1) % 5) * 2; //5档速度,0,2,4,6,8
+	   pPara->Border_Mode = ((Border_Flag - 1) % 20) / 5; //0,1,2,3
+
+	   if(Border_Flag != 0xFF && Border_Flag != 0)
+	     pPara->Border_Check = 1;
+	   else
+	     pPara->Border_Check = 0;
+
+	   OS_memset((INT8U *)pDst + sizeof(S_Txt_Para) - CHK_BYTE_LEN, 0x00, BORDER_DATA_LEN, pDst_Start, DstLen);
+
+	   if(pPara->Border_Check) //边框数据
+	   {
+	       for(i = 0; i < 20; i ++) //宽度24
+		   {          
+			   Re = 1;
+	
+			   if(color < 2)
+	             Re = (Re << color);
+	           else
+	             Re = (Re << 1) + Re;
+	
+	           Set_Buf_Point_Data((INT8U *)pDst + sizeof(S_Txt_Para) - CHK_BYTE_LEN, \
+			                      DstLen - sizeof(S_Txt_Para) + CHK_BYTE_LEN, Screen_Para.Base_Para.Color, 40, i, 0, Re);
+	        }
+		}
+
+
+  }
+
   //pPara->Font_Size = 2;
   SET_SUM((*pPara));
   return sizeof(S_Txt_Para);
@@ -324,6 +372,7 @@ const S_Err_Info Err_Info[]=
 {SMS_SCN_COLOR_ERR,(char *)"屏幕颜色错误"},//   0x12 //屏幕颜色错误
 {SMS_PN_FULL_ERR,(char *)"过滤手机号码已满"},//     0x13 //手机号码满
 {SMS_PSW_ERR,(char *)"密码错误"}, 
+{SMS_BORDER_ERR, (char *)"边框格式错误"},
 {SMS_PN_INVALID,(char *)"手机号码无权限"},//     0x13 //手机号码满
 //{SMS_UNAVAIL_ERR   0x20 //非有效短信，不需应答
 };
@@ -394,6 +443,7 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
   pPara->SMS_Fix_Font_Flag = 0;
   pPara->Color = Screen_Para.Base_Para.Color;
   pPara->SMS_Txt_Flag = TXT_SMS_NORMAL;
+  pPara->SMS_Border_Flag = 0; //无边框
 
   if(!(p[0] EQ '#' || p[0] EQ '*' || p[0] EQ '?'))
     return SMS_UNAVAIL_ERR;
@@ -547,6 +597,10 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
                        return SMS_COLOR_ERR;
 
 				   //p[12]保留作为边框选项---预留处理
+				   if(Get_Chr_Index(p[12]) EQ 0xFF)
+				       return SMS_BORDER_ERR;
+
+				   pPara->SMS_Border_Flag = p[12];// - '0';
 
                    if(p[13] != '+')
                        return SMS_TXTHEAD_ERR;

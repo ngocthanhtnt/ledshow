@@ -430,6 +430,7 @@ typedef struct
   INT8U SMS_Txt_Flag; //短信标志--正常图文情况下置0,短信TXT情况下置AA,短信但在短信情况下，数据读取好，直接放在buf中.
   INT8U SMS_File_No; //启用备用文件编号
   INT8U SMS_Fix_Font_Flag; //是否固定字体大小，1表示固定，0表示自适应
+  INT8U SMS_Border_Flag; //边框标志
 
   INT8U CS[CS_BYTES];
   INT8U Tail;
