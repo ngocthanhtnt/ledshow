@@ -196,6 +196,7 @@ void SPI_FLASH_PageWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteT
 * Output         : None
 * Return         : None
 *******************************************************************************/
+#ifndef USE_FLASH_M25P32
 void SPI_FLASH_BufferWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByteToWrite)
 {
   uint8_t NumOfPage = 0, NumOfSingle = 0, Addr = 0, count = 0, temp = 0;
@@ -266,6 +267,7 @@ void SPI_FLASH_BufferWrite(uint8_t* pBuffer, uint32_t WriteAddr, uint16_t NumByt
     }
   }
 }
+#endif
 
 /*******************************************************************************
 * Function Name  : SPI_FLASH_BufferRead
@@ -479,5 +481,128 @@ void SPI_FLASH_WaitForWriteEnd(void)
   /* Deselect the FLASH: Chip Select high */
   SPI_FLASH_CS_HIGH();
 }
+//-----------------------------以下是兼容M25P16、W25X16等无页写功能的芯片-------------
 
+//W25X16读写
+#define FLASH_ID 0XEF14
+//指令表
+#define W25X_WriteEnable		0x06 
+#define W25X_WriteDisable		0x04 
+#define W25X_ReadStatusReg		0x05 
+#define W25X_WriteStatusReg		0x01 
+#define W25X_ReadData			0x03 
+#define W25X_FastReadData		0x0B 
+#define W25X_FastReadDual		0x3B 
+#define W25X_PageProgram		0x02 
+#define W25X_BlockErase			0xD8 
+#define W25X_SectorErase		0x20 
+#define W25X_ChipErase			0xC7 
+#define W25X_PowerDown			0xB9 
+#define W25X_ReleasePowerDown	0xAB 
+#define W25X_DeviceID			0xAB 
+#define W25X_ManufactDeviceID	0x90 
+#define W25X_JedecDeviceID		0x9F 
+
+//SPI在一页(0~65535)内写入少于256个字节的数据
+//在指定地址开始写入最大256字节的数据
+//pBuffer:数据存储区
+//WriteAddr:开始写入的地址(24bit)
+//NumByteToWrite:要写入的字节数(最大256),该数不应该超过该页的剩余字节数!!!	 
+void SPI_Flash_Write_Page(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)
+{
+ 	u16 i;  
+    SPI_FLASH_WriteEnable();                  //SET WEL 
+
+	SPI_FLASH_CS_LOW();                            //使能器件   
+    SPI_FLASH_SendByte(W25X_PageProgram);      //发送写页命令   
+    SPI_FLASH_SendByte((u8)((WriteAddr)>>16)); //发送24bit地址    
+    SPI_FLASH_SendByte((u8)((WriteAddr)>>8));   
+    SPI_FLASH_SendByte((u8)WriteAddr);   
+    for(i=0;i<NumByteToWrite;i++)SPI_FLASH_SendByte(pBuffer[i]);//循环写数  
+	SPI_FLASH_CS_HIGH(); 
+	                           //取消片选 
+	SPI_FLASH_WaitForWriteEnd();					   //等待写入结束
+} 
+
+//无检验写SPI FLASH 
+//必须确保所写的地址范围内的数据全部为0XFF,否则在非0XFF处写入的数据将失败!
+//具有自动换页功能 
+//在指定地址开始写入指定长度的数据,但是要确保地址不越界!
+//pBuffer:数据存储区
+//WriteAddr:开始写入的地址(24bit)
+//NumByteToWrite:要写入的字节数(最大65535)
+//CHECK OK
+void SPI_Flash_Write_NoCheck(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)   
+{ 			 		 
+	u16 pageremain;	   
+	pageremain=256-WriteAddr%256; //单页剩余的字节数		 	    
+	if(NumByteToWrite<=pageremain)pageremain=NumByteToWrite;//不大于256个字节
+	while(1)
+	{	   
+		SPI_Flash_Write_Page(pBuffer,WriteAddr,pageremain);
+		if(NumByteToWrite==pageremain)break;//写入结束了
+	 	else //NumByteToWrite>pageremain
+		{
+			pBuffer+=pageremain;
+			WriteAddr+=pageremain;	
+
+			NumByteToWrite-=pageremain;			  //减去已经写入了的字节数
+			if(NumByteToWrite>256)pageremain=256; //一次可以写入256个字节
+			else pageremain=NumByteToWrite; 	  //不够256个字节了
+		}
+	};	    
+}
+
+//写SPI FLASH  
+//在指定地址开始写入指定长度的数据
+//该函数带擦除操作!
+//pBuffer:数据存储区
+//WriteAddr:开始写入的地址(24bit)
+//NumByteToWrite:要写入的字节数(最大65535) 
+#ifdef USE_FLASH_M25P32 		   
+u8 SPI_FLASH_BUF[4096];
+void SPI_FLASH_BufferWrite(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite)   
+{ 
+	u32 secpos;
+	u16 secoff;
+	u16 secremain;	   
+ 	u16 i;    
+
+	secpos=WriteAddr/4096;//扇区地址 0~511 for w25x16
+	secoff=WriteAddr%4096;//在扇区内的偏移
+	secremain=4096-secoff;//扇区剩余空间大小   
+
+	if(NumByteToWrite<=secremain)secremain=NumByteToWrite;//不大于4096个字节
+	while(1) 
+	{	
+		SPI_FLASH_BufferRead(SPI_FLASH_BUF,secpos*4096,4096);//读出整个扇区的内容
+		for(i=0;i<secremain;i++)//校验数据
+		{
+			if(SPI_FLASH_BUF[secoff+i]!=0XFF)break;//需要擦除  	  
+		}
+		if(i<secremain)//需要擦除
+		{
+			SPI_FLASH_SectorErase(secpos * 4096);//擦除这个扇区
+			for(i=0;i<secremain;i++)	   //复制
+			{
+				SPI_FLASH_BUF[i+secoff]=pBuffer[i];	  
+			}
+			SPI_Flash_Write_NoCheck(SPI_FLASH_BUF,secpos*4096,4096);//写入整个扇区  
+
+		}else SPI_Flash_Write_NoCheck(pBuffer,WriteAddr,secremain);//写已经擦除了的,直接写入扇区剩余区间. 				   
+		if(NumByteToWrite==secremain)break;//写入结束了
+		else//写入未结束
+		{
+			secpos++;//扇区地址增1
+			secoff=0;//偏移位置为0 	 
+
+		   	pBuffer+=secremain;  //指针偏移
+			WriteAddr+=secremain;//写地址偏移	   
+		   	NumByteToWrite-=secremain;				//字节数递减
+			if(NumByteToWrite>4096)secremain=4096;	//下一个扇区还是写不完
+			else secremain=NumByteToWrite;			//下一个扇区可以写完了
+		}	 
+	};	 	 
+}
+#endif
 /******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/

@@ -44,9 +44,11 @@
 #define MAX_POINTS (800*64) //最大点数--此处是双色屏的最大点数！单色屏的点数在此基础上*2
 #endif
 
-#define DATA_FLASH_SIZE (4*1024*1024)	//dataflash大小
+#define DATA_FLASH_SIZE (2*1024*1024)	//dataflash大小
 #define MAX_SCAN_BLOCK_NUM 8 //最大扫描块
 #define MAX_SCAN_WIDTH 2056 //最大扫描宽度
+
+//#define USE_FLASH_M25P32
 
 #define DATA_PREP_EN 0 //数据预准备
 #define BUILD_SCAN_DATA_INDEX_EN 0 //构建扫描数据索引使能
@@ -82,7 +84,7 @@
 #define MAX_PROG_NUM 1 //最大节目数
 #define MAX_AREA_NUM 6 //每个节目下最大分区数
 #define MAX_FILE_NUM 10 //每个节目下最大文件数
-#define MAX_STORA_BLOCK_NUM  50 //最大存储块数
+#define MAX_STORA_BLOCK_NUM  160 //最大存储块数
 
 #else
 #error "CARD Type Error"
@@ -103,7 +105,7 @@
 #define SMS_EN   0//短信使能
 #endif  
 
-#define MAX_SMS_NUM 150
+#define MAX_SMS_NUM 99
 //#define COM_BUF_ID 0x00
 //#define NET_BUF_ID 0x01
 //#define GPRS_BUF_ID 0x02
