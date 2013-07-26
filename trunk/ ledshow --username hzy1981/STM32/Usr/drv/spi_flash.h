@@ -63,6 +63,9 @@ uint16_t SPI_FLASH_SendHalfWord(uint16_t HalfWord);
 void SPI_FLASH_WriteEnable(void);
 void SPI_FLASH_WaitForWriteEnd(void);
 
+void SPI_Flash_Write_Page(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite);
+void SPI_Flash_Write_NoCheck(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite);
+//void SPI_Flash_Write(u8* pBuffer,u32 WriteAddr,u16 NumByteToWrite);
 #endif /* __SPI_FLASH_H */
 
 /******************* (C) COPYRIGHT 2009 STMicroelectronics *****END OF FILE****/

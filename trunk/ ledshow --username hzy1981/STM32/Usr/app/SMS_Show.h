@@ -34,6 +34,7 @@
 #define SMS_PN_INVALID      0x15 //手机号码无权限
 #define SMS_PSW_ERR         0x16 //密码错误
 #define SMS_BORDER_ERR      0x17 //边框错误
+#define SMS_RD_NO_ERR       0x18
 #define SMS_UNAVAIL_ERR     0x20 //非有效短信，不需应答
 
 #define SMS_FILE_PARA_LEN 400
