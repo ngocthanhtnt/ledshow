@@ -1182,6 +1182,10 @@ void Unselect_SPI_Device(void)
 
 void RST_Periph(void)
 {
+#if SMS_EN || GPRS_EN
+  ModuleReset();
+#endif
+
   SET_RST(0);
   Delay_us(100);
   SET_RST(1);

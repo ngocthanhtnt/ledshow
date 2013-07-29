@@ -5,12 +5,15 @@
 
 #if SMS_EN
 
+#define SMS_BORDER_HEIGHT 1
+#define SMS_BORDER_WIDTH  32
+
 void Reset_Ram_SMS_Phone_No(void)
 {
 	memset(&SMS_Phone_No, 0, sizeof(SMS_Phone_No));
-	SMS_Phone_No.PSW[0] = '0';
-	SMS_Phone_No.PSW[1] = '0';
-	SMS_Phone_No.PSW[2] = '0'; //默认密码为3个0
+	//SMS_Phone_No.PSW[0] = '0';
+	//SMS_Phone_No.PSW[1] = '0';
+	//SMS_Phone_No.PSW[2] = '0'; //默认密码为3个0
 	
 	SET_HT(SMS_Phone_No);
 	SET_SUM(SMS_Phone_No);
@@ -254,8 +257,8 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
   Border_Flag = Get_Chr_Index(pPara->SMS_Border_Flag);	//范围0-60,0xFF
   if(Border_Flag != 0xFF)
   {
- 	   pPara->Border_Width = 48;
-	   pPara->Border_Height = 1;
+ 	   pPara->Border_Width = SMS_BORDER_WIDTH;
+	   pPara->Border_Height = SMS_BORDER_HEIGHT;
 
 	   color = (Border_Flag - 1) / 20; //1-20红色，21-40绿色,41-60黄色
 	   pPara->Border_Speed = ((Border_Flag - 1) % 5) * 2; //5档速度,0,2,4,6,8
@@ -270,7 +273,7 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 
 	   if(pPara->Border_Check) //边框数据
 	   {
-	       for(i = 0; i < 20; i ++) //宽度24
+	       for(i = 0; i < SMS_BORDER_WIDTH; i ++) //宽度24
 		   {          
 			   Re = 1;
 	
@@ -278,9 +281,12 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
 	             Re = (Re << color);
 	           else
 	             Re = (Re << 1) + Re;
+
+			   if(i >= SMS_BORDER_WIDTH * 3 / 4)
+			     Re = 0;
 	
 	           Set_Buf_Point_Data((INT8U *)pDst + sizeof(S_Txt_Para) - CHK_BYTE_LEN, \
-			                      DstLen - sizeof(S_Txt_Para) + CHK_BYTE_LEN, Screen_Para.Base_Para.Color, 40, i, 0, Re);
+			                      DstLen - sizeof(S_Txt_Para) + CHK_BYTE_LEN, Screen_Para.Base_Para.Color, SMS_BORDER_WIDTH, i, 0, Re);
 	        }
 		}
 
@@ -288,7 +294,7 @@ INT16U Read_Cur_SMS_File_Para(void *pDst, void *pDst_Start, INT16U DstLen)
   }
 
   //pPara->Font_Size = 2;
-  SET_SUM((*pPara));
+  //SET_SUM((*pPara)); --不要该句话，否则可能破坏边框数据
   return sizeof(S_Txt_Para);
 }
 
@@ -371,9 +377,10 @@ const S_Err_Info Err_Info[]=
 {SMS_SCN_SCAN_ERR,(char *)"扫描方式错误"},//    0x11 //扫描方式错误
 {SMS_SCN_COLOR_ERR,(char *)"屏幕颜色错误"},//   0x12 //屏幕颜色错误
 {SMS_PN_FULL_ERR,(char *)"过滤手机号码已满"},//     0x13 //手机号码满
-{SMS_PSW_ERR,(char *)"密码错误"}, 
+//{SMS_PSW_ERR,(char *)"密码错误"}, 
 {SMS_BORDER_ERR, (char *)"边框格式错误"},
 {SMS_PN_INVALID,(char *)"手机号码无权限"},//     0x13 //手机号码满
+{SMS_CALL_FILE_INDEX_ERR,(char *)"预存文件序号错误"},
 //{SMS_UNAVAIL_ERR   0x20 //非有效短信，不需应答
 };
 /*
@@ -462,12 +469,12 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
           if(Chk_Int_Str(&p[2], 2) EQ 0) //序号错误
               return SMS_INDEX_ERR;
 
-           index = Str_2_Int(&p[2], 2);
+           index = Str_2_Int(&p[2], 2);       
+		   if(index EQ 0 || index > MAX_SMS_NUM)
+               return SMS_INDEX_ERR;
+		   index --;
 
 		   p = p - 1;
-
-           if(index > MAX_SMS_NUM)
-               return SMS_INDEX_ERR;
 
            if(p[5] EQ '+') //最简方式
            {
@@ -494,16 +501,16 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 		   else if(p[5] EQ '!') //调用预存显示内容
 		   {
              if(Chk_Int_Str(&p[6], 2) EQ 0) //序号错误
-               return SMS_FORMAT_ERR;
+               return SMS_CALL_FILE_INDEX_ERR;
 
 			 temp = Str_2_Int(&p[6], 2);
-			 temp = (temp != 0)?(temp - 1):0;
+			 //temp = (temp != 0)?(temp - 1):0;
 
-			 if(temp >= MAX_FILE_NUM)
-			   return SMS_FORMAT_ERR;
+			 if(temp EQ 0 || temp > MAX_FILE_NUM)
+			   return SMS_CALL_FILE_INDEX_ERR;
              
 			 pPara->SMS_Txt_Flag = TXT_SMS_BK_FILE;
-             pPara->SMS_File_No = (INT8U)temp;
+             pPara->SMS_File_No = (INT8U)temp - 1;
 
 			 SET_SUM(*pPara);
 			 memcpy(SMS_WR_Buf.Data, pPara, sizeof(S_Txt_Para));
@@ -841,8 +848,9 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
           else if(Chk_Int_Str(&p[4], 3))
           {
               index = Str_2_Int(&p[4], 3);
-              if(index > MAX_SMS_NUM)
+              if(index EQ 0 || index > MAX_SMS_NUM)
                   return SMS_INDEX_ERR;
+			  index --;
 
               Set_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index, 0);
               SET_SUM(SMS_File_Flag);
@@ -852,7 +860,7 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
          }
          else
              return SMS_FORMAT_ERR;
-      }
+      }/*
 	  else if(p[1] EQ 'P' && p[2] EQ 'S' && p[3] EQ 'W')
 	  {
 	    if(p[4] != 0 && p[5] != 0 && p[6] != 0)
@@ -870,7 +878,7 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 			{
 				return SMS_FORMAT_ERR;
 			}
-	  }
+	  }*/
       
 	  return SMS_FORMAT_ERR;
   }
@@ -883,26 +891,50 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
       if(Chk_Int_Str(&p[2], 2) EQ 0) //序号错误
         return SMS_INDEX_ERR;
 
-	  index = Str_2_Int(&p[2], 2);
+	  index = Str_2_Int(&p[2], 2);	//显示序号
+      if(index EQ 0 || index > MAX_SMS_NUM)
+         return SMS_INDEX_ERR;
+	  index --;
+
+      p = p - 1;
+
+      //---追加播放错误------------
+      if(!(p[5] >= '0' && p[5] <= '2'))
+         return SMS_SUB_INDEX_ERR;
+
+      SubIndex = (p[5] - '0'); //追加索引
 
 	  if(Get_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index) EQ 0)
 	  {
-	    strcpy(pReStr, "无显示内容");
+	    sprintf(pReStr, "短信%d:", index);
 		return SMS_NO_ERR;
 	  }
 
       if(Read_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data)) EQ 0)
 	  {
-	    strcpy(pReStr, "读显示内容失败");
+	    sprintf(pReStr, "短信%d:", index);
 		return SMS_NO_ERR;
 	  }
 
       if(pPara->SMS_Txt_Flag EQ TXT_SMS_BK_FILE) //启用预存显示内容
 	  {
-	    sprintf((char *)pReStr, "启用预存文件%d", pPara->SMS_File_No);
+	    sprintf((char *)pReStr, "短信%d启用预存文件%d", index, pPara->SMS_File_No);
 		return SMS_NO_ERR;
 	  }
       
+	  if(SubIndex EQ 0)
+	  {
+	    if(strlen(SMS_WR_Buf.Data + sizeof(S_Txt_Para) + 1 * SMS_SUB_DATA_LEN) != 0 ||\
+		   strlen(SMS_WR_Buf.Data + sizeof(S_Txt_Para) + 2 * SMS_SUB_DATA_LEN) != 0)
+	      sprintf(SMS_WR_Buf.Data, "短信%d-%d:", index,SubIndex);
+		else
+		  sprintf(SMS_WR_Buf.Data, "短信%d:", index);
+	  }
+	  else
+	    sprintf(SMS_WR_Buf.Data, "短信%d-%d:", index, SubIndex);
+	  
+	  strncat(SMS_WR_Buf.Data, SMS_WR_Buf.Data + sizeof(S_Txt_Para) + SubIndex * SMS_SUB_DATA_LEN, SMS_SUB_DATA_LEN);
+
 	  return SMS_RD_NO_ERR;       
 	}    
 	else if(p[1] EQ 'V' && p[2] EQ 'E' && p[3] EQ 'R') //查询版本号
@@ -949,9 +981,11 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 {
   INT8U i;
   INT8U re;
-  static char reStr[150];
+  INT16U Len;
 
-  for(i = 0; i < 1; i ++)
+  static char reStr[160];
+
+  for(i = 0; i < MSG_PROC_NUM; i ++)
   {
     if(Chk_PH_No(pMsg[i].TPA) EQ 0) //手机号码无权限
 	  continue;
@@ -981,16 +1015,17 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 	   if(re EQ SMS_NO_ERR)
 		 strcpy(SMS_WR_Buf.Data, reStr);
 	   else
-	     sprintf(SMS_WR_Buf.Data, "查询失败");//"Err %d,设置失败,原始信息:", re);
+	     sprintf(SMS_WR_Buf.Data, "查询失败:%s", GetErrInfo(re));//"Err %d,设置失败,原始信息:", re);
 	  }
 	}
 
 	if(re EQ SMS_RD_NO_ERR) //读取显示内容成功，并且显示内容在SMS_WR_Buf.Data缓冲区中
 	{
-	  for(i = 0; i < 3; i ++)
-	  {
-		strcpy(pMsg[i].TP_UD, SMS_WR_Buf.Data + sizeof(S_Txt_Para) + i * SMS_SUB_DATA_LEN); 
-		gsmSendMessage(&(pMsg[i]));
+	    Len = strlen(SMS_WR_Buf.Data);
+	    if(Len > 0)
+	    {
+		  strncpy(pMsg[i].TP_UD, SMS_WR_Buf.Data, sizeof(pMsg[i].TP_UD) - 1); 
+		  gsmSendMessage(&(pMsg[i]));
 	  }
 	}
 	else if(re != SMS_UNAVAIL_ERR)
@@ -998,7 +1033,7 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 		mem_cpy(pMsg[i].TP_UD, SMS_WR_Buf.Data, sizeof(pMsg[i].TP_UD),\
 		       pMsg[i].TP_UD, sizeof(pMsg[i].TP_UD)); 
 		*/
-		strcpy(pMsg[i].TP_UD, SMS_WR_Buf.Data); 
+		strncpy(pMsg[i].TP_UD, SMS_WR_Buf.Data, sizeof(pMsg[i].TP_UD) - 1); 
 		gsmSendMessage(&(pMsg[i]));
 	}
   }

@@ -43,7 +43,7 @@ typedef struct
 }S_SMS_GPRS_Stack;
 
 S_Main_Stack Main_Stack = {CHK_BYTE, {0}, 0, CHK_BYTE};	 //主任务stack
-S_SMS_GPRS_Stack SMS_GPRS_Stack = {CHK_BYTE, {0}, 0, CHK_BYTE};	 //短信、GRPS通信维护任务
+//S_SMS_GPRS_Stack SMS_GPRS_Stack = {CHK_BYTE, {0}, 0, CHK_BYTE};	 //短信、GRPS通信维护任务
 
 //检测系统堆栈剩余情况
 void Chk_Main_Stack(void)
@@ -52,6 +52,9 @@ void Chk_Main_Stack(void)
   INT16U i = 0;
   INT8U *p;
   static INT8U Min = 0xFF;
+
+  if(Chk_JP_Status() != FAC_STATUS) //工厂状态才允许打印调试信息
+    return;
 
   //每分钟打印一次堆栈大小
   if(Min != Cur_Time.Time[T_MIN])
@@ -68,7 +71,7 @@ void Chk_Main_Stack(void)
 	Main_Stack.Left = i;
 
     debug("main stack remain %d", Main_Stack.Left);
-
+/*
 #if SMS_EN || GPRS_EN
     i = 0;
 
@@ -82,11 +85,15 @@ void Chk_Main_Stack(void)
 	SMS_GPRS_Stack.Left = i;
 	debug("smsGprs stack remain %d", SMS_GPRS_Stack.Left);
 #endif
+*/
   }
 #else
   INT16U i = 0;
   static INT32U Sec = 0;
   static INT8U Sec_Counts = 0;
+
+  if(Chk_JP_Status() != FAC_STATUS) //工厂状态才允许打印调试信息
+    return;
 
   //每分钟打印一次堆栈大小
   if(Sec != Pub_Timer.Sec)
@@ -211,7 +218,7 @@ int main(void)
 //SMS、GRPS通信任务
 void smsGPRSTask(void)
 {
-  ModuleInit();
+  //ModuleInit();
   while(1)
   {
     Chk_Module_Status();
@@ -223,13 +230,18 @@ void smsGPRSTask(void)
 void mainTask(void)
 {
   mainInit();
-
-  OS_Create_Task(&smsGPRSTask,(OS_STK *)(&SMS_GPRS_Stack.Stack[SMS_GPRS_STACK_SIZE - 1]),sizeof(SMS_GPRS_Stack.Stack),"smsGPRSTask");
+#if SMS_EN || GPRS_EN
+  ModuleInit();
+#endif
+  //OS_Create_Task(&smsGPRSTask,(OS_STK *)(&SMS_GPRS_Stack.Stack[SMS_GPRS_STACK_SIZE - 1]),sizeof(SMS_GPRS_Stack.Stack),"smsGPRSTask");
 
   while(1)
   {
 	mainProc();
-	OS_TimeDly_Ms(10);
+
+	Chk_Module_Status();
+    SmsProc();
+	//OS_TimeDly_Ms(10);
   }
 }
 

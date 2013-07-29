@@ -399,9 +399,9 @@ int gsmString2Bytes(const char* pSrc, unsigned char* pDst, int nSrcLength)
 		}
 
 		pSrc++;
-		TRACE("%s",pSrc);
+		//TRACE("%s",pSrc);
 		pDst++;
-		TRACE("%s",pDst);
+		//TRACE("%s",pDst);
 	}
 
 	// 返回目标数据长度
@@ -887,7 +887,7 @@ int gsmEncodePdu(const SM_PARAM* pSrc, char* pDst)
 // 输入: pSrc - 源PDU串指针
 // 输出: pDst - 目标PDU参数指针
 // 返回: 用户信息串长度
-int gsmDecodePdu(const char* pSrc, SM_PARAM* pDst)
+int gsmDecodePdu(char* pSrc, SM_PARAM* pDst)
 {
 	int nDstLength;			// 目标PDU串长度
 	unsigned char tmp;		// 内部用的临时字节变量
@@ -1116,6 +1116,8 @@ void SmsProc(void)
 	return;
   }
 
+  //Screen_Status.Rcv_Flag = FRAME_FLAG; //部分特效时间太长，可能影响短信接收，此处关闭特效
+
   OS_TimeDly_Ms(100);
 
   ClrComm(); //清接收串口
@@ -1135,6 +1137,9 @@ void SmsProc(void)
   }
   
   ATSend("AT+CMGDA=6\r");//WriteComm("AT+CMGDA=6\r", 11); //删除所有短消息
+
+  Screen_Status.Com_Time = 0;
+
   OS_TimeDly_Ms(100);
   ClrComm(); //清接收串口
 }

@@ -143,13 +143,13 @@ void SysTick_Handler(void)
 {
   //volatile INT32U i = 0;
 
-  //SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
+  SysTick->CTRL &= ~SysTick_CTRL_ENABLE_Msk;
 
   Show_Timer_Proc();
   //Delay_us(5);
 
   //GPIO_ResetBits(GPIOB,GPIO_Pin_9); //测试输出
-  //SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
+  SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 }
 
 /**
@@ -293,6 +293,16 @@ void UART4_IRQHandler(void)	//串口4中断服务程序
 	 {
        SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi ++] = Res;
 	   SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi] = 0;
+
+	   if(Res EQ 'I' && SMS_GPRS_Rcv_Buf.WRPosi >= 5 &&\
+	      SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi - 2] EQ 'T' &&\
+	      SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi - 3] EQ 'M' &&\
+		  SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi - 4] EQ 'C' &&\
+		  SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi - 5] EQ '+')
+		  {
+		    if(Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * Screen_Status.Color_Num > 128 * 64 * 2)	//屏幕太宽，在接收短信时关闭显示，否则可能导致接受短信太慢
+		      Screen_Status.Com_Time = 5;
+		   }
 	 }
 
 	 //USART2->DR = (Res & (uint16_t)0x01FF);

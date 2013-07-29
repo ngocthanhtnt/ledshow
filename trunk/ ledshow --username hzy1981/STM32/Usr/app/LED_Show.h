@@ -42,7 +42,8 @@ if(Value EQ 0)\
 else\
     Buf[(Index) >>3] = (Buf[(Index) >>3] | (0x01 << ((Index) & 0x07)));\
 }while(0)
-//#define Get_Buf_Bit GET_BUF_BIT
+
+#define Get_Buf_Bit GET_BUF_BIT
 
 //INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index)
 
@@ -303,7 +304,9 @@ const INT8U Bit_Mask[9] = {0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F, 0xFF}
 //获取当前颜色方案
 EXT INT8U Get_Color(void); //获取当前的颜色方案
 EXT INT8U Get_Bit(INT8U *p,INT16U X_Size,INT16U X,INT16U Y);
+#ifndef Get_Buf_Bit
 EXT INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index);
+#endif
 EXT INT8U Get_Rect_Buf_Bit(INT8U Buf[], INT16U Buf_Size, INT16U Width, INT16U X, INT16U Y);
 EXT void Set_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index, INT8U Value);
 EXT INT16U Get_Area_Width(INT8U Area_No);

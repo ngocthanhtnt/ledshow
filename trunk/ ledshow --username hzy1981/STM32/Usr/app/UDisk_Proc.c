@@ -143,7 +143,7 @@ void UDisk_Proc(void)
  	  RT_Play_Status_Enter(3);
 	  Clr_All_Show_Data();
 
-	  debug("rt play time = 3\r\n");
+	  //debug("rt play time = 3\r\n");
 	  		 
       if(UDisk_Res_Flag.Var EQ UDISK_RES_OK)
 		LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "OK");
@@ -335,7 +335,7 @@ UDiskProcEnd:
 	Clr_All_Show_Data();
 
 	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, reStr);
-	Restore_Show_Area();//此处可以restore
+	//Restore_Show_Area();//此处可以restore
 
 	Set_UDisk_Status(UDISK_NULL);
 

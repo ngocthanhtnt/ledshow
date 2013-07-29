@@ -23,11 +23,15 @@
 #define TVH_ADD_MODE 0x08
 #define THV_ADD_MODE 0x09
 
+#define WIDTH_FLAG 0x01
+#define HEIGHT_FLAG 0x02
+
 typedef struct
 {
   void (*Func)(INT8U);
   INT8U Step_Mode; //步进模式,0-横向，1纵向，3纵横同步
   float Fac; //0,1表示1，其他表示
+  INT8U Size_Flag; //WIDTH_FLAG表示适合宽屏，HEIGHT_FLAG表示适合高屏幕
 #if QT_EN
   const char *name;
 #endif  
