@@ -11,10 +11,10 @@ INT8U GsmInit(void)
 
 	//UCS字符集
 	if(ATSendResponse("AT+CSCS=\"UCS2\"\r", "OK", 2000) EQ 0)
-	  ;//return 0;
+	  return 0;
 	// PDU模式
 	if(ATSendResponse("AT+CMGF=0\r", "OK", 2000) EQ 0)
-	  ;//return 0;
+	  return 0;
     //ATSend("AT+CSCA?\r");
 	return 1;
 }
@@ -133,7 +133,7 @@ void Module_PWR_KEY(void)
 	SET_GSM_ON(0);
 }
 
-void ModuleInit(void) //模块初始化
+void ModuleReset(void)
 {
     //INT8U i;
 
@@ -143,6 +143,15 @@ void ModuleInit(void) //模块初始化
 	    debug("reset sim900A module");
 		Module_PWR_KEY();
 	}
+
+}
+
+void ModuleInit(void) //模块初始化
+{
+    char Temp[30];
+	char *p;
+	int CSQ;
+	INT16U Len;
 
     Clr_Watch_Dog();
 
@@ -157,39 +166,44 @@ void ModuleInit(void) //模块初始化
 	OS_TimeDly_Ms(50);
 
 	// 测试GSM-MODEM的存在性
-	while(1)
-	{
-	  if(CHK_MODULE_STATUS() EQ 0)
-	    return;
+	if(CHK_MODULE_STATUS() EQ 0)
+	  goto err0;
+	
+	if(ATSendResponse("AT\r", "OK", 2000) EQ 0)
+	  goto err0;
 
-	  if(ATSendResponse("AT\r", "OK", 2000))
-	    break;
-
-	  OS_TimeDly_Ms(100);
-	}
 	// ECHO OFF
-	ATSendResponse("AT+IPR=57600\r\n", "OK", 2000);
+	if(ATSendResponse("AT+IPR=0\r\n", "OK", 2000) EQ 0)
+	  goto err0;
 
-	ATSendResponse("ATE0&W\r\n", "OK", 2000);
-	   
-    ATSendResponse("AT+CFUN=1\r\n", "OK", 2000); //全功能
-    
-    ATSendResponse("AT+CMEE=1\r\n", "OK", 2000);// EQ 0)
+	if(ATSendResponse("ATE0&W\r\n", "OK", 2000) EQ 0)
+	  goto err0;
+		   
+    if(ATSendResponse("AT+CFUN=1\r\n", "OK", 2000) EQ 0) //全功能
+      goto err0;
+
+    if(ATSendResponse("AT+CMEE=1\r\n", "OK", 2000) EQ 0)// EQ 0)
+	  goto err0;
 
 	//检测sim卡是否正常
-    while(1)
+    if(ATSendResponse("AT+CCID\r\n", "OK", 2000) EQ 0)
+	  goto err1;
+
+	//if(ATSendResponse("AT+CSQ\r\n", "OK", 2000) EQ 0) //信号强度
+	   //goto err0;
+	//读取信号强度
+	ATSend("AT+CSQ\r\n");
+    Len = ReadComm(Temp, sizeof(Temp), 2000);
+    if(Len > 0 && strstr(Temp, "OK") != 0)
 	{
-	  if(CHK_MODULE_STATUS() EQ 0)
-	    return;
-
-	  if(ATSendResponse("AT+CCID\r\n", "OK", 2000))
-	    break;
-
-	  OS_TimeDly_Ms(200);
+	  p = strstr(Temp, "+CSQ");
+	  if(p != '\0')
+		sscanf(p + 5, "%d", &CSQ);	// 读取信号强度
+	  else
+	    goto err0;
 	}
-
-	ATSendResponse("AT+CSQ\r\n", "OK", 2000); //信号强度
-
+	else
+	  goto err0;
    	//ATSendResponse("AT+CMGDA=6\r\n", "OK", 2000);
 /*       
     for(i = 0; i < 20; i ++)
@@ -201,14 +215,40 @@ void ModuleInit(void) //模块初始化
 	//if(i EQ 20)
 	 // return 0;
 #if SMS_EN
-    GsmInit();
+    if(GsmInit() EQ 0)
+	  goto err0;
 #endif
 
 #if GPRS_EN
-	GprsInit();
+	if(GprsInit() EQ 0)
+	  goto err0;
 #endif
 
-
+    goto ok;
+err0:
+	Set_RT_Show_Area(0, 0, 64, 16);
+	RT_Play_Status_Enter(3);
+	Clr_All_Show_Data();
+	
+	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR10"); //模块启动失败
+    return; 
+err1:
+	Set_RT_Show_Area(0, 0, 64, 16);
+	RT_Play_Status_Enter(3);
+	Clr_All_Show_Data();
+	
+	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR11"); //无sim卡
+    return;
+ok:
+  if(CSQ < 10 || CSQ EQ 99) //信号弱
+  {
+	Set_RT_Show_Area(0, 0, 64, 16);
+	RT_Play_Status_Enter(3);
+	Clr_All_Show_Data();
+	
+	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR12"); //信号弱
+  }
+  return;
 
 }
 

@@ -11,7 +11,7 @@
 #define GSM_OK			1		// OK
 #define GSM_ERR			-1		// ERROR
 
-#define MSG_PROC_NUM 3
+#define MSG_PROC_NUM 1
 
 // 短消息参数结构，编码/解码共用
 // 其中，字符串以'\0'结尾
@@ -52,7 +52,7 @@ int gsmDecodeUcs2(const unsigned char* pSrc, char* pDst, int nSrcLength);
 int gsmInvertNumbers(const char* pSrc, char* pDst, int nSrcLength);
 int gsmSerializeNumbers(const char* pSrc, char* pDst, int nSrcLength);
 int gsmEncodePdu(const SM_PARAM* pSrc, char* pDst);
-int gsmDecodePdu(const char* pSrc, SM_PARAM* pDst);
+int gsmDecodePdu(char* pSrc, SM_PARAM* pDst);
 
 
 int gsmSendMessage(SM_PARAM* pSrc);

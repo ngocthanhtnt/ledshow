@@ -17,6 +17,7 @@ typedef struct
 
 EXT S_GPRS_Buf GPRS_Buf;
 
+EXT void ModuleReset(void);
 EXT void ModuleInit(void);
 EXT INT8U GsmInit(void);
 EXT INT16U ReadComm(char *pDst, INT16U Len, INT16U ms);

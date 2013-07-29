@@ -568,7 +568,7 @@ INT8U Update_Show_Data_Bak(INT8U Prog_No, INT8U Area_No)
 
     if(File_Flag EQ 0) //读不出来则继续读下一个文件参数
     {
-      ASSERT_FAILED();
+      //ASSERT_FAILED();
 
       Prog_Status.File_Para[Area_No].Pic_Para.Flag = SHOW_NULL;
       Prog_Status.Area_Status[Area_No].New_File_Flag = NEW_FLAG;

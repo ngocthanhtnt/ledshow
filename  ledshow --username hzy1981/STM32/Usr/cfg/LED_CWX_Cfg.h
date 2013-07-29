@@ -84,7 +84,7 @@
 #define MAX_PROG_NUM 1 //最大节目数
 #define MAX_AREA_NUM 6 //每个节目下最大分区数
 #define MAX_FILE_NUM 10 //每个节目下最大文件数
-#define MAX_STORA_BLOCK_NUM  160 //最大存储块数
+#define MAX_STORA_BLOCK_NUM  170 //最大存储块数
 
 #else
 #error "CARD Type Error"

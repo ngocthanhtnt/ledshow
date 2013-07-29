@@ -1454,7 +1454,20 @@ void MainWindow::preview(INT8U previewMode)
   QString title = tr("Ô¤ÀÀ-")+QString::number(Screen_No + 1) + tr("ÆÁÄ»");
   if(Preview_Mode EQ PREVIEW_PROG)
       title = title + QString("-") + QString::number(Preview_Prog_No + 1) + tr("½ÚÄ¿");
-  previewWin->move((width() - previewArea->width())/2, (height() - previewArea->height())/2);
+
+  int x,y;
+
+  if(width() < previewArea->width())
+      x = 0;
+  else
+      x = (width() - previewArea->width())/2;
+
+  if(height() < previewArea->height())
+      y = 0;
+  else
+      y = (height() - previewArea->height())/2;
+
+  previewWin->move(x, y);
 
   previewWin->setWindowTitle(title);
 

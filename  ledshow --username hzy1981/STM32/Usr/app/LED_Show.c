@@ -15,6 +15,8 @@
 extern void LED_Scan_Screen(void);
 extern void Clr_Cur_Scan_Row(void);
 //获取缓冲区中第Index位的值
+
+#ifndef Get_Buf_Bit 
 INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index)
 {
 
@@ -28,6 +30,7 @@ INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index)
 
   return (Buf[Index >>3] & (0x01 << (Index & 0x07)))>0?1:0;
 }
+#endif
 
 
 //设置缓冲区中第Index位的值
