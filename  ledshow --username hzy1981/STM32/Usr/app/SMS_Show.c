@@ -998,7 +998,7 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 	if(re EQ SMS_UNAVAIL_ERR) //无效短信直接返回
 	  return;
 
-	if(head EQ '*') //需要应答
+	if(head EQ '#') //需要应答
 	{
 	   if(re EQ SMS_NO_ERR)
 	   	 strcpy(SMS_WR_Buf.Data, "设置成功");//"OK,设置成功,原始信息:");								   
