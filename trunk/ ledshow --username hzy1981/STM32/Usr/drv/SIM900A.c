@@ -168,17 +168,17 @@ void ModuleInit(void) //模块初始化
 	// 测试GSM-MODEM的存在性
 	if(CHK_MODULE_STATUS() EQ 0)
 	  goto err0;
-	
+/*	
 	if(ATSendResponse("AT\r", "OK", 2000) EQ 0)
 	  goto err0;
 
 	// ECHO OFF
-	if(ATSendResponse("AT+IPR=57600\r\n", "OK", 2000) EQ 0)
+	if(ATSendResponse("AT+IPR=0\r\n", "OK", 2000) EQ 0)
 	  goto err0;
 
 	if(ATSendResponse("ATE0&W\r\n", "OK", 2000) EQ 0)
 	  goto err0;
-		   
+*/		   
     if(ATSendResponse("AT+CFUN=1\r\n", "OK", 2000) EQ 0) //全功能
       goto err0;
 

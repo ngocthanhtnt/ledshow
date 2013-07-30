@@ -413,7 +413,13 @@ void Reset_Ram_Screen_Para(void)
   memset(&Screen_Para, 0, sizeof(Screen_Para));
   Screen_Para.Base_Para.Width = 64;
   Screen_Para.Base_Para.Height = 32;
-  Screen_Para.Base_Para.Color = 0x01;
+  Screen_Para.Base_Para.Color = 0x03;
+
+  Screen_Para.Scan_Para.Rows = 16;
+  Screen_Para.Scan_Para.Rows_Fold	= 0x00;
+  Screen_Para.Scan_Para.Cols_Fold	= 0x00;
+  Screen_Para.Scan_Para.Direct = 0x02;
+  Screen_Para.Scan_Para.OE_Polarity = 0x00;
 
 #if NET_EN
   Screen_Para.ETH_Para.IP = 0xFB01A8C0; //192.168.1.251
