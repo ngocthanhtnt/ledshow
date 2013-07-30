@@ -154,8 +154,8 @@ void ModuleInit(void) //模块初始化
 	INT16U Len;
 
     Clr_Watch_Dog();
-
-    OS_Core_Wait_Ms(CHK_MODULE_STATUS(),3000); //最多等待3000ms。
+      
+	OS_Core_Wait_Ms(CHK_MODULE_STATUS(),3000); //最多等待3000ms。
 
 	//连续3个AT自适应波特率
 	ATSend("AT\r");
@@ -173,7 +173,7 @@ void ModuleInit(void) //模块初始化
 	  goto err0;
 
 	// ECHO OFF
-	if(ATSendResponse("AT+IPR=0\r\n", "OK", 2000) EQ 0)
+	if(ATSendResponse("AT+IPR=57600\r\n", "OK", 2000) EQ 0)
 	  goto err0;
 
 	if(ATSendResponse("ATE0&W\r\n", "OK", 2000) EQ 0)
@@ -189,9 +189,17 @@ void ModuleInit(void) //模块初始化
     if(ATSendResponse("AT+CCID\r\n", "OK", 2000) EQ 0)
 	  goto err1;
 
-	//if(ATSendResponse("AT+CSQ\r\n", "OK", 2000) EQ 0) //信号强度
-	   //goto err0;
+  /*    
+    for(i = 0; i < 20; i ++)
+	{
+        if(ATSendResponse("AT+CREG?\r\n", "OK", 2000))  //注册网络
+		  break;          
+    }
+   */
 	//读取信号强度
+	//if(ATSendResponse("AT+CSQ\r\n", "OK", 2000) EQ 0)// EQ 0)
+	  //goto err0;
+	
 	ATSend("AT+CSQ\r\n");
     Len = ReadComm(Temp, sizeof(Temp), 2000);
     if(Len > 0 && strstr(Temp, "OK") != 0)
@@ -204,14 +212,9 @@ void ModuleInit(void) //模块初始化
 	}
 	else
 	  goto err0;
+	  
    	//ATSendResponse("AT+CMGDA=6\r\n", "OK", 2000);
-/*       
-    for(i = 0; i < 20; i ++)
-	{
-        if(ATSendResponse("AT+CREG?\r\n", "OK", 200))  //注册网络
-		  break;          
-    }
-*/
+
 	//if(i EQ 20)
 	 // return 0;
 #if SMS_EN
@@ -240,6 +243,7 @@ err1:
 	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR11"); //无sim卡
     return;
 ok:
+
   if(CSQ < 10 || CSQ EQ 99) //信号弱
   {
 	Set_RT_Show_Area(0, 0, 64, 16);
@@ -248,6 +252,7 @@ ok:
 	
 	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR12"); //信号弱
   }
+ 
   return;
 
 }
