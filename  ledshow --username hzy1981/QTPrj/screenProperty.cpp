@@ -1947,7 +1947,7 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
   QLabel *comModeLabel = new QLabel(tr("通信方式"),this);
   comModeCombo = new QComboBox(this);
   comModeCombo->addItem(tr(COM_MODE_STR));
-  comModeCombo->addItem(tr(WIFI_MODE_STR));
+  //comModeCombo->addItem(tr(WIFI_MODE_STR));
   QLabel *screenIDLabel = new QLabel(tr("屏幕地址"),this);
   screenIDEdit = new QSpinBox(this);
   comPortLabel = new QLabel(tr("串口号"),this);
@@ -3304,7 +3304,7 @@ void CfacScreenProperty::setTestProc()
     if(this->selfTestButton->text() EQ tr("自动检测"))
     {
         QMessageBox::information(w, tr("提示"),
-                               tr("进入自动检测状态前请确定已加载正确的屏幕宽度、高度参数到屏幕，进入自检状态后，请观察屏幕左上角的显示内容（3分钟左右），如正常显示4位数字，则该4位数字作为特征码对应的扫描方式就是该屏幕正确的扫描方式，例如显示\"0200\"，则该屏幕的扫描方式为 \"0200,1/16扫,右入直行一路带16行数据(P10常用)\""),tr("确定"));
+                               tr("进入自动检测状态前请确定已加载正确的屏幕宽度、高度参数到屏幕，进入自检状态后，请观察屏幕左上角的显示内容（3分钟左右），如正常显示4位数字，则该4位数字作为特征码对应的扫描方式就是该屏幕正确的扫描方式，例如显示\"0200\"，则该屏幕的扫描方式为 \"0200,1/16扫,右入直行一路带16行数据(室内常规)\""),tr("确定"));
         //this->parentWidget()->close(); //参数设置成功则关闭窗口
       tmp = 0x00; //进入
       this->selfTestButton->setText(tr("退出检测"));

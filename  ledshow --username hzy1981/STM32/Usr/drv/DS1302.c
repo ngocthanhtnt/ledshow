@@ -173,7 +173,7 @@ void DS1302_Init(void)
   WrCmd(WrCharge, 0x00); //关闭涓流充电
   if((Temp[0] & 0x80 > 0))  //秒数据
   { 
-    WrCmd(OscEnDisCmd,OscEnDat); //振荡器允许
+    WrCmd(OscEnDisCmd,OscEnDat | (Temp[0] & 0x7F)); //振荡器允许
   }
 
   WrCmd(WrEnDisCmd,WrDisDat);  //写允许关闭
