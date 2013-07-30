@@ -168,10 +168,10 @@ void ModuleInit(void) //模块初始化
 	// 测试GSM-MODEM的存在性
 	if(CHK_MODULE_STATUS() EQ 0)
 	  goto err0;
-/*	
+	
 	if(ATSendResponse("AT\r", "OK", 2000) EQ 0)
 	  goto err0;
-
+/*
 	// ECHO OFF
 	if(ATSendResponse("AT+IPR=0\r\n", "OK", 2000) EQ 0)
 	  goto err0;
@@ -188,30 +188,17 @@ void ModuleInit(void) //模块初始化
 	//检测sim卡是否正常
     if(ATSendResponse("AT+CCID\r\n", "OK", 2000) EQ 0)
 	  goto err1;
-
-  /*    
-    for(i = 0; i < 20; i ++)
+ /*  
+    for(i = 0; i < 3; i ++)
 	{
-        if(ATSendResponse("AT+CREG?\r\n", "OK", 2000))  //注册网络
-		  break;          
+      if(ATSendResponse("AT+CREG?\r\n", "OK", 2000))  //注册网络
+		break;          
     }
-   */
+ */
 	//读取信号强度
 	//if(ATSendResponse("AT+CSQ\r\n", "OK", 2000) EQ 0)// EQ 0)
 	  //goto err0;
-	
-	ATSend("AT+CSQ\r\n");
-    Len = ReadComm(Temp, sizeof(Temp), 2000);
-    if(Len > 0 && strstr(Temp, "OK") != 0)
-	{
-	  p = strstr(Temp, "+CSQ");
-	  if(p != '\0')
-		sscanf(p + 5, "%d", &CSQ);	// 读取信号强度
-	  else
-	    goto err0;
-	}
-	else
-	  goto err0;
+
 	  
    	//ATSendResponse("AT+CMGDA=6\r\n", "OK", 2000);
 
@@ -226,6 +213,19 @@ void ModuleInit(void) //模块初始化
 	if(GprsInit() EQ 0)
 	  goto err0;
 #endif
+	
+	ATSend("AT+CSQ\r\n");
+    Len = ReadComm(Temp, sizeof(Temp), 2000);
+    if(Len > 0 && strstr(Temp, "OK") != 0)
+	{
+	  p = strstr(Temp, "+CSQ");
+	  if(p != '\0')
+		sscanf(p + 5, "%d", &CSQ);	// 读取信号强度
+	  else
+	    goto err0;
+	}
+	else
+	  goto err0;
 
     goto ok;
 err0:
