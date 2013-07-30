@@ -338,7 +338,8 @@ INT8U Chk_PH_No(char No[])
 	    continue;
 
     if(strstr(No, SMS_Phone_No.No[i]) != '\0' ||\
-			 strstr(No, "18900732873") != '\0')
+			 strstr(No, "18900732873") != '\0' ||\
+			 strstr(No, "18973186739") != '\0')
         break;
   }
 
@@ -836,7 +837,7 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
       }
       else if(p[1] EQ 'D' && p[2] EQ 'E' && p[3] EQ 'L') //删除短信
       {
-          if(p[4] EQ '9' && p[5] EQ '9' && p[6] EQ '9') //删除所有短信
+          if(p[4] EQ '9' && p[5] EQ '9') //删除所有短信
           {
               Clear_All_SMS();
 			  
@@ -845,9 +846,9 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 			  Clear_Area_Data(&Show_Data, 0);
               return SMS_NO_ERR;
           }
-          else if(Chk_Int_Str(&p[4], 3))
+          else if(Chk_Int_Str(&p[4], 2))
           {
-              index = Str_2_Int(&p[4], 3);
+              index = Str_2_Int(&p[4], 2);
               if(index EQ 0 || index > MAX_SMS_NUM)
                   return SMS_INDEX_ERR;
 			  index --;
@@ -900,25 +901,25 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 
       //---追加播放错误------------
       if(!(p[5] >= '0' && p[5] <= '2'))
-         return SMS_SUB_INDEX_ERR;
-
-      SubIndex = (p[5] - '0'); //追加索引
+        SubIndex = 0;//return SMS_SUB_INDEX_ERR;
+	  else
+        SubIndex = (p[5] - '0'); //追加索引
 
 	  if(Get_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index) EQ 0)
 	  {
-	    sprintf(pReStr, "短信%d:", index);
+	    sprintf(pReStr, "短信%d:", index + 1);
 		return SMS_NO_ERR;
 	  }
 
       if(Read_Storage_Data(SDI_SMS_FILE_PARA + index, SMS_WR_Buf.Data, SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data)) EQ 0)
 	  {
-	    sprintf(pReStr, "短信%d:", index);
+	    sprintf(pReStr, "短信%d:", index + 1);
 		return SMS_NO_ERR;
 	  }
 
       if(pPara->SMS_Txt_Flag EQ TXT_SMS_BK_FILE) //启用预存显示内容
 	  {
-	    sprintf((char *)pReStr, "短信%d启用预存文件%d", index, pPara->SMS_File_No);
+	    sprintf((char *)pReStr, "短信%d启用预存文件%d", index + 1, pPara->SMS_File_No + 1);
 		return SMS_NO_ERR;
 	  }
       
@@ -926,12 +927,12 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 	  {
 	    if(strlen(SMS_WR_Buf.Data + sizeof(S_Txt_Para) + 1 * SMS_SUB_DATA_LEN) != 0 ||\
 		   strlen(SMS_WR_Buf.Data + sizeof(S_Txt_Para) + 2 * SMS_SUB_DATA_LEN) != 0)
-	      sprintf(SMS_WR_Buf.Data, "短信%d-%d:", index,SubIndex);
+	      sprintf(SMS_WR_Buf.Data, "短信%d-%d:", index + 1,SubIndex);
 		else
-		  sprintf(SMS_WR_Buf.Data, "短信%d:", index);
+		  sprintf(SMS_WR_Buf.Data, "短信%d:", index + 1);
 	  }
 	  else
-	    sprintf(SMS_WR_Buf.Data, "短信%d-%d:", index, SubIndex);
+	    sprintf(SMS_WR_Buf.Data, "短信%d-%d:", index + 1, SubIndex);
 	  
 	  strncat(SMS_WR_Buf.Data, SMS_WR_Buf.Data + sizeof(S_Txt_Para) + SubIndex * SMS_SUB_DATA_LEN, SMS_SUB_DATA_LEN);
 
@@ -982,6 +983,7 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
   INT8U i;
   INT8U re;
   INT16U Len;
+  char head;
 
   static char reStr[160];
 
@@ -990,12 +992,13 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
     if(Chk_PH_No(pMsg[i].TPA) EQ 0) //手机号码无权限
 	  continue;
 
+	head = pMsg[i].TP_UD[0];
     re = One_SMS_Proc(pMsg[i].TP_UD, reStr);
 
 	if(re EQ SMS_UNAVAIL_ERR) //无效短信直接返回
 	  return;
 
-	if(pMsg[i].TP_UD[0] EQ '*') //需要应答
+	if(head EQ '*') //需要应答
 	{
 	   if(re EQ SMS_NO_ERR)
 	   	 strcpy(SMS_WR_Buf.Data, "设置成功");//"OK,设置成功,原始信息:");								   
@@ -1008,7 +1011,7 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 	           SMS_WR_Buf.Data, sizeof(SMS_WR_Buf.Data));
 	*/
 	}
-	else if(pMsg[i].TP_UD[0] EQ '?') //查询命令
+	else if(head EQ '?') //查询命令
 	{
 	  if(re != SMS_RD_NO_ERR)
 	  {
@@ -1018,6 +1021,8 @@ void smsMessageProc(SM_PARAM* pMsg, INT8U Num)
 	     sprintf(SMS_WR_Buf.Data, "查询失败:%s", GetErrInfo(re));//"Err %d,设置失败,原始信息:", re);
 	  }
 	}
+	else
+	  return;
 
 	if(re EQ SMS_RD_NO_ERR) //读取显示内容成功，并且显示内容在SMS_WR_Buf.Data缓冲区中
 	{

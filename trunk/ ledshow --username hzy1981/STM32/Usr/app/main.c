@@ -43,7 +43,7 @@ typedef struct
 }S_SMS_GPRS_Stack;
 
 S_Main_Stack Main_Stack = {CHK_BYTE, {0}, 0, CHK_BYTE};	 //主任务stack
-//S_SMS_GPRS_Stack SMS_GPRS_Stack = {CHK_BYTE, {0}, 0, CHK_BYTE};	 //短信、GRPS通信维护任务
+S_SMS_GPRS_Stack SMS_GPRS_Stack = {CHK_BYTE, {0}, 0, CHK_BYTE};	 //短信、GRPS通信维护任务
 
 //检测系统堆栈剩余情况
 void Chk_Main_Stack(void)
@@ -71,7 +71,7 @@ void Chk_Main_Stack(void)
 	Main_Stack.Left = i;
 
     debug("main stack remain %d", Main_Stack.Left);
-/*
+
 #if SMS_EN || GPRS_EN
     i = 0;
 
@@ -85,7 +85,7 @@ void Chk_Main_Stack(void)
 	SMS_GPRS_Stack.Left = i;
 	debug("smsGprs stack remain %d", SMS_GPRS_Stack.Left);
 #endif
-*/
+
   }
 #else
   INT16U i = 0;
@@ -229,19 +229,18 @@ void smsGPRSTask(void)
 //主任务
 void mainTask(void)
 {
+  //INT16U i = 0;
+
   mainInit();
-#if SMS_EN || GPRS_EN
+ 
   ModuleInit();
-#endif
-  //OS_Create_Task(&smsGPRSTask,(OS_STK *)(&SMS_GPRS_Stack.Stack[SMS_GPRS_STACK_SIZE - 1]),sizeof(SMS_GPRS_Stack.Stack),"smsGPRSTask");
+
+  OS_Create_Task(&smsGPRSTask,(OS_STK *)(&SMS_GPRS_Stack.Stack[SMS_GPRS_STACK_SIZE - 1]),sizeof(SMS_GPRS_Stack.Stack),"smsGPRSTask");
 
   while(1)
   {
 	mainProc();
-
-	Chk_Module_Status();
-    SmsProc();
-	//OS_TimeDly_Ms(10);
+	OS_TimeDly_Ms(10);
   }
 }
 
