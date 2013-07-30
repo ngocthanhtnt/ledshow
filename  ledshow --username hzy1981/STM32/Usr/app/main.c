@@ -214,7 +214,7 @@ int main(void)
   } 
 }
 #else
-
+extern void Chk_CSQ(void);
 //SMS、GRPS通信任务
 void smsGPRSTask(void)
 {
@@ -223,6 +223,7 @@ void smsGPRSTask(void)
   {
     Chk_Module_Status();
     SmsProc();
+	Chk_CSQ();
   }
 }
 
