@@ -146,12 +146,43 @@ void ModuleReset(void)
 
 }
 
+void Chk_CSQ(void)
+{
+   static int flag = 0x55;
+  	INT16U Len;
+	int CSQ = 0;
+	char *p;
+    char Temp[30];
+		
+	if(Pub_Timer.Sec >= 8 && flag EQ 0x55)
+	{
+	    flag = 0;
+			
+		ATSend("AT+CSQ\r\n");
+		Len = ReadComm(Temp, sizeof(Temp), 2000);
+		if(Len > 0 && strstr(Temp, "OK") != 0)
+		{
+		  p = strstr(Temp, "+CSQ");
+		  if(p != '\0')
+			sscanf(p + 5, "%d", &CSQ);	// 读取信号强度
+		}
+		
+		if(CSQ < 10 || CSQ EQ 99) //信号弱
+		{
+		  Set_RT_Show_Area(0, 0, 64, 16);
+		  RT_Play_Status_Enter(3);
+		  Clr_All_Show_Data();
+			
+		  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR12"); //信号弱
+		}
+  }
+}
+
 void ModuleInit(void) //模块初始化
 {
-    char Temp[30];
-	char *p;
-	int CSQ;
-	INT16U Len;
+	//char *p;
+
+	//INT16U Len;
 
     Clr_Watch_Dog();
       
@@ -213,19 +244,6 @@ void ModuleInit(void) //模块初始化
 	if(GprsInit() EQ 0)
 	  goto err0;
 #endif
-	
-	ATSend("AT+CSQ\r\n");
-    Len = ReadComm(Temp, sizeof(Temp), 2000);
-    if(Len > 0 && strstr(Temp, "OK") != 0)
-	{
-	  p = strstr(Temp, "+CSQ");
-	  if(p != '\0')
-		sscanf(p + 5, "%d", &CSQ);	// 读取信号强度
-	  else
-	    goto err0;
-	}
-	else
-	  goto err0;
 
     goto ok;
 err0:
@@ -244,14 +262,6 @@ err1:
     return;
 ok:
 
-  if(CSQ < 10 || CSQ EQ 99) //信号弱
-  {
-	Set_RT_Show_Area(0, 0, 64, 16);
-	RT_Play_Status_Enter(3);
-	Clr_All_Show_Data();
-	
-	LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR12"); //信号弱
-  }
  
   return;
 
