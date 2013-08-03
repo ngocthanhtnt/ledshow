@@ -148,13 +148,13 @@ void ModuleReset(void)
 
 void Chk_CSQ(void)
 {
-   static int flag = 0x55;
+   static int flag = 0x55aa;
   	INT16U Len;
 	int CSQ = 0;
 	char *p;
     char Temp[30];
 		
-	if(Pub_Timer.Sec >= 8 && flag EQ 0x55)
+	if(Pub_Timer.Sec >= 8 && flag EQ 0x55aa)
 	{
 	    flag = 0;
 			

@@ -171,6 +171,15 @@ void mainInit(void)
 
   //Encrypt_Chk();
   //Read_Storage_Data_NoCS(SDI_ZK_DATA, 0x8030, 16, (INT8U *)Pub_Buf,  (INT8U *)Pub_Buf, sizeof(Pub_Buf));
+  //²âÊÔ´®¿ÚÐ¾Æ¬
+  /*
+  while(1)
+  {
+  Com_Send_Byte(CH_COM, 0x55);
+  Clr_Watch_Dog();
+  Delay_ms(20);
+  }
+  */
 
 }
 

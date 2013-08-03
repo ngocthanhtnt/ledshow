@@ -354,6 +354,28 @@ INT8U setScreenParaToSettings(QString screenStr, S_Screen_Para &screenPara)
    return 1;
 }
 
+//通信失败时的处理，重连接等
+void comFailedProc()
+{
+    CcomTest comTest;
+
+    if(w->comStatus->comThread->COM_Mode EQ COM_MODE)
+    {
+      int Re =  QMessageBox::warning(w, QObject::tr("提示"),
+                                 QObject::tr(SEND_PARA_FAIL_RECONNECT_STR),QObject::tr("确定"),QObject::tr("取消"));
+      if(0 == Re)
+        comTest.autoConnect();
+
+    }
+    else
+    {
+        QMessageBox::warning(w, QObject::tr("提示"),
+                                 QObject::tr(SEND_PARA_FAIL_STR),QObject::tr("确定"));
+
+    }
+
+}
+
 //读取屏幕参数
 //返回>0表示读取到参数，==0表示没有读取到参数
 INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara, S_Card_Para &cardPara)
@@ -1020,8 +1042,7 @@ void sendLightnessPara()//S_COM_Status &COM_Status)
     }
     else
     {
-        QMessageBox::warning(w, QObject::tr("提示"),
-                               QObject::tr(SEND_PARA_FAIL_STR),QObject::tr("确定"));
+        comFailedProc();
     }
 }
 
@@ -1056,8 +1077,7 @@ void ClightnessDialog::sendPara()
     }
     else
     {
-        QMessageBox::warning(w, tr("提示"),
-                               tr(SEND_PARA_FAIL_STR),tr("确定"));
+        comFailedProc();
     }
 
     this->sendButton->setEnabled(true);
@@ -1092,8 +1112,7 @@ void ClightnessDialog::udiskPara()
     }
     else
     {
-        QMessageBox::warning(w, QObject::tr("提示"),
-                                w->comStatus->getComReStr(),QObject::tr("确定"));
+        comFailedProc();
     }
 
     this->udiskButton->setEnabled(true);
@@ -1208,8 +1227,7 @@ void CopenCloseDialog::sendPara()
     }
     else
     {
-        QMessageBox::warning(w, tr("提示"),
-                               tr(SEND_PARA_FAIL_STR),tr("确定"));
+        comFailedProc();
     }
 
     this->sendButton->setEnabled(true);
@@ -1386,8 +1404,7 @@ void CadjTimeDialog::sendData()
     }
     else
     {
-        QMessageBox::warning(w, tr("提示"),
-                               tr(SEND_PARA_FAIL_STR),tr("确定"));
+        comFailedProc();
     }
 
     this->sendButton->setEnabled(true);
@@ -1687,8 +1704,7 @@ void CsendDataDialog::sendData()
         }
         else
         {
-            QMessageBox::warning(w, tr("提示"),
-                                   tr(SEND_PARA_FAIL_STR),tr("确定"));
+            comFailedProc();
         }
 
         this->sendButton->setEnabled(true);
@@ -2064,7 +2080,7 @@ void CcomTest::autoConnect()
 
             w->comStatus->comThread->setComTimeOutSec(SEARCH_COM_TIME_OUT);
 
-            makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)temp, sizeof(temp));
+            makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0, 0);
             bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
 
             if(re EQ true)
@@ -2136,7 +2152,7 @@ void CcomTest::manualConnect()
 
     getSettingsFromWidget(screenStr);
 
-    makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)temp, sizeof(temp));
+    makeProtoBufData(screenStr, COM_MODE, C_SOFT_VERSION | RD_CMD, (char *)0, 0);
 
     bool re = w->comStatus->waitComEnd(temp, sizeof(temp), &len);
     if(re EQ true)
@@ -3332,8 +3348,7 @@ void CfacScreenProperty::setTestProc()
     }
     else
     {
-        QMessageBox::warning(w, tr("提示"),
-                               tr(SEND_PARA_FAIL_STR),tr("确定"));
+        comFailedProc();
     }
 }
 
@@ -3949,8 +3964,7 @@ void CInvalidDateDialog::sendPara()
     }
     else
     {
-        QMessageBox::warning(w, tr("提示"),
-                               tr(SEND_PARA_FAIL_STR),tr("确定"));
+        comFailedProc();
     }
 
     this->sendButton->setEnabled(true);
