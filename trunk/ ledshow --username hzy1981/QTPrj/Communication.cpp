@@ -165,6 +165,9 @@ bool CcomThread::comRun()
 
     status = COM_ING; //进入通信状态
 
+    this->timeOutFlag = 0;
+    this->deniedFlag = 0;
+
     if(COM_Mode EQ UDISK_MODE) //U盘模式，直接复制文件就行，不需要通信过程
     {
         QDir dataDir;
@@ -229,6 +232,7 @@ bool CcomThread::comRun()
     if(this->connect() EQ 0)
     {
         status = COM_FAILED;
+        this->timeOutFlag = 1;//等同于通信超时处理,重新自动连接
         return false;
     }
 
@@ -413,11 +417,32 @@ bool CcomThread::connect()
         return true;
 }
 
+QString getRcvErrInfo(INT8U ErrByte)
+{
+    QString comReStr = "";
+
+    if(ErrByte EQ 0x01)
+        comReStr += QObject::tr("屏幕大小超限！");
+    else if(ErrByte EQ 0x02)
+        comReStr += QObject::tr("节目数或分区数或文件数超限！");
+    else if(ErrByte EQ 0x03)
+        comReStr += QObject::tr("参数不合法！");
+    else if(ErrByte EQ 0x04)
+        comReStr += QObject::tr("参数长度或控制码错误！");
+    else if(ErrByte EQ 0x05)
+        comReStr += QObject::tr("读/写数据出错，存储器错误或超存储大小限制！");
+
+    return comReStr;
+}
+
 bool CcomThread::sendFrame(char *data, int len, int bufLen)
 {
     int i,re;
   INT8U mode = COM_Mode;
   const char temp[3] = {0xEE, 0xEE, 0xEE};
+
+  this->timeOutFlag = 0;
+  this->deniedFlag = 0;
 
   if(mode EQ PREVIEW_MODE)//预览模式
   {
@@ -457,6 +482,10 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
     else if((Rcv_Buf[FCMD] & 0xC0) EQ 0x80) //否定应答
     {
         comReStr = tr("收到否定应答");
+        this->deniedFlag = 1;
+
+        comReStr += QString(":") + getRcvErrInfo(Rcv_Buf[FDATA]);
+
         emit this->comStatusChanged(comReStr);
         return false;
     }
@@ -494,6 +523,10 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
           else if((Rcv_Buf[FCMD] & 0xC0) EQ 0x80) //否定应答
           {
               comReStr = tr("收到否定应答");
+              this->deniedFlag = 1;
+
+              comReStr += QString(":") + getRcvErrInfo(Rcv_Buf[FDATA]);
+
               emit this->comStatusChanged(comReStr);
               return false;
           }
@@ -506,6 +539,7 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
       }
     }
 
+    this->timeOutFlag = 1; //超时标志
     comReStr = tr("等待应答超时");
     emit this->comStatusChanged(comReStr);
     return false;
@@ -552,6 +586,10 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
             else if((Rcv_Buf[FCMD] & 0xC0) EQ 0x80) //否定应答
             {
                 comReStr = tr("收到否定应答");
+                this->deniedFlag = 1;
+
+                comReStr += QString(":") + getRcvErrInfo(Rcv_Buf[FDATA]);
+
                 emit this->comStatusChanged(comReStr);
                 return false;
             }

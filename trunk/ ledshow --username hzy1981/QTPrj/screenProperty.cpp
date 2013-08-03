@@ -359,13 +359,19 @@ void comFailedProc()
 {
     CcomTest comTest;
 
-    if(w->comStatus->comThread->COM_Mode EQ COM_MODE)
+    if(w->comStatus->comThread->COM_Mode EQ COM_MODE && w->comStatus->comThread->timeOutFlag EQ 1)
     {
+      //串口通信超时
       int Re =  QMessageBox::warning(w, QObject::tr("提示"),
                                  QObject::tr(SEND_PARA_FAIL_RECONNECT_STR),QObject::tr("确定"),QObject::tr("取消"));
       if(0 == Re)
         comTest.autoConnect();
 
+    }
+    else if(w->comStatus->comThread->deniedFlag EQ 1)
+    {
+        QMessageBox::warning(w, QObject::tr("提示"),
+                                 QObject::tr(SEND_PARA_DENIED_STR),QObject::tr("确定"));
     }
     else
     {
@@ -1994,7 +2000,7 @@ CcomTest::CcomTest(QWidget *parent):QGroupBox(parent)
 
   manualConnectButton = new QPushButton(tr("手动连接"),this);
   autoConnectButton = new QPushButton(tr("自动连接"),this);
-  comPortInfoLabel = new QLabel(tr("使用交叉串口线"));
+  comPortInfoLabel = new QLabel(tr("使用直通串口线"));
 
   gridLayout->addWidget(comModeLabel, 0, 0,1,1);
   gridLayout->addWidget(comModeCombo,  0, 1,1,2);
@@ -2086,7 +2092,7 @@ void CcomTest::autoConnect()
             if(re EQ true)
             {
                 QMessageBox::information(w, tr("提示"),
-                                       tr("连接成功！该参数将被设置为当前通信参数。"),tr("确定"));
+                                       tr("连接成功！") + portList.at(i) + tr("将被设置为当前显示屏通信串口。"),tr("确定"));
 
                 setSettingsToWidget(screenStr);
 
@@ -2158,7 +2164,7 @@ void CcomTest::manualConnect()
     if(re EQ true)
     {
         QMessageBox::information(w, tr("提示"),
-                               tr("连接成功！该参数将被设置为当前通信参数。"),tr("确定"));
+                               tr("连接成功！") + comPortEdit->currentText() + tr("将被设置为当前显示屏通信串口。"),tr("确定"));
 
     }
     else
@@ -3126,7 +3132,7 @@ void CfacScreenProperty::readCardType()
       else
       {
         QMessageBox::information(w, QObject::tr("提示"),
-                                QObject::tr("控制卡型号为") +cardTypeStr + QObject::tr("，该型号被设置为当前参数"),QObject::tr("确定"));
+                                QObject::tr("控制卡型号为") +cardTypeStr + QObject::tr("，该型号将被设置为当前控制组件"),QObject::tr("确定"));
         cardCombo->setCurrentIndex(cardIndex);
 /*
         QString str = w->screenArea->getCurrentScreenStr(); //当前屏幕str

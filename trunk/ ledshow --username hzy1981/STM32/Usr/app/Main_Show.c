@@ -742,8 +742,12 @@ INT8U Check_Update_Show_Data_Bak(void)
 			Clr_All_Show_Data();
 			Set_RT_Show_Area(0, 0, 4*16, 32);
 			RT_Play_Status_Enter(2);
+			#if WDG_EN
 			LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "无节目"/*, Prog_Status.Play_Status.Prog_No + 1*/);
-	  }
+	        #else
+			LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "无节目E"/*, Prog_Status.Play_Status.Prog_No + 1*/);
+			#endif	  
+		}
     return 0;		
 	}
 	//else

@@ -137,7 +137,7 @@ void mainInit(void)
 
   Hardware_Init();
 
-  OS_Debug_Print("----------system start----------");
+  OS_Debug_Print("----------system start,wdg_en:%d----------", WDG_EN);
   //OS_Debug_Print("----------version: %s----------", version);
 
   Check_Storage_Size();

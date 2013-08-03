@@ -46,6 +46,7 @@
 #define WORKDIR() QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)
 
 #define SEND_PARA_OK_STR    "数据发送成功"
+#define SEND_PARA_DENIED_STR  "数据发送失败，收到否定应答！"
 #define SEND_PARA_FAIL_STR  "数据发送失败，请检查通信参数和通信链路是否正常！"
 #define SEND_PARA_FAIL_RECONNECT_STR  "数据发送失败，是否需要自动连接显示屏？如果您的电脑只连接了一个显示屏，建议您点“确定”按钮。否则请点“取消”按钮，并手动排查通信故障原因。"
 
