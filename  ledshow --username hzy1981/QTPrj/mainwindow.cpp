@@ -1297,8 +1297,7 @@ void MainWindow::setManualClose()
     }
     else
     {
-        QMessageBox::warning(w, QObject::tr("提示"),
-                               QObject::tr(SEND_PARA_FAIL_STR),QObject::tr("确定"));
+        comFailedProc();
     }
 }
 
@@ -1331,8 +1330,7 @@ void MainWindow::setManualOpen()
     }
     else
     {
-        QMessageBox::warning(w, QObject::tr("提示"),
-                               QObject::tr(SEND_PARA_FAIL_STR),QObject::tr("确定"));
+        comFailedProc();
     }
 }
 
@@ -1634,37 +1632,14 @@ void MainWindow::testCard()
       return;
 
   loop:
-  QDateTime dateTime = QDateTime::currentDateTime(); //当前时间s
-
-  dataBuf[T_YEAR] = dateTime.date().year() - 2000;
-  dataBuf[T_MONTH] = dateTime.date().month();
-  dataBuf[T_DATE] = dateTime.date().day();
-  dataBuf[T_WEEK] = dateTime.date().dayOfWeek();
-  if(dataBuf[T_WEEK] EQ 7)
-      dataBuf[T_WEEK] = 0;
-  dataBuf[T_HOUR] = dateTime.time().hour();
-  dataBuf[T_MIN] = dateTime.time().minute();
-  dataBuf[T_SEC] = dateTime.time().second();
 
   QString screenStr = w->screenArea->getCurrentScreenStr();
-
-  //发送系统校时命令
-  makeProtoBufData(screenStr, COM_MODE, C_SCREEN_TIME | WR_CMD, (char *)dataBuf, 7);
-
-  bool re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
-  if(re EQ false)
-  {
-      QMessageBox::critical(w, tr("提示"),
-                             tr("控制卡自检失败:设置系统时间失败"),tr("确定"));
-      return;
-
-  }
 
   //发送MAC地址命令
   Make_Rand_Mac_Para(dataBuf);
   makeProtoBufData(screenStr, COM_MODE, C_ETH_MAC_PARA | WR_CMD, (char *)dataBuf, 6);
 
-  re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+  bool re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
   if(re EQ false)
   {
       QMessageBox::critical(w, tr("提示"),
@@ -1718,6 +1693,34 @@ void MainWindow::testCard()
       }
 
     Delay_ms(500); //延时等控制器复位
+
+    //----------------系统校时-----------
+    QDateTime dateTime = QDateTime::currentDateTime(); //当前时间s
+
+    dataBuf[T_YEAR] = dateTime.date().year() - 2000;
+    dataBuf[T_MONTH] = dateTime.date().month();
+    dataBuf[T_DATE] = dateTime.date().day();
+    dataBuf[T_WEEK] = dateTime.date().dayOfWeek();
+    if(dataBuf[T_WEEK] EQ 7)
+        dataBuf[T_WEEK] = 0;
+    dataBuf[T_HOUR] = dateTime.time().hour();
+    dataBuf[T_MIN] = dateTime.time().minute();
+    dataBuf[T_SEC] = dateTime.time().second();
+
+
+    //发送系统校时命令
+    makeProtoBufData(screenStr, COM_MODE, C_SCREEN_TIME | WR_CMD, (char *)dataBuf, 7);
+
+    re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
+    if(re EQ false)
+    {
+        QMessageBox::critical(w, tr("提示"),
+                               tr("控制卡自检失败:设置系统时间失败"),tr("确定"));
+        return;
+
+    }
+    //-------------------------------
+
     //发送接口自检命令
     dataBuf[0] = 0x04; //进入扫描接口自检
 

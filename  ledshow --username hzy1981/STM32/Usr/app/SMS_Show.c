@@ -627,16 +627,11 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
                SET_SUM(*pPara);
           }
           else
-           {
-              if(p[10] != '+')
-              {
-                  if(p[13] != '+')
-                      return SMS_TXTHEAD_ERR;
+          {
+            if(p[6] != '+')
+              return SMS_TXTHEAD_ERR;
 
-                   TxtOff = 14;
-              }
-              else
-                TxtOff = 11;
+            TxtOff = 7;
           }
 
           if(strlen(&p[TxtOff]) >= SMS_MAX_DATA_LEN)
