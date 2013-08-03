@@ -969,10 +969,46 @@ INT16U GB2Unicode(INT16U GBCode)
 
     high    = (GBCode & 0xff00)>>8;  
 
-    low     = GBCode & 0x00ff;  
+    low     = GBCode & 0x00ff;
+	
+	GBCode = low * 256 + high;
 
-    unicode = GB_TO_UNICODE_TABLE[(high - 0xa0) * 100 + (low - 0xa0) - 101];  
+	if(GBCode EQ 0xBAA3)
+	  unicode = 65306;
+	else if(GBCode EQ 0xBBA3)
+	  unicode = 65307;
+	else if(GBCode EQ 0xA1A3)
+	  unicode = 65281;
+	else if((GBCode + 0xFEE0) >= 0xFF01 && (GBCode + 0xFEE0) <= 0xFF5E)
+	  unicode =	GBCode + 0xFEE0;
+    else if(GBCode EQ 0xA3A1)
+	  unicode = 0x3002;
+	else if(GBCode EQ 32)
+	  unicode = 0x3000;
+	else if(GBCode EQ 0xA2A1)
+	  unicode = 0x3001;
+	else if(GBCode EQ 0xBAA1)
+	  unicode = 0x300e;
 
+    else if(GBCode EQ 0xBBA1)
+	  unicode = 0x300F;
+	else if(GBCode EQ 0xBCA1)
+	  unicode = 0x3016;
+	else if(GBCode EQ 0xBDA1)
+	  unicode = 0x3017;
+	else if(GBCode EQ 0xB0A1)
+	  unicode = 0x201C;
+
+    else if(GBCode EQ 0xB1A1)
+	  unicode = 0x201D;
+	else if(GBCode EQ 0xB6A1)
+	  unicode = 0x300A;
+	else if(GBCode EQ 0xB7A1)
+	  unicode = 0x301D;
+	else if((GBCode & 0xFF) >= 0xB0)
+      unicode = GB_TO_UNICODE_TABLE[(high - 0xa0) * 100 + (low - 0xa0) - 101];  
+	else
+	  unicode = (0xFF << 8) + (low - 0xA0);
     return (unicode);  
 
 }
@@ -1034,22 +1070,50 @@ INT16U Unicode2GB(INT16U Unicode)
 
       /* Ð£Õý·ûºÅ±àÂë */  
 
-      if(Unicode EQ 12290)      // ·µ»Ø¾äºÅ  
+      if(Unicode EQ 0x3002)      // ·µ»Ø¾äºÅ  
       {
-           return (41379); 
+           return (0xA3A1); 
       }
-      else if(Unicode EQ 12288) // ÐÞÕý0xA1×Ö·ûµÄÏÔÊ¾,·µ»Ø¿Õ¸ñ  
+      else if(Unicode EQ 0x3000) // ÐÞÕý0xA1×Ö·ûµÄÏÔÊ¾,·µ»Ø¿Õ¸ñ  
       {  
            return (32); 
-      }  
+      }
+	  else if(Unicode EQ 0x3001) //¶ÙºÅ
+	  {
+	  	   return 0xA2A1;
+	  }  
       else if(Unicode EQ 0x300e) // ÐÞÕý¡º×Ö·ûµÄÏÔÊ¾  
       {
-           return (41402);
+           return (0xBAA1);
       }
       else if(Unicode EQ 0x300F) // ÐÞÕý¡»×Ö·ûµÄÏÔÊ¾  
       {  
-           return (41403);  
+           return (0xBBA1);  
       }
+      else if(Unicode EQ 0x3016)
+	  {
+		   return 0xBCA1;
+	  }
+      else if(Unicode EQ 0x3017)
+	  {
+		   return 0xBDA1;
+	  }
+	  else if(Unicode EQ 0x201C)
+	  {
+		   return 0xB0A1;
+	  }
+	  else if(Unicode EQ 0x201D)
+	  {
+		   return 0xB1A1;
+	  }
+	  else if(Unicode EQ 0x300A)
+	  {
+		  return 0xB6A1;
+	  }
+	  else if(Unicode EQ 0x301D)
+	  {
+		 return 0xB7A1;
+	  }
       else  
       {
            return Unicode; 
