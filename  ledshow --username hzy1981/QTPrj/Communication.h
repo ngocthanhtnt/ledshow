@@ -108,6 +108,9 @@ public:
         QString uDiskName;
         QString protoFileName;
         QString comReStr; //通信结果字符串
+        int timeOutFlag; //超时标志
+        int deniedFlag; //否定应答标志
+
         bool connect(); //连接屏幕
         bool disConnect(); //断开连接
 
