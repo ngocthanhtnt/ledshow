@@ -435,7 +435,7 @@ extern void Set_Prog_Num(INT8U Num);
 INT8U One_SMS_Proc(char *p, char *pReStr)
 {
   int index,temp,i;
-  INT8U Rows,TxtOff;
+  INT8U Rows,TxtOff = 0;
   INT8U SubIndex;
   S_Scan_Para Scan_Para = {0};
   S_Screen_Base_Para Base_Para = {0};
@@ -456,17 +456,25 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
   if(!(p[0] EQ '#' || p[0] EQ '*' || p[0] EQ '?'))
     return SMS_UNAVAIL_ERR;
 
-  //if(memcmp(&p[1], SMS_Phone_No.PSW, 3) != 0 && memcmp(&p[1], "168", 3) != 0)
-	//return SMS_PSW_ERR;
+  if(p[1] EQ 0) //中文符号则继续走, 判断下个符号
+  {
+    p ++;
+    //TxtOff ++;
+  }
 
   //p = p + 3; //指针向后移3字节
 
   if(p[0] EQ '#' || p[0] EQ '*') //'#'表示不需应答，'*'表示需要应答
   {
       //p = p + 3; //指针向后移3字节
-
       if(p[1] EQ '@') //+T0002AB09
       {
+		  if(p[2] EQ 0)	 //中文符号则继续走, 判断下个符号
+		  {
+		    p ++;
+		    //TxtOff ++;
+		  }
+
           if(Chk_Int_Str(&p[2], 2) EQ 0) //序号错误
               return SMS_INDEX_ERR;
 
@@ -475,10 +483,16 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
                return SMS_INDEX_ERR;
 		   index --;
 
-		   p = p - 1;
+		   p = p - 1; //原来的程序有3位索引号，为了不改下面的程序，此处减1
 
            if(p[5] EQ '+') //最简方式
            {
+			   if(p[6] EQ 0)	 //中文符号则继续走, 判断下个符号
+			   {
+			     p ++;
+	             //TxtOff ++;
+			   }
+
                pPara->In_Mode = 0x01;
                pPara->Out_Mode = 0x01;
                pPara->Play_Counts = 0x00;
@@ -501,6 +515,12 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
            }
 		   else if(p[5] EQ '!') //调用预存显示内容
 		   {
+		     if(p[6] EQ 0)	 //中文符号则继续走, 判断下个符号
+		     {
+		       p ++;
+               //TxtOff ++;
+		     }
+
              if(Chk_Int_Str(&p[6], 2) EQ 0) //序号错误
                return SMS_CALL_FILE_INDEX_ERR;
 
@@ -615,12 +635,20 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
                    if(p[13] != '+')
                        return SMS_TXTHEAD_ERR;
 
+				   if(p[14] EQ 0)
+				     p ++;
+
                    pPara->SMS_Fix_Font_Flag = 1;
 
                    TxtOff = 14;
                }
                else
-                 TxtOff = 11;
+			   {
+			     if(p[11] EQ 0)
+				   p ++;
+
+                 TxtOff = 11;			   
+			   }
 
                pPara->Play_Counts = 1;
 
@@ -630,8 +658,11 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
           {
             if(p[6] != '+')
               return SMS_TXTHEAD_ERR;
-
-            TxtOff = 7;
+		   
+		   if(p[7] EQ 0)
+		     p ++;
+            
+			TxtOff = 7;
           }
 
           if(strlen(&p[TxtOff]) >= SMS_MAX_DATA_LEN)
@@ -695,7 +726,7 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 
            Base_Para.Width = Str_2_Int(&p[4], 4);
 
-           if(!(p[8] EQ 'x' || p[8] EQ 'X' || p[8] EQ '*'))
+           if(!(p[8] EQ 'x' || p[8] EQ 'X' || p[8] EQ '*' || p[8] EQ 0xD7))
              return SMS_FORMAT_ERR;
 
            //高度
@@ -706,6 +737,9 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 
            if(p[12] != ',')
                return SMS_FORMAT_ERR;
+
+		   if(p[13] EQ 0) //输入了中文逗号
+		     p ++;
 
            //颜色
            if(p[13] EQ '0' || p[13] EQ '1')
@@ -738,6 +772,9 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 
            if(p[16] != ',')
                return SMS_FORMAT_ERR;
+
+ 		   if(p[17] EQ 0)   //输入了中文逗号
+		     p ++;
 
            //扫描方式
            if(Chk_Int_Str(&p[17], 4) > 0)
@@ -884,6 +921,12 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 
     if(p[1] EQ '@') //+T0002AB09
     {
+      if(p[2] EQ 0)	 //中文符号则继续走, 判断下个符号
+      {
+        p ++;
+       //TxtOff ++;
+      }
+
       if(Chk_Int_Str(&p[2], 2) EQ 0) //序号错误
         return SMS_INDEX_ERR;
 
