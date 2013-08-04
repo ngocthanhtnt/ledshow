@@ -146,36 +146,28 @@ void ModuleReset(void)
 
 }
 
-void Chk_CSQ(void)
+int Chk_CSQ(char reStr[])
 {
-   static int flag = 0x55aa;
+   //static int flag = 0x55aa;
   	INT16U Len;
 	int CSQ = 0;
 	char *p;
     char Temp[30];
 		
-	if(Pub_Timer.Sec >= 8 && flag EQ 0x55aa)
+			
+	ATSend("AT+CSQ\r\n");
+	Len = ReadComm(Temp, sizeof(Temp), 2000);
+	if(Len > 0 && strstr(Temp, "OK") != 0)
 	{
-	    flag = 0;
-			
-		ATSend("AT+CSQ\r\n");
-		Len = ReadComm(Temp, sizeof(Temp), 2000);
-		if(Len > 0 && strstr(Temp, "OK") != 0)
-		{
-		  p = strstr(Temp, "+CSQ");
-		  if(p != '\0')
-			sscanf(p + 5, "%d", &CSQ);	// 读取信号强度
-		}
-		
-		if(CSQ < 10 || CSQ EQ 99) //信号弱
-		{
-		  Set_RT_Show_Area(0, 0, 64, 16);
-		  RT_Play_Status_Enter(3);
-		  Clr_All_Show_Data();
-			
-		  LED_Print(FONT0, Screen_Para.Base_Para.Color, &Show_Data, 0, 0, 0, "ERR12"); //信号弱
-		}
-  }
+	  p = strstr(Temp, "CSQ");
+	  if(p != '\0')
+	  {
+		sscanf(p + 5, "%d", &CSQ);	// 读取信号强度
+	    strncpy(reStr, p, 9);
+	  }
+	}
+	
+	return CSQ;		
 }
 
 void ModuleInit(void) //模块初始化
@@ -206,10 +198,10 @@ void ModuleInit(void) //模块初始化
 	// ECHO OFF
 	if(ATSendResponse("AT+IPR=0\r\n", "OK", 2000) EQ 0)
 	  goto err0;
-
+*/
 	if(ATSendResponse("ATE0&W\r\n", "OK", 2000) EQ 0)
 	  goto err0;
-*/		   
+		   
     if(ATSendResponse("AT+CFUN=1\r\n", "OK", 2000) EQ 0) //全功能
       goto err0;
 

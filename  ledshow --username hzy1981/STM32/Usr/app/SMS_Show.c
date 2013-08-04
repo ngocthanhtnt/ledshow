@@ -431,6 +431,7 @@ void Clear_All_SMS(void)
 }
 
 extern void Set_Prog_Num(INT8U Num);
+extern int Chk_CSQ(char reStr[]);
 //处理一条短信数据
 INT8U One_SMS_Proc(char *p, char *pReStr)
 {
@@ -1007,6 +1008,14 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 		}
 		
 		return SMS_NO_ERR;
+	}
+	else if(p[1] EQ 'C' && p[2] EQ 'S' && p[3] EQ 'Q')
+	{
+	   memset(pReStr, 0, 10);
+	   Chk_CSQ(pReStr);
+	   //sprintf(pReStr, "CSQ:%d", temp);
+
+	   return SMS_NO_ERR;
 	}
 
 	 //查询版本号，待加
