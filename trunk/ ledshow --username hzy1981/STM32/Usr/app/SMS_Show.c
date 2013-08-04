@@ -431,6 +431,23 @@ void Clear_All_SMS(void)
 }
 
 extern void Set_Prog_Num(INT8U Num);
+void Set_Def_SMS_Para(void)
+{
+	//默认设置为只有一个节目，且只有一个分区
+	Prog_Para.Area_Num = 1;
+	Prog_Para.Border_Check = 0;
+	Prog_Para.Area[0].X = 0;
+	Prog_Para.Area[0].Y = 0;
+	Prog_Para.Area[0].X_Len = Screen_Para.Base_Para.Width;
+	Prog_Para.Area[0].Y_Len = Screen_Para.Base_Para.Height;
+	SET_SUM(Prog_Para);
+	Write_Prog_Para(0, (INT8U *)&Prog_Para.Head + 1, PROG_PARA_LEN);
+	
+	Set_Screen_Replay_Flag(); //重播节目标志
+	Set_Prog_Num(1);	//重置节目个数为1  
+
+}
+
 extern int Chk_CSQ(char reStr[]);
 //处理一条短信数据
 INT8U One_SMS_Proc(char *p, char *pReStr)
@@ -443,6 +460,7 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
   S_Time tempTime;
   INT16U scanMode;
   S_Txt_Para *pPara;
+  INT8U DefSMSFlag = 0;
 
   *pReStr = '\0';
   memset(SMS_WR_Buf.Data, 0, sizeof(SMS_WR_Buf.Data));
@@ -802,21 +820,10 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
              Scan_Para.Rows = 16;
 		   
 		   //重新 
-		   //if(memcmp((INT8U *)&Screen_Para.Base_Para, (INT8U *)&Base_Para, sizeof(Screen_Para.Base_Para)) != 0)
-		   {
-		   //默认设置为只有一个节目，且只有一个分区
-		     Prog_Para.Area_Num = 1;
-			 Prog_Para.Border_Check = 0;
-			 Prog_Para.Area[0].X = 0;
-			 Prog_Para.Area[0].Y = 0;
-			 Prog_Para.Area[0].X_Len = Base_Para.Width;
-			 Prog_Para.Area[0].Y_Len = Base_Para.Height;
-			 SET_SUM(Prog_Para);
-			 Write_Prog_Para(0, (INT8U *)&Prog_Para.Head + 1, PROG_PARA_LEN);
-
-		     Set_Screen_Replay_Flag(); //重播节目标志
-		     Set_Prog_Num(1);	//重置节目个数为1  
-		   }
+		   if(memcmp((INT8U *)&Screen_Para.Base_Para, (INT8U *)&Base_Para, sizeof(Screen_Para.Base_Para)) != 0)
+             DefSMSFlag = 1;
+		   else
+		     DefSMSFlag = 0;
 
            memcpy(&Screen_Para.Base_Para, &Base_Para, sizeof(Base_Para));
            //memcpy(&Screen_Para.Scan_Para, &Scan_Para, sizeof(Scan_Para));
@@ -830,6 +837,9 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 
            Write_Screen_Para();
 
+		   if(DefSMSFlag EQ 1)
+		     Set_Def_SMS_Para();
+			  
            return SMS_NO_ERR;
 
       }
@@ -870,13 +880,15 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
       }
       else if(p[1] EQ 'D' && p[2] EQ 'E' && p[3] EQ 'L') //删除短信
       {
-          if(p[4] EQ '9' && p[5] EQ '9') //删除所有短信
+          if(p[4] EQ '0' && p[5] EQ '0') //删除所有短信
           {
               Clear_All_SMS();
 			  
 			  //删除显示数据 
 			  Clear_Area_Data(&Show_Data_Bak, 0);
 			  Clear_Area_Data(&Show_Data, 0);
+
+			  Set_Screen_Replay_Flag();
               return SMS_NO_ERR;
           }
           else if(Chk_Int_Str(&p[4], 2))

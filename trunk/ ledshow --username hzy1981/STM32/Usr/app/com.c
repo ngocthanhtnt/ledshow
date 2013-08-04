@@ -415,6 +415,8 @@ void Set_Prog_Num(INT8U Num)
 	  SET_SUM(Prog_Num);
 	  Write_Prog_Num();	
 }
+
+extern void Set_Def_SMS_Para(void);
 //从帧中读取工厂参数和用户参数到变量中
 //Cmd控制码
 //Frame数据域起始
@@ -424,7 +426,7 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 #pragma pack(1)
   S_Screen_Base_Para Base_Para;
 #pragma pack()
-  INT8U Data_Polarity;
+  INT8U Data_Polarity, DefSMSFlag = 0;;
 
   Data_Polarity = Screen_Para.Scan_Para.Data_Polarity;
 
@@ -443,12 +445,19 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
     {
       Set_Screen_Replay_Flag(); //重播节目标志
   	  Set_Prog_Num(0); //重置节目个数为0
+
+	  DefSMSFlag = 1; //重置短信分区参数
     }
 
 	mem_cpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para) - CHK_BYTE_LEN, (INT8U *)&Screen_Para, sizeof(Screen_Para));
     //SET_SUM(Screen_Para);
 #if NET_EN
     Net_Para_Modi_Flag = NET_PARA_MODI_FLAG;
+#endif
+
+#if SMS_EN
+    if(DefSMSFlag EQ 1)
+	  Set_Def_SMS_Para();
 #endif
   }
   else if(Cmd EQ C_SCREEN_BASE_PARA && Len >= sizeof(Screen_Para.Base_Para))
@@ -465,15 +474,19 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
     if(memcmp((INT8U *)&Screen_Para.Base_Para, (INT8U *)&Base_Para, sizeof(Screen_Para.Base_Para)) != 0)
     {
       Set_Screen_Replay_Flag(); //重播节目标志
-      Set_Prog_Num(0);	//重置节目个数为0  
-#if SMS_EN
-	  Clear_All_SMS();
-#endif
+      Set_Prog_Num(0);	//重置节目个数为0
+	  
+	  DefSMSFlag = 1;  //重置短信分区参数 
     }
 
 	memcpy((INT8U *)&Screen_Para.Base_Para, Data, sizeof(Screen_Para.Base_Para));
 	SET_SUM(Screen_Para);
     Calc_Screen_Color_Num();
+
+#if SMS_EN
+    if(DefSMSFlag EQ 1)
+	  Set_Def_SMS_Para();
+#endif
   }
   else if(Cmd EQ C_ETH_MAC_PARA && Len >= sizeof(ETH_Mac_Para.Mac))
   {
