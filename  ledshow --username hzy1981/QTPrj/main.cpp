@@ -253,6 +253,7 @@ void resetCardtoCardParaFile()
 
 int main(int argc, char *argv[])
 {
+    QApplication::addLibraryPath("./plugins");
     QApplication a(argc, argv);
 
     //设置为支持中文---重要
