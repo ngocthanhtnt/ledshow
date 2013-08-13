@@ -431,6 +431,7 @@ void Reset_Ram_Screen_Para(void)
   SET_SUM(Screen_Para);
 }
 
+extern void _TIM3_Set_Period(INT16U Period);
 //读取屏幕参数
 INT16U Read_Screen_Para(void)
 {
@@ -445,6 +446,9 @@ INT16U Read_Screen_Para(void)
 	  Reset_Ram_Screen_Para();
 	}
 
+#if QT_EN == 0
+    _TIM3_Set_Period((Screen_Para.Scan_Para.Screen_Freq + 1) * 100);
+#endif
 	Chk_Data_Polarity_Change(Data_Polarity); //检查数据极性是否发生修改
 
 	SET_HT(Screen_Para);

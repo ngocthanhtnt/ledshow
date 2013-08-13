@@ -806,30 +806,41 @@ void TIM2_Configuration(void)
 
 }
 
-//扫描中断
-void TIM3_Configuration(void)
+
+//定时器3的周期设置
+//Period
+void _TIM3_Set_Period(INT16U Period)
 {
-    //RCC_ClocksTypeDef RCC_Clocks;
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
-	/* TIM4 clock enable */
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-	
-	//RCC_GetClocksFreq(&RCC_Clocks);
+
+    TIM_Cmd(TIM3, DISABLE);  //使能TIMx外设
 	/* ---------------------------------------------------------------
 	TIM4CLK 即PCLK1=36MHz
 	TIM4CLK = 36 MHz, Prescaler = 7200, TIM4 counter clock = 5K,即改变一次为5K,周期就为10K
 	--------------------------------------------------------------- */
 	/* Time base configuration */
 	//周期为1ms
-	TIM_TimeBaseStructure.TIM_Period = SCAN_SCREEN_PERIOD / 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	if(Period > 1000)
+	  Period = 1000;
+
+	TIM_TimeBaseStructure.TIM_Period = Period / 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
     TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
+
+	TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
+}
+
+#if 1
+//扫描中断
+void TIM3_Configuration(void)
+{
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+
+    _TIM3_Set_Period(100); //默认100ms一次
 	
-	/* Enables the Update event for TIM3 */
-	//TIM_UpdateDisableConfig(TIM3,ENABLE); 	//使能 TIM4 更新事件 
-	
+	TIM_Cmd(TIM3, DISABLE);  //使能TIMx外设
 	/* TIM IT enable */
 	TIM_ITConfig(  //使能或者失能指定的TIM中断
 		TIM3, //TIM4
@@ -841,7 +852,31 @@ void TIM3_Configuration(void)
 	TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
 
 }
+#else
+void TIM3_Configuration(void)
+{
+	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+
+	TIM_TimeBaseStructure.TIM_Period = SCAN_SCREEN_PERIOD / 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
+	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
+	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
+
+	/* TIM IT enable */
+	TIM_ITConfig(  //使能或者失能指定的TIM中断
+		TIM3, //TIM4
+		TIM_IT_Update,   //TIM 触发中断源 
+		ENABLE  //使能
+		);
+	
+	/* TIM4 enable counter */
+	TIM_Cmd(TIM3, ENABLE);  //使能TIMx外设
+
+}
+#endif
 //101系列不存在TIM1定时器
 
 //定时器中断，用于绘制边框

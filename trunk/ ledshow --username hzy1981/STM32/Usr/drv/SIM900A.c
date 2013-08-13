@@ -259,6 +259,7 @@ ok:
 
 }
 
+#if 0//GPRS_EN
 //进行TCP连接
 INT8U TCPConnect(void)
 {
@@ -294,6 +295,7 @@ void TcpSendData(INT8U Data[], INT16U DataLen)
 
 
 }
+#endif
 
 //读取COM口数据
 INT16U ReadComm(char *pDst, INT16U Len, INT16U ms)

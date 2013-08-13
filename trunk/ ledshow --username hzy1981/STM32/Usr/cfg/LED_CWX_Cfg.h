@@ -56,7 +56,7 @@
 
 #define CLOCK_EN       1 //时钟使能
 
-#if CARD_TYPE == CARDCW2 //串口卡或者GPRS卡
+#if CARD_TYPE == CARDCW1 //串口卡或者GPRS卡
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
 #define CLOCK_SHOW_EN  1 //表盘显示使能
@@ -66,10 +66,14 @@
 #define TIMER_SHOW_EN  1 //定时显示使能 
 #define HUMIDITY_SHOW_EN 1 //湿度显示使能
 #define NOISE_SHOW_EN  0 //噪音显示使能
-#define TXT_SHOW_EN    0
-//短信卡
+#define TXT_SHOW_EN    1
 
-#elif CARD_TYPE == CARDCW1
+#define MAX_PROG_NUM 1 //最大节目数
+#define MAX_AREA_NUM 6 //每个节目下最大分区数
+#define MAX_FILE_NUM 10 //每个节目下最大文件数
+#define MAX_STORA_BLOCK_NUM  170 //最大存储块数
+
+#elif CARD_TYPE == CARDCW2
 #define BORDER_SHOW_EN 1 //边框显示使能
 #define PIC_SHOW_EN    1 //图文显示使能
 #define CLOCK_SHOW_EN  1 //表盘显示使能

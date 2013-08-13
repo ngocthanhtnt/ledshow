@@ -521,7 +521,7 @@ void Get_Scan_Data(INT16U Blocks, INT16U Col)
 		{
 			for(i = 0; i < Blocks; i ++)
 			{
-	     		Scan_Data[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index]; 		    
+     		Scan_Data[0][i] = Show_Data.Color_Data[Index];//Show_Data.Color_Data[Data_Index]; 		    
 				Scan_Data[1][i] = Show_Data.Color_Data[Index + 1];//Show_Data.Color_Data[Data_Index];
 				Index += Screen_Status.Block_Bytes;
 			}
