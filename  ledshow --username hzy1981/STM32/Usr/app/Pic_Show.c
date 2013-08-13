@@ -1,6 +1,7 @@
 #define PIC_SHOW_C
 #include "Includes.h"
 
+#define DEF_FIX_FAC 20
 //#undef QT_EN
 //#define QT_EN 1
 extern void LED_Scan_One_Row(void);
@@ -269,7 +270,7 @@ const S_Mode_Func In_Mode_Func[]=
   } //下飘雪
 #endif
 #if IN_SPEC_EFFECT_NUM > 33
-  ,{&Move_Flash, FIX_MODE, 100, WIDTH_FLAG | HEIGHT_FLAG
+  ,{&Move_Flash, FIX_MODE, DEF_FIX_FAC, WIDTH_FLAG | HEIGHT_FLAG
 #if QT_EN
    ,"闪烁" 
 #endif    
@@ -335,14 +336,14 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 42
-  ,{&Move_Horizontal_Window, FIX_MODE, 100, WIDTH_FLAG | HEIGHT_FLAG
+  ,{&Move_Horizontal_Window, FIX_MODE, DEF_FIX_FAC, WIDTH_FLAG | HEIGHT_FLAG
 #if QT_EN
    ,"水平百叶窗" 
 #endif    
   }//WIN_LEAF_WIDTH} //水平百叶窗
 #endif
 #if IN_SPEC_EFFECT_NUM > 43
-  ,{&Move_Vertical_Window, FIX_MODE, 100, WIDTH_FLAG | HEIGHT_FLAG
+  ,{&Move_Vertical_Window, FIX_MODE, DEF_FIX_FAC, WIDTH_FLAG | HEIGHT_FLAG
 #if QT_EN
    ,"垂直百叶窗" 
 #endif    
@@ -350,7 +351,7 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM > 44
-  ,{&Move_Fade_In, FIX_MODE, 100 , WIDTH_FLAG | HEIGHT_FLAG
+  ,{&Move_Fade_In, FIX_MODE, DEF_FIX_FAC , WIDTH_FLAG | HEIGHT_FLAG
 #if QT_EN
    ,"淡入" 
 #endif    
@@ -453,14 +454,14 @@ const S_Mode_Func In_Mode_Func[]=
 #endif
 
 #if IN_SPEC_EFFECT_NUM >57
-  ,{&Move_Left_Compress, FIX_MODE, 100, 0
+  ,{&Move_Left_Compress, FIX_MODE, DEF_FIX_FAC, 0
 #if QT_EN
    ,"向左比例压缩"
 #endif    
   } //向左压缩
 #endif
 #if IN_SPEC_EFFECT_NUM > 58
-  ,{&Move_Up_Compress, FIX_MODE, 100, 0
+  ,{&Move_Up_Compress, FIX_MODE, DEF_FIX_FAC, 0
 #if QT_EN
    ,"向上比例压缩"
 #endif    
@@ -872,7 +873,7 @@ const S_Mode_Func Out_Mode_Func[]=
 #endif
 
 #if OUT_SPEC_EFFECT_NUM > 25
-  ,{&Move_Fade_In, FIX_MODE, 100, WIDTH_FLAG | HEIGHT_FLAG
+  ,{&Move_Fade_In, FIX_MODE, DEF_FIX_FAC, WIDTH_FLAG | HEIGHT_FLAG
 #if QT_EN
    ,"淡出" 
 #endif

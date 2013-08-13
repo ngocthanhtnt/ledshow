@@ -417,6 +417,7 @@ void Set_Prog_Num(INT8U Num)
 }
 
 extern void Set_Def_SMS_Para(void);
+extern void _TIM3_Set_Period(INT16U Period);
 //从帧中读取工厂参数和用户参数到变量中
 //Cmd控制码
 //Frame数据域起始
@@ -537,7 +538,9 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 	Screen_Status.Com_Err_Flag = COM_ERR_PARA_LEN_ERR;	//参数长度或者控制码错误
     return 0;
   }
-
+#if QT_EN == 0
+  _TIM3_Set_Period((Screen_Para.Scan_Para.Screen_Freq + 1) * 100);
+#endif
   SET_SUM(Screen_Para);
   Write_Screen_Para(); //保存屏幕参数
 

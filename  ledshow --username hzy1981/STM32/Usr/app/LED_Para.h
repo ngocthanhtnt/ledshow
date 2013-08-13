@@ -191,25 +191,26 @@ typedef struct
 //以太网参数
 typedef struct
 {
-    //以太网
-    INT8U Mode; //0固定ip方式，1自动获取方式
+	//以太网
+	INT8U Mode; //0固定ip方式，1自动获取方式
 
-    INT32U IP; //IP地址
-    //INT16U Port; //端口
-    INT32U Mask; //子网掩码
-    INT32U Gate; //网关
+	INT32U IP; //IP地址
+	//INT16U Port; //端口
+	INT32U Mask; //子网掩码
+	INT32U Gate; //网关
 
 
 	INT8U Serv_En; //是否采用服务器模式,0表示不采用，1表示采用
 	INT32U Serv_IP; //服务器IP
-        //INT32U Serv_IP_1; //服务器IP备用,IPV6时使用
-        INT8U Serv_Domain[50]; //服务器域名,当服务器IP为全0时使用
+	//INT32U Serv_IP_1; //服务器IP备用,IPV6时使用
+	INT8U Serv_Domain[40]; //服务器域名,当服务器IP为全0时使用
 
-        INT16U Serv_Port;  //服务器端口
-        INT16U Heart_Period; //心跳周期,单位s
-
-
-    //INT8U Temp[4]; //保留30字节备用--升级程序时可以和老的兼容
+	INT16U Serv_Port;  //服务器端口
+	INT16U Heart_Period; //心跳周期,单位s
+	//以下是GPRS参数
+	//INT8U Connect_Period; //重连周期
+	//INT8U APN[30]; //服务器域名,IP为0时使用
+	//INT8U Temp[4]; //保留30字节备用--升级程序时可以和老的兼容
 }S_ETH_Para;
 
 typedef struct
@@ -289,10 +290,11 @@ typedef struct
   //命令3
   //INT8U Prog_Num; //节目数
   //INT8U Temp[10]; //备用
-#if QT_EN || NET_EN || GPRS_EN || SMS_EN
+#if QT_EN || NET_EN || GPRS_EN// || SMS_EN
   S_ETH_Para ETH_Para; //以太网参数
 
-  S_GPRS_Para GPRS_Para; //GPRS参数
+  //S_GPRS_Para GPRS_Para; //GPRS参数
+	//INT8U Temp[150];
 #endif
 
   INT8U CS[CS_BYTES];

@@ -223,6 +223,8 @@ int main(void)
   } 
 }
 #else
+
+#if SMS_EN
 //SMS、GRPS通信任务
 void smsGPRSTask(void)
 {
@@ -233,6 +235,17 @@ void smsGPRSTask(void)
     SmsProc();
   }
 }
+#else
+//SMS、GRPS通信任务
+void smsGPRSTask(void)
+{
+  //ModuleInit();
+  while(1)
+  {
+    OS_TimeDly_Ms(1000);
+  }
+}
+#endif
 
 //主任务
 void mainTask(void)
