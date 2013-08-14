@@ -819,6 +819,9 @@ void _TIM3_Set_Period(INT16U Period)
 	TIM4CLK = 36 MHz, Prescaler = 7200, TIM4 counter clock = 5K,即改变一次为5K,周期就为10K
 	--------------------------------------------------------------- */
 	/* Time base configuration */
+	//if(Screen_Para.Scan_Para.Rows != 16) //不是室内屏则增加300us--室外或者半
+		//Period += 300;
+	
 	//周期为1ms
 	if(Period > 1000)
 	  Period = 1000;

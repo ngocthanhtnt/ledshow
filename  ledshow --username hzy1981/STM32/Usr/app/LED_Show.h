@@ -47,7 +47,7 @@ else\
 
 //INT8U Get_Buf_Bit(INT8U Buf[], INT32U Buf_Size, INT32U Index)
 
-#pragma pack(1)
+//#pragma pack(1)
 typedef struct
 {
     INT8U Head;
@@ -203,7 +203,7 @@ typedef struct
 typedef struct
 {
   INT8U Head;
-  
+
   S_Play_Status Play_Status;
 
   S_Border_Status Border_Status[MAX_AREA_NUM + 1];
@@ -283,7 +283,7 @@ typedef struct
   INT8U Tail;  
 }S_Screen_Status;
 
-#pragma pack()
+//#pragma pack()
 
 //#define MOVE_STEP Screen_Status.Move_Step
 //EXT S_Area_Status Area_Status[MAX_AREA_NUM]; //分区状态信息

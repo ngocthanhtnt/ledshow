@@ -424,9 +424,9 @@ extern void _TIM3_Set_Period(INT16U Period);
 //Len数据域长度
 INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
 {
-#pragma pack(1)
+//#pragma pack(1)
   S_Screen_Base_Para Base_Para;
-#pragma pack()
+//#pragma pack()
   INT8U Data_Polarity, DefSMSFlag = 0;;
 
   Data_Polarity = Screen_Para.Scan_Para.Data_Polarity;

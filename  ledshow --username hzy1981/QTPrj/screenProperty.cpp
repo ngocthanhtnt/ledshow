@@ -313,7 +313,7 @@ INT8U setScreenParaToSettings(QString screenStr, S_Screen_Para &screenPara)
    settings.setValue("redGreenRev", screenPara.Scan_Para.RG_Reverse);
    settings.setValue("lineOrder", screenPara.Scan_Para.Line_Order);
    settings.setValue("lineHide", screenPara.Scan_Para.Line_Hide);
-   settings.setValue("freq", screenPara.Scan_Para.Clk_Freq);
+   settings.setValue("freq", screenPara.Scan_Para.Screen_Freq);
    //settings.setValue("");
    settings.setValue("scanMode", getScanCodeFromScreenPara(screenPara));
 
@@ -425,7 +425,7 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     screenPara.Scan_Para.RG_Reverse = settings.value("redGreenRev").toInt();
     screenPara.Scan_Para.Line_Order = settings.value("lineOrder").toInt();
     screenPara.Scan_Para.Line_Hide = settings.value("lineHide").toInt();
-    screenPara.Scan_Para.Clk_Freq = settings.value("freq").toInt(); //移位频率
+    screenPara.Scan_Para.Screen_Freq = settings.value("freq").toInt(); //刷新频率
     screenPara.Scan_Para._138Check = settings.value("138Check").toInt();
 
     //扫描方式
@@ -449,7 +449,8 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
       screenPara.Scan_Para.Rows = 16;
 
     //----------------------
-    screenPara.Scan_Para.Screen_Freq = 0; //屏频
+    //screenPara.Scan_Para.Screen_Freq = 0; //屏频
+    screenPara.Scan_Para.Clk_Freq = 0;
     //
     settings.endGroup();
     //亮度调节
@@ -2654,9 +2655,12 @@ CfacScreenProperty::CfacScreenProperty(int flag, CcomTest *com,  QWidget *parent
    freqCombo ->addItem(tr("2"));
    freqCombo ->addItem(tr("3"));
    freqCombo ->addItem(tr("4"));
-   freqCombo ->addItem(tr("5最慢"));
-
-
+   freqCombo ->addItem(tr("5"));
+   freqCombo ->addItem(tr("6"));
+   freqCombo ->addItem(tr("7"));
+   freqCombo ->addItem(tr("8"));
+   freqCombo ->addItem(tr("9"));
+   freqCombo ->addItem(tr("10最慢"));
 
    dataMirrorCombo = new QComboBox(this);
    dataMirrorCombo->addItem(tr("正常"));
@@ -2671,7 +2675,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, CcomTest *com,  QWidget *parent
    vLayout = new QVBoxLayout(this);
 
    gridLayout = new QGridLayout(this);
-   freqLabel = new QLabel(tr("时钟频率"),this);
+   freqLabel = new QLabel(tr("刷新频率"),this);
 
    dataMirrorLabel = new QLabel(tr("数据镜像"),this);
    lineOrderLabel = new QLabel(tr("行顺序"),this);
@@ -3046,8 +3050,8 @@ void CfacScreenProperty::readParaProc()
                          arg((readScreenPara.Scan_Para.RG_Reverse EQ 0)?tr("无"):tr("有"));
 
 
-        screenParaStr += tr("\r\n时钟频率:%1,行消隐:%2,138译码器:%3,行顺序:%4").\
-                         arg(freqCombo->itemText(readScreenPara.Scan_Para.Clk_Freq)).\
+        screenParaStr += tr("\r\n刷新频率:%1,行消隐:%2,138译码器:%3,行顺序:%4").\
+                         arg(freqCombo->itemText(readScreenPara.Scan_Para.Screen_Freq)).\
                          arg(lineHideCombo->itemText(readScreenPara.Scan_Para.Line_Hide)).\
                          arg(_138Combo->itemText(readScreenPara.Scan_Para._138Check)).\
                          arg(lineOrderCombo->itemText(readScreenPara.Scan_Para.Line_Order));
