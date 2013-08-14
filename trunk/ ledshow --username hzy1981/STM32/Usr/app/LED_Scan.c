@@ -1107,7 +1107,10 @@ void LED_Scan_One_Row(void)
 	if(Screen_Para.Scan_Para.Line_Hide > 0)
 	  Delay_us(Screen_Para.Scan_Para.Line_Hide*10); //行消隐时间
     Delay_us(10);
-
+	
+	if(Screen_Para.Scan_Para.Rows != 16) //不是1/16扫描的都增加30us
+    Delay_us(20);
+	
     SET_LAT(0); //锁存信号输出
 	nop();
 	nop();

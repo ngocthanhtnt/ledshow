@@ -25,7 +25,7 @@
 #define MAX_ROWS_FOLD 2
 #define MAX_COLS_FOLD 2
 
-#pragma pack(1)
+//#pragma pack(1)
 typedef struct
 {
   INT8U Head;
@@ -77,7 +77,7 @@ typedef struct
   INT8U Self_OC_Flag;
   INT8U Tail;
 }S_RT_Show_Para;
-#pragma pack()
+//#pragma pack()
 /*
   if((Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x8000) > 0)
     return (INT32U)(Prog_Status.File_Para[Area_No].Pic_Para.Stay_Time & 0x7FFF);
