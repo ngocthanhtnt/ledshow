@@ -1035,8 +1035,8 @@ void LED_Scan_One_Row(void)
        GPIOB->ODR = *(INT16U *)&Scan_Data0[0][0];
 #endif
 	   		
-	   //__enable_irq();//(0); //开总中断--开中断一次让其他更高优先级中断可以运行
-	   //__disable_irq() ; //关总中断 dma传输过程中，中断对dma时序有影响，因此传输过程中关闭
+	   TIMER_INT_ENABLE();//(0); //开定时器中断，保证Pub_Timer继续走
+	   TIMER_INT_DISABLE(); //关定时器中断
 		   	 	
 	   SPI2->DR = 0xAAAA;
 
@@ -1099,7 +1099,7 @@ void LED_Scan_One_Row(void)
 #endif
 	 //此处是硬件扫描方式代码
     Delay_us(5);
-    //__enable_irq();
+    TIMER_INT_ENABLE();
 		 
 	//关闭OE使能
 	Set_OE_Duty_Polarity(0, Screen_Para.Scan_Para.OE_Polarity);
@@ -1108,8 +1108,8 @@ void LED_Scan_One_Row(void)
 	  Delay_us(Screen_Para.Scan_Para.Line_Hide*10); //行消隐时间
     Delay_us(10);
 	
-	if(Screen_Para.Scan_Para.Rows != 16) //不是1/16扫描的都增加30us
-    Delay_us(20);
+	//if(Screen_Para.Scan_Para.Rows != 16) //不是1/16扫描的都增加20us
+    //Delay_us(20);
 	
     SET_LAT(0); //锁存信号输出
 	nop();

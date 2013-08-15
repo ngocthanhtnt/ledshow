@@ -526,7 +526,7 @@ void NVIC_Configuration(void)
 	//NVIC_PriorityGroupConfig(NVIC_PriorityGroup_0);	//设置优先级分组：先占优先级0位,从优先级4位
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);		//设置优先级分组：先占优先级2位,从优先级2位
 	
-    NVIC_SetVectorTable(NVIC_VectTab_FLASH, APP_ADDRESS_OFF);	//重新定期中断向量区
+  NVIC_SetVectorTable(NVIC_VectTab_FLASH, APP_ADDRESS_OFF);	//重新定期中断向量区
 	
 	
     /* Enable the USARTy Interrupt */
@@ -545,27 +545,29 @@ void NVIC_Configuration(void)
 	NVIC_Init(&NVIC_InitStructure);	//根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器USART1
 #endif
 
-	//扫描中断
-	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //扫描特效
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级0级
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
-	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
-
+  //USB中断为PreemptionPriority = 0,SubPriority = 2
+	
 #if TIM1_EN
 	NVIC_InitStructure.NVIC_IRQChannel = TIM1_UP_IRQn;  //1ms中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 #else 	 	
 	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;  //1ms中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;  //先占优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
 #endif
 
+	//扫描中断
+	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;  //扫描特效
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
+	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器
+	
 //USB_OTG_BSP_EnableInterrupt  函数中有设置，此处不设置
 /*
 #ifdef CHIP_USB_HOST	
@@ -757,7 +759,7 @@ void TIM2_Configuration(void)
 
 #if TIM1_EN EQ 0
 	TIM_TimeBaseStructure.TIM_Period = 1000 / 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
-    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+  TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
@@ -819,8 +821,6 @@ void _TIM3_Set_Period(INT16U Period)
 	TIM4CLK = 36 MHz, Prescaler = 7200, TIM4 counter clock = 5K,即改变一次为5K,周期就为10K
 	--------------------------------------------------------------- */
 	/* Time base configuration */
-	//if(Screen_Para.Scan_Para.Rows != 16) //不是室内屏则增加300us--室外或者半
-		//Period += 300;
 	
 	//周期为1ms
 	if(Period > 1000)
@@ -896,6 +896,7 @@ void TIM1_Configuration(void)
 #if  PCLK2_VALUE ==	HCLK_VALUE   
 	TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE /1000000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 #else
+	#error "此处代码没有验证，需要重新验证下"
 	TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE * 2 /1000000-1); 
 #endif
 

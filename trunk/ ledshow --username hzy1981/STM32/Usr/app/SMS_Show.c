@@ -461,6 +461,7 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
   INT16U scanMode;
   S_Txt_Para *pPara;
   INT8U DefSMSFlag = 0;
+	char buf[5];
 
   *pReStr = '\0';
   memset(SMS_WR_Buf.Data, 0, sizeof(SMS_WR_Buf.Data));
@@ -1026,6 +1027,39 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 	   memset(pReStr, 0, 10);
 	   Chk_CSQ(pReStr);
 	   //sprintf(pReStr, "CSQ:%d", temp);
+
+	   return SMS_NO_ERR;
+	}
+	else if(p[1] EQ 'S' && p[2] EQ 'C' && p[3] EQ 'N')
+	{
+		if(Screen_Para.Scan_Para.Rows EQ 16)
+			 Rows = 0;
+		 else if(Screen_Para.Scan_Para.Rows EQ 8)
+			 Rows = 1;
+		 else if(Screen_Para.Scan_Para.Rows EQ 4)
+			 Rows = 2;
+		 else if(Screen_Para.Scan_Para.Rows EQ 2)
+			 Rows = 3;
+		 else if(Screen_Para.Scan_Para.Rows EQ 1)
+			 Rows = 4;
+		 else
+			 Rows = 0;
+		  
+		 //scanMode = Rows * 1000 + Screen_Para.Scan_Para.Direct * 100 + Screen_Para.Scan_Para.Cols_Fold * 10 + Screen_Para.Scan_Para.Rows_Fold;
+		 
+		 buf[0] = Rows + '0';
+		 buf[1] = Screen_Para.Scan_Para.Direct + '0';
+		 buf[2] = Screen_Para.Scan_Para.Cols_Fold + '0';
+		 buf[3] = Screen_Para.Scan_Para.Rows_Fold + '0';
+		 buf[4] = 0;
+		 
+	   sprintf(pReStr, "屏幕宽:%d,高:%d,颜色:%s,数据极性:%s,OE极性:%s,扫描方式:%s",\
+		                 Screen_Para.Base_Para.Width,\
+		                 Screen_Para.Base_Para.Height,\
+		                 (Screen_Para.Base_Para.Color EQ 0x01)?"红":((Screen_Para.Base_Para.Color EQ 0x02)?"绿":((Screen_Para.Base_Para.Color EQ 0x03)?"红+绿":"")),\
+		                 (Screen_Para.Scan_Para.Data_Polarity EQ 0)?"低":"高",\
+		                 (Screen_Para.Scan_Para.OE_Polarity EQ 0)?"低":"高",\
+		                  buf);
 
 	   return SMS_NO_ERR;
 	}

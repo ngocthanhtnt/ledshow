@@ -422,9 +422,9 @@ void Reset_Ram_Screen_Para(void)
   Screen_Para.Scan_Para.OE_Polarity = 0x00;
 
 #if NET_EN
-  Screen_Para.ETH_Para.IP = 0xFB01A8C0; //192.168.1.251
-  Screen_Para.ETH_Para.Gate = 0x0101A8C0; //192.168.1.1
-  Screen_Para.ETH_Para.Mask = 0x00FFFFFF; //255.255.255.0
+  Screen_Para.Net_Para.IP = 0xFB01A8C0; //192.168.1.251
+  Screen_Para.Net_Para.Gate = 0x0101A8C0; //192.168.1.1
+  Screen_Para.Net_Para.Mask = 0x00FFFFFF; //255.255.255.0
 #endif
 
   SET_HT(Screen_Para);

@@ -506,8 +506,8 @@ INT8U Save_Screen_Para_Frame_Proc(INT16U Cmd, INT8U Data[], INT16U Len)
   else if(Cmd EQ C_SCREEN_COM_PARA && Len >= sizeof(Screen_Para.COM_Para))
     mem_cpy((INT8U *)&Screen_Para.COM_Para, Data, sizeof(Screen_Para.COM_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//通信参数 
 #if NET_EN
-  else if(Cmd EQ C_SCREEN_ETH_PARA && Len >= sizeof(Screen_Para.ETH_Para))
-    mem_cpy((INT8U *)&Screen_Para.ETH_Para, Data, sizeof(Screen_Para.ETH_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//通信参数
+  else if(Cmd EQ C_SCREEN_NET_PARA && Len >= sizeof(Screen_Para.Net_Para))
+    mem_cpy((INT8U *)&Screen_Para.Net_Para, Data, sizeof(Screen_Para.Net_Para), (INT8U *)&Screen_Para, sizeof(Screen_Para));//通信参数
 #endif  
   else if(Cmd EQ C_SCREEN_OC_TIME && Len >= sizeof(Screen_Para.OC_Time))
     mem_cpy((INT8U *)&Screen_Para.OC_Time, Data, sizeof(Screen_Para.OC_Time), (INT8U *)&Screen_Para, sizeof(Screen_Para)); //定时开关机时间

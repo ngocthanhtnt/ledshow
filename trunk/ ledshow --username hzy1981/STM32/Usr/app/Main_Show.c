@@ -1511,8 +1511,8 @@ void Para_Show(void)
   Len = RT_LED_Print(FONT0, 0x01, 0, 0, 3, "%d-%d", Screen_Para.COM_Para.Addr, Screen_Para.COM_Para.Baud);
 
 #if UDISK_EN  
-  memcpy(IP, &Screen_Para.ETH_Para.IP, 4);	//显示IP地址和端口号
-  Len = RT_LED_Print(FONT0, 0x01, Len, 0, 3, "%d.%d.%d.%d:%d", IP[3], IP[2], IP[1], IP[0], Screen_Para.ETH_Para.Port);
+  memcpy(IP, &Screen_Para.Net_Para.IP, 4);	//显示IP地址和端口号
+  Len = RT_LED_Print(FONT0, 0x01, Len, 0, 3, "%d.%d.%d.%d:%d", IP[3], IP[2], IP[1], IP[0], Screen_Para.Net_Para.Port);
 #endif
   */
 }
