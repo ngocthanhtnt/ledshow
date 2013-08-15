@@ -51,6 +51,15 @@
 #define STOP_SHOW_TIMER()  TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设  
 #define START_SHOW_TIMER() TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 
+//关闭和打开定时器中断
+#if TIM1_EN
+#define TIMER_INT_ENABLE() TIM1->DIER |= TIM_IT_Update
+#define TIMER_INT_DISABLE() TIM1->DIER  &= (uint16_t)~TIM_IT_Update
+#else
+#define TIMER_INT_ENABLE() TIM2->DIER |= TIM_IT_Update
+#define TIMER_INT_DISABLE() TIM2->DIER &= (uint16_t)~TIM_IT_Update
+#endif
+
 //#define CLR_WDG()  IWDG_ReloadCounter()
 //#define CHK_JP_STATUS1  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_14)
  

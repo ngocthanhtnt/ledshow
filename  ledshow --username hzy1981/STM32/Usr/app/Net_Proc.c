@@ -40,12 +40,12 @@ U16 udp_callback (U8 socket, U8 *remip, U16 port, U8 *buf, U16 len)
 //转换网络参数到需要的格式
 void Trans_IP_Para(LOCALM *pNet)
 {
-  memcpy(pNet->IpAdr, (INT8U *)&Screen_Para.ETH_Para.IP, 4);
-  memcpy(pNet->DefGW, (INT8U *)&Screen_Para.ETH_Para.Gate, 4);
-  memcpy(pNet->NetMask, (INT8U *)&Screen_Para.ETH_Para.Mask, 4);
+  memcpy(pNet->IpAdr, (INT8U *)&Screen_Para.Net_Para.IP, 4);
+  memcpy(pNet->DefGW, (INT8U *)&Screen_Para.Net_Para.Gate, 4);
+  memcpy(pNet->NetMask, (INT8U *)&Screen_Para.Net_Para.Mask, 4);
 
-  memcpy(pNet->PriDNS, (INT8U *)&Screen_Para.ETH_Para.IP, 4); 
-  memcpy(pNet->SecDNS, (INT8U *)&Screen_Para.ETH_Para.IP, 4);
+  memcpy(pNet->PriDNS, (INT8U *)&Screen_Para.Net_Para.IP, 4); 
+  memcpy(pNet->SecDNS, (INT8U *)&Screen_Para.Net_Para.IP, 4);
 }
 
 void Trans_Mac_Para(INT8U Mac[])
@@ -86,7 +86,7 @@ void Send_Heart_Beat(void)
 	if(sendBuf)
 	{
 	  memcpy(sendBuf, Temp, Len);
-	  udp_send (Screen_Status.UDP_Soc, (INT8U *)&Screen_Para.ETH_Para.Serv_IP, Screen_Para.ETH_Para.Serv_Port, sendBuf, Len);
+	  udp_send (Screen_Status.UDP_Soc, (INT8U *)&Screen_Para.Net_Para.Serv_IP, Screen_Para.Net_Para.Serv_Port, sendBuf, Len);
 	}
 }
 
@@ -108,15 +108,15 @@ void Net_Data_Proc(void)
 	Screen_Status.Rem_Data_Len = 0;
   }
 
-  if(Screen_Para.ETH_Para.Serv_En EQ 1) //使用服务器模式，需要定时向服务器发送心跳信息
+  if(Screen_Para.Net_Para.Serv_En EQ 1) //使用服务器模式，需要定时向服务器发送心跳信息
   {
 	  if(Sec.Var != Pub_Timer.Sec)
 	  {
 	    Sec.Var = Pub_Timer.Sec;
 	    Counts.Var ++;
 	
-		if(Screen_Para.ETH_Para.Heart_Period > 0 &&\
-		   Counts.Var >= (INT16U)Screen_Para.ETH_Para.Heart_Period * 60 &&\
+		if(Screen_Para.Net_Para.Heart_Period > 0 &&\
+		   Counts.Var >= (INT16U)Screen_Para.Net_Para.Heart_Period * 60 &&\
 		   Screen_Status.Com_Time EQ 0)
 		{
 		  Send_Heart_Beat(); //发送心跳
@@ -130,9 +130,9 @@ void Net_Para_Modi_Chk(void)
 {
   if(Net_Para_Modi_Flag EQ NET_PARA_MODI_FLAG)
   {
-    if(memcmp((INT8U *)&localm[NETIF_ETH].IpAdr, (INT8U *)&Screen_Para.ETH_Para.IP, 4) != 0 ||\
-       memcmp((INT8U *)&localm[NETIF_ETH].DefGW, (INT8U *)&Screen_Para.ETH_Para.Gate, 4) != 0 ||\
-       memcmp((INT8U *)&localm[NETIF_ETH].NetMask, (INT8U *)&Screen_Para.ETH_Para.Mask, 4) != 0 ||\
+    if(memcmp((INT8U *)&localm[NETIF_ETH].IpAdr, (INT8U *)&Screen_Para.Net_Para.IP, 4) != 0 ||\
+       memcmp((INT8U *)&localm[NETIF_ETH].DefGW, (INT8U *)&Screen_Para.Net_Para.Gate, 4) != 0 ||\
+       memcmp((INT8U *)&localm[NETIF_ETH].NetMask, (INT8U *)&Screen_Para.Net_Para.Mask, 4) != 0 ||\
 	   memcmp(own_hw_adr, ETH_Mac_Para.Mac, 6) != 0)
 	{
 		Net_Init();	

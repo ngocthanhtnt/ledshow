@@ -31,7 +31,7 @@
 //#define C_SCREEN_BAUD 0x04 //通信速率
 #define C_SCREEN_BASE_PARA 0x00 //基本参数
 #define C_SCREEN_COM_PARA 0x01 //串口通信参数
-#define C_SCREEN_ETH_PARA 0x02 //以太网参数
+#define C_SCREEN_NET_PARA 0x02 //以太网参数
 #define C_ETH_MAC_PARA    0x03
 #define C_HEART_BEAT      0x04
 #define C_SCREEN_GPRS_PARA 0x05 //GPRS参数
