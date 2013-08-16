@@ -303,6 +303,8 @@ public slots:
  void comLoadParaProc(); //通信加载参数
  void udiskLoadParaProc(); //U盘加载参数
  void readCardType();
+ void setDefAdvPara(); //设置默认高级参数
+
  public:
  QTabWidget *tabWidget;
  CcomTest *comTest;

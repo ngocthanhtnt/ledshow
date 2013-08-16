@@ -548,10 +548,10 @@ bool CcomThread::sendFrame(char *data, int len, int bufLen)
   {
       QHostAddress host;
 
-      //host.setAddress("192.168.001.122");//ETH_Para.IP);
+      //host.setAddress("192.168.001.122");//Net_Para.IP);
 
       if(mode EQ ETH_MODE)
-        host.setAddress(RevIP(ETH_Para.IP));
+        host.setAddress(RevIP(Net_Para.IP));
       else
         host.setAddress(DEF_WIFI_DST_IP);
 
@@ -877,7 +877,7 @@ void CcomStatus::getCOMParaFromSettings(QString str)
     comThread->COM_Para.Addr = settings.value("screenID").toInt();
     comThread->COM_Para.Baud = settings.value("baud").toInt();
 
-    comThread->ETH_Para.IP = settings.value("ip").toInt();
+    comThread->Net_Para.IP = settings.value("ip").toInt();
 
     settings.endGroup();
     settings.endGroup();
@@ -907,7 +907,7 @@ void CcomStatus::getCOMParaFromSettings(QString str)
         //INT8U ip[4];
         INT32U IP;
 
-        IP = comThread->ETH_Para.IP;
+        IP = comThread->Net_Para.IP;
         str1 = tr("Ä¿±êµØÖ·:");
 
         QHostAddress dstAddr;

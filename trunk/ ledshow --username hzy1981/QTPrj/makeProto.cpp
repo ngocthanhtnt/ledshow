@@ -761,8 +761,8 @@ QString Chk_Prog_Border_Para(int progNo, S_Prog_Para &progPara, S_Screen_Para &s
       for(i = 0; i < progPara.Area_Num; i ++)
           if(progPara.Area[i].X < progPara.Border_Height ||\
              progPara.Area[i].Y < progPara.Border_Height ||\
-             progPara.Area[i].X + progPara.Area[i].X_Len + progPara.Border_Height >= screenPara.Base_Para.Width  ||\
-             progPara.Area[i].Y + progPara.Area[i].Y_Len + progPara.Border_Height >= screenPara.Base_Para.Height)
+             progPara.Area[i].X + progPara.Area[i].X_Len + progPara.Border_Height > screenPara.Base_Para.Width  ||\
+             progPara.Area[i].Y + progPara.Area[i].Y_Len + progPara.Border_Height > screenPara.Base_Para.Height)
           {
               reStr += QString(QObject::tr("第")) + QString::number(i + 1) + QString(QObject::tr("分区")) + QString(QObject::tr("与节目边框有重叠，"));
               Re = 0;

@@ -27,7 +27,7 @@
 //----------------------------------------
 #if defined(CARD_C)
 #if CARD_TYPE == CARDCU1 //
-#define CARD_NAME "C1"  //¿¨Ãû³Æ
+#define CARD_NAME "CU1"  //¿¨Ãû³Æ
 #else
 #error "card CX name error"
 #endif

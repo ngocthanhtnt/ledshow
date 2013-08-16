@@ -51,6 +51,8 @@ const S_Scan_Mode scanMode[] =
 {
     {200, "1/16扫,右入直行一路带16行数据(室内屏常规)"},
     {2213, "1/4扫,右入每8点向下打折,打折3次(P10模组常规)"},
+    {1200, "1/8扫,右入直行一路带8行数据(P6模组常规)"},
+
     {0, "1/16扫,左入直行一路带16行数据"},
     {281, "1/16扫,右入直行每64点向下打折一次"},
 //----------1/8扫-------
@@ -68,7 +70,6 @@ const S_Scan_Mode scanMode[] =
     {1122, "1/8扫,左入每16点向上打折,打折2次"},
   //{1123, "1/8扫,左入每16点向上打折,打折3次"},
     //1-----
-    {1200, "1/8扫,右入直行一路带8行数据"},
     {1211, "1/8扫,右入每8点向下打折,打折1次"},
     {1212, "1/8扫,右入每8点向下打折,打折2次"},
   //{1213, "1/8扫,右入每8点向下打折,打折3次"},
@@ -302,11 +303,11 @@ INT8U setScreenParaToSettings(QString screenStr, S_Screen_Para &screenPara)
    settings.setValue("screenID", screenPara.COM_Para.Addr);
    settings.setValue("baud", screenPara.COM_Para.Baud);
 
-   settings.setValue("ip", screenPara.ETH_Para.IP);
-   //settings.setValue("mac0", screenPara.ETH_Para.Mac0);
-   //settings.setValue("mac1", screenPara.ETH_Para.Mac1);
-   settings.setValue("mask", screenPara.ETH_Para.Mask);
-   settings.setValue("gate", screenPara.ETH_Para.Gate);
+   settings.setValue("ip", screenPara.Net_Para.IP);
+   //settings.setValue("mac0", screenPara.Net_Para.Mac0);
+   //settings.setValue("mac1", screenPara.Net_Para.Mac1);
+   settings.setValue("mask", screenPara.Net_Para.Mask);
+   settings.setValue("gate", screenPara.Net_Para.Gate);
 
    settings.setValue("dataPolarity", screenPara.Scan_Para.Data_Polarity);
    settings.setValue("oePolarity", screenPara.Scan_Para.OE_Polarity);
@@ -409,16 +410,16 @@ INT8U getScreenCardParaFromSettings(QString screenStr, S_Screen_Para &screenPara
     screenPara.COM_Para.Addr = (INT16U)settings.value("screenID").toInt();
     screenPara.COM_Para.Baud = (INT8U)settings.value("baud").toInt();
 
-    screenPara.ETH_Para.IP = settings.value("ip").toInt();
-    //screenPara.ETH_Para.Mac0 = settings.value("mac0").toInt();
-    //screenPara.ETH_Para.Mac1 = settings.value("mac1").toInt();
-    screenPara.ETH_Para.Mask = settings.value("mask").toInt();
-    screenPara.ETH_Para.Gate = settings.value("gate").toInt();
+    screenPara.Net_Para.IP = settings.value("ip").toInt();
+    //screenPara.Net_Para.Mac0 = settings.value("mac0").toInt();
+    //screenPara.Net_Para.Mac1 = settings.value("mac1").toInt();
+    screenPara.Net_Para.Mask = settings.value("mask").toInt();
+    screenPara.Net_Para.Gate = settings.value("gate").toInt();
 
-    screenPara.ETH_Para.Serv_En = 0;
-    screenPara.ETH_Para.Serv_IP = 0;//screenPara.ETH_Para.Gate;
-    screenPara.ETH_Para.Serv_Port = 0;//4001;
-    screenPara.ETH_Para.Heart_Period = 0;//10;
+    screenPara.Net_Para.Serv_En = 0;
+    screenPara.Net_Para.Serv_IP = 0;//screenPara.Net_Para.Gate;
+    screenPara.Net_Para.Serv_Port = 0;//4001;
+    screenPara.Net_Para.Heart_Period = 0;//10;
 
     screenPara.Scan_Para.Data_Polarity = settings.value("dataPolarity").toInt(); //数据级性
     screenPara.Scan_Para.OE_Polarity = settings.value("oePolarity").toInt();
@@ -2336,7 +2337,7 @@ void getComTestParaFromSettings(QString str, S_Screen_Para &screenPara)
     screenPara.COM_Para.Addr = settings.value("screenID").toInt();
     screenPara.COM_Para.Baud = settings.value("baud").toInt();
 
-    screenPara.ETH_Para.IP = settings.value("ip").toInt();
+    screenPara.Net_Para.IP = settings.value("ip").toInt();
 
     settings.endGroup();
     settings.endGroup();
@@ -2540,10 +2541,10 @@ CfacScreenProperty::CfacScreenProperty(int flag, CcomTest *com,  QWidget *parent
    gridLayout->addWidget(oePolarityCombo, 2, 3);
 
 
-   gridLayout->addWidget(lineHideLabel, 2, 4);
-   gridLayout->addWidget(lineHideCombo,2,5);
+   //gridLayout->addWidget(lineHideLabel, 2, 4);
+   //gridLayout->addWidget(lineHideCombo,2,5);
 
-   gridLayout->addWidget(redGreenRevCheck,2,6,1,2);
+   gridLayout->addWidget(redGreenRevCheck,2,4,1,2);
 
 
 
@@ -2686,7 +2687,8 @@ CfacScreenProperty::CfacScreenProperty(int flag, CcomTest *com,  QWidget *parent
    gridLayout->addWidget(freqLabel, 1, 0);
    gridLayout->addWidget(freqCombo, 1, 1);
 
-
+   gridLayout->addWidget(lineHideLabel, 1, 2);
+   gridLayout->addWidget(lineHideCombo,1,3);
    //gridLayout->addWidget(dataMirrorLabel, 2, 0);
    //gridLayout->addWidget(dataMirrorCombo, 2, 1);
    gridLayout->addWidget(_138Label, 2, 0);
@@ -2777,6 +2779,7 @@ CfacScreenProperty::CfacScreenProperty(int flag, CcomTest *com,  QWidget *parent
    connect(readParaButton, SIGNAL(clicked()), this, SLOT(readParaProc()));
    connect(importParaButton, SIGNAL(clicked()), this, SLOT(importParaProc()));
    connect(readCardTypeButton, SIGNAL(clicked()), this ,SLOT(readCardType()));
+   connect(scanModeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setDefAdvPara()));
 
    importParaButton->setEnabled(false);
 
@@ -3016,7 +3019,7 @@ void CfacScreenProperty::readParaProc()
     if(re EQ true)
     {
         //串口卡没有网络相关参数
-        if(len < (int)(sizeof(S_Screen_Para) - sizeof(S_ETH_Para) - sizeof(S_GPRS_Para) - CHK_BYTE_LEN))
+        if(len < (int)(sizeof(S_Screen_Para) - sizeof(S_Net_Para)/* - sizeof(S_GPRS_Para)*/ - CHK_BYTE_LEN))
         {
             QMessageBox::warning(w, QObject::tr("提示"),
                                     QObject::tr("读取参数长度错误！"),QObject::tr("确定"));
@@ -3063,13 +3066,13 @@ void CfacScreenProperty::readParaProc()
         {
             //IP地址等
             QHostAddress dstAddr;
-            dstAddr.setAddress(RevIP(readScreenPara.ETH_Para.IP));
+            dstAddr.setAddress(RevIP(readScreenPara.Net_Para.IP));
             screenParaStr += tr("\r\nIP地址:")+dstAddr.toString();
 
-            dstAddr.setAddress(RevIP(readScreenPara.ETH_Para.Mask));
+            dstAddr.setAddress(RevIP(readScreenPara.Net_Para.Mask));
             screenParaStr += tr(",子网掩码:")+dstAddr.toString();
 
-            dstAddr.setAddress(RevIP(readScreenPara.ETH_Para.Gate));
+            dstAddr.setAddress(RevIP(readScreenPara.Net_Para.Gate));
             screenParaStr += tr(",网关:")+dstAddr.toString();
         }
 
@@ -3092,6 +3095,12 @@ void CfacScreenProperty::importParaProc()
 
     QMessageBox::information(w, QObject::tr("提示"),
                             QObject::tr("参数导入成功!"),QObject::tr("确定"));
+}
+
+//设置默认的高级参数
+void CfacScreenProperty::setDefAdvPara()
+{
+    defParaCheckProc();
 }
 
 void CfacScreenProperty::readCardType()
@@ -3279,7 +3288,7 @@ void CfacScreenProperty::loadParaProc(INT8U Mode)
     int flag = 0;
     SET_BIT(flag, C_SCREEN_PARA);
     //SET_BIT(flag, C_SCREEN_COM_PARA);
-    //SET_BIT(flag, C_SCREEN_ETH_PARA);
+    //SET_BIT(flag, C_SCREEN_NET_PARA);
     //SET_BIT(flag, C_SCREEN_GPRS_PARA);
     //SET_BIT(flag, C_SCAN_PARA);
     //SET_BIT(flag, C_SCREEN_OC_TIME);
@@ -3403,6 +3412,19 @@ void CfacScreenProperty::defParaCheckProc()
     lineOrderCombo->setCurrentIndex(0);
     _138Combo->setCurrentIndex(0);
 
+    //当前在
+    //int scanModeIndex =
+    if(getScanModeIndex(200) EQ scanModeCombo->currentIndex())
+    {
+      freqCombo->setCurrentIndex(0); //最快速度扫描
+      lineHideCombo->setCurrentIndex(0); //消隐时间最短
+    }
+    else// if(getScanModeIndex(2213) EQ scanModeCombo->currentIndex())
+    {
+      freqCombo->setCurrentIndex(2); //降低扫描速度
+      lineHideCombo->setCurrentIndex(2); //拉长消隐时间
+    }
+
     freqCombo->setEnabled(false);
     //lineHideCombo->setEnabled(false);
     dataMirrorCombo->setEnabled(false);
@@ -3414,6 +3436,9 @@ void CfacScreenProperty::defParaCheckProc()
     dataMirrorLabel->setEnabled(false);
     lineOrderLabel->setEnabled(false);
     _138Label->setEnabled(false);
+
+    lineHideCombo->setEnabled(false);
+    lineHideLabel->setEnabled(false);
   }
   else
   {
@@ -3428,6 +3453,9 @@ void CfacScreenProperty::defParaCheckProc()
       dataMirrorLabel->setEnabled(true);
       lineOrderLabel->setEnabled(true);
       _138Label->setEnabled(true);
+
+      lineHideCombo->setEnabled(true);
+      lineHideLabel->setEnabled(true);
   }
 }
 
