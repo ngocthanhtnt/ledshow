@@ -43,8 +43,8 @@ typedef struct
 typedef struct
 {
   S_COM_Para COM_Para;
-  S_ETH_Para ETH_Para;
-  S_GPRS_Para GPRS_Para;
+  S_Net_Para Net_Para;
+  //S_GPRS_Para GPRS_Para;
 
   INT8U Com_Port; //串口的端口号-主台用
   INT8U Com_Mode; //选用通信模式-主台用

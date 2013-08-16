@@ -290,7 +290,8 @@ typedef struct
   S_Lock_Date Lock_Date; //有效日期--到达改日期后自动关闭--全0表示不启用改参数
   //命令3
   //INT8U Prog_Num; //节目数
-  //INT8U Temp[10]; //备用
+  INT8U Temp[20]; //备用--V438版本增加，不影响之前生成的程序。后期的网络控制卡和GPRS控制卡需要重新生成
+	
 #if QT_EN || NET_EN || GPRS_EN// || SMS_EN
   S_Net_Para Net_Para; //以太网参数
 

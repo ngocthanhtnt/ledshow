@@ -340,6 +340,7 @@ void CscreenArea::areaSettingsInit(QTreeWidgetItem *item)
         pArea[index]->fileItem = (QTreeWidgetItem *)0; //还没有绑定一个文件
 
         pArea[index]->filePara.Time_Para.Flag = 0;
+        pArea[index]->filePara.Pic_Para.Border_Check = 0;
 
         w->screenArea->setFocusArea(pArea[index]);
         pArea[index]->move(x * sdWidth, y * sdWidth);

@@ -102,8 +102,8 @@ public:
 
         //通信参数
         S_COM_Para COM_Para; //PC端通信参数
-        S_ETH_Para ETH_Para;
-        S_GPRS_Para GPRS_Para;
+        S_Net_Para Net_Para;
+        //S_GPRS_Para GPRS_Para;
 
         QString uDiskName;
         QString protoFileName;
