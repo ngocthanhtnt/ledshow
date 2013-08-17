@@ -692,7 +692,7 @@ void MainWindow::setupCtrlActions()
     connect(a, SIGNAL(triggered()), this, SLOT(previewScreen()));
     menu->addAction(a);
 
-#if FAC_VERSION_EN //工厂版本
+//#if FAC_VERSION_EN //工厂版本
     //--------------生产以及内部使用--------
     QIcon testIcon = QIcon::fromTheme("生产检测", QIcon(rsrcPath1 + tr("/检测.png")));
     actionTestCard = a = new QAction(testIcon, tr("生产检测"), this);
@@ -707,7 +707,10 @@ void MainWindow::setupCtrlActions()
     //a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(downloadZK()));
     tb->addAction(a);
-#endif
+
+    actionTestCard->setVisible(false);
+    actionDownloadZK->setVisible(false);
+//#endif
 }
 
 void MainWindow::setupToolActions()
@@ -1219,6 +1222,11 @@ void MainWindow::modifyScreenPara()
   {
     CInvalidDateDialog *invalidDateDialog = new CInvalidDateDialog(this);
     invalidDateDialog->exec();
+  }
+  else if(Re EQ 4)
+  {
+    actionTestCard->setVisible(true);
+    actionDownloadZK->setVisible(true);
   }
 
 }
@@ -1820,12 +1828,12 @@ void CinputPSWDialog::okClickProc()
        *verifyRe = 2;
        close();
    }
-   else if(lineEdit->text() == "112233")
+   else if(lineEdit->text() == "ilune")
    {
        *verifyRe = 3;
        close();
    }
-   else if(lineEdit->text() =="445566") //最高级密码
+   else if(lineEdit->text() =="csilune") //最高级密码
    {
        *verifyRe = 4;
        close();

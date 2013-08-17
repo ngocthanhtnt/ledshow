@@ -75,7 +75,7 @@
 
 #if QT_EN
 #define ASSERT_EN 1
-#define FAC_VERSION_EN 1 //工厂版本
+#define FAC_VERSION_EN 0 //工厂版本
 
 #define MAX_PROG_NUM 16 //最大节目数
 #define MAX_AREA_NUM 8  //每个节目下最大分区数

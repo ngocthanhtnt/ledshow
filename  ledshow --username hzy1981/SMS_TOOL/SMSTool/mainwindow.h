@@ -21,6 +21,12 @@ private slots:
 
     void on_pushButton_2_clicked();
 
+    void on_SMSTxt_Edit();
+    void on_addSMSTxt_Edit();
+    void on_adjTime_Button_Edit();
+    void on_screenPara_Eidt();
+    void on_stayTime_Edit();
+
 private:
     Ui::MainWindow *ui;
 
