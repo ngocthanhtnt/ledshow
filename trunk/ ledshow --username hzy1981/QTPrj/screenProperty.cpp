@@ -3019,7 +3019,7 @@ void CfacScreenProperty::readParaProc()
     if(re EQ true)
     {
         //串口卡没有网络相关参数
-        if(len < (int)(sizeof(S_Screen_Para) - sizeof(S_Net_Para)/* - sizeof(S_GPRS_Para)*/ - CHK_BYTE_LEN))
+        if(len > (int)(sizeof(S_Screen_Para) - CHK_BYTE_LEN))
         {
             QMessageBox::warning(w, QObject::tr("提示"),
                                     QObject::tr("读取参数长度错误！"),QObject::tr("确定"));

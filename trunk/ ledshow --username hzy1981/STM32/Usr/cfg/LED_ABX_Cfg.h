@@ -68,7 +68,7 @@
 #endif
 #endif
 
-#define MOVE_STEP_PERIOD 20//5 //移动步进时间,单位为ms
+#define MOVE_STEP_PERIOD 5 //移动步进时间,单位为ms
 #define MOVE_STEP 1 //每个调度单位移动的数据百分比 单位%
 
 //----根据不同的屏幕和硬件配置下列项目
