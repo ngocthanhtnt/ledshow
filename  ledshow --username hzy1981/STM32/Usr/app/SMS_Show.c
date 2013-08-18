@@ -618,30 +618,39 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
                pPara->Out_Speed = p[8] - '0';
 
                //停留时间
-               if(!(p[9] >= '0' && p[9] <= '9'))
+               if(!((p[9] >= '0' && p[9] <= '9') ||\
+                    (p[9] >= 'A' && p[9] <= 'Z') ||\
+                    (p[9] >= 'a' && p[9] <= 'z')))
                  return SMS_STAY_TIME_ERR;
 
-               pPara->Stay_Time = p[9] - '0';
+			   if(p[9] >= '0' && p[9] <= '9')
+                 pPara->Stay_Time = p[9] - '0';
+			   else if(p[9] >= 'a' && p[9] <= 'z')
+			     pPara->Stay_Time = 10 + (p[9] - 'a') * 5;
+			   else
+			     pPara->Stay_Time = 140 + (p[9] - 'A') * 5;
 
+				    debug("set stay time : %d", pPara->Stay_Time);
+				 
                if(p[10] != '+')
                {
                    //字体
-                   if(!(p[10] >= '0' && p[10] <= '2'))
+                   if(!(p[10] >= '1' && p[10] <= '3'))
                      return SMS_FONT_ERR;
 
-                   pPara->Font_Size = p[10] - '0';
+                   pPara->Font_Size = p[10] - '1';
 
 				  //
 				   if(GET_HZ_FONT_HEIGHT(pPara->Font_Size) > Prog_Para.Area[0].Y_Len)
                      return SMS_FONT_ERR1;
 
                    //颜色
-                   if(!(p[11] >= '0' && p[11] <= '3'))
+                   if(!(p[11] >= '1' && p[11] <= '3'))
                      return SMS_COLOR_ERR;
 
                    pPara->Color = p[11] - '0';
-                   if(pPara->Color EQ 0)
-                       pPara->Color = 1;
+                   //if(pPara->Color EQ 0)
+                       //pPara->Color = 1;
 
                    if((pPara->Color & Screen_Para.Base_Para.Color) EQ 0)
                        return SMS_COLOR_ERR;

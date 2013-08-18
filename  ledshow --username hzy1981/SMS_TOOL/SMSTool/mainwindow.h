@@ -27,10 +27,15 @@ private slots:
     void on_screenPara_Eidt();
     void on_stayTime_Edit();
 
+    void on_advPara_Check();
+    void copy2clipBoard();
+    void showAboutDialog();
+
 private:
     Ui::MainWindow *ui;
 
 public:
+    QString smsTxt;// = "";
     void setContextSMS();
 };
 

@@ -1,5 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QClipboard>
+#include <QMessageBox>
+
+#define APP_NAME "LED控制器短信指令生成工具"
+#define APP_VERSION "V1.0"
 
 #define EQ ==
 #define MAX_CHR_NUM 57
@@ -10,19 +15,21 @@
 #define DEL_SMS_INDEX  2
 #define RD_SMS_IDEX    3
 #define ADJ_TIME_INDEX 4
-#define CALL_SMS_INDEX 5
-#define ADD_PHN_INDEX  6
-#define DEL_PHN_INDEX  7
-#define SET_SCREEN_PARA_INDEX 8
-#define RD_OTHER_PARA_INDEX 9
+#define RD_OTHER_PARA_INDEX 5
+#define CALL_SMS_INDEX 6
+#define ADD_PHN_INDEX  7
+#define DEL_PHN_INDEX  8
+#define SET_SCREEN_PARA_INDEX 9
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    this->setWindowTitle(QString(tr(APP_NAME)));
     connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(on_pushButton_clicked()));
+    connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(copy2clipBoard()));
     connect(ui->textEdit_2, SIGNAL(textChanged()), this, SLOT(on_SMSTxt_Edit()));
     connect(ui->textEdit_3, SIGNAL(textChanged()), this, SLOT(on_addSMSTxt_Edit()));
     connect(ui->radioButton, SIGNAL(clicked()), this, SLOT(on_adjTime_Button_Edit()));
@@ -30,9 +37,26 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->spinBox_8, SIGNAL(editingFinished()), this, SLOT(on_screenPara_Eidt()));
     connect(ui->spinBox_9, SIGNAL(editingFinished()), this, SLOT(on_screenPara_Eidt()));
     connect(ui->spinBox_5, SIGNAL(editingFinished()), this, SLOT(on_stayTime_Edit()));
+    connect(ui->action_4, SIGNAL(changed()), this, SLOT(on_advPara_Check())),
+    connect(ui->action_3, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
     //connect(ui->spinBox_5, SIGNAL()
+    ui->textEdit->setTextColor(Qt::blue);
+    smsTxt = "";
+    //ui->textEdit->setFont();
     on_SMSTxt_Edit();
     on_addSMSTxt_Edit();
+    /*
+#define CALL_SMS_INDEX 5
+#define ADD_PHN_INDEX  6
+#define DEL_PHN_INDEX  7
+#define SET_SCREEN_PARA_INDEX 8
+*/
+    ui->smsTab->removeTab(CALL_SMS_INDEX);//CALL_SMS_INDEX);//->setVisible(false);
+    ui->smsTab->removeTab(CALL_SMS_INDEX);//->setVisible(false);
+    ui->smsTab->removeTab(CALL_SMS_INDEX);//->setVisible(false);
+    ui->smsTab->removeTab(CALL_SMS_INDEX);//->setVisible(false);
+    //ui->smsTab->removeTab();
+    //ui->smsTab->removeTab();
 }
 
 MainWindow::~MainWindow()
@@ -82,6 +106,38 @@ char borderIndex2asc(int index)
         return 'K' + index - 33;
     else
         return '1';
+
+}
+
+void MainWindow::copy2clipBoard()
+{
+    if(smsTxt != "")
+    {
+        QClipboard *clipboard = QApplication::clipboard();
+        //QString originalText = clipboard->text();
+        //...
+        clipboard->setText(smsTxt);
+    }
+
+}
+
+//高级参数设置选择
+void MainWindow::on_advPara_Check()
+{
+    if(ui->action_4->isChecked())
+    {
+        ui->smsTab->addTab(ui->tab_2, tr("启用预存文件"));
+        ui->smsTab->addTab(ui->tab_9, tr("增加过滤号码"));
+        ui->smsTab->addTab(ui->tab_3, tr("删除过滤号码"));
+        ui->smsTab->addTab(ui->tab_8, tr("设置屏参"));
+    }
+    else
+    {
+        ui->smsTab->removeTab(CALL_SMS_INDEX);//CALL_SMS_INDEX);//->setVisible(false);
+        ui->smsTab->removeTab(CALL_SMS_INDEX);//->setVisible(false);
+        ui->smsTab->removeTab(CALL_SMS_INDEX);//->setVisible(false);
+        ui->smsTab->removeTab(CALL_SMS_INDEX);//->setVisible(false);
+    }
 
 }
 
@@ -146,7 +202,7 @@ void MainWindow::on_addSMSTxt_Edit()
     num = this->ui->textEdit_3->toPlainText().size();//textEdit2//this->te->toPlainText().toLocal8Bit().size();
     txt = tr("字符数(") + QString::number(num) + QString("/") + QString::number(MAX_ADD_CHR_NUM) + QString(")");
 
-    if(num > MAX_CHR_NUM)
+    if(num > MAX_ADD_CHR_NUM)
     {
       txt = txt + QString(tr("超,超过部分将不能显示!"));
       ui->label_25->setStyleSheet("color:red");
@@ -159,8 +215,10 @@ void MainWindow::on_addSMSTxt_Edit()
 
 void MainWindow::setContextSMS()
 {
-    QString smsTxt = "";
+    QDateTime dateTime;
+    QString nullStr = "";
 
+    smsTxt = "";
     //if(this->ui->smsTab->currentTabText EQ )
     int index = this->ui->smsTab->currentIndex();
     if(index EQ SET_SMS_INDEX)
@@ -188,6 +246,12 @@ void MainWindow::setContextSMS()
         smsTxt.append(index2asc(ui->comboBox_7->currentIndex() + 1)); //颜色
 
         smsTxt.append('+'); //颜色
+
+        if(ui->textEdit_2->toPlainText().size() EQ 0)
+        {
+            nullStr = tr("(注意：显示内容为空)");
+            //QMessageBox::information(0, QObject::tr("提示"),QObject::tr("增加的显示内容为空!"));
+        }
         smsTxt.append(ui->textEdit_2->toPlainText()); //颜色
     }
     else if(index EQ ADD_SMS_INDEX) //追加短信
@@ -197,6 +261,11 @@ void MainWindow::setContextSMS()
         smsTxt += num2str(this->ui->comboBox_8->currentIndex() + 1, 1);
 
         smsTxt.append('+'); //颜色
+        if(ui->textEdit_3->toPlainText().size() EQ 0)
+        {
+            nullStr = tr("(注意：显示内容为空)");
+            //QMessageBox::information(0, QObject::tr("提示"),QObject::tr("追加的显示内容为空!"));
+        }
         smsTxt.append(ui->textEdit_3->toPlainText()); //颜色
     }
     else if(index EQ DEL_SMS_INDEX) //删除短信
@@ -216,7 +285,7 @@ void MainWindow::setContextSMS()
     }
     else if(index EQ ADJ_TIME_INDEX) //校准时间
     {
-        QDateTime dateTime;//CadjTimeProperty::getDateTime()
+        //CadjTimeProperty::getDateTime()
 
         if(ui->radioButton->isChecked())
         {
@@ -283,15 +352,24 @@ void MainWindow::setContextSMS()
         if(ui->radioButton_3->isChecked())
         {
             smsTxt += "?MPN";
+            nullStr = tr("(过滤号码)");
         }
         else if(ui->radioButton_4->isChecked())
         {
             smsTxt += "?SCN";
+            nullStr = tr("(屏幕参数)");
         }
     }
+    else
+        return;
 
 
-    ui->textEdit->setText(smsTxt);
+    //dateTime = currentDateTime();
+    //dateTime.toString()
+    if(smsTxt.size() > 70)
+        smsTxt.truncate(70);
+
+    ui->textEdit->setText(this->ui->smsTab->tabText(index) + nullStr + ":" + smsTxt);
 
 }
 
@@ -302,5 +380,12 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
+
+}
+
+void MainWindow::showAboutDialog()
+{
+    QMessageBox::information(this, tr("关于"), tr(APP_NAME) + tr(" ") + tr(APP_VERSION) + tr("\r\n\r\n") + tr("编译时间 ")+QString(__TIME__) + QString(" ") + QString(__DATE__) +\
+                             tr("\r\n\r\n") + tr("长沙爱朗电子科技有限公司\r\n    WWW.CSILUNE.COM"), tr("确定"));
 
 }
