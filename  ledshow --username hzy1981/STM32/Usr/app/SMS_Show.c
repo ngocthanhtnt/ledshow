@@ -635,10 +635,13 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
                if(p[10] != '+')
                {
                    //字体
-                   if(!(p[10] >= '1' && p[10] <= '3'))
+                   if(!(p[10] >= '0' && p[10] <= '3'))
                      return SMS_FONT_ERR;
 
-                   pPara->Font_Size = p[10] - '1';
+                   pPara->Font_Size = p[10] - '0';
+									 
+									 if(pPara->Font_Size > 0) //==0时自适应字体大小
+										 pPara->SMS_Fix_Font_Flag = 1;
 
 				  //
 				   if(GET_HZ_FONT_HEIGHT(pPara->Font_Size) > Prog_Para.Area[0].Y_Len)
@@ -666,8 +669,6 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 
 				   if(p[14] EQ 0)
 				     p ++;
-
-                   pPara->SMS_Fix_Font_Flag = 1;
 
                    TxtOff = 14;
                }
@@ -727,7 +728,7 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
       }
       else if(p[1] EQ 'T' && p[2] EQ 'I' && p[3] EQ 'M') //校时
       {
-          if(Chk_Int_Str(&p[4], 15) EQ 0)
+          if(Chk_Int_Str(&p[4], 13) EQ 0)
               return SMS_TIME_ERR;
 
           tempTime.Time[T_YEAR] = (INT8U)Str_2_Int(&p[4], 2); //年

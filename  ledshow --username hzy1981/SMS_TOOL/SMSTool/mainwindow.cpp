@@ -91,19 +91,21 @@ char index2asc(int index)
 char borderIndex2asc(int index)
 {
     if(index EQ 0)
+        return '0';
+    else if(index EQ 1)
         return '1';
-    else if(index >= 1 && index < 5)
-        return '6' + index - 1;
-    else if(index >= 5 && index < 16)
-        return 'a' +index - 5;
-    else if(index EQ 16)
+    else if(index >= 2 && index < 6)
+        return '6' + index - 2;
+    else if(index >= 6 && index < 17)
+        return 'a' +index - 6;
+    else if(index EQ 17)
         return 'l';
-    else if(index >= 17 && index < 17 + 15)
-        return 'q' + index - 17;
-    else if(index EQ 32)
+    else if(index >= 18 && index < 18 + 15)
+        return 'q' + index - 18;
+    else if(index EQ 33)
         return 'F';
-    else if(index >= 33 && index < 33 + 15)
-        return 'K' + index - 33;
+    else if(index >= 34 && index < 34 + 15)
+        return 'K' + index - 34;
     else
         return '1';
 
@@ -229,7 +231,6 @@ void MainWindow::setContextSMS()
         smsTxt.append(index2asc(ui->comboBox->currentIndex())); //进入特效
         smsTxt.append(index2asc(ui->comboBox_2->currentIndex())); //退出特效
         smsTxt.append(index2asc(ui->comboBox_4->currentIndex())); //特效速度
-        smsTxt.append(borderIndex2asc(ui->comboBox_3->currentIndex())); //边框特效
 
         int stayTime = ui->spinBox_5->value();
 
@@ -242,8 +243,9 @@ void MainWindow::setContextSMS()
         else
             smsTxt.append("10");
 
-        smsTxt.append(index2asc(ui->comboBox_5->currentIndex() + 1)); //字体大小
+        smsTxt.append(index2asc(ui->comboBox_5->currentIndex())); //字体大小
         smsTxt.append(index2asc(ui->comboBox_7->currentIndex() + 1)); //颜色
+        smsTxt.append(borderIndex2asc(ui->comboBox_3->currentIndex())); //边框特效
 
         smsTxt.append('+'); //颜色
 
@@ -312,7 +314,7 @@ void MainWindow::setContextSMS()
     }
     else if(index EQ CALL_SMS_INDEX)
     {
-        smsTxt += "?@";
+        smsTxt += "#@";
         smsTxt += num2str(this->ui->spinBox_6->value(), 2) + "!";
         smsTxt += num2str(this->ui->spinBox_7->value(), 2);
     }
@@ -368,6 +370,14 @@ void MainWindow::setContextSMS()
     //dateTime.toString()
     if(smsTxt.size() > 70)
         smsTxt.truncate(70);
+
+    if(ui->action->isChecked())
+      ;//ui->textEdit->setText(this->ui->smsTab->tabText(index) + nullStr + ":" + smsTxt);
+    else
+    {
+        if(smsTxt.at(0) EQ '#')
+            smsTxt.replace(0, 1, "*");
+    }
 
     ui->textEdit->setText(this->ui->smsTab->tabText(index) + nullStr + ":" + smsTxt);
 
