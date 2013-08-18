@@ -987,9 +987,10 @@ INT16U GB2Unicode(INT16U GBCode)
 	  unicode = 0x3000;
 	else if(GBCode EQ 0xA2A1)
 	  unicode = 0x3001;
+	else if(GBCode EQ 0xAAA1)
+		unicode = 0x2014;	
 	else if(GBCode EQ 0xBAA1)
 	  unicode = 0x300e;
-
     else if(GBCode EQ 0xBBA1)
 	  unicode = 0x300F;
 	else if(GBCode EQ 0xBCA1)
@@ -998,8 +999,7 @@ INT16U GB2Unicode(INT16U GBCode)
 	  unicode = 0x3017;
 	else if(GBCode EQ 0xB0A1)
 	  unicode = 0x201C;
-
-    else if(GBCode EQ 0xB1A1)
+  else if(GBCode EQ 0xB1A1)
 	  unicode = 0x201D;
 	else if(GBCode EQ 0xB6A1)
 	  unicode = 0x300A;
@@ -1098,6 +1098,10 @@ INT16U Unicode2GB(INT16U Unicode)
 	  {
 		   return 0xBDA1;
 	  }
+		else if(Unicode EQ 0x2014)
+		{
+			 return 0xAAA1;
+		}
 	  else if(Unicode EQ 0x201C)
 	  {
 		   return 0xB0A1;
