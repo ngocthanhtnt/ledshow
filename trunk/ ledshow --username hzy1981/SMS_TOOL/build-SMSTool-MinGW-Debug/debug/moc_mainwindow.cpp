@@ -22,7 +22,7 @@ static const uint qt_meta_data_MainWindow[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+      10,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -37,6 +37,9 @@ static const uint qt_meta_data_MainWindow[] = {
       99,   11,   11,   11, 0x08,
      124,   11,   11,   11, 0x08,
      145,   11,   11,   11, 0x08,
+     164,   11,   11,   11, 0x08,
+     183,   11,   11,   11, 0x08,
+     200,   11,   11,   11, 0x08,
 
        0        // eod
 };
@@ -46,6 +49,8 @@ static const char qt_meta_stringdata_MainWindow[] = {
     "on_pushButton_2_clicked()\0on_SMSTxt_Edit()\0"
     "on_addSMSTxt_Edit()\0on_adjTime_Button_Edit()\0"
     "on_screenPara_Eidt()\0on_stayTime_Edit()\0"
+    "on_advPara_Check()\0copy2clipBoard()\0"
+    "showAboutDialog()\0"
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -61,6 +66,9 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 4: _t->on_adjTime_Button_Edit(); break;
         case 5: _t->on_screenPara_Eidt(); break;
         case 6: _t->on_stayTime_Edit(); break;
+        case 7: _t->on_advPara_Check(); break;
+        case 8: _t->copy2clipBoard(); break;
+        case 9: _t->showAboutDialog(); break;
         default: ;
         }
     }
@@ -99,9 +107,9 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 7)
+        if (_id < 10)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 7;
+        _id -= 10;
     }
     return _id;
 }

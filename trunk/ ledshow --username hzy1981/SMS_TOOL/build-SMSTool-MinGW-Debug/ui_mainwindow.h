@@ -20,6 +20,8 @@
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QMainWindow>
+#include <QtGui/QMenu>
+#include <QtGui/QMenuBar>
 #include <QtGui/QPushButton>
 #include <QtGui/QRadioButton>
 #include <QtGui/QSpinBox>
@@ -34,6 +36,9 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
+    QAction *action_2;
+    QAction *action_3;
+    QAction *action_4;
     QWidget *centralWidget;
     QTabWidget *smsTab;
     QWidget *tab;
@@ -58,6 +63,7 @@ public:
     QLabel *label_23;
     QComboBox *comboBox_7;
     QLabel *label_24;
+    QLabel *label_33;
     QWidget *tab_4;
     QLabel *label_7;
     QLabel *label_8;
@@ -83,6 +89,9 @@ public:
     QRadioButton *radioButton;
     QRadioButton *radioButton_2;
     QDateTimeEdit *dateTimeEdit;
+    QWidget *tab_10;
+    QRadioButton *radioButton_4;
+    QRadioButton *radioButton_3;
     QWidget *tab_2;
     QLabel *label_15;
     QLabel *label_16;
@@ -90,7 +99,7 @@ public:
     QSpinBox *spinBox_6;
     QLabel *label_45;
     QSpinBox *spinBox_7;
-    QWidget *widget;
+    QWidget *tab_9;
     QLabel *label_18;
     QLineEdit *lineEdit_2;
     QLabel *label_19;
@@ -112,25 +121,33 @@ public:
     QComboBox *comboBox_13;
     QLabel *label_32;
     QComboBox *comboBox_14;
-    QWidget *tab_9;
-    QRadioButton *radioButton_3;
-    QRadioButton *radioButton_4;
     QTextEdit *textEdit;
     QPushButton *pushButton;
     QPushButton *pushButton_2;
-    QToolBar *mainToolBar;
     QStatusBar *statusBar;
+    QMenuBar *menuBar;
+    QMenu *menu;
+    QMenu *menu_2;
+    QToolBar *toolBar;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(900, 391);
+        MainWindow->resize(900, 417);
+        action_2 = new QAction(MainWindow);
+        action_2->setObjectName(QString::fromUtf8("action_2"));
+        action_3 = new QAction(MainWindow);
+        action_3->setObjectName(QString::fromUtf8("action_3"));
+        action_4 = new QAction(MainWindow);
+        action_4->setObjectName(QString::fromUtf8("action_4"));
+        action_4->setCheckable(true);
+        action_4->setChecked(false);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         smsTab = new QTabWidget(centralWidget);
         smsTab->setObjectName(QString::fromUtf8("smsTab"));
-        smsTab->setGeometry(QRect(0, 0, 901, 261));
+        smsTab->setGeometry(QRect(0, 0, 901, 280));
         tab = new QWidget();
         tab->setObjectName(QString::fromUtf8("tab"));
         label = new QLabel(tab);
@@ -156,7 +173,7 @@ public:
         comboBox_3->setGeometry(QRect(70, 135, 140, 22));
         label_5 = new QLabel(tab);
         label_5->setObjectName(QString::fromUtf8("label_5"));
-        label_5->setGeometry(QRect(140, 170, 71, 20));
+        label_5->setGeometry(QRect(110, 170, 111, 20));
         textEdit_2 = new QTextEdit(tab);
         textEdit_2->setObjectName(QString::fromUtf8("textEdit_2"));
         textEdit_2->setGeometry(QRect(230, 46, 441, 141));
@@ -181,7 +198,7 @@ public:
         comboBox_4->setGeometry(QRect(70, 105, 140, 22));
         spinBox_5 = new QSpinBox(tab);
         spinBox_5->setObjectName(QString::fromUtf8("spinBox_5"));
-        spinBox_5->setGeometry(QRect(70, 168, 61, 22));
+        spinBox_5->setGeometry(QRect(70, 168, 41, 22));
         spinBox_5->setMaximum(265);
         label_22 = new QLabel(tab);
         label_22->setObjectName(QString::fromUtf8("label_22"));
@@ -198,6 +215,9 @@ public:
         label_24 = new QLabel(tab);
         label_24->setObjectName(QString::fromUtf8("label_24"));
         label_24->setGeometry(QRect(410, 200, 251, 20));
+        label_33 = new QLabel(tab);
+        label_33->setObjectName(QString::fromUtf8("label_33"));
+        label_33->setGeometry(QRect(10, 230, 371, 16));
         smsTab->addTab(tab, QString());
         tab_4 = new QWidget();
         tab_4->setObjectName(QString::fromUtf8("tab_4"));
@@ -209,7 +229,7 @@ public:
         label_8->setGeometry(QRect(250, 20, 91, 16));
         textEdit_3 = new QTextEdit(tab_4);
         textEdit_3->setObjectName(QString::fromUtf8("textEdit_3"));
-        textEdit_3->setGeometry(QRect(250, 50, 461, 121));
+        textEdit_3->setGeometry(QRect(250, 50, 461, 131));
         label_12 = new QLabel(tab_4);
         label_12->setObjectName(QString::fromUtf8("label_12"));
         label_12->setGeometry(QRect(11, 56, 54, 12));
@@ -228,7 +248,7 @@ public:
         spinBox_2->setMinimum(1);
         label_25 = new QLabel(tab_4);
         label_25->setObjectName(QString::fromUtf8("label_25"));
-        label_25->setGeometry(QRect(440, 185, 251, 20));
+        label_25->setGeometry(QRect(420, 190, 251, 20));
         smsTab->addTab(tab_4, QString());
         tab_6 = new QWidget();
         tab_6->setObjectName(QString::fromUtf8("tab_6"));
@@ -280,6 +300,16 @@ public:
         dateTimeEdit->setEnabled(false);
         dateTimeEdit->setGeometry(QRect(100, 44, 194, 22));
         smsTab->addTab(tab_7, QString());
+        tab_10 = new QWidget();
+        tab_10->setObjectName(QString::fromUtf8("tab_10"));
+        radioButton_4 = new QRadioButton(tab_10);
+        radioButton_4->setObjectName(QString::fromUtf8("radioButton_4"));
+        radioButton_4->setGeometry(QRect(10, 47, 89, 16));
+        radioButton_3 = new QRadioButton(tab_10);
+        radioButton_3->setObjectName(QString::fromUtf8("radioButton_3"));
+        radioButton_3->setGeometry(QRect(10, 17, 101, 21));
+        radioButton_3->setChecked(true);
+        smsTab->addTab(tab_10, QString());
         tab_2 = new QWidget();
         tab_2->setObjectName(QString::fromUtf8("tab_2"));
         label_15 = new QLabel(tab_2);
@@ -304,22 +334,22 @@ public:
         spinBox_7->setMinimum(1);
         spinBox_7->setMaximum(50);
         smsTab->addTab(tab_2, QString());
-        widget = new QWidget();
-        widget->setObjectName(QString::fromUtf8("widget"));
-        label_18 = new QLabel(widget);
+        tab_9 = new QWidget();
+        tab_9->setObjectName(QString::fromUtf8("tab_9"));
+        label_18 = new QLabel(tab_9);
         label_18->setObjectName(QString::fromUtf8("label_18"));
         label_18->setGeometry(QRect(10, 50, 54, 12));
-        lineEdit_2 = new QLineEdit(widget);
+        lineEdit_2 = new QLineEdit(tab_9);
         lineEdit_2->setObjectName(QString::fromUtf8("lineEdit_2"));
         lineEdit_2->setGeometry(QRect(70, 50, 161, 20));
         lineEdit_2->setMaxLength(30);
-        label_19 = new QLabel(widget);
+        label_19 = new QLabel(tab_9);
         label_19->setObjectName(QString::fromUtf8("label_19"));
         label_19->setGeometry(QRect(10, 16, 54, 21));
-        comboBox_11 = new QComboBox(widget);
+        comboBox_11 = new QComboBox(tab_9);
         comboBox_11->setObjectName(QString::fromUtf8("comboBox_11"));
         comboBox_11->setGeometry(QRect(70, 16, 41, 22));
-        smsTab->addTab(widget, QString());
+        smsTab->addTab(tab_9, QString());
         tab_3 = new QWidget();
         tab_3->setObjectName(QString::fromUtf8("tab_3"));
         label_20 = new QLabel(tab_3);
@@ -375,36 +405,40 @@ public:
         comboBox_14->setObjectName(QString::fromUtf8("comboBox_14"));
         comboBox_14->setGeometry(QRect(70, 86, 321, 22));
         smsTab->addTab(tab_8, QString());
-        tab_9 = new QWidget();
-        tab_9->setObjectName(QString::fromUtf8("tab_9"));
-        radioButton_3 = new QRadioButton(tab_9);
-        radioButton_3->setObjectName(QString::fromUtf8("radioButton_3"));
-        radioButton_3->setGeometry(QRect(10, 20, 101, 16));
-        radioButton_3->setChecked(true);
-        radioButton_4 = new QRadioButton(tab_9);
-        radioButton_4->setObjectName(QString::fromUtf8("radioButton_4"));
-        radioButton_4->setGeometry(QRect(10, 50, 89, 16));
-        smsTab->addTab(tab_9, QString());
         textEdit = new QTextEdit(centralWidget);
         textEdit->setObjectName(QString::fromUtf8("textEdit"));
-        textEdit->setGeometry(QRect(0, 300, 791, 71));
+        textEdit->setGeometry(QRect(0, 320, 901, 41));
+        textEdit->setStyleSheet(QString::fromUtf8("font: 75 11pt \"\345\256\213\344\275\223\";"));
         pushButton = new QPushButton(centralWidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(0, 270, 101, 23));
+        pushButton->setGeometry(QRect(0, 284, 141, 31));
+        pushButton->setStyleSheet(QString::fromUtf8("font: 75 11pt \"\345\256\213\344\275\223\";"));
         pushButton_2 = new QPushButton(centralWidget);
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-        pushButton_2->setGeometry(QRect(110, 270, 141, 23));
+        pushButton_2->setGeometry(QRect(150, 284, 181, 31));
+        pushButton_2->setStyleSheet(QString::fromUtf8("font: 75 11pt \"\345\256\213\344\275\223\";"));
         MainWindow->setCentralWidget(centralWidget);
-        textEdit->raise();
-        smsTab->raise();
-        pushButton->raise();
-        pushButton_2->raise();
-        mainToolBar = new QToolBar(MainWindow);
-        mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
-        MainWindow->addToolBar(Qt::TopToolBarArea, mainToolBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QString::fromUtf8("statusBar"));
         MainWindow->setStatusBar(statusBar);
+        menuBar = new QMenuBar(MainWindow);
+        menuBar->setObjectName(QString::fromUtf8("menuBar"));
+        menuBar->setGeometry(QRect(0, 0, 900, 23));
+        menu = new QMenu(menuBar);
+        menu->setObjectName(QString::fromUtf8("menu"));
+        menu_2 = new QMenu(menuBar);
+        menu_2->setObjectName(QString::fromUtf8("menu_2"));
+        MainWindow->setMenuBar(menuBar);
+        toolBar = new QToolBar(MainWindow);
+        toolBar->setObjectName(QString::fromUtf8("toolBar"));
+        MainWindow->addToolBar(Qt::TopToolBarArea, toolBar);
+
+        menuBar->addAction(menu->menuAction());
+        menuBar->addAction(menu_2->menuAction());
+        menu->addAction(action_4);
+        menu_2->addSeparator();
+        menu_2->addAction(action_2);
+        menu_2->addAction(action_3);
 
         retranslateUi(MainWindow);
 
@@ -417,6 +451,9 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0, QApplication::UnicodeUTF8));
+        action_2->setText(QApplication::translate("MainWindow", "\344\275\277\347\224\250\346\211\213\345\206\214", 0, QApplication::UnicodeUTF8));
+        action_3->setText(QApplication::translate("MainWindow", "\345\205\263\344\272\216", 0, QApplication::UnicodeUTF8));
+        action_4->setText(QApplication::translate("MainWindow", "\346\211\223\345\274\200\351\253\230\347\272\247\350\256\276\347\275\256", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_WHATSTHIS
         tab->setWhatsThis(QApplication::translate("MainWindow", "<html><head/><body><p><br/></p></body></html>", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_WHATSTHIS
@@ -593,7 +630,7 @@ public:
          << QApplication::translate("MainWindow", "\351\273\204\350\211\262\351\200\206\346\227\266\351\222\210\351\200\237\345\272\246\346\205\242", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "\351\273\204\350\211\262\351\200\206\346\227\266\351\222\210\351\200\237\345\272\246\346\234\200\346\205\242", 0, QApplication::UnicodeUTF8)
         );
-        label_5->setText(QApplication::translate("MainWindow", "\347\247\222", 0, QApplication::UnicodeUTF8));
+        label_5->setText(QApplication::translate("MainWindow", "\347\247\222(>10\345\220\216\351\241\273\344\270\2725\345\200\215\346\225\260)", 0, QApplication::UnicodeUTF8));
         label_6->setText(QApplication::translate("MainWindow", "\345\242\236\345\212\240\347\232\204\346\230\276\347\244\272\345\206\205\345\256\271", 0, QApplication::UnicodeUTF8));
         label_41->setText(QApplication::translate("MainWindow", "\346\230\276\347\244\272\345\272\217\345\217\267", 0, QApplication::UnicodeUTF8));
         label_42->setText(QApplication::translate("MainWindow", "(1-99)", 0, QApplication::UnicodeUTF8));
@@ -626,6 +663,7 @@ public:
          << QApplication::translate("MainWindow", "\351\273\204", 0, QApplication::UnicodeUTF8)
         );
         label_24->setText(QApplication::translate("MainWindow", "\345\255\227\347\254\246\346\225\260", 0, QApplication::UnicodeUTF8));
+        label_33->setText(QApplication::translate("MainWindow", "\346\263\250\346\204\217\357\274\232\345\261\217\345\271\225\350\276\203\345\244\247\357\274\210\344\270\200\350\210\254\345\244\247\344\272\216512*32)\346\227\266\345\273\272\350\256\256\351\200\211\346\213\251\346\211\223\351\222\251\347\232\204\350\277\233\345\205\245\345\222\214\351\200\200\345\207\272\347\211\271\346\225\210", 0, QApplication::UnicodeUTF8));
         smsTab->setTabText(smsTab->indexOf(tab), QApplication::translate("MainWindow", "\345\242\236\345\212\240\346\230\276\347\244\272\345\206\205\345\256\271", 0, QApplication::UnicodeUTF8));
         label_7->setText(QApplication::translate("MainWindow", "\345\234\250\345\272\217\345\217\267\344\270\272", 0, QApplication::UnicodeUTF8));
         label_8->setText(QApplication::translate("MainWindow", "\350\277\275\345\212\240\347\232\204\346\230\276\347\244\272\345\206\205\345\256\271", 0, QApplication::UnicodeUTF8));
@@ -655,6 +693,9 @@ public:
         radioButton->setText(QApplication::translate("MainWindow", "\347\263\273\347\273\237\346\227\266\351\227\264", 0, QApplication::UnicodeUTF8));
         radioButton_2->setText(QApplication::translate("MainWindow", "\350\207\252\345\256\232\344\271\211\346\227\266\351\227\264", 0, QApplication::UnicodeUTF8));
         smsTab->setTabText(smsTab->indexOf(tab_7), QApplication::translate("MainWindow", "\346\240\241\346\227\266", 0, QApplication::UnicodeUTF8));
+        radioButton_4->setText(QApplication::translate("MainWindow", "\350\257\273\345\217\226\345\261\217\345\271\225\345\217\202\346\225\260", 0, QApplication::UnicodeUTF8));
+        radioButton_3->setText(QApplication::translate("MainWindow", "\350\257\273\345\217\226\350\277\207\346\273\244\345\217\267\347\240\201", 0, QApplication::UnicodeUTF8));
+        smsTab->setTabText(smsTab->indexOf(tab_10), QApplication::translate("MainWindow", "\350\257\273\345\217\226\345\205\266\344\273\226\345\217\202\346\225\260", 0, QApplication::UnicodeUTF8));
         label_15->setText(QApplication::translate("MainWindow", "\345\220\257\347\224\250\347\254\254", 0, QApplication::UnicodeUTF8));
         label_16->setText(QApplication::translate("MainWindow", "\344\270\252\351\242\204\345\255\230\346\230\276\347\244\272\346\226\207\344\273\266", 0, QApplication::UnicodeUTF8));
         label_17->setText(QApplication::translate("MainWindow", "\346\230\276\347\244\272\345\272\217\345\217\267", 0, QApplication::UnicodeUTF8));
@@ -674,7 +715,7 @@ public:
          << QApplication::translate("MainWindow", "8", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "9", 0, QApplication::UnicodeUTF8)
         );
-        smsTab->setTabText(smsTab->indexOf(widget), QApplication::translate("MainWindow", "\345\242\236\345\212\240\350\277\207\346\273\244\345\217\267\347\240\201", 0, QApplication::UnicodeUTF8));
+        smsTab->setTabText(smsTab->indexOf(tab_9), QApplication::translate("MainWindow", "\345\242\236\345\212\240\350\277\207\346\273\244\345\217\267\347\240\201", 0, QApplication::UnicodeUTF8));
         label_20->setText(QApplication::translate("MainWindow", "\345\210\240\351\231\244\345\217\267\347\240\201\347\264\242\345\274\225", 0, QApplication::UnicodeUTF8));
         comboBox_12->clear();
         comboBox_12->insertItems(0, QStringList()
@@ -720,11 +761,11 @@ public:
          << QApplication::translate("MainWindow", "1200,1/8\346\211\253,\345\217\263\345\205\245\347\233\264\350\241\214\344\270\200\350\267\257\345\270\2468\350\241\214\346\225\260\346\215\256(P6\346\250\241\347\273\204\345\270\270\350\247\204)", 0, QApplication::UnicodeUTF8)
         );
         smsTab->setTabText(smsTab->indexOf(tab_8), QApplication::translate("MainWindow", "\350\256\276\347\275\256\345\261\217\345\217\202", 0, QApplication::UnicodeUTF8));
-        radioButton_3->setText(QApplication::translate("MainWindow", "\350\257\273\345\217\226\350\277\207\346\273\244\345\217\267\347\240\201", 0, QApplication::UnicodeUTF8));
-        radioButton_4->setText(QApplication::translate("MainWindow", "\350\257\273\345\217\226\345\261\217\345\271\225\345\217\202\346\225\260", 0, QApplication::UnicodeUTF8));
-        smsTab->setTabText(smsTab->indexOf(tab_9), QApplication::translate("MainWindow", "\350\257\273\345\217\226\345\205\266\344\273\226\345\217\202\346\225\260", 0, QApplication::UnicodeUTF8));
         pushButton->setText(QApplication::translate("MainWindow", "\347\224\237\346\210\220\347\237\255\344\277\241\345\206\205\345\256\271", 0, QApplication::UnicodeUTF8));
         pushButton_2->setText(QApplication::translate("MainWindow", "\345\244\215\345\210\266\347\237\255\344\277\241\345\206\205\345\256\271\345\210\260\347\262\230\350\264\264\346\235\277", 0, QApplication::UnicodeUTF8));
+        menu->setTitle(QApplication::translate("MainWindow", "\346\223\215\344\275\234", 0, QApplication::UnicodeUTF8));
+        menu_2->setTitle(QApplication::translate("MainWindow", "\345\270\256\345\212\251", 0, QApplication::UnicodeUTF8));
+        toolBar->setWindowTitle(QApplication::translate("MainWindow", "toolBar", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
