@@ -1510,7 +1510,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>47</y>
+        <y>43</y>
         <width>89</width>
         <height>16</height>
        </rect>
@@ -1533,6 +1533,22 @@
       </property>
       <property name="checked">
        <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="radioButton_5">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>65</y>
+        <width>101</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>读取固件版本</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
       </property>
      </widget>
     </widget>
@@ -2135,10 +2151,10 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
-    <string>设置命令需要应答</string>
+    <string>设置指令改为不应答模式</string>
    </property>
   </action>
  </widget>

@@ -1614,6 +1614,7 @@ void MainWindow::downloadZK()
     bool re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
     if(re EQ false)
     {
+        comFailedProc();
         QMessageBox::critical(w, tr("提示"),
                                tr("下载字库失败!"),tr("确定"));
         return;
@@ -1649,11 +1650,15 @@ void MainWindow::testCard()
 
   bool re = w->comStatus->waitComEnd(Temp, sizeof(Temp), &len);
   if(re EQ false)
-  {
+  {/*
       QMessageBox::critical(w, tr("提示"),
                              tr("设置MAC地址失败"),tr("确定"));
       return;
-
+*/
+      comFailedProc();
+      QMessageBox::critical(w, tr("提示"),
+                             tr("设置MAC地址失败"),tr("确定"));
+      return;
   }
 
   //发送硬件自检命令

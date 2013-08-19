@@ -361,6 +361,11 @@ void MainWindow::setContextSMS()
             smsTxt += "?SCN";
             nullStr = tr("(屏幕参数)");
         }
+        else if(ui->radioButton_5->isChecked())
+        {
+            smsTxt += "?VER";
+            nullStr = tr("(固件版本)");
+        }
     }
     else
         return;
@@ -371,7 +376,7 @@ void MainWindow::setContextSMS()
     if(smsTxt.size() > 70)
         smsTxt.truncate(70);
 
-    if(ui->action->isChecked())
+    if(ui->action->isChecked() EQ false)
       ;//ui->textEdit->setText(this->ui->smsTab->tabText(index) + nullStr + ":" + smsTxt);
     else
     {
