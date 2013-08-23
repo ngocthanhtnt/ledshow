@@ -11,6 +11,7 @@
 #define FONT0_FILE ".\\font\\hzk16.dat"
 #define FONT1_FILE ".\\font\\hzk24.dat"
 #define FONT2_FILE ".\\font\\hzk32.dat"
+#define FONT_FILE  ".\\font\\mcuzk.dat"
 
 #include <QDateTime>
 #include <QFile>
@@ -173,19 +174,23 @@ INT8S File_Delete(char File_Name[])
 
 //打开字库文件
 void fontFileOpen()
-{
+{/*
     fontFile.asc0File = fopen(ASC0_FILE, "rb");
     fontFile.asc1File = fopen(ASC1_FILE, "rb");
     fontFile.asc2File = fopen(ASC2_FILE, "rb");
     fontFile.font0File = fopen(FONT0_FILE, "rb");
     fontFile.font1File = fopen(FONT1_FILE, "rb");
     fontFile.font2File = fopen(FONT2_FILE, "rb");
+    */
+    fontFile.fontFile = fopen(FONT_FILE, "rb");
     SET_HT(fontFile);
     SET_SUM(fontFile);
 }
 
 FILE *getFontFile(INT8U FontSize, INT8U Flag)
 {
+    return fontFile.fontFile;
+    /*
     if(Flag)
     {
         if(FontSize EQ 0)
@@ -206,6 +211,7 @@ FILE *getFontFile(INT8U FontSize, INT8U Flag)
     }
 
     return (FILE *)0;
+    */
 }
 
 void Mem_Open()

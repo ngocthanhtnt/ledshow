@@ -94,6 +94,7 @@ typedef struct
     FILE *font0File;
     FILE *font1File;
     FILE *font2File;
+    FILE *fontFile;
     INT8U CS[CS_BYTES];
     INT8U Tail;
 }S_FONTFILE;
