@@ -150,6 +150,7 @@ void resetCardtoCardParaFile()
   cardIniFile.setValue("romSize", 4096);
   cardIniFile.setValue("fileEnWord", ((0x01<<BORDER_SHOW_BIT) |\
                                       (0x01 << PIC_SHOW_BIT) |\
+                                      (0x01 << TXT_SHOW_BIT) |\
                                       (0x01<<CLOCK_BIT) |\
                                       (0x01<<CLOCK_SHOW_BIT) |\
                                       (0x01 << TIME_SHOW_BIT) |\
