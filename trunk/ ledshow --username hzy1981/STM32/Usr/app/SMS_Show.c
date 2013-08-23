@@ -452,7 +452,7 @@ extern int Chk_CSQ(char reStr[]);
 //处理一条短信数据
 INT8U One_SMS_Proc(char *p, char *pReStr)
 {
-  int index,temp,i;
+  int index,temp,i, Sms_Index;
   INT8U Rows,TxtOff = 0;
   INT8U SubIndex;
   S_Scan_Para Scan_Para = {0};
@@ -502,7 +502,8 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 		   if(index EQ 0 || index > MAX_SMS_NUM)
                return SMS_INDEX_ERR;
 		   index --;
-
+       Sms_Index = index;
+			 
 		   p = p - 1; //原来的程序有3位索引号，为了不改下面的程序，此处减1
 
            if(p[5] EQ '+') //最简方式
@@ -531,6 +532,8 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
                SET_SUM(SMS_File_Flag);
                Write_SMS_File_Flag();
 
+				       if(SMS_Cur_No.No EQ Sms_Index)
+				         Set_Screen_Replay_Flag();
                return SMS_NO_ERR;
            }
 		   else if(p[5] EQ '!') //调用预存显示内容
@@ -564,6 +567,9 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 			 Set_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index, 1);
 			 SET_SUM(SMS_File_Flag);
 			 Write_SMS_File_Flag();
+			 
+			 if(SMS_Cur_No.No EQ Sms_Index)
+				 Set_Screen_Replay_Flag();
 
 			 return SMS_NO_ERR;
 		   }
@@ -638,10 +644,18 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
                    if(!(p[10] >= '0' && p[10] <= '3'))
                      return SMS_FONT_ERR;
 
-                   pPara->Font_Size = p[10] - '0';
+                   //pPara->Font_Size = p[10] - '0';
 									 
-									 if(pPara->Font_Size > 0) //==0时自适应字体大小
+									 if(p[10] - '0' > 0) //==0时自适应字体大小
+									 {
 										 pPara->SMS_Fix_Font_Flag = 1;
+										 pPara->Font_Size = p[10] - '0' - 1;
+									 }
+									 else
+									 {
+										 pPara->SMS_Fix_Font_Flag = 0;
+										 pPara->Font_Size = 0;//p[10] - '0';
+									 }
 
 				  //
 				   if(GET_HZ_FONT_HEIGHT(pPara->Font_Size) > Prog_Para.Area[0].Y_Len)
@@ -723,7 +737,10 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 		  Set_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index, 1);
 		  SET_SUM(SMS_File_Flag);
 	      Write_SMS_File_Flag();
-		           
+		 
+		  if(SMS_Cur_No.No EQ Sms_Index)
+			  Set_Screen_Replay_Flag();
+			
 		  return SMS_NO_ERR;
       }
       else if(p[1] EQ 'T' && p[2] EQ 'I' && p[3] EQ 'M') //校时
@@ -895,11 +912,11 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
           {
               Clear_All_SMS();
 			  
-			  //删除显示数据 
-			  Clear_Area_Data(&Show_Data_Bak, 0);
-			  Clear_Area_Data(&Show_Data, 0);
+							//删除显示数据 
+							Clear_Area_Data(&Show_Data_Bak, 0);
+							Clear_Area_Data(&Show_Data, 0);
 
-			  Set_Screen_Replay_Flag();
+							Set_Screen_Replay_Flag();
               return SMS_NO_ERR;
           }
           else if(Chk_Int_Str(&p[4], 2))
@@ -907,12 +924,16 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
               index = Str_2_Int(&p[4], 2);
               if(index EQ 0 || index > MAX_SMS_NUM)
                   return SMS_INDEX_ERR;
-			  index --;
+			        index --;
+							Sms_Index = index;
 
               Set_Buf_Bit(SMS_File_Flag.Flag, sizeof(SMS_File_Flag.Flag), index, 0);
               SET_SUM(SMS_File_Flag);
 
               Write_SMS_File_Flag();
+							
+							if(SMS_Cur_No.No EQ Sms_Index)
+				         Set_Screen_Replay_Flag();
               return SMS_NO_ERR;
          }
          else

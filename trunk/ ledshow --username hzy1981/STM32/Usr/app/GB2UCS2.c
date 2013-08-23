@@ -960,10 +960,72 @@ const INT16U GB_TO_UNICODE_TABLE[]={
 0x9F37,0x9F3D,0x9F3E,0x9F44,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000 
 }; 
 
+const INT16U GB_Unicode_Map[][2] = 
+{
+	{0x3200, 0x3000},
+	{0xA1A2, 0x3001},
+	{0xA1A3, 0x3002},
+  {0xA1A4, 0x00B7},
+  {0xA1A5, 0x02C9},
+  {0xA1A6, 0x02C7},
+  {0xA1A7, 0x00A8},	
+	{0xA1AA, 0x2014},
+	{0xA1AC, 0x2016},
+	{0xA1AD, 0x2026},
+	{0xA1AE, 0x2018},
+  {0xA1AF, 0x2019},	
+	{0xA1B0, 0x201C},
+	{0xA1B1, 0x201D},
+	{0xA1B6, 0x300A},
+	{0xA1B7, 0x300B},
+	{0xA1BA, 0x300E},
+	{0xA1BB, 0x300F},
+	{0xA1BC, 0x3016},
+	{0xA1BD, 0x3017},
+	{0xA1C0, 0x00B1},
+	{0xA1C1, 0x00D7},
+	{0xA1C2, 0x00F7},
+	{0xA1C6, 0x2211},
+	{0xA1C7, 0x220F},
+	{0xA1C9, 0x2229},
+	{0xA1CC, 0x221A},
+	{0xA1D2, 0x222B},
+	{0xA3BA, 0xFF1A},
+	{0xA3BB, 0xFF1B},
+	{0xA3A1, 0xFF01},	
+	//---
+	{0xA1D4, 0x2261},
+	{0xA1D6, 0x2248},
+	{0xA1D9, 0x2260},
+	{0xA1DC, 0x2264},
+	{0xA1DD, 0x2265},
+	{0xA1DE, 0x221E},
+	{0xA1E3, 0x00B0},
+	{0xA1E4, 0x2032},
+	{0xA1E5, 0x2033},
+	{0xA1EB, 0x2030},
+	{0xA2D9, 0x2460},
+	{0xA2DA, 0x2461},
+	{0xA2DB, 0x2462},
+	{0xA2DC, 0x2463},
+	{0xA2DD, 0x2464},
+	{0xA2DE, 0x2465},
+	{0xA2DF, 0x2466},
+	{0xA2E0, 0x2467},
+	{0xA2E1, 0x2468},
+	{0xA2E2, 0x2469},
+	{0xA6A4, 0x0394},
+	{0xA6AB, 0x039B},
+	{0xA6B2, 0x03A3},
+	{0xA6C1, 0x03B1},
+	{0xA6C2, 0x03B2},
+	{0xA6C3, 0x03B3}	
+};
+
 INT16U GB2Unicode(INT16U GBCode)  
 {  
 
-    INT16U unicode;  
+    INT16U unicode, i;  
 
     INT8U high, low;  
 
@@ -971,45 +1033,21 @@ INT16U GB2Unicode(INT16U GBCode)
 
     low     = GBCode & 0x00ff;
 	
-	GBCode = low * 256 + high;
+	for(i = 0; i < S_NUM(GB_Unicode_Map); i ++)
+	{
+		if(GB_Unicode_Map[i][0] EQ GBCode)
+			return GB_Unicode_Map[i][1];
+	}
 
-	if(GBCode EQ 0xBAA3)
-	  unicode = 65306;
-	else if(GBCode EQ 0xBBA3)
-	  unicode = 65307;
-	else if(GBCode EQ 0xA1A3)
-	  unicode = 65281;
-	else if((GBCode + 0xFEE0) >= 0xFF01 && (GBCode + 0xFEE0) <= 0xFF5E)
+	GBCode = low * 256 + high; //以下判断前转换一下
+	
+	if((GBCode + 0xFEE0) >= 0xFF01 && (GBCode + 0xFEE0) <= 0xFF5E)
 	  unicode =	GBCode + 0xFEE0;
-    else if(GBCode EQ 0xA3A1)
-	  unicode = 0x3002;
-	else if(GBCode EQ 32)
-	  unicode = 0x3000;
-	else if(GBCode EQ 0xA2A1)
-	  unicode = 0x3001;
-	else if(GBCode EQ 0xAAA1)
-		unicode = 0x2014;	
-	else if(GBCode EQ 0xBAA1)
-	  unicode = 0x300e;
-    else if(GBCode EQ 0xBBA1)
-	  unicode = 0x300F;
-	else if(GBCode EQ 0xBCA1)
-	  unicode = 0x3016;
-	else if(GBCode EQ 0xBDA1)
-	  unicode = 0x3017;
-	else if(GBCode EQ 0xB0A1)
-	  unicode = 0x201C;
-  else if(GBCode EQ 0xB1A1)
-	  unicode = 0x201D;
-	else if(GBCode EQ 0xB6A1)
-	  unicode = 0x300A;
-	else if(GBCode EQ 0xB7A1)
-	  unicode = 0x301D;
 	else if((GBCode & 0xFF) >= 0xB0)
       unicode = GB_TO_UNICODE_TABLE[(high - 0xa0) * 100 + (low - 0xa0) - 101];  
 	else
 	  unicode = (0xFF << 8) + (low - 0xA0);
-    return (unicode);  
+  return (unicode);  
 
 }
 
@@ -1021,23 +1059,15 @@ INT16U Unicode2GB(INT16U Unicode)
     INT8U hi, low;  
 	INT16U i;
 
+		for(i = 0; i < S_NUM(GB_Unicode_Map); i ++)
+	  {
+		  if(GB_Unicode_Map[i][1] EQ Unicode)
+			  return ((GB_Unicode_Map[i][0] >> 8) & 0xFF) + ((GB_Unicode_Map[i][0] << 8) & 0xFF00);
+	  }
 
     if(Unicode >= 0x4e00)  
     {  
-      if(Unicode EQ 65306)      // 修正冒号的GB码  
-      {  
-           GBCode = 0xBAA3;  
-      }  
-
-      else if(Unicode EQ 65307) // 修正中文分号；的GB码  
-      {  
-           GBCode = 0xBBA3;  
-      }  
-      else if(Unicode EQ 65281) // 修正感叹号的GB码  
-      {  
-           GBCode = 0xA1A3;  
-      }
-      else if((Unicode <= 0xFF5E) && (Unicode >= 0xFF01)) // 对应于ASCII码范围0x21~0x7E  
+      if((Unicode <= 0xFF5E) && (Unicode >= 0xFF01)) // 对应于ASCII码范围0x21~0x7E  
       {  
            GBCode = Unicode - 0xFEE0;  
       }
@@ -1068,59 +1098,6 @@ INT16U Unicode2GB(INT16U Unicode)
     else  
     {  
 
-      /* 校正符号编码 */  
-
-      if(Unicode EQ 0x3002)      // 返回句号  
-      {
-           return (0xA3A1); 
-      }
-      else if(Unicode EQ 0x3000) // 修正0xA1字符的显示,返回空格  
-      {  
-           return (32); 
-      }
-	  else if(Unicode EQ 0x3001) //顿号
-	  {
-	  	   return 0xA2A1;
-	  }  
-      else if(Unicode EQ 0x300e) // 修正『字符的显示  
-      {
-           return (0xBAA1);
-      }
-      else if(Unicode EQ 0x300F) // 修正』字符的显示  
-      {  
-           return (0xBBA1);  
-      }
-      else if(Unicode EQ 0x3016)
-	  {
-		   return 0xBCA1;
-	  }
-      else if(Unicode EQ 0x3017)
-	  {
-		   return 0xBDA1;
-	  }
-		else if(Unicode EQ 0x2014)
-		{
-			 return 0xAAA1;
-		}
-	  else if(Unicode EQ 0x201C)
-	  {
-		   return 0xB0A1;
-	  }
-	  else if(Unicode EQ 0x201D)
-	  {
-		   return 0xB1A1;
-	  }
-	  else if(Unicode EQ 0x300A)
-	  {
-		  return 0xB6A1;
-	  }
-	  else if(Unicode EQ 0x301D)
-	  {
-		 return 0xB7A1;
-	  }
-      else  
-      {
-           return Unicode; 
-      }
+          return Unicode; 
     }
 } 
