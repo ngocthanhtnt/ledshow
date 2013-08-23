@@ -261,6 +261,7 @@ typedef struct
   INT8U Com_Time;  //通信维持时间
   INT8U Byte_Time; //接受字节倒计时
   INT16U Rcv_Posi;
+	INT8U SMS_Flag; //收到短信标志
 
   INT8U Com_Rcv_Data[MAX_COM_BUF_LEN];//((BLOCK_DATA_LEN > SCREEN_PARA_LEN) ? BLOCK_DATA_LEN : SCREEN_PARA_LEN) + 20];
   INT8U Com_Err_Flag; //通信错误标志字

@@ -503,6 +503,7 @@ const INT8U GSM7Bit_ASCII_Map[][2]=
  {0x0F, 0xE5}, //
  {0x11, 0x5F}, //_
  {0x1C, 0xC6}, //?
+ {0x1D, 0xE6},
  {0x1E, 0xDF},//
  {0x1F, 0xA9},
  {0x24, 0xA4}, //
@@ -520,7 +521,7 @@ const INT8U GSM7Bit_ASCII_Map[][2]=
  {0x7F, 0xE0}
 
 };
-
+/*
 INT8U Convert_GSM7Bit_2_ASCII(INT8U chr)
 {
   INT8U i;
@@ -534,6 +535,80 @@ INT8U Convert_GSM7Bit_2_ASCII(INT8U chr)
 
   return chr;
 }
+*/
+INT8U Convert_GSM7Bit_2_ASCII(char *pSrc, char *pDst)
+{
+	INT8U len = 0;
+	
+  INT8U i;
+	
+	if(*pSrc EQ 0x1B)
+	{
+		if(*(pSrc + 1) EQ 0x40)
+		{
+		  *pDst = 124;
+	    len = 2;
+		}
+		else if(*(pSrc + 1) EQ 0x3E)
+		{
+		  *pDst = 93;
+	    len = 2;			
+		}
+		else if(*(pSrc + 1) EQ 0x3D)
+		{
+		  *pDst = 126;
+	    len = 2;			
+		}
+		else if(*(pSrc + 1) EQ 0x3C)
+		{
+		  *pDst = 91;
+	    len = 2;			
+		}
+		else if(*(pSrc + 1) EQ 0x2F)
+		{
+		  *pDst = 92;
+	    len = 2;			
+		}
+		else if(*(pSrc + 1) EQ 0x29)
+		{
+		  *pDst = 125;
+	    len = 2;			
+		}			
+		else if(*(pSrc + 1) EQ 0x28)
+		{
+		  *pDst = 123;
+	    len = 2;			
+		}		
+		else if(*(pSrc + 1) EQ 0x14)
+		{
+		  *pDst = 94;
+	    len = 2;			
+		}		
+		else if(*(pSrc + 1) EQ 0x0A)
+		{
+		  *pDst = 12;
+	    len = 2;			
+		}				
+	}
+	
+	if(len > 0)
+		return len;
+
+
+	*pDst = *pSrc;
+	
+  for(i = 0; i < S_NUM(GSM7Bit_ASCII_Map); i ++)
+  {
+		if(*pSrc EQ GSM7Bit_ASCII_Map[i][0])
+		{
+			*pDst = GSM7Bit_ASCII_Map[i][1];
+			break;
+		}
+  }
+
+  return 1;	
+	
+}
 
 // 7bit解码
 // 输入: pSrc - 源编码串指针
@@ -546,7 +621,12 @@ int gsmDecode7bit(const unsigned char* pSrc, char* pDst, int nSrcLength)
 	int nDst;		// 目标解码串的计数值
 	int nByte;		// 当前正在处理的组内字节的序号，范围是0-6
 	unsigned char nLeft = 0;	// 上一字节残余的数据
-
+  int len,i,j;
+	//char *pSrc1;
+  char *pDst1;
+	
+	//pSrc1 = pSrc;
+	pDst1 = pDst;
 	// 计数值初始化
 	nSrc = 0;
 	nDst = 0;
@@ -562,7 +642,8 @@ int gsmDecode7bit(const unsigned char* pSrc, char* pDst, int nSrcLength)
 	{
 		// 将源字节右边部分与残余数据相加，去掉最高位，得到一个目标解码字节
 		*pDst = ((*pSrc << nByte) | nLeft) & 0x7f;
-		*pDst = Convert_GSM7Bit_2_ASCII(*pDst);
+		//*pDst = Convert_GSM7Bit_2_ASCII(*pDst);
+		//len = Convert_GSM7Bit_2_ASCII(pSrc, pDst);
 		// 将该字节剩下的左边部分，作为残余数据保存起来
 		nLeft = *pSrc >> (7-nByte);
 
@@ -574,11 +655,11 @@ int gsmDecode7bit(const unsigned char* pSrc, char* pDst, int nSrcLength)
 		nByte++;
 
 		// 到了一组的最后一个字节
-		if(nByte == 7)
+		if(nByte == 7 && nSrc != nSrcLength - 1) //当前是最后一个字节不转，否则可能导致多一个@符号,当短信长度是7倍数时
 		{
 			// 额外得到一个目标解码字节
 			*pDst = nLeft;
-			*pDst = Convert_GSM7Bit_2_ASCII(*pDst);
+			//*pDst = Convert_GSM7Bit_2_ASCII(*pDst);
 			// 修改目标串的指针和计数值
 			pDst++;
 			nDst++;
@@ -596,8 +677,15 @@ int gsmDecode7bit(const unsigned char* pSrc, char* pDst, int nSrcLength)
 	// 输出字符串加个结束符
 	*pDst = '\0';
 
+	j = 0;
+	for(i = 0; i < nDst; i += len)
+	{
+		len = Convert_GSM7Bit_2_ASCII(pDst1 + i, pDst1 + j);
+		j ++;
+	}
 	// 返回目标串长度
-	return nDst;
+	pDst1[j] = 0;
+	return j;//nDst;
 }
 
 // 8bit编码
@@ -817,6 +905,8 @@ typedef struct
   INT8U Tail;
 }S_Buf;
 
+static S_Buf Buf = {CHK_BYTE, {0}, CHK_BYTE};//unsigned char buf[256];	// 内部用的缓冲区
+	
 // PDU编码，用于编制、发送短消息
 // 输入: pSrc - 源PDU参数指针
 // 输出: pDst - 目标PDU串指针
@@ -824,8 +914,7 @@ typedef struct
 int gsmEncodePdu(const SM_PARAM* pSrc, char* pDst)
 {
 	int nLength;			// 内部用的串长度
-	int nDstLength;			// 目标PDU串长度
-	static S_Buf Buf = {CHK_BYTE, {0}, CHK_BYTE};//unsigned char buf[256];	// 内部用的缓冲区
+	int nDstLength = 0;			// 目标PDU串长度
 
 #define buf Buf.Data
 
@@ -843,16 +932,26 @@ int gsmEncodePdu(const SM_PARAM* pSrc, char* pDst)
 //	TRACE("%s",pDst);
 */
 	// TPDU段基本参数、目标地址等
-	nDstLength = 0;
+		
+	//nDstLength = 0;
 	nLength = strlen(pSrc->TPA);	// TP-DA地址字符串的长度
 	buf[0] = 0x00;
 	buf[1] = 0x11;					// 是发送短信(TP-MTI=01)，TP-VP用相对格式(TP-VPF=10)
 	buf[2] = 0x00;						// TP-MR=0
 	buf[3] = (char)nLength;			// 目标地址数字个数(TP-DA地址字符串真实长度)
-	buf[4] = 0x91;					// 固定: 用国际格式号码
-	nDstLength = gsmBytes2String(buf, &pDst[nDstLength], 5);		// 转换4个字节到目标PDU串
+	buf[4] = pSrc->ToSCA;//0x81;					// 固定: 用国际格式号码
+	nDstLength += gsmBytes2String(buf, &pDst[nDstLength], 5);		// 转换4个字节到目标PDU串
 	nDstLength += gsmInvertNumbers(pSrc->TPA, &pDst[nDstLength], nLength);	// 转换TP-DA到目标PDU串
-
+/*
+	nLength = strlen(pSrc->TPA);	// TP-DA地址字符串的长度
+	buf[0] = 0x11;
+	buf[1] = 0x00;					// 是发送短信(TP-MTI=01)，TP-VP用相对格式(TP-VPF=10)
+	buf[2] = (char)nLength;			// 目标地址数字个数(TP-DA地址字符串真实长度)
+	buf[3] = 0x91;					// 固定: 用国际格式号码
+	//buf[4] = 0x91;					// 固定: 用国际格式号码
+	nDstLength += gsmBytes2String(buf, &pDst[nDstLength], 4);		// 转换4个字节到目标PDU串
+	nDstLength += gsmInvertNumbers(pSrc->TPA, &pDst[nDstLength], nLength);	// 转换TP-DA到目标PDU串
+*/	
 	// TPDU段协议标识、编码方式、用户信息等
 	nLength = strlen(pSrc->TP_UD);	// 用户信息字符串的长度
 	buf[0] = pSrc->TP_PID;			// 协议标识(TP-PID)
@@ -888,12 +987,14 @@ int gsmEncodePdu(const SM_PARAM* pSrc, char* pDst)
 // 输入: pSrc - 源PDU串指针
 // 输出: pDst - 目标PDU参数指针
 // 返回: 用户信息串长度
+//unsigned char buf[256];	// 内部用的缓冲区
+//int nDstLength;			// 目标PDU串长度
 int gsmDecodePdu(char* pSrc, SM_PARAM* pDst)
 {
 	int nDstLength;			// 目标PDU串长度
 	unsigned char tmp;		// 内部用的临时字节变量
-	static unsigned char buf[256];	// 内部用的缓冲区
-
+	//static unsigned char buf[256];	// 内部用的缓冲区
+#define buf Buf.Data
 	// SMSC地址信息段
 	gsmString2Bytes(pSrc, &tmp, 2);	// 取长度
 	tmp = (tmp - 1) * 2;	// SMSC号码串长度
@@ -908,7 +1009,9 @@ int gsmDecodePdu(char* pSrc, SM_PARAM* pDst)
 	// 取回复号码
 	gsmString2Bytes(pSrc, &tmp, 2);	// 取长度
 	if(tmp & 1) tmp += 1;	// 调整奇偶性
-	pSrc += 4;			// 指针后移，忽略了回复地址(TP-RA)格式
+	pSrc += 2;			// 指针后移，忽略了回复地址(TP-RA)格式
+	gsmString2Bytes(pSrc, (unsigned char *)&pDst->ToSCA, 2);	// 取长度
+	pSrc += 2;
 	gsmSerializeNumbers(pSrc, pDst->TPA, tmp);	// 取TP-RA号码
 	pSrc += tmp;		// 指针后移
 
@@ -943,6 +1046,7 @@ int gsmDecodePdu(char* pSrc, SM_PARAM* pDst)
 
 	// 返回目标字符串长度
 	return nDstLength;
+#undef buf	
 }
 
 
@@ -1111,7 +1215,7 @@ void SmsProc(void)
 //  INT8U i;
   int re;
 
-  if(strstr(SMS_GPRS_Rcv_Buf.Buf, "+CMTI") EQ NULL)	//每秒检查是否收到短信
+  if(Screen_Status.SMS_Flag != 1)//strstr(SMS_GPRS_Rcv_Buf.Buf, "+CMTI") EQ NULL)	//每秒检查是否收到短信
   {
 	OS_TimeDly_Ms(1000);
 	return;
@@ -1139,8 +1243,9 @@ void SmsProc(void)
   
   ATSend("AT+CMGDA=6\r");//WriteComm("AT+CMGDA=6\r", 11); //删除所有短消息
 
-  Screen_Status.Com_Time = 0;
-
+  //Screen_Status.Com_Time = 0;
+  Screen_Status.SMS_Flag = 0;
+	
   OS_TimeDly_Ms(100);
   ClrComm(); //清接收串口
 }

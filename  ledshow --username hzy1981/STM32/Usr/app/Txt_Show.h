@@ -33,7 +33,7 @@
 //HZ16  261696
 //HZ24  588816
 //HZ32  1046784
-#if QT_EN
+#if 0//QT_EN
 #define GET_ASC_FONT_OFF(X) 0
 #define GET_HZ_FONT_OFF(X)  0
 #else
