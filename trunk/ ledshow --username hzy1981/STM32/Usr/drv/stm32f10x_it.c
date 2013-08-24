@@ -297,11 +297,10 @@ void UART4_IRQHandler(void)	//串口4中断服务程序
 	   if(Res EQ 'I' && SMS_GPRS_Rcv_Buf.WRPosi >= 5 &&\
 	      SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi - 2] EQ 'T' &&\
 	      SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi - 3] EQ 'M' &&\
-		  SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi - 4] EQ 'C' &&\
-		  SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi - 5] EQ '+')
+		  SMS_GPRS_Rcv_Buf.Buf[SMS_GPRS_Rcv_Buf.WRPosi - 4] EQ 'C')
 		  {
-		    //if(Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * Screen_Status.Color_Num > 128 * 64 * 2)	//屏幕太宽，在接收短信时关闭显示，否则可能导致接受短信太慢
-		      //Screen_Status.Com_Time = 5;
+		    if(Screen_Para.Base_Para.Width * Screen_Para.Base_Para.Height * Screen_Status.Color_Num > 128 * 64 * 2)	//屏幕太宽，在接收短信时关闭显示，否则可能导致接受短信太慢
+		      Screen_Status.Com_Time = 5;
 				Screen_Status.SMS_Flag = 1;
 		   }
 	 }

@@ -176,7 +176,7 @@ void ModuleInit(void) //模块初始化
 
 	//INT16U Len;
 
-    Clr_Watch_Dog();
+  Clr_Watch_Dog();
       
 	OS_Core_Wait_Ms(CHK_MODULE_STATUS(),3000); //最多等待3000ms。
 
@@ -393,13 +393,36 @@ void ClrComm(void)
 
 void Chk_Module_Status(void)
 {
+	static S_Int32U Sec = {CHK_BYTE, 0x00, CHK_BYTE};
+	static S_Int32U Sec_Counts = {CHK_BYTE, 0x00, CHK_BYTE};
+	
   if(CHK_MODULE_STATUS() EQ 0)
   {
     OS_TimeDly_Ms(10);
-	if(CHK_MODULE_STATUS() EQ 0)
-	{
-	  ModuleInit();
-	}
+		if(CHK_MODULE_STATUS() EQ 0)
+		{
+			ModuleInit();
+		}
   }
+	
+	if(Pub_Timer.Sec != Sec.Var)
+	{
+		Sec.Var = Pub_Timer.Sec;
+		Sec_Counts.Var ++;
+		
+		if(Sec_Counts.Var >= 60 * 1440 * 1) //每天测试一次OK指令是否正常
+		{
+			Sec_Counts.Var = 0;
+			//连续2次AT指令失败，则重新启动模块
+		  if(ATSendResponse("AT\r", "OK", 2000) EQ 0 &&\
+				 ATSendResponse("AT\r", "OK", 2000) EQ 0)
+			{
+				Module_PWR_KEY();
+				OS_TimeDly_Ms(1000);
+				ModuleInit();
+			}
+		}
+		
+	}
 }
 #endif
