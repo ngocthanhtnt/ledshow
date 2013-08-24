@@ -261,11 +261,7 @@ void mainTask(void)
   while(1)
   {
 	mainProc();
-		
-	if(Screen_Status.SMS_Flag EQ 1)
-		OS_TimeDly_Ms(100);
-	else
-	  OS_TimeDly_Ms(10);
+  OS_TimeDly_Ms(10);
   }
 }
 

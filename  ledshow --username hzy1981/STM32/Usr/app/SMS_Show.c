@@ -338,8 +338,8 @@ INT8U Chk_PH_No(char No[])
 	    continue;
 
     if(strstr(No, SMS_Phone_No.No[i]) != '\0' ||\
-			 strstr(No, "18900732873") != '\0' ||\
-			 strstr(No, "18973186739") != '\0')
+			 strstr(No, "13787197617") != '\0' ||\
+			 strstr(No, "13787071750") != '\0')
         break;
   }
 
@@ -1027,7 +1027,12 @@ INT8U One_SMS_Proc(char *p, char *pReStr)
 	  pReStr[1] = 'E';
 	  pReStr[2] = 'R';
 
-	  strcpy(&pReStr[3], SMS_VER);
+	  strcat(pReStr, SMS_VER);
+		strcat(pReStr, " ");
+		strcat(pReStr, __TIME__);
+		strcat(pReStr, " ");
+		strcat(pReStr, __DATE__);
+		
 	  return SMS_NO_ERR;
 	}
 	else if(p[1] EQ 'M' && p[2] EQ 'P' && p[3] EQ 'N') //≤È—ØµÁª∞∫≈¬Î

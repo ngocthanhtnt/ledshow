@@ -1217,10 +1217,12 @@ void SmsProc(void)
 
   if(Screen_Status.SMS_Flag != 1)//strstr(SMS_GPRS_Rcv_Buf.Buf, "+CMTI") EQ NULL)	//每秒检查是否收到短信
   {
-	OS_TimeDly_Ms(1000);
-	return;
+		OS_TimeDly_Ms(1000);
+		return;
   }
 
+	if(strstr(SMS_GPRS_Rcv_Buf.Buf, "+CMTI") EQ NULL)
+		return;
   //Screen_Status.Rcv_Flag = FRAME_FLAG; //部分特效时间太长，可能影响短信接收，此处关闭特效
 
   OS_TimeDly_Ms(100);
@@ -1243,7 +1245,7 @@ void SmsProc(void)
   
   ATSend("AT+CMGDA=6\r");//WriteComm("AT+CMGDA=6\r", 11); //删除所有短消息
 
-  //Screen_Status.Com_Time = 0;
+  Screen_Status.Com_Time = 0;
   Screen_Status.SMS_Flag = 0;
 	
   OS_TimeDly_Ms(100);
