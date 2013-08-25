@@ -51,14 +51,6 @@
 #define STOP_SHOW_TIMER()  TIM_Cmd(TIM4, DISABLE);  //使能TIMx外设  
 #define START_SHOW_TIMER() TIM_Cmd(TIM4, ENABLE);  //使能TIMx外设
 
-//关闭和打开定时器中断
-#if TIM1_EN
-#define TIMER_INT_ENABLE() TIM1->DIER |= TIM_IT_Update
-#define TIMER_INT_DISABLE() TIM1->DIER  &= (uint16_t)~TIM_IT_Update
-#else
-#define TIMER_INT_ENABLE() TIM2->DIER |= TIM_IT_Update
-#define TIMER_INT_DISABLE() TIM2->DIER &= (uint16_t)~TIM_IT_Update
-#endif
 
 //#define CLR_WDG()  IWDG_ReloadCounter()
 //#define CHK_JP_STATUS1  GPIO_ReadInputDataBit(GPIOC,GPIO_Pin_14)
@@ -243,6 +235,9 @@
 	 }\
 }while(0);
 */
+#define STM32_ID 0x0041
+#define GD32_ID  0x07A3
+
 typedef unsigned int INT32U;
 typedef int INT32S;
 typedef unsigned short int INT16U;
@@ -261,7 +256,7 @@ EXT INT8U Write_PHY_Mem(INT32U Offset, void *pSrc, INT16U SrcLen);
 EXT void ReInit_Mem_Port(void);
 #endif
 
-//EXT void Clr_Watch_Dog(void);
+EXT INT16U Get_JTAG_ID(void);
 EXT void RCC_Configuration(void);
 EXT void SysTick_Configuration(void);
 EXT void Delay_ms(INT16U nms);

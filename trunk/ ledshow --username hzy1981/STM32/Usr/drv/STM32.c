@@ -2,6 +2,24 @@
 #include "Includes.h"
 
 extern void Set_Clock_Normal_Speed(void);
+//获取芯片ID STM32为0x0041，GD32为0x07A3
+INT16U Get_JTAG_ID(void)
+{/*
+			if( *( INT8U *)( 0xE00FFFE8 ) & 0x08 )
+			{
+							return   ( ( ( *( INT8U *)( 0xE00FFFD0 ) & 0x0F ) << 8 ) |
+															 ( ( *( INT8U *)( 0xE00FFFE4 ) & 0xFF ) >> 3 ) | 
+															 ( ( *( INT8U *)( 0xE00FFFE8 ) & 0x07 ) << 5 ) ) + 1 ;
+			}
+
+
+			return  STM32_ID;
+*/	
+	if((*( INT8U *)( 0xE00FFFD0 ) & 0x0F ) EQ 0x07)
+		return GD32_ID;
+	else
+		return STM32_ID;
+}
 
 /*
 void Clr_Watch_Dog(void)
@@ -111,6 +129,7 @@ void RCC_Configuration(void)
 void RCC_Configuration(void)
 {
     RCC_ClocksTypeDef RCC_Clocks;
+	INT32U HClk_Mul;
 	/* system clocks configuration -----------------系统时钟配置-------------------*/
 	/* RCC system reset(for debug purpose) */
 	RCC_DeInit();                                    //将外设RCC寄存器重设为缺省值
@@ -127,7 +146,18 @@ void RCC_Configuration(void)
 		/* Enable Prefetch Buffer */
 		FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable); //使能FLASH预取指缓存
 		/* Flash 2 wait state */
-		FLASH_SetLatency(FLASH_Latency_2);   //设置FLASH存储器延时时钟周期数(根据不同的系统时钟选取不同的值)
+		if(Get_JTAG_ID() EQ STM32_ID)
+		{
+			#if (HCLK_VALUE <= 24000000)
+		    FLASH_SetLatency(FLASH_Latency_0);   //设置FLASH存储器延时时钟周期数(根据不同的系统时钟选取不同的值)
+			#elif (HCLK_VALUE <= 48000000)
+				FLASH_SetLatency(FLASH_Latency_1);
+			#else
+				FLASH_SetLatency(FLASH_Latency_2);
+			#endif
+		}
+	  else
+			FLASH_SetLatency(FLASH_Latency_0);   //设置FLASH存储器延时时钟周期数(根据不同的系统时钟选取不同的值)
 		
 		RCC_HCLKConfig(RCC_SYSCLK_Div1);   //设置AHB分频系数为1
 		RCC_SYSCLKConfig(RCC_SYSCLKSource_HSE); //设置外部时钟为HSE
@@ -136,11 +166,16 @@ void RCC_Configuration(void)
 		RCC_PCLK2Config(PCLK2_DIV);   //设置APB2时钟=72 MHz
 		RCC_PLLCmd(DISABLE); //关闭PLL
 
-   #if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL) && !defined (STM32F10X_CL)
-	    RCC_PLLConfig(RCC_PLLSource_HSE_Div1, HCLK_MUL); //PLL必须在其激活前完成配置（设置PLL时钟源及倍频系数）
-   #else
-		RCC_PLLConfig(RCC_PLLSource_PREDIV1, HCLK_MUL); //PLL必须在其激活前完成配置（设置PLL时钟源及倍频系数）
-   #endif
+		if(Get_JTAG_ID() EQ STM32_ID)
+      HClk_Mul = HCLK_MUL;
+		else
+			HClk_Mul = HCLK_MUL_1;
+		
+		#if !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD_VL) && !defined (STM32F10X_CL)
+		  RCC_PLLConfig(RCC_PLLSource_HSE_Div1, HClk_Mul); //PLL必须在其激活前完成配置（设置PLL时钟源及倍频系数）
+		#else
+		  RCC_PLLConfig(RCC_PLLSource_PREDIV1, HClk_Mul); //PLL必须在其激活前完成配置（设置PLL时钟源及倍频系数）
+		#endif
 
 		RCC_PLLCmd(ENABLE);
 		// Wait till PLL is ready 
@@ -163,13 +198,28 @@ void RCC_Configuration(void)
   uint32_t PCLK2_Frequency; 
   uint32_t ADCCLK_Frequency;
 */
-	if(RCC_Clocks.SYSCLK_Frequency != HCLK_VALUE ||\
-	   RCC_Clocks.HCLK_Frequency != HCLK_VALUE ||\
-	   RCC_Clocks.PCLK1_Frequency != PCLK1_VALUE ||\
-	   RCC_Clocks.PCLK2_Frequency != PCLK2_VALUE)
+	if(Get_JTAG_ID() EQ STM32_ID)
 	{
-	  ASSERT_FAILED();
-	  while(1);
+		if(RCC_Clocks.SYSCLK_Frequency != HCLK_VALUE ||\
+			 RCC_Clocks.HCLK_Frequency != HCLK_VALUE ||\
+			 RCC_Clocks.PCLK1_Frequency != PCLK1_VALUE ||\
+			 RCC_Clocks.PCLK2_Frequency != PCLK2_VALUE)
+		{
+			ASSERT_FAILED();
+			while(1);
+		}
+  }
+	else
+	{
+		if(RCC_Clocks.SYSCLK_Frequency != HCLK_VALUE_1 ||\
+			 RCC_Clocks.HCLK_Frequency != HCLK_VALUE_1 ||\
+			 RCC_Clocks.PCLK1_Frequency != PCLK1_VALUE_1 ||\
+			 RCC_Clocks.PCLK2_Frequency != PCLK2_VALUE_1)
+		{
+			ASSERT_FAILED();
+			while(1);
+		}		
+		
 	}
 }
 #endif
@@ -181,12 +231,26 @@ void RCC_Configuration(void)
 void SysTick_Configuration(void)
 {
 	//SysTick->CTRL&=0xfffffffb;//bit2清空,选择外部时钟  HCLK/8
+  if(Get_JTAG_ID() EQ STM32_ID)
+	{		
     if (SysTick_Config(HCLK_VALUE / 1000 * MOVE_STEP_PERIOD))     // (72MHz/1000)*SYSCLK=1MS
-	{ 
-	   /* Capture error */
-	   ASSERT_FAILED(); 
-	    while (1);
-	}
+		{ 
+			 /* Capture error */
+			 ASSERT_FAILED(); 
+				while (1);
+		}
+  }
+  else
+	{
+    if (SysTick_Config(HCLK_VALUE_1 / 1000 * MOVE_STEP_PERIOD))     // (72MHz/1000)*SYSCLK=1MS
+		{ 
+			 /* Capture error */
+			 ASSERT_FAILED(); 
+				while (1);
+		}
+	}		
+
+
 }	
 //延时nms
 //注意nms的范围
@@ -234,6 +298,8 @@ void Delay_us(INT32U nus)
   
   //j = (INT32S)(12 * nus - 2) * (HCLK_VALUE / 72000000);
   //48M、72M等均已验证正确
+	if(Get_JTAG_ID() EQ STM32_ID)
+	{
 #ifdef CARD_A
   j = (INT32S)nus * (HCLK_VALUE / 2000000);// - HCLK_VALUE / 36000000;
   while(i < j) 
@@ -247,6 +313,15 @@ void Delay_us(INT32U nus)
     i++;
 	}
 #endif
+  }
+	else
+	{
+		j = (INT32S)nus * (HCLK_VALUE_1 / 6000000) - HCLK_VALUE_1 / 36000000;
+		while(i < j) 
+		{
+			i++;
+		}		
+	}
 }
 
 //sec为要延时的秒
@@ -752,24 +827,24 @@ INT16U SPI2_DMA_Data[] = {0x0303, 0x0303, 0x0303, 0x0303};
 //定时器2,输入捕获中断!!两个通道，下降沿捕获！
 void TIM2_Configuration(void)
 {
+	INT32U Clk_Value;
+	
   TIM_ICInitTypeDef  TIM_ICInitStructure;
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
 
-#if TIM1_EN EQ 0
-	TIM_TimeBaseStructure.TIM_Period = 1000 / 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
-  TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
-	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
-	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
-	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
-#else
-	TIM_TimeBaseStructure.TIM_Period = 100 / 10 * (PCLK1_VALUE * 2/100000); //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	if(Get_JTAG_ID() EQ STM32_ID)
+		Clk_Value = PCLK1_VALUE;
+	else
+		Clk_Value = PCLK1_VALUE_1;
+
+	TIM_TimeBaseStructure.TIM_Period = 100 / 10 * (Clk_Value * 2/100000);//设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
 	TIM_TimeBaseStructure.TIM_Prescaler =0;//(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
 	TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
-#endif	
+	
 	/* Enables the Update event for TIM3 */
 	//TIM_UpdateDisableConfig(TIM3,ENABLE); 	//使能 TIM4 更新事件 
 	
@@ -813,6 +888,7 @@ void TIM2_Configuration(void)
 //Period
 void _TIM3_Set_Period(INT16U Period)
 {
+	INT32U Clk_Value;
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 
     TIM_Cmd(TIM3, DISABLE);  //使能TIMx外设
@@ -826,8 +902,13 @@ void _TIM3_Set_Period(INT16U Period)
 	if(Period > 1000)
 	  Period = 1000;
 
+	if(Get_JTAG_ID() EQ STM32_ID)
+		Clk_Value = PCLK1_VALUE;
+	else
+		Clk_Value = PCLK1_VALUE_1;
+	
 	TIM_TimeBaseStructure.TIM_Period = Period / 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
-    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+    TIM_TimeBaseStructure.TIM_Prescaler =(Clk_Value * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
@@ -858,12 +939,19 @@ void TIM3_Configuration(void)
 #else
 void TIM3_Configuration(void)
 {
+	INT32U Clk_Value;
+	
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
-
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	
+	if(Get_JTAG_ID() EQ STM32_ID)
+		Clk_Value = PCLK1_VALUE;
+	else
+		Clk_Value = PCLK1_VALUE_1;
+	
 	TIM_TimeBaseStructure.TIM_Period = SCAN_SCREEN_PERIOD / 10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
-    TIM_TimeBaseStructure.TIM_Prescaler =(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+  TIM_TimeBaseStructure.TIM_Prescaler =(Clk_Value * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
 	TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure); //根据TIM_TimeBaseInitStruct中指定的参数初始化TIMx的时间基数单位
@@ -887,18 +975,33 @@ void TIM3_Configuration(void)
 void TIM1_Configuration(void)
 {
 #if TIM1_EN
+	INT32U PClk2_Value, HClk_Value;
+	
     //RCC_ClocksTypeDef RCC_Clocks;
 	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); 
 
-	TIM_TimeBaseStructure.TIM_Period = 1000; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	TIM_TimeBaseStructure.TIM_Period = 1000;//设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
 
-#if  PCLK2_VALUE ==	HCLK_VALUE   
-	TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE /1000000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
-#else
-	#error "此处代码没有验证，需要重新验证下"
-	TIM_TimeBaseStructure.TIM_Prescaler =(PCLK2_VALUE * 2 /1000000-1); 
-#endif
+	if(Get_JTAG_ID() EQ STM32_ID)
+	{
+		PClk2_Value = PCLK2_VALUE;
+		HClk_Value = HCLK_VALUE;
+	}
+	else
+	{
+		PClk2_Value = PCLK2_VALUE_1;
+		HClk_Value = HCLK_VALUE_1;		
+	}
+
+	if(PClk2_Value ==	HClk_Value)   
+		TIM_TimeBaseStructure.TIM_Prescaler =(PClk2_Value /1000000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
+	else
+	{
+		ASSERT_FAILED();
+		while(1);
+		//TIM_TimeBaseStructure.TIM_Prescaler =(PClk2_Value * 2 /1000000-1); 
+	}
 
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; 
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
@@ -919,6 +1022,7 @@ void TIM1_Configuration(void)
 //用于OE-PWM输出.
 void TIM4_Configuration(void)
 {
+	INT32U Clk_Value;
     //RCC_ClocksTypeDef RCC_Clocks;
  	TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure = {0};
 	TIM_OCInitTypeDef  TIM_OCInitStructure = {0};
@@ -948,7 +1052,8 @@ void TIM4_Configuration(void)
 
 	/* TIM3 clock enable */
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-	
+
+
 	//不分频。PWM频率=72000000/900=80Khz
 	/* ---------------------------------------------------------------
 	TIM3CLK 即PCLK1=36MHz
@@ -960,7 +1065,12 @@ void TIM4_Configuration(void)
 	TIM3CLK = 36 MHz, Prescaler = 0, TIM3 counter clock = 36MHz
 	--------------------------------------------------------------- */
 	/* Time base configuration */
-	TIM_TimeBaseStructure.TIM_Period = (PCLK1_VALUE * 2 / OE_PWM_FREQ / 10)/10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 80K
+	if(Get_JTAG_ID() EQ STM32_ID)
+		Clk_Value = PCLK1_VALUE;
+	else
+		Clk_Value = PCLK1_VALUE_1;
+	
+	TIM_TimeBaseStructure.TIM_Period = (Clk_Value * 2 / OE_PWM_FREQ / 10)/10; //设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 80K
 	TIM_TimeBaseStructure.TIM_Prescaler = 0; //设置用来作为TIMx时钟频率除数的预分频值  不分频
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式

@@ -1,6 +1,23 @@
 #define LED_SCAN_C
 #include "Includes.h"
-
+/*
+//关闭和打开定时器中断
+#if TIM1_EN
+#define TIMER_INT_ENABLE() NVIC->ISER[TIM1_UP_IRQn >> 0x05] = (uint32_t)0x01 << (TIM1_UP_IRQn & (uint8_t)0x1F) //TIM2->DIER |= TIM_IT_Update
+#define TIMER_INT_DISABLE() NVIC->ICER[TIM1_UP_IRQn >> 0x05] = (uint32_t)0x01 << (TIM1_UP_IRQn & (uint8_t)0x1F)
+#else 
+#define TIMER_INT_ENABLE() NVIC->ISER[TIM2_IRQn >> 0x05] = (uint32_t)0x01 << (TIM2_IRQn & (uint8_t)0x1F) //;TIM2->DIER |= TIM_IT_Update
+#define TIMER_INT_DISABLE() NVIC->ICER[TIM2_IRQn >> 0x05] = (uint32_t)0x01 << (TIM2_IRQn & (uint8_t)0x1F);
+#endif
+*/
+//关闭和打开定时器中断
+#if TIM1_EN
+#define TIMER_INT_ENABLE() TIM1->DIER |= TIM_IT_Update
+#define TIMER_INT_DISABLE() TIM1->DIER  &= (uint16_t)~TIM_IT_Update
+#else
+#define TIMER_INT_ENABLE() TIM2->DIER |= TIM_IT_Update
+#define TIMER_INT_DISABLE() TIM2->DIER &= (uint16_t)~TIM_IT_Update
+#endif
 volatile INT32U test_temp = 0, test_x=0, test_y=0;
 
 #if 1//MAX_SCAN_BLOCK_NUM EQ 16
@@ -256,7 +273,7 @@ void Set_Clock_Hight_Speed(void)
 }
  */
 void Set_Clock_Normal_Speed(void)
-{
+{/*
 	RCC_SYSCLKConfig(RCC_SYSCLKSource_HSE); //设置外部时钟为HSE
 	//_RCC_HCLKConfig(RCC_SYSCLK_Div1);   //设置AHB时钟=AHB_FREQ MHz
 	RCC_PCLK1Config(PCLK1_DIV);   //设置APB1时钟=36 MHz(APB1时钟最大值)
@@ -282,7 +299,7 @@ void Set_Clock_Normal_Speed(void)
 	while(RCC_GetSYSCLKSource() != 0x08)
 	{
 	}
-
+*/
 }
 
 #if BUILD_SCAN_DATA_INDEX_EN
@@ -1037,7 +1054,7 @@ void LED_Scan_One_Row(void)
 	   		
 	   TIMER_INT_ENABLE();//(0); //开定时器中断，保证Pub_Timer继续走
 	   TIMER_INT_DISABLE(); //关定时器中断
-		   	 	
+
 	   SPI2->DR = 0xAAAA;
 
        
@@ -1100,7 +1117,7 @@ void LED_Scan_One_Row(void)
 	 //此处是硬件扫描方式代码
     Delay_us(5);
     TIMER_INT_ENABLE();
-		 
+
 	//关闭OE使能
 	Set_OE_Duty_Polarity(0, Screen_Para.Scan_Para.OE_Polarity);
 

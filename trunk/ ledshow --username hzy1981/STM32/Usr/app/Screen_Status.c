@@ -347,12 +347,14 @@ void Screen_Time_Proc()
 #if QT_EN
   Get_Cur_Time();
 #else
-  static S_Int32U Sec = {CHK_BYTE, 0, CHK_BYTE};
   static S_Int8U Flag = {CHK_BYTE, 0xAA, CHK_BYTE};
-  INT32U Diff;
+	static S_Int32U Sec = {CHK_BYTE, 0, CHK_BYTE};
+	INT32U Diff;
+
   
   Diff = Pub_Timer.Sec - Sec.Var;
-
+  Sec.Var = Pub_Timer.Sec;
+	
   if(Diff != 0)
   {
     Cur_Time.Time[T_SEC] += Diff;
@@ -364,8 +366,6 @@ void Screen_Time_Proc()
     Flag.Var = 0;
     Get_Cur_Time();
   }
-
-   Sec.Var = Pub_Timer.Sec;
 #endif
 #endif 
 }
