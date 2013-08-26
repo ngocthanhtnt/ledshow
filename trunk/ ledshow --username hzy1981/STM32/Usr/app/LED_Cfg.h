@@ -61,7 +61,7 @@
 //#define CARD_TYPE CARD_AX //A系列板卡针对小条屏，其他针对中大屏
 //QT_EN=1,QT_SIM_EN=1表示预览功能，完全模仿QT_SIM_EN=0表示正常预览
 
-#define WDG_EN 0 //看门狗使能，仿真调试时关闭
+#define WDG_EN 1 //看门狗使能，仿真调试时关闭
 //#define GMODULE_DBG_EN 1//GPRS模块测试使能
 
 #define OE_PWM_FREQ 1000 //1KPWM频率
