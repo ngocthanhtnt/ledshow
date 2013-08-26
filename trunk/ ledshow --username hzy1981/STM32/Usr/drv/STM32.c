@@ -839,7 +839,7 @@ void TIM2_Configuration(void)
 	else
 		Clk_Value = PCLK1_VALUE_1;
 
-	TIM_TimeBaseStructure.TIM_Period = 100 / 10 * (Clk_Value * 2/100000);//设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
+	TIM_TimeBaseStructure.TIM_Period = 1000 / 10 * (Clk_Value * 2/100000);//设置在下一个更新事件装入活动的自动重装载寄存器周期的值	 计数到5000为500ms
 	TIM_TimeBaseStructure.TIM_Prescaler =0;//(PCLK1_VALUE * 2/100000-1); //设置用来作为TIMx时钟频率除数的预分频值  10Khz的计数频率  
 	TIM_TimeBaseStructure.TIM_ClockDivision = 0; //设置时钟分割:TDTS = Tck_tim
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;  //TIM向上计数模式
