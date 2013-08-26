@@ -301,13 +301,13 @@ void Delay_us(INT32U nus)
 	if(Get_JTAG_ID() EQ STM32_ID)
 	{
 #ifdef CARD_A
-  j = (INT32S)nus * (HCLK_VALUE / 2000000);// - HCLK_VALUE / 36000000;
+  j = (INT32S)nus * (HCLK_VALUE / 2000000) - HCLK_VALUE / 2000000;
   while(i < j) 
   {
     i++;
 	}
 #else
-  j = (INT32S)nus * (HCLK_VALUE / 6000000) - HCLK_VALUE / 36000000;
+  j = (INT32S)nus * (HCLK_VALUE / 6000000) - HCLK_VALUE / 6000000;
   while(i < j) 
   {
     i++;
@@ -316,7 +316,7 @@ void Delay_us(INT32U nus)
   }
 	else
 	{
-		j = (INT32S)nus * (HCLK_VALUE_1 / 6000000) - HCLK_VALUE_1 / 36000000;
+		j = (INT32S)nus * (HCLK_VALUE_1 / 6000000) - HCLK_VALUE_1 / 6000000;
 		while(i < j) 
 		{
 			i++;

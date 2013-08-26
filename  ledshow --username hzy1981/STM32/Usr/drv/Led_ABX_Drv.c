@@ -78,6 +78,15 @@ void GPIO_Configuration()
   SET_G1(0);
   SET_G1(1);
   */
+	/*
+	while(1)
+	{
+		SET_R1(0);
+		Delay_us(1);
+		SET_R1(1);
+		Delay_us(1);
+	}
+	*/
 }
 
 
